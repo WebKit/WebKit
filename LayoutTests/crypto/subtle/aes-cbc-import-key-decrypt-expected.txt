@@ -1,0 +1,78 @@
+CONSOLE MESSAGE: AES-CBC and AES-CTR do not provide authentication by default, and implementing it manually can result in minor, but serious mistakes. We recommended using authenticated encryption like AES-GCM to protect against chosen-ciphertext attacks.
+Test decrypting using AES-CBC with an imported 128bit key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Expected plain text:
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: A
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: AB
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABC
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCD
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDE
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEF
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFG
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGH
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHI
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJ
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJK
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKL
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLM
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMN
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNO
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOP
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQ
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQR
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRS
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRST
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTU
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUV
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVW
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVWX
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVWXY
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZA
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZAB
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZABC
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZABCD
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF
+PASS bytesToASCIIString(plainText) is expectedPlainText
+Expected plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFG
+PASS bytesToASCIIString(plainText) is expectedPlainText
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

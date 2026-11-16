@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head id="head">
+<script src="../resources/runner.js"></script>
+<style id="style">
+</style>
+</head>
+<body id="body">
+<div id="test"></div>
+</body>
+<script>
+let head = document.getElementById("head");
+let style = document.getElementById("style");
+let body = document.getElementById("body");
+let styleString = "";
+let elementCount = 1000;
+for (let i = 0; i < elementCount; ++i) {
+    let div = document.createElement("div");
+    let id = `div${i}`;
+    div.id = id;
+    body.appendChild(div);
+    styleString = styleString + `#${id} { font-weight: ${i}; }`;
+}
+style.innerText = styleString;
+PerfTestRunner.measureRunsPerSecond({run:function() {
+    style.innerText = `${styleString}`;
+    let fontFace = new FontFace("WebFont", "url('MyCoolWebFont.ttf') format('truetype')");
+    if (!document.fonts.has(fontFace))
+        document.fonts.add(fontFace)
+    document.fonts.clear();
+}});
+</script>
+</html>

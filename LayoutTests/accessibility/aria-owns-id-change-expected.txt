@@ -1,0 +1,34 @@
+This test ensures aria-owns relationships update when a target element's id changes.
+
+Initial state - owner should have 2 children (Item 1 + owned button), other-owner should have 1 child:
+PASS: owner.childrenCount === 2
+PASS: owner.childAtIndex(1).role.toLowerCase().includes('button') === true
+PASS: otherOwner.childrenCount === 1
+
+Changing the owned element's id from 'owned' to 'not-owned':
+document.getElementById('owned').id = 'not-owned'
+
+Owner should now only have 1 child (Item 1):
+PASS: owner.childrenCount === 1
+
+Changing the element's id back to 'owned':
+document.getElementById('not-owned').id = 'owned'
+
+Owner should now have 2 children again:
+PASS: owner.childrenCount === 2
+PASS: owner.childAtIndex(1).role.toLowerCase().includes('button') === true
+
+Testing ownership transfer - changing id to match other-owner's aria-owns:
+document.getElementById('owned').id = 'different-id'
+
+Owner should have 1 child, other-owner should have 2 children:
+PASS: owner.childrenCount === 1
+PASS: otherOwner.childrenCount === 2
+PASS: otherOwner.childAtIndex(1).role.toLowerCase().includes('button') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Item 1
+Item 2
+Owned button

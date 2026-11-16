@@ -1,0 +1,53 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ ARIAActionsSupportEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul role="listbox">
+<li id="option" role="option" tabindex="0" aria-label="Artichokes" aria-actions="delete-action favorite-action">
+    <span role="button" id="delete-action" aria-label="Delete">Delete</span>
+    <span role="button" id="favorite-action" aria-label="Favorite">Favorite</span>
+</li>
+</ul>
+
+<script>
+var output = "This test verifies that aria-actions targets which are themselves accessibility-ignored (here, role=button elements inside a listbox option) are still exposed with an accessible name, and thus as invokable custom actions.\n\n";
+
+if (window.accessibilityController) {
+    var clickedActions = [];
+    document.getElementById("delete-action").addEventListener("click", () => clickedActions.push("delete-action"));
+    document.getElementById("favorite-action").addEventListener("click", () => clickedActions.push("favorite-action"));
+
+    var option = accessibilityController.accessibleElementById("option");
+    var deleteAction = option.ariaActionsElementAtIndex(0);
+    var favoriteAction = option.ariaActionsElementAtIndex(1);
+
+    output += "The action targets are resolved in DOM order:\n";
+    output += expect("deleteAction.domIdentifier", "'delete-action'");
+    output += expect("favoriteAction.domIdentifier", "'favorite-action'");
+    output += "\n";
+
+    output += "The action targets are accessibility-ignored (they are buttons inside a listbox option):\n";
+    output += expect("deleteAction.isIgnored", "true");
+    output += expect("favoriteAction.isIgnored", "true");
+    output += "\n";
+
+    output += "Even though they are ignored, the action targets expose their accessible name:\n";
+    output += expect("platformValueForW3CName(deleteAction)", "'Delete'");
+    output += expect("platformValueForW3CName(favoriteAction)", "'Favorite'");
+    output += "\n";
+
+    output += "The custom actions are exposed on the option and can be invoked:\n";
+    output += expect("option.invokeCustomActionAtIndex(0)", "true");
+    output += expect("option.invokeCustomActionAtIndex(1)", "true");
+    output += expect("clickedActions[0]", "'delete-action'");
+    output += expect("clickedActions[1]", "'favorite-action'");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

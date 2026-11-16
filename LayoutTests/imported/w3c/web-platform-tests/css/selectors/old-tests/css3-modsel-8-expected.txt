@@ -1,0 +1,6 @@
+This paragraph should have green background because its language is "en-gb"
+
+This address should also have green background because the language of the inner SPANs is not French.
+
+PASS Attribute value selectors
+

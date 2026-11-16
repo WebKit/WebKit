@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <body>
+        <canvas id="canvas1" width=400px height=400px></canvas>
+        <video id="video1" controls autoplay width=400px height=400px></video>
+        <br>
+        <canvas id="canvas2" width=400px height=400px></canvas>
+        <video id="video2" controls autoplay width=400px height=400px></video>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+        <script>
+
+var canvas1 = document.getElementById("canvas1");
+var canvas2 = document.getElementById("canvas2");
+var video1 = document.getElementById("video1");
+var video2 = document.getElementById("video2");
+var gl1 = canvas1.getContext('webgl', { preserveDrawingBuffer: false } );
+var gl2 = canvas2.getContext('webgl', { preserveDrawingBuffer: true } );
+
+function modifyCanvas(gl, green)
+{
+    gl.clearColor(0, green ? 1 : 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    setTimeout(() => { modifyCanvas(gl, !green) }, 500);
+}
+
+function checkGreenPixel(value, cptr)
+{
+    var index = cptr % 4;
+    if (index == 0)
+        return value == 0;
+    if (index == 1)
+        return value == 255;
+    if (index == 2)
+        return value == 0;
+    if (index == 3)
+        return value == 255;
+}
+
+promise_test(async test => {
+    var stream = canvas1.captureStream();
+    video1.srcObject = stream;
+
+    await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+
+    const promise = new Promise((resolve, reject) => {
+        const identifier = video1.requestVideoFrameCallback((now, metadata) => {
+            resolve(new VideoFrame(video1));
+        });
+        setTimeout(() => {
+            reject("no rvfc for " + identifier);
+            video1.cancelVideoFrameCallback(identifier);
+        }, 5000);
+
+    });
+
+    modifyCanvas(gl1, true);
+
+    const frame = await promise;
+    test.add_cleanup(() => { frame.close(); });
+
+    const data = new Uint8Array(frame.allocationSize());
+    const layout = await frame.copyTo(data);
+
+    assert_equals(frame.format, "BGRA");
+    data.forEach((value, cptr) => {
+        assert_true(checkGreenPixel(value, cptr), "expecting value " + cptr + " to be part of a green pixel");
+    });
+}, "captureStream with 3d context drawing - not buffered initially");
+
+promise_test(async test => {
+    var stream = canvas2.captureStream();
+    video2.srcObject = stream;
+
+    await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+
+    const promise = new Promise((resolve, reject) => {
+        const identifier = video2.requestVideoFrameCallback((now, metadata) => {
+            resolve(new VideoFrame(video2));
+        });
+        setTimeout(() => {
+            reject("no rvfc for " + identifier);
+            video2.cancelVideoFrameCallback(identifier);
+        }, 5000);
+
+    });
+
+    modifyCanvas(gl2, true);
+
+    const frame = await promise;
+    test.add_cleanup(() => { frame.close(); });
+
+    const data = new Uint8Array(frame.allocationSize());
+    const layout = await frame.copyTo(data);
+
+    assert_equals(frame.format, "BGRA");
+    data.forEach((value, cptr) => {
+        assert_true(checkGreenPixel(value, cptr), "expecting value " + cptr + " to be part of a green pixel");
+    });
+}, "captureStream with 3d context drawing - buffered initially");
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS Removing the `src` content attribute does not 'prepare' the script
+

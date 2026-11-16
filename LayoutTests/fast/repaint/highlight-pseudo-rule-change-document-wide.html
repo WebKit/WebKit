@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Repaint tracking for ::highlight() changes with a document-wide rule</title>
+<style>
+  body { margin: 0; font: 40px/1.5 monospace; }
+  /* Bare rule: matches every element, so the hasPseudoStyle bits are set document-wide and a change
+     to which rules match is invisible in highlightPseudoElementTypes(). */
+  ::highlight(h) { background-color: yellow; }
+  .classy::highlight(h) { background-color: lime; }
+  #cssomTarget::highlight(h) { background-color: yellow; }
+</style>
+<div id="cssomTarget">cssom</div>
+<div id="classTarget">class</div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText(false);
+    testRunner.waitUntilDone();
+}
+
+const log = message => document.getElementById("log").textContent += message + "\n";
+const ruleFor = id => [...document.styleSheets[0].cssRules].find(rule => rule.selectorText && rule.selectorText.includes(id));
+const range = element => {
+    const r = new Range();
+    r.selectNodeContents(element);
+    return r;
+};
+CSS.highlights.set("h", new Highlight(range(cssomTarget), range(classTarget)));
+
+// These cases depend on the highlight pseudo styles having been resolved and cached by painting,
+// the way they are on a real page. A display with nothing dirty may not repaint the text at all, so
+// dirty the page first, otherwise there is no previous style to compare against and the test is flaky.
+async function paint() {
+    document.body.style.backgroundColor = document.body.style.backgroundColor === "white" ? "rgb(255, 255, 254)" : "white";
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await testRunner.displayAndTrackRepaints();
+}
+
+async function check(name, mutate) {
+    await paint();
+    internals.startTrackingRepaints();
+    mutate();
+    document.body.offsetTop;
+    const rects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    // Every case here should repaint the originating element.
+    log(`${rects.trim() ? "PASS" : "FAIL (no repaint)"} ${name}`);
+}
+
+async function run() {
+    await check("CONTROL element's own outline", () => {
+        cssomTarget.style.outline = "2px solid blue";
+    });
+    await check("CSSOM edit, painted-only element, bare rule present", () => {
+        ruleFor("cssomTarget").style.backgroundColor = "red";
+    });
+    await check("class change, painted-only element, bare rule present", () => {
+        classTarget.className = "classy";
+    });
+    testRunner.notifyDone();
+}
+
+if (window.testRunner && window.internals)
+    run();
+else
+    log("needs testRunner and internals");
+</script>

@@ -1,0 +1,4 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Even though this text is large enough to be legible at initial scale, we should still allow double tapping to zoom for consistent behavior.

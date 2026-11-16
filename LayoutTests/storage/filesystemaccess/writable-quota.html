@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+const quota = 1024 * 1024;
+if (window.testRunner) {
+    testRunner.setOriginQuotaRatioEnabled(false);
+    testRunner.setQuota(quota);
+    testRunner.setAllowStorageQuotaIncrease(false);
+}
+
+promise_test(async (test) => {
+    var rootHandle = await navigator.storage.getDirectory();
+    // Create a new file for this test.
+    await rootHandle.removeEntry("writable-quota.txt").then(() => { }, () => { });
+    const fileHandle = await rootHandle.getFileHandle("writable-quota.txt", { "create" : true  });
+    const writable = await fileHandle.createWritable();
+
+    await writable.write(new Uint8Array(512 * 1024));
+
+    return promise_rejects_dom(test, 'QuotaExceededError', writable.write(new Uint8Array(1024 * 1024)));
+}, "Validate write quota");
+
+promise_test(async (test) => {
+    var rootHandle = await navigator.storage.getDirectory();
+    // Create a new file for this test.
+    await rootHandle.removeEntry("writable-quota1.txt").then(() => { }, () => { });
+    await rootHandle.removeEntry("writable-quota2.txt").then(() => { }, () => { });
+    const fileHandle1 = await rootHandle.getFileHandle("writable-quota1.txt", { "create" : true  });
+    const fileHandle2 = await rootHandle.getFileHandle("writable-quota2.txt", { "create" : true  });
+
+    const writable1 = await fileHandle1.createWritable();
+    const writable2 = await fileHandle2.createWritable();
+
+    await writable1.truncate(512 * 1024);
+
+    let counter = 0;
+    return Promise.all([
+        writable1.truncate(1532 * 1024).then(() => assert_not_reached("should reject"), e => {
+            assert_equals(counter++, 0);
+            assert_equals(e.name, "QuotaExceededError");
+        }),
+        writable2.truncate(0).then(() => assert_equals(counter, 1))
+    ]);
+}, "Validate truncate quota");
+</script>
+</body>
+</html>

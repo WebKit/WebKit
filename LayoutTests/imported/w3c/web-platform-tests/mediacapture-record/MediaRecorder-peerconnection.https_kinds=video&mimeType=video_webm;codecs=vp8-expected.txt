@@ -1,0 +1,5 @@
+
+
+PASS PeerConnection MediaRecorder receives data after onstart, kinds "video "mimeType "video/webm;codecs=vp8"
+PASS PeerConnection MediaRecorder gets ondata on stopping tracks, kinds "video "mimeType "video/webm;codecs=vp8"
+

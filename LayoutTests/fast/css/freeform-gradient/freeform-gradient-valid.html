@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSFreeformGradientsEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Images Module Level 5: parsing freeform-gradient() with valid values</title>
+<link rel="help" href="https://github.com/w3c/csswg-drafts/pull/14655">
+<meta name="assert" content="freeform-gradient() supports the full grammar.">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+</head>
+<body>
+<script>
+// Positions.
+test_valid_value("background-image", "freeform-gradient(red center center)");
+test_valid_value("background-image", "freeform-gradient(red left top, blue right bottom)");
+test_valid_value("background-image", "freeform-gradient(red 0px 0px, blue 100% 100%, green 10px 50%)");
+
+// A single unitless 0 is a position.
+test_valid_value("background-image", "freeform-gradient(red 0, blue 100% 100%)", "freeform-gradient(red 0px center, blue 100% 100%)");
+test_valid_value("background-image", "freeform-gradient(red 0 0, blue 100% 100%)", "freeform-gradient(red 0px 0px, blue 100% 100%)");
+
+// Weights.
+test_valid_value("background-image", "freeform-gradient(red left top / 0.5, blue right bottom / -2)");
+test_valid_value("background-image", "freeform-gradient(red 10px 20px / 0, blue 100% 100%)");
+test_valid_value("background-image", "freeform-gradient(red 0 0/1, blue 100% 100%)", "freeform-gradient(red 0px 0px / 1, blue 100% 100%)");
+
+// Color interpolation method.
+test_valid_value("background-image", "freeform-gradient(in oklab, red left top, blue right bottom)");
+test_valid_value("background-image", "freeform-gradient(in srgb, red left top, blue right bottom)", "freeform-gradient(red left top, blue right bottom)");
+test_valid_value("background-image", "freeform-gradient(in hsl longer hue, red left top, blue right bottom)");
+test_valid_value("background-image", "freeform-gradient(color(display-p3 1 0 0) left top, blue right bottom)");
+</script>
+</body>
+</html>

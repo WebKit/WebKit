@@ -1,0 +1,12 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+if (window.opener) {
+    const bc = new BroadcastChannel("blob-bc");
+    bc.onmessage = (e) => window.opener.postMessage(e.data, '*');
+}
+</script>
+</head>
+</html>
+

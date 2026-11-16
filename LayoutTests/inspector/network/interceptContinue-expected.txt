@@ -1,0 +1,74 @@
+Tests for Network.interceptContinue.
+
+
+== Running test suite: Network.interceptContinue
+-- Running test case: Network.interceptContinue.Request
+Adding interception...
+Triggering load...
+
+Testing invalid requestId...
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Missing pending intercept request for given requestId",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Missing pending intercept request for given requestId"
+    }
+  ]
+}
+
+Testing incorrect stage...
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Missing pending intercept response for given requestId",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Missing pending intercept response for given requestId"
+    }
+  ]
+}
+
+Continuing load...
+{"alpha":"beta","gamma":12345}
+
+Removing interception...
+
+-- Running test case: Network.interceptContinue.Response
+Adding interception...
+Triggering load...
+
+Testing invalid requestId...
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Missing pending intercept response for given requestId",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Missing pending intercept response for given requestId"
+    }
+  ]
+}
+
+Testing incorrect stage...
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Missing pending intercept request for given requestId",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Missing pending intercept request for given requestId"
+    }
+  ]
+}
+
+Continuing load...
+{"alpha":"beta","gamma":12345}
+
+Removing interception...
+

@@ -1,0 +1,12 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "a-rate oscillator honors sub-sample start offset"
+PASS Audit report
+PASS > [a-rate oscillator honors sub-sample start offset]
+PASS   reference[0:5] contains only the constant 0.
+PASS   a-rate[0:5] contains only the constant 0.
+PASS   Max |a-rate - reference| after start is less than or equal to 0.000001.
+PASS   a-rate[6:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000001,"relativeThreshold":0}.
+PASS < [a-rate oscillator honors sub-sample start offset] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

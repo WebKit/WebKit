@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<my-card id="host"><b>a</b>
+<b>b</b></my-card>
+<my-list id="blockHost"><div>a</div>
+<div>b</div></my-list>
+<div id="boxParent" style="color: black">
+  <span id="contents" style="display: contents">Text child of a display: contents element.</span>
+</div>
+<script>
+description("Text children of a display: contents element should only be part of the style update when the imaginary wrapper style actually changes.");
+
+if (!window.internals)
+    testFailed("This test requires internals.lastStyleUpdateSize.");
+else {
+
+    var contentsElement = document.getElementById("contents");
+    var boxParent = document.getElementById("boxParent");
+
+    var host = document.getElementById("host");
+    host.attachShadow({ mode: "open" }).innerHTML = "<div id='frame' style='color: black'><slot></slot></div>";
+    var slot = host.shadowRoot.querySelector("slot");
+
+    var blockHost = document.getElementById("blockHost");
+    blockHost.attachShadow({ mode: "open" }).innerHTML = "<div style='color: black'><slot></slot></div>";
+    var blockSlot = blockHost.shadowRoot.querySelector("slot");
+
+    // NOTE: Do not log before measuring - that would mutate the DOM and end up in the next style update by itself!
+    var sizes = [];
+
+    document.body.offsetTop;
+
+    // 1. A non-inherited change leaves the imaginary wrapper style identical.
+    contentsElement.style.outlineColor = "red";
+    document.body.offsetTop;
+    sizes.push(internals.lastStyleUpdateSize);
+
+    // 2. An inherited change alters the wrapper style -> text needs update.
+    contentsElement.style.color = "green";
+    document.body.offsetTop;
+    sizes.push(internals.lastStyleUpdateSize);
+
+    // 3. Reverting the change, also requires a text update.
+    contentsElement.style.color = "";
+    document.body.offsetTop;
+    sizes.push(internals.lastStyleUpdateSize);
+
+    // 4. Changing only the box-generating parent, should not affect the text child.
+    boxParent.style.outlineColor = "blue";
+    document.body.offsetTop;
+    sizes.push(internals.lastStyleUpdateSize);
+
+    // 5. The slotted whitespace must not affect a resolution that does not touch the wrapper style.
+    slot.style.outlineColor = "red";
+    document.body.offsetTop;
+    sizes.push(internals.lastStyleUpdateSize);
+
+    // 6. Whitespace slotted between block children has no renderer at all -> don't include in the update.
+    blockSlot.style.outlineColor = "red";
+    document.body.offsetTop;
+    sizes.push(internals.lastStyleUpdateSize);
+
+    shouldBe("sizes[0]", "1");
+    shouldBe("sizes[1]", "2");
+    shouldBe("sizes[2]", "2");
+    shouldBe("sizes[3]", "1");
+    shouldBe("sizes[4]", "1");
+    shouldBe("sizes[5]", "1");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS A plain object can be posted to a non-secure context of the same origin
+PASS FileSystemFileHandle cannot be posted to a non-secure context of the same origin
+PASS FileSystemDirectoryHandle cannot be posted to a non-secure context of the same origin
+

@@ -1,0 +1,6 @@
+
+PASS navigator.audioSession exposes an AudioSession instance
+PASS AudioSession.type defaults to 'auto'
+PASS AudioSession.state defaults to 'inactive'
+PASS navigator.audioSession is [SameObject]
+

@@ -1,0 +1,21 @@
+<style>
+details {
+  position: absolute;
+}
+div { 
+  scale: 6;
+}
+marquee {
+  align-content: flex-end;
+  width: 0px;
+  height: 1px;
+}
+</style>
+PASS if no crash or assert.
+<div><marquee><details></details><video id=changeThis></video></marquee></div>
+<script>
+window.testRunner?.dumpAsText();
+
+document.body.offsetHeight;
+changeThis.controls = true;
+</script>

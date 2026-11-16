@@ -1,0 +1,161 @@
+/*
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "SmartMagnificationController.h"
+
+#if PLATFORM(IOS_FAMILY)
+
+#import "MessageSenderInlines.h"
+#import "SmartMagnificationControllerMessages.h"
+#import "ViewGestureGeometryCollectorMessages.h"
+#import "WKContentView.h"
+#import "WKScrollView.h"
+#import "WebPageGroup.h"
+#import "WebPageMessages.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
+#import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/TZoneMallocInlines.h>
+
+static const float smartMagnificationPanScrollThresholdZoomedOut = 60;
+static const float smartMagnificationPanScrollThresholdIPhone = 100;
+static const float smartMagnificationPanScrollThresholdIPad = 150;
+static const float smartMagnificationElementPadding = 0.05;
+
+static const double smartMagnificationMaximumScale = 1.6;
+static const double smartMagnificationMinimumScale = 0;
+
+namespace WebKit {
+using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SmartMagnificationController);
+
+Ref<SmartMagnificationController> SmartMagnificationController::create(WKContentView *contentView)
+{
+    return adoptRef(*new SmartMagnificationController(contentView));
+}
+
+SmartMagnificationController::SmartMagnificationController(WKContentView *contentView)
+    : m_webPageProxy(*contentView.page)
+    , m_contentView(contentView)
+{
+    protect(m_webPageProxy->legacyMainFrameProcess())->addMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), m_webPageProxy->webPageIDInMainFrameProcess(), *this);
+}
+
+SmartMagnificationController::~SmartMagnificationController()
+{
+    if (RefPtr page = m_webPageProxy.get())
+        protect(page->legacyMainFrameProcess())->removeMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), page->webPageIDInMainFrameProcess());
+}
+
+void SmartMagnificationController::handleSmartMagnificationGesture(FloatPoint origin)
+{
+    if (RefPtr page = m_webPageProxy.get())
+        protect(page->legacyMainFrameProcess())->send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin), page->webPageIDInMainFrameProcess());
+}
+
+void SmartMagnificationController::handleResetMagnificationGesture(FloatPoint origin)
+{
+    [protect(m_contentView) _zoomOutWithOrigin:origin];
+}
+
+std::tuple<FloatRect, double, double> SmartMagnificationController::smartMagnificationTargetRectAndZoomScales(FloatRect targetRect, double minimumScale, double maximumScale, bool addMagnificationPadding)
+{
+    FloatRect outTargetRect = targetRect;
+    double outMinimumScale = minimumScale;
+    double outMaximumScale = maximumScale;
+
+    if (addMagnificationPadding) {
+        outTargetRect.inflateX(smartMagnificationElementPadding * outTargetRect.width());
+        outTargetRect.inflateY(smartMagnificationElementPadding * outTargetRect.height());
+    }
+
+    outMinimumScale = std::max(outMinimumScale, smartMagnificationMinimumScale);
+    outMaximumScale = std::min(outMaximumScale, smartMagnificationMaximumScale);
+
+    return { outTargetRect, outMinimumScale, outMaximumScale };
+}
+
+double SmartMagnificationController::zoomFactorForTargetRect(FloatRect targetRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
+{
+    // FIXME: Share some of this code with didCollectGeometryForSmartMagnificationGesture?
+
+    auto [adjustedTargetRect, minimumScale, maximumScale] = smartMagnificationTargetRectAndZoomScales(targetRect, viewportMinimumScale, viewportMaximumScale, !fitEntireRect);
+
+    RetainPtr contentView = m_contentView.get();
+    double currentScale = [contentView _contentZoomScale];
+    double targetScale = [contentView _targetContentZoomScaleForRect:adjustedTargetRect currentScale:currentScale fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale];
+
+    if (targetScale == currentScale)
+        targetScale = [contentView _initialScaleFactor];
+
+    return targetScale;
+}
+
+void SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect absoluteTargetRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
+{
+    RetainPtr contentView = m_contentView.get();
+    if (absoluteTargetRect.isEmpty()) {
+        // FIXME: If we don't zoom, send the tap along to text selection (see <rdar://problem/6810344>).
+        [contentView _zoomToInitialScaleWithOrigin:origin];
+        return;
+    }
+    RefPtr page = m_webPageProxy.get();
+    if (!page)
+        return;
+
+    auto [adjustedTargetRect, minimumScale, maximumScale] = smartMagnificationTargetRectAndZoomScales(absoluteTargetRect, viewportMinimumScale, viewportMaximumScale, !fitEntireRect);
+
+    // FIXME: Check if text selection wants to consume the double tap before we attempt magnification.
+
+    // If the content already fits in the scroll view and we're already zoomed in to the target scale,
+    // it is most likely that the user intended to scroll, so use a small distance threshold to initiate panning.
+    float minimumScrollDistance;
+    if ([contentView bounds].size.width <= page->unobscuredContentRect().width())
+        minimumScrollDistance = smartMagnificationPanScrollThresholdZoomedOut;
+    else if (PAL::currentUserInterfaceIdiomIsSmallScreen())
+        minimumScrollDistance = smartMagnificationPanScrollThresholdIPhone;
+    else
+        minimumScrollDistance = smartMagnificationPanScrollThresholdIPad;
+
+    // For replaced elements like images, we want to fit the whole element
+    // in the view, so scale it down enough to make both dimensions fit if possible.
+    // For other elements, try to fit them horizontally.
+    if ([contentView _zoomToRect:adjustedTargetRect withOrigin:origin fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:minimumScrollDistance])
+        return;
+
+    // FIXME: If we still don't zoom, send the tap along to text selection (see <rdar://problem/6810344>).
+    [contentView _zoomToInitialScaleWithOrigin:origin];
+}
+
+void SmartMagnificationController::scrollToRect(FloatPoint origin, FloatRect targetRect)
+{
+    [protect(m_contentView) _scrollToRect:targetRect withOrigin:origin minimumScrollDistance:0];
+}
+
+} // namespace WebKit
+
+#endif // PLATFORM(IOS_FAMILY)

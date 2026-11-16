@@ -1,0 +1,10 @@
+
+
+PASS Sanity check: Setting non-TT attributes still works.
+PASS Set script.src via textContent
+PASS Set script.src via nodeValue
+PASS Set iframe.srcdoc via textContent
+PASS Set iframe.srcdoc via nodeValue
+PASS Set div.onclick via textContent
+PASS Set div.onclick via nodeValue
+

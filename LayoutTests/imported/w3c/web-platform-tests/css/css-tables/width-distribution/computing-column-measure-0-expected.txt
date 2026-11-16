@@ -1,0 +1,12 @@
+Width Distribution
+
+"Computing column measures"
+
+This is testing that the table root's minimum is max(table-root width, capmin, gridmin) Spec Text
+
+
+PASS Checking intermediate min-content width for span 1 (1)
+PASS Checking intermediate min-content width for span 1 (2)
+PASS Checking intermediate min-content width for span 1 (3)
+PASS Checking intermediate min-content width for span 1 (4)
+

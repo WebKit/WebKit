@@ -1,0 +1,6 @@
+Test passes if there is a green square below.
+
+
+
+PASS img 1
+

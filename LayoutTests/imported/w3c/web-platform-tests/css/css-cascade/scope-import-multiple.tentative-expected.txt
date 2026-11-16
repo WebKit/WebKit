@@ -1,0 +1,7 @@
+Inside
+Inside
+Outside
+
+FAIL A stylesheet may be imported multiple times, and scoped differently assert_equals: expected "1" but got ""
+PASS Scope-imported rule does not apply outside of scope
+

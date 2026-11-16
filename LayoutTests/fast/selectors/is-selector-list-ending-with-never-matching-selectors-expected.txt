@@ -1,0 +1,34 @@
+Test :is() with a selector list ending with selector that can never match.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing "testcase:is(.bar, :not(*))"
+PASS document.querySelectorAll('#test-root testcase:is(.bar, :not(*))').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(.bar, :not(*))')[0].id is "testcase1"
+PASS styledElements is ["testcase1"]
+
+Testing "testcase:is(.bazoo, *:not(*))"
+PASS document.querySelectorAll('#test-root testcase:is(.bazoo, *:not(*))').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(.bazoo, *:not(*))')[0].id is "testcase2"
+PASS styledElements is ["testcase2"]
+
+Testing "testcase:is(.baz, #foo#bar)"
+PASS document.querySelectorAll('#test-root testcase:is(.baz, #foo#bar)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(.baz, #foo#bar)')[0].id is "testcase3"
+PASS styledElements is ["testcase3"]
+
+Testing "testcase:is(.bar, #foo#bar, :not(*), *:not(*), foo:not(*))"
+PASS document.querySelectorAll('#test-root testcase:is(.bar, #foo#bar, :not(*), *:not(*), foo:not(*))').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(.bar, #foo#bar, :not(*), *:not(*), foo:not(*))')[0].id is "testcase1"
+PASS styledElements is ["testcase1"]
+
+Testing "testcase:is(.bazoo, #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))"
+PASS document.querySelectorAll('#test-root testcase:is(.bazoo, #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(.bazoo, #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))')[0].id is "testcase2"
+PASS styledElements is ["testcase2"]
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

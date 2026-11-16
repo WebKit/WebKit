@@ -1,0 +1,7 @@
+
+PASS Referencing a custom property with ident()
+PASS ident() is substituted on custom properties
+PASS ident() causing lookup of invalid custom property
+PASS ident() causing lookup of invalid custom property, fallback
+PASS ident() causing lookup of invalid custom property, fallback, CSS-wide keyword
+

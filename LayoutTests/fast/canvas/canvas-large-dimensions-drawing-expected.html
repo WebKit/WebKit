@@ -1,0 +1,20 @@
+<style>
+    html, body {
+        margin: 0; 
+        height: 100%; 
+        overflow: hidden;
+    }
+    canvas {
+        image-rendering: pixelated;
+    }
+</style>
+<body>
+    <canvas id="canvas" width="100" height="100"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, 100, 100);
+    </script>
+</body>

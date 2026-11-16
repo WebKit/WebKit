@@ -1,0 +1,19 @@
+<style>
+@font-face {
+    font-family: 'LitherumArabic';
+    src: url("./resources/Litherum-arabic.svg") format(svg)
+}
+</style>
+<meta charset="utf-8">
+<meta name="fuzzy" content="maxDifference=0-30; totalPixels=0-15" />
+This test makes sure that underlines under Arabic-family script text (e.g. Urdu Nastaliq) do not skip
+over low-hanging curves in the glyphs, the same way CJK text is already handled.
+<div style="text-decoration: underline; font-family: LitherumArabic">
+<p>ب</p>
+<p>ݐ</p>
+<p>ࢠ</p>
+<p>ࡰ</p>
+<p>𐻀</p>
+<p>ﭐ</p>
+<p>ﹰ</p>
+</div>

@@ -1,0 +1,9 @@
+Visibility collapse
+
+Spec
+Setting row and column to visibility:collapse changes both height and width. The collapsed result should have whitespace in the bottom right corner.
+
+
+PASS spanning col visibility:collapse changes table width
+PASS spanning row visibility:collapse changes height
+

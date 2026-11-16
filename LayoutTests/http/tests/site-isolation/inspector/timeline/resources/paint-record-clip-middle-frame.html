@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<body style="margin: 0">
+<iframe style="position: absolute; left: 20px; top: 30px; width: 200px; height: 150px; border: none"></iframe>
+<script>
+// The innermost frame is always from 127.0.0.1, the main frame's site. The query string is the size of its box.
+document.querySelector("iframe").src = `http://127.0.0.1:8000/site-isolation/inspector/timeline/resources/paint-record-clip-inner-frame.html${location.search}`;
+</script>
+</body>

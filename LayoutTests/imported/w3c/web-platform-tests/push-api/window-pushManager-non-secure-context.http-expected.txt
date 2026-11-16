@@ -1,0 +1,4 @@
+
+PASS This page is not a secure context
+PASS pushManager is not exposed
+

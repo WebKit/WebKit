@@ -1,0 +1,3 @@
+
+PASS Tests scrollend event for [scrollLeft] behavior:'smooth' on root.
+

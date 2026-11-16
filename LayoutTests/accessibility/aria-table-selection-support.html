@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="table" role="table" aria-rowcount="32">
+    <div role="rowgroup">
+        <div role="row">
+            <span role="columnheader">Foo</span>
+            <span role="columnheader">Bar</span>
+        </div>
+    </div>
+    <div role="rowgroup">
+        <div role="row" aria-rowindex="10">
+            <span role="cell">header</span>
+            <span role="cell">h1</span>
+        </div>
+        <div role="row" aria-rowindex="13">
+            <span role="cell">header</span>
+            <span role="cell">h6</span>
+        </div>
+    </div>
+</div>
+
+<script>
+var output = "This test ensures that role='table' elements do not support selection or aria-multiselectable.\n\n";
+// https://w3c.github.io/aria/#table
+//
+// "The table role is intended for tabular containers which are not interactive. If the tabular container maintains a
+// selection state, provides its own two-dimensional navigation, or allows the user to rearrange or otherwise manipulate
+// its contents or the display thereof, authors SHOULD use grid or treegrid instead."
+
+if (window.accessibilityController) {
+    output += expect("accessibilityController.accessibleElementById('table').isAttributeSupported('AXSelectedRows')", "false");
+    output += expect("accessibilityController.accessibleElementById('table').isMultiSelectable", "false");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

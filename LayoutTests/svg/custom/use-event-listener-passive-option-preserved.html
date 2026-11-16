@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<svg id="svg" width="200" height="200">
+    <defs>
+        <rect id="target" width="200" height="200" fill="green"/>
+    </defs>
+</svg>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that the 'passive' option on an event listener is preserved when copied to an SVG use shadow tree.");
+
+var defaultPrevented;
+
+// Add a { passive: true } listener to the original element FIRST.
+var target = document.getElementById("target");
+target.addEventListener("test", function(e) { e.preventDefault(); defaultPrevented = e.defaultPrevented; }, { passive: true });
+
+// Now dynamically create the <use> element so the shadow tree is built
+// AFTER the listener exists, ensuring transferEventListenersToShadowTree
+// copies it to the shadow clone.
+var svg = document.getElementById("svg");
+var use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+use.setAttribute("href", "#target");
+svg.appendChild(use);
+
+// Force layout to build the shadow tree (which copies listeners).
+document.body.offsetHeight;
+
+// Access the shadow clone via internals and dispatch a cancelable event to it.
+var shadowRoot = internals.shadowRoot(use);
+var shadowClone = shadowRoot.querySelector("rect");
+shadowClone.dispatchEvent(new Event("test", { cancelable: true }));
+
+// With passive properly preserved, preventDefault() should be a no-op.
+shouldBeFalse("defaultPrevented");
+</script>
+</body>
+</html>

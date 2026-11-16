@@ -1,0 +1,80 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS background-image sec-fetch-site - Not sent to non-trustworthy same-origin destination
+PASS border-image sec-fetch-site - Not sent to non-trustworthy same-origin destination
+PASS content sec-fetch-site - Not sent to non-trustworthy same-origin destination
+PASS cursor sec-fetch-site - Not sent to non-trustworthy same-origin destination
+PASS list-style-image sec-fetch-site - Not sent to non-trustworthy same-origin destination
+PASS background-image sec-fetch-site - Not sent to non-trustworthy same-site destination
+PASS border-image sec-fetch-site - Not sent to non-trustworthy same-site destination
+PASS content sec-fetch-site - Not sent to non-trustworthy same-site destination
+PASS cursor sec-fetch-site - Not sent to non-trustworthy same-site destination
+PASS list-style-image sec-fetch-site - Not sent to non-trustworthy same-site destination
+PASS background-image sec-fetch-site - Not sent to non-trustworthy cross-site destination
+PASS border-image sec-fetch-site - Not sent to non-trustworthy cross-site destination
+PASS content sec-fetch-site - Not sent to non-trustworthy cross-site destination
+PASS cursor sec-fetch-site - Not sent to non-trustworthy cross-site destination
+PASS list-style-image sec-fetch-site - Not sent to non-trustworthy cross-site destination
+PASS background-image sec-fetch-mode - Not sent to non-trustworthy same-origin destination
+PASS border-image sec-fetch-mode - Not sent to non-trustworthy same-origin destination
+PASS content sec-fetch-mode - Not sent to non-trustworthy same-origin destination
+PASS cursor sec-fetch-mode - Not sent to non-trustworthy same-origin destination
+PASS list-style-image sec-fetch-mode - Not sent to non-trustworthy same-origin destination
+PASS background-image sec-fetch-mode - Not sent to non-trustworthy same-site destination
+PASS border-image sec-fetch-mode - Not sent to non-trustworthy same-site destination
+PASS content sec-fetch-mode - Not sent to non-trustworthy same-site destination
+PASS cursor sec-fetch-mode - Not sent to non-trustworthy same-site destination
+PASS list-style-image sec-fetch-mode - Not sent to non-trustworthy same-site destination
+PASS background-image sec-fetch-mode - Not sent to non-trustworthy cross-site destination
+PASS border-image sec-fetch-mode - Not sent to non-trustworthy cross-site destination
+PASS content sec-fetch-mode - Not sent to non-trustworthy cross-site destination
+PASS cursor sec-fetch-mode - Not sent to non-trustworthy cross-site destination
+PASS list-style-image sec-fetch-mode - Not sent to non-trustworthy cross-site destination
+PASS background-image sec-fetch-dest - Not sent to non-trustworthy same-origin destination
+PASS border-image sec-fetch-dest - Not sent to non-trustworthy same-origin destination
+PASS content sec-fetch-dest - Not sent to non-trustworthy same-origin destination
+PASS cursor sec-fetch-dest - Not sent to non-trustworthy same-origin destination
+PASS list-style-image sec-fetch-dest - Not sent to non-trustworthy same-origin destination
+PASS background-image sec-fetch-dest - Not sent to non-trustworthy same-site destination
+PASS border-image sec-fetch-dest - Not sent to non-trustworthy same-site destination
+PASS content sec-fetch-dest - Not sent to non-trustworthy same-site destination
+PASS cursor sec-fetch-dest - Not sent to non-trustworthy same-site destination
+PASS list-style-image sec-fetch-dest - Not sent to non-trustworthy same-site destination
+PASS background-image sec-fetch-dest - Not sent to non-trustworthy cross-site destination
+PASS border-image sec-fetch-dest - Not sent to non-trustworthy cross-site destination
+PASS content sec-fetch-dest - Not sent to non-trustworthy cross-site destination
+PASS cursor sec-fetch-dest - Not sent to non-trustworthy cross-site destination
+PASS list-style-image sec-fetch-dest - Not sent to non-trustworthy cross-site destination
+PASS background-image sec-fetch-user - Not sent to non-trustworthy same-origin destination
+PASS border-image sec-fetch-user - Not sent to non-trustworthy same-origin destination
+PASS content sec-fetch-user - Not sent to non-trustworthy same-origin destination
+PASS cursor sec-fetch-user - Not sent to non-trustworthy same-origin destination
+PASS list-style-image sec-fetch-user - Not sent to non-trustworthy same-origin destination
+PASS background-image sec-fetch-user - Not sent to non-trustworthy same-site destination
+PASS border-image sec-fetch-user - Not sent to non-trustworthy same-site destination
+PASS content sec-fetch-user - Not sent to non-trustworthy same-site destination
+PASS cursor sec-fetch-user - Not sent to non-trustworthy same-site destination
+PASS list-style-image sec-fetch-user - Not sent to non-trustworthy same-site destination
+PASS background-image sec-fetch-user - Not sent to non-trustworthy cross-site destination
+PASS border-image sec-fetch-user - Not sent to non-trustworthy cross-site destination
+PASS content sec-fetch-user - Not sent to non-trustworthy cross-site destination
+PASS cursor sec-fetch-user - Not sent to non-trustworthy cross-site destination
+PASS list-style-image sec-fetch-user - Not sent to non-trustworthy cross-site destination
+PASS background-image sec-fetch-site - HTTPS downgrade (header not sent)
+PASS border-image sec-fetch-site - HTTPS downgrade (header not sent)
+PASS content sec-fetch-site - HTTPS downgrade (header not sent)
+PASS cursor sec-fetch-site - HTTPS downgrade (header not sent)
+PASS list-style-image sec-fetch-site - HTTPS downgrade (header not sent)
+TIMEOUT background-image sec-fetch-site - HTTPS upgrade Test timed out
+PASS border-image sec-fetch-site - HTTPS upgrade
+PASS content sec-fetch-site - HTTPS upgrade
+PASS cursor sec-fetch-site - HTTPS upgrade
+PASS list-style-image sec-fetch-site - HTTPS upgrade
+TIMEOUT background-image sec-fetch-site - HTTPS downgrade-upgrade Test timed out
+PASS border-image sec-fetch-site - HTTPS downgrade-upgrade
+PASS content sec-fetch-site - HTTPS downgrade-upgrade
+PASS cursor sec-fetch-site - HTTPS downgrade-upgrade
+PASS list-style-image sec-fetch-site - HTTPS downgrade-upgrade
+

@@ -1,0 +1,4 @@
+
+Is showing date picker? true
+
+This test verifies that a date picker is presented when calling showPicker on a datetime-local input.

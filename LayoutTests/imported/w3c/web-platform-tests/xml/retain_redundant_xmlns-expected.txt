@@ -1,0 +1,5 @@
+
+PASS Non-prefixed: xmlns attribute is retained when same default namespace is already in scope on parent
+PASS Non-prefixed: xmlns attribute is retained when intermediate element has no explicit namespace declaration
+PASS Prefixed: xmlns:p attribute is retained when same prefix namespace is already in scope on parent
+

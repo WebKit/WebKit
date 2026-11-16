@@ -1,0 +1,13 @@
+Test that webkitfullscreenchange from shadow tree should be propagated to the shadow host.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS () => event.composed is true
+PASS () => event.currentTarget is [object ShadowRoot]
+PASS () => event.composed is true
+PASS () => event.currentTarget is [object HTMLDocument]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Enter fullscreen

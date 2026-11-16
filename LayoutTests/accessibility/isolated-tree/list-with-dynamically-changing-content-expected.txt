@@ -1,0 +1,25 @@
+This test ensures that lists that are initially empty but gain children later become part of the AX tree with the proper role.
+
+PASS: ulList.role.toLowerCase().includes('group') === true
+PASS: ulList.childrenCount === 0
+PASS: ariaList.role.toLowerCase().includes('group') === true
+PASS: ariaList.childrenCount === 0
+
+Adding listitems to both lists.
+
+PASS: ulList.role.toLowerCase().includes('list') === true
+PASS: ulList.childrenCount === 1
+PASS: ariaList.role.toLowerCase().includes('list') === true
+PASS: ariaList.childrenCount === 1
+
+Clearing listitems from both lists.
+
+PASS: ulList.role.toLowerCase().includes('group') === true
+PASS: ulList.childrenCount === 0
+PASS: ariaList.role.toLowerCase().includes('group') === true
+PASS: ariaList.childrenCount === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

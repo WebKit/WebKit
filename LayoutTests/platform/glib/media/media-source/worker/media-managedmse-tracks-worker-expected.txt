@@ -1,0 +1,6 @@
+
+EXPECTED (ManagedMediaSource.canConstructInDedicatedWorker == 'true'), OBSERVED 'undefined' FAIL
+RUN(video.disableRemotePlayback = true)
+error message from worker: MSE not supported FAIL
+END OF TEST
+

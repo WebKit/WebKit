@@ -1,0 +1,24 @@
+You should see the word 'PASS' five times below (letter spacing will differ), and no red:
+
+P
+P
+A
+A
+S
+S
+S
+S
+PASS
+ 
+P
+P
+A
+A
+S
+S
+S
+S
+(repaint rects
+  (rect 104 334 18 37)
+)
+

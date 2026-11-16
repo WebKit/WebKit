@@ -1,0 +1,844 @@
+{
+  "algorithm": "PBKDF2-HMACSHA384",
+  "schema": "pbkdf_test_schema.json",
+  "generatorVersion": "0.9",
+  "numberOfTests": 58,
+  "header": [
+    "Test vector of type PbkdfTest are for password based key derivations."
+  ],
+  "notes": {
+    "Ascii": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vector contains a password consisting of ASCII characters."
+    },
+    "NonUtf8": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vector contains a password that is not a valid UTF-8 string."
+    },
+    "Printable": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vector contains a password consisting of printable ASCII characters."
+    },
+    "Pseudorandom": {
+      "bugType": "BASIC",
+      "description": "Pseudorandomly generated test vector"
+    },
+    "Utf8": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vector contains a password that is a valid UTF-8 string."
+    }
+  },
+  "testGroups": [
+    {
+      "type": "PbkdfTest",
+      "tests": [
+        {
+          "tcId": 1,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "7130577430643470",
+          "salt": "798acc7c76739d75",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "c5a4f853b1a3960134e572c8e29a5be9",
+          "result": "valid"
+        },
+        {
+          "tcId": 2,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "5a30673349567272",
+          "salt": "84bbd18de5ec10ff",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "dfe1dea643acbae0d7d3154717f9a620937d9bf32218b27db99c0c34a0a6dfa189b31292020b727cc147",
+          "result": "valid"
+        },
+        {
+          "tcId": 3,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "7439315572766f47",
+          "salt": "5d76db9ca0f0bae2",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "17c6ba7e45f8a26a13b4d5f72ca3a2f97147e5f60c3108829b5b51633ab8afd9888b0465b22995f072ee2c8383e091afb808bf48b0e786da661ff95142a6229f1f",
+          "result": "valid"
+        },
+        {
+          "tcId": 4,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "6b6f67583748447a",
+          "salt": "0a8fbd0232a3a7f6e60d6564c92ea35f",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "7b3772edd5ddd2fefed54e124f813d15",
+          "result": "valid"
+        },
+        {
+          "tcId": 5,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "4939745242645168",
+          "salt": "0a3bb93c0de86a174ab005b8089706ab",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "314c435ffba5e7f8dc3af254ac164c51398c839f3c789a91fb7927aa28dc2424bc589e29fd715fe74bba",
+          "result": "valid"
+        },
+        {
+          "tcId": 6,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "6f4f4d37324f6330",
+          "salt": "3827c3b6b1e6de7aab096eb75e23610d",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "409b051d5d6f77149633e65dfd0ebbadebda7f82ffcc09d2efb81c6d94a425537c5bb1bea65a9fb40a92a4466bfb448d7b3505894dccdb6a365d44d4eba54ef11c",
+          "result": "valid"
+        },
+        {
+          "tcId": 7,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "6761734354484546654d36526f61386349",
+          "salt": "cac9ae7ef670990e",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "9df584f636d3853cf75116538f240315",
+          "result": "valid"
+        },
+        {
+          "tcId": 8,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "75375330684678774e33586f76707a6551",
+          "salt": "201b1e277f4ff955",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "74d040278a45fe589c66833a34cc71bc7249b4dc86e3dc70117afb94cf7cb60bca51c1d3359a06998c95",
+          "result": "valid"
+        },
+        {
+          "tcId": 9,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "51524b6a6d6d6b48524462507178696868",
+          "salt": "e71d6a702d2d54bc",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "421a7d2aa3a0b31f51b2971af45327ffbcb023a6fd71a51739e57b335c9fe386f8b3083991bc012474161341ebb71f7b9f495d012904264aacebc00a6392b7e81c",
+          "result": "valid"
+        },
+        {
+          "tcId": 10,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "3732317a52704b79306b4c6d3862317279",
+          "salt": "8b9314972ef99ac98b69b6c2ac4247c7",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "5873f6050f94ffbd5db5913711a1e779",
+          "result": "valid"
+        },
+        {
+          "tcId": 11,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "75507078436d7536577a68535030553947",
+          "salt": "874d7cc9369ff9988642ffe05a7f2153",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "38c6c68ab0ea2aab6e8ec42b6d08203e7f3c2a51c7771626b9df6ac6ac0e7c7b9e690ea53916e7a4ef0a",
+          "result": "valid"
+        },
+        {
+          "tcId": 12,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "6f39505350597a445349783365374d7063",
+          "salt": "1569909588ec25a3afa147cb7fff9fb1",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "8b3c1f69e3e992203f59b4aee9c0ed79d98bf7a1f261036d58e2289dcde27504129d357f8c21919f1f152e7d4a5c011e04f1adf2a3d0fdcb64cad396810332d291",
+          "result": "valid"
+        },
+        {
+          "tcId": 13,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "4b2d6c600e66535c7f3d6d6c",
+          "salt": "7a4c02db8bd8fcc2",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "60f6a456e9a4f1d8dcfb7a73c58ab3be",
+          "result": "valid"
+        },
+        {
+          "tcId": 14,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "287e74200e6b69285f5f7e00",
+          "salt": "dddf018487fa4b95",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "745ff4750e9371a28424220ea555138fed621e4b32c58503720dd1e2243803848f9fe9b74ed09afe759f",
+          "result": "valid"
+        },
+        {
+          "tcId": 15,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "0f3b5e220e1c000c2a703a4d",
+          "salt": "7cf71b19c0daf499",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "9531ee2380908f10dd0806782a90dd01a513880e6d848ce8370e5a6dff7a061d6e20a2b1ecccadfed5feaae62fa64e0cc6fe98bd87f6311fbc624453344e694a94",
+          "result": "valid"
+        },
+        {
+          "tcId": 16,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "1f4b7b354903545f2b07720b",
+          "salt": "62f91ea01f3a18aa2f122bd15c4a615b",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "ea4658ca124f8a8332e1241da381e22e",
+          "result": "valid"
+        },
+        {
+          "tcId": 17,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "5d7e1f70174b2f616c0d6722",
+          "salt": "4fb602173327228431dd8d088154c7ec",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "7b89d1bd20dec87b8ecf9bae12fa0e5d9c0f1c010078249baeefded4f23e354a5fe9efa50d2d569ee12d",
+          "result": "valid"
+        },
+        {
+          "tcId": 18,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "2657324e694c6b242b174f1a",
+          "salt": "3cad67ef1eaf3aaafb5ee372d6b1ecb4",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "08968b88460e0df143e1f52d0b1640e77266204bb552d3e9a260dfc782aef06707f7eb386a3037dc343792b6c41452549d812eca04be8bf01d436e1557bec6438d",
+          "result": "valid"
+        },
+        {
+          "tcId": 19,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "15296b0933473119180f3c0645202d5221633803",
+          "salt": "d7412e4137fc4410",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "23055ea847137568a2ea8f84ae13d220",
+          "result": "valid"
+        },
+        {
+          "tcId": 20,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "2a1124361d53464245580130076d6b54001e3d01",
+          "salt": "7ecaaed1eab03c3f",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "819a1fd3f182702d3629b0453352e7224048ed964e57b252a9a039c1d73292f2f668429a8aa530732edc",
+          "result": "valid"
+        },
+        {
+          "tcId": 21,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "666252024e18233308430820127e753e6b041f56",
+          "salt": "756fafa7fac1f019",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "ba344a8df0cbedced95d6f5f8ea8f4d3e1aca52f751a2c1b529067df28d0e3d08ea42ffb6b8f8537dab32ce89ec0dd4a84c7683b5960d987ab7f5f744c7d8d7f84",
+          "result": "valid"
+        },
+        {
+          "tcId": 22,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "7a106c2773542c791d2f0a02632b69644f666278",
+          "salt": "a36350db68186d747254bd9835219487",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "d5ce40d19ffa0ea0a0f9ede719053fcd",
+          "result": "valid"
+        },
+        {
+          "tcId": 23,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "0b3c6f070149615b5b461c7f5c3a366a6d375402",
+          "salt": "42be6c8fcd7858458fb97cece0069524",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "840512f3702d1387ab28785750cca03d0452dcd3abbf39f56fa38c04dfe6e1e17570463a8cc074850070",
+          "result": "valid"
+        },
+        {
+          "tcId": 24,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Ascii"
+          ],
+          "password": "5177161d237c1b64426353434113015665344a6c",
+          "salt": "596dbf5830aa8b00682429883e0b1ed0",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "f9e10e6fc595e3ae155910f4c019245b559bbec1a944de00bbbe1fe202265db4ccf28b9f10b519c1856e3386a15ba9005e05cf5e050718d4a92c89dc309f167a31",
+          "result": "valid"
+        },
+        {
+          "tcId": 25,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "d0a3d1bed38acc83",
+          "salt": "8dfae85c9f2072ae",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "ae75e7ae9848e3550cf3ddfca4ed5e74",
+          "result": "valid"
+        },
+        {
+          "tcId": 26,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "d0bcccab64cf9a",
+          "salt": "15187b0393d8a441",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "9b909246d2fb6e76a5375bcd608820f855e43b7782fb7aecfedc766fbd7296a99862c4ee9ffe52d2305d",
+          "result": "valid"
+        },
+        {
+          "tcId": 27,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "c4bddd8f4ad69d",
+          "salt": "775bde4bd6e40ddd",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "555ab346c29248f24748dd7cb9ca4d7793894cf0ffdf337c01c6badf5ea8821eac516b7a93a74628be32468ecad35bc28bf422bcee9046ed9d5512765d644edf05",
+          "result": "valid"
+        },
+        {
+          "tcId": 28,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "c299d292cd92dcb8",
+          "salt": "99c55e182238c8e0c385447685e9ba85",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "84d0773faa5dad4dbbd7d7f461272807",
+          "result": "valid"
+        },
+        {
+          "tcId": 29,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "d086d0bed193d9b6",
+          "salt": "42a7aca6a7664f87b405b49d62a074db",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "58b8fd680c076f23f4e65bbb58a4af6a7160c4a8d81c99fb05f0543dd01923dcaef67a8ac6f14e6e1019",
+          "result": "valid"
+        },
+        {
+          "tcId": 30,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "da8ddcacde86d3b0",
+          "salt": "f3eb3938f338fe8639813beacd8100a5",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "fca2e866aa3e4f42abe27feb90a55286bbd868c93bdd67029db96c77bf943eb094c9e31c55f108bd848824e0ef0bc69e763cbd7c3c6ddc008703a40bcbc8e22667",
+          "result": "valid"
+        },
+        {
+          "tcId": 31,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "cfbec3b9d7acc7a9d585d1a5c28fcca119",
+          "salt": "e9c55717a1259a29",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "7612061da9d4dd1ee3638ab60eae5605",
+          "result": "valid"
+        },
+        {
+          "tcId": 32,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "d29cd099d197d1b0da9aca8ec2a3daa5c38a",
+          "salt": "5acc2d76a9f4444c",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "845d37414eb3bba79503226c55112a62f787d88aae3f027c0028a06f63d7307dcf9c1c7cd8f255755562",
+          "result": "valid"
+        },
+        {
+          "tcId": 33,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "de89d193d18c75c2b8c6bcd190d198c3a2",
+          "salt": "c69c3b58917e0975",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "94fa0a0e7150e8553aef53c3d695f8ef65b3e54c056ed1d0a0c46a064cb5891f4bdff7ee37f21136fb482dcb13421fdce7408b2cd18b9831dc11143aacfca500f0",
+          "result": "valid"
+        },
+        {
+          "tcId": 34,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "da9dd096cb93db88dbbed495ceaacf853c",
+          "salt": "200bba668b2010b1968b82091848937c",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "33f720ca3aa8e6784f93d9d04983f88a",
+          "result": "valid"
+        },
+        {
+          "tcId": 35,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "de81d0a6cea9c7b3cbabce9bda90d29f73",
+          "salt": "36586fdefbe916369412c9f3e6337ddf",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "5b043b06c042f0ed61f00d15b4d058425ecb822505d141757ad2b428f1ef71dbdb2bca191b7d7b5704b9",
+          "result": "valid"
+        },
+        {
+          "tcId": 36,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "Utf8"
+          ],
+          "password": "d281da97c8a3d8b7ceb9db80dc8dd4a0c3be",
+          "salt": "ab7c17e3b78fe71e373b0ccb0fc3ccda",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "67aee62bffe2d7742a2058bb146ba629f532e2c0576555f0fb385ae8ea7b34e2f8d8b24dd31ea3a14ec6f39138337771d86518d3d1742eb3a5c197d4732012a338",
+          "result": "valid"
+        },
+        {
+          "tcId": 37,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "8423ec7ea4ca4b03",
+          "salt": "8dfae85c9f2072ae",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "de49fbeb68b9e092e952fb2f752b642b",
+          "result": "valid"
+        },
+        {
+          "tcId": 38,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "2c3c932bf0648bda",
+          "salt": "15187b0393d8a441",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "49b18e7cf5f8803bc129c0f433de931f7e2c3ac1f3305789495ec3548787cee83c1c973f73f4bac9e80b",
+          "result": "valid"
+        },
+        {
+          "tcId": 39,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "393d474fd84a259d",
+          "salt": "775bde4bd6e40ddd",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "f3a909587aacd3fd03e7fb4a48ece960d90a7a65b36f5b8f982f14f0997a4630e01cf092573a9af728f46e86b35099fe68ccab07a111b832718bd224af8a130194",
+          "result": "valid"
+        },
+        {
+          "tcId": 40,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "48997492c3528738",
+          "salt": "99c55e182238c8e0c385447685e9ba85",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "c26c4d099817ab48baeb2ed94a6e0e66",
+          "result": "valid"
+        },
+        {
+          "tcId": 41,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "74064c3ebc53d676",
+          "salt": "42a7aca6a7664f87b405b49d62a074db",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "2790b6ca89a36f6702f3fe2a031fbf5349613dd756b8e23e545180286b7f94746eb8df4ee00536a902e1",
+          "result": "valid"
+        },
+        {
+          "tcId": 42,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "668d4f2c8f86f4f0",
+          "salt": "f3eb3938f338fe8639813beacd8100a5",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "44fbc1a0422401ed1b4f7a3cccf4c56ed6dd61bbca31ffc542e2930ea62b5c6deeff8cc9c709b2e96a5bcc3ef5b47fec89a0fad774ef5a406fcd319a374dcbf7db",
+          "result": "valid"
+        },
+        {
+          "tcId": 43,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "e3feb0f96dec61e9dd451465f88f132119",
+          "salt": "e9c55717a1259a29",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "81c0ff3ddfee0fbb1c285ea772b21a93",
+          "result": "valid"
+        },
+        {
+          "tcId": 44,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "5c9ca419dc576470269a828e40a3aea5ca",
+          "salt": "5acc2d76a9f4444c",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "a54129741f4d41c198e76bc688de03d221bee45538cdb9f265859af918a4b336f6fc9b9f9a0b44894107",
+          "result": "valid"
+        },
+        {
+          "tcId": 45,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "bf898453344c6875f0b8b9bc2c50fc58e2",
+          "salt": "c69c3b58917e0975",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "d88a85b941a802f48a4fa80ebe4ca10e659d684a6310975dff862819930b60f0d776b728a716ef3b7abaea89c9b0fdcbb76c1b9fac44ad28d468800bbb20c7a76c",
+          "result": "valid"
+        },
+        {
+          "tcId": 46,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "9e9d7c166ad3bec856fe5d15d3aacbc53c",
+          "salt": "200bba668b2010b1968b82091848937c",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "1a7db5ce7b3fa690dda6aed94b42a07d",
+          "result": "valid"
+        },
+        {
+          "tcId": 47,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "17812c26bba941f3c2ebdb9bb6904c9f73",
+          "salt": "36586fdefbe916369412c9f3e6337ddf",
+          "iterationCount": 4096,
+          "dkLen": 42,
+          "dk": "41f0fdc44e8e51be0bf913af19524a6d041d6160194226fc90c17da715b4f7b6859060d72d8973bfa66d",
+          "result": "valid"
+        },
+        {
+          "tcId": 48,
+          "comment": "",
+          "flags": [
+            "Pseudorandom",
+            "NonUtf8"
+          ],
+          "password": "6c816697ba2366375bb986c0af0d7d20fe",
+          "salt": "ab7c17e3b78fe71e373b0ccb0fc3ccda",
+          "iterationCount": 4096,
+          "dkLen": 65,
+          "dk": "81fb39ec6f23c4fd32fc923cea3fbfa42f5b10620f3f0c0716e71301d0886a1392f50ee0e7805964f44bc08abce926002a36fc7806828e7da93cf8ddb910a21e60",
+          "result": "valid"
+        },
+        {
+          "tcId": 49,
+          "comment": "empty password",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "",
+          "salt": "1a71e2118c9fbcc9",
+          "iterationCount": 4096,
+          "dkLen": 32,
+          "dk": "221029235aaa16453fc00ce61bb81d2c0fe24e8a038dbf845578f7d3aa1006d9",
+          "result": "valid"
+        },
+        {
+          "tcId": 50,
+          "comment": "long password",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "523249584467597a5a4271363970667a4a714e744b7761545a4544494676766b6a6253417167566e456a6b456b454557504e69383653626a6e376b725764394d67",
+          "salt": "d26b99043c8ba3a4",
+          "iterationCount": 4096,
+          "dkLen": 32,
+          "dk": "6aff25d08e9acf0bc81366c88c2939b2206a5f3e96a6ae1bb7754286edd72fb5",
+          "result": "valid"
+        },
+        {
+          "tcId": 51,
+          "comment": "long password",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "63727a466d396430795463456a6468545758693877674e516f544e6d486e61686f6956317071613133655471477933497531354b4f52516339494c53646756527a45524e6b4463723565676a62584a78426572536a74726b6b674341616a63356243354434706e66743836663754626663666370595a30767354454d4930524178",
+          "salt": "9266da5b8c102b27",
+          "iterationCount": 4096,
+          "dkLen": 32,
+          "dk": "b967e5eb79c1ec4a3ad0cb09c18915793bd87b51911a5e9ca43cbe49eb328b83",
+          "result": "valid"
+        },
+        {
+          "tcId": 52,
+          "comment": "long password",
+          "flags": [
+            "Pseudorandom",
+            "Printable"
+          ],
+          "password": "32647a56696e6f45774464656c656257797058314d6f4f685975585a463172514b7a32535a6c307578576377796f3561416e6f42524e7a5044763072513662693742345a34324f50695258534c6859684441643262746f647633744d54424430744b46316e4b655942656565547a70413145434150713942687a4a4c555a67737636754e4b664450333558414d684a486c736a6f5a796b677130624d506265556941796d6f324371586b64524752633876544176684e5a5838536f564d33704e74594a4a7258766975337547583233736a353847723061614a4b45763765796c373248636e6167713474766e533737626d6376676c79536d347370707a65673869",
+          "salt": "6a06903b78dae6de",
+          "iterationCount": 4096,
+          "dkLen": 32,
+          "dk": "b94a84f5e52d232868f5fe8f4c568ad582e7bd623eab7b7a4f4081f45ab2c7ea",
+          "result": "valid"
+        },
+        {
+          "tcId": 53,
+          "comment": "special case password",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "ff",
+          "salt": "32140a66b88e1683",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "bb50b900e301b23a4801bba57e163b47",
+          "result": "valid"
+        },
+        {
+          "tcId": 54,
+          "comment": "special case password",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "ffffffffffffffff",
+          "salt": "8a359634423ed028",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "08f89be37ee7d29f9c24c67a354effcb",
+          "result": "valid"
+        },
+        {
+          "tcId": 55,
+          "comment": "special case password",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "c0c0c0c0c0c0c0c0",
+          "salt": "d6f596f170ed2414",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "956f188642dfc807cb47658c203093e5",
+          "result": "valid"
+        },
+        {
+          "tcId": 56,
+          "comment": "special case password",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "eeeeeeeeeeeeeeee",
+          "salt": "6b2269425e288d03",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "c8b50d274f16cd66fce052a0e52f6840",
+          "result": "valid"
+        },
+        {
+          "tcId": 57,
+          "comment": "special case password",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "f0f0f0f0f0f0f0f0",
+          "salt": "ebf0b04633711248",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "5f4d98d86b3de83fe6a554c139256037",
+          "result": "valid"
+        },
+        {
+          "tcId": 58,
+          "comment": "special case password",
+          "flags": [
+            "Ascii"
+          ],
+          "password": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "salt": "9de9b71eeb9d9a34",
+          "iterationCount": 4096,
+          "dkLen": 16,
+          "dk": "8458ae1b33e367c9724db9259bc06208",
+          "result": "valid"
+        }
+      ]
+    }
+  ]
+}

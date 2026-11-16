@@ -1,0 +1,9 @@
+Press Enter in each text field below.
+
+
+
+
+
+FAIL textInput: Enter key for textarea and contenteditable, <textarea> assert_equals: expected 1 but got 0
+FAIL textInput: Enter key for textarea and contenteditable, <div contenteditable="true"> assert_equals: expected 1 but got 0
+

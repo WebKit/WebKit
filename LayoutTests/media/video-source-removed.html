@@ -1,0 +1,92 @@
+<!doctype HTML>
+<html>
+    <head>
+        <title>crash after removing &lt;source&gt; test</title>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+        <script>
+
+            var testInfo = 
+            {
+                current : -1,
+                tests : [removeChild, innerHTML, replaceChild]
+            };
+
+            function removeChild(sources)
+            {
+                consoleWrite("Removing all &lt;source&gt; elements with <i>removeChild()<" + "/i>");
+                for (var ndx = 0; ndx < sources.length; ++ndx) {
+                    consoleWrite(" -> removeChild(" + ndx + ")"); 
+                    video.removeChild(sources[ndx]);
+               }
+            }
+
+            function innerHTML()
+            {
+                consoleWrite("Removing all &lt;source&gt; by setting <i>.innerHTML<" + "/i>");
+                consoleWrite(" -> video.innerHTML = ''"); 
+            }
+
+            function replaceChild(sources)
+            {
+                consoleWrite("Removing all &lt;source&gt; elements with <i>replaceChild()<" + "/i>");
+                var span = document.createElement("span")
+                span.appendChild(document.createTextNode("Yo"));
+                for (var ndx = 0; ndx < sources.length; ++ndx) {
+                    consoleWrite(" -> replaceChild(" + ndx + ")"); 
+                   video.replaceChild(span, sources[ndx]);
+                }
+            }
+
+            function runOneTest()
+            {
+                testInfo.tests[testInfo.current](document.querySelectorAll('source'));
+                setTimeout(configureNextTest, 100);
+            }
+
+            function addSource(index)
+            {
+                source = document.createElement('source');
+                source.src = findMediaFile("video", index + "-" + Date.now());
+                source.type = mimeTypeForExtension(source.src.split('.').pop());
+                video.appendChild(source);
+            }
+            
+            function runNextTest()
+            {
+                consoleWrite("");
+                if (++testInfo.current >= testInfo.tests.length) {
+                    consoleWrite("PASS: A crash did not occur when removing &lt;source&gt; elements.<br>");
+                    endTest();
+                    return;
+                }
+
+                video = mediaElement = document.createElement('video');
+                document.body.appendChild(video);
+                video.addEventListener("loadstart", runOneTest);
+
+                // Add a bunch of source elements with bogus urls because we want to remove elements 
+                // after the media engine begins processing sources, and we can't predict the delay 
+                // between when the media element fires an 'error' event and our handler is called,
+                // but we need to guarantee that there are <source> elements that haven't been processed
+                // when we run the test.
+                for (var ndx = 1; ndx <= 10; ndx++)
+                    addSource(ndx);
+            }
+
+            function configureNextTest()
+            {
+                var videos = document.querySelectorAll('video');
+                for (var ndx = 0; ndx < videos.length; ++ndx)
+                    videos[ndx].parentNode.removeChild(videos[ndx]);
+                video = mediaElement = null;
+                setTimeout(runNextTest, 100);
+            }
+        </script>
+    </head>
+
+    <body>
+        Test to make sure removing a media element's &lt;source&gt;(s) does not cause a crash.
+        <script>configureNextTest()</script>
+    </body>
+</html>

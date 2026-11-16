@@ -1,0 +1,4 @@
+A
+
+PASS Modifying property value invalidates style, even after selectorText mutation
+

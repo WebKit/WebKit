@@ -1,0 +1,8 @@
+x
+x
+x
+
+PASS A 1px wide opaque shape image excludes its single column
+PASS An opaque run starting in the last column is part of the shape
+PASS An opaque run starting in the last logical column is part of the shape in vertical writing mode
+

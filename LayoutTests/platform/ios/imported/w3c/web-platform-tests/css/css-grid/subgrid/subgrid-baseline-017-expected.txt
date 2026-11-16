@@ -1,0 +1,20 @@
+X
+y
+A
+B
+C
+d
+E
+F
+
+PASS .item 1
+FAIL .item 2 assert_equals:
+<div class="item axis-item small" style="grid-column: 2;" data-offset-x="60" data-offset-y="16">y</div>
+offsetTop expected 16 but got 0
+PASS .item 3
+PASS .item 4
+PASS .item 5
+PASS .item 6
+PASS .item 7
+PASS .item 8
+

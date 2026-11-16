@@ -1,0 +1,28 @@
+This test ensures that we don't crash when removing an object from the AX tree whose child recently changed aria-hidden status.
+
+
+{ListMarker}
+
+{StaticText AXLabel: One}
+
+{ListMarker}
+
+{StaticText AXLabel: Two}
+
+{ListMarker}
+
+{StaticText AXLabel: Three}
+
+Making #li1 aria-hidden and #ul display:none.
+
+Re-dumping AX tree.
+
+
+{#body Group}
+
+PASS: There was no crash.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

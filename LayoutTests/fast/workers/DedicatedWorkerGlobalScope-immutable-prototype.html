@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/worker-create-common.js"></script>
+<script>
+
+var jsTestIsAsync = true;
+
+description('Tests that DedicatedWorkerGlobalScope\'s prototype is immutable');
+
+var worker = createWorker();
+worker.postMessage("eval Object.setPrototypeOf(self, { })");
+worker.postMessage("eval DONE");
+
+worker.onmessage = function(evt) {
+    if (!/DONE/.test(evt.data))
+        debug(evt.data.replace(new RegExp("/.*LayoutTests"), "<...>"));
+    else
+        finishJSTest();
+};
+
+</script>
+<script src="../../resources/js-test-post.js"></script>

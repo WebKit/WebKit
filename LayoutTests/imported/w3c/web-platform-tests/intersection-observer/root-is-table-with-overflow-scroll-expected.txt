@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver observing an element inside a root table.
+PASS First rAF.
+PASS Moving the target to the right bottom corner of the table.
+

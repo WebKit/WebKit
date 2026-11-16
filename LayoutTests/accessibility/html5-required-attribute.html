@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="text" id="text-input" required>
+<input type="file" id="file-input" required>
+
+<script>
+    var testOutput = "This tests that the required attribute is returned correctly through accessibility.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var fileInput = accessibilityController.accessibleElementById("file-input");
+        var textInput = accessibilityController.accessibleElementById("text-input");
+
+        testOutput += expect("textInput.isRequired", "true");
+        document.getElementById("text-input").removeAttribute("required");
+        setTimeout(async function() {
+            await waitFor(() => !textInput.isRequired);
+            testOutput += expect("textInput.isRequired", "false");
+
+            testOutput += expect("fileInput.isRequired", "true");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

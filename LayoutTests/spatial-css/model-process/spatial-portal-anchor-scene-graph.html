@@ -1,0 +1,188 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../model-element/resources/model-utils.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 400px; height: 300px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const asset = "2x2x2-center.usdz";
+
+const settledAnchor = (model, expected, description) =>
+    waitFor(() => internals.spatialPortalAnchorForModel(model) === expected, description);
+
+async function anchoredPair(test, { positionAnchor = "--host" } = {}) {
+    const portal = createPortal(test);
+
+    const host = appendModel(portal, asset);
+    host.id = "host";
+    host.style.anchorName = "--host";
+
+    const child = appendModel(portal, asset);
+    child.id = "child";
+    child.style.positionAnchor = positionAnchor;
+    child.style.positionContext = "anchor";
+
+    await Promise.all([host.ready, child.ready]);
+    return { portal, host, child };
+}
+
+promise_test(async t => {
+    const { portal, host, child } = await anchoredPair(t);
+    await settledAnchor(child, host, "the child resolves to the host");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#host", "the child's entity is reparented under the host's");
+}, `position-anchor with position-context: anchor resolves to the named model`);
+
+promise_test(async t => {
+    const { portal, host, child } = await anchoredPair(t, { positionAnchor: "--host#Cube" });
+
+    await settledAnchor(child, host, "the child resolves to the host");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.name, "Cube", "the child's entity is reparented under the placement");
+
+    child.style.positionAnchor = "--host#missing";
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#host", "an unknown placement falls back to the host's root");
+}, `an anchor name with a placement resolves to the same model`);
+
+promise_test(async t => {
+    const { portal, host, child } = await anchoredPair(t);
+    await settledAnchor(child, host, "anchored");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#host", "the child's entity is under the host's");
+
+    child.style.positionAnchor = "";
+    await settledAnchor(child, null, "un-anchored");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.name, "WebKit:PortalContainer", "the child's entity is back under the container");
+}, `clearing position-anchor removes the anchor`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const child = appendModel(portal, asset);
+    child.id = "child";
+    child.style.positionAnchor = "--later";
+    child.style.positionContext = "anchor";
+
+    const host = appendModel(portal, asset);
+    host.id = "host";
+    host.style.anchorName = "--later";
+
+    await Promise.all([host.ready, child.ready]);
+    await settledAnchor(child, host, "the child resolves to a host declared after it");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#host", "the child's entity is reparented under the host's");
+}, `an anchor declared after the anchored model still resolves`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const first = appendModel(portal, asset);
+    first.id = "first";
+    first.style.anchorName = "--first";
+
+    const middle = appendModel(portal, asset);
+    middle.id = "middle";
+    middle.style.anchorName = "--middle";
+    middle.style.positionAnchor = "--first";
+    middle.style.positionContext = "anchor";
+
+    const last = appendModel(portal, asset);
+    last.id = "last";
+    last.style.positionAnchor = "--middle";
+    last.style.positionContext = "anchor";
+
+    await Promise.all([first.ready, middle.ready, last.ready]);
+
+    await settledAnchor(middle, first, "middle resolves to first");
+    await settledAnchor(last, middle, "last resolves to middle");
+    const entities = await modelSceneGraph(portal);
+    assert_equals(parentOfElement(entities, "#middle")?.element, "#first", "middle's entity is under first's");
+    assert_equals(parentOfElement(entities, "#last")?.element, "#middle", "last's entity is under middle's");
+}, `a chain of anchors resolves at every step`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const first = appendModel(portal, asset);
+    first.id = "first";
+    first.style.anchorName = "--host";
+
+    const second = appendModel(portal, asset);
+    second.id = "second";
+    second.style.anchorName = "--host";
+
+    const child = appendModel(portal, asset);
+    child.id = "child";
+    child.style.positionAnchor = "--host";
+    child.style.positionContext = "anchor";
+
+    await Promise.all([first.ready, second.ready, child.ready]);
+
+    await settledAnchor(child, second, "the child resolves to the last host in tree order");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#second", "the child's entity is under the last host's");
+
+    portal.insertBefore(second, first);
+    await settledAnchor(child, first, "the child follows the hosts' new tree order");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#first", "the child's entity moves under the new last host's");
+}, `the last <model> in tree order wins when several declare the same anchor-name`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const host = appendModel(portal, asset);
+    host.id = "host";
+    host.style.anchorName = "--host";
+
+    const child = appendModel(portal, asset);
+    child.id = "child";
+    child.style.anchorName = "--host";
+    child.style.positionAnchor = "--host";
+    child.style.positionContext = "anchor";
+
+    await Promise.all([host.ready, child.ready]);
+
+    await settledAnchor(child, host, "the child skips itself and resolves to the host");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#host", "the child's entity is under the host's");
+}, `a <model> anchored to an anchor-name it also declares resolves to the previous <model> with that name`);
+
+const multiplyQuaternions = ([x1, y1, z1, w1], [x2, y2, z2, w2]) => [
+    w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
+    w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
+    w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2,
+    w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
+];
+
+const isIdentityRotation = ([x, y, z, w]) => Math.abs(Math.abs(w) - 1) < epsilon;
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const zUpHost = appendModel(portal, "2x2x2-center.usdz");
+    zUpHost.id = "host";
+    zUpHost.style.anchorName = "--host";
+
+    const yUpChild = appendModel(portal, "cube.usdz");
+    yUpChild.id = "child";
+    yUpChild.style.positionAnchor = "--host";
+    yUpChild.style.positionContext = "anchor";
+
+    await Promise.all([zUpHost.ready, yUpChild.ready]);
+    await settledAnchor(yUpChild, zUpHost, "the child resolves to the host");
+
+    const entities = await modelSceneGraph(portal);
+    const hostEntity = entities.find(entity => entity.element === "#host");
+    const childEntity = entities.find(entity => entity.element === "#child");
+    assert_equals(childEntity.parent, hostEntity, "the child's entity is under the host's");
+    assert_false(isIdentityRotation(hostEntity.rotation), "the Z-up host's entity is rotated to be upright");
+
+    const childRotationInPortal = multiplyQuaternions(hostEntity.rotation, childEntity.rotation);
+    assert_true(isIdentityRotation(childRotationInPortal), "the Y-up child is upright");
+}, `a Y-up <model> anchored to a Z-up <model> stays upright`);
+
+</script>
+</body>
+</html>

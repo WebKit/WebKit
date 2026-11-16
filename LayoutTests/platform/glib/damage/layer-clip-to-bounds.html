@@ -1,0 +1,22 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .clip { position: fixed; left: 10px; top: 10px; width: 50px; height: 50px; overflow: hidden; will-change: transform; }
+      .inner { position: absolute; left: 0; top: 0; width: 40px; height: 40px; background-color: green; will-change: transform; }
+    </style>
+  </head>
+  <body>
+    <div class="clip"><div class="inner"></div></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+      var inner = document.getElementsByClassName("inner")[0];
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { inner.style.left = "30px"; },
+          () => { assertRectsEq(latestFrameDamage().rects, [[10, 10, 50, 40]]); },
+      ], 0);
+    </script>
+  </body>
+</html>

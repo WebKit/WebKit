@@ -1,0 +1,81 @@
+<!doctype html>
+<head>
+<style>
+div { border:5px solid maroon; -webkit-column-count:2; width:750px; margin: 1em 0 }
+h2 { -webkit-column-span: all; background-color:#eeeeee }
+</style>
+</head>
+<body>
+
+<div id="one">
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus. Quisque adipiscing rhoncus sem. Proin nulla purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis aliquam. Cras convallis adipiscing sem. Nam nonummy enim. Nullam bibendum lobortis neque. Vestibulum velit orci, tempus euismod, pretium quis, interdum vitae, nulla. Phasellus eget ante et tortor condimentum vestibulum.
+Suspendisse hendrerit quam nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus. Quisque adipiscing rhoncus sem. Proin nulla purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis aliquam. Cras convallis adipiscing sem. Nam nonummy enim. Nullam bibendum lobortis neque. Vestibulum velit orci, tempus euismod, pretium quis, interdum vitae, nulla. Phasellus eget ante et tortor condimentum vestibulum.
+Suspendisse hendrerit quam nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+<h2>This is a first span.</h2>
+<h2 id="before">This is a second span.</h2>
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus. Quisque adipiscing rhoncus sem. Proin nulla purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis aliquam. Cras convallis adipiscing sem. Nam nonummy enim. Nullam bibendum lobortis neque. Vestibulum velit orci, tempus euismod, pretium quis, interdum vitae, nulla. Phasellus eget ante et tortor condimentum vestibulum.
+Suspendisse hendrerit quam nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi.
+</div>
+
+<script>
+one = document.getElementById('one');
+one.insertBefore(document.createTextNode("This text should be sitting between two spanning elements."), document.getElementById('before'));
+</script>
+
+<div id="two">
+<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus. Quisque adipiscing rhoncus sem. Proin nulla purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis aliquam. Cras convallis adipiscing sem. Nam nonummy enim. Nullam bibendum lobortis neque. Vestibulum velit orci, tempus euismod, pretium quis, interdum vitae, nulla. Phasellus eget ante et tortor condimentum vestibulum.
+Suspendisse hendrerit quam nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+</p>
+
+<p id="beforetwo">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus. Quisque adipiscing rhoncus sem. Proin nulla purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis aliquam. Cras convallis adipiscing sem. Nam nonummy enim. Nullam bibendum lobortis neque. Vestibulum velit orci, tempus euismod, pretium quis, interdum vitae, nulla. Phasellus eget ante et tortor condimentum vestibulum.
+Suspendisse hendrerit quam nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+</p>
+
+<h2>This is a second span.</h2>
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus. Quisque adipiscing rhoncus sem. Proin nulla purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis aliquam. Cras convallis adipiscing sem. Nam nonummy enim. Nullam bibendum lobortis neque. Vestibulum velit orci, tempus euismod, pretium quis, interdum vitae, nulla. Phasellus eget ante et tortor condimentum vestibulum.
+Suspendisse hendrerit quam nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi.
+</div>
+
+<script>
+h2 = document.createElement("h2");
+h2.appendChild(document.createTextNode("This is a first span."));
+two = document.getElementById('two');
+two.insertBefore(h2, document.getElementById('beforetwo'));
+</script>
+
+<div id="three">
+<span>
+<span style="display:block">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus. Quisque adipiscing rhoncus sem. Proin nulla purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis aliquam. Cras convallis adipiscing sem. Nam nonummy enim. Nullam bibendum lobortis neque. Vestibulum velit orci, tempus euismod, pretium quis, interdum vitae, nulla. Phasellus eget ante et tortor condimentum vestibulum.
+Suspendisse hendrerit quam nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+</span>
+</span>
+<p id="beforethree">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus. Quisque adipiscing rhoncus sem. Proin nulla purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis aliquam. Cras convallis adipiscing sem. Nam nonummy enim. Nullam bibendum lobortis neque. Vestibulum velit orci, tempus euismod, pretium quis, interdum vitae, nulla. Phasellus eget ante et tortor condimentum vestibulum.
+Suspendisse hendrerit quam nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+</p>
+
+<h2>This is a second span.</h2>
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus. Quisque adipiscing rhoncus sem. Proin nulla purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis aliquam. Cras convallis adipiscing sem. Nam nonummy enim. Nullam bibendum lobortis neque. Vestibulum velit orci, tempus euismod, pretium quis, interdum vitae, nulla. Phasellus eget ante et tortor condimentum vestibulum.
+Suspendisse hendrerit quam nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla varius enim ac mi.
+</div>
+
+<script>
+h2 = document.createElement("h2");
+h2.appendChild(document.createTextNode("This is a first span."));
+three = document.getElementById('three');
+three.insertBefore(h2, document.getElementById('beforethree'));
+</script>
+
+</body>
+</html>

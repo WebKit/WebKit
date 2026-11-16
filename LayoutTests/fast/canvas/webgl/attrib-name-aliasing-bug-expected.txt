@@ -1,0 +1,10 @@
+Verify fix on substring-mached attrib locations.
+Test attrib names not incorrectly identified during renaming
+PASS gl.getProgramParameter(program, gl.LINK_STATUS) is true
+PASS attrib location should not be -1
+PASS attrib 2 location should not be -1
+PASS getError was expected value: NO_ERROR :
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,5 @@
+Test Blob.size of response blob received for XMLHttpRequest
+
+PASS: "200" == "200"
+PASS: "103746" == "103746"
+

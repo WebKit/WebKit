@@ -1,0 +1,23 @@
+
+Testing fractional touch inside simple iframe
+PASS event.data.clientX is within 0.00001 of 0.5
+PASS event.data.clientY is within 0.00001 of 0.5
+PASS event.data.pageX is within 0.00001 of 0.5
+PASS event.data.pageY is within 0.00001 of 0.5
+
+Testing fractional touch inside rotated iframe
+PASS event.data.clientX is within 0.00001 of 99.5
+PASS event.data.clientY is within 0.00001 of 99.5
+PASS event.data.pageX is within 0.00001 of 99.5
+PASS event.data.pageY is within 0.00001 of 99.5
+
+Testing fractional touch inside scaled iframe
+PASS event.data.clientX is within 0.00001 of 0.25
+PASS event.data.clientY is within 0.00001 of 0.25
+PASS event.data.pageX is within 0.00001 of 0.25
+PASS event.data.pageY is within 0.00001 of 0.25
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

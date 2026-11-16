@@ -1,0 +1,6 @@
+
+PASS fetchLater() accepts max payload in a parent-frame-origin POST request body of String in a default cross-origin iframe.
+PASS fetchLater() rejects max+1 payload in a parent-frame-origin POST request body of String in a default cross-origin iframe.
+PASS fetchLater() accepts max payload in a self-frame-origin POST request body of String in a default cross-origin iframe.
+PASS fetchLater() rejects max+1 payload in a self-frame-origin POST request body of String in a default cross-origin iframe.
+

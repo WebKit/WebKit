@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+my-host {
+  display: block;
+  width: 100px;
+  height: 25px;
+  background: red;
+}
+</style>
+</head>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<my-host id="t1"><div id="host-child">text</div></my-host>
+<my-host id="t2"><div>text</div></my-host>
+<my-host id="t3"><div>text</div></my-host>
+<my-host id="t4"><div>text</div></my-host>
+
+<script>
+var host = document.querySelector('#t1');
+host.attachShadow({ mode: 'open' }).innerHTML = `
+  <style>
+    #myslot::slotted(#host-child) {
+      background-color: green; width: 100%; height: 100%;
+    }
+  </style>
+  <slot id="myslot" style="color:green"></slot>
+`;
+
+var host = document.querySelector('#t2');
+host.attachShadow({ mode: 'open' }).innerHTML = `
+  <style>
+    .myclass#myslot[style]::slotted(*) {
+      background-color: green; width: 100%; height: 100%;
+    }
+    #myslot::slotted(#not-my-host-child) {
+        background-color: red; width: 100%; height: 100%;
+    }
+    #notmyslot::slotted(*) {
+      background-color: red; width: 100%; height: 100%;
+    }
+  </style>
+  <slot class="myclass" id="myslot" style="color:green"></slot>
+`;
+
+var host = document.querySelector('#t3');
+host.attachShadow({ mode: 'open' }).innerHTML = `
+  <style>
+    #myslot::slotted(*) {
+      background-color: green; width: 100%; height: 100%;
+    }
+  </style>
+  <slot id="myslot" style="color:green"></slot>
+`;
+
+var host = document.querySelector('#t4');
+var shadow = host.attachShadow({ mode: 'open' });
+shadow.innerHTML = `
+  <style>
+    #myslot::slotted(*) {
+      background-color: green; width: 100%; height: 100%;
+    }
+  </style>
+  <slot id="notmyslot" style="color:green"></slot>
+`;
+var slot = shadow.querySelector("#notmyslot");
+slot.offsetWidth;
+slot.setAttribute("id", "myslot");
+</script>
+</body>
+</html>

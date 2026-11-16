@@ -1,0 +1,3 @@
+
+PASS Test that a scroll-driven animation can be paused by updating animation-play-state
+

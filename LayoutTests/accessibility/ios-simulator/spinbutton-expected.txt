@@ -1,0 +1,14 @@
+button
+
+This test makes sure that spinbuttons appear.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS button.description is 'AXLabel: spinner'
+PASS button.isIgnored is false
+PASS button2.stringValue is 'AXValue: 5.00'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

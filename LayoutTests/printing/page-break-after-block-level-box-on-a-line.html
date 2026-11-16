@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>CSS Test: a forced page break after a block level box on a line moves the following content to the next page</title>
+<script src="resources/paged-media-test-utils.js"></script>
+<style>
+.breaker { page-break-after: always; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test()
+{
+    pageNumberForElementShouldBe('after', 1);
+}
+</script>
+</head>
+<body onload="runPrintingTest(test)">
+<div><span><div class="breaker">This sentence must be on the first page.</div></span><span id="after">This sentence must be on the second page.</span></div>
+</body>
+</html>

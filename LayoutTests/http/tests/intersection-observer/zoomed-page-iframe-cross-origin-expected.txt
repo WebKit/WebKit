@@ -1,0 +1,4 @@
+
+
+PASS Intersection Observer in a cross-origin iframe works when the page is zoomed
+

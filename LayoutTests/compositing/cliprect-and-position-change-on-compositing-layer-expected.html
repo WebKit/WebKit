@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This test that compositing layers get repainted properly when cliprect is applied with position change.</title>
+<style>
+  #foo {
+    position: absolute;
+    top: 1px;
+    left: 0px;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    -webkit-transform: translateZ(0);
+}
+</style>
+</head> 
+<body>     
+<div id=foo></div>      
+</body>
+</html>

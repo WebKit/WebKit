@@ -1,0 +1,33 @@
+Test that while a frame is paused, a same-process sibling frame is held and cannot start its own pause, and that a paused frame removed from the page stays paused until it is resumed.
+
+
+
+== Running test suite: SiteIsolation.Debugger.SameProcessPause
+-- Running test case: SiteIsolation.Debugger.SameProcessPause.Setup
+PASS: Should find the frame target for frame A.
+PASS: Should find the frame target for frame B.
+PASS: Frame B's interval should be running.
+
+-- Running test case: SiteIsolation.Debugger.SameProcessPause.SiblingHeld
+PASS: Frame A should be paused.
+PASS: Frame B's interval should not advance while frame A is paused.
+
+-- Running test case: SiteIsolation.Debugger.SameProcessPause.DebuggerStatementInSibling
+PASS: Frame B should run past its debugger statement.
+PASS: Frame A should still be paused.
+
+-- Running test case: SiteIsolation.Debugger.SameProcessPause.PendingPauseInSibling
+PASS: Frame B should not pause while frame A is paused.
+PASS: Frame B should pause after frame A resumes.
+PASS: Frame A should not be paused.
+
+-- Running test case: SiteIsolation.Debugger.SameProcessPause.ExceptionInSibling
+PASS: Frame B should not pause on the exception while frame A is paused.
+PASS: Frame B should not pause after frame A resumes.
+
+-- Running test case: SiteIsolation.Debugger.SameProcessPause.RemovePausedFrame
+PASS: Frame A should still be paused after its iframe is removed.
+PASS: Frame B's interval should not advance while frame A is paused.
+PASS: Frame B's interval should advance after resuming.
+PASS: Frame A's target should be removed after resuming.
+

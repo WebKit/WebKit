@@ -1,0 +1,18 @@
+{
+  "url": "content/test-inband-cea608-track.mp4",
+  "type": "video/mp4; codecs=\"avc1\"",
+  "init": {
+    "offset": 0,
+    "size": 1462
+  },
+  "media": [
+    {
+      "offset": 1462,
+      "size": 547650
+    },
+    {
+      "offset": 549112,
+      "size": 653340
+    }
+  ]
+}

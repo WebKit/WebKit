@@ -1,0 +1,33 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ThreadedTimeBasedAnimationsEnabled=false ] -->
+<body>
+<style>
+
+html {
+    height: 2000px;
+}
+
+</style>
+
+<script src="threaded-animations-utils.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+
+<script>
+
+promise_test(async t => { 
+    const scrollTarget = createDiv(t);
+    const monotonicTarget = createDiv(t);
+    
+    const timeline = new ScrollTimeline({ source : document.documentElement });
+    scrollTarget.animate({ opacity: [0, 1] }, { timeline });
+    monotonicTarget.animate({ opacity: [0, 1] }, 1000 * 1000);
+
+    await legacyAnimationCommit();
+
+    assert_true(window.internals?.acceleratedAnimationsForElement(scrollTarget)[0].isThreaded);
+    assert_false(window.internals?.acceleratedAnimationsForElement(monotonicTarget)[0].isThreaded);
+}, "Scroll-driven animations can be threaded while monotonic animations can be accelerated but not threaded.");
+
+</script>
+</body>

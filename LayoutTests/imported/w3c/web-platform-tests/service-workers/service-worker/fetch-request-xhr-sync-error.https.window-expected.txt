@@ -1,0 +1,3 @@
+
+FAIL Verify synchronous XMLHttpRequest always throws a NetworkError for ReadableStream errors assert_throws_dom: function "() => frame.contentWindow.performSyncXHR("non-existent-stream-1.txt")" did not throw
+

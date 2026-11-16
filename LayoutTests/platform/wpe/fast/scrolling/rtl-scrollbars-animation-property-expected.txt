@@ -1,0 +1,11 @@
+layer at (0,0) size 800x2000
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x216
+  RenderBlock {HTML} at (0,0) size 800x216
+    RenderBody {BODY} at (8,8) size 784x200
+layer at (8,8) size 200x200 scrollHeight 2000
+  RenderBlock (relative positioned) {DIV} at (0,0) size 200x200
+layer at (8,8) size 1x2000 backgroundClip at (8,8) size 200x200 clip at (8,8) size 200x200
+  RenderBlock (positioned) {DIV} at (0,0) size 1x2000
+layer at (0,0) size 1x2000
+  RenderBlock (positioned) {DIV} at (0,0) size 1x2000

@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/ipc.js"></script>
+<title>WebAuthenticatorCoordinatorProxy signal* messages must invoke their reply CompletionHandler on the main run loop.</title>
+</head>
+<body>
+<p>This test passes if WebKit does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.IPC) {
+    import('./coreipc.js').then(async ({ CoreIPC }) => {
+        const origin = { data: { variantType: 'WebCore::SecurityOriginData::Tuple', variant: { protocol: 'https', host: 'example.com', port: { } } } };
+        const rpId = 'example.com';
+        const userId = 'dGVzdA';
+        const credentialId = 'dGVzdA';
+
+        CoreIPC.UI.WebAuthenticatorCoordinatorProxy.SignalUnknownCredential(IPC.webPageProxyID, { origin, options: { rpId, credentialId } });
+        CoreIPC.UI.WebAuthenticatorCoordinatorProxy.SignalAllAcceptedCredentials(IPC.webPageProxyID, { origin, options: { rpId, userId, allAcceptedCredentialIds: [credentialId] } });
+        CoreIPC.UI.WebAuthenticatorCoordinatorProxy.SignalCurrentUserDetails(IPC.webPageProxyID, { origin, options: { rpId, userId, name: 'test', displayName: 'test' } });
+
+        await asyncFlush('UI');
+        // Give the platform credential-manager async callback time to fire on its background queue.
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await asyncFlush('UI');
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }).catch(e => {
+        document.body.textContent = "FAIL: " + e;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+} else if (window.testRunner) {
+    testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

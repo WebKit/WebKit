@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+PACKAGES=(
+    autoconf
+    automake
+    cmake
+    enchant
+    gettext
+    gobject-introspection
+    intltool
+    itstool
+    libcroco
+    libtiff
+    libtool
+    little-cms2
+    ninja
+    openssl@3
+    pango
+    pkg-config
+    sqlite
+    unifdef
+    vulkan-volk
+    webp
+    xz
+)

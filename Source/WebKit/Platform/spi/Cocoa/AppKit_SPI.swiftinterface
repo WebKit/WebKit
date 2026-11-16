@@ -1,0 +1,17 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level api -module-name AppKit_SPI -module-abi-name AppKit
+// swift-module-flags-ignorable: -public-module-name AppKit -formal-cxx-interoperability-mode=off -project-name AppKit
+import CoreFoundation
+import Foundation
+import Swift
+import _Concurrency
+@_exported import AppKit
+
+@_Concurrency.MainActor @available(macOS 27.0, *)
+@objc public protocol NSRefreshControlHosting {
+  @objc @_Concurrency.MainActor func apply(verticalInset: CoreFoundation.CGFloat, animated: Swift.Bool, completion: (@Sendable @convention(block) () -> Swift.Void)?)
+  @objc @_Concurrency.MainActor func remove(verticalInset: CoreFoundation.CGFloat, animated: Swift.Bool, completion: (@Sendable @convention(block) () -> Swift.Void)?)
+  @objc @_Concurrency.MainActor var refreshControlVisibleHeight: CoreFoundation.CGFloat { get }
+  @objc @_Concurrency.MainActor var refreshControlHostBounds: Foundation.NSRect { get }
+  @objc @_Concurrency.MainActor optional var refreshControlHostIsTracking: Swift.Bool { get }
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<title>Setting CanvasRenderingContext2D.font to the same string re-resolves relative sizes against the current style</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="log"></div>
+<div id="container" style="font-size: 10px">
+    <canvas id="canvas" style="font-size: inherit"></canvas>
+</div>
+<script>
+const container = document.getElementById('container');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+function reset()
+{
+    container.style.fontSize = '10px';
+    canvas.style.fontSize = 'inherit';
+    ctx.font = '10px sans-serif';
+}
+
+test(function(t) {
+    t.add_cleanup(reset);
+
+    canvas.style.fontSize = '10px';
+    ctx.font = '100% sans-serif';
+    assert_equals(ctx.font, '10px sans-serif', 'resolved against the initial font-size');
+
+    canvas.style.fontSize = '40px';
+    ctx.font = '100% sans-serif';
+    assert_equals(ctx.font, '40px sans-serif', 'resolved against the updated font-size');
+}, 'Re-setting the same percentage font string picks up the new font-size of the canvas');
+
+test(function(t) {
+    t.add_cleanup(reset);
+
+    canvas.style.fontSize = '10px';
+    ctx.font = '2em sans-serif';
+    assert_equals(ctx.font, '20px sans-serif', 'resolved against the initial font-size');
+
+    canvas.style.fontSize = '15px';
+    ctx.font = '2em sans-serif';
+    assert_equals(ctx.font, '30px sans-serif', 'resolved against the updated font-size');
+}, 'Re-setting the same em font string picks up the new font-size of the canvas');
+
+test(function(t) {
+    t.add_cleanup(reset);
+
+    ctx.font = '100% sans-serif';
+    assert_equals(ctx.font, '10px sans-serif', 'resolved against the initial inherited font-size');
+
+    container.style.fontSize = '25px';
+    ctx.font = '100% sans-serif';
+    assert_equals(ctx.font, '25px sans-serif', 'resolved against the updated inherited font-size');
+}, 'Re-setting the same relative font string picks up a font-size inherited from an ancestor');
+
+test(function(t) {
+    t.add_cleanup(reset);
+
+    canvas.style.fontSize = '10px';
+    ctx.font = '100% sans-serif';
+    const smallWidth = ctx.measureText('WebKit').width;
+    assert_greater_than(smallWidth, 0, 'text has a non-zero width');
+
+    canvas.style.fontSize = '40px';
+    ctx.font = '100% sans-serif';
+    const largeWidth = ctx.measureText('WebKit').width;
+    assert_approx_equals(largeWidth, smallWidth * 4, smallWidth * 0.25, 'width scales with the resolved font size');
+}, 'The font used for measuring and drawing is re-resolved, not just the serialization');
+
+test(function(t) {
+    t.add_cleanup(reset);
+
+    canvas.style.fontSize = '10px';
+    ctx.font = '20px sans-serif';
+    assert_equals(ctx.font, '20px sans-serif', 'absolute size is unaffected by the element font-size');
+
+    canvas.style.fontSize = '40px';
+    ctx.font = '20px sans-serif';
+    assert_equals(ctx.font, '20px sans-serif', 'absolute size stays put across a font-size change');
+}, 'Absolute font sizes are not affected by the font-size of the canvas');
+
+test(function(t) {
+    t.add_cleanup(reset);
+
+    canvas.style.fontSize = '10px';
+    ctx.font = '100% sans-serif';
+    assert_equals(ctx.font, '10px sans-serif', 'resolved against the initial font-size');
+
+    // Relative values are resolved when the font is set, so changing the style without setting the
+    // font again must not change the font of the context.
+    canvas.style.fontSize = '40px';
+    canvas.offsetTop;
+    assert_equals(ctx.font, '10px sans-serif', 'unchanged until the font is set again');
+}, 'Changing the font-size of the canvas does not by itself re-resolve the font');
+
+test(function(t) {
+    t.add_cleanup(reset);
+
+    canvas.style.fontSize = '10px';
+    ctx.font = '100% sans-serif';
+    ctx.save();
+
+    canvas.style.fontSize = '40px';
+    ctx.font = '100% sans-serif';
+    assert_equals(ctx.font, '40px sans-serif', 'resolved against the updated font-size');
+
+    ctx.restore();
+    assert_equals(ctx.font, '10px sans-serif', 'restored to the previously resolved font');
+}, 'Save and restore keep the font resolved at the time each state was saved');
+</script>

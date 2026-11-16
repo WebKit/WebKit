@@ -1,0 +1,4 @@
+
+PASS Not handled evaluation error => Worker.onerror handler
+PASS Not handled evaluation error => Worker error listener
+

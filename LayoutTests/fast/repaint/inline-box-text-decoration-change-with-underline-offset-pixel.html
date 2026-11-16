@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: pixel version of inline-box-text-decoration-change-with-underline-offset.html.
+     displayAndTrackRepaints() paints first, so anything the style change fails to invalidate shows up as
+     stale pixels against the reference. -->
+<script src="resources/repaint.js"></script>
+<script>
+function repaintTest() {
+    document.getElementById('target').style.textDecorationLine = 'underline';
+}
+onload = runRepaintTest;
+</script>
+<style>
+  body {
+      font-size: 0.8em;
+  }
+  #container {
+      display: inline-block;
+      width: 300px;
+      height: 300px;
+  }
+  .a {
+      text-underline-offset: 0.3em;
+      text-decoration: none;
+      color: black;
+  }
+</style>
+
+<div id=container>
+  <a class=a id=target href=.>
+    text text text
+  </a>
+</div>

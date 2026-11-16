@@ -1,0 +1,7 @@
+2d.path.isPointInPath.nobitmap
+
+isPointInPath() works on a canvas with no bitmap
+
+
+PASS isPointInPath() works on a canvas with no bitmap
+

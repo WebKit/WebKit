@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+div {
+  width: min-content;
+}
+#test {
+  word-break: auto-phrase;
+  color: transparent; /* This content doesn’t render as expected. */
+  height: 0px;
+}
+</style>
+
+<pre>Test passes if the second box breaks at each character.</pre>
+
+<div id=test lang=ja>ょ&#x200B;う&#x200B;。</div>
+<div lang=ja>ょ&#x200B;う&#x200B;。</div>

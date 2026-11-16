@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="test-content"><span id="host"></span></div>
+<pre id="console" style="visibility: hidden;"></pre>
+<script>
+
+const target = "wkfindtoken";
+
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+// The document scope (searched with DoNotTraverseFlatTree) excludes shadow content, so it stays
+// tiny. The shadow scope is filled with many text runs so that, once a small run-count limit is
+// set, textForScope() treats it as oversized.
+const host = document.getElementById('host');
+const shadowRoot = host.attachShadow({ mode: 'closed' });
+const shadowRunCount = 50;
+for (let i = 0; i < shadowRunCount; i++)
+    shadowRoot.appendChild(document.createElement('p')).textContent = target;
+
+async function navigateSelectionIntoShadow()
+{
+    getSelection().empty();
+    // Uses the flat-tree buffer (which includes shadow content) to move the selection into the
+    // shadow scope, so the subsequent window.find() starts from inside the shadow root.
+    await testRunner.findString(target, []);
+}
+
+onload = async () => {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    // Baseline: with no limit, window.find() (which uses DoNotTraverseFlatTree) finds a match
+    // through findNextMatchInShadowIncludingAncestorTree's cached path.
+    await navigateSelectionIntoShadow();
+    if (window.find(target, false, false))
+        log("PASS: found match with the find-match cache enabled");
+    else
+        log("FAIL: did not find match with the find-match cache enabled");
+
+    // Shrink the run-count limit so the shadow scope is treated as oversized. The document scope
+    // has far fewer runs, so findMatchFrom() passes its own oversized check and enters
+    // findNextMatchInShadowIncludingAncestorTree, where textForScope() on the shadow scope returns
+    // nullopt -> CacheUnusable::Oversized. Editor::findString then falls back to the uncached
+    // rangeOfString(), which still finds the match.
+    internals.setCachedFindMatchBufferLimitForTesting(5);
+
+    await navigateSelectionIntoShadow();
+    if (window.find(target, false, false))
+        log("PASS: found match via uncached fallback when the shadow scope is oversized");
+    else
+        log("FAIL: match missed when the shadow scope is oversized");
+
+    document.getElementById("console").style.removeProperty("visibility");
+    testRunner.notifyDone();
+};
+
+</script>
+</body>
+</html>

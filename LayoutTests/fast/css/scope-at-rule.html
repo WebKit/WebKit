@@ -1,0 +1,256 @@
+<style>
+@scope (.a) to (.b) {
+  .green-1 { color: green; }
+}
+@scope (.a) {
+  @scope (.b) {
+    .green-2 { color: green; }
+  }
+}
+div {
+  @scope (.a) {
+    .green-3 { color: green; }
+  }
+}
+video {
+  @scope (.a) {
+    .green-4 { color: green; }
+  }
+}
+@scope (.b) to (.a) {
+  .green-5 { color: green; }
+}
+@scope (.a) {
+  .green-6 :scope { color: green; }
+}
+@scope (.a) {
+  :scope :scope .green-7 { color: green; }
+}
+
+@scope (.a) {
+  span.green-9 { color: green; }
+}
+@scope (.b) {
+  .green-8 { color: green; }
+  .green-9 { color: red; }
+}
+@scope (.a) {
+  .green-8 { color: red; }
+  .green-9 { color: red; }
+}
+
+div {
+  @scope (&.a) to (&.foo) {
+    & {
+      .green-10 { color:green; }
+    }
+  }
+}
+
+div {
+  @scope (&) {
+    & {
+      .green-11 { color:green; }
+    }
+  }
+}
+
+@scope (#a) {
+  @scope (#b) {
+    :scope {
+      .green-12 {
+        color: green;
+      }
+    }
+  }
+  :scope {
+    .green-12 {
+      color: red;
+    }
+  }
+}
+
+#green-15 {
+  @scope (#b) {
+    & {
+      color: green;
+    }
+  }
+}
+
+#green-16 {
+  @scope (#b) {
+    color: green;
+  }
+}
+
+@scope (.root) to (.limit) {
+  :scope.outer .green-17 {
+    color: green;
+  }
+}
+
+@scope (#green-18) {
+  * { color: red; font-style: italic; }
+}
+
+@scope (#green-21) to (#limit1, #limit2) {
+ * { text-decoration: underline; }
+}
+</style>
+
+<div class="a">
+  <span class="green-1">should be green</span>
+  <div class="b">
+    <span class="green-1">should not be green</span>
+      <div class="j">
+        <span class="green-1">should not be green</span>
+      </div>
+  </div>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-2">should be green</span>
+  </div>
+</div>
+
+<div>
+  <span class="green-4">should not be green</span>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-5">should be green</span>
+  </div>
+</div>
+
+<div class="green-6">
+    <span class="a">should be green</span>
+</div>
+
+<div class="a">
+  <div class="a">
+    <div class="a">
+      <span class="green-7">should not be green</span>
+    </div>
+  </div>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-8">should be green</span>
+  </div>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-9">should be green</span>
+  </div>
+
+<div>
+  <div class="a b">
+    <div class="a b">
+      <div class="a b green-10">should be green</span>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="green-11">should be green</span>
+</div>
+
+<div id="a">
+  <div id="b">
+    <span class="green-12">should be green</div>
+  </div>
+</div>
+
+<div>
+  <div>
+    <style>
+    @scope {
+      .green-13 { color: green; }
+    }
+    </style>
+    <span class="green-13">should be green</div>
+  </div>
+  <span class="green-13">should not be green</div>
+</div>
+
+<div>
+  <div>
+    <style>
+    @import "scope-at-rule-green-14.css"
+    </style>
+    <span class="green-14">should be green</div>
+  </div>
+  <span class="green-14">should not be green</div>
+</div>
+
+<div id="green-15">
+  <div id="b">
+    should be green
+  </div>
+  should not be green
+</div>
+
+<div id="green-16">
+  <div id="b">
+   should be green
+  </div>
+  should not be green
+</div>
+
+<div class="root outer">
+  <span class="green-17">should be green</span>
+  <div class="limit">
+    <div class="root inner">
+      <span class="green-17">should not be green</span>
+    </div>
+  </div>
+</div>
+
+<div id="green-18">
+ <div>
+  <style>
+    @scope {
+      * { color: green; }
+    }
+  </style>
+  <span>should be green and italic</span>
+</div>
+</div>
+
+<div id="green-19">
+ <div>
+  <style>
+    @scope {
+    * { color: green; }
+    }
+    @scope (#green-19) {
+    * { color: red; font-style: italic}
+    }
+  </style>
+  <span>should be green and italic</span>
+</div>
+</div>
+
+<div id="green-20">
+  <style>
+    @scope (#green-20) {
+    * { color: red; font-style: italic; }
+    }
+    @scope {
+    * { color: green; }
+    }
+  </style>
+<span>should be green and italic</span>
+</div>
+
+<div id="green-21">
+  <span>should be underlined</span>
+  <div id=limit2>
+    <span>should not be underlined</span>
+  </div>
+</div>

@@ -1,0 +1,3 @@
+
+PASS scroll: scroll() in precommitHandler throws
+

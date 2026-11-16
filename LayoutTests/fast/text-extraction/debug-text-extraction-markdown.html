@@ -1,0 +1,131 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body.done {
+    white-space: pre-wrap;
+}
+
+body {
+    font-family: system-ui;
+}
+
+.linethrough {
+    text-decoration: line-through;
+}
+
+section.background {
+    border-radius: 1em;
+    padding: 1em;
+    background-color: #efefef;
+}
+
+section + section {
+    margin-top: 1em;
+}
+
+section.bordered {
+    border: 1px solid #eee;
+    border-radius: 1em;
+    padding: 1em;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.card {
+    min-width: 150px;
+    min-height: 100px;
+    background: white;
+    padding: 1rem;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2d5016;
+    margin-bottom: 0.6em;
+}
+
+.label {
+    color: #666;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<h1>Hello world</h1>
+<section class="background">
+    <p>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes.</p>
+    <a href="https://www.apple.com">T[e]st link</a>
+    <div>You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them. Because they change things.</div>
+    <img src="file:///fake/image.png" alt="Purposefully broken image"></img>
+    <p>This is a list:</p>
+    <ul>
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+</section>
+<section class="bordered">
+    On <a href="https://webkit.org">sale</a> for
+    <p>
+        <sup>£</sup>
+        10
+        <sup>99</sup>
+        This <strike>text</strike> has a <del>line through it</del>. The price <s>was ~~$50</s>
+    </p>
+    <p><span class="linethrough">CSS linethrough</span> normal text</p>
+    <p class="linethrough">Linethrough <span>also linethrough</span></p>
+    <p><del class="linethrough">both semantic and CSS</del></p>
+    <p class="linethrough"><a href="https://www.apple.com">A link</a></p>
+    <a href="https://www.example.com"><img src="file:///fake/linked-image.png" alt="A linked image"></a>
+</section>
+<section class="background">
+    <h3>Information</h3>
+    <div class="stats">
+        <div class="card">
+            <div class="number">40</div>
+            <div class="label">First</div>
+        </div>
+        <div class="card">
+            <div class="number">3</div>
+            <div class="label">Second</div>
+        </div>
+        <div class="card">
+            <div class="number">15</div>
+            <div class="label">Third</div>
+        </div>
+    </div>
+</section>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        includeURLs: true,
+        outputFormat: "markdown",
+    });
+    document.body.classList.add("done");
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

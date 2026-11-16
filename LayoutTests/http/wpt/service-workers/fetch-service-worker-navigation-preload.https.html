@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+const url = "/WebKit/service-workers/resources/fetch-service-worker-preload-script.py?useNavigationPreloadPromise=true&token=" + token();
+
+promise_test(async (test) => {
+    return setupActivatedButNotRunningServiceWorker("/WebKit/service-workers/fetch-service-worker-preload-worker.js", url, registration => {
+        return registration.navigationPreload.enable();
+    });
+}, "Setup activated but not running worker");
+
+promise_test(async (test) => {
+    await fetch(url + "&value=use-preload2", { method: 'POST' });
+
+    const frame = await withIframe(url);
+    assert_equals(frame.contentWindow.value, "use-preload2");
+
+    // We should have only one GET fetch to url: the service worker preload
+    const response = await fetch(url + "&count=True");
+    assert_equals(await response.text(), "1");
+}, "Service worker preloadResponse does not trigger an additional load");
+</script>
+</body>
+</html>

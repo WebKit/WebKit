@@ -1,0 +1,16 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices
+reexported-libraries:
+-       targets: [arm64-xros, arm64e-xros]
+        libraries: [/System/Library/PrivateFrameworks/AssertionServices.framework/AssertionServices]
+exports: []
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /System/Library/PrivateFrameworks/AssertionServices.framework/AssertionServices
+current-version: 1008.0.2
+exports: []
+...

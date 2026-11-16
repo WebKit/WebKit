@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PointerLockEnabled=true ] -->
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function main() {
+    if (!window.IPC) {
+        testRunner?.notifyDone();
+        return;
+    }
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    if (window.testRunner && testRunner.setHasMouseDeviceForTesting)
+        testRunner.setHasMouseDeviceForTesting(true);
+
+    function sendPointerLock() {
+        return new Promise(resolve => {
+            CoreIPC.UI.WebPageProxy.RequestPointerLock(IPC.webPageProxyID, {}, () => resolve());
+        });
+    }
+
+    function sendPointerUnlock() {
+        return new Promise(resolve => {
+            CoreIPC.UI.WebPageProxy.RequestPointerUnlock(IPC.webPageProxyID, {}, () => resolve());
+        });
+    }
+
+    window.focus();
+
+    await sendPointerLock();
+    await sendPointerLock();
+    await sendPointerUnlock();
+
+    testRunner.notifyDone();
+}
+
+main().catch(() => {
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+This test passes if WebKit does not crash.
+</body>
+</html>

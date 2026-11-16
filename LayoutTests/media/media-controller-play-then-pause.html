@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="timeout" content="long">
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+var controller;
+var video2;
+
+async function start() {
+  var videos = document.getElementsByTagName('video');
+	video = videos[0];
+	video2 = videos[1];
+	run('controller = video.controller');
+	var src = findMediaFile('video', 'content/test');
+	video.src = src;
+	video2.src = src;
+  await waitFor(controller, 'canplaythrough');
+
+	run('controller.play()');
+	await waitFor(controller, 'playing');
+
+	run('controller.pause()');
+	await waitFor(controller, 'pause');
+
+	run('controller.play()');
+	await waitFor(controller, 'play');
+
+	testExpected('controller.playbackState', 'playing');
+  await waitForConditionOrTimeout('!internals.isPlayerPaused(video)');
+  await waitForConditionOrTimeout('!internals.isPlayerPaused(video2)');
+	endTest();
+}
+</script>
+</head>
+<body onload="start()">
+	<video mediaGroup="group" controls></video>
+	<video mediaGroup="group" controls></video>
+</body>
+</html>

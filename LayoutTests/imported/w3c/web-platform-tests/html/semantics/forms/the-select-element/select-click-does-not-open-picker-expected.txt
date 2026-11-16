@@ -1,0 +1,4 @@
+
+
+PASS Synthetic click events do not open select picker
+

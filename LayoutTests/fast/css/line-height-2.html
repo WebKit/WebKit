@@ -1,0 +1,18 @@
+<!DOCTYPE html><meta charset=utf-8>
+<style>
+.a1, .a2, .a3, .a4, .a5, .a6 { float: left; }
+.a1 { line-height: calc(1*2); }
+.a2 { line-height: calc(1*2*3); }
+.a3 { line-height: calc(1*2*3*1px); }
+.a4 { line-height: calc((1*2)*3); }
+.a5 { line-height: calc(1*(2*3)); }
+.a6 { line-height: calc((1*2*3)); }
+.a7 { line-height: calc(-1); }
+</style>
+<p class="a1">abc<br>def</p>
+<p class="a2">abc<br>def</p>
+<p class="a3">abc<br>def</p>
+<p class="a4">abc<br>def</p>
+<p class="a5">abc<br>def</p>
+<p class="a6">abc<br>def</p>
+<p class="a7">abc<br>def</p>

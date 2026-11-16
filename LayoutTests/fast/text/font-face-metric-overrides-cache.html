@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+@font-face {
+    font-family: NoMetricsOverride;
+    src: local(Ahem);
+}
+
+@font-face {
+    font-family: ReferenceMetricsOverride;
+    src: local(Ahem);
+    ascent-override: 50%;
+    descent-override: 20%;
+    line-gap-override: 0%;
+}
+
+@font-face {
+    font-family: AscentMetricsOverride;
+    src: local(Ahem);
+    ascent-override: 100%;
+    descent-override: 20%;
+    line-gap-override: 0%;
+}
+
+@font-face {
+    font-family: DescentMetricsOverride;
+    src: local(Ahem);
+    ascent-override: 50%;
+    descent-override: 80%;
+    line-gap-override: 0%;
+}
+
+@font-face {
+    font-family: LineGapMetricsOverride;
+    src: local(Ahem);
+    ascent-override: 50%;
+    descent-override: 20%;
+    line-gap-override: 70%;
+}
+
+@font-face {
+    font-family: URLMetricsOverride;
+    src: url("../../resources/Ahem.ttf");
+    ascent-override: 50%;
+    descent-override: 80%;
+    line-gap-override: 70%;
+}
+
+.test {
+    display: inline-block;
+    font-size: 100px;
+    line-height: normal;
+}
+
+#noOverride {
+    font-family: NoMetricsOverride;
+}
+
+#reference {
+    font-family: ReferenceMetricsOverride;
+}
+
+#ascent {
+    font-family: AscentMetricsOverride;
+}
+
+#descent {
+    font-family: DescentMetricsOverride;
+}
+
+#lineGap {
+    font-family: LineGapMetricsOverride;
+}
+
+#urlFont {
+    font-family: URLMetricsOverride;
+}
+</style>
+</head>
+<body>
+<div id="noOverride" class="test">X</div>
+<div id="reference" class="test">X</div>
+<div id="ascent" class="test">X</div>
+<div id="descent" class="test">X</div>
+<div id="lineGap" class="test">X</div>
+<div id="urlFont" class="test">X</div>
+<script>
+description("Tests font metric overrides across local font cache entries and URL fonts, including updates to loaded descriptors.");
+self.jsTestIsAsync = true;
+
+var noOverride = document.getElementById("noOverride");
+var reference = document.getElementById("reference");
+var ascent = document.getElementById("ascent");
+var descent = document.getElementById("descent");
+var lineGap = document.getElementById("lineGap");
+var urlFont = document.getElementById("urlFont");
+
+document.fonts.load("100px URLMetricsOverride").then(function() {
+    var referenceFace;
+    for (let face of document.fonts) {
+        if (face.family == "ReferenceMetricsOverride") {
+            referenceFace = face;
+            break;
+        }
+    }
+    if (!referenceFace) {
+        testFailed("Should find the reference font face.");
+        finishJSTest();
+        return;
+    }
+
+    // Every Ahem glyph has an advance width of 1em, so these checks verify both source paths.
+    shouldBe("reference.offsetWidth", "100");
+    shouldBe("urlFont.offsetWidth", "100");
+
+    // Each local face differs from the reference in exactly one descriptor.
+    shouldBe("noOverride.offsetHeight", "100");
+    shouldBe("reference.offsetHeight", "70");
+    shouldBe("ascent.offsetHeight", "120");
+    shouldBe("descent.offsetHeight", "130");
+    shouldBe("lineGap.offsetHeight", "140");
+
+    // The URL face has non-default values for all three descriptors.
+    shouldBe("urlFont.offsetHeight", "200");
+
+    // Mutating a loaded face must invalidate its cached font data.
+    referenceFace.ascentOverride = "100%";
+    shouldBe("reference.offsetHeight", "120");
+    referenceFace.ascentOverride = "50%";
+    shouldBe("reference.offsetHeight", "70");
+
+    referenceFace.descentOverride = "80%";
+    shouldBe("reference.offsetHeight", "130");
+    referenceFace.descentOverride = "20%";
+    shouldBe("reference.offsetHeight", "70");
+
+    referenceFace.lineGapOverride = "70%";
+    shouldBe("reference.offsetHeight", "140");
+    referenceFace.lineGapOverride = "0%";
+    shouldBe("reference.offsetHeight", "70");
+
+    for (let element of document.querySelectorAll(".test"))
+        element.style.display = "none";
+    finishJSTest();
+}, function() {
+    testFailed("The URL Ahem font face should load.");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

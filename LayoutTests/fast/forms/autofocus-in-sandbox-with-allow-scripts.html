@@ -1,0 +1,19 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+</script>
+This tests having an input element with autofocus content attribute inside a sandboxed iframe.<br>
+The input element should be autofocused since scripts are allowed.
+<iframe sandbox="allow-scripts"
+    src="data:text/html,<input id=input autofocus onfocus><script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    window.onload = function () {
+        requestAnimationFrame(() => {
+            document.body.append(document.activeElement == input ? 'PASS' : 'FAIL');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    }</script>"></iframe>

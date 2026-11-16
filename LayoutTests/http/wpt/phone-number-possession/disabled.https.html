@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ PhoneNumberPossessionEnabled=false ] -->
+<meta charset="utf-8">
+<title>Phone Number Possession: feature disabled</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+test(() => {
+    assert_false("PhoneNumberPossessionCredential" in window);
+    assert_equals(typeof PhoneNumberPossessionCredential, "undefined");
+    assert_throws_js(ReferenceError, () => PhoneNumberPossessionCredential);
+    assert_false(
+        Object.getOwnPropertyNames(window).includes(
+            "PhoneNumberPossessionCredential",
+        ),
+    );
+}, "PhoneNumberPossessionCredential isn't exposed when the feature is disabled.");
+
+promise_test(async (t) => {
+    let didReadMember = false;
+    const options = {
+        get phoneNumberPossessionIdentifier() {
+            didReadMember = true;
+            return {
+                challenge: new Uint8Array([1, 2, 3, 4]),
+                desiredResponseType: "possession-identifier",
+            };
+        },
+    };
+    const error = await navigator.credentials.get(options).then(
+        () => null,
+        (error) => error,
+    );
+    const errorWithoutMember = await navigator.credentials.get({}).then(
+        () => null,
+        (error) => error,
+    );
+
+    assert_false(
+        didReadMember,
+        "phoneNumberPossessionIdentifier is never read",
+    );
+    assert_true(error instanceof DOMException, "get() rejects");
+    assert_equals(error.name, errorWithoutMember.name);
+    assert_equals(error.message, errorWithoutMember.message);
+}, "get() ignores phoneNumberPossessionIdentifier when the feature is disabled, as if it weren't there.");
+</script>
+</body>

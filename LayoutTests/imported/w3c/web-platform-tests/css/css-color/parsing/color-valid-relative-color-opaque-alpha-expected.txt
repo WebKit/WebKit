@@ -1,0 +1,10 @@
+
+PASS e.style['color'] = "rgb(from currentcolor r g b / 1)" should set the property value
+PASS e.style['color'] = "hsl(from currentcolor h s l / 1)" should set the property value
+PASS e.style['color'] = "hwb(from currentcolor h w b / 1)" should set the property value
+PASS e.style['color'] = "lab(from currentcolor l a b / 1)" should set the property value
+PASS e.style['color'] = "oklab(from currentcolor l a b / 1)" should set the property value
+PASS e.style['color'] = "lch(from currentcolor l c h / 1)" should set the property value
+PASS e.style['color'] = "oklch(from currentcolor l c h / 1)" should set the property value
+PASS e.style['color'] = "color(from currentcolor srgb r g b / 1)" should set the property value
+

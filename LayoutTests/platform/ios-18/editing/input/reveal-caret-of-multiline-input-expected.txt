@@ -1,0 +1,79 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x187
+  RenderBlock {HTML} at (0,0) size 800x187
+    RenderBody {BODY} at (8,8) size 784x171
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 610x19
+          text run at (0,0) width 610: "When the caret is scrolled out, on starting typing it must be brought to the center of the control."
+      RenderBlock (anonymous) at (0,20) size 784x151
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,28) size 98x146 clip at (9,29) size 81x144 scrollHeight 452
+  RenderTextControl {TEXTAREA} at (0,0) size 98x146 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+    RenderBlock {DIV} at (6,3) size 71x448
+      RenderText {#text} at (0,0) size 15x434
+        text run at (0,0) width 14: "00"
+        text run at (13,0) width 1: " "
+        text run at (0,14) width 13: "01"
+        text run at (12,14) width 1: " "
+        text run at (0,28) width 14: "02"
+        text run at (13,28) width 1: " "
+        text run at (0,42) width 14: "03"
+        text run at (13,42) width 1: " "
+        text run at (0,56) width 15: "04"
+        text run at (14,56) width 1: " "
+        text run at (0,70) width 14: "05"
+        text run at (13,70) width 1: " "
+        text run at (0,84) width 15: "06"
+        text run at (14,84) width 1: " "
+        text run at (0,98) width 14: "07"
+        text run at (13,98) width 1: " "
+        text run at (0,112) width 15: "08"
+        text run at (14,112) width 1: " "
+        text run at (0,126) width 15: "09"
+        text run at (14,126) width 1: " "
+        text run at (0,140) width 13: "10"
+        text run at (12,140) width 1: " "
+        text run at (0,154) width 11: "11"
+        text run at (10,154) width 1: " "
+        text run at (0,168) width 12: "12"
+        text run at (11,168) width 1: " "
+        text run at (0,182) width 13: "13"
+        text run at (12,182) width 1: " "
+        text run at (0,196) width 13: "14"
+        text run at (12,196) width 1: " "
+        text run at (0,210) width 13: "15"
+        text run at (12,210) width 1: " "
+        text run at (0,224) width 13: "16"
+        text run at (12,224) width 1: " "
+        text run at (0,238) width 12: "17"
+        text run at (11,238) width 1: " "
+        text run at (0,252) width 13: "18"
+        text run at (12,252) width 1: " "
+        text run at (0,266) width 13: "19"
+        text run at (12,266) width 1: " "
+        text run at (0,280) width 14: "20"
+        text run at (13,280) width 1: " "
+        text run at (0,294) width 12: "21"
+        text run at (11,294) width 1: " "
+        text run at (0,308) width 14: "22"
+        text run at (13,308) width 1: " "
+        text run at (0,322) width 14: "23"
+        text run at (13,322) width 1: " "
+        text run at (0,336) width 14: "24"
+        text run at (13,336) width 1: " "
+        text run at (0,350) width 14: "25"
+        text run at (13,350) width 1: " "
+        text run at (0,364) width 14: "26"
+        text run at (13,364) width 1: " "
+        text run at (0,378) width 14: "27"
+        text run at (13,378) width 1: " "
+        text run at (0,392) width 14: "28"
+        text run at (13,392) width 1: " "
+        text run at (0,406) width 14: "29"
+        text run at (13,406) width 1: " "
+        text run at (0,420) width 14: "30"
+        text run at (13,420) width 1: " "
+      RenderBR {BR} at (0,434) size 0x14
+caret: position 36 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {TEXTAREA} of body

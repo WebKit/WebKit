@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<style>
+    #container {
+        height: 250px;
+        width: 250px;
+        border: 1px solid black;
+        transform: translateZ(0);
+    }
+
+    #parent {
+        position: absolute;
+        left: 320px;
+        width: 250px;
+        height: 250px;
+        background-color: green;
+        z-index: 0;
+    }
+  
+    #parent.changed {
+        z-index: auto;
+    }
+  
+    #child {
+        position: absolute;
+        left: 25px;
+        top: 25px;
+        width: 200px;
+        height: 200px;
+        z-index: -2;
+        background-color: red;
+        transform: translateZ(0);
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('parent').classList.add('changed');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }, false);
+</script>
+<body>
+    <div id="container">
+        <div id="parent">
+            <div id="child"></div>
+        </div>
+    </div>
+</body>

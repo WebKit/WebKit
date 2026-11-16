@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    width: 220px;
+    height: 220px;
+    background-color: green;
+    clip-path: url(#chevron);
+}
+svg {
+    height: 0px;
+    width: 0px;
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    jsTestIsAsync = true;
+    let repaintRects;
+
+    async function animationFrame()
+    {
+        return new Promise(requestAnimationFrame);
+    }
+
+    async function delayFor(ms)
+    {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function renderingUpdate()
+    {
+        await animationFrame();
+        await delayFor(0);
+    }
+
+    async function changeClipPathAndFinish()
+    {
+        if (!window.internals)
+            return;
+
+        internals.startTrackingRepaints();
+        
+        await renderingUpdate();
+        await renderingUpdate();
+        await renderingUpdate();
+
+        repaintRects = internals.repaintRectsAsText();
+        // Look for at least one repaint.
+        shouldNotBe("repaintRects.indexOf('rect 8 8 220 220')", "-1");
+
+        internals.stopTrackingRepaints();
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            changeClipPathAndFinish()
+        }, 0);
+    }, false);
+</script>
+</head>
+<body>
+<div></div>
+<svg>
+    <clipPath id="chevron">
+        <polygon points="0,100 22.222,133.333 8.333,147.222 -13.889,113.889 -47.222,91.667 -33.333,77.778">
+        <animateTransform attributeType="XML" attributeName="transform" type="translate" 
+            values="0,100;144.444,-44.444" dur="0.5s" repeatCount="indefinite"/>
+        </polygon>
+    </clipPath>
+</svg>
+<div id="console"></div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<!--
+    This test ensures that reparented overlay scrollbars still respect
+    clips applied by a tree-order ancestor, even if that ancestor is
+    not an ancestor in the compositing layer tree.
+-->
+<style>
+#clipper {
+    overflow: hidden;
+    width: 400px;
+    height: 100px;
+    margin: 10px;
+}
+
+#scroller {
+    overflow: scroll;
+    width: 300px;
+    height: 300px;
+    position: relative;
+    top: 10px;
+}
+
+#fixed {
+    position: fixed;
+    background: blue;
+    left: 90px;
+    width: 10px;
+    height: 10px;
+}
+
+#scrolled {
+    position: relative;
+    background: green;
+    width: 80px;
+    height: 500px;
+}
+</style>
+<script>
+if (window.internals) {
+    window.internals.settings.setOverlayScrollbarsEnabled(true);
+    window.internals.settings.setPreferCompositingToLCDTextEnabled(true);
+}
+</script>
+<div id='clipper'>
+    <div id='scroller'>
+        <div id='fixed'></div>
+        <div id='scrolled'></div>
+    </div>
+</div>

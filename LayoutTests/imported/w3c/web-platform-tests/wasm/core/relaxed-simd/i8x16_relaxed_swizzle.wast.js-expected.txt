@@ -1,0 +1,27 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (i8x16_relaxed_swizzle.wast:3)
+PASS #3 Test that WebAssembly compilation succeeds (wrapper)
+PASS #4 Test that WebAssembly compilation succeeds (wrapper)
+PASS #5 Test that WebAssembly compilation succeeds (wrapper)
+PASS #6 Test that WebAssembly compilation succeeds (wrapper)
+PASS #7 Test that WebAssembly compilation succeeds (wrapper)
+PASS #8 Reinitialize the default imports
+PASS #9 Test that WebAssembly compilation succeeds (i8x16_relaxed_swizzle.wast:3)
+PASS #10 Test that WebAssembly instantiation succeeds (i8x16_relaxed_swizzle.wast:3)
+PASS #11 Test that WebAssembly compilation succeeds (wrapper)
+PASS #12 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #13 Run a WebAssembly test without special assertions (i8x16_relaxed_swizzle.wast:12)
+PASS #14 Test that WebAssembly compilation succeeds (wrapper)
+PASS #15 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #16 Run a WebAssembly test without special assertions (i8x16_relaxed_swizzle.wast:19)
+PASS #17 Test that WebAssembly compilation succeeds (wrapper)
+PASS #18 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #19 Run a WebAssembly test without special assertions (i8x16_relaxed_swizzle.wast:26)
+PASS #20 Test that WebAssembly compilation succeeds (wrapper)
+PASS #21 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #22 Run a WebAssembly test without special assertions (i8x16_relaxed_swizzle.wast:35)
+PASS #23 Test that WebAssembly compilation succeeds (wrapper)
+PASS #24 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #25 Run a WebAssembly test without special assertions (i8x16_relaxed_swizzle.wast:41)
+

@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <title>attribute lspace rspace dynamic</title>
+    <meta charset="utf-8"/>
+    <script>
+      function test()
+      {
+        document.getElementById("mo1").setAttribute("lspace", "3em");
+        document.getElementById("mo2").setAttribute("rspace", "5em");
+        document.getElementById("mo3").setAttribute("lspace", "3em");
+        document.getElementById("mo3").setAttribute("rspace", "5em");
+        document.getElementById("mo4").removeAttribute("lspace");
+        document.getElementById("mo5").removeAttribute("rspace");
+        document.getElementById("mo6").removeAttribute("lspace");
+        document.getElementById("mo6").removeAttribute("rspace");
+      }
+    </script>
+  </head>
+  <body onload="test()">
+
+    <!-- This tests adding/removing lspace/rspace. This should render the same as the static reference. -->
+    <math><mi>x</mi><mo id="mo1">X</mo><mi>y</mi></math><br/>
+    <math><mi>x</mi><mo id="mo2">X</mo><mi>y</mi></math><br/>
+    <math><mi>x</mi><mo id="mo3">X</mo><mi>y</mi></math><br/>
+    <math><mi>x</mi><mo id="mo4" lspace="3em" rspace="5em">X</mo><mi>y</mi></math><br/>
+    <math><mi>x</mi><mo id="mo5" lspace="3em" rspace="5em">X</mo><mi>y</mi></math><br/>
+    <math><mi>x</mi><mo id="mo6" lspace="3em" rspace="5em">X</mo><mi>y</mi></math>
+
+  </body>
+</html>

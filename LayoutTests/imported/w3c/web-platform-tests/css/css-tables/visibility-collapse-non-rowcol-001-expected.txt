@@ -1,0 +1,17 @@
+Visibility collapse
+
+Spec
+When setting any element that is not a row, col, row group, or col group, visibility:collapse is equivalent to visibility:hidden.
+
+row 1	
+row 2	
+Bottom table is identical to top except top cells have been collapsed.
+row 2	
+
+PASS table width is unchanged
+PASS table height is unchanged
+PASS td visibility:collapse has no effect on td width
+PASS td visibility:collapse has no effect on td height
+PASS span visibility:collapse has no effect on span width
+PASS span visibility:collapse has no effect on span height
+

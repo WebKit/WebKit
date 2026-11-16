@@ -1,0 +1,18 @@
+Test that cloning elements between quirks and no-quirks document handles case folding properly
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.compatMode is 'CSS1Compat'
+PASS quirksFrame.contentDocument.compatMode is 'BackCompat'
+PASS noQuirksFrame.contentDocument.compatMode is 'CSS1Compat'
+PASS quirksFrame.contentDocument.querySelector('.pageContentClass') is sectionElementImportedToQuirksDocument
+PASS quirksFrame.contentDocument.querySelector('.pagecontentclass') is sectionElementImportedToQuirksDocument
+PASS document.querySelector('.pageContentClass') is sectionElement
+PASS noQuirksFrame.contentDocument.querySelector('.pageContentClass') is sectionElementImportedToNoQuirksDocument
+PASS quirksFrame.contentDocument.querySelector('.pageContentClass') is sectionElementImportedToQuirksDocument
+PASS quirksFrame.contentDocument.querySelector('.pagecontentclass') is sectionElementImportedToQuirksDocument
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

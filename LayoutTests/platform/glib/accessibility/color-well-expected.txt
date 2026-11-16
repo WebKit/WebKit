@@ -1,0 +1,13 @@
+This test checks the role of ColorWellRole on an input with type=color
+
+Role of input type=color is: AXRole: AXButton
+Value of empty color well: AXValue: rgb 0.00000 0.00000 0.00000 1
+Value of good color well: AXValue: rgb 1.00000 0.00000 0.00000 1
+Value of bad color well: AXValue: rgb 0.00000 0.00000 0.00000 1
+Value of alpha color well: AXValue: rgb 0.23137 0.23529 0.23137 0.40000
+Value of p3 color well: AXValue: rgb 1.00000 0.26667 0.60000 0.25882
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

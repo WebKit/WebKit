@@ -1,0 +1,6 @@
+
+PASS e.style['page-orientation'] = "hotpink" should not set the property value
+PASS e.style['page-orientation'] = "upright" should not set the property value
+PASS e.style['page-orientation'] = "rotate-left" should not set the property value
+PASS e.style['page-orientation'] = "rotate-right" should not set the property value
+

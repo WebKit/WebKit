@@ -1,0 +1,227 @@
+/*
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "BitmapImage.h"
+
+#include "BitmapImageSource.h"
+#include "GeometryUtilities.h"
+#include "GraphicsContext.h"
+#include "ImageBuffer.h"
+#include "ImageObserver.h"
+#include "PlatformResource.h"
+#include "ShareableBitmap.h"
+#include "SharedBuffer.h"
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+#include "ShareableSpatialImage.h"
+#endif
+
+namespace WebCore {
+
+Ref<BitmapImage> BitmapImage::create(ImageObserver* observer, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+{
+    return adoptRef(*new BitmapImage(observer, alphaOption, gammaAndColorProfileOption));
+}
+
+Ref<BitmapImage> BitmapImage::createFromPlatformResource(StringView name)
+{
+    RefPtr data = loadPlatformResource(name, "png"_s);
+    if (!data)
+        return nullImage();
+
+    auto image = create();
+    image->setData(data.releaseNonNull(), true);
+    return image;
+}
+
+BitmapImage& BitmapImage::nullImage()
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+    static NeverDestroyed<Ref<BitmapImage>> nullImage = BitmapImage::create();
+    return nullImage->get();
+}
+
+BitmapImage::BitmapImage(ImageObserver* observer, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+    : Image(observer)
+    , m_source(BitmapImageSource::create(*this, alphaOption, gammaAndColorProfileOption))
+{
+}
+
+EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived)
+{
+    return m_source->dataChanged(protect(data()), allDataReceived);
+}
+
+void BitmapImage::dataReplaced()
+{
+    return m_source->dataReplaced(protect(data()));
+}
+
+void BitmapImage::simulateDataReplacedForTesting()
+{
+    dataReplaced();
+}
+
+void BitmapImage::destroyDecodedData(bool destroyAll)
+{
+    m_source->destroyDecodedData(destroyAll);
+    invalidateAdapter();
+}
+
+NaturalDimensions BitmapImage::unorientedNaturalDimensions() const
+{
+    auto size = m_source->size(ImageOrientation::Orientation::None);
+    if (size.isEmpty())
+        return NaturalDimensions::none();
+    return NaturalDimensions::fixed(size);
+}
+
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, FloatPoint destination)
+{
+    return draw(context, FloatRect(destination, size()), FloatRect({ }, size()));
+}
+
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destination)
+{
+    return draw(context, destination, FloatRect({ }, size()));
+}
+
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destination, const FloatRect& source)
+{
+    return draw(context, ImageDrawDescriptor { ConcreteObjectSize::fixed(size()) }, destination, source);
+}
+
+ImageDrawResult BitmapImage::drawImage(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatRect& destinationRect, const FloatRect& sourceRect)
+{
+    if (destinationRect.isEmpty() || sourceRect.isEmpty())
+        return ImageDrawResult::DidNothing;
+
+    auto size = m_source->size(ImageOrientation::Orientation::None);
+    auto sourceSize = m_source->sourceSize(ImageOrientation::Orientation::None);
+
+    // adjustedSourceRect is in the coordinates of densityCorrectedSize, so map it to the sourceSize.
+    auto adjustedSourceRect = sourceRect;
+    if (sourceSize != size)
+        adjustedSourceRect.scale(sourceSize / size);
+
+    auto scaleFactorForDrawing = context.scaleFactorForDrawing(destinationRect, adjustedSourceRect);
+    auto sizeForDrawing = expandedIntSize(sourceSize * scaleFactorForDrawing);
+    auto subsamplingLevel =  m_source->subsamplingLevelForScaleFactor(context, scaleFactorForDrawing, descriptor.allowImageSubsampling);
+    auto preferredDecodingDestination = m_source->preferredDecodingDestination(context, descriptor);
+
+    auto decodingOptions = DecodingOptions { descriptor.decodingMode, preferredDecodingDestination, sizeForDrawing };
+    auto nativeImageOrError = m_source->currentNativeImageForDrawing(subsamplingLevel, decodingOptions);
+
+    if (!nativeImageOrError) {
+        // The decoder has not returned a frame. Fill the image rectangle with a debugging color to show what has happened.
+        if (descriptor.showDebugBackground == ShowDebugBackground::Yes) {
+            if (nativeImageOrError.error() == DecodingStatus::Decoding)
+                fillWithSolidColor(context, destinationRect, Color::yellow.colorWithAlphaByte(128), descriptor.compositeOperator);
+            else if (nativeImageOrError.error() == DecodingStatus::Invalid)
+                fillWithSolidColor(context, destinationRect, Color::red.colorWithAlphaByte(128), descriptor.compositeOperator);
+        }
+        return nativeImageOrError.error() == DecodingStatus::Decoding ? ImageDrawResult::DidRequestDecoding : ImageDrawResult::DidNothing;
+    }
+
+    Ref nativeImage = WTF::move(nativeImageOrError.value());
+    if (auto color = nativeImage->singlePixelSolidColor())
+        fillWithSolidColor(context, destinationRect, *color, descriptor.compositeOperator);
+    else {
+        // adjustedSourceRect is in the coordinates of the unsubsampled image, so map it to the subsampled image.
+        auto imageSize = nativeImage->size();
+        if (imageSize != sourceSize)
+            adjustedSourceRect.scale(imageSize / sourceSize);
+
+        auto orientation = descriptor.orientation;
+        if (orientation == ImageOrientation::Orientation::FromImage)
+            orientation = currentFrameOrientation();
+
+#if !HAVE(SUPPORT_HDR_DISPLAY_APIS)
+        if (hasHDRContentForTesting() && descriptor.rendition.dynamicRangeLimit != PlatformDynamicRangeLimit::standard())
+            fillWithSolidColor(context, destinationRect, Color::green, descriptor.compositeOperator);
+        else {
+#endif
+            auto headroom = descriptor.rendition.headroom;
+
+            if (headroom == Headroom::FromImage)
+                headroom = nativeImage->headroom();
+
+            m_source->drawNativeImage(context, nativeImage, destinationRect, adjustedSourceRect, { descriptor.rasterDrawingOptions(), orientation, headroom });
+#if !HAVE(SUPPORT_HDR_DISPLAY_APIS)
+        }
+#endif
+    }
+
+    if (auto observer = imageObserver())
+        observer->didDraw(*this);
+
+    return ImageDrawResult::DidDraw;
+}
+
+void BitmapImage::dump(TextStream& ts) const
+{
+    Image::dump(ts);
+    m_source->dump(ts);
+}
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+std::optional<ShareableSpatialImage> BitmapImage::createShareableSpatialImage() const
+{
+    if (!isSpatial())
+        return std::nullopt;
+
+    auto leftIndex = spatialLeftEyeFrameIndex();
+    auto rightIndex = spatialRightEyeFrameIndex();
+
+    if (!leftIndex || !rightIndex || leftIndex == rightIndex)
+        return std::nullopt;
+
+    auto leftMetadata = spatialEyePropertiesAtIndex(*leftIndex);
+    auto rightMetadata = spatialEyePropertiesAtIndex(*rightIndex);
+    if (!leftMetadata || !rightMetadata)
+        return std::nullopt;
+
+    RefPtr leftImage = nativeImageAtIndex(*leftIndex);
+    RefPtr rightImage = nativeImageAtIndex(*rightIndex);
+    if (!leftImage || !rightImage)
+        return std::nullopt;
+
+    RefPtr leftShareableBitmap = ShareableBitmap::createFromImagePixels(*leftImage);
+    RefPtr rightShareableBitmap = ShareableBitmap::createFromImagePixels(*rightImage);
+    if (!leftShareableBitmap || !rightShareableBitmap)
+        return std::nullopt;
+
+    auto leftHandle = leftShareableBitmap->createReadOnlyHandle();
+    auto rightHandle = rightShareableBitmap->createReadOnlyHandle();
+    if (!leftHandle || !rightHandle)
+        return std::nullopt;
+
+    return ShareableSpatialImage(WTF::move(*leftHandle), WTF::move(*rightHandle), *leftMetadata, *rightMetadata);
+}
+#endif
+
+} // namespace WebCore

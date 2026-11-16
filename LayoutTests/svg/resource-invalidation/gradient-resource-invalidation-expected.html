@@ -1,0 +1,66 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ColorFilterEnabled=true ] -->
+<body onload="run();">
+<svg width="450" height="350">
+    <defs>
+        <linearGradient id="g1">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g2a">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g2b">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g3">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g4">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g5">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g6" x2="0.5">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g7">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g8">
+            <stop offset="0.5" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g9">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g10">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g11">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+    </defs>
+
+    <rect id="r1" x="50" y="50" width="50" height="50" fill="url(#g1)"/>
+    <rect id="r2" x="150" y="50" width="50" height="50" fill="url(#g2b)"/>
+    <rect id="r3" x="250" y="50" width="50" height="50"/>
+    <rect id="r4" x="350" y="50" width="50" height="50" fill="url(#g4)" fill-opacity="0.5"/>
+    <rect id="r5" x="50" y="150" width="75" height="50" fill="url(#g5)"/>
+    <rect id="r6" x="150" y="150" width="50" height="50" fill="url(#g6)"/>
+    <rect id="r7" x="250" y="150" width="50" height="50" fill="url(#g7)"/>
+    <rect id="r8" x="350" y="150" width="50" height="50" fill="url(#g8)"/>
+    <rect id="r9" x="50" y="250" width="50" height="50" fill="url(#g9)"/>
+    <rect id="r10" x="150" y="250" width="50" height="50" fill="url(#g10)"/>
+    <rect id="r11" x="250" y="250" width="50" height="50" fill="url(#g11)" style="-apple-color-filter: grayscale();"/>
+</svg>

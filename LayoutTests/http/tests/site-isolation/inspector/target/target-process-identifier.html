@@ -1,0 +1,91 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function addIframe(url) {
+    let iframe = document.createElement("iframe");
+    iframe.src = url;
+    document.body.append(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Target.ProcessIdentifier");
+
+    // Frame target IDs are "frame-<frame ID>-<process ID>".
+    function processIdentifierInTargetID(target) {
+        return target.identifier.split("-").at(-1);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Target.ProcessIdentifier.FrameTargets",
+        description: "Targets in one process share a process identifier, and targets in different processes do not.",
+        timeout: 30000,
+        async test() {
+            let mainFrameTarget = await waitForFrameTargetForURLContaining("target-process-identifier.html");
+            let sameSiteFrameTarget = await waitForFrameTargetForURLContaining("frame-with-name.html?same-site");
+            let crossOriginFrameTarget = await waitForFrameTargetForURLContaining("frame-with-name.html?cross-origin");
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame's target.");
+            InspectorTest.expectNotNull(sameSiteFrameTarget, "Should find the same-site frame's target.");
+            InspectorTest.expectNotNull(crossOriginFrameTarget, "Should find the cross-origin frame's target.");
+            if (!mainFrameTarget || !sameSiteFrameTarget || !crossOriginFrameTarget)
+                return;
+
+            let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+            InspectorTest.expectThat(frameTargets.every((target) => typeof target.processIdentifier === "string" && target.processIdentifier.length), "Every frame target should have a process identifier.");
+            InspectorTest.expectThat(frameTargets.every((target) => target.processIdentifier === processIdentifierInTargetID(target)), "Every frame target's process identifier should match the process in its target ID.");
+
+            InspectorTest.expectEqual(sameSiteFrameTarget.processIdentifier, mainFrameTarget.processIdentifier, "The same-site frame should share the main frame's process identifier.");
+            InspectorTest.expectNotEqual(crossOriginFrameTarget.processIdentifier, mainFrameTarget.processIdentifier, "The cross-origin frame should not share the main frame's process identifier.");
+            InspectorTest.expectEqual(WI.pageTarget.processIdentifier, mainFrameTarget.processIdentifier, "The page target should share the main frame's process identifier.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Target.ProcessIdentifier.ProvisionalFrameTarget",
+        description: "A provisional frame target has the process identifier of the process it loads in.",
+        timeout: 30000,
+        async test() {
+            let crossOriginFrameTarget = await waitForFrameTargetForURLContaining("frame-with-name.html?cross-origin");
+            InspectorTest.expectNotNull(crossOriginFrameTarget, "Should find the cross-origin frame's target.");
+            if (!crossOriginFrameTarget)
+                return;
+
+            let provisionalTargetPromise = new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                    let {target} = event.data;
+                    if (target.type !== WI.TargetType.Frame || !target.isProvisional)
+                        return;
+
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, listener);
+                    resolve(target);
+                });
+            });
+
+            InspectorTest.evaluateInPage(`addIframe("http://localhost:8000/site-isolation/inspector/target/resources/frame-with-name.html?added")`);
+
+            let provisionalTarget = await provisionalTargetPromise;
+            let committedPromise = new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, (event) => {
+                    if (event.data.target !== provisionalTarget)
+                        return;
+
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, listener);
+                    resolve();
+                });
+            });
+            InspectorTest.expectEqual(provisionalTarget.processIdentifier, crossOriginFrameTarget.processIdentifier, "The provisional frame target should share the process identifier of the other frame from its site.");
+
+            await committedPromise;
+            InspectorTest.pass("The provisional frame target should commit.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that page and frame targets tell which process they run in.</p>
+<iframe src="resources/frame-with-name.html?same-site"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/target/resources/frame-with-name.html?cross-origin"></iframe>
+</body>

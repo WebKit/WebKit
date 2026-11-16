@@ -1,0 +1,4 @@
+This tests acquiring a web lock in a shared worker created by a third-party iframe, with site isolation enabled so that the shared worker does not run in the process of the frame that created it. You should see PASS below
+
+PASS
+

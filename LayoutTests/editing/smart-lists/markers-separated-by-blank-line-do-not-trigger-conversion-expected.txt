@@ -1,0 +1,6 @@
+Two matching markers that are separated by a blank line should not trigger smart-list conversion: the markers must appear on consecutive lines.
+| "* A"
+| <div>
+|   <br>
+| <div>
+|   "* B<#selection-caret>"

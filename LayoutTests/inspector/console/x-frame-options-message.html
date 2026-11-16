@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.XFrameOptionsMessages");
+
+    suite.addTestCase({
+        name: "XFrameOptionsDeny",
+        description: "Ensure that a console message is logged when enforcing an X-Frame-Options policy. In this case, setting X-Frame-Options: 'deny' means the iframe does not want to be embedded in the test page.",
+        test(resolve) {
+            WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.MessageAdded, function (event) {
+                let { source, level, target } = event.data.message;
+                InspectorTest.expectEqual(source, "security", "The message should be due to a security violation.");
+                InspectorTest.expectEqual(level, "error", "The message should be an error.");
+
+                let mainTargetType = WI.isSiteIsolationEnabled() ? WI.TargetType.Frame : WI.TargetType.Page;
+                InspectorTest.expectEqual(target.type, mainTargetType, "The message should come from the main target.");
+
+                resolve();
+            });
+            InspectorTest.evaluateInPage(`triggerXFrameOptionDeny();`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+  <iframe id="denied"></iframe>
+  <script>
+  function triggerXFrameOptionDeny()
+  {
+    let deniedFrame = document.getElementById('denied');
+    let deniedDocument = deniedFrame.contentWindow.document;
+    deniedDocument.write('<meta http-equiv="X-Frame-Options" content="deny"/>');
+  }
+  </script>
+</body>
+</html>

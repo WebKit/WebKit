@@ -1,0 +1,6 @@
+
+PASS DynamicsCompressorNode: invalid arguments throw TypeError
+PASS DynamicsCompressorNode: default constructor and attributes
+PASS DynamicsCompressorNode: constructor with various AudioNodeOptions
+PASS DynamicsCompressorNode: constructor with parameter options
+

@@ -1,0 +1,15 @@
+عنوان بريدي الإلكتروني هو select@this.text. أرسل لي تحديثًا عند وصولك إلى المطار
+
+Verifies that the text selection shows up in the correct place inside a right-to-left overflow scrolling container
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS selectionRects.length is 1
+PASS selectionRects[0].top is >= 1
+PASS selectionRects[0].left is >= 1
+PASS selectionRects[0].width is >= 1
+PASS selectionRects[0].height is >= 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

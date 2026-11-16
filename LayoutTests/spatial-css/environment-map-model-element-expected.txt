@@ -1,0 +1,6 @@
+
+PASS environment-map: auto defers to the environmentmap attribute
+PASS A named environment map overrides the environmentmap attribute
+PASS environment-map: none overrides the environmentmap attribute
+PASS Reverting environment-map to auto hands control back to the attribute
+

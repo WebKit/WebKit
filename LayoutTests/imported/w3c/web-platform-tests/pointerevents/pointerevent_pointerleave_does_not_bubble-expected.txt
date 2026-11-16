@@ -1,0 +1,14 @@
+Pointer Event: pointerleave does not bubble
+
+Test Description: The pointerleave event must not bubble up to parent elements.
+
+Use the mouse or pen to hover over then out of the purple box nested in the black box. Or with touch, tap on the purple box.
+Test complete: Scroll to Summary to view Pass/Fail Results.
+
+The following pointer types were detected: mouse.
+
+Refresh the page to run the tests again with a different pointer type.
+
+
+PASS pointerLeave event does not bubble
+

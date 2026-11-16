@@ -1,0 +1,14 @@
+
+After focusing the text field with a hardware keyboard attached:
+PASS internals.visualViewportRect().width == internals.layoutViewportRect().width is true
+PASS Math.abs(internals.visualViewportRect().height - internals.layoutViewportRect().height) <= 1 is true
+PASS Math.abs(internals.layoutViewportRect().height - window.inputViewBoundsTopInView) <= 1 is true
+
+After blurring the text field:
+PASS internals.visualViewportRect().width == internals.layoutViewportRect().width is true
+PASS internals.visualViewportRect().height == internals.layoutViewportRect().height is true
+PASS internals.visualViewportRect().height == window.initialLayoutViewport.height is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,123 @@
+/*
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#import <Metal/Metal.h>
+#import <WebGPU/WebGPUCpp.h>
+#import <atomic>
+#import <wtf/FastMalloc.h>
+#import <wtf/Ref.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/SwiftBridging.h>
+#import <wtf/TZoneMalloc.h>
+#import <wtf/ThreadSafeWeakPtr.h>
+#import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
+#import <wtf/threads/BinarySemaphore.h>
+
+
+namespace WebGPU::Metal {
+
+class CommandEncoder;
+class Device;
+
+// https://gpuweb.github.io/gpuweb/#gpucommandbuffer
+class CommandBuffer final : public WebGPU::CommandBuffer {
+    WTF_MAKE_TZONE_ALLOCATED(CommandBuffer);
+public:
+    static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer, Device& device, id<MTLSharedEvent> sharedEvent, uint64_t sharedEventSignalValue, Vector<Function<bool(CommandBuffer&, CommandEncoder&)>>&& onCommitHandlers, CommandEncoder& commandEncoder)
+    {
+        return adoptRef(*new CommandBuffer(commandBuffer, device, sharedEvent, sharedEventSignalValue, WTF::move(onCommitHandlers), commandEncoder));
+    }
+    static Ref<CommandBuffer> createInvalid(Device& device)
+    {
+        return adoptRef(*new CommandBuffer(device));
+    }
+
+    ~CommandBuffer();
+
+    void setLabel(String&&) final;
+
+    bool isValid() const final { return m_commandBuffer; }
+
+    id<MTLCommandBuffer> commandBuffer() const { return m_commandBuffer; }
+
+    // A single MTLCommandBuffer can only hold so many MTLRenderCommandEncoders before IOGPU runs out
+    // of memory for it, so CommandEncoder rolls over to a fresh MTLCommandBuffer and hands the filled
+    // ones here. The queue commits them, in order, immediately before commandBuffer().
+    void setPriorCommandBuffers(Vector<RetainPtr<id<MTLCommandBuffer>>>&&);
+    Vector<RetainPtr<id<MTLCommandBuffer>>> takePriorCommandBuffers();
+
+    Device& device() const { return m_device; }
+    void makeInvalid(NSString*);
+    void makeInvalidDueToCommit(NSString*);
+    void setBufferMapCount(int bufferMapCount) { m_bufferMapCount = bufferMapCount; }
+    int bufferMapCount() const { return m_bufferMapCount; }
+
+    NODELETE NSString* lastError() const;
+    bool waitForCompletion();
+    bool preCommitHandler();
+    void postCommitHandler();
+    void addPostCommitHandler(Function<void(id<MTLCommandBuffer>)>&&);
+
+    double gpuExecutionDurationSeconds() const { return m_gpuExecutionDurationSeconds.load(std::memory_order_relaxed); }
+
+private:
+    CommandBuffer(id<MTLCommandBuffer>, Device&, id<MTLSharedEvent>, uint64_t sharedEventSignalValue, Vector<Function<bool(CommandBuffer&, CommandEncoder&)>>&&, CommandEncoder&);
+    CommandBuffer(Device&);
+    void retainTimestampsForOneUpdateLoop();
+    void releasePriorCommandBuffers();
+
+    id<MTLCommandBuffer> m_commandBuffer { nil };
+    id<MTLCommandBuffer> m_cachedCommandBuffer { nil };
+    Vector<RetainPtr<id<MTLCommandBuffer>>> m_priorCommandBuffers;
+    int m_bufferMapCount { 0 };
+
+    const Ref<Device> m_device;
+    NSString* m_lastErrorString { nil };
+    id<MTLSharedEvent> m_sharedEvent { nil };
+    Vector<Function<bool(CommandBuffer&, CommandEncoder&)>> m_preCommitHandlers;
+    Vector<Function<void(id<MTLCommandBuffer>)>> m_postCommitHandlers;
+    const uint64_t m_sharedEventSignalValue { 0 };
+    // FIXME: we should not need this semaphore - https://bugs.webkit.org/show_bug.cgi?id=272353
+    BinarySemaphore m_commandBufferComplete;
+    RefPtr<CommandEncoder> m_commandEncoder;
+    std::atomic<double> m_gpuExecutionDurationSeconds { 0 };
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refCommandBuffer, derefCommandBuffer);
+
+} // namespace WebGPU::Metal
+
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
+inline void refCommandBuffer(WebGPU::Metal::CommandBuffer* obj)
+{
+    obj->ref();
+}
+
+inline void derefCommandBuffer(WebGPU::Metal::CommandBuffer* obj)
+{
+    obj->deref();
+}
+#endif

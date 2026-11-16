@@ -1,0 +1,6 @@
+XXXXXXXXXXXX
+(repaint rects
+  (rect 8 8 192 115)
+  (rect 8 8 192 115)
+)
+

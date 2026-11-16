@@ -1,0 +1,3 @@
+
+PASS Pages should remain controlled after restored from BFCache
+

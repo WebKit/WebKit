@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="wrapper" role="presentation">
+    <button id="button-one">Press</button>
+    <button id="button-two" style="display:contents">Press</button>
+</div>
+
+<script>
+var output = "This test ensures we update the accessibility tree when content-visibility changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    output += dumpAXSearchTraversal(webarea);
+
+    var button;
+    document.getElementById("wrapper").setAttribute("style", "content-visibility: hidden");
+    setTimeout(async function() {
+        await waitFor(() => {
+            button = accessibilityController.accessibleElementById("button-one");
+            if (button && !button.isIgnored)
+                return false;
+
+            button = accessibilityController.accessibleElementById("button-two");
+            if (button && !button.isIgnored)
+                return false;
+
+            return true;
+        });
+        output += "\n\nTree traversal after adding content-visibility: hidden:\n"
+        output += dumpAXSearchTraversal(webarea);
+
+        document.getElementById("wrapper").removeAttribute("style");
+        await waitFor(() => {
+            button = accessibilityController.accessibleElementById("button-one");
+            if (!button || button.isIgnored)
+                return false;
+
+            button = accessibilityController.accessibleElementById("button-two");
+            if (!button || button.isIgnored)
+                return false;
+
+            return true;
+        });
+        output += "\n\nTree traversal after adding content-visibility: hidden:\n"
+        output += dumpAXSearchTraversal(webarea);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

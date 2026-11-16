@@ -1,0 +1,7 @@
+
+PASS CSS animation: animationcancel event is fired asynchronously on element remove
+PASS CSS transition: transitioncancel event is fired asynchronously on element remove
+PASS Ancestor removal: animationcancel and transitioncancel are fired asynchronously
+PASS Re-parenting: animationcancel is fired asynchronously
+PASS Web Animations: cancel event on Animation object is fired asynchronously on element remove
+

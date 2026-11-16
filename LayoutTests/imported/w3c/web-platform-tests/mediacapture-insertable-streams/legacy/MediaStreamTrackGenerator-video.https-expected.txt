@@ -1,0 +1,15 @@
+When prompted, use the accept button to give permission to use your audio and video devices.
+
+Description
+
+This test checks that generating video MediaStreamTracks works as expected.
+
+
+FAIL Tests that MediaStreamTrackGenerator forwards frames to sink promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackProcessor"
+FAIL Tests that frames are actually rendered correctly in a stream used for a video element. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackGenerator"
+FAIL Tests that frames are actually rendered correctly in a stream sent over a peer connection. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackGenerator"
+FAIL Tests that frames are sent correctly with RTCRtpEncodingParameters.scaleResolutionDownBy. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackGenerator"
+FAIL Tests that creating a Video MediaStreamTrackGenerator works as expected promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackGenerator"
+FAIL Tests that VideoFrames are destroyed on write. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackGenerator"
+FAIL Mismatched frame and generator kind throws on write. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackGenerator"
+

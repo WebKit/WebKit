@@ -1,0 +1,9 @@
+
+RUN(video.src = findMediaFile("video", "../../../media/content/test"))
+EVENT(canplay)
+RUN(video.play())
+Promise resolved OK
+Simulate drag on video element
+EVENT(scroll)
+END OF TEST
+

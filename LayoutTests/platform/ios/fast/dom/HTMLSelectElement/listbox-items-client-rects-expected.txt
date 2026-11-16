@@ -1,0 +1,60 @@
+PASS listBoundingBoxes.length is 1
+PASS listBoundingBoxes[0].left is listBoundingBox.left
+PASS listBoundingBoxes[0].right is listBoundingBox.right
+PASS listBoundingBoxes[0].top is listBoundingBox.top
+PASS listBoundingBoxes[0].bottom is listBoundingBox.bottom
+PASS listBoundingBoxes[0].width is listBoundingBox.width
+PASS listBoundingBoxes[0].height is listBoundingBox.height
+FAIL groupBoundingBoxes.length should be 1. Was 0.
+FAIL groupBoundingBoxes[0].left should be 0. Threw exception TypeError: undefined is not an object (evaluating 'groupBoundingBoxes[0].left')
+FAIL groupBoundingBoxes[0].right should be 0. Threw exception TypeError: undefined is not an object (evaluating 'groupBoundingBoxes[0].right')
+FAIL groupBoundingBoxes[0].top should be 0. Threw exception TypeError: undefined is not an object (evaluating 'groupBoundingBoxes[0].top')
+FAIL groupBoundingBoxes[0].bottom should be 0. Threw exception TypeError: undefined is not an object (evaluating 'groupBoundingBoxes[0].bottom')
+FAIL groupBoundingBoxes[0].width should be 0. Threw exception TypeError: undefined is not an object (evaluating 'groupBoundingBoxes[0].width')
+FAIL groupBoundingBoxes[0].height should be 0. Threw exception TypeError: undefined is not an object (evaluating 'groupBoundingBoxes[0].height')
+FAIL option1BoundingBoxes.length should be 1. Was 0.
+FAIL option1BoundingBoxes[0].left should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option1BoundingBoxes[0].left')
+FAIL option1BoundingBoxes[0].right should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option1BoundingBoxes[0].right')
+FAIL option1BoundingBoxes[0].top should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option1BoundingBoxes[0].top')
+FAIL option1BoundingBoxes[0].bottom should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option1BoundingBoxes[0].bottom')
+FAIL option1BoundingBoxes[0].width should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option1BoundingBoxes[0].width')
+FAIL option1BoundingBoxes[0].height should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option1BoundingBoxes[0].height')
+FAIL option2BoundingBoxes.length should be 1. Was 0.
+FAIL option2BoundingBoxes[0].left should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option2BoundingBoxes[0].left')
+FAIL option2BoundingBoxes[0].right should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option2BoundingBoxes[0].right')
+FAIL option2BoundingBoxes[0].top should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option2BoundingBoxes[0].top')
+FAIL option2BoundingBoxes[0].bottom should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option2BoundingBoxes[0].bottom')
+FAIL option2BoundingBoxes[0].width should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option2BoundingBoxes[0].width')
+FAIL option2BoundingBoxes[0].height should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option2BoundingBoxes[0].height')
+FAIL option3BoundingBoxes.length should be 1. Was 0.
+FAIL option3BoundingBoxes[0].left should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option3BoundingBoxes[0].left')
+FAIL option3BoundingBoxes[0].right should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option3BoundingBoxes[0].right')
+FAIL option3BoundingBoxes[0].top should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option3BoundingBoxes[0].top')
+FAIL option3BoundingBoxes[0].bottom should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option3BoundingBoxes[0].bottom')
+FAIL option3BoundingBoxes[0].width should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option3BoundingBoxes[0].width')
+FAIL option3BoundingBoxes[0].height should be 0. Threw exception TypeError: undefined is not an object (evaluating 'option3BoundingBoxes[0].height')
+FAIL groupBoundingBox.left should be 9. Was 0.
+FAIL groupBoundingBox.top should be 9. Was 0.
+FAIL groupBoundingBox.right should be 107. Was 0.
+PASS groupBoundingBox.bottom is groupBoundingBox.top + 3 * optionHeight
+FAIL groupBoundingBox.width should be 98. Was 0.
+PASS groupBoundingBox.height is 3 * optionHeight
+FAIL option1BoundingBox.left should be 9. Was 0.
+FAIL option1BoundingBox.top should be 9. Was 0.
+FAIL option1BoundingBox.right should be 107. Was 0.
+PASS option1BoundingBox.bottom is option1BoundingBox.top + option1BoundingBox.height
+FAIL option1BoundingBox.width should be 98. Was 0.
+FAIL option2BoundingBox.left should be 9. Was 0.
+FAIL option2BoundingBox.top should be 9. Was 0.
+FAIL option2BoundingBox.right should be 107. Was 0.
+PASS option2BoundingBox.bottom is option2BoundingBox.top + option2BoundingBox.height
+FAIL option2BoundingBox.width should be 98. Was 0.
+FAIL option3BoundingBox.left should be 9. Was 0.
+FAIL option3BoundingBox.top should be 9. Was 0.
+FAIL option3BoundingBox.right should be 107. Was 0.
+PASS option3BoundingBox.bottom is option3BoundingBox.top + option3BoundingBox.height
+FAIL option3BoundingBox.width should be 98. Was 0.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

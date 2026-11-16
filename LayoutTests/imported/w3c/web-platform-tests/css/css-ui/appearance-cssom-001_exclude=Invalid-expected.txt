@@ -1,0 +1,44 @@
+Test
+
+PASS -webkit-appearance: none
+PASS -webkit-appearance: auto
+PASS -webkit-appearance: textfield
+PASS -webkit-appearance: menulist-button
+PASS -webkit-appearance: button (compat)
+PASS -webkit-appearance: checkbox (compat)
+PASS -webkit-appearance: listbox (compat)
+PASS -webkit-appearance: menulist (compat)
+PASS -webkit-appearance: meter (compat)
+PASS -webkit-appearance: progress-bar (compat)
+PASS -webkit-appearance: radio (compat)
+PASS -webkit-appearance: searchfield (compat)
+PASS -webkit-appearance: textarea (compat)
+PASS appearance: none
+PASS appearance: auto
+PASS appearance: textfield
+PASS appearance: menulist-button
+PASS appearance: button (compat)
+PASS appearance: checkbox (compat)
+PASS appearance: listbox (compat)
+PASS appearance: menulist (compat)
+PASS appearance: meter (compat)
+PASS appearance: progress-bar (compat)
+PASS appearance: radio (compat)
+PASS appearance: searchfield (compat)
+PASS appearance: textarea (compat)
+PASS -ms-appearance (should not be supported)
+PASS mso-appearance (should not be supported)
+PASS -o-appearance (should not be supported)
+PASS -xv-appearance (should not be supported)
+PASS -atsc-appearance (should not be supported)
+PASS -wap-appearance (should not be supported)
+PASS -khtml-appearance (should not be supported)
+PASS -konq-appearance (should not be supported)
+PASS -apple-appearance (should not be supported)
+PASS prince-appearance (should not be supported)
+PASS -ah-appearance (should not be supported)
+PASS -hp-appearance (should not be supported)
+PASS -ro-appearance (should not be supported)
+PASS -rim-appearance (should not be supported)
+PASS -tc-appearance (should not be supported)
+

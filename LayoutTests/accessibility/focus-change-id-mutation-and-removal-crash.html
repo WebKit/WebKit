@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<div id="test-content">
+    <!-- Shadow host -->
+    <div id="shadow-host"></div>
+
+    <!-- Light DOM elements that will be moved INTO shadow DOM -->
+    <div id="target-1" role="button">Light Target 1</div>
+    <div id="target-2" role="button">Light Target 2</div>
+    <div id="label-1">Light Label 1</div>
+    <div id="desc-1">Light Description 1</div>
+
+    <!-- Light DOM elements with aria relationships pointing to the above IDs -->
+    <div id="owner-1" role="group" aria-label="owner1" aria-owns="target-1"></div>
+    <div id="owner-2" role="group" aria-label="owner2" aria-owns="target-2"></div>
+    <div id="labelled-1" role="group" aria-labelledby="label-1"></div>
+    <div id="described-1" role="group" aria-describedby="desc-1"></div>
+
+    <!-- Element whose ID will change to dirty relations -->
+    <div id="changeable-id" role="group">Changeable</div>
+
+    <!-- Element that will be removed - is owned so ownerParentObject() will be called -->
+    <div id="owner-of-removed" role="group" aria-owns="to-remove">Owner of removed</div>
+    <div id="to-remove" role="button">Will be removed</div>
+
+    <!-- Focus targets -->
+    <input type="text" id="input1" onfocusout="focusoutHandler()">
+    <input type="text" id="input2">
+</div>
+
+<script>
+var output = "This test ensures we don't crash when a focusout handler moves elements from light DOM into shadow DOM while changing IDs and removing elements involved in aria relationships.\n\n";
+
+var shadowRoot = document.getElementById("shadow-host").attachShadow({ mode: "open" });
+
+function focusoutHandler() {
+    // Force layout to be clean before we start manipulating.
+    document.body.offsetHeight;
+
+    // Change an ID to dirty relations.
+    document.getElementById("changeable-id").id = "new-id";
+
+    // Move elements from light DOM into shadow DOM.
+    shadowRoot.appendChild(document.getElementById("target-1"));
+    shadowRoot.appendChild(document.getElementById("label-1"));
+
+    // Remove an element that is aria-owned.
+    document.getElementById("to-remove").remove();
+
+    // Additional ID changes and moves.
+    document.getElementById("target-2").id = "target-2-modified";
+    document.getElementById("desc-1").id = "desc-1-modified";
+    shadowRoot.appendChild(document.getElementById("desc-1-modified"));
+    shadowRoot.appendChild(document.getElementById("target-2-modified"));
+    shadowRoot.appendChild(document.getElementById("new-id"));
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    touchAccessibilityTree(accessibilityController.rootElement);
+    setTimeout(async function() {
+        await UIHelper.renderingUpdate();
+
+        // Focus input1 via accessibility API
+        var axInput1 = accessibilityController.accessibleElementById("input1");
+        axInput1.takeFocus();
+
+        await waitFor(() => {
+            var focused = accessibilityController.focusedElement;
+            return focused && focused.domIdentifier === "input1";
+        });
+        output += "PASS: input1 is focused.\n";
+
+        // Focus input2 - triggers focusout handler
+        var axInput2 = accessibilityController.accessibleElementById("input2");
+        axInput2.takeFocus();
+
+        touchAccessibilityTree(accessibilityController.rootElement);
+
+        output += "PASS: No crash after focus change with shadow DOM element moves and id mutations.\n";
+        debug(output);
+        document.getElementById("test-content").style.display = "none";
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

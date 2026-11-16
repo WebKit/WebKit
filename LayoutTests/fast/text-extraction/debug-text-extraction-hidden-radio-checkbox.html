@@ -1,0 +1,77 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+.text-representation {
+    white-space: pre-wrap;
+}
+
+.visually-hidden-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<form name="verification" autocomplete="on">
+    <p>Choose a verification method:</p>
+    <label>
+        <input class="visually-hidden-input" type="radio" name="method" value="sms">
+        Text me a code
+    </label>
+    <label>
+        <input class="visually-hidden-input" type="radio" name="method" value="email" checked>
+        Email me a code
+    </label>
+    <label>
+        <input class="visually-hidden-input" type="checkbox" name="remember" value="yes">
+        Remember this device
+    </label>
+    <label>
+        <input style="display: none" type="radio" name="hidden" value="gone">
+        This label has a display:none input
+    </label>
+    <button type="submit">Next</button>
+</form>
+<input class="visually-hidden-input" type="radio" name="orphan" value="no-label">
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const results = [];
+    for (let outputFormat of ["texttree", "html"]) {
+        const heading = document.createElement("h1");
+        heading.textContent = `-- ${outputFormat}`;
+
+        const container = document.createElement("pre");
+        container.classList.add("text-representation");
+        let textContent = await UIHelper.requestDebugText({
+            normalize: true,
+            includeRects: false,
+            includeURLs: false,
+            skipNearlyTransparentContent: true,
+            outputFormat,
+        });
+
+        container.textContent = textContent;
+        results.push(heading);
+        results.push(container);
+        results.push(document.createElement("br"));
+    }
+
+    document.body.replaceChildren(...results);
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

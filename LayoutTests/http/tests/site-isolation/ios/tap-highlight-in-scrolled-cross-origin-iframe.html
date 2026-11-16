@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Tapping a button in the middle of a tall cross-origin iframe that has been scrolled should show a tap highlight over the button.");
+jsTestIsAsync = true;
+
+const buttonWidth = 200;
+const buttonHeight = 60;
+const expectedSubframeScrollY = 900;
+const tapHighlightInflationPerSide = 4;
+let subframeScrollY;
+let expectedTop;
+let highlightTop;
+let highlightWidth;
+let highlightHeight;
+let buttonWasClicked = false;
+
+async function waitForTapHighlightToAppear()
+{
+    let rect;
+    for (let i = 0; i < 100; i++) {
+        rect = await UIHelper.tapHighlightViewRect();
+        if (rect.width > 0 && rect.height > 0)
+            break;
+        await UIHelper.ensurePresentationUpdate();
+    }
+    return rect;
+}
+
+addEventListener("message", async (event) => {
+    if (event.data === "clicked") {
+        buttonWasClicked = true;
+        return;
+    }
+    if (!event.data || event.data.type !== "ready")
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+
+    const frameRect = document.getElementById("frame").getBoundingClientRect();
+    subframeScrollY = event.data.scrollY;
+    expectedTop = frameRect.top + event.data.buttonTop;
+
+    await UIHelper.activateAt(frameRect.left + event.data.buttonLeft + event.data.buttonWidth / 2,
+        expectedTop + event.data.buttonHeight / 2);
+
+    const rect = await waitForTapHighlightToAppear();
+    highlightTop = rect.top;
+    highlightWidth = rect.width;
+    highlightHeight = rect.height;
+
+    shouldBe("subframeScrollY", "expectedSubframeScrollY");
+    shouldBeTrue("buttonWasClicked");
+    shouldBe("highlightWidth", "buttonWidth + 2 * tapHighlightInflationPerSide");
+    shouldBe("highlightHeight", "buttonHeight + 2 * tapHighlightInflationPerSide");
+    shouldBe("highlightTop", "expectedTop - tapHighlightInflationPerSide");
+
+    finishJSTest();
+});
+</script>
+<iframe id="frame" style="position: absolute; left: 0; top: 100px; width: 400px; height: 500px; border: none;" src="http://localhost:8000/site-isolation/resources/tall-tap-target-frame.html"></iframe>

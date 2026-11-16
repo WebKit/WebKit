@@ -1,0 +1,17 @@
+This tests that sort() is a stable sort.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS arr[0] is sortArr[0]
+PASS arr[1] is sortArr[2]
+PASS arr[2] is sortArr[1]
+PASS arr[3] is sortArr[3]
+PASS arr[0] is sortArr[0]
+PASS arr[1] is sortArr[2]
+PASS arr[2] is sortArr[1]
+PASS arr[3] is sortArr[3]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

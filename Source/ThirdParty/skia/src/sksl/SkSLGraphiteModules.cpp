@@ -1,0 +1,36 @@
+/*
+ * Copyright 2024 Google LLC
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+
+#include "src/sksl/SkSLGraphiteModules.h"
+
+#include "include/core/SkTypes.h"
+#include "include/private/SkOnce.h"
+
+// We include minified SkSL module code and pass it directly to the compiler.
+#if defined(SK_ENABLE_OPTIMIZE_SIZE) || !defined(SK_DEBUG)
+#include "src/sksl/generated/sksl_graphite_frag.minified.sksl"
+#include "src/sksl/generated/sksl_graphite_vert.minified.sksl"
+#else
+#include "src/sksl/generated/sksl_graphite_frag.unoptimized.sksl"
+#include "src/sksl/generated/sksl_graphite_vert.unoptimized.sksl"
+#endif
+
+namespace SkSL::Loader {
+
+void LoadGraphiteModules() {
+    static SkOnce once;
+    once([] {
+#define M(name) SKSL_MINIFIED_##name
+        SetGraphiteModuleData(GraphiteModules{
+                M(sksl_graphite_frag),
+                M(sksl_graphite_vert),
+        });
+#undef M
+    });
+}
+
+}  // namespace SkSL::Loader

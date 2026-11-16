@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Permission policy 'Camera' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+
+
+PASS Same origin embed should get access to camera
+PASS Cross origin embed should not get access to camera
+

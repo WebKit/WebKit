@@ -1,0 +1,25 @@
+<svg width="404" height="404" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 2 202 L 202 2 L 402 202 L 202 402" fill="green"/>
+    <g id="zigzag-border"/>
+    <script><![CDATA[
+        let nameSpace = "http://www.w3.org/2000/svg";
+        let groupElement = document.getElementById("zigzag-border");
+
+        function createBorderRects(count, x, y, dx, dy) {
+            for (let i = 0; i < count; i++) {
+                var rectElement = document.createElementNS(nameSpace, "rect");
+                rectElement.setAttribute("x", (x + i * dx).toString());
+                rectElement.setAttribute("y", (y + i * dy).toString());
+                rectElement.setAttribute("width", "4");
+                rectElement.setAttribute("height", "4");
+                rectElement.setAttribute("fill", "green");
+                groupElement.appendChild(rectElement);
+            }
+        }
+
+        createBorderRects(101,   0, 200,  2, -2);
+        createBorderRects(101, 200,   0,  2,  2);
+        createBorderRects(101, 400, 200, -2,  2);
+        createBorderRects(101, 200, 400, -2, -2);
+     ]]></script>
+</svg>

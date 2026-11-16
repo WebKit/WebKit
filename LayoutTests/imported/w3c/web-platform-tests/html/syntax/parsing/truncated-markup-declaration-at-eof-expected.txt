@@ -1,0 +1,6 @@
+
+
+FAIL An incomplete markup declaration at end of input becomes a bogus comment assert_array_equals: lengths differ, expected array ["#text:Abc", "#comment:d", "#text:Hi"] length 3, got ["#text:Abc"] length 1
+FAIL A DOCTYPE with a truncated PUBLIC keyword at end of input is emitted assert_not_equals: doctype should be emitted got disallowed value null
+FAIL An incomplete markup declaration at the end of a navigated document becomes a bogus comment assert_array_equals: lengths differ, expected array ["#text:Abc", "#comment:d", "#text:Hi"] length 3, got ["#text:Abc"] length 1
+

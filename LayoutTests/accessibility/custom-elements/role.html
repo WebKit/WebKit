@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-element id="custom-element"></custom-element>
+<custom-checkbox id="custom-checkbox"></custom-checkbox>
+<custom-checkbox id="button-checkbox" role="button" aria-roledescription="other description" aria-label="other label" aria-checked="false"></custom-checkbox>
+<script>
+
+customElements.define('custom-element', class CustomElement extends HTMLElement {});
+customElements.define('custom-checkbox', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'checkbox';
+        internals.ariaRoleDescription = 'some description';
+        internals.ariaLabel = 'some label';
+        internals.ariaChecked = 'true';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBe('accessibilityController.accessibleElementById("custom-element")', 'null');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-checkbox").role', 'AXRole: AXCheckBox');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-checkbox").roleDescription', 'AXRoleDescription: some description');
+    shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("custom-checkbox"))', 'some label');
+    shouldBe('accessibilityController.accessibleElementById("custom-checkbox").isChecked', 'true');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("button-checkbox").role', 'AXRole: AXButton');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("button-checkbox").roleDescription', 'AXRoleDescription: other description');
+    shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("button-checkbox"))', 'other label');
+    shouldBe('accessibilityController.accessibleElementById("button-checkbox").isChecked', 'false');
+}
+
+</script>
+</body>
+</html>

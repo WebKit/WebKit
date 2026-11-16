@@ -1,0 +1,3 @@
+
+FAIL SMIL animating 'currentcolor' on target within visited link assert_equals: currentcolor animation does not leak :visited expected "rgb(0, 0, 255)" but got "rgb(173, 216, 230)"
+

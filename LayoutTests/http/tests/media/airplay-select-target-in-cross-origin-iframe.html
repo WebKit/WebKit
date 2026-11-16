@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+if (window.internals)
+    internals.setMockMediaPlaybackTargetPickerEnabled(true);
+
+addEventListener("message", (event) => {
+    if (event.data.type === "ready") {
+        if (window.internals)
+            internals.setMockMediaPlaybackTargetPickerState("", "DeviceAvailable");
+        return;
+    }
+
+    if (event.data.type === "available") {
+        if (window.internals)
+            internals.setMockMediaPlaybackTargetPickerState("Sleepy TV", "DeviceAvailable");
+        return;
+    }
+
+    if (event.data.type === "connecting") {
+        document.body.textContent = "PASS";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+});
+</script>
+</head>
+<body style="margin: 0">
+<iframe src="http://localhost:8000/media/resources/airplay-select-target-in-cross-origin-iframe-frame.html"
+    style="display: block; width: 320px; height: 240px"></iframe>
+<p>Test that a video in a cross-origin iframe is told which AirPlay target was selected.</p>
+</body>
+</html>

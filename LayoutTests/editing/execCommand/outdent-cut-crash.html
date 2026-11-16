@@ -1,0 +1,25 @@
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+onload = () => {
+    document.designMode = 'on';
+    getSelection().selectAllChildren(input);
+    getSelection().extend(div);
+    queueMicrotask(() => {
+        document.execCommand('Cut');
+    });
+    document.execCommand('Outdent');
+    document.write("Test passes if it does not crash.");
+};
+</script>
+<body>
+  <blockquote>
+    <div>
+      <div>
+        <iframe></iframe>
+      </div>
+      <input id="input"></input>
+    </div>
+  </blockquote>
+  <div id="div"></div>
+</body>

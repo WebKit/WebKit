@@ -1,0 +1,10 @@
+STARTEND
+Verifies that native selection UI is not suppressed. To manually run the test, select from START to END and verify that the selection highlight is visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS selectionRects.length is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

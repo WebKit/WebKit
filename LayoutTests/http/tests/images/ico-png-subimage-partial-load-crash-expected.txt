@@ -1,0 +1,3 @@
+An ICO whose PNG sub-image has only partly arrived must not be asked for a frame buffer before the sub-decoder has parsed its own header. The test passes unless a crash happens.
+
+

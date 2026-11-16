@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: []});
+    let shaderModule = device.createShaderModule({
+    code: ` 
+        @vertex fn e() -> @builtin(position) vec4f {
+            return vec4f();
+        }
+        struct FragmentOutput0 {
+            @location(0) g: i32
+        }
+        @fragment fn h() -> FragmentOutput0 {
+            var f: FragmentOutput0;
+            return f;
+        }
+    `
+    })
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            { binding: 0, visibility: GPUShaderStage.VERTEX, sampler: {} }
+        ]
+    });
+    let buffer = device.createBuffer({ size: 3668, usage: GPUBufferUsage.INDEX });
+    let sampler = device.createSampler();
+    let bindGroup = device.createBindGroup({ layout: bindGroupLayout, entries: [{ binding: 0, resource: sampler }] });
+    let renderPipeline = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'r16sint' }]},
+        vertex: { module: shaderModule }
+    });
+    let renderPipeline2 = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'r16sint' }]},
+        vertex: { module: shaderModule }
+    });
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['r16sint'] });
+    renderBundleEncoder.setBindGroup(3, bindGroup);
+    renderBundleEncoder.setPipeline(renderPipeline);
+    renderBundleEncoder.drawIndexed(1);
+    renderBundleEncoder.setIndexBuffer(buffer, 'uint32', 3_668);
+    renderBundleEncoder.setPipeline(renderPipeline2);
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

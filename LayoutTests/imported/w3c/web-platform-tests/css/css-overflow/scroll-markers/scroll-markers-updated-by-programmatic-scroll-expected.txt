@@ -1,0 +1,3 @@
+
+FAIL The selected ::scroll-marker is updated using the eventual scroll position for a programmatic scroll assert_equals: ::scroll-marker background-color should be rgb(0, 128, 0) but was  expected "rgb(0, 128, 0)" but got ""
+

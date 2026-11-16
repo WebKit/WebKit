@@ -1,0 +1,60 @@
+<style></style>
+<script>
+window.testRunner?.dumpAsText();
+
+const nodes = new Map([['n0', new WeakRef(document.documentElement)]]);
+const stuff = new Map([['Window', [new WeakRef(globalThis)]]]);
+function storeObject(key, o) {
+	let weak = new WeakRef(o);
+	let entriesForKey = stuff.get(key) ?? [];
+	entriesForKey.push(weak);
+	stuff.set(key, entriesForKey);
+}
+function getObject(key) {
+	let entriesForKey = stuff.get(key);
+	while (entriesForKey.length) {
+		let nextEntry = entriesForKey.shift();
+		let theObject = nextEntry.deref();
+		if (theObject) {
+			return theObject;
+		}
+	}
+}
+function storeNode(key, node) {
+    let weak = new WeakRef(node);
+    nodes.set(key, weak);
+}
+function getNodeSafe(key) {
+    let weak = nodes.get(key);
+    let node = weak.deref();
+    return node;
+}    
+
+(async () => {
+	internals.withUserGesture(() => {});
+	let ss0 = document.styleSheets[0];
+	let sr0 = ss0.rules;
+	storeObject('CSSContainerRule', (()=> {
+	let idx = ss0?.insertRule(`@container (height >= 70em) { @layer l2.l3; }`, sr0?.length);
+	return ss0.cssRules[idx];
+})());
+try { (() => {
+  let n4 = document.createElement('details');  n4.id = 'n4';
+  getNodeSafe('n0').prepend(n4);
+  storeNode('n4', n4);
+  let n7 = document.createElement('li');  n7.id = 'n7';
+  getNodeSafe('n4').append(n7);
+  storeNode('n7', n7);
+  let n18 = document.createElement('input');  n18.id = 'n9';
+  getNodeSafe('n7').appendChild(n18);
+  storeNode('n18', n18);
+})(); } catch {}
+try { await (()=>{ return getNodeSafe('n7').webkitRequestFullscreen() })() } catch {}
+try { await (()=>{ let cacheName = `B\u0826\u{1f60d}\u{1fdbc}\u068b\u{1f71f}\u0ed4\ue8c8\u{1f638}\u0f56\ud9ad\u{1ffcd}\u{1fb88}\u9b1a\u{1ff32}\xac\u38c9\u{1fac8}\u0394\u04cf\u7f29\uc252\u2c1e\u0d9f\u{1fb08}\u{1fc0a}\u{1fda1}\u0ea9\u09cb\ufac9\u{1f671}\u{1fd00}\u08ff\u333f\u{1f729}\u0959\ucf9f\u{1f99d}\u{1f931}\u5926\ua92e\u{1fa54}\u{1fbdc}\u{1fbac}\u{1ffca}\uf05d\u0f54\u{1fc5f}`; return caches.has(cacheName) })() } catch {}
+try { getNodeSafe('n18').type = 'file'; } catch {}
+try { await (()=>{ let index = -0.5; return getObject('CSSContainerRule').deleteRule(index) })() } catch {}
+try { await getNodeSafe('n18').scrollTop } catch {}
+try { getNodeSafe('n18').height = 1; } catch {}
+})();
+</script>
+</head>

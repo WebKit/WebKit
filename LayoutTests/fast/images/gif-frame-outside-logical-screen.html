@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<p>A GIF frame placed entirely outside the logical screen must clamp to an empty frame rect, not
+to one whose width and height are negative. The test passes if the web process survives and the
+first frame still decodes.</p>
+<pre id="log">PASS</pre>
+<img id="image" src="resources/gif-frame-outside-logical-screen.gif">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var image = document.getElementById("image");
+var rounds = 0;
+
+function log(message)
+{
+    document.getElementById("log").textContent += "\n" + message;
+}
+
+function drawImage()
+{
+    var canvas = document.createElement("canvas");
+    canvas.width = 8;
+    canvas.height = 8;
+    var context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+    return context.getImageData(0, 0, 1, 1).data;
+}
+
+function decodeRound()
+{
+    try {
+        var pixel = drawImage();
+        if (!rounds && (pixel[0] != 255 || pixel[1] || pixel[2] || pixel[3] != 255))
+            log("FAIL: expected an opaque red pixel, got " + [pixel[0], pixel[1], pixel[2], pixel[3]]);
+    } catch (exception) {
+        log("FAIL: " + exception.message);
+    }
+    ++rounds;
+
+    // The second frame is the one placed off-screen. Drawing the image decodes the frame the
+    // animation is currently at, so we are done once the animation has advanced to the second
+    // frame and it has been drawn. Without internals, fall back to drawing for long enough that
+    // the 100ms first frame has certainly elapsed.
+    var drewSecondFrame = window.internals ? internals.imageFrameIndex(image) == 1 : rounds >= 30;
+    if (!drewSecondFrame) {
+        requestAnimationFrame(decodeRound);
+        return;
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+image.onload = decodeRound;
+image.onerror = decodeRound;
+</script>

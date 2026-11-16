@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0">
+<input id="target" type="file" style="width: 100vw; height: 100vh;">
+<script>
+const input = document.getElementById("target");
+
+input.addEventListener("change", () => {
+    window.parent.postMessage({
+        type: "fileChosen",
+        name: input.files.length ? input.files[0].name : ""
+    }, "*");
+});
+
+window.addEventListener("message", (event) => {
+    if (event.data.type === "getInputRect") {
+        const rect = input.getBoundingClientRect();
+        window.parent.postMessage({
+            type: "inputRect",
+            x: rect.x + rect.width / 2,
+            y: rect.y + rect.height / 2
+        }, "*");
+    }
+});
+</script>
+</body>
+</html>

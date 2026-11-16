@@ -1,0 +1,8 @@
+
+PASS ":where(ul,ol,.list) > [hidden]" should be a valid selector
+PASS ":where(:hover,:focus)" should be a valid selector
+PASS "a:where(:not(:hover))" should be a valid selector
+PASS ":where(#a)" should be a valid selector
+PASS ".a.b ~ :where(.c.d ~ .e.f)" should be a valid selector
+PASS ".a.b ~ .c.d:where(span.e + .f, .g.h > .i.j .k)" should be a valid selector
+

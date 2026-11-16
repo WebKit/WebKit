@@ -1,0 +1,50 @@
+# This is the list of BoringSSL's significant contributors.
+#
+# This does not necessarily list everyone who has contributed code,
+# especially since many employees of one corporation may be contributing.
+# To see the full list of contributors, see the revision history in
+# source control.
+Google LLC
+Brian Smith
+Apple Inc
+
+# Additionally, much of the code in BoringSSL is derived from code in the
+# OpenSSL project. We thank the OpenSSL project’s contributors for their
+# work. Some of these contributors are listed below. For the full list of
+# these contributors, see AUTHORS.md in OpenSSL and the revision history
+# in OpenSSL’s source control.
+OpenSSL Software Services, Inc.
+OpenSSL Software Foundation, Inc.
+Andy Polyakov
+Ben Laurie
+Ben Kaduk
+Bernd Edlinger
+Bodo Möller
+David Benjamin
+David von Oheimb
+Dmitry Belyavskiy (Дмитрий Белявский)
+Emilia Käsper
+Eric Young
+Geoff Thorpe
+Holger Reif
+Kurt Roeckx
+Lutz Jänicke
+Mark J. Cox
+Matt Caswell
+Matthias St. Pierre
+Nicola Tuveri
+Nils Larsch
+Patrick Steuer
+Paul Dale
+Paul C. Sutton
+Paul Yang
+Ralf S. Engelschall
+Rich Salz
+Richard Levitte
+Shane Lontis
+Stephen Henson
+Steve Marquess
+Tim Hudson
+Tomáš Mráz
+Ulf Möller
+Viktor Dukhovni

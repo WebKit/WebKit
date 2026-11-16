@@ -1,0 +1,6 @@
+first line
+first line
+PASS ::first-line applies to the inline boxes
+PASS ::first-line removed
+PASS ::first-line added back
+

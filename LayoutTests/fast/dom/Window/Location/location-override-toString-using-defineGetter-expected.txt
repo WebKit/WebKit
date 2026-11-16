@@ -1,0 +1,5 @@
+PASS location.__defineGetter__('toString', getter) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

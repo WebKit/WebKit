@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tests painting of a layer which isolates blending into shared backing</title>
+    <style>
+        .clipping {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            overflow: hidden;
+            height: 300px;
+            width: 300px;
+            margin: 10px;
+            border: 1px solid black;
+        }
+        
+        .sharing {
+			position: relative;
+			top: 30px;
+			left: 30px;
+            width: 180px;
+            height: 180px;
+            background-color: green;
+        }
+        
+        .isolation {
+            isolation: isolate;
+        }
+        
+        .blending {
+            position: relative;
+            top: 50px;
+            left: 50px;
+            width: 180px;
+            height: 180px;
+            mix-blend-mode: multiply;
+            background-color: green;
+        }
+
+        .trigger {
+            transform: translateZ(0);
+            width: 50px;
+            height: 50px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div class="composited trigger"></div>
+    <div class="clipping">
+        <div class="sharing isolation box">
+            <div class="blending"></div>
+        </div>
+    </div>
+</body>
+</html>

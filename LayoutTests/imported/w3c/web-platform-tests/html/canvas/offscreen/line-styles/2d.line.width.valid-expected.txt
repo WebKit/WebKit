@@ -1,0 +1,7 @@
+2d.line.width.valid
+
+Setting lineWidth to valid values works
+
+
+PASS Setting lineWidth to valid values works
+

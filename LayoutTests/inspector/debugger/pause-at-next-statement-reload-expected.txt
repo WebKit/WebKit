@@ -1,0 +1,10 @@
+Tests that a pause requested for the next statement before a reload stops at the first statement of the new document and is reported as the pause that was requested.
+
+
+== Running test suite: Debugger.PauseAtNextStatementAcrossReload
+-- Running test case: Debugger.PauseAtNextStatementAcrossReload.Reload
+PASS: The debugger should pause after the global object was cleared.
+PASS: The pause should be reported as a pause on the next statement.
+PASS: The debugger should stop before the scripts of the new document run.
+PASS: The page should finish loading after resuming.
+

@@ -1,0 +1,9 @@
+SVG A
+SVG A
+ Other Button
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT InterestEvent is not dispatched unless the svg <a> has an href Test timed out
+NOTRUN InterestEvent dispatches on svg <a> hover
+

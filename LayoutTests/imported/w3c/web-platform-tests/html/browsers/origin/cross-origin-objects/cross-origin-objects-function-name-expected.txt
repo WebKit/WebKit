@@ -1,0 +1,6 @@
+
+PASS Cross-origin Window methods have correct 'name'
+PASS Cross-origin Window accessors have correct 'name'
+PASS Cross-origin Location `replace` method has correct 'name'
+PASS Cross-origin Location `href` setter has correct 'name'
+

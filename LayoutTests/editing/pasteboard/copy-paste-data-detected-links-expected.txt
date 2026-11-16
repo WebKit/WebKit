@@ -1,0 +1,12 @@
+This tests copy/paste of content containing data-detected links.
+| "Meeting "
+| <span>
+|   dir="ltr"
+|   style="font-weight: bold;"
+|   "on Friday 11/6 at 4pm"
+| " "
+| "at"
+| " "
+| <span>
+|   dir="ltr"
+|   "1 Apple Park Way, Cupertino CA<#selection-caret>"

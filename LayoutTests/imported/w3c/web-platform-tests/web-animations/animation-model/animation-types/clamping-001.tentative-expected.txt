@@ -1,0 +1,4 @@
+
+FAIL opacity should not clamp number keyframe values assert_equals: expected 0.75 but got 0.5
+FAIL opacity should not clamp percentage keyframe values assert_equals: expected 0.75 but got 0.5
+

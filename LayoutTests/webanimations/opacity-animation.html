@@ -1,0 +1,20 @@
+<meta name="fuzzy" content="maxDifference=1;totalPixels=10000" />
+<div style="position: absolute; top: 0; left: 0; width: 100px; height: 100px; background-color: black;"></div>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const animation = document.querySelector("div").animate([
+    { opacity: 0 },
+    { opacity: 0.5, offset: 0.001 },
+    { opacity: 0.5 }
+], 1000);
+
+if (window.testRunner) {
+    animation.ready.then(() => {
+        setTimeout(() => testRunner.notifyDone(), 100);
+    });
+}
+
+</script>

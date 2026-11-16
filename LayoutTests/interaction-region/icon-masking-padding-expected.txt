@@ -1,0 +1,49 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (guard (20,10) width=31 height=33),
+        (interaction (20,20) width=31 height=13)
+        (clipPath add rect (6,0) width=19 height=1, add rect (3,1) width=25 height=1, add rect (2,2) width=27 height=1, add rect (1,3) width=29 height=3, add rect (0,6) width=31 height=1, add rect (1,7) width=29 height=3, add rect (2,10) width=27 height=1, add rect (3,11) width=25 height=1, add rect (6,12) width=19 height=1),
+        (guard (80,20) width=31 height=49),
+        (interaction (80,20) width=31 height=49)
+        (clipPath add rect (6,14) width=19 height=1, add rect (3,15) width=25 height=1, add rect (2,16) width=27 height=1, add rect (1,17) width=29 height=3, add rect (0,20) width=31 height=1, add rect (1,21) width=29 height=3, add rect (2,24) width=27 height=1, add rect (3,25) width=25 height=1, add rect (6,26) width=19 height=1),
+        (guard (640,20) width=31 height=49),
+        (interaction (640,20) width=31 height=49)
+        (clipPath add rect (6,22) width=19 height=1, add rect (3,23) width=25 height=1, add rect (2,24) width=27 height=1, add rect (1,25) width=29 height=3, add rect (0,28) width=31 height=1, add rect (1,29) width=29 height=3, add rect (2,32) width=27 height=1, add rect (3,33) width=25 height=1, add rect (6,34) width=19 height=1),
+        (guard (140,20) width=65 height=31),
+        (interaction (140,20) width=65 height=31)
+        (clipPath add rect (30,14) width=19 height=1, add rect (27,15) width=25 height=1, add rect (26,16) width=27 height=1, add rect (25,17) width=29 height=3, add rect (24,20) width=31 height=1, add rect (25,21) width=29 height=3, add rect (26,24) width=27 height=1, add rect (27,25) width=25 height=1, add rect (30,26) width=19 height=1),
+        (guard (240,20) width=62 height=62),
+        (interaction (240,20) width=62 height=62)
+        (clipPath add rect (10,19) width=42 height=1, add rect (7,20) width=48 height=1, add rect (6,21) width=50 height=1, add rect (5,22) width=52 height=1, add rect (4,23) width=54 height=1, add rect (3,24) width=56 height=1, add rect (2,25) width=58 height=3, add rect (1,28) width=60 height=6, add rect (2,34) width=58 height=3, add rect (3,37) width=56 height=1, add rect (4,38) width=54 height=1, add rect (5,39) width=52 height=1, add rect (6,40) width=50 height=1, add rect (7,41) width=48 height=1, add rect (10,42) width=42 height=1),
+        (guard (340,20) width=61 height=63),
+        (interaction (340,20) width=61 height=63)
+        (clipPath add rect (11,40) width=19 height=1, add rect (8,41) width=25 height=1, add rect (7,42) width=27 height=1, add rect (6,43) width=29 height=3, add rect (5,46) width=31 height=1, add rect (6,47) width=29 height=3, add rect (7,50) width=27 height=1, add rect (8,51) width=25 height=1, add rect (11,52) width=19 height=1),
+        (interaction (440,20) width=62 height=62)
+        (cornerRadius 8.00),
+        (interaction (540,20) width=40 height=40)
+        (cornerRadius 8.00),
+        (guard (20,110) width=51 height=33),
+        (interaction (20,120) width=51 height=13)
+        (clipPath add rect (6,0) width=19 height=1, add rect (3,1) width=25 height=1, add rect (2,2) width=27 height=1, add rect (1,3) width=29 height=3, add rect (0,6) width=31 height=1, add rect (1,7) width=29 height=3, add rect (2,10) width=27 height=1, add rect (3,11) width=25 height=1, add rect (6,12) width=19 height=1),
+        (guard (100,120) width=62 height=98),
+        (interaction (100,120) width=62 height=98)
+        (clipPath add rect (10,29) width=42 height=1, add rect (7,30) width=48 height=1, add rect (6,31) width=50 height=1, add rect (5,32) width=52 height=1, add rect (4,33) width=54 height=1, add rect (3,34) width=56 height=1, add rect (2,35) width=58 height=3, add rect (1,38) width=60 height=6, add rect (2,44) width=58 height=3, add rect (3,47) width=56 height=1, add rect (4,48) width=54 height=1, add rect (5,49) width=52 height=1, add rect (6,50) width=50 height=1, add rect (7,51) width=48 height=1, add rect (10,52) width=42 height=1),
+        (guard (200,120) width=31 height=27),
+        (interaction (200,120) width=31 height=27)
+        (clipPath move to (6,14), add line to (25,14), add line to (25,15), add line to (6,15), close subpath, move to (3,15), add line to (28,15), add line to (28,16), add line to (3,16), close subpath, move to (2,16), add line to (29,16), add line to (29,17), add line to (2,17), close subpath, move to (1,17), add line to (30,17), add line to (30,20), add line to (1,20), close subpath, move to (0,20), add line to (31,20), add line to (31,21), add line to (0,21), close subpath, move to (1,21), add line to (30,21), add line to (30,24), add line to (1,24), close subpath, move to (2,24), add line to (29,24), add line to (29,25), add line to (2,25), close subpath, move to (3,25), add line to (28,25), add line to (28,26), add line to (3,26), close subpath, move to (6,26), add line to (25,26), add line to (25,27), add line to (6,27), close subpath)])
+      )
+    )
+  )
+)
+

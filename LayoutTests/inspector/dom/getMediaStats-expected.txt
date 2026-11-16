@@ -1,0 +1,18 @@
+
+
+== Running test suite: DOM.getMediaStats
+-- Running test case: GetMediaStats-InvalidElement
+PASS: Should produce an exception.
+Error: Node for given nodeId is not a media element
+
+-- Running test case: GetMediaStats-EmptyVideo
+PASS: Did not throw when calling getMediaStats on video#emptyVideo
+PASS: Empty Video elements should not provide a stats.video
+PASS: Empty Video elements should not provide a stats.audio
+
+-- Running test case: GetMediaStats-ValidVideo
+PASS: Did not throw when calling getMediaStats on video#validVideo
+PASS: Empty Audio elements should not have empty stats.video
+PASS: Empty Audio elements should not have empty stats.video.codec
+PASS: Empty Audio elements should not have empty stats.video.humanReadableCodecString
+

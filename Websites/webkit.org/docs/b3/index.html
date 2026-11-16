@@ -1,0 +1,212 @@
+<html>
+<head>
+  <title>Bare Bones Backend</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <div id="banner">
+    <a href="http://www.webkit.org/" class="banner-link">
+      <div id="logo" class="site-logo">
+        WebKit
+        <span class="tagline">Open Source Web Browser Engine</span>
+      </div>
+    </a>
+  </div>
+  <div id="contents">
+    <h1>Bare Bones Backend</h1>
+    <p>The Bare Bones Backend, or B3 for short, is WebKit's optimizing JIT for procedures
+      containing C-like code.  It's currently used as the default backend for the
+      <a href="https://trac.webkit.org/wiki/FTLJIT">FTL JIT</a> inside
+      <a href="https://trac.webkit.org/wiki/JavaScriptCore">JavaScriptCore</a>.</p>
+
+    <p>B3 comprises a <a href="intermediate-representation.html">C-like
+        SSA IR</a> known as "B3 IR", optimizations on B3 IR, an
+      <a href="assembly-intermediate-representation.html">assembly IR</a>
+      known as "Air", optimizations on Air, an instruction selector that turns B3 IR into Air,
+      and a code generator that assembles Air into machine code.</p>
+
+    <h2>Hello, World!</h2>
+
+    <p>Here's a simple example of C++ code that uses B3 to generate a function that adds two to
+      its argument and returns it:</p>
+
+    <pre><code>// Create a Procedure that holds our code.
+Procedure proc;
+BasicBlock* root = proc.addBlock();
+root->appendNew&lt;Value&gt;(
+    proc, Return, Origin(),
+    root->appendNew&lt;Value&gt;(
+        proc, Add, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Const64Value>(proc, Origin(), 2)));
+
+// Have B3 compile the Procedure into code. The code and all of its artifacts (constant pools, jump tables)
+// will stay alive so long as Compilation stays alive.
+std::unique_ptr&lt;Compilation&gt; compilation = std::make_unique&lt;Compilation&gt;(vm, proc);
+
+// Get a function pointer that we can call. This function pointer points to JIT-generated machine code.
+int64_t (*function)(int64_t) = bitwise_cast&lt;int64_t (*)(int64_t)&gt;(compilation->code().executableAddress());
+
+// Run it and print the result!
+printf("%lld\n", function(42)); // Prints 44.</code></pre>
+
+    <p>When compiled, the resulting machine code looks like this:</p>
+
+    <pre><code>0x3aa6eb801000: pushq %rbp
+0x3aa6eb801001: movq %rsp, %rbp
+0x3aa6eb801004: leaq 0x2(%rdi), %rax
+0x3aa6eb801008: popq %rbp
+0x3aa6eb801009: ret </code></pre>
+
+    <p>B3 always emits a frame pointer prologue/epilogue to play nice with debugging tools.
+      Besides that, you can see that B3 optimized the procedure's body to a single instruction:
+      in this case, a Load Effective Address to transfer %rdi + 2, where %rdi is the first
+      argument register, into %rax, which is the result register.</p>
+
+    <h2>B3 IR</h2>
+
+    <p>Clients of B3 usually interact with it using
+      <a href="intermediate-representation.html">B3 IR</a>.  It's C-like, in the sense that it
+      models heap references as integers and does not attempt to verify memory accesses.  It
+      enforces <a href="https://en.wikipedia.org/wiki/Static_single_assignment_form">static single
+        assignment</a>, or SSA for short.  An SSA program will contain only one assignment to each
+      variable, which makes it trivial to trace from a use of a variable to the operation that
+      defined its value.  B3 IR is designed to be easy to generate and cheap to manipulate.</p>
+
+    <p>In most ways, B3 IR is platform-agnostic. However, since B3 is designed to be used as a
+      backend for JITs, it does embrace some platform-specific concepts whenever it is pragmatic to
+      do so. B3 exposes direct control over argument registers, stack frame layout, the frame
+      pointer, and the call argument areas.  It's possible to emit B3 IR that defines completely
+      novel calling conventions, both for callers of the procedure being generated and for callees of
+      the procedure's callsites.  B3 also makes it easy to just emit a C call.  There's an opcode for
+      that.</p>
+
+    <p>See <a href="intermediate-representation.html">the IR documentation</a> for more
+      info.</p>
+
+    <p>Here's an example of the IR from the example above:</p>
+
+    <pre><code>BB#0: ; frequency = 1.000000
+    Int64 @0 = ArgumentReg(%rdi)
+    Int64 @1 = Const64(2)
+    Int64 @2 = Add(@0, $2(@1))
+    Void @3 = Return(@2, Terminal)</code></pre>
+
+    <h2>B3 Optimizations</h2>
+
+    <p>B3 is fairly new - we only started working on it in late Oct 2015.  But it already has
+      some awesome optimizations:</p>
+    
+    <ul>
+      <li>CFG simplification.</li>
+      <li>Constant folding with some flow sensitivity.</li>
+      <li>Global CSE, including sophisticated load elimination.</li>
+      <li>Aggressive dead code elimination.</li>
+      <li>Tail duplication.</li>
+      <li>SSA fix-up</li>
+      <li>Optimal placement of constant materializations.</li>
+      <li>Integer overflow check elimination.</li>
+      <li>Reassociation.</li>
+      <li>Lots of miscellaneous strength reduction rules.</li>
+    </ul>
+
+    <h2>Air</h2>
+
+    <p><a href="assembly-intermediate-representation.html">Air</a>, or Assembly IR, is the way
+      that B3 represents the machine instruction sequence prior
+      to code generation.  Air is like assembly, except that in addition to registers it has
+      temporaries, and in addition to the native address forms it has abstract ones like "stack"
+      (an abstract stack slot) and "callArg" (an abstract location in the outgoing call argument
+      area of the stack).</p>
+
+    <p>Here's the initial Air generated from the example above:</p>
+
+    <pre><code>BB#0: ; frequency = 1.000000
+    Move %rdi, %tmp1, @0
+    Move $2, %tmp2, $2(@1)
+    Add64 $2, %tmp1, %tmp0, @2
+    Move %tmp0, %rax, @3
+    Ret64 %rax, @3</code></pre>
+
+    <p>Note that the "@" references indicate the origin of the instruction in the B3 IR.</p>
+
+    <h2>Air Optimizations</h2>
+
+    <p>Air has sophisticated optimizations that transform programs that use temporaries and
+      abstract stack locations into ones that use registers directly.  Air is also responsible
+      for ABI-related issues like stack layout and handling the C calling convention.  Air has
+      the following optimizations:</p>
+
+    <ul>
+      <li><a href="https://www.cs.princeton.edu/research/techreps/TR-498-95">Iterated Register Coalescing</a>.  This is our register allocator.</li>
+      <li>Graph coloring stack allocation.</li>
+      <li>Spill code fix-up.</li>
+      <li>Dead code elimination.</li>
+      <li>Partial register stall fix-up.</li>
+      <li>CFG simplification.</li>
+      <li>CFG layout optimization.</li>
+    </ul>
+
+    <p>Here's what these optimizations do to the example program:</p>
+
+    <pre><code>BB#0: ; frequency = 1.000000
+    Add64 $2, %rdi, %rax, @2
+    Ret64 %rax, @3</code></pre>
+
+    <h2>B3&rarr;Air lowering, also known as Instruction Selection</h2>
+
+    <p>The B3::LowerToAir phase converts B3 into Air by doing pattern-matching.  It processes
+      programs backwards.  At each B3 value, it greedily tries to match both the value and as
+      many of its children (i.e. Values it uses) and their children as possible to create a
+      single instruction.  Different hardware targets support different instructions.  Air
+      allows B3 to speak of the superset of all instructions on all targets, but exposes a fast
+      query to check if a given instruction, or specific instruction form (like 3-operand add,
+      for example) is available.  The instruction selector simply cascades through the patterns
+      it knows about until it finds one that gives a legal instruction in Air.</p>
+
+    <p>The instruction selector is powerful enough to do basic things like compare-branch and
+      load-op-store fusion.  It's smart enough to do things like what we call the Mega Combo,
+      where the following B3 IR:</p>
+
+    <pre><code>Int64 @0 = ArgumentReg(%rdi)
+Int64 @1 = ArgumentReg(%rsi)
+Int32 @2 = Trunc(@1)
+Int64 @3 = ZExt32(@2)
+Int32 @4 = Const32(1)
+Int64 @5 = Shl(@3, $1(@4))
+Int64 @6 = Add(@0, @5)
+Int32 @7 = Load8S(@6, ControlDependent|Reads:Top)
+Int32 @8 = Const32(42)
+Int32 @9 = LessThan(@7, $42(@8))
+Void @10 = Check(@9:WarmAny, generator = 0x103fe1010, earlyClobbered = [], lateClobbered = [],
+                 usedRegisters = [], ExitsSideways|Reads:Top)</code></pre>
+
+    <p>Is turned into the following Air:</p>
+
+    <pre><code>Move %rsi, %tmp7, @1
+Move %rdi, %tmp1, @0
+Move32 %tmp7, %tmp2, @3
+Patch &Branch8(3,SameAsRep), LessThan, (%tmp1,%tmp2,2), $42, @10</code></pre>
+
+    <p>And the resulting code ends up being:</p>
+
+    <pre><code>0x311001401004: movl %esi, %eax
+0x311001401006: cmpb $0x2a, (%rdi,%rax,2)
+0x31100140100a: jl 0x311001401015</code></pre>
+
+    <p>Other than the mandatory zero-extending operation to deal with the 32-bit argument being
+      used as an index, B3 is smart enough to convert the address computation, load, and compare
+      into a single instruction and then fuse that with the branch.</p>
+
+    <h2>Code generation</h2>
+
+    <p>The final form of Air contains no unallocated temporaries or abstract stack slots.  Therefore,
+      it maps directly to machine code.  The final code generation step is a very fast transformation
+      from Air's object-oriented way of representing those instructions to the target's machine
+      code.  We use JavaScriptCore's macro assembler for this purpose.</p>
+
+  </div>
+</body>
+</html>
+
+

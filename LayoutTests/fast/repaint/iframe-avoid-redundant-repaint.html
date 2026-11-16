@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function repaintTest()
+        {
+            await UIHelper.renderingUpdate();
+
+            if (window.internals)
+                internals.startTrackingRepaints();
+            
+            const iframe = document.getElementsByTagName('iframe')[0];
+            const iframeDocument = iframe.contentDocument;
+            iframeDocument.body.classList.add('changed');
+
+            await UIHelper.renderingUpdate();
+
+            if (window.internals) {
+                const repaintRects = internals.repaintRectsAsText();
+                internals.stopTrackingRepaints();
+                const pre = document.createElement('pre');
+                pre.innerText = repaintRects;
+                document.body.appendChild(pre);
+            }
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(repaintTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <iframe scrolling="no" srcdoc="
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            overflow: clip;
+        }
+
+        rect {
+            fill: blue;
+        }
+        
+        body.changed rect {
+            width: 310px;
+        }
+    </style>
+    <body>
+        <svg width=300 height=300>
+            <rect x=0 y=0 width=300 height=300 />
+            <rect x=0 y=0 width=300 height=300 />
+            <rect x=0 y=0 width=300 height=300 />
+        </svg>
+    </body>
+    "></iframe>
+</body>
+</html>

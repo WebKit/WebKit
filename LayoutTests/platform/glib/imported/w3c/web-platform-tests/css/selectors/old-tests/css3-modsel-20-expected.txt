@@ -1,0 +1,5 @@
+The background color of anchors in this page should turn to green when they have the focus.
+
+
+PASS Verify :focus matches focused elements
+

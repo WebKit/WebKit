@@ -1,0 +1,86 @@
+/*
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#pragma once
+
+#include "RenderBlock.h"
+#include "RenderReplaced.h"
+#include <wtf/HashMap.h>
+#include <wtf/WeakRef.h>
+
+namespace WebCore {
+
+class HTMLCanvasElement;
+struct CanvasElementSnapshot;
+
+namespace DisplayList {
+class RecorderImpl;
+}
+
+class RenderHTMLCanvas final : public RenderReplaced {
+    WTF_MAKE_TZONE_ALLOCATED(RenderHTMLCanvas);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderHTMLCanvas);
+public:
+    RenderHTMLCanvas(HTMLCanvasElement&, Style::ComputedStyle&&);
+    virtual ~RenderHTMLCanvas();
+
+    NODELETE HTMLCanvasElement& canvasElement() const;
+
+    void canvasSizeChanged();
+
+    RenderBlock* innerRenderer() const { return m_innerRenderer.get(); }
+    NODELETE void setInnerRenderer(RenderBlock*);
+
+    bool hasDrawableContent() const;
+
+    DisplayList::RecorderImpl* canvasDrawableRecorder(RenderElement&, GraphicsContext&, const IntRect& elementRelativeBounds) const;
+    std::optional<CanvasElementSnapshot> canvasDrawableSnapshot(RenderElement&) const;
+
+    void requestPaintEventIfNeeded(const RenderElement& repaintedRenderer) const;
+
+private:
+    void element() const = delete;
+
+    bool requiresLayer() const override;
+    ASCIILiteral renderName() const override { return "RenderHTMLCanvas"_s; }
+
+    NaturalDimensions zoomedNaturalDimensions() const final;
+
+    bool canHaveChildren() const override;
+
+    void layout() override;
+    void paintReplaced(PaintInfo&, const LayoutPoint&) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+
+    void intrinsicSizeChanged() override { canvasSizeChanged(); }
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+
+    SingleThreadWeakPtr<RenderBlock> m_innerRenderer;
+    mutable HashMap<SingleThreadWeakRef<RenderElement>, Ref<DisplayList::RecorderImpl>> m_canvasDrawableRecorderMap;
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderHTMLCanvas, isRenderHTMLCanvas())

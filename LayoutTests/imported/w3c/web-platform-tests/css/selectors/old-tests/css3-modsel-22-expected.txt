@@ -1,0 +1,7 @@
+This list item should be green because its language is British English
+This list item should be green because its language is British English (Wales)
+This list item should NOT be green because its language is US English
+This list item should NOT be green because its language is French
+
+PASS li:lang(en-GB) matches
+

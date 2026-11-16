@@ -1,0 +1,6 @@
+PASS imageOverlayContainer(image1).translate is false
+PASS imageOverlayContainer(image2).translate is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,14 @@
+#! /usr/bin/env sh
+set -e
+
+reconfigure_mode=$1
+shift
+
+if [ "$reconfigure_mode" = flag ] || [ -r "$1/build.ninja" ] ; then
+    set -- setup --reconfigure "$@"
+else
+    set -- setup "$@"
+fi
+
+echo "MESON: meson $*"
+exec meson "$@"

@@ -1,0 +1,175 @@
+/*
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2009 Torch Mobile, Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/Image.h>
+#include <WebCore/ImageSource.h>
+#include <wtf/Function.h>
+
+namespace WebCore {
+
+class ImageObserver;
+class ImageSource;
+class NativeImage;
+class ShareableSpatialImage;
+
+class BitmapImage final : public Image {
+public:
+    NODELETE WEBCORE_EXPORT static Ref<BitmapImage> create(ImageObserver* = nullptr, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
+    WEBCORE_EXPORT static Ref<BitmapImage> createFromPlatformResource(StringView name);
+
+    WEBCORE_EXPORT static BitmapImage& nullImage();
+
+    using Image::draw;
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, FloatPoint destination = { });
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const FloatRect& destination);
+    WEBCORE_EXPORT ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source);
+
+    // Animation
+    void startAnimation() final { m_source->startAnimation(); }
+    void stopAnimation() final { m_source->stopAnimation(); }
+    void resetAnimation() final { m_source->resetAnimation(); }
+    bool isAnimated() const final { return m_source->isAnimated(); }
+    bool hasEverAnimated() const { return m_source->hasEverAnimated(); }
+
+    // Decoding
+    bool isLargeForDecoding() const { return m_source->isLargeForDecoding(); }
+    void cancelPendingDecodingRequests() { m_source->cancelPendingDecodingRequests(); }
+    void decode(Function<void(DecodingStatus)>&& decodeCallback) { m_source->decode(WTF::move(decodeCallback)); }
+
+    // Current ImageFrame
+    unsigned currentFrameIndex() const { return m_source->currentFrameIndex(); }
+    bool currentFrameHasAlpha() const { return m_source->currentImageFrame().hasAlpha(); }
+    ImageOrientation currentFrameOrientation() const { return m_source->currentImageFrame().orientation(); }
+    DecodingOptions currentFrameDecodingOptions() const { return m_source->currentImageFrame().decodingOptions(std::nullopt); }
+
+    // Primary & current NativeImage
+    RefPtr<NativeImage> primaryNativeImage() { return m_source->primaryNativeImage(); }
+    RefPtr<NativeImage> nativeImage(const ColorSpace& = ColorSpace::SRGB()) { return primaryNativeImage(); }
+    RefPtr<NativeImage> currentNativeImage() { return m_source->currentNativeImage(); }
+
+    RefPtr<NativeImage> nativeImageForUnpremultipliedPixels() { return m_source->primaryNativeImageForUnpremultipliedPixels(); }
+
+    // A bitmap has a size of its own, so these ignore the concrete object size.
+    RefPtr<NativeImage> nativeImage(const ImageDrawDescriptor&, const ColorSpace& = ColorSpace::SRGB()) final { return primaryNativeImage(); }
+    RefPtr<NativeImage> currentNativeImage(const ImageDrawDescriptor&) final { return currentNativeImage(); }
+
+    // Image Metadata
+    String uti() const final { return m_source->uti(); }
+    FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return m_source->size(orientation); }
+    bool hasSomethingToDraw() const final { return !size().isEmpty(); }
+    FloatSize density() const { return m_source->density(); }
+    ColorSpace colorSpace() final { return m_source->colorSpace(); }
+    bool hasHDRContent() const final { return m_source->hasHDRContent(); }
+    ImageOrientation orientation() const final { return m_source->orientation(); }
+    unsigned frameCount() const final { return m_source->frameCount(); }
+    std::optional<IntPoint> hotSpot() const final { return m_source->hotSpot(); }
+#if ASSERT_ENABLED
+    bool hasSolidColor() final { return m_source->hasSolidColor(); }
+#endif
+
+    NaturalDimensions unorientedNaturalDimensions() const final;
+
+    // ImageFrame
+    Seconds frameDurationAtIndex(unsigned index) const { return m_source->frameDurationAtIndex(index); }
+
+    // NativeImage
+    RefPtr<NativeImage> nativeImageAtIndex(unsigned index) const { return m_source->nativeImageAtIndex(index); }
+    RefPtr<NativeImage> nativeImageAtIndex(unsigned index, const ImageDrawDescriptor&) final { return nativeImageAtIndex(index); }
+
+    // Testing support.
+    UTF8CString sourceUTF8() const { return sourceURL().string().utf8(); }
+    void setAsyncDecodingEnabledForTesting(bool enabled) { m_source->setAsyncDecodingEnabledForTesting(enabled); }
+    bool isAsyncDecodingEnabledForTesting() const { return m_source->isAsyncDecodingEnabledForTesting(); }
+    void setMinimumDecodingDurationForTesting(Seconds duration) { m_source->setMinimumDecodingDurationForTesting(duration); }
+    void setClearDecoderAfterAsyncFrameRequestForTesting(bool enabled) { m_source->setClearDecoderAfterAsyncFrameRequestForTesting(enabled); }
+    void setHasHDRContentForTesting() { m_source->setHasHDRContentForTesting(); }
+    WEBCORE_EXPORT void simulateDataReplacedForTesting();
+    unsigned decodeCountForTesting() const { return m_source->decodeCountForTesting(); }
+    unsigned blankDrawCountForTesting() const { return m_source->blankDrawCountForTesting(); }
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    bool isSpatial() const final { return m_source->isSpatial(); }
+    std::optional<unsigned> spatialLeftEyeFrameIndex() const { return m_source->spatialLeftEyeFrameIndex(); }
+    std::optional<unsigned> spatialRightEyeFrameIndex() const { return m_source->spatialRightEyeFrameIndex(); }
+    std::optional<SpatialImageEyeProperties> spatialEyePropertiesAtIndex(unsigned index) const { return m_source->spatialEyePropertiesAtIndex(index); }
+    WEBCORE_EXPORT std::optional<ShareableSpatialImage> createShareableSpatialImage() const;
+#endif
+
+private:
+    BitmapImage(ImageObserver*, AlphaOption, GammaAndColorProfileOption);
+
+    // Encoded and decoded data
+    EncodedDataStatus dataChanged(bool allDataReceived) final;
+    void destroyDecodedData(bool destroyAll = true) final;
+
+    bool canReplaceData() const final { return m_source->canReplaceData(); }
+    void dataReplaced() final;
+
+    // Current ImageFrame
+    bool currentFrameKnownToBeOpaque() const final { return !currentFrameHasAlpha(); }
+    bool currentFrameIsComplete() const final { return m_source->currentImageFrame().isComplete(); }
+
+    // Current NativeImage
+    RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) { return m_source->currentPreTransformedNativeImage(orientation); }
+    RefPtr<NativeImage> currentPreTransformedNativeImage(const ImageDrawDescriptor& descriptor) final { return currentPreTransformedNativeImage(descriptor.orientation); }
+
+    // Image Metadata
+    bool hasDensityCorrectedSize() const final { return m_source->hasDensityCorrectedSize(); }
+    String filenameExtension() const final { return m_source->filenameExtension(); }
+    String accessibilityDescription() const final { return m_source->accessibilityDescription(); }
+    std::optional<Color> singlePixelSolidColor() const final { return m_source->singlePixelSolidColor(); }
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    bool isPanorama() const final { return m_source->isPanorama(); }
+#endif
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    std::optional<float> focalLengthIn35mm() const final { return m_source->focalLengthIn35mm(); }
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    bool isMaybePanoramic() const final { return m_source->isMaybePanoramic(); }
+#endif
+
+    // Image methods
+    bool isBitmapImage() const final { return true; }
+    bool isAnimating() const final { return m_source->isAnimating(); }
+
+    bool hasHDRContentForTesting() const final { return m_source->hasHDRContentForTesting(); }
+
+    ImageDrawResult drawImage(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destinationRect, const FloatRect& sourceRect) final;
+
+    void dump(WTF::TextStream&) const final;
+
+    const Ref<ImageSource> m_source;
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_IMAGE(BitmapImage)

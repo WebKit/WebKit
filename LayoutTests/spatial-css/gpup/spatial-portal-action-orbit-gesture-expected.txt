@@ -1,0 +1,7 @@
+
+PASS dragging a portal-action: orbit portal rotates its content
+PASS dragging a portal-action: none portal leaves its content alone
+PASS preventDefault() on mousedown stops a portal-action: orbit gesture from starting
+PASS switching to portal-action: none in the middle of a drag cancels the gesture and restores the fit
+PASS re-enabling portal-action: orbit starts from the fitted pose rather than the previous rotation
+

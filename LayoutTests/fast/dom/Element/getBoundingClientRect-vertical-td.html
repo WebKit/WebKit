@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<style>
+    td { padding: 10px }
+</style>
+<div style="-webkit-writing-mode: vertical-rl; writing-mode: vertical-rl">    <table style="margin: 50px">
+    <tr id="tr1">
+        <td id="td1a"><span id="s1a">1-A</span></td>
+        <td id="td1b"><span id="s1b">1-B</span></td>
+        <td id="td1c"><span id="s1c">1-C</span></td>
+        <td id="td1d"><span id="s1d">1-D</span></td>
+        <td id="td1e"><span id="s1e">1-E</span></td>
+    </tr>
+    <tr id="tr2">
+        <td id="td2a"><span id="s2a">2-A</span></td>
+        <td id="td2b"><span id="s2b">2-B</span></td>
+        <td id="td2c"><span id="s2b">2-C</span></td>
+        <td id="td2d"><span id="s2b">2-D</span></td>
+        <td id="td2e"><span id="s2b">2-E</span></td>
+    </tr>
+    <tr id="tr3">
+        <td id="td3a"><span id="s3a">3-A</span></td>
+        <td id="td3b"><span id="s3b">3-B</span></td>
+        <td id="td3c"><span id="s3b">3-C</span></td>
+        <td id="td3d"><span id="s3b">3-D</span></td>
+        <td id="td3e"><span id="s3b">3-E</span></td>
+    </tr>
+    <tr id="tr4">
+        <td id="td4a"><span id="s4a">4-A</span></td>
+        <td id="td4b"><span id="s4b">4-B</span></td>
+        <td id="td4c"><span id="s4b">4-C</span></td>
+        <td id="td4d"><span id="s4b">4-D</span></td>
+        <td id="td4e"><span id="s4b">4-E</span></td>
+    </tr>
+    <tr id="tr5">
+        <td id="td5a"><span id="s5a">5-A</span></td>
+        <td id="td5b"><span id="s5b">5-B</span></td>
+        <td id="td5c"><span id="s5b">5-C</span></td>
+        <td id="td5d"><span id="s5b">5-D</span></td>
+        <td id="td5e"><span id="s5b">5-E</span></td>
+    </tr>
+</table>
+<div id="r"></div>
+<div style="padding: 100px"></div>
+</div>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+testRunner.dumpAsText();
+
+function doesRectContainRect(description, parent, child) {
+    var margin = 0;
+    if (child.top < (parent.top - margin)) {
+        return false;
+    }
+    if (child.bottom > (parent.bottom + margin)) {
+        return false;
+    }
+    if (child.left < (parent.left - margin)) {
+        return false;
+    }
+    if (child.right > (parent.right + margin)) {
+    return false;
+    }
+    return true;
+    }
+
+    var gTrRect;
+    var gTdRect;
+function assert_contains(parent, child, description) {
+    gTrRect = parent;
+    gTdRect = child;
+    shouldBeTrue("doesRectContainRect('" + description + "', gTrRect, gTdRect)");
+}
+
+function checkRowColumn(row, column) {
+    var columnName = ["a", "b", "c", "d", "e"];
+    var trId = "tr" + (row + 1);
+    var tr = document.getElementById(trId);
+    var trRect = tr.getBoundingClientRect();
+    var name = (row + 1).toString() + "-" + columnName[column].toUpperCase();
+    var tdId = "td" + (row + 1) + columnName[column];
+    var td = document.getElementById(tdId);
+    var tdRect = td.getBoundingClientRect();
+    assert_contains(trRect, tdRect, name);
+}
+
+for (var i = 0; i < 5; i++) {
+    for (var j = 0; j < 5; j++) {
+        checkRowColumn(i, j);
+    }
+}
+</script>

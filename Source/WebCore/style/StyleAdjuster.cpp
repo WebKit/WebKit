@@ -1,0 +1,1557 @@
+/*
+ * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
+ * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
+ * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2012-2020 Google Inc. All rights reserved.
+ * Copyright (C) 2014, 2020, 2022 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "StyleAdjuster.h"
+
+#include "CSSFontSelector.h"
+#include "ContainerNodeInlines.h"
+#include "DocumentPage.h"
+#include "DocumentQuirks.h"
+#include "DocumentView.h"
+#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
+#include "ElementInlines.h"
+#include "EventNames.h"
+#include "HTMLBodyElement.h"
+#include "HTMLCanvasElement.h"
+#include "HTMLDialogElement.h"
+#include "HTMLDivElement.h"
+#include "HTMLInputElement.h"
+#include "HTMLLabelElement.h"
+#include "HTMLMarqueeElement.h"
+#include "HTMLNames.h"
+#include "HTMLSlotElement.h"
+#include "HTMLTableElement.h"
+#include "HTMLTextAreaElement.h"
+#include "HTMLVideoElement.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrameView.h"
+#include "MathMLElement.h"
+#include "NodeName.h"
+#include "Page.h"
+#include "PathOperation.h"
+#include "PlatformRenderTheme.h"
+#include "RenderBox.h"
+#include "RenderTheme.h"
+#include "RenderView.h"
+#include "SVGElement.h"
+#include "SVGGraphicsElement.h"
+#include "SVGNames.h"
+#include "SVGSVGElement.h"
+#include "SVGURIReference.h"
+#include "SelectPopoverElement.h"
+#include "Settings.h"
+#include "ShadowRoot.h"
+#include "StyleableInlines.h"
+#include "StyleContainmentCheckerInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
+#include "StyleFontSizeFunctions.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StyleSelfAlignmentData.h"
+#include "StyleTextDecorationLine.h"
+#include "StyleTouchAction.h"
+#include "StyleUpdate.h"
+#include "Styleable.h"
+#include "Text.h"
+#include "TouchAction.h"
+#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
+#include "UserAgentParts.h"
+#include "VisibilityAdjustment.h"
+#include "WebAnimationTypes.h"
+#include <wtf/RobinHoodHashSet.h>
+#include <wtf/WeakHashMap.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+#include "DocumentFullscreen.h"
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/StyleAdjusterAdditions.cpp>
+#endif
+
+namespace WebCore {
+namespace Style {
+
+using namespace CSS::Literals;
+using namespace HTMLNames;
+
+Adjuster::Adjuster(const Document& document, const Style::ComputedStyle& parentStyle, const Style::ComputedStyle* parentBoxStyle, Element* element)
+    : m_document(document)
+    , m_parentStyle(parentStyle)
+    , m_parentBoxStyle(parentBoxStyle ? *parentBoxStyle : m_parentStyle)
+    , m_element(element)
+{
+}
+
+#if PLATFORM(COCOA)
+static void addIntrinsicMargins(Style::ComputedStyle& style)
+{
+    // Intrinsic margin value.
+    const auto intrinsicMargin = MarginEdge::Fixed { static_cast<float>(clampTo<int>(2 * style.usedZoom())) };
+
+    // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
+    // FIXME: Using "hasQuirk" to decide the margin wasn't set is kind of lame.
+    if (style.width().isSizingKeywordOrAuto()) {
+        if (style.marginLeft().hasQuirk())
+            style.setMarginLeft(intrinsicMargin);
+        if (style.marginRight().hasQuirk())
+            style.setMarginRight(intrinsicMargin);
+    }
+
+    if (style.height().isAuto()) {
+        if (style.marginTop().hasQuirk())
+            style.setMarginTop(intrinsicMargin);
+        if (style.marginBottom().hasQuirk())
+            style.setMarginBottom(intrinsicMargin);
+    }
+}
+#endif
+
+static bool shouldInheritTextDecorationsInEffect(const Style::ComputedStyle& style, const Element* element)
+{
+    if (style.floating() != Float::None || style.hasOutOfFlowPosition())
+        return false;
+
+    // Media elements have a special rendering where the media controls do not use a proper containing
+    // block model which means we need to manually stop text-decorations to apply to text inside media controls.
+    auto isAtMediaUAShadowBoundary = [&] {
+#if ENABLE(VIDEO)
+        if (!element)
+            return false;
+        RefPtr parentNode = element->parentNode();
+        return parentNode && parentNode->isUserAgentShadowRoot() && protect(parentNode->parentOrShadowHostElement())->isMediaElement();
+#else
+        return false;
+#endif
+    }();
+
+    // Outermost <svg> roots are considered to be atomic inline-level.
+    if (auto* svgElement = dynamicDowncast<SVGElement>(element); svgElement && svgElement->isOutermostSVGSVGElement())
+        return false;
+
+    // There is no other good way to prevent decorations from affecting user agent shadow trees.
+    if (isAtMediaUAShadowBoundary)
+        return false;
+
+    switch (style.display().value) {
+    case DisplayType::InlineFlowRoot:
+    case DisplayType::InlineTable:
+    case DisplayType::InlineFlex:
+    case DisplayType::InlineGrid:
+    case DisplayType::InlineGridLanes:
+    case DisplayType::InlineDeprecatedFlex:
+        return false;
+    default:
+        break;
+    };
+
+    return true;
+}
+
+NODELETE static bool isUserScrollableOverflow(Overflow overflow)
+{
+    return overflow == Overflow::Scroll || overflow == Overflow::Auto;
+}
+
+static TouchAction computeUsedTouchAction(const Style::ComputedStyle& style, TouchAction usedTouchAction)
+{
+    // https://w3c.github.io/pointerevents/#determining-supported-touch-behavior
+    // "A touch behavior is supported if it conforms to the touch-action property of each element between
+    // the hit tested element and its nearest ancestor with the default touch behavior (including both the
+    // hit tested element and the element with the default touch behavior)."
+
+    bool hasDefaultTouchBehavior = isUserScrollableOverflow(style.overflowX()) || isUserScrollableOverflow(style.overflowY());
+    if (hasDefaultTouchBehavior)
+        usedTouchAction = ComputedStyle::initialTouchAction();
+
+    auto touchAction = style.touchAction();
+    if (touchAction == ComputedStyle::initialTouchAction())
+        return usedTouchAction;
+
+    if (usedTouchAction.isNone() || touchAction.isNone())
+        return CSS::Keyword::None { };
+
+    auto usedTouchActionEnumSet = usedTouchAction.tryEnumSet();
+    if (!usedTouchActionEnumSet)
+        return touchAction;
+
+    auto touchActionEnumSet = touchAction.tryEnumSet();
+    if (!touchActionEnumSet)
+        return usedTouchAction;
+
+    auto sharedTouchActions = *usedTouchActionEnumSet & *touchActionEnumSet;
+    if (sharedTouchActions.isEmpty())
+        return CSS::Keyword::None { };
+
+    return sharedTouchActions;
+}
+
+bool Adjuster::adjustEventListenerRegionTypesForRootStyle(Style::ComputedStyle& rootStyle, const Document& document)
+{
+    auto regionTypes = computeEventListenerRegionTypes(document, rootStyle, document, { });
+    if (RefPtr window = document.window())
+        regionTypes.add(computeEventListenerRegionTypes(document, rootStyle, *window, { }));
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    // https://html.spec.whatwg.org/multipage/interactive-elements.html#run-light-dismiss-activities
+    if (document.shouldUseTouchEventRegions() && document.needsPointerEventHandlingForPopoverOrDialog()) {
+        regionTypes.add(EventListenerRegionType::PointerDown);
+        regionTypes.add(EventListenerRegionType::PointerUp);
+    }
+#endif
+
+    bool changed = regionTypes != rootStyle.eventListenerRegionTypes();
+    rootStyle.setEventListenerRegionTypes(regionTypes);
+    return changed;
+}
+
+OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const Document& document, const Style::ComputedStyle& style, const EventTarget& eventTarget, OptionSet<EventListenerRegionType> parentTypes)
+{
+    auto types = parentTypes;
+
+#if ENABLE(WHEEL_EVENT_REGIONS) || ENABLE(TOUCH_EVENT_REGIONS)
+    auto findListeners = [&](auto& eventName, auto type, auto nonPassiveType) {
+        auto* eventListenerVector = eventTarget.eventTargetData()->eventListenerMap.find(eventName);
+        if (!eventListenerVector)
+            return;
+
+        types.add(type);
+
+        auto isPassiveOnly = [&] {
+            for (auto& listener : *eventListenerVector) {
+                if (!listener->isPassive())
+                    return false;
+            }
+            return true;
+        }();
+
+        if (!isPassiveOnly)
+            types.add(nonPassiveType);
+    };
+#endif
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    if (eventTarget.hasEventListeners()) {
+        findListeners(eventNames().wheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
+        findListeners(eventNames().mousewheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
+    }
+#endif
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    if (document.shouldUseTouchEventRegions() && eventTarget.hasEventListeners()) {
+        findListeners(eventNames().touchstartEvent, EventListenerRegionType::TouchStart, EventListenerRegionType::NonPassiveTouchStart);
+        findListeners(eventNames().touchendEvent, EventListenerRegionType::TouchEnd, EventListenerRegionType::NonPassiveTouchEnd);
+        // `touchcancel` is sent after the event has already been cancelled. Calling preventDefault() has no effect, so we don't
+        // need a synchronous version.
+        findListeners(eventNames().touchcancelEvent, EventListenerRegionType::TouchCancel, EventListenerRegionType::TouchCancel);
+        findListeners(eventNames().touchmoveEvent, EventListenerRegionType::TouchMove, EventListenerRegionType::NonPassiveTouchMove);
+        findListeners(eventNames().touchforcechangeEvent, EventListenerRegionType::TouchForceChange, EventListenerRegionType::NonPassiveTouchForceChange);
+
+        findListeners(eventNames().pointerdownEvent, EventListenerRegionType::PointerDown, EventListenerRegionType::NonPassivePointerDown);
+        findListeners(eventNames().pointerenterEvent, EventListenerRegionType::PointerEnter, EventListenerRegionType::NonPassivePointerEnter);
+        findListeners(eventNames().pointerleaveEvent, EventListenerRegionType::PointerLeave, EventListenerRegionType::NonPassivePointerLeave);
+        findListeners(eventNames().pointermoveEvent, EventListenerRegionType::PointerMove, EventListenerRegionType::NonPassivePointerMove);
+        findListeners(eventNames().pointeroutEvent, EventListenerRegionType::PointerOut, EventListenerRegionType::NonPassivePointerOut);
+        findListeners(eventNames().pointeroverEvent, EventListenerRegionType::PointerOver, EventListenerRegionType::NonPassivePointerOver);
+        findListeners(eventNames().pointerupEvent, EventListenerRegionType::PointerUp, EventListenerRegionType::NonPassivePointerUp);
+        if (document.quirks().shouldDispatchSimulatedMouseEvents(&eventTarget)) {
+            findListeners(eventNames().mousedownEvent, EventListenerRegionType::MouseDown, EventListenerRegionType::NonPassiveMouseDown);
+            findListeners(eventNames().mouseupEvent, EventListenerRegionType::MouseUp, EventListenerRegionType::NonPassiveMouseUp);
+            findListeners(eventNames().mousemoveEvent, EventListenerRegionType::MouseMove, EventListenerRegionType::NonPassiveMouseMove);
+        }
+
+        findListeners(eventNames().gesturechangeEvent, EventListenerRegionType::GestureChange, EventListenerRegionType::NonPassiveGestureChange);
+        findListeners(eventNames().gestureendEvent, EventListenerRegionType::GestureEnd, EventListenerRegionType::NonPassiveGestureEnd);
+        findListeners(eventNames().gesturestartEvent, EventListenerRegionType::GestureStart, EventListenerRegionType::NonPassiveGestureStart);
+    }
+
+    if (eventTarget.hasInternalTouchEventHandling()) {
+        types.add(EventListenerRegionType::TouchCancel);
+        types.add(EventListenerRegionType::TouchEnd);
+        types.add(EventListenerRegionType::TouchForceChange);
+        types.add(EventListenerRegionType::TouchMove);
+        types.add(EventListenerRegionType::TouchStart);
+        types.add(EventListenerRegionType::NonPassiveTouchEnd);
+        types.add(EventListenerRegionType::NonPassiveTouchForceChange);
+        types.add(EventListenerRegionType::NonPassiveTouchMove);
+        types.add(EventListenerRegionType::NonPassiveTouchStart);
+    }
+#endif
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (document.page() && document.page()->shouldBuildInteractionRegions()) {
+        if (const auto* node = dynamicDowncast<Node>(eventTarget)) {
+            if (node->willRespondToMouseClickEventsWithEditability(node->computeEditabilityForMouseClickEvents(&style)))
+                types.add(EventListenerRegionType::MouseClick);
+        }
+    }
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(style);
+#endif
+
+#if !ENABLE(WHEEL_EVENT_REGIONS) && !ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    UNUSED_PARAM(eventTarget);
+#endif
+
+    return types;
+}
+
+NODELETE static bool isOverflowClipOrVisible(Overflow overflow)
+{
+    return overflow == Overflow::Clip || overflow == Overflow::Visible;
+}
+
+NODELETE static bool shouldInlinifyForRuby(const Style::ComputedStyle& style, const Style::ComputedStyle& parentBoxStyle)
+{
+    auto parentDisplay = parentBoxStyle.display();
+    auto hasRubyParent = parentDisplay == DisplayType::InlineRuby
+        || parentDisplay == DisplayType::BlockRuby
+        || parentDisplay == DisplayType::RubyText
+        || parentDisplay == DisplayType::RubyBase;
+
+    return hasRubyParent && !style.hasOutOfFlowPosition() && style.floating() == Float::None;
+}
+
+NODELETE static bool hasUnsupportedRubyDisplay(Display display, const Element* element, const Document& document)
+{
+    if (document.settings().cssRubyDisplayTypesInAuthorStylesEnabled())
+        return false;
+
+    // Only allow ruby elements to have ruby display types for now.
+    switch (display.value) {
+    case DisplayType::InlineRuby:
+    case DisplayType::BlockRuby:
+        // Test for localName so this also allows WebVTT ruby elements.
+        return !element || !element->hasLocalName(rubyTag->localName());
+    case DisplayType::RubyText:
+        return !element || !element->hasLocalName(rtTag->localName());
+    case DisplayType::RubyBase:
+        ASSERT_NOT_REACHED();
+        return false;
+    default:
+        return false;
+    }
+}
+
+// https://drafts.csswg.org/css-ruby-1/#bidi
+NODELETE static UnicodeBidi forceBidiIsolationForRuby(UnicodeBidi unicodeBidi)
+{
+    switch (unicodeBidi) {
+    case UnicodeBidi::Normal:
+    case UnicodeBidi::Embed:
+    case UnicodeBidi::Isolate:
+        return UnicodeBidi::Isolate;
+    case UnicodeBidi::Override:
+    case UnicodeBidi::IsolateOverride:
+        return UnicodeBidi::IsolateOverride;
+    case UnicodeBidi::Plaintext:
+        return UnicodeBidi::Plaintext;
+    }
+    ASSERT_NOT_REACHED();
+    return UnicodeBidi::Isolate;
+}
+
+bool Adjuster::shouldTreatAutoZIndexAsZero(const Style::ComputedStyle& style)
+{
+    return !style.opacity().isOpaque()
+        || style.hasTransformRelatedProperty()
+        || style.hasMask()
+        || !style.clipPath().isNone()
+        || !style.boxReflect().isNone()
+        || !style.filter().isNone()
+        || !style.backdropFilter().isNone()
+#if HAVE(CORE_MATERIAL)
+        || style.appleVisualEffect() != AppleVisualEffect::None
+#endif
+        || style.blendMode() != BlendMode::Normal
+        || style.isolation() != Isolation::Auto
+        || style.position() == PositionType::Sticky
+        || style.position() == PositionType::Fixed
+#if ENABLE(SPATIAL_PORTAL)
+        || style.spatial() == SpatialType::Portal
+#endif
+        || style.willChange().canCreateStackingContext();
+}
+
+void Adjuster::adjustFromBuilder(Style::ComputedStyle& style)
+{
+    // Do some adjustments that don't depend on element or parent style and are safe to cache.
+    // This allows copy-on-write to trigger before caching.
+
+    if (style.specifiedZIndex().isAuto()) {
+        if (shouldTreatAutoZIndexAsZero(style))
+            style.setUsedZIndex(0);
+    } else if (style.position() != PositionType::Static)
+        style.setUsedZIndex(style.specifiedZIndex());
+
+    // Adjust any coordinated value lists.
+    adjustAnimations(style);
+    adjustTransitions(style);
+    adjustBackgroundLayers(style);
+    adjustMaskLayers(style);
+
+    // Do the same for scroll-timeline and view-timeline longhands.
+    adjustScrollTimelines(style);
+    adjustViewTimelines(style);
+}
+
+void Adjuster::adjustFirstLetterStyle(Style::ComputedStyle& style)
+{
+    if (style.pseudoElementType() != PseudoElementType::FirstLetter)
+        return;
+
+    // Force inline display (except for floating first-letters).
+    style.setDisplayMaintainingOriginalDisplay(style.floating() != Float::None ? DisplayType::BlockFlow : DisplayType::InlineFlow);
+}
+
+void Adjuster::adjustFirstLineStyle(Style::ComputedStyle& style)
+{
+    if (style.pseudoElementType() != PseudoElementType::FirstLine)
+        return;
+
+    // Force inline display.
+    style.setDisplayMaintainingOriginalDisplay(DisplayType::InlineFlow);
+}
+
+static WeakHashMap<Element, WebCore::Color, WeakPtrImplWithEventTargetData>& overrideBackgroundColorsForTesting()
+{
+    static MainThreadNeverDestroyed<WeakHashMap<Element, WebCore::Color, WeakPtrImplWithEventTargetData>> colors;
+    return colors;
+}
+
+void Adjuster::setOverrideBackgroundColorForTesting(Element& element, std::optional<WebCore::Color>&& color)
+{
+    if (color)
+        overrideBackgroundColorsForTesting().set(element, WTF::move(*color));
+    else
+        overrideBackgroundColorsForTesting().remove(element);
+
+    element.invalidateStyle();
+}
+
+void Adjuster::adjust(Style::ComputedStyle& style) const
+{
+    if (style.display() == DisplayType::Contents)
+        adjustDisplayContentsStyle(style);
+    else if (style.display() != DisplayType::None) {
+        if (RefPtr element = m_element) {
+            // Tables never support the -webkit-* values for text-align and will reset back to the default.
+            if (is<HTMLTableElement>(*element) && (style.textAlign() == TextAlign::WebKitLeft || style.textAlign() == TextAlign::WebKitCenter || style.textAlign() == TextAlign::WebKitRight))
+                style.setTextAlign(TextAlign::Start);
+
+            // Ruby text does not support float or position. This might change with evolution of the specification.
+            if (element->hasTagName(rtTag)) {
+                style.setPosition(PositionType::Static);
+                style.setFloating(Float::None);
+            }
+
+            if (element->hasTagName(legendTag))
+                style.setDisplayMaintainingOriginalDisplay(style.display().blockified());
+        }
+
+        if (hasUnsupportedRubyDisplay(style.display(), m_element.get(), m_document))
+            style.setDisplayMaintainingOriginalDisplay(style.display() == DisplayType::BlockRuby ? DisplayType::BlockFlow : DisplayType::InlineFlow);
+
+        // Top layer elements are always position: absolute; unless the position is set to fixed.
+        // https://fullscreen.spec.whatwg.org/#new-stacking-layer
+        if (m_element != m_document->documentElement() && style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayerOrBackdrop(style, m_element.get()))
+            style.setPosition(PositionType::Absolute);
+
+        // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
+        if (style.hasOutOfFlowPosition() || style.floating() != Float::None || (m_element && m_document->documentElement() == m_element.get()))
+            style.setDisplayMaintainingOriginalDisplay(style.display().blockified());
+
+        adjustFirstLetterStyle(style);
+        adjustFirstLineStyle(style);
+
+        // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
+        // clear how that should work.
+        if (style.display() == DisplayType::InlineFlow && !style.pseudoElementType() && style.writingMode().computedWritingMode() != m_parentStyle.writingMode().computedWritingMode())
+            style.setDisplayMaintainingOriginalDisplay(DisplayType::InlineFlowRoot);
+
+        // FIXME: according to the specification this should apply as well to -webkit-line-clamp.
+        if (!style.hasLegacyLineClamp() && style.overflowContinue() != OverflowContinue::Normal && style.boxOrient() == BoxOrient::Vertical) {
+            if (style.display() == DisplayType::BlockDeprecatedFlex)
+                style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlowRoot);
+            else if (style.display() == DisplayType::InlineDeprecatedFlex)
+                style.setDisplayMaintainingOriginalDisplay(DisplayType::InlineFlowRoot);
+        }
+
+        auto display = style.display();
+
+        // We do not honor position:relative or position:sticky on table row groups. Table rows are
+        // allowed to be position:relative (they extend RenderBlock and can be proper containing blocks).
+        if ((display == DisplayType::TableHeaderGroup || display == DisplayType::TableRowGroup || display == DisplayType::TableFooterGroup)
+            && style.position() == PositionType::Relative)
+            style.setPosition(PositionType::Static);
+
+        // writing-mode does not apply to table row groups, table column groups, table rows, and table columns.
+        if (display.isInternalTableBox() && display != DisplayType::TableCell)
+            style.setWritingMode(m_parentStyle.writingMode().computedWritingMode());
+
+        // FIXME: Adjust this once CSSWG clarifies exactly how the initial value should compute on other display types.
+        // For now, this gives mostly backwards-compatible behavior.
+        auto adjustGridAutoFlow = [&](GridAutoFlow::Direction direction) {
+            if (auto gridAutoFlow = style.gridAutoFlow(); gridAutoFlow.direction() == GridAutoFlow::Direction::Normal) {
+                gridAutoFlow.setDirection(direction);
+                style.setGridAutoFlow(gridAutoFlow);
+            }
+        };
+        if (display.isGridBox())
+            adjustGridAutoFlow(GridAutoFlow::Direction::Row);
+        else if (display.isGridLanesBox()) {
+            auto direction = (!style.gridTemplateRows().isNone() && style.gridTemplateColumns().isNone())
+                ? GridAutoFlow::Direction::Column : GridAutoFlow::Direction::Row;
+            adjustGridAutoFlow(direction);
+        }
+
+        if (display.isDeprecatedFlexibleBox()) {
+            // FIXME: Since we don't support block-flow on flexible boxes yet, disallow setting
+            // of block-flow to anything other than StyleWritingMode::HorizontalTb.
+            // https://bugs.webkit.org/show_bug.cgi?id=46418 - Flexible box support.
+            style.setWritingMode(StyleWritingMode::HorizontalTb);
+        }
+
+        if (m_parentBoxStyle.display().isDeprecatedFlexibleBox())
+            style.setFloating(Float::None);
+
+        // https://www.w3.org/TR/css-display/#transformations
+        // "A parent with a grid or flex display value blockifies the box’s display type."
+        if (m_parentBoxStyle.display().isFlexibleOrGridFormattingContextBox()) {
+            style.setFloating(Float::None);
+            style.setDisplayMaintainingOriginalDisplay(style.display().blockified());
+        }
+
+        // https://www.w3.org/TR/css-ruby-1/#anon-gen-inlinize
+        if (shouldInlinifyForRuby(style, m_parentBoxStyle))
+            style.setDisplayMaintainingOriginalDisplay(style.display().inlinified());
+        // https://drafts.csswg.org/css-ruby-1/#bidi
+        if (style.display().isRubyContainerOrInternalRubyBox())
+            style.setUnicodeBidi(forceBidiIsolationForRuby(style.unicodeBidi()));
+
+        // Line decorations propagate through the box tree, not through inheritance, so only a
+        // box-generating element folds its own text-decoration-line into the in-effect value.
+        if (shouldInheritTextDecorationsInEffect(style, m_element.get())) {
+            auto updatedTextDecorationLineInEffect = style.textDecorationLineInEffect();
+            updatedTextDecorationLineInEffect.addOrReplaceIfNotNone(style.textDecorationLine());
+            style.setTextDecorationLineInEffect(updatedTextDecorationLineInEffect);
+        } else
+            style.setTextDecorationLineInEffect(style.textDecorationLine());
+    }
+
+    auto hasAutoZIndex = [](const Style::ComputedStyle& style, const Style::ComputedStyle& parentBoxStyle, const Element* element) {
+        if (style.specifiedZIndex().isAuto())
+            return true;
+
+        // SVG2: Contrary to the rules in CSS 2.1, the z-index property applies to all SVG elements regardless
+        // of the value of the position property, with one exception: as for boxes in CSS 2.1, outer ‘svg’ elements
+        // must be positioned for z-index to apply to them.
+        if (element && element->document().settings().layerBasedSVGEngineEnabled()) {
+            if (auto* svgElement = dynamicDowncast<SVGElement>(*element); svgElement && svgElement->isOutermostSVGSVGElement())
+                return style.position() == PositionType::Static && !parentBoxStyle.display().isFlexibleBoxIncludingDeprecatedOrGridFormattingContextBox();
+
+            return false;
+        }
+
+        // Make sure our z-index value is only applied if the object is positioned.
+        return style.position() == PositionType::Static && !parentBoxStyle.display().isFlexibleBoxIncludingDeprecatedOrGridFormattingContextBox();
+    };
+
+    bool hasAutoSpecifiedZIndex = hasAutoZIndex(style, m_parentBoxStyle, m_element.get());
+
+    // For SVG compatibility purposes we have to consider the 'animatedLocalTransform' besides the ComputedStyle to query
+    // if an element has a transform. SVG transforms are not stored on the StyleComputedStyle, and thus we need a special case here.
+    // Same for the additional translation component present in RenderSVGTransformableContainer (that stems from <use> x/y
+    // properties, that are transferred to the internal RenderSVGTransformableContainer), or for the viewBox-induced transformation
+    // in RenderSVGViewportContainer. They all need to return true for 'hasTransformRelatedProperty'.
+    auto hasTransformRelatedProperty = [](const Style::ComputedStyle& style, const Element* element, const Style::ComputedStyle& parentStyle) {
+        if (element && element->document().settings().css3DTransformBackfaceVisibilityInteroperabilityEnabled() && style.backfaceVisibility() == BackfaceVisibility::Hidden && parentStyle.usedTransformStyle3D() == TransformStyle3D::Preserve3D)
+            return true;
+
+        if (style.hasTransformRelatedProperty())
+            return true;
+
+        if (element && element->document().settings().layerBasedSVGEngineEnabled()) {
+            if (auto* graphicsElement = dynamicDowncast<SVGGraphicsElement>(element); graphicsElement && graphicsElement->hasTransformRelatedAttributes())
+                return true;
+        }
+
+        return false;
+    };
+
+    // Auto z-index becomes 0 for the root element and transparent objects. This prevents
+    // cases where objects that should be blended as a single unit end up with a non-transparent
+    // object wedged in between them. Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
+    if (hasAutoSpecifiedZIndex) {
+        if ((m_element && m_document->documentElement() == m_element.get())
+            || (m_element && m_element->isCanvasDrawable())
+            || (is<HTMLCanvasElement>(m_element.get()) && downcast<HTMLCanvasElement>(*m_element).hasDrawableContent())
+            || hasTransformRelatedProperty(style, m_element.get(), m_parentStyle)
+            || shouldTreatAutoZIndexAsZero(style)
+            || isInTopLayerOrBackdrop(style, m_element.get()))
+            style.setUsedZIndex(0);
+        else
+            style.setUsedZIndex(CSS::Keyword::Auto { });
+    } else
+        style.setUsedZIndex(style.specifiedZIndex());
+
+    if (RefPtr element = m_element) {
+        // Textarea considers overflow visible as auto.
+        if (is<HTMLTextAreaElement>(*element)) {
+            style.setOverflowX(style.overflowX() == Overflow::Visible ? Overflow::Auto : style.overflowX());
+            style.setOverflowY(style.overflowY() == Overflow::Visible ? Overflow::Auto : style.overflowY());
+        }
+
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element); input && input->isPasswordField())
+            style.setTextSecurity(style.inputSecurity() == InputSecurity::Auto ? TextSecurity::Disc : TextSecurity::None);
+
+        // Disallow -webkit-user-modify on ::pseudo elements, except if that pseudo-element targets a slot,
+        // in which case we want the editability to be passed onto the slotted contents.
+        if (element->isInUserAgentShadowTree() && !element->userAgentPart().isNull() && !is<HTMLSlotElement>(element))
+            style.setUserModify(UserModify::ReadOnly);
+
+        if (is<HTMLMarqueeElement>(*element)) {
+            bool isVertical = style.marqueeDirection() == MarqueeDirection::Up || style.marqueeDirection() == MarqueeDirection::Down;
+            // Make horizontal marquees not wrap.
+            if (!isVertical) {
+                style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Collapse);
+                style.setTextWrapMode(TextWrapMode::NoWrap);
+                style.setTextAlign(TextAlign::Start);
+            }
+            // Apparently this is the expected legacy behavior.
+            if (isVertical && style.height().isAuto())
+                style.setHeight(200_css_px);
+        }
+
+        if (m_element->visibilityAdjustment().contains(VisibilityAdjustment::Subtree)) [[unlikely]]
+            style.setIsForceHidden();
+
+        if (m_element->invokedPopover())
+            style.setIsPopoverInvoker();
+
+        if (m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::detailsContent())
+            style.setAutoRevealsWhenFound();
+
+        if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(element); htmlElement && htmlElement->isHiddenUntilFound())
+            style.setAutoRevealsWhenFound();
+    }
+
+    bool overflowIsClipOrVisible = isOverflowClipOrVisible(style.overflowY()) && isOverflowClipOrVisible(style.overflowX());
+
+    // The overflow property does not apply to table row elements (CSS2 section 11.1.1).
+    if (style.display() == DisplayType::TableRow) {
+        style.setOverflowX(ComputedStyle::initialOverflowX());
+        style.setOverflowY(ComputedStyle::initialOverflowY());
+    } else if (!overflowIsClipOrVisible && style.display().isTableBox()) {
+        // Tables only support overflow:hidden and overflow:visible and ignore anything else,
+        // see https://drafts.csswg.org/css2/#overflow. As a table is not a block
+        // container box the rules for resolving conflicting x and y values in CSS Overflow Module
+        // Level 3 do not apply. Arguably overflow-x and overflow-y aren't allowed on tables but
+        // all UAs allow it.
+        if (style.overflowX() != Overflow::Hidden)
+            style.setOverflowX(Overflow::Visible);
+        if (style.overflowY() != Overflow::Hidden)
+            style.setOverflowY(Overflow::Visible);
+        // If we are left with conflicting overflow values for the x and y axes on a table then resolve
+        // both to Overflow::Visible. This is interoperable behaviour but is not specced anywhere.
+        if (style.overflowX() == Overflow::Visible)
+            style.setOverflowY(Overflow::Visible);
+        else if (style.overflowY() == Overflow::Visible)
+            style.setOverflowX(Overflow::Visible);
+    } else if (!isOverflowClipOrVisible(style.overflowY())) {
+        // FIXME: Once we implement pagination controls, overflow-x should default to hidden
+        // if overflow-y is set to -webkit-paged-x or -webkit-page-y. For now, we'll let it
+        // default to auto so we can at least scroll through the pages.
+        // 'visible' computes to 'auto' if the other axis is scrollable. 'clip' is preserved
+        // when single-axis scroll containers are enabled, making a scroll container that only
+        // scrolls in the other axis; otherwise it computes to 'hidden'.
+        // https://drafts.csswg.org/css-overflow-3/#overflow-control
+        if (style.overflowX() == Overflow::Visible)
+            style.setOverflowX(Overflow::Auto);
+        else if (style.overflowX() == Overflow::Clip && !m_document->settings().cssSingleAxisScrollContainersEnabled())
+            style.setOverflowX(Overflow::Hidden);
+    } else if (!isOverflowClipOrVisible(style.overflowX())) {
+        if (style.overflowY() == Overflow::Visible)
+            style.setOverflowY(Overflow::Auto);
+        else if (style.overflowY() == Overflow::Clip && !m_document->settings().cssSingleAxisScrollContainersEnabled())
+            style.setOverflowY(Overflow::Hidden);
+    }
+
+    // Call setStylesForPaginationMode() if a pagination mode is set for any non-root elements. If these
+    // styles are specified on a root element, then they will be incorporated in
+    // Style::createForm_document.
+    if ((style.overflowY() == Overflow::PagedX || style.overflowY() == Overflow::PagedY) && !(m_element && (m_element->hasTagName(htmlTag) || m_element->hasTagName(bodyTag))))
+        adjustColumnStylesForPaginationMode(style, WebCore::paginationModeForRenderStyle(style));
+
+#if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
+    // Touch overflow scrolling creates a stacking context.
+    if (style.usedZIndex().isAuto() && style.overflowScrolling() == WebkitOverflowScrolling::Touch && (isUserScrollableOverflow(style.overflowX()) || isUserScrollableOverflow(style.overflowY())))
+        style.setUsedZIndex(0);
+#endif
+
+#if PLATFORM(COCOA)
+    static const bool shouldAddIntrinsicMarginToFormControls = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotAddIntrinsicMarginsToFormControls);
+    if (shouldAddIntrinsicMarginToFormControls) {
+        // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
+        // alter fonts and heights/widths.
+        if (is<HTMLFormControlElement>(m_element) && style.usedFontSize() >= 11) {
+            // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
+            // so we have to treat all image buttons as though they were explicitly sized.
+            if (RefPtr input = dynamicDowncast<HTMLInputElement>(*m_element); !input || !input->isImageButton())
+                addIntrinsicMargins(style);
+        }
+    }
+#endif
+
+    // Let the theme also have a crack at adjusting the style.
+    if (style.appearance() != StyleAppearance::None && style.appearance() != StyleAppearance::Base)
+        adjustThemeStyle(style, m_parentStyle);
+
+    bool hasBaseAppearance = style.usedAppearance() == StyleAppearance::Base;
+    if ((hasBaseAppearance || style.inBaseAppearanceSubtree()) && !style.pseudoElementType() && m_element && m_element->supportsBaseAppearance(StyleAppearance::Base)) {
+        if (is<SelectPopoverElement>(m_element))
+            hasBaseAppearance = hasBaseAppearance && m_parentStyle.inBaseAppearanceSubtree();
+        style.setInBaseAppearanceSubtree(hasBaseAppearance);
+    }
+
+    // This should be kept in sync with requiresRenderingConsolidationForViewTransition
+    if (style.usedTransformStyle3D() == TransformStyle3D::Preserve3D) {
+        bool forceToFlat = style.overflowX() != Overflow::Visible
+            || style.overflowY() != Overflow::Visible
+            || !style.opacity().isOpaque()
+            || !style.clip().isAuto()
+            || !style.clipPath().isNone()
+            || !style.filter().isNone()
+            || style.isolation() != Isolation::Auto
+            || style.hasMask()
+            || !style.backdropFilter().isNone()
+#if HAVE(CORE_MATERIAL)
+            || style.appleVisualEffect() != AppleVisualEffect::None
+#endif
+            || style.blendMode() != BlendMode::Normal
+            || !style.viewTransitionName().isNone();
+        if (auto* element = m_element.get()) {
+            auto styleable = Styleable::fromElement(*element);
+            forceToFlat |= styleable.capturedInViewTransition();
+        }
+        style.setTransformStyleForcedToFlat(forceToFlat);
+    }
+
+    style.setIsEffectivelyTransparent(style.opacity().isTransparent() || m_parentStyle.isEffectivelyTransparent());
+
+    // https://drafts.csswg.org/css-text-4/#wrap-inside
+    // wrap-inside is not inherited, but its "avoid" effect applies to soft wrap opportunities within the box's own inline
+    // formatting context. Propagate it from an inline box to its in-flow content.
+    bool isInlineBox = style.display() == DisplayType::InlineFlow || style.display() == DisplayType::InlineRuby || style.display() == DisplayType::RubyBase;
+    style.setEffectiveWrapInsideAvoid(style.wrapInside() == WrapInside::Avoid || (isInlineBox && m_parentStyle.effectiveWrapInsideAvoid()));
+
+    if (RefPtr element = dynamicDowncast<SVGElement>(m_element))
+        adjustSVGElementStyle(style, *element);
+
+    // If the inherited value of justify-items includes the 'legacy' keyword (plus 'left', 'right' or
+    // 'center'), 'legacy' computes to the the inherited value. Otherwise, 'auto' computes to 'normal'.
+    if (m_parentBoxStyle.justifyItems().isLegacy() && style.justifyItems().isLegacyNone())
+        style.setJustifyItems(m_parentBoxStyle.justifyItems());
+
+#if HAVE(CORE_MATERIAL)
+    auto appleVisualEffect = style.appleVisualEffect();
+    style.setUsedAppleVisualEffectForSubtree(appleVisualEffectNeedsBackdrop(appleVisualEffect) ? appleVisualEffect : m_parentStyle.usedAppleVisualEffectForSubtree());
+#endif
+
+    style.setUsedTouchAction(computeUsedTouchAction(style, m_parentStyle.usedTouchAction()));
+
+    // Counterpart in Element::addToTopLayer/removeFromTopLayer!
+    auto hasInertAttribute = [] (const Element* element) -> bool {
+        return is<HTMLElement>(element) && element->hasAttributeWithoutSynchronization(HTMLNames::inertAttr);
+    };
+    auto isInertSubtreeRoot = [this, hasInertAttribute] (const Element* element) -> bool {
+        SUPPRESS_UNCOUNTED_ARG if (m_document->activeModalDialog() && element == m_document->documentElement())
+            return true;
+        if (hasInertAttribute(element))
+            return true;
+#if ENABLE(FULLSCREEN_API)
+        if (RefPtr documentFullscreen = m_document->fullscreenIfExists(); documentFullscreen && documentFullscreen->fullscreenElement() && element == m_document->documentElement())
+            return true;
+#endif
+        return false;
+    };
+    if (isInertSubtreeRoot(m_element.get()))
+        style.setEffectiveInert(true);
+
+    if (RefPtr element = m_element) {
+        // Make sure the active dialog is interactable when the whole document is blocked by the modal dialog
+        SUPPRESS_UNCOUNTED_ARG if (element == m_document->activeModalDialog() && !hasInertAttribute(element.get()))
+            style.setEffectiveInert(false);
+
+#if ENABLE(FULLSCREEN_API)
+        if (RefPtr documentFullscreen = m_document->fullscreenIfExists(); documentFullscreen && m_element == documentFullscreen->fullscreenElement() && !hasInertAttribute(m_element.get()))
+            style.setEffectiveInert(false);
+#endif
+
+        style.setEventListenerRegionTypes(computeEventListenerRegionTypes(m_document, style, protect(*m_element), m_parentStyle.eventListenerRegionTypes()));
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        // Every element will automatically get an interaction region which is not useful, ignoring the `cursor: pointer;` on the body.
+        if (is<HTMLBodyElement>(*m_element) && style.cursorType() == CursorType::Pointer && style.eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick))
+            style.setCursor(CSS::Keyword::Auto { });
+#endif
+
+        if (m_document->settings().textAutosizingUsesIdempotentMode())
+            adjustForTextAutosizing(style, protect(*m_element));
+    }
+
+    if (m_parentStyle.contentVisibility() != ContentVisibility::Hidden && m_element && ContainmentChecker { style, *m_element }.isSkippedContentRoot())
+        style.setUsedContentVisibility(style.contentVisibility());
+
+    if (style.contentVisibility() == ContentVisibility::Auto) {
+        style.setContainIntrinsicWidth(style.containIntrinsicWidth().addingAuto());
+        style.setContainIntrinsicHeight(style.containIntrinsicHeight().addingAuto());
+    }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    adjustForAXCustomColorMode(style);
+#endif
+
+    adjustForSiteSpecificQuirks(style);
+
+    if (m_element) {
+        if (auto overrideBackgroundColor = overrideBackgroundColorsForTesting().getOptional(*m_element)) [[unlikely]]
+            style.setOverrideBackgroundColor({ WTF::move(*overrideBackgroundColor) });
+    }
+
+    adjustUsedUserSelect(style);
+    // Don't allow selecting individual glyphs on text recognized inside an image:
+#if ENABLE(IMAGE_ANALYSIS)
+    if (m_element && m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::internalImageOverlayText()) {
+        auto userSelect = style.usedUserSelectIgnoringEffectivelyInert() == UserSelect::None ? UserSelect::None : UserSelect::All;
+        style.setWebkitUserSelect(userSelect);
+        style.setUserSelect(userSelect);
+        style.setUsedUserSelect(userSelect);
+    }
+#endif
+}
+
+static bool considerUnprefixedUserSelect()
+{
+#if PLATFORM(COCOA)
+    static const bool result = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UserSelectSupersedesWebkitUserSelect);
+    return result;
+#else
+    return true;
+#endif
+}
+
+void Adjuster::adjustUsedUserSelect(Style::ComputedStyle& style) const
+{
+    if (!m_document->settings().cssUserSelectEnabled() || !considerUnprefixedUserSelect()) {
+        // Legacy behavior: only -webkit-user-select is consulted and it doesn't behave
+        // according to spec; 'user-select' is ignored.
+        auto value = style.webkitUserSelect();
+
+        // On editable, non-draggable content, 'none' is overridden so that the content can
+        // still be selected and carets can be placed in it.
+        if (style.userModify() != UserModify::ReadOnly && style.userDrag() != UserDrag::Element && value == UserSelect::None)
+            value = UserSelect::Text;
+
+        // 'auto' means nothing stronger was inherited, so it is handled as 'text'.
+        if (value == UserSelect::Auto)
+            value = UserSelect::Text;
+
+        style.setUsedUserSelect(value);
+        return;
+    }
+
+    auto value = [&] {
+        // The prefixed property only applies if the author did not use the unprefixed
+        // one. Neither flag is inherited, so this is decided per element:
+        if (style.hasExplicitlySetWebkitUserSelect() && !style.hasExplicitlySetUserSelect()) {
+            auto prefixedValue = style.webkitUserSelect();
+
+            // We fold explicitly set prefixed 'auto' into 'text' instead of using
+            // the parent's used value. This is against the spec but preserves
+            // legacy -webkit-user-select usage:
+            return prefixedValue == UserSelect::Auto ? UserSelect::Text : prefixedValue;
+        }
+
+        auto unprefixedValue = style.userSelect();
+        if (unprefixedValue == UserSelect::Auto)
+            return m_parentStyle.usedUserSelectIgnoringEffectivelyInert();
+
+        return unprefixedValue;
+    }();
+
+    // FIXME: this should be overridden to UserSelect::Contain, which is unimplemented but is how
+    // editable content with 'text' already behaves.
+    if (style.userModify() != UserModify::ReadOnly)
+        value = UserSelect::Text;
+
+    style.setUsedUserSelect(value);
+}
+
+NODELETE static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
+{
+    using namespace ElementNames;
+
+    // According to the CSS Display spec[1], nested <svg> elements, <g>,
+    // <use>, and <tspan> elements are not rendered and their children are
+    // "hoisted". For other elements display:contents behaves as display:none.
+    // https://drafts.csswg.org/css-display-3/#unbox-svg
+    if (auto* svgElement = dynamicDowncast<SVGElement>(element)) {
+        bool isOutermostSVG = svgElement->isOutermostSVGSVGElement();
+        if (isOutermostSVG || (!svgElement->hasTagName(SVGNames::svgTag) && !svgElement->hasTagName(SVGNames::tspanTag) && !svgElement->hasTagName(SVGNames::gTag) && !svgElement->hasTagName(SVGNames::useTag)))
+            return true;
+        return false;
+    }
+#if ENABLE(MATHML)
+    // Not sure MathML code can handle it.
+    if (is<MathMLElement>(element))
+        return true;
+#endif // ENABLE(MATHML)
+    if (!is<HTMLElement>(element))
+        return false;
+
+    // https://drafts.csswg.org/css-display-3/#unbox-html
+    switch (element.elementName()) {
+    case HTML::br:
+    case HTML::wbr:
+    case HTML::meter:
+    case HTML::applet:
+    case HTML::progress:
+    case HTML::canvas:
+    case HTML::embed:
+    case HTML::object:
+    case HTML::audio:
+    case HTML::iframe:
+    case HTML::img:
+    case HTML::video:
+    case HTML::frame:
+    case HTML::frameset:
+    case HTML::input:
+    case HTML::textarea:
+    case HTML::select:
+        return true;
+    default:
+        break;
+    }
+
+    return false;
+}
+
+void Adjuster::adjustDisplayContentsStyle(Style::ComputedStyle& style) const
+{
+    bool isInTopLayer = isInTopLayerOrBackdrop(style, m_element.get());
+    if (isInTopLayer || m_document->documentElement() == m_element.get()) {
+        style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlow);
+        return;
+    }
+
+    if (!m_element && style.pseudoElementType() != PseudoElementType::Before && style.pseudoElementType() != PseudoElementType::After) {
+        style.setDisplayMaintainingOriginalDisplay(DisplayType::None);
+        return;
+    }
+
+    if (m_element && hasEffectiveDisplayNoneForDisplayContents(*m_element))
+        style.setDisplayMaintainingOriginalDisplay(DisplayType::None);
+}
+
+void Adjuster::adjustSVGElementStyle(Style::ComputedStyle& style, const SVGElement& svgElement)
+{
+    // Only the root <svg> element in an SVG document fragment tree honors css position
+    if (!svgElement.isOutermostSVGSVGElement())
+        style.setPosition(ComputedStyle::initialPosition());
+
+    // SVG2: A new stacking context must be established at an SVG element for its descendants if:
+    // - it is the root element
+    // - the "z-index" property applies to the element and its computed value is an integer
+    // - the element is an outermost svg element, or a "foreignObject", "image", "marker", "mask", "pattern", "symbol" or "use" element
+    // - the element is an inner "svg" element and the computed value of its "overflow" property is a value other than visible
+    // - the element is subject to explicit clipping:
+    //   - the "clip" property applies to the element and it has a computed value other than auto
+    //   - the "clip-path" property applies to the element and it has a computed value other than none
+    // - the "mask" property applies to the element and it has a computed value other than none
+    // - the "filter" property applies to the element and it has a computed value other than none
+    // - a property defined in another specification is applied and that property is defined to establish a stacking context in SVG
+    //
+    // Some of the rules above were already enforced in StyleResolver::adjust() - for those cases assertions were added.
+    if (svgElement.document().settings().layerBasedSVGEngineEnabled() && style.usedZIndex().isAuto()) {
+        // adjust() has already assigned a z-index of 0 if clip / filter is present or the element is the root element.
+        ASSERT(style.clipPath().isNone());
+        ASSERT(style.filter().isNone());
+
+        if (svgElement.isOutermostSVGSVGElement()
+            || svgElement.hasTagName(SVGNames::foreignObjectTag)
+            || svgElement.hasTagName(SVGNames::imageTag)
+            || svgElement.hasTagName(SVGNames::markerTag)
+            || svgElement.hasTagName(SVGNames::maskTag)
+            || svgElement.hasTagName(SVGNames::patternTag)
+            || svgElement.hasTagName(SVGNames::symbolTag)
+            || svgElement.hasTagName(SVGNames::useTag)
+            || (svgElement.isInnerSVGSVGElement() && (style.overflowX() != Overflow::Visible || style.overflowY() != Overflow::Visible))
+            || style.hasPositionedMask())
+        style.setUsedZIndex(0);
+    }
+
+    // (Legacy)RenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
+    // not be scaled again.
+    if (svgElement.hasTagName(SVGNames::foreignObjectTag)) {
+        style.setUsedZoom(evaluate<float>(ComputedStyle::initialZoom()));
+
+        // The font's computed size may have been inherited from the HTML tree with CSS zoom
+        // already applied. Since we just reset usedZoom for foreignObject, recompute the font's
+        // computed size from the specified size without zoom (useSVGZoomRules=true), so that
+        // children inherit the correct (unzoomed) computed size. The SVG root transform handles
+        // the zoom scaling, consistent with other SVG content.
+        auto fontDescription = style.fontDescription();
+        auto usedFontSize = usedFontSizeFromComputedSize(fontDescription.computedSize(), fontDescription.isAbsoluteSize(), /*useSVGZoomRules=*/true, style, protect(svgElement.document()));
+        fontDescription.setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);
+        style.setFontDescription(WTF::move(fontDescription));
+    }
+
+    // SVG text layout code expects us to be a block-level style element.
+    // While in theory any block level element would work (flex, grid etc), since we construct RenderBlockFlow for both foreign object and svg text,
+    // in practice only block layout happens here.
+    if ((svgElement.hasTagName(SVGNames::foreignObjectTag) || svgElement.hasTagName(SVGNames::textTag)) && style.display().doesGenerateBox())
+        style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlow);
+}
+
+void Adjuster::adjustAnimatedStyle(Style::ComputedStyle& style, OptionSet<AnimationImpact> impact) const
+{
+    adjust(style);
+
+    // Set an explicit used z-index in two cases:
+    // 1. When the element respects z-index, and the style has an explicit z-index set (for example, the animation
+    //    itself may animate z-index).
+    // 2. When we want the stacking context side-effets of explicit z-index, via forceStackingContext.
+    // It's important to not clobber an existing used z-index, since an earlier animation may have set it, but we
+    // may still need to update the used z-index value from the specified value.
+    
+    if (style.usedZIndex().isAuto() && impact.contains(AnimationImpact::ForcesStackingContext))
+        style.setUsedZIndex(0);
+}
+
+void Adjuster::adjustThemeStyle(Style::ComputedStyle& style, const Style::ComputedStyle& parentStyle) const
+{
+    ASSERT(style.appearance() != StyleAppearance::None && style.appearance() != StyleAppearance::Base);
+    auto isOldWidthAuto = style.width().isAuto();
+    auto isOldMinWidthAuto = style.minWidth().isAuto();
+    auto isOldHeightAuto = style.height().isAuto();
+    auto isOldMinHeightAuto = style.minHeight().isAuto();
+
+    RenderTheme::singleton().adjustStyle(style, parentStyle, m_element.get());
+
+    if (style.usedAppearance() == StyleAppearance::None || style.usedAppearance() == StyleAppearance::Base)
+        return;
+
+    if (style.usedContain().contains(ContainValue::Size)) {
+        if (!style.containIntrinsicWidth().isNone()) {
+            if (isOldWidthAuto)
+                style.setWidth(CSS::Keyword::Auto { });
+            if (isOldMinWidthAuto)
+                style.setMinWidth(CSS::Keyword::Auto { });
+        }
+        if (!style.containIntrinsicHeight().isNone()) {
+            if (isOldHeightAuto)
+                style.setHeight(CSS::Keyword::Auto { });
+            if (isOldMinHeightAuto)
+                style.setMinHeight(CSS::Keyword::Auto { });
+        }
+    }
+}
+
+void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
+{
+    if (!m_element)
+        return;
+
+    Ref document = m_document.get();
+    const auto& documentQuirks = document->quirks();
+
+    if (!documentQuirks.hasRelevantQuirks())
+        return;
+
+    if (documentQuirks.needsBodyScrollbarWidthNoneDisabledQuirk() && is<HTMLBodyElement>(*m_element)) {
+        if (style.scrollbarWidth() == ScrollbarWidth::None)
+            style.setScrollbarWidth(ScrollbarWidth::Auto);
+    }
+
+    if (documentQuirks.needsYouTubeOverflowScrollQuirk()) {
+        // This turns sidebar scrollable without hover.
+        static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content"_s);
+        if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
+            style.setOverflowY(Overflow::Auto);
+    }
+    if (documentQuirks.needsGMailOverflowScrollQuirk()) {
+        // This turns sidebar scrollable without mouse move event.
+        static MainThreadNeverDestroyed<const AtomString> roleValue("navigation"_s);
+        if (style.overflowY() == Overflow::Hidden && m_element->attributeWithoutSynchronization(roleAttr) == roleValue)
+            style.setOverflowY(Overflow::Auto);
+    }
+
+    if (documentQuirks.needsGoogleDocsNavigationWidgetScrollQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> className("navigation-widget-content"_s);
+        if (style.visibility() == Visibility::Hidden && m_parentStyle.visibility() == Visibility::Visible && m_element->hasClassName(className))
+            style.setVisibility(Visibility::Visible);
+    }
+
+    if (documentQuirks.needsWebExScrollabilityQuirk()) {
+        // Ignore overflow: hidden on the body and #wrapper so the page remains
+        // scrollable, and drop the width constraints on #wrapper so the desktop
+        // layout fits the viewport.
+        static MainThreadNeverDestroyed<const AtomString> wrapperID("wrapper"_s);
+        bool isWrapper = m_element->idForStyleResolution() == wrapperID;
+        if (m_element->hasTagName(bodyTag) || isWrapper) {
+            if (style.overflowX() == Overflow::Hidden)
+                style.setOverflowX(Overflow::Auto);
+            if (style.overflowY() == Overflow::Hidden)
+                style.setOverflowY(Overflow::Auto);
+        }
+        if (isWrapper) {
+            style.setMinWidth(CSS::Keyword::Auto { });
+            style.setMaxWidth(CSS::Keyword::None { });
+        }
+    }
+
+    // yahoo.com rdar://170502516
+    if (documentQuirks.needsYahooVolumeSliderQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> className("vjs-volume-control"_s);
+        if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className)) {
+            style.setMinHeight(100_css_percentage);
+            style.setAlignItems(Style::AlignItems { CSS::Keyword::Center { } });
+        }
+    }
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    // google.com/maps/embed rdar://184166392
+    if (documentQuirks.needsGoogleMapsEmbedManipulationSurfaceQuirk()) {
+        if (toPlatform(style.usedTouchAction()) == OptionSet { WebCore::TouchAction::PanX, WebCore::TouchAction::PanY })
+            style.setUsedTouchAction(CSS::Keyword::None { });
+    }
+
+    // box.com rdar://187475153
+    if (documentQuirks.needsBoxAnnotationQuirk(protect(*m_element)))
+        style.setUsedTouchAction(CSS::Keyword::Auto { });
+#endif // HAVE(APPKIT_GESTURES_SUPPORT)
+
+#if PLATFORM(IOS_FAMILY)
+    if (documentQuirks.needsGoogleMapsScrollingQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> className("PUtLdf"_s);
+        if (is<HTMLBodyElement>(*m_element) && m_element->hasClassName(className))
+            style.setUsedTouchAction(CSS::Keyword::Auto { });
+    }
+    // netflix.com rdar://178545839
+    if (documentQuirks.needsNetflixVolumeSliderQuirk()) {
+        static MainThreadNeverDestroyed<const QualifiedName> dataUiaAttr(nullAtom(), "data-uia"_s, nullAtom());
+        static MainThreadNeverDestroyed<const AtomString> scrubberValue("scrubber"_s);
+        static MainThreadNeverDestroyed<const AtomString> verticalValue("vertical"_s);
+        if (is<HTMLDivElement>(*m_element)
+            && m_element->attributeWithoutSynchronization(dataUiaAttr) == scrubberValue
+            && m_element->attributeWithoutSynchronization(HTMLNames::aria_orientationAttr) == verticalValue)
+            style.setUsedTouchAction(CSS::Keyword::None { });
+    }
+    if (documentQuirks.needsFacebookStoriesCreationFormQuirk(*m_element, style))
+        style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlex);
+#endif // PLATFORM(IOS_FAMILY)
+
+    if (documentQuirks.needsFacebookRemoveNotSupportedQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> className("xnw9j1v"_s);
+        if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className))
+            style.setDisplayMaintainingOriginalDisplay(DisplayType::None);
+    }
+
+    // airindiaexpress.com https://webkit.org/b/317375
+    if (documentQuirks.needsAirIndiaExpressLayeringQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> className("new-trip-type-and-guest-selection-container"_s);
+        if (m_element->hasClassName(className))
+            style.setUsedZIndex(2);
+    }
+
+    if (auto tikTokOverflowingContentQuery = documentQuirks.needsTikTokOverflowingContentQuirk(protect(*m_element), m_parentStyle)) {
+        if (*tikTokOverflowingContentQuery == Quirks::TikTokOverflowingContentQuirkType::CommentsSectionQuirk)  {
+            style.setFlexShrink({ 1 });
+            style.setMinWidth(0_css_px);
+        } else {
+            ASSERT(tikTokOverflowingContentQuery == Quirks::TikTokOverflowingContentQuirkType::VideoSectionQuirk);
+            style.setFlexShrink({ 2 });
+        }
+    }
+
+    // tiktok.com rdar://problem/183445905
+    if (documentQuirks.needsTikTokCaptchaSliderTouchActionQuirk(protect(*m_element)))
+        style.setUsedTouchAction(CSS::Keyword::None { });
+
+#if ENABLE(VIDEO)
+    if (documentQuirks.needsFullscreenDisplayNoneQuirk()) {
+        if (is<HTMLDivElement>(*m_element) && style.display() == DisplayType::None) {
+            static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
+            static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
+
+            if (m_element->hasClassName(instreamNativeVideoDivClass)) {
+                RefPtr video = dynamicDowncast<HTMLVideoElement>(protect(m_element->treeScope())->getElementById(videoElementID));
+                if (video && video->isFullscreen())
+                    style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlow);
+            }
+        }
+    }
+#if ENABLE(FULLSCREEN_API)
+    if (RefPtr documentFullscreen = m_document->fullscreenIfExists(); documentFullscreen && documentQuirks.needsFullscreenObjectFitQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> playerClassName("top-player-video-element"_s);
+        bool isFullscreen = documentFullscreen->isFullscreen();
+        if (is<HTMLVideoElement>(*m_element) && isFullscreen && m_element->hasClassName(playerClassName) && style.objectFit() == ObjectFit::Fill)
+            style.setObjectFit(ObjectFit::Contain);
+    }
+#endif
+#endif
+
+    if (documentQuirks.needsExpediaGroupAnimationQuirk(protect(*m_element))) {
+        // We need to reset animation styles that are mistakenly overridden:
+        //     animation-delay: 0s, 0.06s;
+        //     animation-duration: 0.18s, 0.06s;
+        //     animation-fill-mode: none, both;
+        //     animation-name: menu-grow-left, menu-fade-in;
+        auto menuGrowLeftAnimation = Style::Animation { { ScopedName { "menu-grow-left"_s } } };
+        menuGrowLeftAnimation.setDelay(0_css_s);
+        menuGrowLeftAnimation.setDuration(.18_css_s);
+        menuGrowLeftAnimation.setFillMode(AnimationFillMode::None);
+
+        auto menuFadeInAnimation = Style::Animation { { ScopedName { "menu-fade-in"_s } } };
+        menuFadeInAnimation.setDelay(.06_css_s);
+        menuFadeInAnimation.setDuration(.06_css_s);
+        menuFadeInAnimation.setFillMode(AnimationFillMode::Both);
+
+        auto& animations = style.ensureAnimations();
+        animations = Style::Animations { WTF::move(menuGrowLeftAnimation), WTF::move(menuFadeInAnimation) };
+        animations.prepareForUse();
+    }
+
+#if PLATFORM(IOS_FAMILY)
+    if (documentQuirks.needsClaudeSidebarViewportUnitQuirk(protect(*m_element), style))
+        style.setHeight(PreferredSize::Fixed { protect(m_document->renderView())->sizeForCSSDynamicViewportUnits().height() });
+
+    if (auto openRiceAdPopupHeight = documentQuirks.needsOpenRiceAdPopupHeightQuirk(protect(*m_element), style)) {
+        style.setUsesViewportUnits();
+        m_element->document().setHasStyleWithViewportUnits();
+        if (openRiceAdPopupHeight->clampedHeight)
+            style.setHeight(PreferredSize::Fixed { *openRiceAdPopupHeight->clampedHeight });
+    }
+
+    if (documentQuirks.needsAmazonDesignMenuViewportUnitQuirk(style, m_parentStyle)) {
+        if (auto fixedHeight = style.height().tryFixed()) {
+            auto resolvedHeight = fixedHeight->resolveZoom(ZoomFactor::none());
+            CheckedPtr renderView = m_document->renderView();
+            auto defaultViewportHeight = renderView->sizeForCSSDefaultViewportUnits().height();
+            auto dynamicViewportHeight = renderView->sizeForCSSDynamicViewportUnits().height();
+            style.setHeight(PreferredSize::Fixed { resolvedHeight - (defaultViewportHeight - dynamicViewportHeight) });
+        }
+    }
+#endif
+
+#if PLATFORM(MAC)
+    if (documentQuirks.needsZomatoEmailLoginLabelQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> class1("eNjKGZ"_s);
+        if (is<HTMLLabelElement>(*m_element)
+            && m_element->hasClassName(class1)
+            && style.backgroundColorResolvingCurrentColor() == WebCore::Color::white)
+            style.setBackgroundColor({ WebCore::Color::transparentBlack });
+    }
+#endif
+
+    if (documentQuirks.needsInstagramResizingReelsQuirk(protect(*m_element), style, m_parentStyle))
+        style.setFlexGrow(1);
+}
+
+void Adjuster::adjustColumnStylesForPaginationMode(Style::ComputedStyle& style, PaginationMode paginationMode)
+{
+    if (paginationMode == Pagination::Mode::Unpaginated)
+        return;
+
+    style.setColumnFill(ColumnFill::Auto);
+
+    auto writingMode = style.writingMode();
+
+    switch (paginationMode) {
+    case Pagination::Mode::LeftToRightPaginated:
+        style.setColumnAxis(ColumnAxis::Horizontal);
+        if (writingMode.isHorizontal())
+            style.setColumnProgression(writingMode.isBidiLTR() ? ColumnProgression::Normal : ColumnProgression::Reverse);
+        else
+            style.setColumnProgression(writingMode.isBlockFlipped() ? ColumnProgression::Reverse : ColumnProgression::Normal);
+        break;
+    case Pagination::Mode::RightToLeftPaginated:
+        style.setColumnAxis(ColumnAxis::Horizontal);
+        if (writingMode.isHorizontal())
+            style.setColumnProgression(writingMode.isBidiLTR() ? ColumnProgression::Reverse : ColumnProgression::Normal);
+        else
+            style.setColumnProgression(writingMode.isBlockFlipped() ? ColumnProgression::Normal : ColumnProgression::Reverse);
+        break;
+    case Pagination::Mode::TopToBottomPaginated:
+        style.setColumnAxis(ColumnAxis::Vertical);
+        if (writingMode.isHorizontal())
+            style.setColumnProgression(writingMode.isBlockFlipped() ? ColumnProgression::Reverse : ColumnProgression::Normal);
+        else
+            style.setColumnProgression(writingMode.isBidiLTR() ? ColumnProgression::Normal : ColumnProgression::Reverse);
+        break;
+    case Pagination::Mode::BottomToTopPaginated:
+        style.setColumnAxis(ColumnAxis::Vertical);
+        if (writingMode.isHorizontal())
+            style.setColumnProgression(writingMode.isBlockFlipped() ? ColumnProgression::Normal : ColumnProgression::Reverse);
+        else
+            style.setColumnProgression(writingMode.isBidiLTR() ? ColumnProgression::Reverse : ColumnProgression::Normal);
+        break;
+    case Pagination::Mode::Unpaginated:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& update, const Document& document)
+{
+    RefPtr body = document.body();
+    CheckedPtr bodyStyle = body ? update.elementStyle(*body) : nullptr;
+    CheckedPtr documentElementStyle = update.elementStyle(*document.documentElement());
+
+    if (!documentElementStyle)
+        return;
+
+    // https://drafts.csswg.org/css-contain-2/#contain-property
+    // "Additionally, when any containments are active on either the HTML html or body elements, propagation of
+    // properties from the body element to the initial containing block, the viewport, or the canvas background, is disabled."
+    auto shouldPropagateFromBody = [&] {
+        if (bodyStyle && !bodyStyle->usedContain().isNone())
+            return false;
+        return documentElementStyle->usedContain().isNone();
+    }();
+
+    auto writingMode = [&] {
+        if (shouldPropagateFromBody && bodyStyle && bodyStyle->hasExplicitlySetWritingMode())
+            return bodyStyle->writingMode().computedWritingMode();
+        if (documentElementStyle->hasExplicitlySetWritingMode())
+            return documentElementStyle->writingMode().computedWritingMode();
+        return ComputedStyle::initialWritingMode();
+    }();
+
+    auto direction = [&] {
+        if (documentElementStyle->hasExplicitlySetDirection())
+            return documentElementStyle->writingMode().computedTextDirection();
+        if (shouldPropagateFromBody && bodyStyle && bodyStyle->hasExplicitlySetDirection())
+            return bodyStyle->writingMode().computedTextDirection();
+        return ComputedStyle::initialDirection();
+    }();
+
+    // https://drafts.csswg.org/css-writing-modes-3/#icb
+    WritingMode viewWritingMode = document.renderView()->writingMode();
+    if (writingMode != viewWritingMode.computedWritingMode() || direction != viewWritingMode.computedTextDirection()) {
+        auto newRootStyle = Style::ComputedStyle::clonePtr(protect(document.renderView()->style()));
+        newRootStyle->setWritingMode(writingMode);
+        newRootStyle->setDirection(direction);
+        adjustColumnStylesForPaginationMode(*newRootStyle, document.view()->pagination().mode);
+        update.addInitialContainingBlockUpdate(WTF::move(newRootStyle));
+    }
+
+    // https://drafts.csswg.org/css-writing-modes-3/#principal-flow
+    if (writingMode != documentElementStyle->writingMode().computedWritingMode() || direction != documentElementStyle->writingMode().computedTextDirection()) {
+        auto* documentElementUpdate = update.elementUpdate(*document.documentElement());
+        if (!documentElementUpdate) {
+            update.addElement(protect(*document.documentElement()), nullptr, { Style::ComputedStyle::clonePtr(*documentElementStyle) });
+            documentElementUpdate = update.elementUpdate(*document.documentElement());
+        }
+        documentElementUpdate->style->setWritingMode(writingMode);
+        documentElementUpdate->style->setDirection(direction);
+        documentElementUpdate->changes.add(Change::Inherited);
+    }
+}
+
+std::unique_ptr<Style::ComputedStyle> Adjuster::restoreUsedDocumentElementStyleToComputed(const Style::ComputedStyle& style)
+{
+    if (style.writingMode().computedWritingMode() == ComputedStyle::initialWritingMode() && style.writingMode().computedTextDirection() == ComputedStyle::initialDirection())
+        return { };
+
+    auto adjusted = Style::ComputedStyle::clonePtr(style);
+    if (!style.hasExplicitlySetWritingMode())
+        adjusted->setWritingMode(ComputedStyle::initialWritingMode());
+    if (!style.hasExplicitlySetDirection())
+        adjusted->setDirection(ComputedStyle::initialDirection());
+
+    return adjusted;
+}
+
+NODELETE static bool hasTextChild(const Element& element)
+{
+    for (auto* child = element.firstChild(); child; child = child->nextSibling()) {
+        if (is<Text>(child))
+            return true;
+    }
+    return false;
+}
+
+auto Adjuster::adjustmentForTextAutosizing(const Style::ComputedStyle& style, const Element& element) -> AdjustmentForTextAutosizing
+{
+    AdjustmentForTextAutosizing adjustmentForTextAutosizing;
+
+    Ref document = element.document();
+    if (!document->textAutosizingEnabled()
+        || !document->settings().textAutosizingUsesIdempotentMode()
+        || document->settings().idempotentModeAutosizingOnlyHonorsPercentages())
+        return adjustmentForTextAutosizing;
+
+    auto newStatus = AutosizeStatus::compute(style);
+    if (newStatus != style.autosizeStatus())
+        adjustmentForTextAutosizing.newStatus = newStatus;
+
+    if (style.textSizeAdjust().isNone())
+        return adjustmentForTextAutosizing;
+
+    float initialScale = document->page() ? document->page()->initialScaleIgnoringContentSize() : 1;
+    auto adjustLineHeightIfNeeded = [&](auto usedFontSize) {
+        auto lineHeight = style.lineHeight();
+        constexpr static unsigned eligibleFontSize = 12;
+        if (usedFontSize * initialScale >= eligibleFontSize)
+            return;
+
+        constexpr static float boostFactor = 1.25;
+        auto minimumLineHeight = boostFactor * usedFontSize;
+        if (auto fixedLineHeight = lineHeight.tryFixed(); !fixedLineHeight || fixedLineHeight->resolveZoom(ZoomFactor { 1.0f }) >= minimumLineHeight)
+            return;
+
+        if (AutosizeStatus::probablyContainsASmallFixedNumberOfLines(style))
+            return;
+
+        adjustmentForTextAutosizing.newLineHeight = minimumLineHeight;
+    };
+
+    auto& fontDescription = style.fontDescription();
+    auto initialUsedFontSize = fontDescription.usedSize();
+    auto computedFontSize = fontDescription.computedSize();
+
+    bool isCandidate = newStatus.isIdempotentTextAutosizingCandidate(style);
+    if (!isCandidate && WTF::areEssentiallyEqual(initialUsedFontSize, computedFontSize))
+        return adjustmentForTextAutosizing;
+
+    auto adjustedFontSize = AutosizeStatus::idempotentTextSize(fontDescription.computedSize(), initialScale);
+    if (isCandidate && WTF::areEssentiallyEqual(initialUsedFontSize, adjustedFontSize))
+        return adjustmentForTextAutosizing;
+
+    if (!hasTextChild(element))
+        return adjustmentForTextAutosizing;
+
+    adjustmentForTextAutosizing.newFontSize = isCandidate ? adjustedFontSize : computedFontSize;
+
+    // FIXME: We should restore computed line height to its original value in the case where the element is not
+    // an idempotent text autosizing candidate; otherwise, if an element that is a text autosizing candidate contains
+    // children which are not autosized, the non-autosized content will end up with a boosted line height.
+    if (isCandidate)
+        adjustLineHeightIfNeeded(adjustedFontSize);
+
+    return adjustmentForTextAutosizing;
+}
+
+bool Adjuster::adjustForTextAutosizing(Style::ComputedStyle& style, AdjustmentForTextAutosizing adjustment)
+{
+    style.setAutosizeStatus(AutosizeStatus::compute(style));
+
+    if (auto newFontSize = adjustment.newFontSize) {
+        auto fontDescription = style.fontDescription();
+        fontDescription.setUsedSize(*newFontSize);
+        style.setFontDescription(WTF::move(fontDescription));
+    }
+    if (auto newLineHeight = adjustment.newLineHeight)
+        style.setTextAutosizingAdjustedLineHeight(LineHeight::Fixed { *newLineHeight });
+    if (auto newStatus = adjustment.newStatus)
+        style.setAutosizeStatus(*newStatus);
+    return adjustment.newFontSize || adjustment.newLineHeight;
+}
+
+bool Adjuster::adjustForTextAutosizing(Style::ComputedStyle& style, const Element& element)
+{
+    return adjustForTextAutosizing(style, adjustmentForTextAutosizing(style, element));
+}
+
+void Adjuster::adjustVisibilityForPseudoElement(Style::ComputedStyle& style, const Element& host)
+{
+    if ((style.pseudoElementType() == PseudoElementType::After && host.visibilityAdjustment().contains(VisibilityAdjustment::AfterPseudo))
+        || (style.pseudoElementType() == PseudoElementType::Before && host.visibilityAdjustment().contains(VisibilityAdjustment::BeforePseudo)))
+        style.setIsForceHidden();
+}
+
+void Adjuster::adjustAnimations(Style::ComputedStyle& style)
+{
+    if (style.animations().isInitial())
+        return;
+
+    style.ensureAnimations().prepareForUse();
+}
+
+void Adjuster::adjustTransitions(Style::ComputedStyle& style)
+{
+    if (style.transitions().isInitial())
+        return;
+
+    style.ensureTransitions().prepareForUse();
+}
+
+void Adjuster::adjustBackgroundLayers(Style::ComputedStyle& style)
+{
+    if (style.backgroundLayers().isInitial())
+        return;
+
+    style.ensureBackgroundLayers().prepareForUse();
+}
+
+void Adjuster::adjustMaskLayers(Style::ComputedStyle& style)
+{
+    if (style.maskLayers().isInitial())
+        return;
+
+    style.ensureMaskLayers().prepareForUse();
+}
+
+void Adjuster::adjustScrollTimelines(Style::ComputedStyle& style)
+{
+    if (style.scrollTimelines().isInitial())
+        return;
+
+    style.ensureScrollTimelines().prepareForUse();
+}
+
+void Adjuster::adjustViewTimelines(Style::ComputedStyle& style)
+{
+    if (style.viewTimelines().isInitial())
+        return;
+
+    style.ensureViewTimelines().prepareForUse();
+}
+
+} // namespace Style
+} // namespace WebCore

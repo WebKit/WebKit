@@ -1,0 +1,11 @@
+bytecompiler/NodesCodegen.cpp
+debugger/Debugger.cpp
+dfg/DFGLazyJSValue.cpp
+ftl/FTLCompile.cpp
+ftl/FTLLowerDFGToB3.cpp
+ftl/FTLOSRExitHandle.cpp
+ftl/FTLPatchpointExceptionHandle.cpp
+jit/JITSizeStatistics.cpp
+runtime/CachedTypes.cpp
+wasm/WasmCalleeGroup.cpp
+wasm/WasmTable.cpp

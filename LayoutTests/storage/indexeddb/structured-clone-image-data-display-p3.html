@@ -1,0 +1,93 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<script>
+    description("Test structured clone of ImageData with a display-p3 colorSpace.");
+
+    indexedDBTest(prepareDatabase, startTests);
+
+    function prepareDatabase()
+    {
+        db = event.target.result;
+        evalAndLog("store = db.createObjectStore('storeName')");
+        debug("This index is not used, but evaluating key path on each put() call will exercise (de)serialization:");
+        evalAndLog("store.createIndex('indexName', 'dummyKeyPath')");
+    }
+    
+    function testValue(value, callback)
+    {
+        // One transaction per test, since some tests require asynchronous
+        // operations to verify the result (e.g. via FileReader)
+        evalAndLog("transaction = db.transaction('storeName', 'readwrite')");
+        transaction.onerror = unexpectedErrorCallback;
+        transaction.onabort = unexpectedAbortCallback;
+        evalAndLog("store = transaction.objectStore('storeName')");
+
+        self.value = value;
+        request = evalAndLog("store.put(value, 'key')");
+        request.onerror = unexpectedErrorCallback;
+        request.onsuccess = function(e) {
+            request = evalAndLog("store.get('key')");
+            request.onerror = unexpectedErrorCallback;
+            request.onsuccess = function(e) {
+                callback(request.result);
+            };
+        };
+    }
+
+    // Identity testing, sensitive to NaN and -0
+    function is(x, y) {
+        if (x === y) {
+            return x !== 0 || 1 / x === 1 / y;
+        }
+        return x !== x && y !== y;
+    }
+
+    function arrayCompare(a, b) {
+        if (a.length !== b.length) {
+            return false;
+        }
+        for (var i = 0; i < a.length; ++i) {
+            if (!is(a[i], b[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function startTests()
+    {
+        debug("");
+        debug(`Testing ImageData: { colorSpace: "display-p3" }`);
+        evalAndLog("canvas = document.createElement('canvas')");
+        evalAndLog("canvas.width = 8");
+        evalAndLog("canvas.height = 8");
+        evalAndLog(`test_data = canvas.getContext('2d').getImageData(0, 0, 8, 8, { colorSpace: "display-p3" })`);
+    
+        for (var i = 0; i < 256; ++i) {
+            test_data.data[i] = i;
+        }
+
+        testValue(test_data, function(result) {
+            self.result = result;
+            shouldBeTrue("test_data !== result");
+            shouldBeEqualToString("Object.prototype.toString.call(result)", "[object ImageData]");
+            shouldBe("result.width", "test_data.width");
+            shouldBe("result.height", "test_data.height");
+            shouldBe("result.data.length", "test_data.data.length");
+            shouldBe("result.colorSpace", "test_data.colorSpace");
+            if (arrayCompare(test_data.data, result.data)) {
+                testPassed("result data matches");
+            } else {
+                testFailed("result data doesn't match");
+            }
+            
+            finishJSTest();
+        });
+    }
+</script>
+</body>
+</html>

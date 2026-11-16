@@ -1,0 +1,14 @@
+Tests that pressing Home while an animated scroll to the end of the document is in progress scrolls all the way back to the start.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Document
+PASS scrollY is 0
+Overflow scroller
+PASS scroller.scrollTop is 0
+PASS scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

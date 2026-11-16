@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <style>
+      #a {
+        background-color: red;
+        height: 100px;
+        width: 100px;
+        -webkit-transition: height 0.5s linear;
+        overflow: hidden;
+      }
+
+      #b {
+        background-color: blue;
+        height: 100px;
+        width: 100px;
+        -webkit-transition: -webkit-transform 0.5s linear;
+      }
+    </style>
+    <script>
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+      }
+
+      function endTest() {
+        if (window.testRunner) {
+          testRunner.notifyDone();
+        }
+      }
+      
+      function startTest() {
+        var a = document.getElementById("a");
+        var b = document.getElementById("b");
+        a.addEventListener("webkitTransitionEnd", endTest, false);
+        
+        // Trigger transitions.
+        a.style.height = "0px";
+        b.style.webkitTransform = "translateX(10px)";
+
+        // Force layout.
+        document.body.offsetHeight;
+
+        // Remove the transform transition by hiding its div.
+        b.style.display = "none";
+      }
+    </script>
+  </head>
+  <body onload="startTest()">
+    <div id="a">FAIL</div>
+    <div id="b"></div>
+    PASS
+  </body>
+
+</html>

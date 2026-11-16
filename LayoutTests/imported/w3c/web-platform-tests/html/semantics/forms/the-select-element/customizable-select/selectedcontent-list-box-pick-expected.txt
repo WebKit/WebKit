@@ -1,0 +1,4 @@
+
+
+PASS Picking an option in a list box updates its <selectedcontent>.
+

@@ -1,0 +1,11 @@
+Transferring an OffscreenCanvas to a cross-site iframe should let that iframe paint into the placeholder canvas.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+iframe reported: drew 100x100
+PASS placeholderPixel() is "255,0,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

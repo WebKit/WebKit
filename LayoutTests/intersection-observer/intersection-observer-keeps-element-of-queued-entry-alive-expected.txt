@@ -1,0 +1,23 @@
+This tests observing an element with an IntersectionObserver and removing the element from the document while it is queued for delivery.
+
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+PASS - IntersectionObserver wrapper is alive
+

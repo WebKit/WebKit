@@ -1,0 +1,10 @@
+PASS clickError is ""
+PASS clickCounts['651'] is 1
+PASS clickCounts['200'] is 0
+PASS clickCounts['702'] is 0
+PASS clickCounts['list-item-div'] is 0
+PASS clickCounts['outside-button'] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button">Click me</button>
+
+<script>
+var testOutput = "This test ensures that AX doesn't become unresponsive when a page is reloaded.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const axButton = accessibilityController.accessibleElementById("button");
+    const storageKey = "page-reload-deadlock-webkit-test-did-reload";
+    if (window.localStorage.getItem(storageKey) === null) {
+        window.localStorage.setItem(storageKey, "true")
+        accessibilityController.setRetainedElement(axButton);
+        // Queue an arbitrary update. This is required to make the bug reproduce because it causes an acquisition of a lock
+        // used to retrieve the isolated tree for the page associated with this button.
+        document.getElementById("button").setAttribute("disabled", "true");
+        // Note that this reloads the test, too.
+        internals.forceReload(true);
+    } else {
+        window.localStorage.removeItem(storageKey);
+        // Request the role from the retained button. This action (requesting an attribute from a wrapper that has had its
+        // AX object destroyed by page reload) is currently required to trigger isolated tree destruction, but ideally that wouldn't be the case.
+        // This bug is tracked in https://bugs.webkit.org/show_bug.cgi?id=250345.
+        testOutput += `Role of #button element retained from first page load: ${accessibilityController.retainedElement().role}\n`;
+        testOutput += `Role of #button element from second page load: ${axButton.role}\n`;
+
+        testOutput += `PASS: Test didn't timeout.`;
+        debug(testOutput);
+        finishJSTest();
+    }
+}
+</script>
+</body>
+</html>
+

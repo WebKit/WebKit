@@ -1,0 +1,14 @@
+ABC
+
+PASS setBaseAndExtent(use, 0, use, 1) in "<svg><use><circle></circle></use></svg>"
+PASS setBaseAndExtent(use, 0, circle, 0) in "<svg><use><circle></circle></use></svg>"
+PASS setBaseAndExtent(use, 1, circle, 0) in "<svg><use>\n<circle></circle></use></svg>"
+PASS setBaseAndExtent(circle, 0, use, 1) in "<svg><use><circle></circle></use></svg>"
+PASS setBaseAndExtent(details, 0, summary, 0) in "<details><summary>ABC</summary>DEF</details>"
+PASS setBaseAndExtent(details, 1, summary, 0) in "<details>\n<summary>ABC</summary>DEF</details>"
+PASS setBaseAndExtent(details, 0, summary > #text, 0) in "<details><summary>ABC</summary>DEF</details>"
+PASS setBaseAndExtent(details, 0, summary + #text, 0) in "<details><summary>ABC</summary>DEF</details>"
+PASS setBaseAndExtent(details, 1, summary + #text, 0) in "<details>\n<summary>ABC</summary>DEF</details>"
+PASS setBaseAndExtent(details, 0, p+p, 0) in "<details><summary>ABC</summary><p>DEF</p><p>GHI</p></details>"
+PASS setBaseAndExtent(details, 1, p+p, 0) in "<details>\n<summary>ABC</summary><p>DEF</p><p>GHI</p></details>"
+

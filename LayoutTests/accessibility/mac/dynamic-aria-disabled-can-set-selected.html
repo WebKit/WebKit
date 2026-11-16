@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="radio" role="menuitemradio" aria-checked="true">Radio</div>
+
+<ul id="tree" role="tree">
+    <li id="treeitem" role="treeitem">Tree item</li>
+</ul>
+
+<script>
+var output = "This test ensures we properly report whether AXSelected is settable after dynamic changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('radio').isAttributeSettable('AXSelected')", "true");
+    output += expect("accessibilityController.accessibleElementById('tree').isAttributeSettable('AXSelected')", "true");
+    output += expect("accessibilityController.accessibleElementById('treeitem').isAttributeSettable('AXSelected')", "true");
+
+    document.getElementById("radio").setAttribute("aria-disabled", "true")
+    document.getElementById("tree").setAttribute("aria-disabled", "true")
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('radio').isAttributeSettable('AXSelected')", "false");
+        output += await expectAsync("accessibilityController.accessibleElementById('tree').isAttributeSettable('AXSelected')", "false");
+        output += await expectAsync("accessibilityController.accessibleElementById('treeitem').isAttributeSettable('AXSelected')", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

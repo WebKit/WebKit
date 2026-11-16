@@ -1,0 +1,27 @@
+<html>
+<head>
+<style>
+blockquote {
+    color: blue;
+    padding-left: 10px;
+    margin-left: 0px;
+    border-left: 2px solid blue;
+}
+</style>
+</head>
+<body>
+<div id="description">This tests to make sure that an Apple-paste-as-quotation blockquote can override document default styles even if they are different than the insertion position.</div>
+<div id="edit" contenteditable="true" style="color: red;"></div>
+
+<script>
+edit = document.getElementById("edit");
+description = document.getElementById("description");
+edit.focus();
+document.execCommand("InsertHTML", false, "<blockquote class='Apple-paste-as-quotation'><span class='Apple-style-span' style='color:black;'>This text should have the blockquote color (blue). There should be no style spans around it.</span></blockquote>");
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    document.body.innerText = description.innerText + "\n" + edit.innerHTML;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+box-sizing: default; border-collapse: separate
+
+box-sizing: border-box; border-collapse: separate
+
+box-sizing: content-box; border-collapse: separate
+
+box-sizing: default; border-collapse: collapse
+
+box-sizing: border-box; border-collapse: collapse
+
+box-sizing: content-box; border-collapse: collapse
+
+div with display:table; box-sizing: default; border-collapse: separate
+
+div with display:table; box-sizing: border-box; border-collapse: separate
+
+div with display:table;box-sizing: content-box; border-collapse: separate
+
+Same tests, but tables are inline.
+
+ box-sizing: border-box; border-collapse: separate
+ box-sizing: content-box; border-collapse: separate
+ box-sizing: border-box; border-collapse: collapse
+ box-sizing: content-box; border-collapse: collapse
+  div with display:inline-table; box-sizing: border-box;
+  div with display:inline-table;box-sizing: content-box
+
+PASS .t 1
+PASS .t 2
+FAIL .t 3 assert_equals:
+<table class="t" style="box-sizing:content-box;border-collapse: separate" data-expected-width="180" data-expected-height="180">
+  <tbody>
+    <tr><td></td>
+  </tr></tbody>
+</table>
+width expected 180 but got 100
+PASS .t 4
+PASS .t 5
+FAIL .t 6 assert_equals:
+<table class="t" style="box-sizing:content-box;border-collapse: collapse" data-expected-width="130" data-expected-height="130">
+  <tbody>
+    <tr><td></td>
+  </tr></tbody>
+</table>
+width expected 130 but got 100
+PASS .t 7
+PASS .t 8
+PASS .t 9
+PASS .t 10
+FAIL .t 11 assert_equals:
+<table class="t inline" style="box-sizing:content-box;border-collapse: separate" data-expected-width="180" data-expected-height="180">
+  <tbody>
+    <tr><td></td>
+  </tr></tbody>
+</table>
+width expected 180 but got 100
+PASS .t 12
+FAIL .t 13 assert_equals:
+<table class="t inline" style="box-sizing:content-box;border-collapse: collapse" data-expected-width="130" data-expected-height="130">
+  <tbody>
+    <tr><td></td>
+  </tr></tbody>
+</table>
+width expected 130 but got 100
+PASS .t 14
+PASS .t 15
+

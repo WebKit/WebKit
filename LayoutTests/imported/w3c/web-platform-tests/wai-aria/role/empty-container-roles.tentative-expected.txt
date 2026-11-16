@@ -1,0 +1,12 @@
+x
+x
+
+FAIL role is list (empty) assert_equals: <div role="list" data-testname="role is list (empty)" data-expectedrole="list" class="ex"></div> expected "list" but got "group"
+FAIL role is list (no listitem) assert_equals: <div role="list" data-testname="role is list (no listitem)" data-expectedrole="list" class="ex">
+  <div>x</div>
+</div> expected "list" but got "group"
+FAIL role is menu (empty) assert_equals: <div role="menu" data-testname="role is menu (empty)" data-expectedrole="menu" class="ex"></div> expected "menu" but got "generic"
+FAIL role is menu (no menuitem) assert_equals: <div role="menu" data-testname="role is menu (no menuitem)" data-expectedrole="menu" class="ex">
+  <div>x</div>
+</div> expected "menu" but got "generic"
+

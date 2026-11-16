@@ -1,0 +1,16 @@
+
+PASS Text fragment works from HTTP 301 redirect.
+PASS Text fragment works from HTTP 302 redirect.
+PASS Text fragment works from HTTP 303 redirect.
+PASS Text fragment works from HTTP 307 redirect.
+PASS Text fragment works from HTTP 308 redirect.
+PASS Text fragment propagated through HTTP 301 redirect.
+PASS Text fragment propagated through HTTP 302 redirect.
+PASS Text fragment propagated through HTTP 303 redirect.
+PASS Text fragment propagated through HTTP 307 redirect.
+PASS Text fragment propagated through HTTP 308 redirect.
+PASS Text fragment works on client-side location redirect.
+PASS Text fragment works on client-side meta redirect.
+FAIL One text fragment per user gesture allowed in client-side location redirect. assert_equals: expected false but got true
+FAIL One text fragment per user gesture allowed in client-side meta redirect. assert_equals: expected false but got true
+

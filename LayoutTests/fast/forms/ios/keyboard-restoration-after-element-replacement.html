@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        input {
+            display: block;
+            width: 200px;
+            height: 30px;
+            font-size: 16px;
+        }
+
+        .container {
+            margin: 20px;
+        }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+
+        addEventListener("load", async () => {
+            if (!window.testRunner)
+                return;
+
+            description("Test keyboard restoration when input elements are replaced during the same presentation update.");
+
+            await UIHelper.setHardwareKeyboardAttached(false);
+
+            // Test 1: Keyboard should remain visible after element replacement during same presentation update.
+            const container1 = document.getElementById('container1');
+            const input1 = document.getElementById('input1');
+
+            await UIHelper.activateElement(input1);
+            await UIHelper.waitForKeyboardToShow();
+            isShowingKeyboard = await UIHelper.isShowingKeyboard();
+            shouldBeTrue("isShowingKeyboard");
+
+            container1.innerHTML = '<input type="text" id="input1_replaced">';
+            const input1_replaced = document.getElementById('input1_replaced');
+            input1_replaced.focus();
+            await UIHelper.ensurePresentationUpdate();
+
+            isShowingKeyboard = await UIHelper.isShowingKeyboard();
+            shouldBeTrue("isShowingKeyboard");
+
+            input1_replaced.blur();
+            await UIHelper.waitForKeyboardToHide();
+
+            // Test 2: Programmatic focus without user interaction should not show keyboard
+            const input2 = document.getElementById('input2');
+
+            input2.focus();
+            await UIHelper.ensurePresentationUpdate();
+
+            isShowingKeyboard = await UIHelper.isShowingKeyboard();
+            shouldBeFalse("isShowingKeyboard");
+
+            input2.blur();
+
+            // Test 3: Focus after presentation update should not show keyboard
+            const container3 = document.getElementById('container3');
+            const input3 = document.getElementById('input3');
+
+            await UIHelper.activateElement(input3);
+            await UIHelper.waitForKeyboardToShow();
+
+            isShowingKeyboard = await UIHelper.isShowingKeyboard();
+            shouldBeTrue("isShowingKeyboard");
+
+            container3.innerHTML = '';
+            await UIHelper.waitForKeyboardToHide();
+            await UIHelper.ensurePresentationUpdate();
+
+            container3.innerHTML = '<input type="text" id="input3_delayed">';
+            const input3_delayed = document.getElementById('input3_delayed');
+            input3_delayed.focus();
+
+            await UIHelper.ensurePresentationUpdate();
+
+            isShowingKeyboard = await UIHelper.isShowingKeyboard();
+            shouldBeFalse("isShowingKeyboard");
+
+            // Test 4: Programmatic focus immediately after keyboard explicitly dismissed should not show keyboard.
+            const container4 = document.getElementById('container4');
+            const input4 = document.getElementById('input4');
+
+            await UIHelper.activateElement(input4);
+            await UIHelper.waitForKeyboardToShow();
+
+            isShowingKeyboard = await UIHelper.isShowingKeyboard();
+            shouldBeTrue("isShowingKeyboard");
+
+            setInterval(function(){
+                input4.focus();
+            }, 2);
+
+            await UIHelper.dismissFormAccessoryView();
+            await UIHelper.waitForKeyboardToHide();
+            await UIHelper.ensurePresentationUpdate();
+
+            await UIHelper.ensurePresentationUpdate();
+            isShowingKeyboard = await UIHelper.isShowingKeyboard();
+            shouldBeFalse("isShowingKeyboard");
+
+            finishJSTest();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container" id="container1">
+        <input type="text" id="input1">
+    </div>
+    <div class="container" id="container2">
+        <input type="text" id="input2">
+    </div>
+    <div class="container" id="container3">
+        <input type="text" id="input3">
+    </div>
+    <div class="container" id="container4">
+        <input type="text" id="input4">
+    </div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+Some text
+
+PASS Rendering is blocked before render-blocking resources are loaded
+PASS Parser-inserted render-blocking defer script is evaluated
+

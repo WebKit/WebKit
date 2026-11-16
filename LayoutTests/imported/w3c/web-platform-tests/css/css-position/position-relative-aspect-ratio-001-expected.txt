@@ -1,0 +1,6 @@
+
+PASS Explicit width + aspect-ratio 2/1, top: 50%
+PASS Explicit width + aspect-ratio 2/1, bottom: 25%
+PASS Auto width block + aspect-ratio 2/1, top: 50%
+PASS No aspect-ratio, auto height, top: 50% does not resolve
+

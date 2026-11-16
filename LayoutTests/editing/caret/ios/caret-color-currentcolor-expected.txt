@@ -1,0 +1,10 @@
+This test verifies the used caret color matches the value of an element's color property when 'caret-color: currentcolor' is explicitly specified.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS caretColor is "rgb(255, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,5 @@
+
+PASS environment-map on a nested <model> is ignored
+PASS The environmentmap attribute on a nested <model> is ignored
+PASS Un-nesting a <model> applies its own environment map
+

@@ -1,0 +1,3 @@
+
+PASS Test that the inline style attribute is loaded
+

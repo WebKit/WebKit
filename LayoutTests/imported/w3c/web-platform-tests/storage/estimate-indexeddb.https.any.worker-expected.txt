@@ -1,0 +1,5 @@
+
+PASS estimate() method exists and returns a Promise
+PASS estimate() resolves to dictionary with members
+PASS estimate() shows usage increase after large value is stored
+

@@ -1,0 +1,3 @@
+
+FAIL getIntersectionList() on element with intersecting bounding box assert_array_equals: lengths differ, expected array ["e0", "e1"] length 2, got ["e0", "e1", "e2"] length 3
+

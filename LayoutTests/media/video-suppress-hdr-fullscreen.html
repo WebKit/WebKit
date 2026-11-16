@@ -1,0 +1,99 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SupportHDRDisplayEnabled=true ] -->
+<html>
+<head>
+    <title>video-suppress-hdr-fullscreen</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+
+    <script>
+
+    // So that the non-failure output is the same if dynamic-range-limit:no-limit is not supported.
+    function testExpectedIfSupportsDynamicRangeLimit(testFuncString, expected)
+    {
+        if (CSS.supports("dynamic-range-limit", "no-limit")) {
+            try {
+                let {success, observed} = compare(testFuncString, expected, '==');
+                if (!success)
+                    reportExpected(success, testFuncString, '==', expected, observed)
+            } catch (ex) {
+                consoleWrite(ex);
+            }
+        }
+    }
+
+    function go()
+    {
+        if (!window.internals) {
+            failTest('This test requires window.internals.');
+            return;
+        }
+
+        findMediaElement();
+
+        testExpectedIfSupportsDynamicRangeLimit('video.style["dynamic-range-limit"]', '');
+        testExpectedIfSupportsDynamicRangeLimit('getComputedStyle(video)["dynamic-range-limit"]', 'no-limit');
+
+        run('internals.setPageShouldSuppressHDR(false)');
+        testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 1.0);
+        run('internals.setPageShouldSuppressHDR(true)');
+        testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 0.5);
+        run('internals.setPageShouldSuppressHDR(false)');
+        testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 1.0);
+
+        internals.settings.setAllowsInlineMediaPlayback(false);
+        internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(true);
+        // Disable the Fullscreen API (element fullscreen) support
+        internals.settings.setFullScreenEnabled(false);
+        internals.setMockVideoPresentationModeEnabled(true);
+        internals.setMediaElementRestrictions(video, "NoRestrictions");
+
+        waitForEventOnce('canplaythrough', canplaythrough);
+        run('video.src = findMediaFile("video", "content/test")');
+    }
+
+    function canplaythrough()
+    {
+        run('video.play().then(playing);');
+    }
+
+    async function playing()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+
+        // Mock fullscreen is flaky (webkit.org/b/222573) so adapt to it for this test,
+        // where we're more interested in the implication: fullscreen+mac -> don't suppress HDR.
+        const isFullscreen = video.webkitDisplayingFullscreen;
+        const isMac = window.testRunner && window.testRunner.isMac;
+        const shouldSuppressHDR = !(isFullscreen && isMac);
+
+        testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 1.0);
+        run('internals.setPageShouldSuppressHDR(true)');
+        testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', shouldSuppressHDR ? 0.5 : 1.0);
+        run('internals.setPageShouldSuppressHDR(false)');
+        testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 1.0);
+
+        waitForEventOnce('webkitpresentationmodechanged', endfullscreen);
+        run('video.webkitExitFullscreen()');
+    }
+
+    async function endfullscreen()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', false);
+        testExpected('video.paused', false);
+
+        testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 1.0);
+        run('internals.setPageShouldSuppressHDR(true)');
+        testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 0.5);
+        run('internals.setPageShouldSuppressHDR(false)');
+        testExpectedIfSupportsDynamicRangeLimit('internals.effectiveDynamicRangeLimitValue(video)', 1.0);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="go()">
+    <video controls></video>
+    <p>Test how fullscreen influences suppress-HDR notification handling.</p>
+</body>
+</html>

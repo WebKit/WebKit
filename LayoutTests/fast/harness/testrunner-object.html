@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre><script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.writeln(window.testRunner ? "PASS - window.testRunner exists" : "FAIL - window.testRunner doesn't");
+if (window.layoutTestController) {
+    for (var property in window.testRunner) {
+        if (!(property in window.layoutTestController))
+            document.write("Property " + property + " exists on testRunner but doesn't exist on layoutTestController");
+    }
+    for (var property in window.layoutTestController) {
+        if (!(property in window.testRunner))
+            document.write("Property " + property + " exists on layoutTestController but doesn't exist on testRunner");
+    }
+}
+
+document.writeln('Done');
+
+</script></pre>
+</body>
+</html>

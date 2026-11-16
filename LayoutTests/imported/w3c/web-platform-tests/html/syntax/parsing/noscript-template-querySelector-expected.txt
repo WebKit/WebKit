@@ -1,0 +1,5 @@
+
+PASS noscript child should be text node.
+PASS noscript contents are escaped when serialized in a template
+PASS noscript child should be unreachable
+

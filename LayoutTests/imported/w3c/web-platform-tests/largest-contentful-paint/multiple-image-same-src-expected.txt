@@ -1,0 +1,4 @@
+
+
+PASS Largest Contentful Paint:dynamically appended image with different dimensions but same src triggers new entry.
+

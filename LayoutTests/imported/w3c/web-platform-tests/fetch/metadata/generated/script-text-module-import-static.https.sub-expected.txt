@@ -1,0 +1,19 @@
+
+PASS sec-fetch-site - Same origin
+PASS sec-fetch-site - Cross-site
+PASS sec-fetch-site - Same site
+FAIL sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect assert_own_property: expected property "sec-fetch-site" missing
+FAIL sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect assert_own_property: expected property "sec-fetch-site" missing
+FAIL sec-fetch-site - Cross-Site -> Same Origin assert_own_property: expected property "sec-fetch-site" missing
+FAIL sec-fetch-site - Cross-Site -> Same-Site assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-site - Cross-Site -> Cross-Site
+PASS sec-fetch-site - Same-Origin -> Same Origin
+FAIL sec-fetch-site - Same-Origin -> Same-Site assert_own_property: expected property "sec-fetch-site" missing
+FAIL sec-fetch-site - Same-Origin -> Cross-Site assert_own_property: expected property "sec-fetch-site" missing
+FAIL sec-fetch-site - Same-Site -> Same Origin assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-site - Same-Site -> Same-Site
+FAIL sec-fetch-site - Same-Site -> Cross-Site assert_own_property: expected property "sec-fetch-site" missing
+PASS sec-fetch-mode
+PASS sec-fetch-dest
+PASS sec-fetch-user
+

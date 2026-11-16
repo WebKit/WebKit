@@ -1,0 +1,11 @@
+Regression test for bugs.webkit.org/show_bug.cgi?id=264219: exercises the render bundle indirect-draw skip cache's invalidation path. executeBundles GPU-encodes a drawIndexedIndirect into the bundle's persistent ICB slot only when the indirect buffer's contents generation changed since the last encode (data.lastIndirectGeneration); otherwise the previously baked slot is reused. The draw count (indexCount) is baked into the ICB slot at encode time, so rewriting the indirect args buffer between two executeBundles() calls on the same bundle MUST force a re-encode. A real vertex-step-mode @location buffer is bound so the re-encode also re-runs the batched min-count clamp path. frame0 draws the triangle (green); after rewriting indexCount to 0 the re-encoded slot draws nothing, so frame1 is the red clear. A stale (non-invalidated) cache would leave frame1 green.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frame0.join() is "0,255,0,255"
+PASS frame1.join() is "255,0,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

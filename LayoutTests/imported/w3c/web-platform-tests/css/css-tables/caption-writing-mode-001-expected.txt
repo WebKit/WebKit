@@ -1,0 +1,8 @@
+caption
+caption
+This is a script test because of how ridiculously differently the current engines render these cases.
+
+
+PASS Caption percent margins are resolved against table's height for vertical-lr tables
+PASS Caption with auto top/bottom margins is centered vertically for vertical-lr tables
+

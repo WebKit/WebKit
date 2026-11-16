@@ -1,0 +1,21 @@
+<html>
+<head>
+    <script>
+        if (window.internals)
+            internals.clearMemoryCache();
+    </script>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=100&test=css-import-base-tag"></script>
+</head>
+<body>
+<script>
+description("Test that the preload scanner correctly resolves relative @import URLs in CSS against a base tag");
+    if (window.internals)
+        shouldBeTrue("internals.isPreloaded('http://127.0.0.1:8000/preload/resources/base-tag-import.css');");
+</script>
+<base href="http://127.0.0.1:8000/preload/resources/foo.html">
+<style>
+@import "base-tag-import.css";
+</style>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<script>
+  testRunner?.dumpAsText();
+
+  let details1 = document.createElement('details');
+  document.documentElement.append(details1);
+
+  details1.append(document.createElement('div'));
+
+  let details2 = document.createElement('details');
+  details1.append(details2);
+
+  let div = document.createElement('div');
+  details1.appendChild(div);
+
+(async () => {
+internals.withUserGesture(() => {});
+
+details2.requestFullscreen();
+
+await (()=>{
+  div.offsetHeight;
+  setTimeout(function() {
+    window.document.caretRangeFromPoint(0);
+  }, 10);
+})()
+
+})();
+</script>
+PASS if no crash.

@@ -1,0 +1,5 @@
+
+PASS import.meta.url in a root external script
+PASS import.meta.url in a dependent external script
+PASS import.meta.url when importing the module with different fragments
+

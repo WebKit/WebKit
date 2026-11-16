@@ -1,0 +1,3 @@
+
+PASS updateCallbackDone rejects with the exception thrown by the update callback's returned promise's constructor getter
+

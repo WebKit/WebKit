@@ -1,0 +1,6 @@
+
+PASS CookieChangeEvent construction with default arguments
+PASS CookieChangeEvent construction with changed cookie list
+PASS CookieChangeEvent construction with deleted cookie list
+PASS CookieChangeEvent construction with changed and deleted cookie lists
+

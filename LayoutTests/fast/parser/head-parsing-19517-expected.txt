@@ -1,0 +1,3 @@
+Test for bug 19517: DOM modification of textArea causes Access Violation
+
+PASS if no crash

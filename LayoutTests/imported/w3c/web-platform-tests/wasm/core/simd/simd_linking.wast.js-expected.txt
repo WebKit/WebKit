@@ -1,0 +1,10 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (simd_linking.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (simd_linking.wast:7)
+PASS #4 Reinitialize the default imports
+PASS #5 Test that WebAssembly compilation succeeds (simd_linking.wast:1)
+PASS #6 Test that WebAssembly instantiation succeeds (simd_linking.wast:1)
+PASS #7 Test that WebAssembly compilation succeeds (simd_linking.wast:7)
+PASS #8 Test that WebAssembly instantiation succeeds (simd_linking.wast:7)
+

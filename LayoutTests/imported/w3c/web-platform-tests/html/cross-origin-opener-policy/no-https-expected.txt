@@ -1,0 +1,4 @@
+
+PASS Cross-Origin-Opener-Policy only works over secure contexts
+PASS Bonus: window.crossOriginIsolated
+

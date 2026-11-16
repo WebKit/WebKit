@@ -1,0 +1,182 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import os
+import subprocess
+import sys
+import time
+import threading
+
+import resultsdbpy
+from webkitcorepy import AutoInstall
+
+libraries = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if sys.platform == 'darwin':
+    is_root = not os.getuid()
+    does_own_libraries = os.stat(libraries).st_uid == os.getuid()
+    if (is_root or not does_own_libraries):
+        libraries = os.path.expanduser('~/Library/webkitpy')
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
+
+from resultsdbpy.model.docker import Docker
+from multiprocessing import Process
+from redis import StrictRedis
+
+
+class DockerIfNeededContext(object):
+
+    def __init__(self, args):
+        self.docker = Docker.instance() if 'localhost' in [args.cassandra_server, args.redis_server] else None
+
+    def __enter__(self):
+        if self.docker:
+            self.docker.__enter__()
+
+    def __exit__(self, *args, **kwargs):
+        if self.docker:
+            self.docker.__exit__(*args, **kwargs)
+
+
+def has_gunicorn():
+    return not subprocess.run(['python3', '/usr/local/bin/gunicorns', '--version'], capture_output=True).returncode
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Run a simple instance of the results database for local development')
+    parser.add_argument(
+        '--local-cassandra', help='Use a local Cassandra instance',
+        dest='cassandra_server', action='store_const', const='localhost',
+    )
+    parser.add_argument(
+        '--mock-cassandra', help='Use a mock Cassandra instance',
+        dest='cassandra_server', action='store_const', const='mock',
+    )
+    parser.set_defaults(cassandra_server='localhost' if Docker.installed() else 'mock')
+
+    parser.add_argument(
+        '--local-redis', help='Use a local Redis instance',
+        dest='redis_server', action='store_const', const='localhost',
+    )
+    parser.add_argument(
+        '--mock-redis', help='Use a mock Redis instance',
+        dest='redis_server', action='store_const', const='mock',
+    )
+    parser.set_defaults(redis_server='localhost' if Docker.installed() else 'mock')
+
+    parser.add_argument(
+        '--drop-keyspace', help='Drop the existing keyspace before running the program',
+        dest='drop_keyspace', action='store_true',
+    )
+    parser.add_argument(
+        '--no-drop-keyspace', help='Do NOT drop the existing keyspace before running the program',
+        dest='drop_keyspace', action='store_false',
+    )
+    parser.set_defaults(drop_keyspace=False)
+
+    parser.add_argument(
+        '--clear-redis', help='Clear redis before running the application',
+        dest='clear_redis', action='store_true',
+    )
+    parser.add_argument(
+        '--no-clear-redis',
+        help='Do not clear redis before running the application',
+        dest='clear_redis', action='store_false',
+    )
+    parser.set_defaults(clear_redis=True)
+
+    parser.add_argument(
+        '--gunicorn', help='Use the gunicorn webserver',
+        dest='gunicorn', action='store_true',
+    )
+    parser.add_argument(
+        '--no-gunicorn',
+        help='Do not use the gunicorn webserver',
+        dest='gunicorn', action='store_false',
+    )
+    parser.set_defaults(gunicorn=has_gunicorn())
+
+    return parser.parse_args()
+
+
+def do_work():
+    from resultsdbpy.example.worker import main
+    main()
+
+
+def web_app():
+    from resultsdbpy.example.main import main
+    return main()
+
+
+def gunicorn():
+    if not has_gunicorn():
+        print('gunicorn is not installed, please run `pip3 install gunicorn`')
+        return 1
+
+    # Slight delay so that the worker is started before the webserver
+    time.sleep(2)
+    return subprocess.run([
+        'python3', '/usr/local/bin/gunicorn',
+        'example.main:app',
+        '--log-file=-', '--reload',
+    ]).returncode
+
+
+def main():
+    args = parse_arguments()
+    with DockerIfNeededContext(args):
+        os.environ['CASSANDRA_SERVER'] = args.cassandra_server
+        os.environ['REDIS_HOST'] = args.redis_server
+        os.environ['DROP_KEYSPACE'] = '1' if args.drop_keyspace else '0'
+        os.environ['CREATE_KEYSPACE'] = '1'  # Unconditionally create keyspace for testing
+
+        if args.clear_redis and args.redis_server != 'mock':
+            StrictRedis(host=args.redis_server).flushdb()
+
+        if args.gunicorn:
+            if 'mock' in [args.redis_server, args.cassandra_server]:
+                raise RuntimeError('Cannot run with gunicorn and mock databases, asynchronous workers rely on the real databases')
+
+        from resultsdbpy.example.environment import main as environment_main
+        environment_main()
+
+        if not args.gunicorn:
+            worker = threading.Thread(target=do_work)
+            worker.daemon = True
+            worker.start()
+
+            return web_app()
+
+        worker = Process(target=do_work)
+        worker.start()
+
+        try:
+            return gunicorn()
+        finally:
+            worker.terminate()
+            worker.join()
+
+if __name__ == '__main__':
+    sys.exit(main())

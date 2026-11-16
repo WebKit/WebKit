@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    width: 2000px;
+    height: 2000px;
+}
+</style>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ width: "200px", height: "200px" }, (target, test) => {
+
+    document.addEventListener("touchstart", () => {}, { passive: false });
+    target.addEventListener("pointerdown", event => event.preventDefault());
+
+    ui.swipe({ x: 100, y: 150 }, { x: 100, y: 50 }).then(() => {
+        assert_not_equals(window.pageYOffset, 0, "The page was scrolled in the y-axis.");
+        test.done();
+    });
+}, "Calling preventDefault() on pointerdown does not prevent page scrolling when touch listeners are active (non-passive).");
+
+</script>
+</body>
+</html>

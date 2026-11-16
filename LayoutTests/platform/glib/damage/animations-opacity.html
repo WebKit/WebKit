@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          margin-top: 50px;
+      }
+      .rect {
+          width: 64px;
+          height: 64px;
+          margin-left: 50px;
+          background-color: green;
+          animation-name: animate;
+          animation-duration: 5s;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;
+      }
+      @keyframes animate {
+          from {
+              opacity: 1.0;
+          }
+          to {
+              opacity: 0.15;
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rect"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      setTimeout(() => {
+          var damage = latestFrameDamage();
+          if (!assertEq(damage.rects.length, 1, "wrong number of damage rects")
+              || !assertRectsEq(damage.rects, [[50, 50, 64, 64]])) {
+              failTest(failure);
+              return;
+          }
+          passTest();
+      }, 2000);
+    </script>
+  </body>
+</html>

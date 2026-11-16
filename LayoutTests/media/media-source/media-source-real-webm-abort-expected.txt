@@ -1,0 +1,17 @@
+Tests abort() followed by re-initialization through the real WebM parser pipeline.
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '2') OK
+RUN(sourceBuffer.abort())
+EXPECTED (sourceBuffer.updating == 'false') OK
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '4') OK
+EXPECTED (source.readyState == 'open') OK
+END OF TEST
+

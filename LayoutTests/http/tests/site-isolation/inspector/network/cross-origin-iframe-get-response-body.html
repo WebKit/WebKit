@@ -1,0 +1,105 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addIFrame() {
+    iframe = document.createElement("iframe");
+    // Main page is served from 127.0.0.1:8000; localhost:8000 is cross-origin and, under
+    // Site Isolation, loads in a separate WebContent process. Trigger the subresource
+    // loads only after the iframe has loaded (so its frame target exists and Network
+    // instrumentation is enabled) by posting it a message.
+    iframe.src = "http://localhost:8000/site-isolation/inspector/network/resources/get-response-body-iframe.html";
+    iframe.addEventListener("load", () => iframe.contentWindow.postMessage({type: "TriggerLoads"}, "*"));
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    // This test exercises the Network.getResponseBody success path under Site Isolation:
+    // ProxyingNetworkAgent (UIProcess) parses the process-qualified requestId, routes the
+    // command to the owning WebContent process's WebInspectorBackend, which reads the body
+    // out of BackendResourceDataStore. We deliberately drive the resources through the
+    // WI.Frame.Event.ResourceWasAdded path (as in cross-origin-iframe-request-id-uniqueness)
+    // rather than the FrameTarget/RuntimeAgent path, which has historical event-ordering
+    // races under SI. The getResponseBody command is issued directly against the
+    // multiplexing (web-page) target's NetworkAgent -- that is where ProxyingNetworkAgent
+    // lives under SI (see MultiplexingBackendTarget / NetworkManager.initializeTarget).
+
+    // Resolve when a resource whose URL contains `urlSubstring` is added to any frame.
+    function waitForResource(urlSubstring) {
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource || !resource.url || !resource.url.includes(urlSubstring))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    async function waitForFinished(resource) {
+        if (!resource.finished && !resource.failed)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+    }
+
+    let textResource;
+    let imageResource;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.GetResponseBody");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.LoadResources",
+        description: "Load a text resource and a binary image inside a cross-origin iframe and wait for both to finish.",
+        async test() {
+            // Register both waiters before triggering the loads so neither event is missed.
+            let textPromise = waitForResource("echo.py");
+            let imagePromise = waitForResource("white.png");
+
+            InspectorTest.evaluateInPage("addIFrame()");
+
+            textResource = await textPromise;
+            imageResource = await imagePromise;
+
+            InspectorTest.expectThat(textResource instanceof WI.Resource, "Text resource should be created.");
+            InspectorTest.expectThat(imageResource instanceof WI.Resource, "Image resource should be created.");
+
+            await waitForFinished(textResource);
+            await waitForFinished(imageResource);
+
+            InspectorTest.expectThat(textResource.finished, "Text resource should finish loading.");
+            InspectorTest.expectThat(imageResource.finished, "Image resource should finish loading.");
+            InspectorTest.expectThat(!!textResource.requestIdentifier, "Text resource should have a request identifier.");
+            InspectorTest.expectThat(!!imageResource.requestIdentifier, "Image resource should have a request identifier.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.TextContent",
+        description: "getResponseBody should return the decoded text body for a cross-origin-iframe resource.",
+        async test() {
+            let {body, base64Encoded} = await WI.backendTarget.NetworkAgent.getResponseBody(textResource.requestIdentifier);
+            InspectorTest.expectEqual(base64Encoded, false, "Text response body should not be base64-encoded.");
+            InspectorTest.expectEqual(body, "si-cross-origin-response-body", "Text response body should match the served content.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.BinaryContent",
+        description: "getResponseBody should return a base64-encoded body for a binary (image) cross-origin-iframe resource.",
+        async test() {
+            let {body, base64Encoded} = await WI.backendTarget.NetworkAgent.getResponseBody(imageResource.requestIdentifier);
+            InspectorTest.expectEqual(base64Encoded, true, "Binary (image) response body should be base64-encoded.");
+            InspectorTest.expectThat(body.length > 0, "Binary response body should not be empty.");
+            InspectorTest.log("Base64-encoded image body length: " + body.length);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that Network.getResponseBody returns the correct text and base64-encoded bodies for resources loaded in a cross-origin iframe under Site Isolation, routed through ProxyingNetworkAgent and BackendResourceDataStore.</p>
+</body>

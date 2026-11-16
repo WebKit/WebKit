@@ -1,0 +1,5 @@
+self is derived correctly inside inside a sandboxed iframe.
+
+
+PASS img-src 'self' works when specified in a meta tag.
+

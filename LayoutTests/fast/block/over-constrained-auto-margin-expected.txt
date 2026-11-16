@@ -1,0 +1,3 @@
+PASS getComputedStyle(target1).marginRight is '-116px'
+PASS getComputedStyle(target2).marginLeft is '-116px'
+

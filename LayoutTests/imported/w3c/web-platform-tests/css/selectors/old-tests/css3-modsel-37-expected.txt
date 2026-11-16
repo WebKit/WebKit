@@ -1,0 +1,8 @@
+This paragraph should have normal background
+
+But this address should have green background
+This paragraph should have normal background
+
+
+PASS :only-of-type
+

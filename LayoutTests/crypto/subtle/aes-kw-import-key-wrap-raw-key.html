@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test wrapping a raw key with AES-KW using an imported key");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var expectWrappedKey = "d64787ab3e048dbdc30bb62781c9f18e58ad7dbfc64aab16";
+
+crypto.subtle.importKey("raw", rawKey, "aes-kw", extractable, ["wrapKey", "unwrapKey"]).then(function(result) {
+    wrappingKey = result;
+    return crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["encrypt", "decrypt"]);
+}).then(function(result) {
+    key = result;
+    return crypto.subtle.wrapKey("raw", key, wrappingKey, "AES-KW");
+}).then(function(result) {
+    wrappedKey = result;
+
+    shouldBe("bytesToHexString(wrappedKey)", "expectWrappedKey");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

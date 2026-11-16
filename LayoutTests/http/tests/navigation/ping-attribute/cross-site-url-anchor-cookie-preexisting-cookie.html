@@ -1,0 +1,50 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true ] -->
+<html><head>
+<title>Ping</title>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/utilities.js"></script>
+<script>
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function test()
+{
+    let anchor = document.getElementById("a");
+    location.hash = "step3";
+    a.href = location.href.replace("127.0.0.1", "localhost");
+    clickElement(anchor);
+}
+
+window.onload = function ()
+{
+    if (location.hash == "") {
+        testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
+            location.href = location.href.replace("127.0.0.1", "localhost") + "#step1";
+        }, false, true);
+    } else if (location.hash == "#step1") {
+        document.cookie = "firstParty=value";
+        location.hash = "step2";
+        location.href = location.href.replace("localhost", "127.0.0.1");
+    } else if (location.hash == "#step2") {
+        clearLastPingResultAndRunTest(test);
+    } else if (location.hash == "#step3") {
+        setTimeout(() => {
+            fetch("http://localhost:8000/cookies/resources/echo-cookies.py").then((r) => r.text()).then((text) => {
+                let expected = "Cookies are:\n";
+                if (text == expected)
+                    testPassed(`step3: echo-cookies returned the expected value`);
+                else
+                    testFailed(`step3: echo-cookies returned ${text}, expected ${expected}`);
+                testRunner.notifyDone();
+            });
+        }, 500);
+    }
+}
+</script>
+</head>
+<body>
+<img src="non-existent-image.jpg">
+<a id="a" ping="http://localhost:8000/navigation/resources/save-ping-and-set-cookies-and-redirect-to-save-ping.py">Navigate and send ping</a>
+</body></html>

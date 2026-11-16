@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+</style>
+<body>
+    <div style="font-size: 40px;" id="source">Copy this text!</div>
+    <p>To manually test, copy the above text. The output below dumps DataTransfer state following each operation,</p>
+    <p>described directly above the output text for each step. The DataTransfer state should be consistent with the</p>
+    <p>operation performed at each step.</p>
+    <pre style="width: 100%; height: 100%" id="output"></pre>
+</body>
+<script>
+function write(message) {
+    output.textContent += `${message}\n`;
+}
+
+function representationForFile(file) {
+    return file ? {
+        name: file.name,
+        bytes: file.size,
+        type: file.type
+    } : null;
+}
+
+function removeAt(itemList, index) {
+    const removedItem = itemList[index];
+    itemList.remove(index);
+    return removedItem;
+}
+
+function updateOutputText(description, event, itemList, fileList) {
+    const dataInfo = {};
+    for (const type of event.clipboardData.types)
+        dataInfo[type] = event.clipboardData.getData(type);
+    const itemsInfo = []
+    for (const item of itemList) {
+        itemsInfo.push({
+            type: item.type,
+            kind: item.kind,
+            file: representationForFile(item.getAsFile())
+        });
+    }
+    write(`\n${description}\n${JSON.stringify({
+        data: dataInfo,
+        items: itemsInfo,
+        files: Array.from(fileList).map(representationForFile)
+    }, null, "    ")}`);
+}
+
+source.addEventListener("copy", event => {
+    const file = new File([ "This is a text file." ], "file.txt", { type: "text/plain" });
+
+    let itemList = event.clipboardData.items;
+    let fileList = event.clipboardData.files;
+    event.clipboardData.items.add(file);
+    event.clipboardData.items.add(file);
+    event.clipboardData.items.add("plain text string", "text/plain");
+    event.clipboardData.items.add("https://webkit.org", "text/uri-list");
+    event.clipboardData.items.add(file);
+    event.clipboardData.items.add(file);
+    updateOutputText("1. After adding all items", event, itemList, fileList);
+
+    itemList = event.clipboardData.items;
+    fileList = event.clipboardData.files;
+    let removedItem = removeAt(itemList, 4);
+    updateOutputText("2. After removing at index 4", event, itemList, fileList);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    itemList = event.clipboardData.items;
+    fileList = event.clipboardData.files;
+    removedItem = removeAt(itemList, 1);
+    updateOutputText("3. After removing at index 1", event, itemList, fileList);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    itemList = event.clipboardData.items;
+    fileList = event.clipboardData.files;
+    removedItem = removeAt(itemList, 3);
+    updateOutputText("4. After removing at index 3", event, itemList, fileList);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    itemList = event.clipboardData.items;
+    fileList = event.clipboardData.files;
+    event.clipboardData.items.clear();
+    updateOutputText("5. After clearing items", event, itemList, fileList);
+
+    event.clipboardData.items.add(file);
+    event.clipboardData.items.add("<strong>some styled text</strong>", "text/html");
+    event.clipboardData.items.add("some plain text", "text/plain");
+    itemList = event.clipboardData.items;
+    fileList = event.clipboardData.files;
+    event.clipboardData.items.add(file);
+    updateOutputText("6. After adding two files and some string data again", event, itemList, fileList);
+
+    itemList = event.clipboardData.items;
+    fileList = event.clipboardData.files;
+    removedItem = removeAt(itemList, 2);
+    updateOutputText("7. After removing at index 2", event, itemList, fileList);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    itemList = event.clipboardData.items;
+    fileList = event.clipboardData.files;
+    removedItem = removeAt(itemList, 2);
+    updateOutputText("8. After removing at index 2", event, itemList, fileList);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    itemList = event.clipboardData.items;
+    fileList = event.clipboardData.files;
+    removedItem = removeAt(itemList, 1);
+    updateOutputText("9. After removing at index 1", event, itemList, fileList);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    itemList = event.clipboardData.items;
+    fileList = event.clipboardData.files;
+    removedItem = removeAt(itemList, 0);
+    updateOutputText("10. After removing at index 0", event, itemList, fileList);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    event.preventDefault();
+});
+
+getSelection().setBaseAndExtent(source, 0, source, 1);
+
+if (window.testRunner && window.internals) {
+    internals.settings.setCustomPasteboardDataEnabled(true);
+    testRunner.dumpAsText();
+    document.execCommand("Copy");
+}
+</script>
+</html>

@@ -1,0 +1,6 @@
+Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet.
+
+PASS getComputedStyle() with fragmented containing block in multicolumn layout
+PASS getComputedStyle() with fragmented containing block in inline layout
+

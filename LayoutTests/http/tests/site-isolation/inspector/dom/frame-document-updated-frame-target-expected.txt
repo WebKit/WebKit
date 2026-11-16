@@ -1,0 +1,45 @@
+Test that a cross-origin iframe's document stays complete in the DOM tree when the iframe reloads or is inserted while Web Inspector is open.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDocumentUpdated
+-- Running test case: Setup
+PASS: Should find the static frame's target.
+PASS: Should find the static <iframe> in the page tree.
+PASS: The frame target's current document should be spliced into the <iframe>.
+PASS: The <iframe> should show the frame target's current document.
+PASS: <head> should contain <title>.
+PASS: <html> should contain <body>.
+PASS: <body> should contain the content parsed after the stall.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentUpdated.ReloadInSameProcess
+PASS: A reload should send `DOM.documentUpdated` once.
+PASS: The frame target's current document should be spliced into the <iframe>.
+PASS: The <iframe> should show the frame target's current document.
+PASS: <head> should contain <title>.
+PASS: <html> should contain <body>.
+PASS: <body> should contain the content parsed after the stall.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentUpdated.SupersededGetDocumentIgnored
+PASS: The frame target's current document should be spliced into the <iframe>.
+PASS: The <iframe> should show the frame target's current document.
+PASS: <head> should contain <title>.
+PASS: <html> should contain <body>.
+PASS: <body> should contain the content parsed after the stall.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentUpdated.DynamicallyInsertedIFrame
+PASS: Should find the inserted <iframe> in the page tree.
+PASS: The frame target's current document should be spliced into the <iframe>.
+PASS: The <iframe> should show the frame target's current document.
+PASS: <head> should contain <title>.
+PASS: <html> should contain <body>.
+PASS: <body> should contain the content parsed after the stall.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentUpdated.NestedSameProcessIFrame
+PASS: Should find the nested <iframe> in the static frame's tree.
+PASS: The frame target's current document should be spliced into the <iframe>.
+PASS: The <iframe> should show the frame target's current document.
+PASS: <head> should contain <title>.
+PASS: <html> should contain <body>.
+PASS: <body> should contain the content parsed after the stall.
+

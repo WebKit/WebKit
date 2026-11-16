@@ -1,0 +1,26 @@
+According to HTML's navigate algorithm, requests to javascript: URLs should inherit the cross-origin opener policy of the active document. To observe this, each subtest uses the following procedure.
+
+create popup with a given COOP (the parentCOOP)
+navigate the popup to a javascript: URL (the new document is expected to inherit the parentCOOP)
+from the popup, create a second popup window with a given COOP (the childCOOP)
+Both popup windows inspect state and report back to the test.
+
+    .---- test ----.
+    | open(https:) |
+    |  parentCOOP  |   .----- subject -------.
+    |      '---------> | --------.           |
+    |              |   |         v           |
+    |              |   | assign(javascript:) |
+    |              |   |  (COOP under test)  |
+    |              |   |         |           |
+    |              |   |    open(https:)     |
+    |              |   |     childCOOP       |    .- child -.
+    |              |   |         '--------------> |         |
+    |              |   '---------------------'    '---------'
+    |              |             |                     |
+    |  validate    | <--status---+---------------------'
+    '--------------'
+
+PASS navigation: SAME_ORIGIN; parentCOOP: same-origin; childCOOP: same-origin
+PASS navigation: SAME_SITE; parentCOOP: same-origin; childCOOP: same-origin
+

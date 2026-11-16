@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py">
+    <script src="/js-test-resources/js-test-pre.js"></script>
+
+</head>
+<body>
+    <script>
+        window.jsTestIsAsync = true;
+
+        var haveReportedFetchError = false;
+        var haveReportedBlockedURI = false;
+
+        // Expect the blocked URI to be the requested origin, not the redirect target.
+        document.addEventListener('securitypolicyviolation', e => {
+            document.body.innerHTML += `blockedURI = <b>${e.blockedURI}</b><br/><br/>`;
+            haveReportedBlockedURI = true;
+            if (haveReportedFetchError)
+                finishJSTest();
+        });
+
+        var url = "resources/redir.py?url=http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py?url=http://localhost:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.py";
+
+async function loadURL() {
+    try {
+        await fetch(url);
+        testFailed("fetch should not have succeeded.");
+    } catch (e) {
+        haveReportedFetchError = true;
+        testPassed("fetch was successfully blocked.");
+        if (haveReportedBlockedURI)
+            finishJSTest();
+    }
+}
+loadURL();
+    </script>
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+Verifies that calling preventDefault() in touchstart and touchend listeners prevents click events from being dispatched when the web page takes a long time to process the touchstart event. To manually run the test, tap the two boxes and verify that no click events are dispatched.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS handledFirstTouch became true
+PASS handledSecondTouch became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

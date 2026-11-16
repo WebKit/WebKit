@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.box { display: inline-block; width: 20px; height: 20px; margin: 2px; }
+.a { background: red; } .b { background: orange; } .c { background: green; } .d { background: blue; }
+.fallback { background: gray; } .other { border-radius: 10px; }
+select, ::picker(select) { appearance: base-select; }
+</style>
+</head>
+<body>
+<div id="insertIntoEmpty"><span class="box b" slot="first"></span><span class="box a"></span></div>
+<div id="removeLast"><span class="box c"></span></div>
+<div id="reassign"><span class="box a other" slot=""></span><span class="box c"></span></div>
+<div id="text">more</div>
+<div id="move"><span class="box c"></span><span class="box a"></span><span class="box d"></span><span class="box b"></span></div>
+<div id="moveOut"></div>
+<div id="textFallback"></div>
+<div id="contentsFallback"></div>
+<details open><summary>First</summary><summary>Second</summary>Content</details>
+<details open>Content</details>
+<details open><summary>Second</summary>Content<summary>First</summary></details>
+<details open><div slot="summarySlot">Content</div></details>
+<select><option>Zero</option><button>Button</button><option selected>One</option><option>Two</option></select>
+<select><button>Button</button><option>Two</option></select>
+<script src="resources/slot-change-incremental-render-tree-update.js"></script>
+<script>
+attachShadows();
+</script>
+</body>
+</html>

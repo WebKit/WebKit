@@ -1,0 +1,11 @@
+Tests that a smooth scrollTo() issued during a view transition leaves the web process and UI process scroll positions in sync.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scroller.scrollLeft is 0
+PASS clickedItem is "item0"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+test(() => {
+    assert_true(!!window.internals, 'test requires internals');
+    assert_equals(internals.documentIPAddressSpace(), 'loopback');
+}, 'a document served over loopback knows it is loopback');
+
+test(() => {
+    assert_true(!!window.internals, 'test requires internals');
+    const frame = document.createElement('iframe');
+    document.body.appendChild(frame);
+
+    assert_equals(frame.contentWindow.internals.documentIPAddressSpace(), 'loopback');
+}, 'an about:blank document inherits its initiator address space');
+
+promise_test(async (t) => {
+    assert_true(!!window.internals, 'test requires internals');
+    const reported = new Promise((resolve) => {
+        window.addEventListener('message', (event) => resolve(event.data), { once: true });
+        t.step_timeout(() => resolve('no reply'), 4000);
+    });
+
+    const blobURL = URL.createObjectURL(new Blob(
+        ['<script>parent.postMessage(internals.documentIPAddressSpace(), "*")<\/script>'],
+        { type: 'text/html' }));
+    t.add_cleanup(() => URL.revokeObjectURL(blobURL));
+
+    const frame = document.createElement('iframe');
+    frame.src = blobURL;
+    document.body.appendChild(frame);
+
+    assert_equals(await reported, 'loopback');
+}, 'a blob: document inherits the address space of the environment that created it');
+
+promise_test(async (t) => {
+    assert_true(!!window.internals, 'test requires internals');
+    const reported = new Promise((resolve) => {
+        window.addEventListener('message', (event) => resolve(event.data), { once: true });
+        t.step_timeout(() => resolve('no reply'), 4000);
+    });
+
+    const frame = document.createElement('iframe');
+    frame.srcdoc = '<script>parent.postMessage(internals.documentIPAddressSpace(), "*")<\/script>';
+    document.body.appendChild(frame);
+
+    assert_equals(await reported, 'loopback');
+}, 'a srcdoc document inherits its parent address space');
+
+</script>
+</body>
+</html>

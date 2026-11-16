@@ -1,0 +1,8 @@
+Ensures that the ShowMenu accessibility action fires a contextmenu DOM event on elements inside a remote iframe.
+PASS: contextMenuFired === true
+PASS: contextMenuTargetId === 'contextmenu-target'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

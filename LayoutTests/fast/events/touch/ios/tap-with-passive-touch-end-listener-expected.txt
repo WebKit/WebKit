@@ -1,0 +1,12 @@
+Tap on Target1 (green)
+
+Listener target1 received event touchend targetting eventTarget1
+Done
+Tap on Target2 (red)
+
+Listener target1 received event touchend targetting eventTarget2
+Done
+Tap on Target3 (blue)
+
+Listener target1 received event touchend targetting eventTarget3
+

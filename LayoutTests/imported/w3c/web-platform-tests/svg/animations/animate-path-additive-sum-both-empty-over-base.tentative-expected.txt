@@ -1,0 +1,3 @@
+
+PASS SVG path 'd' additive animation with both-empty over non-empty base
+

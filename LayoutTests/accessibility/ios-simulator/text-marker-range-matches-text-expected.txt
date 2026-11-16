@@ -1,0 +1,13 @@
+This is some testing content.
+This tests that we are able to get a range with desired text that is close to a given range.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text.stringForTextMarkerRange(markerRange) is 'ome t'
+PASS text.stringForTextMarkerRange(matchedMarkerRange) is 'testing'
+PASS text.stringForTextMarkerRange(matchedMarkerRange) is 'some'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

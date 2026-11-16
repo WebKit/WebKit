@@ -1,0 +1,1 @@
+PASS bold lines=1 (expected 1), normal lines=1 (expected 1) PASS weight-independent

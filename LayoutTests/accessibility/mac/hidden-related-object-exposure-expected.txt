@@ -1,0 +1,11 @@
+This test ensures we don't include hidden elements in the accessibility tree.
+
+PASS: !hiddenDiv || hiddenDiv.isIgnored === undefined
+PASS: !heading || heading.isIgnored === undefined
+PASS: hiddenDiv.isIgnored === false
+PASS: heading.isIgnored === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hidden

@@ -1,0 +1,3 @@
+
+PASS :draw_depth_and_stencil_with_vertex_only_pipeline:
+

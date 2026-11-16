@@ -1,0 +1,31 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that form submission gets cancelled when the form gets detached from inside the formdata event handler.");
+jsTestIsAsync = true;
+ 
+onload = () => {
+    let form = document.getElementById("testForm");
+    frame = document.getElementById("testFrame");
+    frame.onload = () => {
+        // Form submission should have been cancelled since the form was detached in the
+        // formdata event handler. As a result, we should continue the origin test2.txt
+        // navigation instead of doing the test.txt form navigation.
+        shouldBeTrue("frame.contentWindow.location.href.indexOf('test2.txt') != -1");
+        finishJSTest();
+    };
+    form.addEventListener('formdata', e => {
+        form.remove();
+    });
+    frame.src = "resources/test2.txt";
+    form.submit();
+}
+</script>
+<iframe id="testFrame" name="testFrame" style="display:none"></iframe>
+<form id="testForm" action="resources/test.txt" target="testFrame" style="display:none">
+    <input name="foo" value="bar">
+<form>
+</body>
+</html>

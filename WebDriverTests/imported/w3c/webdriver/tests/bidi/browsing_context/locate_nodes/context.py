@@ -1,0 +1,105 @@
+import pytest
+import webdriver.bidi.error as error
+
+from ... import any_string, recursive_compare
+
+pytestmark = pytest.mark.asyncio
+
+
+async def test_params_context_invalid_value(bidi_session, inline, top_context):
+    url = inline("""<div>foo</div>""")
+    await bidi_session.browsing_context.navigate(
+        context=top_context["context"], url=url, wait="complete"
+    )
+
+    with pytest.raises(error.NoSuchFrameException):
+        await bidi_session.browsing_context.locate_nodes(
+            context="foo", locator={ "type": "css", "value": "div" }
+        )
+
+
+async def test_locate_in_different_contexts(bidi_session, inline, top_context, new_tab):
+    url = inline("""<div class="in-top-context">foo</div>""")
+    await bidi_session.browsing_context.navigate(
+        context=top_context["context"], url=url, wait="complete"
+    )
+
+    # Try to locate nodes in the other context
+    nodes = await bidi_session.browsing_context.locate_nodes(
+        context=new_tab["context"], locator={"type": "css", "value": ".in-top-context"}
+    )
+
+    assert nodes == []
+
+    # Locate in the correct context
+    nodes = await bidi_session.browsing_context.locate_nodes(
+        context=top_context["context"], locator={"type": "css", "value": ".in-top-context"}
+    )
+
+    expected = [
+        {
+            "type": "node",
+            "sharedId": any_string,
+            "value": {
+                "attributes": {"class": "in-top-context"},
+                "childNodeCount": 1,
+                "localName": "div",
+                "namespaceURI": "http://www.w3.org/1999/xhtml",
+                "nodeType": 1,
+            }
+        }
+    ]
+
+    recursive_compare(expected, nodes)
+
+
+@pytest.mark.parametrize("domain", ["", "alt"], ids=["same_origin", "cross_origin"])
+@pytest.mark.parametrize(
+    "locator_type,value",
+    [
+        ("css", "#in-iframe"),
+        ("accessibility", {"role": "banner", "name": "bar"}),
+    ],
+    ids=["css", "accessibility"],
+)
+async def test_locate_in_iframe(
+    bidi_session, inline, top_context, domain, iframe, locator_type, value
+):
+    # Define an element inside the iframe that matches the tested locators.
+    iframe_html_1 = "<div id='in-iframe' role='banner' aria-label='bar'>foo</div>"
+    # Include a matching element in the top-level document to verify iframe scoping.
+    page_url = inline(
+        f"<div id='in-top' role='banner' aria-label='bar'>foo</div>{iframe(iframe_html_1, domain=domain)}"
+    )
+
+    await bidi_session.browsing_context.navigate(
+        context=top_context["context"], url=page_url, wait="complete"
+    )
+
+    contexts = await bidi_session.browsing_context.get_tree(root=top_context["context"])
+    iframe_context = contexts[0]["children"][0]
+
+    nodes = await bidi_session.browsing_context.locate_nodes(
+        context=iframe_context["context"],
+        locator={"type": locator_type, "value": value}
+    )
+
+    expected = [
+        {
+            "type": "node",
+            "sharedId": any_string,
+            "value": {
+                "attributes": {
+                    "aria-label": "bar",
+                    "id": "in-iframe",
+                    "role": "banner",
+                },
+                "childNodeCount": 1,
+                "localName": "div",
+                "namespaceURI": "http://www.w3.org/1999/xhtml",
+                "nodeType": 1,
+            }
+        }
+    ]
+
+    recursive_compare(expected, nodes)

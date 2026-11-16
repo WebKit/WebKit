@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ContentInsetBackgroundFillEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    width: 100%;
+    margin: 0;
+    font-family: system-ui;
+    font-size: 16px;
+    line-height: 2;
+}
+
+p {
+    padding: 0 1em;
+}
+
+.tall {
+    height: 3000px;
+}
+
+.short {
+    height: 90vh;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    await UIHelper.setObscuredInsets(100, 0, 0, 0);
+    await UIHelper.renderingUpdate();
+    scrollBy(0, document.body.scrollHeight);
+    await UIHelper.ensurePresentationUpdate();
+
+    pageYOffsetBefore = pageYOffset;
+
+    await eventSender.asyncMouseMoveTo(200, 50);
+    await eventSender.asyncMouseDown();
+    for (let i = 0; i < 100; i += 10) {
+        await eventSender.asyncMouseMoveTo(200 + i, 50);
+        await UIHelper.delayFor(100);
+    }
+    await eventSender.asyncMouseUp();
+
+    shouldBe("pageYOffset", "pageYOffsetBefore");
+
+    await UIHelper.setObscuredInsets(0, 0, 0, 0);
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="tall"></div>
+    <p>Hello world</p>
+    <div class="short"></div>
+</body>
+</html>

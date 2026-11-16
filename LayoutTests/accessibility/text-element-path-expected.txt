@@ -1,0 +1,67 @@
+Add or delete a table in Numbers on iPhone
+
+When you add a table, you choose from a number of predesigned styles that match your template. After you add a table, you can customize it however you like. You can add as many tables as you want to a sheet.
+
+This tests that text elements properly support paths.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXStaticText
+AXValue: Add or delete a table in Numbers on iPhone
+
+Start Path
+
+AXRole: AXStaticText
+AXValue: When you add a table, you choose from a number of predesigned styles that match your
+
+Start Path
+
+AXRole: AXLink
+AXValue:
+
+Start Path
+
+AXRole: AXStaticText
+AXValue: . After you add a table, you can customize it however you like. You can add as many tables as you want to a
+
+Start Path
+	Move to point
+	Line to
+	Line to
+	Line to
+	Line to
+	Line to
+	Line to
+	Line to
+	Close
+	Move to point
+	Line to
+	Line to
+	Line to
+	Line to
+	Line to
+	Line to
+	Line to
+	Close
+	Move to point
+
+AXRole: AXLink
+AXValue:
+
+Start Path
+
+AXRole: AXStaticText
+AXValue: .
+
+Start Path
+
+AXRole: AXStaticText
+AXValue: template
+
+Start Path
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+
+FAIL View timeline with subject that is not a direct descendant of the scroll container assert_equals: Effect is in the after phase at effect end time expected "1" but got "0.7"
+

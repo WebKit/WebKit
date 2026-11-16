@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+window.internals.settings.forcedDisplayIsMonochromeAccessibilityValue = "on";
+window.parent.postMessage({
+    monochromeMatches: matchMedia("(monochrome)").matches,
+    monochrome: [...Array(33).keys()].find(bits => matchMedia(`(monochrome: ${bits})`).matches),
+}, "*");
+</script>
+</body>
+</html>

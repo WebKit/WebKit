@@ -1,0 +1,11 @@
+Tests that drawImage() of an HDR WebGPU canvas into a float16 2D canvas preserves extended-range values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS HDR WebGPU -> float16: kept an extended-range value (max 3.0000)
+PASS HDR WebGPU -> unorm8: clamped to the SDR range (max 1.0000)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

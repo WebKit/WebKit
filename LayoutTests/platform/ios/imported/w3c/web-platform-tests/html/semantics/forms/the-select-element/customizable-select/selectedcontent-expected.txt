@@ -1,0 +1,33 @@
+
+
+three
+
+span two
+
+span two
+
+two
+
+span one
+
+modified span one
+
+one
+two
+
+span two
+
+A
+
+PASS The <selectedcontent> element should reflect the HTML contents of the selected <option>.
+PASS When there are multiple <selectedcontent> elements, both of them should be kept up to date.
+PASS <seletedcontent> behavior in disconnected <select>.
+PASS Setting HTMLOptionElement.selected updates the <selectedcontent>.
+PASS Setting the option selected attribute updates the <selectedcontent>.
+PASS Setting HTMLOptionElement.selected does not cause a redundant async selectedcontent update.
+PASS form.reset() updates <selectedcontent> when an option has the selected attribute.
+PASS Setting HTMLOptionElement.selected = false updates the <selectedcontent>.
+PASS Re-assigning option.selected = true updates the <selectedcontent>.
+FAIL Setting option.selected = false in a listbox clears the <selectedcontent>. assert_equals: Setting option.selected = false in a listbox where no option remains selected should clear <selectedcontent>. expected "" but got "one"
+PASS Removing an unselected option when another option became enabled updates <selectedcontent>.
+

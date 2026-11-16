@@ -1,0 +1,11 @@
+
+PASS border-color on its own gives the table no border
+PASS border-color on its own gives the cell no border
+PASS the border attribute gives the table an outset border
+PASS the border attribute gives the cells an inset border
+PASS adding bordercolor does not change which borders exist
+PASS setting rules=cols replaces the cells' inset border with a rule on their inline edges
+PASS setting rules=rows leaves the cells with no border
+PASS setting rules=rows puts the rule on the row
+PASS removing the border attribute while rules is set hides the table's own border
+

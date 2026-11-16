@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Encrypted ClearKey Session life cycles</title>
+    <script src="../medias-enc.js"></script>
+    <script src="../../video-test.js"></script>
+    <script>
+    var _mediaKeysSystemAccess;
+    var _mediaKeys;
+    var _mediaKeySession;
+
+    function runTest() {
+        if (!navigator.requestMediaKeySystemAccess) {
+            logResult(false, "EME API is not supported");
+            return;
+        } else {
+            logResult(true, "EME API is supported");
+        }
+
+        const options = [
+            {    initDataTypes: ["cenc"],
+                 videoCapabilities: [{contentType : 'video/mp4; codecs="avc1.64001F"'}] }
+        ];
+
+        navigator.requestMediaKeySystemAccess('org.w3.clearkey', options).then(function(access) {
+            _mediaKeysSystemAccess = access;
+            testExpected("_mediaKeysSystemAccess.keySystem", 'org.w3.clearkey');
+            return access.createMediaKeys();
+        }).then(function(result) {
+            _mediaKeys = result;
+            testExpected("_mediaKeys", null, "!=");
+            testExpected("typeof _mediaKeys.createSession", 'function');
+            _mediaKeySession = _mediaKeys.createSession();
+            testExpected("_mediaKeySession.constructor.name", 'MediaKeySession');
+            testExpected("internals.mediaKeysInternalInstanceObjectRefCount(_mediaKeys)", 1);
+            testExpected("internals.mediaKeySessionInternalInstanceSessionObjectRefCount(_mediaKeySession)", 1);
+            endTest();
+        }).catch(function(failure) {
+            failTest(failure);
+        });
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

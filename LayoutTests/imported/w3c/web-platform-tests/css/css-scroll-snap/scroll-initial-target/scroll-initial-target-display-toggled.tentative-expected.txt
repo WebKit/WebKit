@@ -1,0 +1,4 @@
+
+FAIL display:block scroll-initial-target becomes display: none assert_equals: inner-scroller is scrolled to scroll-initial-target expected 317 but got 0
+FAIL display:none scroll-initial-target becomes display: block assert_equals: inner-scroller is scrolled to scroll-initial-target expected 317 but got 0
+

@@ -1,0 +1,688 @@
+
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, encrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, encrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, sign])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, encrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, encrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, verify])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, deriveBits])
+PASS Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, deriveBits])
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 128, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, encrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, encrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, sign])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, encrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, encrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, verify])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, deriveBits])
+PASS Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, deriveBits])
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 192, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, encrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, encrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, sign])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, encrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, encrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, verify])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, deriveKey])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, deriveBits])
+PASS Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, deriveBits])
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({length: 256, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [decrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [decrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, false, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 64, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [decrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [decrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, false, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 127, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [decrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [decrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, false, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 129, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [decrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [decrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, false, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 255, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [decrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [decrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, false, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 257, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [decrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [decrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, false, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 512, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [decrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [decrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [wrapKey])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, false, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: 4294967424, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [decrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [decrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [wrapKey])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [wrapKey])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, false, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({length: -4294967168, name: AES-CBC}, true, [encrypt, decrypt, wrapKey, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Empty usages: generateKey({length: 128, name: AES-CBC}, false, [])
+PASS Empty usages: generateKey({length: 128, name: AES-CBC}, true, [])
+PASS Empty usages: generateKey({length: 192, name: AES-CBC}, false, [])
+PASS Empty usages: generateKey({length: 192, name: AES-CBC}, true, [])
+PASS Empty usages: generateKey({length: 256, name: AES-CBC}, false, [])
+PASS Empty usages: generateKey({length: 256, name: AES-CBC}, true, [])
+

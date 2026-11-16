@@ -1,0 +1,37 @@
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 302
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 302
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 404
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py due to access control checks.
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 404
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py due to access control checks.
+Tests that not successful preflight responses make preflight failing
+
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi (sync)
+Expecting success: true
+PASS: PASS: Cross-domain access allowed.
+
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi(async)
+Expecting success: true
+PASS: PASS: Cross-domain access allowed.
+
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi (sync)
+Expecting success: false
+PASS: NetworkError:  A network error occurred.
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi(async)
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py (sync)
+Expecting success: true
+PASS:
+Testing http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py(async)
+Expecting success: true
+PASS:
+Testing http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py (sync)
+Expecting success: false
+PASS: NetworkError:  A network error occurred.
+Testing http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py(async)
+Expecting success: false
+PASS: 0
+

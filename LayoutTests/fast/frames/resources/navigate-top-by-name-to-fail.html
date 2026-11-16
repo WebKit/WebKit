@@ -1,0 +1,11 @@
+<script>
+if (window.open("fail-and-notify-done.html", "target"))
+    console.log("FAIL");
+if (window.open("fail-and-notify-done.html", "_top"))
+    console.log("FAIL");
+if (window.open("fail-and-notify-done.html", "_parent"))
+    console.log("FAIL");
+if (window.open("fail-and-notify-done.html", "_blank"))
+    console.log("FAIL");
+console.log("PASS");
+</script>

@@ -1,0 +1,21 @@
+{
+  "name": "mobx",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node ./benchmark-node.mjs",
+    "clean": "rm -rf dist/*",
+    "build": "webpack"
+  },
+  "license": "See LICENSE files",
+  "dependencies": {
+    "mobx": "^6.13.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.3",
+    "babel-loader": "^10.0.0",
+    "generate-license-file-webpack-plugin": "^4.1.0",
+    "terser-webpack-plugin": "^5.3.14",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  }
+}

@@ -1,0 +1,6 @@
+2d.fillStyle.colormix.currentcolor
+color-mix works as color input with currentcolor
+Actual output:
+
+PASS color-mix works as color input with currentcolor
+

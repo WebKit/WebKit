@@ -1,0 +1,34 @@
+Tests pausing at the next statement in a script that is blackboxed by its URL, with a class that has no constructor and with the Function constructor.
+
+
+== Running test suite: Debugger.BlackboxedScript
+-- Running test setup.
+-- Running test case: Debugger.BlackboxedScript.NotBlackboxed
+PASS: Should pause in Global Code.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.BlackboxedScript.ClassWithoutConstructor
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.BlackboxedScript.ClassWithPrivateFields
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.BlackboxedScript.DerivedClassWithoutConstructor
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.BlackboxedScript.FunctionConstructor
+PASS: Should pause in anonymous.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.BlackboxedScript.FunctionConstructorWithSourceURL
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+

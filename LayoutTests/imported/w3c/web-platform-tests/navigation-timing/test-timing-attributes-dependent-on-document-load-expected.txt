@@ -1,0 +1,15 @@
+Description
+
+This test observes values of navigation timing entries,
+
+dependent on Document Load Timing for a detached iframe.
+
+
+This page should be loaded with a green background frame below,
+
+which disappears after the iframe is detached.
+
+
+
+PASS Navigation Timing 2 WPT
+

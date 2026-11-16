@@ -1,0 +1,5 @@
+
+
+PASS HTMLObjectElement.contentDocument for cross-origin document
+PASS HTMLObjectElement.getSVGDocument() for cross-origin document
+

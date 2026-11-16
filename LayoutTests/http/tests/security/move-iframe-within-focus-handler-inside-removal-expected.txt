@@ -1,0 +1,11 @@
+Tests moving an iframe inside a focus event handler while removing a node.
+To manually test, open this page on a new window/tab each time. Reloading would not work.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS newGlobal is not oldGlobal
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

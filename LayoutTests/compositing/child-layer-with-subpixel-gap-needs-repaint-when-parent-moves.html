@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we repaint child layer if the subpixel gap changes between layers when parent layer moves.</title>
+<style>
+    .outer {
+        position: relative;
+        left: 0.3px;
+        height: 200px;
+        width: 200px;
+        background-color: rgba(0, 0, 255, 1);
+    }
+
+    .container-background {
+        position: relative;
+        transform: translateZ(0);
+        height: 100px;
+        width: 100px;
+        background-color: green;
+    }
+
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function runTest() {
+    	setTimeout(function () {
+    	    document.getElementById("container").style.left = "0.7px";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }
+    window.addEventListener('load', runTest, false);
+</script>
+<body>
+<div id=container class=outer>foo
+  <div class=container-background>bar
+  </div>
+</div>
+</body>

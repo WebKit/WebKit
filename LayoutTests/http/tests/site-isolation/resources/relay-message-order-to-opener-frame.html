@@ -1,0 +1,8 @@
+<script>
+// Same site as the frame recording the order, so this runs on its event loop.
+addEventListener("message", (event) => {
+    if (event.data && event.data.type == "sequence")
+        opener.frames[0].record(event.data.sequence);
+});
+opener.postMessage({ type: "ready" }, "*");
+</script>

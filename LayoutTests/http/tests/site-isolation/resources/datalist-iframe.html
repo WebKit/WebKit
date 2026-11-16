@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+input { width: 300px; height: 50px; }
+</style>
+</head>
+<body>
+<input id="input" list="fruits" type="text"/>
+<datalist id="fruits">
+    <option>Apple</option>
+    <option>Banana</option>
+    <option>Cherry</option>
+</datalist>
+<script>
+const input = document.getElementById("input");
+
+// Report value changes back to parent
+input.addEventListener("input", () => {
+    window.parent.postMessage({
+        type: "result",
+        value: input.value
+    }, "*");
+});
+</script>
+</body>
+</html>

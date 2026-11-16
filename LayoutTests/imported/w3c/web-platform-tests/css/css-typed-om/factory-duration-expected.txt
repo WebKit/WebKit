@@ -1,0 +1,4 @@
+
+PASS CSS.s() produces s duration
+PASS CSS.ms() produces ms duration
+

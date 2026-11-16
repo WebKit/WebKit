@@ -1,0 +1,63 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ ARIAActionsSupportEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="source" aria-actions="action1 action2">Source</button>
+<button id="action1">Delete</button>
+<button id="action2">Edit</button>
+
+<script>
+var output = "This test verifies the exposure of aria-actions.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var clickedActions = [];
+
+    document.getElementById("action1").addEventListener("click", () => {
+        clickedActions.push("action1");
+    });
+    document.getElementById("action2").addEventListener("click", () => {
+        clickedActions.push("action2");
+    });
+
+    var source = accessibilityController.accessibleElementById("source");
+    var action1 = source.ariaActionsElementAtIndex(0);
+    var action2 = source.ariaActionsElementAtIndex(1);
+
+    output += "Verifying action elements are exposed in DOM order:\n";
+    output += expect("action1.domIdentifier", "'action1'");
+    output += expect("action2.domIdentifier", "'action2'");
+    output += expect("source.ariaActionsElementAtIndex(2)", "null");
+    output += "\n";
+
+    output += "Invoking custom actions:\n";
+    output += expect("source.invokeCustomActionAtIndex(0)", "true");
+    output += expect("clickedActions.length", "1");
+    output += expect("clickedActions[0]", "'action1'");
+
+    output += expect("source.invokeCustomActionAtIndex(1)", "true");
+    output += expect("clickedActions.length", "2");
+    output += expect("clickedActions[1]", "'action2'");
+    output += "\n";
+
+    output += "Invoking out-of-bounds action returns false:\n";
+    output += expect("source.invokeCustomActionAtIndex(99)", "false");
+    output += "\n";
+
+    output += "Testing dynamic update - removing an action:\n";
+    document.getElementById("source").setAttribute("aria-actions", "action2");
+    setTimeout(async () => {
+        output += await expectAsync("source.ariaActionsElementAtIndex(0)?.domIdentifier", "'action2'");
+        output += await expectAsync("source.ariaActionsElementAtIndex(1)", "null");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

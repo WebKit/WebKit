@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Warning from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Error from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Hello from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Warning from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html
+CONSOLE MESSAGE: Error from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html
+
+== Running test suite: SiteIsolation.ClearConsoleAcrossFrameTargets
+-- Running test case: ClearConsoleAcrossFrameTargets.FrontendClear
+Adding a same-origin iframe that logs to the console...
+Adding a cross-origin iframe that logs to the console...
+PASS: Main frame, same-origin iframe, and cross-origin iframe should each have a frame target.
+PASS: The frame targets should all support the Console domain.
+Requesting a frontend console clear...
+PASS: Cleared event should fire after a frontend clear across frame targets.
+PASS: No cleared frame target should replay messages when Console is re-enabled.
+

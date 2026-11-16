@@ -1,0 +1,12 @@
+<!DOCTYPE HTML>
+<style>
+.item {
+  display: inline-block;
+  font-size: 50px;
+}
+.large { font-size: 100px; }
+</style>
+<p>This test passes if text in both columns are aligned using their alhabetic baseline, like it happens in horizontal mode.</p>
+<div style="writing-mode: vertical-lr;">
+  <div class="item">foo</div><div class="large item">foo</div>
+</div>

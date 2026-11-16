@@ -1,0 +1,16 @@
+
+PASS Property shape-outside value 'ellipse()'
+PASS Property shape-outside value 'ellipse(1px 2px)'
+PASS Property shape-outside value 'ellipse(20px 40px at center)'
+PASS Property shape-outside value 'ellipse(closest-side 20%)'
+PASS Property shape-outside value 'ellipse(farthest-side 20%)'
+PASS Property shape-outside value 'ellipse(closest-corner 20%)'
+PASS Property shape-outside value 'ellipse(farthest-corner 20%)'
+PASS Property shape-outside value 'ellipse(at 10% 20%)'
+PASS Property shape-outside value 'ellipse(at -10px -20%)'
+PASS Property shape-outside value 'ellipse(4% 20% at top right)'
+PASS Property shape-outside value 'ellipse(calc(100% - 20px) calc(80% - 10px) at calc(100% - 20px) calc(100% / 4))'
+PASS Property shape-outside value 'ellipse(10px closest-side at top right)'
+PASS Property shape-outside value 'ellipse(farthest-side 20px at center top)'
+PASS Property shape-outside value 'ellipse(farthest-side farthest-side at top right)'
+

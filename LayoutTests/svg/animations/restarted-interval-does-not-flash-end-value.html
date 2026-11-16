@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<title>SMIL: a restarting animation must not flash its previous interval's end value</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<!--
+  Regression test for https://bugs.webkit.org/show_bug.cgi?id=196596
+
+  #mover animates x from 0 to 300 and restarts back-to-back at t=1s (begin="0s;1s", dur="1s", so
+  its second interval begins exactly when the first ends). #holder is a lower-priority animation
+  that freezes x at 100 and wins the sandwich until #mover restarts. When #mover's second interval
+  begins at 1s it becomes the highest-priority (latest begin) contributor and must show the START
+  of that interval (~0), NOT the END/destination of its previous interval (300).
+
+  The bug computed the animation percent against the previous interval (which had just ended, so
+  percent clamped to 1 -> the destination value 300) before checkRestart() advanced to the new
+  interval, so the crossover frame briefly applied 300 for ~1-2 frames before correcting. Because
+  the restart is an Active->Active transition, no beginEvent fires; the flash is observed by
+  sampling x across the crossover. See the follow-up fix that moved the percent computation to
+  after the interval is resolved.
+-->
+<svg id="svg" width="400" height="120" xmlns="http://www.w3.org/2000/svg">
+  <rect id="target" x="0" y="0" width="20" height="20" fill="green">
+    <animate id="holder" attributeName="x" begin="0.5s" dur="0.1s" values="100;100" fill="freeze"/>
+    <animate id="mover" attributeName="x" begin="0s;1s" dur="1s" values="0;300" fill="freeze"/>
+  </rect>
+</svg>
+<script>
+async_test(t => {
+  const svg = document.getElementById("svg");
+  const target = document.getElementById("target");
+  let sampledCrossover = false;
+
+  function frame() {
+    const ct = svg.getCurrentTime();
+    const x = target.x.animVal.value;
+
+    // Just after the back-to-back restart at 1s, x must be near the new interval's start (0), not
+    // the previous interval's end (300). The buggy code applied 300 for the crossover frame(s).
+    if (ct >= 1.0 && ct <= 1.2) {
+      sampledCrossover = true;
+      assert_less_than(x, 150,
+        `x=${x.toFixed(1)} at t=${ct.toFixed(3)}s: the restart frame flashed the previous interval's end value (300)`);
+    }
+
+    if (ct > 1.3) {
+      assert_true(sampledCrossover, "sampled at least one frame just after the restart");
+      t.done();
+      return;
+    }
+    requestAnimationFrame(t.step_func(frame));
+  }
+  requestAnimationFrame(t.step_func(frame));
+});
+</script>

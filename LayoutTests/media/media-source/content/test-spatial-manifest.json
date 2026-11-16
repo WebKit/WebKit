@@ -1,0 +1,11 @@
+{
+    "url": "content/test-spatial.mp4",
+    "type":"video/mp4; codecs=\"hvc1.1.6.L123.b0,mp4a.40.2\"",
+    "init":{"offset":0,"size":1939},
+    "duration": 0.9,
+    "media": [
+        {"offset":1939,"size":4503911,"timestamp":0,"duration":0.8333333333333334},
+        {"offset":4505850,"size":18529,"timestamp":0,"duration":61.44},
+        {"offset":4524379,"size":160,"timestamp":0,"duration":15.173333333333334}
+    ]
+}

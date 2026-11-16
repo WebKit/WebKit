@@ -1,0 +1,3 @@
+
+PASS Manipulating selection after clicking <details> shouldn't cause a crash
+

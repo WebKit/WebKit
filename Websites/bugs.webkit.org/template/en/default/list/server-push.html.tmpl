@@ -1,0 +1,35 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # debug: boolean. True if we want the search displayed while we wait.
+  # query: string. The SQL query which makes the buglist.
+  #%]
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>[% terms.Bugzilla %] is pondering your search</title>
+    <link href="[% 'skins/standard/global.css' FILTER mtime %]"
+          rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1 id="serverpush_msg">Please stand by ...</h1>
+
+    <p class="center">
+      <progress>Data is being retrieved...</progress>
+    </p>
+
+    [% IF debug %]
+      <p>[% query FILTER html %]</p>
+      [% IF query_explain.defined %]
+        <pre>[% query_explain FILTER html %]</pre>
+      [% END %]
+    [% END %]
+  </body>
+</html>

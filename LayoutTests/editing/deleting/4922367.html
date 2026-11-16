@@ -1,0 +1,32 @@
+<head><style>
+table, td {
+    border: 1px solid #bbb;
+}
+</style></head>
+<p>This tests selecting and deleting the paragraph before a table.  You should see only a table in the editable region below, with the caret just before it.</p>
+<div contenteditable="true">
+<div><br></div>
+<table id="table">
+<tr><td>1</td><td>2</td></tr>
+</table>
+</div>
+<ul id="console"></ul>
+
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    var text = document.createTextNode(str);
+    var console = document.getElementById("console");
+    li.appendChild(text);
+    console.appendChild(li);
+}
+
+var sel = window.getSelection();
+var table = document.getElementById("table");
+var parent = table.parentNode;
+if (parent.childNodes[3] != table)
+    log("Error: the table is not at index 3 of its parent.");
+sel.setPosition(parent, 3);
+sel.modify("extend", "backward", "paragraph");
+document.execCommand("Delete");
+</script>

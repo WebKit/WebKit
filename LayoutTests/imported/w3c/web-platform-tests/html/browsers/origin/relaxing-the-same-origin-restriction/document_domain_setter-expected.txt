@@ -1,0 +1,6 @@
+
+
+PASS failed setting of document.domain
+PASS same-origin-domain iframe
+PASS failed setting of document.domain for documents without browsing context
+

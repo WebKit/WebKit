@@ -1,0 +1,7 @@
+
+PASS Matching to a single request should work
+FAIL Matching to a non-existing request should work assert_equals: expected (string) "matchmissingrequest" but got (undefined) undefined
+PASS Matching multiple times on the same request works as expected.
+PASS Access to active fetches is supported.
+FAIL Match with query options. assert_equals: expected 2 but got 3
+

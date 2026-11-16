@@ -1,0 +1,3 @@
+
+PASS A script with invalid JSON should fire error events on the element and window
+

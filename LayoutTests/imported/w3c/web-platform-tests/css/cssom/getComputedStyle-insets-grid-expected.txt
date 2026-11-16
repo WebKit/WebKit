@@ -1,0 +1,7 @@
+
+PASS Position absolute getComputedStyle insets for display: grid (ltr)
+PASS Position absolute getComputedStyle insets for display: grid (rtl)
+PASS Position absolute getComputedStyle insets for display: grid (vlr)
+PASS Position absolute getComputedStyle insets for display: grid (vrl)
+PASS Position absolute getComputedStyle insets for display: grid (slr)
+

@@ -1,0 +1,2 @@
+This should not fire a background-image transition.
+PASS: no background-image transition

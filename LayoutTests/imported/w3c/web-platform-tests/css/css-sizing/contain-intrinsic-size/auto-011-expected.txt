@@ -1,0 +1,4 @@
+
+PASS contain:size does not prevent recording last remembered size
+PASS contain:inline-size does not prevent recording last remembered inline size
+

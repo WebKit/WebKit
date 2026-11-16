@@ -1,0 +1,5 @@
+
+PASS A plain object can be posted to a cross-site iframe
+PASS MediaStreamTrack can be transferred to a same-origin iframe
+PASS MediaStreamTrack cannot be transferred to a cross-site iframe
+

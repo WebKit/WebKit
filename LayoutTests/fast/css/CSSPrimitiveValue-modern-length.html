@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="test-div"></div>
+<script>
+var unsupported = ["Q", "cap", "ch", "ic", "lh", "rcap", "rch", "rem", "rex",
+                   "ric", "rlh", "vb", "vh", "vi", "vmax", "vmin", "vw"];
+
+for (var unit of unsupported) {
+  debug("Testing behaviors of CSSPrimitiveValue on the " + unit + " unit.");
+
+  document.getElementById("test-div").style.width = "1" + unit;
+  var divWidth = document.getElementById("test-div").style.getPropertyCSSValue("width");
+
+  shouldBe("divWidth.primitiveType", "CSSPrimitiveValue.CSS_UNKNOWN");
+
+  shouldThrowErrorName("divWidth.getFloatValue(CSSPrimitiveValue.CSS_S)", "InvalidAccessError");
+  shouldThrowErrorName("divWidth.getCounterValue()", "InvalidAccessError");
+  shouldThrowErrorName("divWidth.getRGBColorValue()", "InvalidAccessError");
+  shouldThrowErrorName("divWidth.getRectValue()", "InvalidAccessError");
+  shouldThrowErrorName("divWidth.getStringValue()", "InvalidAccessError");
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

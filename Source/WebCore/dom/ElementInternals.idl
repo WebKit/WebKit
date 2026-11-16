@@ -1,0 +1,100 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// https://html.spec.whatwg.org/multipage/custom-elements.html#elementinternals
+[
+    GenerateIsReachable=ImplElementRoot,
+    GenerateAddOpaqueRoot=element,
+    Exposed=Window
+] interface ElementInternals {
+    readonly attribute ShadowRoot? shadowRoot;
+
+    [Custom] undefined setFormValue(any value, optional any state);
+
+    readonly attribute HTMLFormElement? form;
+
+    undefined setValidity(optional ValidityStateFlags flags = {}, optional DOMString message, optional HTMLElement validationAnchor);
+    readonly attribute boolean willValidate;
+    readonly attribute ValidityState validity;
+    readonly attribute DOMString validationMessage;
+    boolean checkValidity();
+    boolean reportValidity();
+
+    // FIXME: `labels` should not be nullable.
+    readonly attribute NodeList? labels;
+
+    [SameObject] readonly attribute CustomStateSet states;
+
+    [Reflect] attribute DOMString? role;
+    [Reflect="aria-activedescendant"] attribute Element? ariaActiveDescendantElement;
+    [Reflect="aria-atomic"] attribute DOMString? ariaAtomic;
+    [Reflect="aria-autocomplete"] attribute DOMString? ariaAutoComplete;
+    [Reflect="aria-braillelabel"] attribute DOMString? ariaBrailleLabel;
+    [Reflect="aria-brailleroledescription"] attribute DOMString? ariaBrailleRoleDescription;
+    [Reflect="aria-busy"] attribute DOMString? ariaBusy;
+    [Reflect="aria-checked"] attribute DOMString? ariaChecked;
+    [Reflect="aria-colcount"] attribute DOMString? ariaColCount;
+    [Reflect="aria-colindex"] attribute DOMString? ariaColIndex;
+    [Reflect="aria-colspan"] attribute DOMString? ariaColSpan;
+    [CustomGetter, Reflect="aria-controls"] attribute FrozenArray<Element>? ariaControlsElements;
+    [CustomGetter, Reflect="aria-actions", EnabledBySetting=ARIAActionsSupportEnabled] attribute FrozenArray<Element>? ariaActionsElements;
+    [Reflect="aria-current"] attribute DOMString? ariaCurrent;
+    [CustomGetter, Reflect="aria-describedby"] attribute FrozenArray<Element>? ariaDescribedByElements;
+    [CustomGetter, Reflect="aria-details"] attribute FrozenArray<Element>? ariaDetailsElements;
+    [Reflect="aria-disabled"] attribute DOMString? ariaDisabled;
+    [CustomGetter, Reflect="aria-errormessage"] attribute FrozenArray<Element>? ariaErrorMessageElements;
+    [Reflect="aria-expanded"] attribute DOMString? ariaExpanded;
+    [CustomGetter, Reflect="aria-flowto"] attribute FrozenArray<Element>? ariaFlowToElements;
+    [Reflect="aria-haspopup"] attribute DOMString? ariaHasPopup;
+    [Reflect="aria-hidden"] attribute DOMString? ariaHidden;
+    [Reflect="aria-invalid"] attribute DOMString? ariaInvalid;
+    [Reflect="aria-keyshortcuts"] attribute DOMString? ariaKeyShortcuts;
+    [Reflect="aria-label"] attribute DOMString? ariaLabel;
+    [CustomGetter, Reflect="aria-labelledby"] attribute FrozenArray<Element>? ariaLabelledByElements;
+    [Reflect="aria-level"] attribute DOMString? ariaLevel;
+    [Reflect="aria-live"] attribute DOMString? ariaLive;
+    [Reflect="aria-modal"] attribute DOMString? ariaModal;
+    [Reflect="aria-multiline"] attribute DOMString? ariaMultiLine;
+    [Reflect="aria-multiselectable"] attribute DOMString? ariaMultiSelectable;
+    [Reflect="aria-orientation"] attribute DOMString? ariaOrientation;
+    [CustomGetter, Reflect="aria-owns"] attribute FrozenArray<Element>? ariaOwnsElements;
+    [Reflect="aria-placeholder"] attribute DOMString? ariaPlaceholder;
+    [Reflect="aria-posinset"] attribute DOMString? ariaPosInSet;
+    [Reflect="aria-pressed"] attribute DOMString? ariaPressed;
+    [Reflect="aria-readonly"] attribute DOMString? ariaReadOnly;
+    [Reflect="aria-relevant"] attribute DOMString? ariaRelevant;
+    [Reflect="aria-required"] attribute DOMString? ariaRequired;
+    [Reflect="aria-roledescription"] attribute DOMString? ariaRoleDescription;
+    [Reflect="aria-rowcount"] attribute DOMString? ariaRowCount;
+    [Reflect="aria-rowindex"] attribute DOMString? ariaRowIndex;
+    [Reflect="aria-rowspan"] attribute DOMString? ariaRowSpan;
+    [Reflect="aria-selected"] attribute DOMString? ariaSelected;
+    [Reflect="aria-setsize"] attribute DOMString? ariaSetSize;
+    [Reflect="aria-sort"] attribute DOMString? ariaSort;
+    [Reflect="aria-valuemax"] attribute DOMString? ariaValueMax;
+    [Reflect="aria-valuemin"] attribute DOMString? ariaValueMin;
+    [Reflect="aria-valuenow"] attribute DOMString? ariaValueNow;
+    [Reflect="aria-valuetext"] attribute DOMString? ariaValueText;
+};

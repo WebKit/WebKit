@@ -1,0 +1,5 @@
+
+PASS Setup
+PASS  precommitHandler with window.stop() before navigation commit
+PASS  precommitHandler with window.stop() before fragment navigation commit
+

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8"></meta>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<a href="#url">
+    <div>10% OFF</div>
+    <div>Foobar 9000</div>
+    <div>Category Name</div>
+    <div>
+        <div id="new-price-div"><span>$</span><span>430</span><span>.10</span></div>
+        <div>$550.00</div>
+    </div>
+</a>
+
+<script>
+var output = "This test ensures we consider links to be leaf accessibility elements if they only contain text, generics, insertions, and deletions.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var searchResult;
+    while (true) {
+        searchResult = webArea.uiElementForSearchPredicate(searchResult, /* directionIsNext */ true, "AXAnyTypeSearchKey", /* searchText */ "", /* visibleOnly */ true);
+        if (!searchResult)
+            break;
+        if (searchResult.isIgnored)
+            continue;
+        output += `Found accessibility element with role ${searchResult.role}\n`;
+    }
+    debug(output);
+}
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style type="text/css" media="screen">
+      .content {
+        background-color: silver;
+        height: 200px;
+        margin: 5px;
+      }
+      .fixed {
+        position: fixed;
+        width: 300px;
+        height: 300px;
+        top: 50px;
+        left: 0;
+        margin: 10px 100px;
+        background-color: rgba(0, 128, 0, 0.8);
+        border: 2px solid black;
+      }
+
+      .absolute {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        top: 250px;
+        left: 50px;
+        background-color: rgba(0, 128, 128, 0.8);
+        border: 2px solid black;
+      }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+      if (window.testRunner)
+        testRunner.waitUntilDone();
+      function doTest()
+      {
+        window.setTimeout(function() {
+          window.scrollTo(50, 200);
+          if (window.testRunner)
+            testRunner.notifyDone();
+        }, 0);
+      }
+      window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+  <div class="fixed">
+    Take a survey!
+  </div>
+  
+  <div class="absolute">
+    This should go over the top.
+  </div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+
+</body>
+</html>

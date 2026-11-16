@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+/* We're verifying what we capture, so just display the new contents for 5 minutes.  */
+html::view-transition-group(*) { animation-duration: 300s; }
+html::view-transition-new(*) { animation: unset; opacity: 1; }
+html::view-transition-old(*) { animation: unset; opacity: 0; }
+</style>
+<canvas id="canvas1" width=400px height=400px></canvas>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  if (testRunner.dontForceRepaint)
+    testRunner.dontForceRepaint();
+}
+
+async function runTest() {
+
+  var canvas1 = document.getElementById("canvas1");
+  var gl = canvas1.getContext('webgl', { preserveDrawingBuffer: false } );
+  gl.clearColor(0, 1, 0, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  document.startViewTransition();
+
+  await UIHelper.renderingUpdate();
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+onload = () => requestAnimationFrame(() => requestAnimationFrame(runTest));
+</script>

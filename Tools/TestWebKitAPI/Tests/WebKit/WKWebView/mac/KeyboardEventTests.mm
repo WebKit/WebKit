@@ -1,0 +1,212 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#if PLATFORM(MAC)
+
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKContentWorld.h>
+#import <WebKit/WKContentWorldPrivate.h>
+#import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <pal/spi/mac/NSMenuSPI.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
+
+@interface KeyboardTestMenu : NSMenu
+@end
+
+@implementation KeyboardTestMenu
+
+- (BOOL)_containsItemMatchingEvent:(NSEvent *)event includingDisabledItems:(BOOL)includingDisabledItems
+{
+    return [event.charactersIgnoringModifiers isEqualToString:@"e"] && event.modifierFlags & NSEventModifierFlagFunction;
+}
+
+@end
+
+@interface KeyboardTestMenuItem : NSMenuItem
+
+@end
+
+@implementation KeyboardTestMenuItem
+
+- (BOOL)_isSystemMenuItem
+{
+    return YES;
+}
+
+@end
+
+@interface NSViewWithKeyDownOverride : NSView
+
+@property (nonatomic) NSUInteger keyDownCount;
+
+@end
+
+@implementation NSViewWithKeyDownOverride
+
+- (void)keyDown:(NSEvent *)event
+{
+    _keyDownCount++;
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+static void arrowKeyDownWithKeyRepeat(WKWebView *webView, unsigned keyRepeatCount)
+{
+    NSString *arrowString = [NSString stringWithFormat:@"%C", (unichar)NSDownArrowFunctionKey];
+    NSEvent *event = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:[[NSDate date] timeIntervalSince1970] windowNumber:[[webView window] windowNumber] context:[NSGraphicsContext currentContext] characters:arrowString charactersIgnoringModifiers:arrowString isARepeat:NO keyCode:0x7D];
+
+    [webView keyDown:event];
+
+    for (unsigned i = 0; i < keyRepeatCount; i++) {
+        event = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:[[NSDate date] timeIntervalSince1970] windowNumber:[[webView window] windowNumber] context:[NSGraphicsContext currentContext] characters:arrowString charactersIgnoringModifiers:arrowString isARepeat:YES keyCode:0x7D];
+
+        [webView keyDown:event];
+    }
+}
+
+TEST(KeyboardEventTests, FunctionKeyCommand)
+{
+    RetainPtr menu = adoptNS([[KeyboardTestMenu alloc] initWithTitle:@"Test menu"]);
+    RetainPtr menuItem = adoptNS([[KeyboardTestMenuItem alloc] initWithTitle:@"Emojis & Symbols" action:@selector(description) keyEquivalent:@"e"]);
+    [menuItem setKeyEquivalentModifierMask:NSEventModifierFlagFunction];
+    [menu setItemArray:@[ menuItem.get() ]];
+    NSApp.mainMenu = menu.get();
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<script>addEventListener('load', () => document.body.focus())</script><body contenteditable></body>"];
+    [webView typeCharacter:'e' modifiers:NSEventModifierFlagFunction];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(KeyboardEventTests, SmoothKeyboardScrolling)
+{
+    RetainPtr window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400) styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
+
+    RetainPtr view = adoptNS([[NSViewWithKeyDownOverride alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+
+    [view addSubview:webView.get()];
+
+    [[window contentView] addSubview:view.get()];
+    [window makeKeyAndOrderFront:nil];
+    [window makeFirstResponder:webView.get()];
+
+    [webView synchronouslyLoadTestPageNamed:@"simple-tall"];
+    [webView waitForNextPresentationUpdate];
+
+    arrowKeyDownWithKeyRepeat(webView.get(), 3);
+
+    Util::runFor(Seconds(3));
+    EXPECT_EQ([view keyDownCount], 0UL);
+}
+
+TEST(KeyboardEventTests, TerminateWebContentProcessDuringKeyEventHandling)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@""];
+
+    RunLoop::mainSingleton().dispatchAfter(5_ms, [&] {
+        [webView _killWebContentProcessAndResetState];
+    });
+    for (unsigned i = 0; i < 10; ++i) {
+        [webView typeCharacter:'a'];
+        Util::runFor(1_ms);
+    }
+    Util::runFor(25_ms);
+}
+
+// FIXME when rdar://168322007 is resolved.
+TEST(KeyboardEventTests, UserTextInputEvent)
+{
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    [webView addToTestWindow];
+
+    RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+    configuration.get().allowAutofill = YES;
+    RetainPtr autofillWorld = [WKContentWorld _worldWithConfiguration:configuration.get()];
+
+    __block RetainPtr<NSString> lastMessage;
+    __block bool receivedMessage = false;
+    RetainPtr messageHandler = adoptNS([[TestMessageHandler alloc] init]);
+    [messageHandler setDidReceiveScriptMessage:^(NSString *body) {
+        lastMessage = body;
+        receivedMessage = true;
+    }];
+
+    RetainPtr<WKUserContentController> userContentController = [webView configuration].userContentController;
+    [userContentController addScriptMessageHandler:messageHandler.get() contentWorld:autofillWorld.get() name:@"testHandler"];
+    [userContentController addScriptMessageHandler:messageHandler.get() contentWorld:WKContentWorld.pageWorld name:@"testHandler"];
+
+    NSString *pageWorldJS = @"window.addEventListener('webkitusertextinput', () => webkit.messageHandlers.testHandler.postMessage('fail'))";
+    NSString *autofillWorldJS = @"window.addEventListener('webkitusertextinput', (e) => { setTimeout(() => webkit.messageHandlers.testHandler.postMessage('pass ' + e.target.id), 50) })";
+    RetainPtr pageWorldScript = adoptNS([[WKUserScript alloc] initWithSource:pageWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
+    RetainPtr autofillWorldScript = adoptNS([[WKUserScript alloc] initWithSource:autofillWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES inContentWorld:autofillWorld.get()]);
+    [userContentController addUserScript:pageWorldScript.get()];
+    [userContentController addUserScript:autofillWorldScript.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<input id='input' type='text'><textarea id='textarea'></textarea>"];
+
+    [webView objectByEvaluatingJavaScript:@"input.focus()"];
+    [webView waitForNextPresentationUpdate];
+    receivedMessage = false;
+    [webView typeCharacter:'a'];
+    Util::run(&receivedMessage);
+    EXPECT_WK_STREQ(lastMessage.get(), "pass input");
+
+    [webView objectByEvaluatingJavaScript:@"textarea.focus()"];
+    [webView waitForNextPresentationUpdate];
+    receivedMessage = false;
+    [webView typeCharacter:'c'];
+    Util::run(&receivedMessage);
+    EXPECT_WK_STREQ(lastMessage.get(), "pass textarea");
+
+    // Untrusted input changes should not cause webkitusertextinput to fire.
+    [webView objectByEvaluatingJavaScript:@"window.addEventListener('webkitusertextinput', () => webkit.messageHandlers.testHandler.postMessage('fail'))" inFrame:nil inContentWorld:autofillWorld.get()];
+    NSString *inputListenerJS = @"window.addEventListener('input', (e) => { setTimeout(() => webkit.messageHandlers.testHandler.postMessage('input without webkitusertextinput ' + e.target.id), 50) })";
+    [webView objectByEvaluatingJavaScript:inputListenerJS];
+
+    receivedMessage = false;
+    [webView evaluateJavaScript:@"input.value += 'c'; input.dispatchEvent(new InputEvent('input', { data: 'c', inputType: 'insertText', bubbles: true }));" completionHandler:nil];
+    Util::run(&receivedMessage);
+    EXPECT_WK_STREQ(lastMessage.get(), "input without webkitusertextinput input");
+
+    receivedMessage = false;
+    [webView evaluateJavaScript:@"textarea.value += 'c'; textarea.dispatchEvent(new InputEvent('input', { data: 'c', inputType: 'insertText', bubbles: true }));" completionHandler:nil];
+    Util::run(&receivedMessage);
+    EXPECT_WK_STREQ(lastMessage.get(), "input without webkitusertextinput textarea");
+}
+
+} // namespace TestWebKitAPI
+
+#endif // PLATFORM(MAC)

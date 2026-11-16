@@ -1,0 +1,3 @@
+
+PASS Assure microtasks posted by pagehide event handler are dispatched
+

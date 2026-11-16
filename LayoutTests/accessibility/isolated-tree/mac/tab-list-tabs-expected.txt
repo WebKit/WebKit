@@ -1,0 +1,11 @@
+This test ensures a tab list's AXTabs is only its tab items, and that AXContents reports the same set, so a non-tab child of a tab list is not offered as a tab.
+
+PASS: lengthOf('AXChildren') === 3
+PASS: titlesOf('AXChildren') === 'First, Second, Not a tab'
+PASS: titlesOf('AXTabs') === 'First, Second'
+PASS: titlesOf('AXContents') === 'First, Second'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

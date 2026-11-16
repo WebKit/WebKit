@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that using defineProperty() does not clear existing setter if the new descriptor only has a getter");
+
+evalAndLog('oldDescriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")');
+shouldBeType("oldDescriptor.get", "Function");
+shouldBeType("oldDescriptor.set", "Function");
+shouldBeTrue('oldDescriptor.enumerable');
+shouldBeTrue('oldDescriptor.configurable');
+
+function newGetter() { }
+debug('');
+debug('Override only the getter');
+evalAndLog('Object.defineProperty(HTMLInputElement.prototype, "value", { get: newGetter })');
+
+debug('');
+evalAndLog('newDescriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")');
+shouldBe("newDescriptor.get", "newGetter");
+shouldBe("newDescriptor.set", "oldDescriptor.set");
+shouldBeTrue('newDescriptor.enumerable');
+shouldBeTrue('newDescriptor.configurable');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

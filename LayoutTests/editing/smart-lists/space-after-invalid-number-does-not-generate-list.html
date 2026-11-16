@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test-zero" contenteditable></div>
+<div id="test-negative" contenteditable></div>
+<div id="test-plus" contenteditable></div>
+<script>
+Markup.description('Numbers with leading zero, a minus sign, or a plus sign are not valid ordered-list markers; typing them should not trigger smart-list conversion.');
+
+var zeroTarget = document.getElementById('test-zero');
+zeroTarget.focus();
+[...'0. Hello'].forEach(typeCharacterCommand);
+Markup.dump('test-zero', 'Zero');
+
+var negativeTarget = document.getElementById('test-negative');
+negativeTarget.focus();
+[...'-42. Hello'].forEach(typeCharacterCommand);
+Markup.dump('test-negative', 'Negative number');
+
+var plusTarget = document.getElementById('test-plus');
+plusTarget.focus();
+[...'+42. Hello'].forEach(typeCharacterCommand);
+Markup.dump('test-plus', 'Plus-prefixed number');
+</script>
+</body>
+</html>

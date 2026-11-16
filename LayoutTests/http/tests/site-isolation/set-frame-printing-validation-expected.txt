@@ -1,0 +1,5 @@
+
+PASS setFramePrinting accepts print mode for an iframe from the main frame's process (allowed)
+PASS setFramePrinting ignores print mode for the main frame and its sibling from an iframe's process (disallowed)
+PASS setFramePrinting rejects a frame of another page (disallowed)
+

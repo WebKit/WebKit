@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test window.oncuechange EventHandler attribute");
+
+shouldBeNull("window.oncuechange");
+
+var video = document.createElement('video');
+var track = video.addTextTrack('subtitles');
+var testEvent = new Event('cuechange');
+var ran = false;
+evalAndLog("window.oncuechange = function() { ran = true; };");
+
+evalAndLog("window.dispatchEvent(testEvent)");
+shouldBeTrue("ran");
+
+evalAndLog("window.oncuechange = null");
+ran = false;
+evalAndLog("track.dispatchEvent(testEvent)");
+shouldBeFalse("ran");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

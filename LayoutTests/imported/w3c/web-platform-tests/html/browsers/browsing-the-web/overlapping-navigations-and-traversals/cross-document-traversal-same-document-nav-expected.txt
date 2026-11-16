@@ -1,0 +1,4 @@
+
+PASS same-document traversals + fragment navigations
+PASS same-document traversals + pushState()
+

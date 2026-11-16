@@ -1,0 +1,10 @@
+Test that a video's second <source> element's URL is loaded if the MediaDeviceRoute rejects the first <source> element's URL.
+
+
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+EXPECTED (actualURL == '/LayoutTests/media/content/test.mp4') OK
+END OF TEST
+

@@ -1,0 +1,3 @@
+
+PASS with "unsafe-url" referrer policy on cross-site referring page with document rule
+

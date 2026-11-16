@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/timeline-event-utilities.js"></script>
+<script>
+
+function testClickEventHandler({preventDefault}) {
+    savePageData({preventDefault});
+
+    let button = document.body.appendChild(document.createElement("button"));
+    button.addEventListener("click", (event) => {
+        TestPage.addResult("PASS: click handler fired" + (preventDefault ? ", will prevent default" : ""));
+
+        if (preventDefault)
+            event.preventDefault();
+    }, {once: true});
+    button.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true}));
+}
+
+function testClickEventAttributeHandler(id, {preventDefault}) {
+    savePageData({preventDefault});
+
+    let button = document.getElementById(id);
+    button.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true}));
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineEvent.EventDispatch");
+
+    suite.addTestCase({
+        name: "TimelineEvent.EventDispatch.Handler.Regular",
+        async test() {
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testClickEventHandler({preventDefault: false})`,
+                eventType: WI.ScriptTimelineRecord.EventType.EventDispatched,
+            });
+
+            InspectorTest.assert(typeof pageRecordingData.preventDefault === "boolean");
+
+            let recording = WI.timelineManager.activeRecording;
+            let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
+            let records = scriptTimeline.records.filter((x) => x.eventType === WI.ScriptTimelineRecord.EventType.EventDispatched);
+            InspectorTest.expectEqual(records.length, 1, "Should be 1 EventDispatched record.");
+            for (let record of records) {
+                InspectorTest.log("DETAILS: " + JSON.stringify(record.extraDetails));
+                InspectorTest.expectEqual(record.extraDetails.defaultPrevented, pageRecordingData.preventDefault, "ScriptTimelineRecord extraDetails should show default was not prevented.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "TimelineEvent.EventDispatch.Handler.DefaultPrevented",
+        async test() {
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testClickEventHandler({preventDefault: true})`,
+                eventType: WI.ScriptTimelineRecord.EventType.EventDispatched,
+            });
+
+            InspectorTest.assert(typeof pageRecordingData.preventDefault === "boolean");
+
+            let recording = WI.timelineManager.activeRecording;
+            let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
+            let records = scriptTimeline.records.filter((x) => x.eventType === WI.ScriptTimelineRecord.EventType.EventDispatched);
+            InspectorTest.expectEqual(records.length, 1, "Should be 1 EventDispatched record.");
+            for (let record of records) {
+                InspectorTest.log("DETAILS: " + JSON.stringify(record.extraDetails));
+                InspectorTest.expectEqual(record.extraDetails.defaultPrevented, pageRecordingData.preventDefault, "ScriptTimelineRecord extraDetails should show default was prevented.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "TimelineEvent.EventDispatch.AttributeHandler.Regular",
+        async test() {
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testClickEventAttributeHandler("b1", {preventDefault: false})`,
+                eventType: WI.ScriptTimelineRecord.EventType.EventDispatched,
+            });
+
+            InspectorTest.assert(typeof pageRecordingData.preventDefault === "boolean");
+
+            let recording = WI.timelineManager.activeRecording;
+            let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
+            let records = scriptTimeline.records.filter((x) => x.eventType === WI.ScriptTimelineRecord.EventType.EventDispatched);
+            InspectorTest.expectEqual(records.length, 1, "Should be 1 EventDispatched record.");
+            for (let record of records) {
+                InspectorTest.log("DETAILS: " + JSON.stringify(record.extraDetails));
+                InspectorTest.expectEqual(record.extraDetails.defaultPrevented, pageRecordingData.preventDefault, "ScriptTimelineRecord extraDetails should show default was not prevented.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "TimelineEvent.EventDispatch.AttributeHandler.DefaultPrevented",
+        async test() {
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testClickEventAttributeHandler("b2", {preventDefault: true})`,
+                eventType: WI.ScriptTimelineRecord.EventType.EventDispatched,
+            });
+
+            InspectorTest.assert(typeof pageRecordingData.preventDefault === "boolean");
+
+            let recording = WI.timelineManager.activeRecording;
+            let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
+            let records = scriptTimeline.records.filter((x) => x.eventType === WI.ScriptTimelineRecord.EventType.EventDispatched);
+            InspectorTest.expectEqual(records.length, 1, "Should be 1 EventDispatched record.");
+            for (let record of records) {
+                InspectorTest.log("DETAILS: " + JSON.stringify(record.extraDetails));
+                InspectorTest.expectEqual(record.extraDetails.defaultPrevented, pageRecordingData.preventDefault, "ScriptTimelineRecord extraDetails should show default was prevented.");
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests 'EventDispatch' Timeline event records.</p>
+    <button id="b1" onclick="TestPage.addResult('PASS: b1 onclick attribute handler fired'); return true"></button>
+    <button id="b2" onclick="TestPage.addResult('PASS: b2 onclick attribute handler fired, will prevent default'); return false"></button>
+</body>
+</html>

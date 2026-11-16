@@ -1,0 +1,15 @@
+Testing for the font-variant-alternates computed values
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+target.style.fontVariantAlternates = 'historical-forms swash(flowing)';
+PASS getComputedStyle(target).fontVariantAlternates is "historical-forms swash(flowing)"
+target.style.fontVariantAlternates = 'historical-forms';
+PASS getComputedStyle(target).fontVariantAlternates is "historical-forms"
+target.style.fontVariantAlternates = 'normal';
+PASS getComputedStyle(target).fontVariantAlternates is "normal"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

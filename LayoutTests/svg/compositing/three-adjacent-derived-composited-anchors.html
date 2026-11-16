@@ -1,0 +1,26 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+</style>
+</head>
+<body>
+<!-- Three adjacent composited anchor <g>s. Every group's own fill must paint. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g style="z-index: 1">
+        <rect style="transform: translateZ(0)" x="10" y="10" width="40" height="40" fill="red"/>
+        <rect x="10" y="60" width="40" height="40" fill="purple"/>
+    </g>
+    <g style="z-index: 2">
+        <rect style="transform: translateZ(0)" x="70" y="10" width="40" height="40" fill="blue"/>
+        <rect x="70" y="60" width="40" height="40" fill="green"/>
+    </g>
+    <g style="z-index: 3">
+        <rect style="transform: translateZ(0)" x="130" y="10" width="40" height="40" fill="black"/>
+        <rect x="130" y="60" width="40" height="40" fill="orange"/>
+    </g>
+</svg>
+</body>
+</html>

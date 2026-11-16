@@ -1,0 +1,3 @@
+Tests that decimal numbers typed while holding down the Control key are inserted.
+
+PASS

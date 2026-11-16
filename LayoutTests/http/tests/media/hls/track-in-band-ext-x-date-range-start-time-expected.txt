@@ -1,0 +1,28 @@
+
+Test that #EXT-X-DATERANGE metadata cues have valid start time.
+
+RUN(video.src = "http://127.0.0.1:8000/media/resources/hls/dynamic-ext-date-range.py")
+EVENT(addtrack)
+RUN(track = video.textTracks[0])
+RUN(track.mode = "hidden")
+EVENT(playing)
+EVENT(cuechange)
+
+EXPECTED (track.cues[0].startTime == '0') OK
+EXPECTED (track.cues[1].startTime != '0') OK
+EXPECTED (track.cues[2].startTime != '0') OK
+EXPECTED (track.cues[3].startTime != '0') OK
+EXPECTED (track.cues[4].startTime != '0') OK
+EXPECTED (track.cues[5].startTime != '0') OK
+EXPECTED (track.cues[6].startTime != '0') OK
+EXPECTED (track.cues[7].startTime != '0') OK
+EXPECTED (track.cues[8].startTime != '0') OK
+EXPECTED (track.cues[9].startTime != '0') OK
+EXPECTED (track.cues[10].startTime != '0') OK
+EXPECTED (track.cues[11].startTime != '0') OK
+EXPECTED (track.cues[12].startTime != '0') OK
+EXPECTED (track.cues[13].startTime != '0') OK
+EXPECTED (track.cues[14].startTime != '0') OK
+
+END OF TEST
+

@@ -1,0 +1,14 @@
+Tests error handling for Network.getResponseBody with invalid or nonexistent requestIds.
+
+
+== Running test suite: Network.getResponseBody.CrossOriginIframe.ErrorCases
+-- Running test case: Network.getResponseBody.CrossOriginIframe.ErrorCases.InvalidRequestId
+PASS: Should throw for invalid requestId.
+
+-- Running test case: Network.getResponseBody.CrossOriginIframe.ErrorCases.NonexistentResource
+PASS: Should throw for nonexistent resource.
+
+-- Running test case: Network.getResponseBody.CrossOriginIframe.ErrorCases.ValidResourceSucceeds
+PASS: Valid resource should not have an error.
+PASS: Content should match expected value.
+

@@ -1,0 +1,23 @@
+This test ensures that inputs with multiple labels have the correct accessibility text exposed.
+
+Initial AX text:
+	AXTitle: Enter your color
+	AXDescription:
+	AXHelp:
+document.getElementById('label2').remove();
+	AXTitle: Enter color
+	AXDescription:
+	AXHelp:
+document.getElementById('label3').innerText = 'choice';
+	AXTitle: Enter choice
+	AXDescription:
+	AXHelp:
+document.getElementById('label3').innerHTML = 'decision';
+	AXTitle: Enter decision
+	AXDescription:
+	AXHelp:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Enter decision

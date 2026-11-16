@@ -1,0 +1,11 @@
+This verifies that using the insertion and deletion roles adds the attribute to the attributed string.
+PASS: item1.attributedStringForTextMarkerRangeContainsAttribute('AXIsSuggestedInsertion', markerRange) === true
+PASS: item2.attributedStringForTextMarkerRangeContainsAttribute('AXIsSuggestedDeletion', markerRange) === true
+PASS: item3.attributedStringForTextMarkerRangeContainsAttribute('AXIsSuggestion', markerRange) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+inserted text
+deleted text
+hellohi

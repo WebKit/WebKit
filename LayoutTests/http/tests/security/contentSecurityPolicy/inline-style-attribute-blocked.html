@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="style-src 'none'; script-src 'unsafe-inline'">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body style="background-color: blue;">
+<script>
+document.write(document.body.style.length > 0 ? 'FAIL' : 'PASS');
+</script>
+</body>
+</html>

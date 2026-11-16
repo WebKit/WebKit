@@ -1,0 +1,5 @@
+
+PASS Custom property changed on the root element
+PASS Inherited property changed on the parent
+PASS Custom property changed on the root element, read after a rendering update
+

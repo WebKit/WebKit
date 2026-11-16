@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name='viewport' content='initial-scale=1'>
+        <script>
+            function imageOverlaysAsText()
+            {
+                const result = [];
+                for (const image of Array.from(document.images)) {
+                    const root = internals.shadowRoot(image);
+                    if (!root)
+                        continue;
+
+                    const overlay = root.getElementById("image-overlay");
+                    if (!overlay)
+                        continue;
+
+                    result.push(overlay.textContent);
+                }
+                return result;
+            }
+
+            function appendImage(imageSource)
+            {
+                const image = document.createElement("img");
+                image.src = imageSource;
+                document.body.appendChild(image);
+            }
+
+            async function appendAndLoadSubframe(source)
+            {
+                const frame = document.createElement("iframe");
+                frame.src = source;
+                await new Promise(resolve => {
+                    frame.addEventListener("load", resolve);
+                    document.body.appendChild(frame);
+                });
+            }
+
+            function hideAllImages()
+            {
+                Array.from(document.images).forEach(image => image.style.setProperty("display", "none"));
+            }
+
+            function showAllImages()
+            {
+                Array.from(document.images).forEach(image => image.style.removeProperty("display"));
+            }
+        </script>
+    </head>
+    <body style='margin: 0px;'>
+        <p>large-red-square.png</p>
+        <img src="large-red-square.png">
+        <p>sunset-in-cupertino-200px.png</p>
+        <img src="sunset-in-cupertino-200px.png">
+        <p>test.jpg</p>
+        <img src="test.jpg">
+        <p>400x400-green.png</p>
+        <img src="400x400-green.png">
+        <p>sunset-in-cupertino-100px.tiff</p>
+        <img src="sunset-in-cupertino-100px.tiff">
+    </body>
+</html>

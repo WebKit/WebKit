@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+      body {
+        font-family: Monospace;
+        font-size: 10px;
+      }
+    </style>
+</head>
+<body>
+    <div>
+        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=14395">http://bugs.webkit.org/show_bug.cgi?id=14395</a>
+        When a &lt;p> is inside &lt;li> two &lt;BR>s are rendered</i>.
+    </div>
+    <div>
+        In all of the following, the bullets should be lined up with the first line of text.
+    </div>
+    
+    <ul><li>item</li></ul>
+        
+    <ul><li>item</li></ul>
+
+    <ul><li style="font-style: italic">item</li></ul>
+
+    <ul><li>before<br>item</li></ul>
+
+    <ul><li><ul><li>item</li></ul><br></li></ul>
+
+    <ul><li><ul><li>item</li></ul><br></li></ul>
+    
+    <div>
+        In this case, the solid bullet should be one line above the hollow bullet and the text.
+    </div>
+    
+    <ul><li><br><ul><li>item</li></ul></li></ul>
+</body>
+</html>

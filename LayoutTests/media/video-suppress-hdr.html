@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SupportHDRDisplayEnabled=false ] -->
+<html id="html">
+<style>video { dynamic-range-limit: standard }</style> <!-- should be ignored -->
+<body>
+<script src='../resources/js-test-pre.js'></script>
+<video id="video1"></video>
+<script>
+var video1;
+var video2;
+var video3;
+
+window.addEventListener('load', async event => {
+    if (!window.internals) {
+        failTest('This test requires window.internals.');
+        return;
+    }
+    video1 = document.getElementById("video1");
+
+    internals.setPageShouldSuppressHDR(false);
+    shouldBe('internals.effectiveDynamicRangeLimitValue(video1)', '1.0', quiet);
+
+    internals.setPageShouldSuppressHDR(true);
+    shouldBe('internals.effectiveDynamicRangeLimitValue(video1)', '0.5', quiet);
+
+    video2 = document.createElement("video");
+    video1.append(video2);
+    shouldBe('internals.effectiveDynamicRangeLimitValue(video2)', '0.5', quiet);
+
+    internals.setPageShouldSuppressHDR(false);
+    shouldBe('internals.effectiveDynamicRangeLimitValue(video1)', '1.0', quiet);
+    shouldBe('internals.effectiveDynamicRangeLimitValue(video2)', '1.0', quiet);
+
+    video3 = document.createElement("video");
+    video2.append(video3);
+    shouldBe('internals.effectiveDynamicRangeLimitValue(video3)', '1.0', quiet);
+});
+</script>
+<script src='../resources/js-test-post.js'></script>
+</body>
+</html>

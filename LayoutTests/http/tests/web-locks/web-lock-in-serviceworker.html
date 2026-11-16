@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+if (window.testRunner) {
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    setTimeout(() => testRunner.notifyDone(), 3000);
+}
+
+async function register() {
+    const serviceWorkerURL = './web-lock-in-serviceworker-service-worker.js?' + Date.now();
+    const registration = await navigator.serviceWorker.register(serviceWorkerURL);
+    if (registration.active)
+        return registration;
+    return new Promise((resolve) => {
+        const worker = registration.installing;
+        worker.addEventListener("statechange", () => {
+            if (worker.state == "activated")
+                resolve(registration);
+        });
+    });
+}
+
+async function runTest() {
+    const registration = await register();
+
+    if (!navigator.serviceWorker.controller)
+        await new Promise(resolve => navigator.serviceWorker.addEventListener('controllerchange', resolve));
+
+    const response = await fetch('./test1');
+
+    result.textContent = await response.text();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runTest();
+
+</script>
+<p>This tests acquiring a web lock in a service worker. You should see PASS below</p>
+<div id="result">Running</div>
+</body>
+</html>

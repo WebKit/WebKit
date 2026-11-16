@@ -1,0 +1,6 @@
+Download started.
+Downloading URL with suggested filename "foo.pdf"
+Download completed.
+Tests that a suggested filename on a download attribute is allowed if the link is in the same origin.
+
+The suggested filename at the top should be foo.pdf.

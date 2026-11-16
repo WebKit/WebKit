@@ -1,0 +1,5 @@
+
+PASS import() should not drain the microtask queue if it fails during specifier resolution
+PASS import() should not drain the microtask queue when loading an already loaded module
+PASS import() should drain the microtask queue when fetching a new module
+

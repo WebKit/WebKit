@@ -1,0 +1,16 @@
+Test that disconnecting a cross-origin iframe's inspector target from inside one of its breakpoint actions abandons the remaining actions and lets the frame keep running.
+
+
+
+== Running test suite: SiteIsolation.Debugger.BreakpointActionDetach
+-- Running test case: SiteIsolation.Debugger.BreakpointActionDetach.Setup
+PASS: Should find the cross-origin frame target.
+
+-- Running test case: SiteIsolation.Debugger.BreakpointActionDetach.RemainingActionsAbandoned
+PASS: Should find the frame's script.
+iframe: first breakpoint action ran, disconnecting this frame's inspector target
+iframe: breakpoint line ran
+iframe: execution continued after the breakpoint
+PASS: Breakpoint actions after the disconnecting one should not run.
+PASS: Frame should keep executing instead of staying paused.
+

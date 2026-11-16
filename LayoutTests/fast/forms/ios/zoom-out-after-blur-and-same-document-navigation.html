@@ -1,0 +1,110 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        input {
+            display: block;
+            width: 100px;
+            margin: 10px;
+            font-size: 12px;
+        }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+
+        async function focusAndWaitForZoom(element)
+        {
+            await UIHelper.activateElementAndWaitForInputSession(element);
+            await UIHelper.waitForZoomingOrScrollingToEnd();
+            return UIHelper.zoomScale();
+        }
+
+        async function blurAndWaitForKeyboardToHide(element)
+        {
+            element.blur();
+            await UIHelper.waitForKeyboardToHide();
+            await UIHelper.waitForZoomingOrScrollingToEnd();
+        }
+
+        async function navigateAndWaitForZoomToSettle(fragment)
+        {
+            history.pushState({ }, "", `#${fragment}`);
+            await UIHelper.waitForZoomingOrScrollingToEnd();
+            return UIHelper.waitForZoomScaleToSettle();
+        }
+
+        addEventListener("load", async () => {
+            description("Verifies that the zoom from revealing a focused element is undone once the page has performed a same-document navigation and the keyboard is dismissed; requires WebKitTestRunner.");
+
+            await UIHelper.setHardwareKeyboardAttached(false);
+            const first = document.getElementById("first");
+            const second = document.getElementById("second");
+            const third = document.getElementById("third");
+
+            debug("Blurring without navigating");
+            zoomedScale = await focusAndWaitForZoom(first);
+            shouldBeTrue("zoomedScale > 1");
+            await blurAndWaitForKeyboardToHide(first);
+            scale = await UIHelper.waitForZoomScaleToSettle();
+            shouldBe("scale", "zoomedScale");
+
+            debug("\nNavigating after the keyboard was dismissed");
+            scale = await navigateAndWaitForZoomToSettle("after-blur");
+            shouldBe("scale", "1");
+
+            debug("\nNavigating while the keyboard is shown, then blurring");
+            scale = await focusAndWaitForZoom(second);
+            shouldBe("scale", "zoomedScale");
+            scale = await navigateAndWaitForZoomToSettle("while-focused");
+            shouldBe("scale", "zoomedScale");
+            await blurAndWaitForKeyboardToHide(second);
+            scale = await UIHelper.waitForZoomScaleToSettle();
+            shouldBe("scale", "1");
+
+            debug("\nNavigating while the keyboard is shown, then moving focus to another field");
+            scale = await focusAndWaitForZoom(first);
+            shouldBe("scale", "zoomedScale");
+            scale = await navigateAndWaitForZoomToSettle("before-changing-focus");
+            shouldBe("scale", "zoomedScale");
+            await UIHelper.moveToNextByKeyboardAccessoryBar();
+            await shouldBecomeEqual("document.activeElement.id", "'second'");
+            await UIHelper.waitForZoomingOrScrollingToEnd();
+            scale = await UIHelper.waitForZoomScaleToSettle();
+            shouldBe("scale", "zoomedScale");
+            await blurAndWaitForKeyboardToHide(second);
+            scale = await UIHelper.waitForZoomScaleToSettle();
+            shouldBe("scale", "1");
+
+            debug("\nNavigating after the user changed the zoom");
+            scale = await focusAndWaitForZoom(second);
+            shouldBe("scale", "zoomedScale");
+            await blurAndWaitForKeyboardToHide(second);
+            await UIHelper.zoomToScale(1.5);
+            scale = await navigateAndWaitForZoomToSettle("after-user-zoom");
+            shouldBe("scale", "1.5");
+            await UIHelper.zoomToScale(1);
+
+            debug("\nRemoving the focused element and navigating at the same time");
+            scale = await focusAndWaitForZoom(third);
+            shouldBe("scale", "zoomedScale");
+            third.remove();
+            scale = await navigateAndWaitForZoomToSettle("removed");
+            await UIHelper.waitForKeyboardToHide();
+            scale = await UIHelper.waitForZoomScaleToSettle();
+            shouldBe("scale", "1");
+
+            finishJSTest();
+        });
+    </script>
+</head>
+<body>
+    <input id="first" type="text">
+    <input id="second" type="text">
+    <input id="third" type="password">
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

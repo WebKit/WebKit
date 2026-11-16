@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Tapping just outside a cross-origin iframe whose content responds to clicks must deliver the click to the iframe's content, as when the iframe is same-origin.");
+jsTestIsAsync = true;
+
+let message;
+addEventListener("message", (event) => {
+    message = event.data;
+    shouldBeEqualToString("message", "child click");
+    finishJSTest();
+});
+
+function onLoad() {
+    // Nothing in this document responds to clicks at the tap location, so the tap is
+    // adjusted to the nearby iframe whose content does.
+    UIHelper.tapAt(200, 97);
+}
+</script>
+</head>
+<body style="margin: 0;">
+<iframe onload="onLoad()" style="position: absolute; left: 100px; top: 100px; width: 200px; height: 200px; border: none;" src="http://localhost:8000/site-isolation/touch-events/resources/post-message-on-click.html"></iframe>
+</body>
+</html>

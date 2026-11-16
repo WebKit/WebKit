@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.square {
+  width: 100px;
+  height: 100px;
+  float: left;
+  margin: 50px;
+}
+
+.transparent-border {
+  background-color:red;
+  border-bottom: 10px solid rgba(1, 52, 193, 0.5);
+}
+
+.gradient {
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(0,0,255,1)), to(rgba(0,255,0,1)));
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText(true);
+</script>
+</head><body>
+<p>Test for Bug 51240: PASS if the second box is painted as an opaque blue-to-green square.</p>
+<div class="square transparent-border"></div>
+<div class="square gradient"></div>
+</body></html>

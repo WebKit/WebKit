@@ -1,0 +1,10 @@
+Under site isolation, a video element playing audio in the main frame activates the audio session, and the web process observes it via AudioSession::isActive().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS the audio session is active
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

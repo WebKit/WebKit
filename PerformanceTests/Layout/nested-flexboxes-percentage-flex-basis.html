@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<head>
+<style>
+.flex {
+    display: flex;
+    flex: 1 0 100%;
+}
+.col { flex-direction: column; }
+.row { flex-direction: row; }
+</style>
+<script src="../resources/runner.js"></script>
+<script>
+function startTest() {
+    document.body.offsetHeight;
+
+    var index = 0;
+    PerfTestRunner.measureRunsPerSecond({run: function() {
+        document.body.style.width = ++index % 2 ? "99%" : "98%";
+        document.body.offsetHeight;
+    }});
+}
+</script>
+</head>
+<body onload="startTest()">
+<div class="flex row" style="flex: none;">
+    <div class="flex col">
+        <div class="flex row">
+            <div class="flex col">
+                <div class="flex row">
+                    <div class="flex col">
+                        <div class="flex row">
+                            <div class="flex col">
+                                <div class="flex row">
+                                    <div class="flex col">
+                                        <div class="flex row"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>

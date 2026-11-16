@@ -1,0 +1,11 @@
+<script>
+window.addEventListener("message", (event) => {
+    if (event.data !== "start-nested-blob-workers")
+        return;
+
+    window.worker = startNestedBlobWorkers((urls) => {
+        window.parent.postMessage({type: "nested-blob-workers-ready", urls}, "*");
+    });
+});
+</script>
+<script src="nested-blob-workers.js"></script>

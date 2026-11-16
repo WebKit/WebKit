@@ -1,0 +1,5 @@
+Click me
+Click me
+
+PASS EventTiming: verify interactionCount for click interaction
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Deeply nested block boxes are rendered up to the render tree depth limit.</title>
+<style>
+.block { width: 1px; height: 1px; }
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+description("Block boxes nested below the render tree depth limit should all get renderers. Only inline formatting contexts nested inside each other are limited further.");
+
+function buildBlockChain(root, depth)
+{
+    let container = root;
+    for (let i = 0; i < depth; ++i) {
+        const block = document.createElement("div");
+        block.className = "block";
+        container.appendChild(block);
+        container = block;
+    }
+    return container;
+}
+
+const innermost = buildBlockChain(document.getElementById("container"), 400);
+
+shouldBe("document.querySelectorAll('.block').length", "400");
+shouldBe("innermost.getClientRects().length", "1");
+</script>
+</body>
+</html>

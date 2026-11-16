@@ -1,0 +1,121 @@
+<!doctype html><!-- webkit-test-runner [ PeerConnectionVideoScalingAdaptationDisabled=false ] -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src="../fast/mediastream/resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <script src ="routines.js"></script>
+        <script>
+async function waitFor(duration)
+{
+    return new Promise((resolve) => setTimeout(resolve, duration));
+}
+
+function getInboundRTPStats(pc)
+{
+    return pc.getStats().then((report) => {
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "inbound-rtp") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+async function getFirstInboundRtpReport(pc)
+{
+    const stats = await getInboundRTPStats(pc);
+    if (!stats || !stats.framesDecoded)
+        return getFirstInboundRtpReport(pc);
+    return stats;
+}
+
+async function testVideoAdaptation(localStreamCallback)
+{
+    var pc1, pc2;
+    await new Promise((resolve, reject) => {
+        createConnections(async (firstConnection) => {
+            pc1 = firstConnection;
+            localStreamCallback(firstConnection);
+            const sender = firstConnection.getSenders()[0];
+            const parameters = sender.getParameters();
+            // We severly limit bandwidth to trigger bandwidth reduction via frame rate or resolution decrease.
+            parameters.encodings[0].maxBitrate = 83000;
+            await sender.setParameters(parameters);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    return getFirstInboundRtpReport(pc2);
+}
+
+let gumStream, gdmStream;
+promise_test(async () => {
+    gumStream = await navigator.mediaDevices.getUserMedia({ video: { width: 1920, height:1080 } });
+    gdmStream = await callGetDisplayMedia({ video: { width: 1920, height:1080 } });
+}, "Setup");
+
+promise_test(async (test) => {
+    const results = await testVideoAdaptation(pc => {
+        pc.addTrack(gumStream.getVideoTracks()[0], gumStream);
+    });
+    assert_less_than(results.frameWidth, 1920);
+    assert_less_than(results.frameHeight, 1080);
+}, "getUserMedia() streaming to PeerConnection should favor frame rate");
+
+promise_test(async (test) => {
+    const results = await testVideoAdaptation(pc => {
+        pc.addTrack(gdmStream.getVideoTracks()[0], gdmStream);
+    });
+    assert_equals(results.frameWidth, 1920);
+    assert_equals(results.frameHeight, 1080);
+}, "getDisplayMedia() streaming to PeerConnection should favor frame resolution");
+
+promise_test(async (test) => {
+    gumStream.getTracks()[0].contentHint = "text";
+    test.add_cleanup(async () => gumStream.getTracks()[0].contentHint = "");
+    const results = await testVideoAdaptation(pc => {
+        pc.addTrack(gumStream.getVideoTracks()[0], gumStream);
+    });
+    assert_equals(results.frameWidth, 1920);
+    assert_equals(results.frameHeight, 1080);
+}, "getUserMedia() streaming to PeerConnection can favor frame resolution with content hint");
+
+promise_test(async (test) => {
+    gdmStream.getTracks()[0].contentHint = "motion";
+    test.add_cleanup(async () => gdmStream.getTracks()[0].contentHint = "");
+    const results = await testVideoAdaptation(pc => {
+        pc.addTrack(gdmStream.getVideoTracks()[0], gdmStream);
+    });
+    assert_less_than(results.frameWidth, 1920);
+    assert_less_than(results.frameHeight, 1080);
+}, "getDisplayMedia() streaming to PeerConnection can favor frame rate with content hint");
+
+promise_test(async (test) => {
+    const results = await testVideoAdaptation(async pc => {
+        pc.addTrack(gumStream.getVideoTracks()[0], gumStream);
+        pc.getSenders()[0].replaceTrack(gdmStream.getTracks()[0]);
+    });
+    assert_equals(results.frameWidth, 1920);
+    assert_equals(results.frameHeight, 1080);
+}, "getDisplayMedia() streaming to PeerConnection (while sender was created for video) should favor frame resolution");
+
+promise_test(async test => {
+    test.add_cleanup(async () => gumStream.getTracks().forEach(track => track.stop()));
+    test.add_cleanup(async () => gdmStream.getTracks().forEach(track => track.stop()));
+}, "Cleanup");
+
+        </script>
+    </body>
+</html>

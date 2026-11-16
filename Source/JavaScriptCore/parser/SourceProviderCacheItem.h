@@ -1,0 +1,151 @@
+/*
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <JavaScriptCore/ConstructorKind.h>
+#include <JavaScriptCore/ImplementationVisibility.h>
+#include <JavaScriptCore/ParserModes.h>
+#include <JavaScriptCore/ParserTokens.h>
+#include <wtf/PackedRefPtr.h>
+#include <wtf/TrailingArray.h>
+#include <wtf/Vector.h>
+#include <wtf/text/UniquedStringImpl.h>
+#include <wtf/text/WTFString.h>
+
+namespace JSC {
+
+struct SourceProviderCacheItemCreationParameters {
+    std::span<UniquedStringImpl* const> freeVariables() const LIFETIME_BOUND
+    {
+        ASSERT(freeVariableCount <= usedVariables.size());
+        return usedVariables.span().first(freeVariableCount);
+    }
+
+    unsigned lastTokenStartOffset { 0 };
+    unsigned lastTokenEndOffset { 0 };
+    unsigned endFunctionOffset { 0 };
+    unsigned parameterCount { 0 };
+    unsigned freeVariableCount { 0 };
+    LexicallyScopedFeatures lexicallyScopedFeatures { 0 };
+    InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures { 0 };
+    ImplementationVisibility implementationVisibility { ImplementationVisibility::Public };
+    // Scope's own free variables followed by the captures from its parameter expressions.
+    Vector<UniquedStringImpl*, 8> usedVariables;
+    JSTokenType tokenType { CLOSEBRACE };
+    ConstructorKind constructorKind;
+    SuperBinding expectedSuperBinding;
+    bool needsFullActivation : 1 { false };
+    bool usesEval : 1 { false };
+    bool usesImportMeta : 1 { false };
+    bool needsSuperBinding : 1 { false };
+    bool isBodyArrowExpression : 1 { false };
+};
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);
+class SourceProviderCacheItem final : public TrailingArray<SourceProviderCacheItem, PackedRefPtr<UniquedStringImpl>> {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem, SourceProviderCacheItem);
+public:
+    using Base = TrailingArray<SourceProviderCacheItem, PackedRefPtr<UniquedStringImpl>>;
+
+    static std::unique_ptr<SourceProviderCacheItem> create(const SourceProviderCacheItemCreationParameters&);
+
+    JSToken endFunctionToken() const 
+    {
+        JSToken token;
+        token.m_type = isBodyArrowExpression ? static_cast<JSTokenType>(tokenType) : CLOSEBRACE;
+        token.m_startPosition.offset = lastTokenStartOffset;
+        token.m_endPosition.offset = lastTokenEndOffset;
+        // token.m_location.sourceOffset is initialized once by the client. So,
+        // we do not need to set it here.
+        return token;
+    }
+
+    LexicallyScopedFeatures lexicallyScopedFeatures() const
+    {
+        LexicallyScopedFeatures features = NoLexicallyScopedFeatures;
+        if (strictMode)
+            features |= StrictModeLexicallyScopedFeature;
+        if (taintedByWithScope)
+            features |= TaintedByWithScopeLexicallyScopedFeature;
+        return features;
+    }
+
+    bool needsFullActivation : 1;
+    unsigned endFunctionOffset : 31;
+    bool usesEval : 1;
+    unsigned lastTokenStartOffset : 31;
+    bool strictMode : 1;
+    unsigned lastTokenEndOffset: 31;
+    unsigned expectedSuperBinding : 1; // SuperBinding
+    unsigned parameterCount : 31;
+    bool needsSuperBinding: 1;
+    bool taintedByWithScope : 1;
+    bool isBodyArrowExpression : 1;
+    unsigned tokenType : 24; // JSTokenType
+    unsigned innerArrowFunctionFeatures : 6; // InnerArrowFunctionCodeFeatures
+    unsigned constructorKind : 2; // ConstructorKind
+    unsigned implementationVisibility : 2; // ImplementationVisibility
+    bool usesImportMeta : 1 { false };
+
+    std::span<const PackedRefPtr<UniquedStringImpl>> usedVariables() const LIFETIME_BOUND { return span(); }
+
+private:
+    SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters&);
+};
+
+inline std::unique_ptr<SourceProviderCacheItem> SourceProviderCacheItem::create(const SourceProviderCacheItemCreationParameters& parameters)
+{
+    void* slot = SourceProviderCacheItemMalloc::malloc(Base::allocationSize(parameters.usedVariables.size()));
+    return std::unique_ptr<SourceProviderCacheItem>(new (NotNull, slot) SourceProviderCacheItem(parameters));
+}
+
+inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters& parameters)
+    : Base(parameters.usedVariables.span())
+    , needsFullActivation(parameters.needsFullActivation)
+    , endFunctionOffset(parameters.endFunctionOffset)
+    , usesEval(parameters.usesEval)
+    , lastTokenStartOffset(parameters.lastTokenStartOffset)
+    , strictMode(parameters.lexicallyScopedFeatures & StrictModeLexicallyScopedFeature)
+    , lastTokenEndOffset(parameters.lastTokenEndOffset)
+    , expectedSuperBinding(static_cast<unsigned>(parameters.expectedSuperBinding))
+    , parameterCount(parameters.parameterCount)
+    , needsSuperBinding(parameters.needsSuperBinding)
+    , taintedByWithScope(parameters.lexicallyScopedFeatures & TaintedByWithScopeLexicallyScopedFeature)
+    , isBodyArrowExpression(parameters.isBodyArrowExpression)
+    , tokenType(static_cast<unsigned>(parameters.tokenType))
+    , innerArrowFunctionFeatures(static_cast<unsigned>(parameters.innerArrowFunctionFeatures))
+    , constructorKind(static_cast<unsigned>(parameters.constructorKind))
+    , implementationVisibility(static_cast<unsigned>(parameters.implementationVisibility))
+    , usesImportMeta(parameters.usesImportMeta)
+{
+    ASSERT(tokenType == static_cast<unsigned>(parameters.tokenType));
+    ASSERT(innerArrowFunctionFeatures == static_cast<unsigned>(parameters.innerArrowFunctionFeatures));
+    ASSERT(constructorKind == static_cast<unsigned>(parameters.constructorKind));
+    ASSERT(implementationVisibility == static_cast<unsigned>(parameters.implementationVisibility));
+    ASSERT(expectedSuperBinding == static_cast<unsigned>(parameters.expectedSuperBinding));
+}
+
+} // namespace JSC

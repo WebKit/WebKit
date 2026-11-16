@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test for a crash in CloseWatcherManager::remove() caused by mutating m_groups
+while range-iterating over it.</p>
+<p>remove() iterates m_groups with a range-for and, when a group becomes empty,
+calls m_groups.removeFirst(group) inside the loop. WTF::Vector::removeAt shifts
+the surviving groups down in place and shrinks the size; the range-for's end
+iterator (captured before the shrink) then points past the live size, so the
+following iterations read out-of-bounds slots of the m_groups buffer (flagged as
+a contiguous-container overflow under ASAN). We build many groups and remove the
+watcher in the first one so the loop walks the maximal shifted range.</p>
+<p id="result">FAIL: did not run to completion.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const numberOfGroups = 16;
+const watchers = [];
+
+// Build `numberOfGroups` separate entries in CloseWatcherManager::m_groups.
+// A new group is only created when m_groups.size() < m_allowedNumberOfGroups,
+// and that limit is raised by one each time notifyAboutUserActivation() observes
+// a fresh user activation. So we interleave: create a watcher, then deliver a
+// trusted activation so the next watcher is allowed to start its own group.
+// (We keep references to every watcher so none is garbage-collected, which would
+// otherwise call remove() and mutate m_groups before we are ready.)
+for (let i = 0; i < numberOfGroups; ++i) {
+    watchers.push(new CloseWatcher());
+    if (window.eventSender) {
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+// m_groups == [[w0], [w1], ..., [w15]]
+
+// Destroy the watcher in the FIRST (non-last) group. remove() empties group 0
+// and calls m_groups.removeFirst(group) during the range-for over m_groups,
+// shifting every remaining group down by one. The loop's end iterator, captured
+// before the shrink, now points past the live size, so the following iterations
+// read out-of-bounds (poisoned, under ASAN) slots of the m_groups buffer.
+watchers[0].destroy();
+
+// Clean up the surviving watchers.
+for (let i = 1; i < watchers.length; ++i)
+    watchers[i].destroy();
+
+document.getElementById("result").textContent = "PASS: did not crash.";
+</script>
+</body>
+</html>

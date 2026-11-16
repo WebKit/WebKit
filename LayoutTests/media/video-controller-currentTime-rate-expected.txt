@@ -1,0 +1,7 @@
+
+Test that setting playbackRate on media controller modifies current time
+
+EVENT(canplaythrough)
+EXPECTED (0 == '0') OK
+END OF TEST
+

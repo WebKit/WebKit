@@ -1,0 +1,10 @@
+PASS style.getPropertyValue('font-family') is not 'UICTFontTextStyleBody'
+PASS isNaN(parseInt(style.getPropertyValue('font-size'))) is true
+PASS style.getPropertyValue('font-style') is not 'normal'
+PASS isNaN(parseInt(style.getPropertyValue('font-weight'))) is true
+PASS style.getPropertyValue('font-variant-caps') is not 'normal'
+PASS style.getPropertyValue('line-height') is not 'normal'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

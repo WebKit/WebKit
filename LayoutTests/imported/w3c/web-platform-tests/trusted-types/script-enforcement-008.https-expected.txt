@@ -1,0 +1,6 @@
+
+PASS script-src CSP directive is properly set.
+PASS Untrusted HTMLScriptElement with classic type uses the source text returned by the default policy for inline CSP check.
+PASS Untrusted HTMLScriptElement of importmap type uses the source text returned by the default policy for inline CSP check.
+PASS Untrusted HTMLScriptElement of module type uses the source text returned by the default policy for inline CSP check.
+

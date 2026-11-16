@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    .wrapper {
+        width: 200px;
+        height: 200px;
+        border: 1px solid black;
+    }
+    .box {
+        width: 200px;
+        height: 200px;
+        background-color: green;
+        overflow: hidden;
+        -webkit-clip-path: url(#MaskTest);
+    }
+    
+    .child-box {
+        width: 100%;
+        height: 100%;
+        background-color: red;
+        transform: translate(100px, 0);
+    }
+</style>
+</head>
+<body>
+    <svg height="0" width="0">
+        <clipPath id="MaskTest" clipPathUnits="objectBoundingBox" transform="scale(0.005, 0.005)">
+            <path d="M0,0 L100,0 L100,100 L0,100 L0,0 z"/>
+        </clipPath>
+    </svg>
+    <div class="wrapper">
+        <div class="box">
+            <div class="child-box"></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-end-of-stream</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-WebM equivalent of media-source-end-of-stream.html
+    // Tests endOfStream() with various error codes and their effect on video.error.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        // Test 1: endOfStream("network") without init segment → MEDIA_ERR_SRC_NOT_SUPPORTED
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run('source.endOfStream("network")');
+        await waitFor(video, 'error');
+        testExpected('video.error.code', MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+
+        // Test 2: endOfStream("decode") without init segment → MEDIA_ERR_SRC_NOT_SUPPORTED
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run('source.endOfStream("decode")');
+        await waitFor(video, 'error');
+        testExpected('video.error.code', MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+
+        // Test 3: endOfStream("network") WITH init segment → MEDIA_ERR_NETWORK
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+        run('source.endOfStream("network")');
+        await waitFor(video, 'error');
+        testExpected('video.error.code', MediaError.MEDIA_ERR_NETWORK);
+
+        // Test 4: endOfStream("decode") WITH init segment → MEDIA_ERR_DECODE
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+        run('source.endOfStream("decode")');
+        await waitFor(video, 'error');
+        testExpected('video.error.code', MediaError.MEDIA_ERR_DECODE);
+
+        // Test 5: endOfStream() (no error) WITH init segment → NETWORK_IDLE
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+        run('source.endOfStream()');
+        await waitFor(video, 'suspend');
+        testExpected('video.networkState', HTMLMediaElement.NETWORK_IDLE);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

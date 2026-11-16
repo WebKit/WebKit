@@ -1,0 +1,11 @@
+<body>
+<p>This tests for a bug where inserting at the end of a link would place content in the wrong paragraph.</p>
+<div contenteditable="true"><a id="link" href="#">Everything&nbsp;<br></a></div>
+               
+<script>
+var sel = window.getSelection();
+var link = document.getElementById("link");
+sel.setPosition(link, link.childNodes.length);
+document.execCommand("InsertText", false, "in this editable region should be in the same paragraph.");
+</script>
+</body>

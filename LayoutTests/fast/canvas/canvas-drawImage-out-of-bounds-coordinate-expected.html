@@ -1,0 +1,28 @@
+<style>
+    canvas {
+        outline: 1px solid red;
+        aspect-ratio: 1 / 1;
+    }
+</style>
+<body>
+    <canvas id="test1"></canvas>
+    <canvas id="test2"></canvas>
+    <script>
+        function drawRectsToCanvas(destCanvas) {
+            const destCtx = destCanvas.getContext('2d');
+            destCtx.fillStyle = 'green';
+
+            destCtx.fillRect(25, 25, 40, 40);
+            destCtx.fillRect(25, 75, 40, 75);
+
+            destCtx.fillRect(75, 25, 80, 40);
+            destCtx.fillRect(75, 75, 80, 75);
+
+            destCtx.fillRect(175, 25, 40, 40);
+            destCtx.fillRect(175, 75, 40, 75);
+        }
+
+        drawRectsToCanvas(document.querySelector('#test1'));
+        drawRectsToCanvas(document.querySelector('#test2'));
+    </script>
+</body>

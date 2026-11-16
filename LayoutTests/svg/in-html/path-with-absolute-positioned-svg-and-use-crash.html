@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+.c3 {
+}
+</style>
+<body>
+PASS if no crash.
+<svg id="svg" style="position: absolute;">
+	<path class="c3" d="M 100 100 L 300 100 L 200 300 z" fill="orange" stroke="black" stroke-width="3"></path>
+</svg>
+<svg>
+    <use xlink:href="#svg"></use>
+</svg>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetTop;
+document.styleSheets[0].insertRule('.c3 { border: 5px solid red; } ', '.c3');
+</script>
+</body>
+</html>

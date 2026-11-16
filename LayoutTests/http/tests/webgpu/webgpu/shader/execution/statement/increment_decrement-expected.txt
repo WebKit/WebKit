@@ -1,0 +1,19 @@
+
+PASS :scalar_i32_increment:
+PASS :scalar_i32_increment_overflow:
+PASS :scalar_u32_increment:
+PASS :scalar_u32_increment_overflow:
+PASS :scalar_i32_decrement:
+PASS :scalar_i32_decrement_underflow:
+PASS :scalar_u32_decrement:
+PASS :scalar_u32_decrement_underflow:
+PASS :vec2_element_increment:
+PASS :vec3_element_increment:
+PASS :vec4_element_increment:
+PASS :vec2_element_decrement:
+PASS :vec3_element_decrement:
+PASS :vec4_element_decrement:
+PASS :frexp_exp_increment:
+PASS :single_eval_increment:
+PASS :single_eval_decrement:
+

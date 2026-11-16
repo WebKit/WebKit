@@ -1,0 +1,6 @@
+
+PASS didDestroyFrame accepts the parent's provisional process (allowed)
+PASS didDestroyFrame ignores a sibling from an iframe's process (disallowed)
+PASS didDestroyFrame rejects a frame of another page (disallowed)
+PASS didDestroyFrame ignores the main frame from an iframe's process (disallowed)
+

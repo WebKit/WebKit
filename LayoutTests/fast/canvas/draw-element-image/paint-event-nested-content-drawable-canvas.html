@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<title>The paint event for a drawable element inside a nested content=drawable canvas fires on the nested canvas</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<canvas id="outer" content="drawable" width="200" height="200">
+    <canvas id="inner" drawable content="drawable" width="100" height="100">
+        <div id="box" drawable style="width: 50px; height: 50px; background-color: red;"></div>
+    </canvas>
+</canvas>
+<script>
+    function waitForOneFrame() {
+        return new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve)));
+    }
+
+    promise_test(async () => {
+        await waitForOneFrame();
+        await waitForOneFrame();
+
+        const innerChangedElements = [];
+        const outerChangedElements = [];
+        inner.onpaint = event => {
+            innerChangedElements.push(...event.changedElements);
+            inner.getContext('2d').drawElementImage(box, 0, 0);
+        };
+        outer.onpaint = event => outerChangedElements.push(...event.changedElements);
+
+        box.style.backgroundColor = 'green';
+        await waitForOneFrame();
+        await waitForOneFrame();
+
+        assert_array_equals(innerChangedElements, [box], 'The nested canvas should report its drawable element.');
+        assert_false(outerChangedElements.includes(box), 'The outer canvas should not report a drawable element of the nested canvas.');
+        assert_true(outerChangedElements.includes(inner), 'The outer canvas should report the nested canvas after it draws.');
+    }, 'Paint events are routed to the canvas that owns the changed drawable element');
+</script>

@@ -1,0 +1,35 @@
+
+PASS Inner binary operator should not affect position and size of outer fences.
+FAIL Fences are stretched symmetrically with respect to the math axis assert_approx_equals: expected 65.265625 +/- 2 but got 62.2421875
+(
+(
+𝑥
++
+𝑦
+)
+)
+
+(
+(
+𝑥
+)
+)
+
++
+(
+𝑥
+)
+
+(
+𝜕
+2
+𝜕
+𝑥
+2
++
+𝜕
+2
+𝜕
+𝑦
+2
+)

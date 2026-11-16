@@ -1,0 +1,4 @@
+
+
+PASS Form associated custom elements should work with fieldset.elements
+

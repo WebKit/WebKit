@@ -1,0 +1,4 @@
+
+
+PASS resizing of RTL textarea whose position is anchored to the left side
+

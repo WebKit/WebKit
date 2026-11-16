@@ -1,0 +1,3 @@
+
+PASS timeline.subject does not expose pseudo-element
+

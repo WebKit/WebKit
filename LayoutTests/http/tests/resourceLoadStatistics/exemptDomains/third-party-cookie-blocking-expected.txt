@@ -1,0 +1,30 @@
+Tests that third-party cookies are blocked when managed domains added.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Before adding a managed domain, should receive no cookies.
+Did not receive cookie named 'firstPartyCookie'.
+Client-side document.cookie:
+
+--------
+Frame: '<!--frame2-->'
+--------
+After adding an unrelated managed domain, should still not receive cookies.
+Did not receive cookie named 'firstPartyCookie'.
+Client-side document.cookie:
+
+--------
+Frame: '<!--frame3-->'
+--------
+Should receive both cookies.
+Received cookie named 'firstPartyCookie'.
+Client-side document.cookie: firstPartyCookie=value

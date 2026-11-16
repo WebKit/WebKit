@@ -1,0 +1,230 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "BlockFormattingState.h"
+#include "InlineDamage.h"
+#include "InlineFormattingConstraints.h"
+#include "InlineFormattingContext.h"
+#include "InlineIteratorInlineBox.h"
+#include "LayoutIntegrationBoxGeometryUpdater.h"
+#include "LayoutIntegrationBoxTreeUpdater.h"
+#include <WebCore/FloatRect.h>
+#include <WebCore/InlineIteratorLineBox.h>
+#include <WebCore/InlineIteratorTextBox.h>
+#include <WebCore/LayoutPoint.h>
+#include <WebCore/LayoutState.h>
+#include <WebCore/RenderObjectEnums.h>
+#include <wtf/CheckedPtr.h>
+
+namespace WebCore {
+
+class HitTestLocation;
+class HitTestRequest;
+class HitTestResult;
+class RenderBlockFlow;
+class RenderBox;
+class RenderBoxModelObject;
+class RenderListOutsideMarker;
+struct PaintInfo;
+struct SVGTextFragment;
+
+namespace Layout {
+class InlineDamage;
+}
+
+namespace LayoutIntegration {
+
+class InlineContent;
+struct LineAdjustment;
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
+
+class LineLayout final : public CanMakeCheckedPtr<LineLayout> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LineLayout, LayoutIntegration_LineLayout);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LineLayout);
+public:
+    LineLayout(RenderBlockFlow&);
+    ~LineLayout();
+
+    NODELETE static RenderBlockFlow* blockContainer(const RenderObject&);
+    static LineLayout* containing(RenderObject&);
+    static const LineLayout* containing(const RenderObject&);
+
+    static bool shouldInvalidateLineLayoutAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);
+    static bool shouldInvalidateLineLayoutAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
+
+    void updateFormattingContextGeometries(LayoutUnit availableLogicalWidth);
+
+    std::optional<LayoutRect> updateOverflow();
+
+    // Partial invalidation.
+    bool insertedIntoTree(RenderObject& child);
+    bool removedFromTree(RenderObject& child);
+    bool updateTextContent(RenderText&, std::optional<size_t> offset, size_t oldLength);
+    bool rootStyleWillChange(const RenderBlockFlow&, const Style::ComputedStyle& newStyle);
+    bool styleWillChange(const RenderElement&, const Style::ComputedStyle& newStyle, Style::Difference);
+    bool boxContentWillChange(const RenderBox&);
+
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
+    void resetIntrinsicWidthConstraints();
+
+    enum class ForceFullLayout : bool { No, Yes };
+    std::optional<LayoutRect> layout(RenderBlockFlow::MarginInfo&, ForceFullLayout = ForceFullLayout::No);
+    // Builds the display content without line layout. Returns false when the content needs the full layout.
+    bool layoutSVGText();
+    void paint(PaintInfo&, const LayoutPoint& paintOffset, const RenderBoxModelObject* layerRenderer = nullptr);
+    bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction, const RenderBoxModelObject* layerRenderer = nullptr);
+    void adjustForPagination();
+    void shiftLinesByInBlockDirection(LayoutUnit blockShift);
+
+    void collectOverflow();
+    LayoutRect inkOverflowBoundingBoxRectFor(const RenderBoxModelObject&) const;
+    Vector<FloatRect> collectInlineBoxRects(const RenderBoxModelObject&) const;
+
+    NODELETE LayoutUnit contentLogicalHeight() const;
+    std::optional<LayoutUnit> clampedContentLogicalHeight() const;
+    NODELETE bool hasEllipsisInBlockDirectionOnLastFormattedLine() const;
+    bool contentFitsWithinMaximumLines() const { return m_inlineContent && m_inlineContent->contentFitsWithinMaximumLines(); }
+    bool contains(const RenderElement& renderer) const;
+
+    NODELETE bool isPaginated() const;
+    NODELETE size_t lineCount() const;
+    NODELETE size_t lineCountIgnoringBlockLevelBoxes() const;
+    // Lines with contentful inline content (block-in-inline and empty lines don't count) ending within logicalHeight from the border box top, and whether any ends past it.
+    NODELETE std::pair<size_t, bool> lineCountForHeight(LayoutUnit logicalHeight) const;
+    bool hasContent() const { return !!m_inlineContent; }
+    NODELETE bool hasContentfulInlineOrBlockLine() const;
+    NODELETE bool hasContentfulInlineLine() const;
+    bool isSelfCollapsingContent() const;
+    NODELETE bool hasInkOverflow() const;
+    std::optional<LayoutUnit> firstLineBaseline() const;
+    std::optional<LayoutUnit> lastLineBaseline() const;
+    LayoutRect firstInlineBoxRect(const RenderBoxModelObject&) const;
+    LayoutRect blockStartRelativeFirstInlineBoxRect(const RenderBoxModelObject&) const;
+    LayoutRect enclosingBorderBoxRectFor(const RenderBoxModelObject&) const;
+
+    InlineIterator::TextBoxIterator textBoxesFor(const RenderText&) const;
+    InlineIterator::LeafBoxIterator boxFor(const RenderElement&) const;
+    InlineIterator::InlineBoxIterator firstInlineBoxFor(const RenderBoxModelObject&) const;
+    InlineIterator::InlineBoxIterator firstRootInlineBox() const;
+    InlineIterator::BoxIterator lastBox() const;
+    NODELETE InlineIterator::LineBoxIterator firstLineBox() const;
+    NODELETE InlineIterator::LineBoxIterator lastLineBox() const;
+
+    const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(*m_rootLayoutBox->rendererForIntegration()); }
+    RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(*m_rootLayoutBox->rendererForIntegration()); }
+
+    static void releaseCaches(RenderView&);
+
+#if ENABLE(TREE_DEBUGGING)
+    void outputLineTree(WTF::TextStream&, size_t depth) const;
+#endif
+
+    // This is temporary, required by partial bailout check.
+    NODELETE bool contentNeedsVisualReordering() const;
+    bool isDamaged() const { return !!m_lineDamage; }
+    const Layout::InlineDamage* damage() const LIFETIME_BOUND { return m_lineDamage.get(); }
+#ifndef NDEBUG
+    bool hasTruncatedDisplayContent() const { return m_lineDamage && m_lineDamage->hasTruncatedDisplayContent(); }
+#endif
+
+    struct SVGTextFragmentsForBoxes {
+        const InlineDisplay::Boxes& boxes;
+        Vector<Vector<SVGTextFragment>>& fragments;
+    };
+    // Empties the per box SVG text fragments for SVGTextLayoutAlgorithm to fill in.
+    SVGTextFragmentsForBoxes resetSVGTextFragments() LIFETIME_BOUND;
+    // Sets the box rects from the SVG text fragments.
+    FloatRect applySVGTextFragments();
+
+    NODELETE bool hasBlocks() const;
+
+    // The last layout() pass. A pagination restart runs a second pass from inside layout().
+    struct LayoutInfoForTesting {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(LayoutInfoForTesting);
+        // Increases with every inline layout of any block container.
+        uint64_t sequenceNumber { 0 };
+        Layout::InlineLayoutResult::Range range { Layout::InlineLayoutResult::Range::Full };
+        bool isFromMaximumIntrinsicWidthLine { false };
+        size_t laidOutLineCount { 0 };
+        // Lines kept from the previous layout.
+        size_t reusedLineCount { 0 };
+    };
+    NODELETE WEBCORE_EXPORT static void setCollectsLayoutInfoForTesting(bool);
+    const LayoutInfoForTesting* layoutInfoForTesting() const { return m_layoutInfoForTesting.get(); }
+
+private:
+    void preparePlacedFloats();
+    FloatRect constructContent(const Layout::InlineLayoutState&, std::unique_ptr<Layout::InlineLayoutResult>&&);
+    static std::unique_ptr<LayoutInfoForTesting> collectLayoutInfoForTesting(const Layout::InlineLayoutResult*);
+    void setLayoutInfoForTesting(std::unique_ptr<LayoutInfoForTesting>&&);
+    Vector<LineAdjustment> adjustContentForPagination(const Layout::BlockLayoutState&, bool isPartialLayout);
+    void updateRenderTreePositions(const Vector<LineAdjustment>&, const Layout::InlineLayoutState&, bool didDiscardContent);
+
+    InlineContent& ensureInlineContent() LIFETIME_BOUND;
+    Layout::BlockFormattingState& ensureBlockFormattingState() LIFETIME_BOUND;
+    Layout::InlineContentCache& ensureInlineContentCache() LIFETIME_BOUND;
+    NODELETE const Layout::InlineItemList& inlineItemsForInvalidation() const LIFETIME_BOUND;
+
+    Layout::LayoutState& layoutState() LIFETIME_BOUND { return *m_layoutState; }
+    const Layout::LayoutState& layoutState() const LIFETIME_BOUND { return *m_layoutState; }
+
+    Layout::InlineDamage& ensureLineDamage() LIFETIME_BOUND;
+    void removeLayoutBox(RenderObject& child);
+    void releaseContentRebuiltFromDamage();
+
+    const Layout::ElementBox& rootLayoutBox() const { return *m_rootLayoutBox; }
+    Layout::ElementBox& rootLayoutBox() { return *m_rootLayoutBox; }
+    void clearInlineContent();
+    void releaseCachesAndResetDamage();
+
+    NODELETE LayoutUnit baselineForLine(const InlineDisplay::Line&) const;
+
+    NODELETE bool isContentConsideredStale() const;
+
+    using ExcludedMarkerList = Vector<CheckedPtr<RenderListOutsideMarker>>;
+    ExcludedMarkerList excludedMarkersForFirstFormattedLine(Layout::InlineLayoutState&);
+    void setExcludedMarkerPositions(const ExcludedMarkerList&);
+
+private:
+    CheckedPtr<Layout::ElementBox> m_rootLayoutBox;
+    CheckedPtr<Document> m_document;
+    WeakPtr<Layout::LayoutState> m_layoutState;
+    // Inline formatting context state, created on first use. The SVG text fast path does not need it.
+    Layout::BlockFormattingState* m_blockFormattingState { nullptr };
+    Layout::InlineContentCache* m_inlineContentCache { nullptr };
+    std::optional<Layout::ConstraintsForInlineContent> m_inlineContentConstraints;
+    // FIXME: This should be part of LayoutState.
+    std::unique_ptr<Layout::InlineDamage> m_lineDamage;
+    std::unique_ptr<InlineContent> m_inlineContent;
+    BoxGeometryUpdater m_boxGeometryUpdater;
+    std::unique_ptr<LayoutInfoForTesting> m_layoutInfoForTesting;
+};
+
+}
+}
+

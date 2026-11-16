@@ -1,0 +1,36 @@
+<h1>Service Worker Example</h1>
+
+<p>When get message, it ask service worker to load requested size.</p>
+
+<script src="./service-worker-setup.js"></script>
+<script>
+    async function setup() {
+        const worker = await setupServiceWorker("./service-worker.js", (data) => {
+            // Let parent window knows the frame get data or not.
+            window.parent.postMessage(data instanceof Blob, '*');
+        });
+
+        if (!worker) {
+            window.parent.postMessage(false, '*');
+            return;
+        }
+
+        window.addEventListener('message', (e) => {
+            console.log(`Get message from parent window: ${e.data}`);
+            if (typeof e.data === 'number') {
+                console.log("Send fetch request to Service Worker");
+                try {
+                    worker.postMessage(e.data);
+                } catch (error) {
+                    console.error("Sending message to Service Worker failed:", error);
+                    window.parent.postMessage(false, '*');
+                }
+            }
+        });
+
+        console.log("iframe is ready");
+        window.parent.postMessage(true, '*');
+    }
+
+    setup();
+</script>

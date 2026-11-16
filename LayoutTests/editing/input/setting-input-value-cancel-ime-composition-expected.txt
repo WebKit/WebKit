@@ -1,0 +1,3 @@
+This test ensures WebKit clears IME composition inside an input element when the value is programmatically set. To manually test, type in "nihao" using Chinese IME and then press the down arrow key. The text must be replaced by "henhao" without composition marker.
+
+PASS

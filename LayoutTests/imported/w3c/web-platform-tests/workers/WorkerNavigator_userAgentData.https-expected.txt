@@ -1,0 +1,4 @@
+
+FAIL Test that userAgentData is available in workers in secure contexts promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.data.brands.length')"
+FAIL Platform version and wow64-ness on Linux and Fuchsia should contain fixed values promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.userAgentData.getHighEntropyValues')"
+

@@ -1,0 +1,36 @@
+<style>
+.content {
+  transform: translateX(0px);
+  border: 10px solid red;
+  width: 120px;
+}
+
+.continuation {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+  border: solid blue;
+}
+</style><div id=hide_this class=content><span><div class=continuation></div></span></div>
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+setTimeout(function() {
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  hide_this.style.display = "none";
+
+  if (window.internals) {
+    result.innerText = internals.repaintRectsAsText().indexOf("8 8 140 126") != -1 ? "PASS" : "FAIL";
+    internals.stopTrackingRepaints();
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}, 10);
+</script>

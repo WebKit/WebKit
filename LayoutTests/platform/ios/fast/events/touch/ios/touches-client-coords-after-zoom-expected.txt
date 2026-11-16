@@ -1,0 +1,6 @@
+
+The floored coordinates of this touchstart event should equal the coordinates of the click event:
+
+Received event touchstart with client coords 83, 109
+Received event click with client coords 83, 110
+

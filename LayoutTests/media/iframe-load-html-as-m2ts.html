@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>iframe-load-html-as-m2ts</title>
+	<script src="video-test.js"></script>
+	<script>
+	window.addEventListener('load', event => {
+		runTest().then(endTest).catch(failTest);
+	});
+
+	var frame;
+
+	async function runTest() {
+		frame = document.body.appendChild(document.createElement('iframe'));
+		waitFor(window, 'message').then(event => {
+			failTest(`Received message from iframe: "${event.data}"`);
+		});
+		frame.src = 'data:video/mp2t,%3Ch1%3EError%3C%2Fh1%3E%3Cscript%3Eparent.postMessage%28%22fail%22%2C%20%22%2A%22%29%3C%2Fscript%3E';
+		await testExpectedEventually('frame.contentDocument.readyState', 'complete');
+		await sleepFor('100');
+	}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width">
+<style>
+    a {
+        -webkit-clip-path: path("M 82 14 L 84 14 L 84 16 L 82 16 z");
+        text-decoration: none;
+    }
+    img {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<script>
+window.addEventListener("load", () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 10;
+    canvas.height = 10;
+    const ctx = canvas.getContext("2d");
+    const images = document.querySelectorAll("img");
+    images.forEach(image => {
+        ctx.clearRect(0, 0, 10, 10);
+        const color = image.getAttribute("data-color");
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, 10, 10);
+        image.src = canvas.toDataURL();
+    });
+}, false);
+</script>
+<a href="/">
+    <img data-color="rgb(255, 57, 57)">
+</a>
+<a href="/">
+    <img data-color="rgb(80, 169, 79)">
+</a>
+<a href="/">
+    <img data-color="rgb(102, 102, 255)">
+</a>
+<a href="/">
+    <img data-color="rgb(0, 255, 255)">
+</a>
+<a href="/">
+    <img data-color="rgb(156, 156, 156)">
+</a>
+<a href="/">
+    <img data-color="rgb(255, 174, 104)">
+</a>
+<a href="/">
+    <img data-color="white">
+</a>
+<a href="/">
+    <img data-color="rgb(118, 118, 118)">
+</a>
+<a href="/">
+    <img data-color="rgba(0, 0, 0, 0.0)">
+</a>

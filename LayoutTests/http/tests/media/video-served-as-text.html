@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>media file served as 'text/plain'</title>
+        <script src=../../media-resources/media-file.js></script>
+        <script src=../../media-resources/video-test.js></script>
+        <script>
+            function loadedmetadata(evt) 
+            {
+                logResult(true, "loaded media file served as text");
+                endTest();
+            }
+
+            function error(evt)
+            {
+                logResult(false, "failed trying to load media file served as text");
+                endTest();
+            }
+
+            function start() 
+            {
+                findMediaElement();
+
+                waitForEvent('loadedmetadata', loadedmetadata);
+                waitForEvent("error", error);
+                waitForEvent("loadstart");
+                testExpected("video.error", null);
+
+                var movie = findMediaFile("video", "resources/test");
+                video.src = "http://127.0.0.1:8000/media/video-throttled-load.cgi?name=" + movie + "&throttle=99999&type=text/plain";
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls></video>
+    </body>
+</html>

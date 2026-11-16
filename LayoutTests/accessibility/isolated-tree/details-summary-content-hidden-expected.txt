@@ -1,0 +1,16 @@
+This tests that the summary content is inaccessible when a details element is collapsed.
+PASS: details.isExpanded === false
+PASS: summary.isExpanded === false
+PASS: !accessibilityController.accessibleElementById('content') === true
+PASS: details.isExpanded === true
+PASS: summary.isExpanded === true
+PASS: !!accessibilityController.accessibleElementById('content') === true
+PASS: details.isExpanded === false
+PASS: summary.isExpanded === false
+PASS: !accessibilityController.accessibleElementById('content') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Some open info
+

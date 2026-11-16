@@ -1,0 +1,21 @@
+
+Test that "invisible autoplay not allowed restriction" pauses media when scrolled out of view.
+
+** setting video source.src
+
+EVENT(play)
+RUN(video.style.display = "none")
+EVENT(pause)
+RUN(video.style.removeProperty("display"))
+EVENT(play)
+RUN(video.style.visibility = "hidden")
+EVENT(pause)
+RUN(video.style.removeProperty("visibility"))
+EVENT(play)
+RUN(document.documentElement.style.height = window.innerHeight + 20 + video.offsetHeight)
+RUN(window.scrollBy(0, 20 + video.offsetHeight))
+EVENT(pause)
+RUN(window.scrollTo(0, 0))
+EVENT(play)
+END OF TEST
+

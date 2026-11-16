@@ -1,0 +1,7 @@
+PASS embedder without viewport-fit=cover: requestFullscreen is absent
+PASS embed with viewport-fit=cover: requestFullscreen is present
+PASS embed without viewport-fit=cover: requestFullscreen is absent
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

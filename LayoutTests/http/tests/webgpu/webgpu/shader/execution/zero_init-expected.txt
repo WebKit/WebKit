@@ -1,0 +1,622 @@
+
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=0
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=1
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=2
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=3
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=4
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=5
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=6
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=7
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=8
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=9
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=10
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=11
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=12
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=13
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=14
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=15
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=16
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=17
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=18
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=19
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=20
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=21
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=22
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=23
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=24
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=25
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=26
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=27
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=28
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=29
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=30
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,1];batch__=31
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=0
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=1
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=2
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=3
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=4
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=5
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=6
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=7
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=8
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=9
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=10
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=11
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=12
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=13
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=14
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=15
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=16
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=17
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=18
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=19
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=20
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=21
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=22
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=23
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=24
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=25
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=26
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=27
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=28
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=29
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=30
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,32,1];batch__=31
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=0
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=1
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=2
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=3
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=4
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=5
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=6
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=7
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=8
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=9
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=10
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=11
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=12
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=13
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=14
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=15
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=16
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=17
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=18
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=19
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=20
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=21
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=22
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=23
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=24
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=25
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=26
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=27
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=28
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=29
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=30
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[64,1,1];batch__=31
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=0
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=1
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=2
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=3
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=4
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=5
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=6
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=7
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=8
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=9
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=10
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=11
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=12
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=13
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=14
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=15
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=16
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=17
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=18
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=19
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=20
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=21
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=22
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=23
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=24
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=25
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=26
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=27
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=28
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=29
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=30
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,48];batch__=31
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=0
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=1
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=2
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=3
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=4
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=5
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=6
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=7
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=8
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=9
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=10
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=11
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=12
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=13
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=14
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=15
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=16
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=17
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=18
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=19
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=20
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=21
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=22
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=23
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=24
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=25
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=26
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=27
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=28
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=29
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=30
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,47,1];batch__=31
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=0
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=1
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=2
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=3
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=4
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=5
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=6
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=7
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=8
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=9
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=10
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=11
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=12
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=13
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=14
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=15
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=16
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=17
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=18
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=19
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=20
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=21
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=22
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=23
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=24
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=25
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=26
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=27
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=28
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=29
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=30
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[33,1,1];batch__=31
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=0
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=1
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=2
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=3
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=4
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=5
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=6
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=7
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=8
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=9
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=10
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=11
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=12
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=13
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=14
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=15
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=16
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=17
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=18
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=19
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=20
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=21
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=22
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=23
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=24
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=25
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=26
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=27
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=28
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=29
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=30
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[1,1,63];batch__=31
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=0
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=1
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=2
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=3
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=4
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=5
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=6
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=7
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=8
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=9
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=10
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=11
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=12
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=13
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=14
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=15
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=16
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=17
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=18
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=19
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=20
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=21
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=22
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=23
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=24
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=25
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=26
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=27
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=28
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=29
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=30
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[8,8,2];batch__=31
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=0
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=1
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=2
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=3
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=4
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=5
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=6
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=7
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=8
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=9
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=10
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=11
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=12
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=13
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=14
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=15
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=16
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=17
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=18
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=19
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=20
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=21
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=22
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=23
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=24
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=25
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=26
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=27
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=28
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=29
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=30
+PASS :compute,zero_init:addressSpace="workgroup";workgroupSize=[7,7,3];batch__=31
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=0
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=1
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=2
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=3
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=4
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=5
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=6
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=7
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=8
+FAIL :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=9 assert_unreached:
+  - (in subcase: shaderTypeParam="array<array<mat4x4<f32>, 3>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<bool, 3>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<u32, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<vec2<u32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<f32, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<vec4<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat2x2<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat3x2<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat4x2<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat2x3<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat3x3<f32>, 67>, 3>") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="array<array<mat3x3<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat4x3<f32>, 67>, 3>") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="array<array<mat4x3<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat2x4<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat3x4<f32>, 67>, 3>") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+      at (elided: only 2 shown)
+  - (in subcase: shaderTypeParam="array<array<mat3x4<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat4x4<f32>, 67>, 3>") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+      at (elided: only 2 shown)
+  - (in subcase: shaderTypeParam="array<array<mat4x4<f32>, 67>, 3>") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=10
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=11
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=12
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=13
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=14
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=15
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=16
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=17
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=18
+FAIL :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=19 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 3>, array<mat3x4<f32>, 3>, array<mat4x4<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<bool, 3>, array<u32, 67>, array<vec2<u32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<f32, 67>, array<vec4<f32>, 67>, array<mat2x2<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x2<f32>, 67>, array<mat4x2<f32>, 67>, array<mat2x3<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x4<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat3x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 67>, array<mat4x4<f32>, 67>, array<bool, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { u32 }, struct { vec2<u32> }, struct { f32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec4<f32> }, struct { mat2x2<f32> }, struct { mat3x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x2<f32> }, struct { mat2x3<f32> }, struct { mat3x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x3<f32> }, struct { mat2x4<f32> }, struct { mat3x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x4<f32> }, struct { bool }, struct { u32, vec2<u32>, f32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec4<f32>, mat2x2<f32>, mat3x2<f32> }, struct { mat4x2<f32>, mat2x3<f32>, mat3x3<f32> }, struct { mat4x3<f32>, mat2x4<f32>, mat3x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x4<f32>, bool, bool }, struct { mat4x4<f32>, mat3x4<f32>, mat2x4<f32> }, struct { mat4x3<f32>, mat3x3<f32>, mat2x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x2<f32>, mat3x2<f32>, mat2x2<f32> }, struct { vec4<f32>, f32, vec2<u32> }, struct { u32, u32, vec2<u32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { f32, vec4<f32>, mat2x2<f32> }, struct { mat3x2<f32>, mat4x2<f32>, mat2x3<f32> }, struct { mat3x3<f32>, mat4x3<f32>, mat2x4<f32> } }") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=20
+FAIL :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=21 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { struct { mat3x4<f32> }, struct { mat2x4<f32> }, struct { mat4x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x3<f32> }, struct { mat2x3<f32> }, struct { mat4x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x2<f32> }, struct { mat2x2<f32> }, struct { vec4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { f32 }, struct { vec2<u32> }, struct { u32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<bool, 67>, array<mat4x4<f32>, 67>, array<mat3x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x3<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x3<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x3<f32>, 67>, array<mat4x2<f32>, 67>, array<mat3x2<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x2<f32>, 67>, array<vec4<f32>, 67>, array<f32, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec2<u32>, 67>, array<u32, 67>, array<bool, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x4<f32>, 3>, array<mat3x4<f32>, 3>, array<mat2x4<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x3<f32>, 3>, array<mat3x3<f32>, 3>, array<mat2x3<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x2<f32>, 3>, array<mat3x2<f32>, 3>, array<mat2x2<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec4<f32>, 3>, array<f32, 3>, array<vec2<u32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<u32, 3>, array<bool, 1>, array<mat4x4<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 1>, array<mat2x4<f32>, 1>, array<mat4x3<f32>, 1> }") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=22
+FAIL :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=23 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x4<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { u32 }, array<mat4x4<f32>, 67>, array<bool, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec4<f32> }, struct { vec2<u32> }, struct { f32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x2<f32> }, struct { mat2x2<f32> }, struct { mat3x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x3<f32> }, struct { mat2x3<f32> }, struct { mat3x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x4<f32> }, struct { mat2x4<f32> }, struct { mat3x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec4<f32>, mat2x2<f32>, mat3x2<f32> }, struct { bool }, struct { u32, vec2<u32>, f32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x4<f32>, bool, bool }, struct { mat4x2<f32>, mat2x3<f32>, mat3x3<f32> }, struct { mat4x3<f32>, mat2x4<f32>, mat3x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x2<f32>, mat3x2<f32>, mat2x2<f32> }, struct { mat4x4<f32>, mat3x4<f32>, mat2x4<f32> }, struct { mat4x3<f32>, mat3x3<f32>, mat2x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { f32, vec4<f32>, mat2x2<f32> }, struct { vec4<f32>, f32, vec2<u32> }, struct { u32, u32, vec2<u32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x4<f32>, mat4x4<f32>, bool }, struct { mat3x2<f32>, mat4x2<f32>, mat2x3<f32> }, struct { mat3x3<f32>, mat4x3<f32>, mat2x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat2x3<f32>, mat4x2<f32>, mat3x2<f32> }, struct { bool, mat4x4<f32>, mat3x4<f32> }, struct { mat2x4<f32>, mat4x3<f32>, mat3x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec2<u32>, f32, vec4<f32> }, struct { mat2x2<f32>, vec4<f32>, f32 }, struct { vec2<u32>, u32, u32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat2x4<f32>, mat3x4<f32>, mat4x4<f32> }, struct { mat2x2<f32>, mat3x2<f32>, mat4x2<f32> }, struct { mat2x3<f32>, mat3x3<f32>, mat4x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x3<f32>, mat2x3<f32>, mat4x2<f32> }, struct { bool, bool, mat4x4<f32> }, struct { mat3x4<f32>, mat2x4<f32>, mat4x3<f32> } }") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=24
+FAIL :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=25 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x4<f32>, 67>, array<mat3x4<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x4<f32>, 67>, array<mat3x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x3<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat2x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x3<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x2<f32>, 67>, array<mat4x2<f32>, 67>, array<mat3x2<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec2<u32>, 67>, array<vec4<f32>, 67>, array<f32, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x4<f32>, 3>, array<u32, 67>, array<bool, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x3<f32>, 3>, array<mat3x4<f32>, 3>, array<mat2x4<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x2<f32>, 3>, array<mat3x3<f32>, 3>, array<mat2x3<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec4<f32>, 3>, array<mat3x2<f32>, 3>, array<mat2x2<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<u32, 3>, array<f32, 3>, array<vec2<u32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 1>, array<bool, 1>, array<mat4x4<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x3<f32>, 1>, array<mat2x4<f32>, 1>, array<mat4x3<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x2<f32>, 1>, array<mat2x3<f32>, 1>, array<mat4x2<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<f32, 1>, array<mat2x2<f32>, 1>, array<vec4<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<u32, 1>, array<vec2<u32>, 1>, array<u32, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec4<f32>, 1>, array<mat2x2<f32>, 1>, array<f32, 1> }") INFO: subcase ran
+ Reached unreachable code
+FAIL :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=26 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { array<mat4x2<f32>, 1>, array<mat2x3<f32>, 1>, array<mat3x2<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x3<f32>, 1>, array<mat2x4<f32>, 1>, array<mat3x3<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x4<f32>, 1>, array<bool, 1>, array<mat3x4<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec2<u32>, 3>, array<f32, 3>, array<u32, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x2<f32>, 3>, array<mat3x2<f32>, 3>, array<vec4<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x3<f32>, 3>, array<mat3x3<f32>, 3>, array<mat4x2<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 3>, array<mat3x4<f32>, 3>, array<mat4x3<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<bool, 3>, array<u32, 67>, array<mat4x4<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<f32, 67>, array<vec4<f32>, 67>, array<vec2<u32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x2<f32>, 67>, array<mat4x2<f32>, 67>, array<mat2x2<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x3<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat3x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x3<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 67>, array<mat4x4<f32>, 67>, array<mat2x4<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 67>, array<mat4x4<f32>, 67>, array<mat2x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { u32 }, struct { vec2<u32> }, array<bool, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec4<f32> }, struct { mat2x2<f32> }, struct { f32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x2<f32> }, struct { mat2x3<f32> }, struct { mat3x2<f32> } }") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=27
+FAIL :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=28 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { struct { mat3x3<f32>, mat4x3<f32>, mat2x4<f32> }, struct { mat3x2<f32>, mat4x2<f32>, mat2x3<f32> }, struct { mat3x4<f32>, mat4x4<f32>, bool } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { u32, u32, vec2<u32> }, struct { vec4<f32>, f32, vec2<u32> }, struct { f32, vec4<f32>, mat2x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x3<f32>, mat3x3<f32>, mat2x3<f32> }, struct { mat4x4<f32>, mat3x4<f32>, mat2x4<f32> }, struct { mat4x2<f32>, mat3x2<f32>, mat2x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x3<f32>, mat2x4<f32>, mat3x4<f32> }, struct { mat4x2<f32>, mat2x3<f32>, mat3x3<f32> }, struct { mat4x4<f32>, bool, bool } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { u32, vec2<u32>, f32 }, struct { bool }, struct { vec4<f32>, mat2x2<f32>, mat3x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x4<f32> }, struct { mat2x4<f32> }, struct { mat4x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x3<f32> }, struct { mat2x3<f32> }, struct { mat4x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x2<f32> }, struct { mat2x2<f32> }, struct { mat4x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { f32 }, struct { vec2<u32> }, struct { vec4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<bool, 67>, array<mat4x4<f32>, 67>, struct { u32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x4<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in the private address space exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x3<f32>, 67>, array<mat4x2<f32>, 67>, array<mat3x3<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x2<f32>, 67>, array<vec4<f32>, 67>, array<mat3x2<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec2<u32>, 67>, array<u32, 67>, array<f32, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x4<f32>, 3>, array<mat3x4<f32>, 3>, array<bool, 3> }") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="private";workgroupSize=[1,1,1];batch__=29
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=0
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=1
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=2
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=3
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=4
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=5
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=6
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=7
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=8
+FAIL :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=9 assert_unreached:
+  - (in subcase: shaderTypeParam="array<array<mat4x4<f32>, 3>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<bool, 3>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<u32, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<vec2<u32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<f32, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<vec4<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat2x2<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat3x2<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat4x2<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat2x3<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat3x3<f32>, 67>, 3>") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="array<array<mat3x3<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat4x3<f32>, 67>, 3>") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="array<array<mat4x3<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat2x4<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat3x4<f32>, 67>, 3>") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+      at (elided: only 2 shown)
+  - (in subcase: shaderTypeParam="array<array<mat3x4<f32>, 67>, 3>") INFO: subcase ran
+  - (in subcase: shaderTypeParam="array<array<mat4x4<f32>, 67>, 3>") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+      at (elided: only 2 shown)
+  - (in subcase: shaderTypeParam="array<array<mat4x4<f32>, 67>, 3>") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=10
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=11
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=12
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=13
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=14
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=15
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=16
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=17
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=18
+FAIL :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=19 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 3>, array<mat3x4<f32>, 3>, array<mat4x4<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<bool, 3>, array<u32, 67>, array<vec2<u32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<f32, 67>, array<vec4<f32>, 67>, array<mat2x2<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x2<f32>, 67>, array<mat4x2<f32>, 67>, array<mat2x3<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x4<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat3x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 67>, array<mat4x4<f32>, 67>, array<bool, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { u32 }, struct { vec2<u32> }, struct { f32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec4<f32> }, struct { mat2x2<f32> }, struct { mat3x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x2<f32> }, struct { mat2x3<f32> }, struct { mat3x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x3<f32> }, struct { mat2x4<f32> }, struct { mat3x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x4<f32> }, struct { bool }, struct { u32, vec2<u32>, f32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec4<f32>, mat2x2<f32>, mat3x2<f32> }, struct { mat4x2<f32>, mat2x3<f32>, mat3x3<f32> }, struct { mat4x3<f32>, mat2x4<f32>, mat3x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x4<f32>, bool, bool }, struct { mat4x4<f32>, mat3x4<f32>, mat2x4<f32> }, struct { mat4x3<f32>, mat3x3<f32>, mat2x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x2<f32>, mat3x2<f32>, mat2x2<f32> }, struct { vec4<f32>, f32, vec2<u32> }, struct { u32, u32, vec2<u32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { f32, vec4<f32>, mat2x2<f32> }, struct { mat3x2<f32>, mat4x2<f32>, mat2x3<f32> }, struct { mat3x3<f32>, mat4x3<f32>, mat2x4<f32> } }") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=20
+FAIL :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=21 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { struct { mat3x4<f32> }, struct { mat2x4<f32> }, struct { mat4x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x3<f32> }, struct { mat2x3<f32> }, struct { mat4x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x2<f32> }, struct { mat2x2<f32> }, struct { vec4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { f32 }, struct { vec2<u32> }, struct { u32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<bool, 67>, array<mat4x4<f32>, 67>, array<mat3x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x3<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x3<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x3<f32>, 67>, array<mat4x2<f32>, 67>, array<mat3x2<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x2<f32>, 67>, array<vec4<f32>, 67>, array<f32, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec2<u32>, 67>, array<u32, 67>, array<bool, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x4<f32>, 3>, array<mat3x4<f32>, 3>, array<mat2x4<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x3<f32>, 3>, array<mat3x3<f32>, 3>, array<mat2x3<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x2<f32>, 3>, array<mat3x2<f32>, 3>, array<mat2x2<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec4<f32>, 3>, array<f32, 3>, array<vec2<u32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<u32, 3>, array<bool, 1>, array<mat4x4<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 1>, array<mat2x4<f32>, 1>, array<mat4x3<f32>, 1> }") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=22
+FAIL :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=23 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x4<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { u32 }, array<mat4x4<f32>, 67>, array<bool, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec4<f32> }, struct { vec2<u32> }, struct { f32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x2<f32> }, struct { mat2x2<f32> }, struct { mat3x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x3<f32> }, struct { mat2x3<f32> }, struct { mat3x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x4<f32> }, struct { mat2x4<f32> }, struct { mat3x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec4<f32>, mat2x2<f32>, mat3x2<f32> }, struct { bool }, struct { u32, vec2<u32>, f32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x4<f32>, bool, bool }, struct { mat4x2<f32>, mat2x3<f32>, mat3x3<f32> }, struct { mat4x3<f32>, mat2x4<f32>, mat3x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x2<f32>, mat3x2<f32>, mat2x2<f32> }, struct { mat4x4<f32>, mat3x4<f32>, mat2x4<f32> }, struct { mat4x3<f32>, mat3x3<f32>, mat2x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { f32, vec4<f32>, mat2x2<f32> }, struct { vec4<f32>, f32, vec2<u32> }, struct { u32, u32, vec2<u32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x4<f32>, mat4x4<f32>, bool }, struct { mat3x2<f32>, mat4x2<f32>, mat2x3<f32> }, struct { mat3x3<f32>, mat4x3<f32>, mat2x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat2x3<f32>, mat4x2<f32>, mat3x2<f32> }, struct { bool, mat4x4<f32>, mat3x4<f32> }, struct { mat2x4<f32>, mat4x3<f32>, mat3x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec2<u32>, f32, vec4<f32> }, struct { mat2x2<f32>, vec4<f32>, f32 }, struct { vec2<u32>, u32, u32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat2x4<f32>, mat3x4<f32>, mat4x4<f32> }, struct { mat2x2<f32>, mat3x2<f32>, mat4x2<f32> }, struct { mat2x3<f32>, mat3x3<f32>, mat4x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x3<f32>, mat2x3<f32>, mat4x2<f32> }, struct { bool, bool, mat4x4<f32> }, struct { mat3x4<f32>, mat2x4<f32>, mat4x3<f32> } }") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=24
+FAIL :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=25 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x4<f32>, 67>, array<mat3x4<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x4<f32>, 67>, array<mat3x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x3<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat2x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x3<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x2<f32>, 67>, array<mat4x2<f32>, 67>, array<mat3x2<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec2<u32>, 67>, array<vec4<f32>, 67>, array<f32, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x4<f32>, 3>, array<u32, 67>, array<bool, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x3<f32>, 3>, array<mat3x4<f32>, 3>, array<mat2x4<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x2<f32>, 3>, array<mat3x3<f32>, 3>, array<mat2x3<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec4<f32>, 3>, array<mat3x2<f32>, 3>, array<mat2x2<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<u32, 3>, array<f32, 3>, array<vec2<u32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 1>, array<bool, 1>, array<mat4x4<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x3<f32>, 1>, array<mat2x4<f32>, 1>, array<mat4x3<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x2<f32>, 1>, array<mat2x3<f32>, 1>, array<mat4x2<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<f32, 1>, array<mat2x2<f32>, 1>, array<vec4<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<u32, 1>, array<vec2<u32>, 1>, array<u32, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec4<f32>, 1>, array<mat2x2<f32>, 1>, array<f32, 1> }") INFO: subcase ran
+ Reached unreachable code
+FAIL :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=26 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { array<mat4x2<f32>, 1>, array<mat2x3<f32>, 1>, array<mat3x2<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x3<f32>, 1>, array<mat2x4<f32>, 1>, array<mat3x3<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x4<f32>, 1>, array<bool, 1>, array<mat3x4<f32>, 1> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec2<u32>, 3>, array<f32, 3>, array<u32, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x2<f32>, 3>, array<mat3x2<f32>, 3>, array<vec4<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x3<f32>, 3>, array<mat3x3<f32>, 3>, array<mat4x2<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 3>, array<mat3x4<f32>, 3>, array<mat4x3<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<bool, 3>, array<u32, 67>, array<mat4x4<f32>, 3> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<f32, 67>, array<vec4<f32>, 67>, array<vec2<u32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x2<f32>, 67>, array<mat4x2<f32>, 67>, array<mat2x2<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x3<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat3x3<f32>, 67>, array<mat4x3<f32>, 67>, array<mat2x3<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 67>, array<mat4x4<f32>, 67>, array<mat2x4<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat3x4<f32>, 67>, array<mat4x4<f32>, 67>, array<mat2x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { u32 }, struct { vec2<u32> }, array<bool, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { vec4<f32> }, struct { mat2x2<f32> }, struct { f32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x2<f32> }, struct { mat2x3<f32> }, struct { mat3x2<f32> } }") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=27
+FAIL :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=28 assert_unreached:
+  - (in subcase: shaderTypeParam="struct { struct { mat3x3<f32>, mat4x3<f32>, mat2x4<f32> }, struct { mat3x2<f32>, mat4x2<f32>, mat2x3<f32> }, struct { mat3x4<f32>, mat4x4<f32>, bool } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { u32, u32, vec2<u32> }, struct { vec4<f32>, f32, vec2<u32> }, struct { f32, vec4<f32>, mat2x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x3<f32>, mat3x3<f32>, mat2x3<f32> }, struct { mat4x4<f32>, mat3x4<f32>, mat2x4<f32> }, struct { mat4x2<f32>, mat3x2<f32>, mat2x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat4x3<f32>, mat2x4<f32>, mat3x4<f32> }, struct { mat4x2<f32>, mat2x3<f32>, mat3x3<f32> }, struct { mat4x4<f32>, bool, bool } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { u32, vec2<u32>, f32 }, struct { bool }, struct { vec4<f32>, mat2x2<f32>, mat3x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x4<f32> }, struct { mat2x4<f32> }, struct { mat4x4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x3<f32> }, struct { mat2x3<f32> }, struct { mat4x3<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { mat3x2<f32> }, struct { mat2x2<f32> }, struct { mat4x2<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { struct { f32 }, struct { vec2<u32> }, struct { vec4<f32> } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<bool, 67>, array<mat4x4<f32>, 67>, struct { u32 } }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x4<f32>, 67> }") EXCEPTION: GPUPipelineError: The combined byte size of all variables in this function exceeds 8192 bytes
+    _
+  - (in subcase: shaderTypeParam="struct { array<mat2x4<f32>, 67>, array<mat4x3<f32>, 67>, array<mat3x4<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x3<f32>, 67>, array<mat4x2<f32>, 67>, array<mat3x3<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat2x2<f32>, 67>, array<vec4<f32>, 67>, array<mat3x2<f32>, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<vec2<u32>, 67>, array<u32, 67>, array<f32, 67> }") INFO: subcase ran
+  - (in subcase: shaderTypeParam="struct { array<mat4x4<f32>, 3>, array<mat3x4<f32>, 3>, array<bool, 3> }") INFO: subcase ran
+ Reached unreachable code
+PASS :compute,zero_init:addressSpace="function";workgroupSize=[1,1,1];batch__=29
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<title>rdar://179949639: <input type=search> results=N attribute is disabled by default for newly-linked apps and full web browsers</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+
+<!-- No webkit-test-runner [ SearchInputResultsAttributeEnabled=... ] header is set on this test
+     deliberately. WebKitTestRunner counts as "running test" inside isFullWebBrowserOrRunningTest(),
+     so the setting defaults to false and the results attribute is ignored. The shadow element must
+     still exist, because it is the ::-webkit-search-decoration element when results is absent. -->
+
+<input id="resultsButton" type="search" results="10">
+<input id="cancelButton"  type="search" value="x">
+
+<script>
+function shadowPart(input, partName) {
+    if (!window.internals)
+        throw new Error('This test requires window.internals (run-webkit-tests).');
+    const root = internals.shadowRoot(input);
+    return root.querySelector(`[useragentpart='${partName}']`);
+}
+
+test(() => {
+    const input = document.getElementById('resultsButton');
+    assert_equals(shadowPart(input, '-webkit-search-results-button'), null,
+        '::-webkit-search-results-button shadow element must not exist when SearchInputResultsAttributeEnabled is false');
+    assert_not_equals(shadowPart(input, '-webkit-search-decoration'), null,
+        '::-webkit-search-decoration shadow element must exist, since the ignored results attribute leaves the input as if it had none');
+    assert_equals(shadowPart(input, '-webkit-search-results-decoration'), null,
+        '::-webkit-search-results-decoration shadow element must not exist when SearchInputResultsAttributeEnabled is false');
+}, 'results=N is ignored and the input gets ::-webkit-search-decoration instead');
+
+test(() => {
+    const input = document.getElementById('cancelButton');
+    assert_not_equals(shadowPart(input, '-webkit-search-cancel-button'), null,
+        '::-webkit-search-cancel-button shadow element must always exist (web-platform-relevant; not gated by the setting)');
+}, 'cancel button is unaffected by the SearchInputResultsAttributeEnabled gate');
+</script>

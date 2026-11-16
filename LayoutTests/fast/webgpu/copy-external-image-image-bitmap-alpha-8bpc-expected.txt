@@ -1,0 +1,51 @@
+Tests that createImageBitmap(premultiplyAlpha: "none") preserves an 8 bit alpha channel that carries data rather than opacity, including when the copy crops, flips or resizes, so that GPUQueue.copyExternalImageToTexture can upload it.
+
+PASS whole image at 0,0
+PASS whole image at 1,0
+PASS whole image at 2,0
+PASS whole image at 3,0
+PASS whole image at 0,1
+PASS whole image at 1,1
+PASS whole image at 2,1
+PASS whole image at 3,1
+PASS whole image at 0,2
+PASS whole image at 1,2
+PASS whole image at 2,2
+PASS whole image at 3,2
+PASS whole image at 0,3
+PASS whole image at 1,3
+PASS whole image at 2,3
+PASS whole image at 3,3
+PASS flipY at 0,0
+PASS flipY at 1,0
+PASS flipY at 2,0
+PASS flipY at 3,0
+PASS flipY at 0,1
+PASS flipY at 1,1
+PASS flipY at 2,1
+PASS flipY at 3,1
+PASS flipY at 0,2
+PASS flipY at 1,2
+PASS flipY at 2,2
+PASS flipY at 3,2
+PASS flipY at 0,3
+PASS flipY at 1,3
+PASS flipY at 2,3
+PASS flipY at 3,3
+PASS crop 1,1 2x2 and resize 2x pixelated at 0,0
+PASS crop 1,1 2x2 and resize 2x pixelated at 1,0
+PASS crop 1,1 2x2 and resize 2x pixelated at 2,0
+PASS crop 1,1 2x2 and resize 2x pixelated at 3,0
+PASS crop 1,1 2x2 and resize 2x pixelated at 0,1
+PASS crop 1,1 2x2 and resize 2x pixelated at 1,1
+PASS crop 1,1 2x2 and resize 2x pixelated at 2,1
+PASS crop 1,1 2x2 and resize 2x pixelated at 3,1
+PASS crop 1,1 2x2 and resize 2x pixelated at 0,2
+PASS crop 1,1 2x2 and resize 2x pixelated at 1,2
+PASS crop 1,1 2x2 and resize 2x pixelated at 2,2
+PASS crop 1,1 2x2 and resize 2x pixelated at 3,2
+PASS crop 1,1 2x2 and resize 2x pixelated at 0,3
+PASS crop 1,1 2x2 and resize 2x pixelated at 1,3
+PASS crop 1,1 2x2 and resize 2x pixelated at 2,3
+PASS crop 1,1 2x2 and resize 2x pixelated at 3,3
+

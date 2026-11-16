@@ -1,0 +1,33 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests null handling of several HTMLDocument attributes");
+
+var htmlDocument = document.implementation.createHTMLDocument();
+shouldBeNull("htmlDocument.documentElement.getAttribute('dir')");
+shouldBeNull("htmlDocument.body.getAttribute('bgColor')");
+shouldBeNull("htmlDocument.body.getAttribute('text')");
+shouldBeNull("htmlDocument.body.getAttribute('alink')");
+shouldBeNull("htmlDocument.body.getAttribute('link')");
+shouldBeNull("htmlDocument.body.getAttribute('vlink')");
+
+evalAndLog("htmlDocument.dir = null");
+shouldBeEqualToString("htmlDocument.documentElement.getAttribute('dir')", "null");
+evalAndLog("htmlDocument.bgColor = null");
+shouldBeEqualToString("htmlDocument.body.getAttribute('bgColor')", "");
+evalAndLog("htmlDocument.bgColor = null");
+shouldBeEqualToString("htmlDocument.body.getAttribute('bgColor')", "");
+evalAndLog("htmlDocument.fgColor = null");
+shouldBeEqualToString("htmlDocument.body.getAttribute('text')", "");
+evalAndLog("htmlDocument.alinkColor = null");
+shouldBeEqualToString("htmlDocument.body.getAttribute('alink')", "");
+evalAndLog("htmlDocument.linkColor = null");
+shouldBeEqualToString("htmlDocument.body.getAttribute('link')", "");
+evalAndLog("htmlDocument.vlinkColor = null");
+shouldBeEqualToString("htmlDocument.body.getAttribute('vlink')", "");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

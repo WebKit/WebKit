@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>import.meta.url should be redirected url</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+</head>
+<body>
+<script>
+globalThis.metaURLs = [];
+const basename = `http://${document.location.host}/WebKit/html/semantics/scripting-1/the-script-element/module`;
+promise_test(() => {
+    return new Promise(function (resolve, reject) {
+        let script = document.createElement('script');
+        script.type = 'module';
+        script.src = '/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js`);
+        script.onload = function () {
+            try {
+                assert_equals(globalThis.metaURLs.length, 1);
+                assert_equals(globalThis.metaURLs[0], `${basename}/resources/import-meta-url-expose.js`);
+                resolve();
+            } catch (e) {
+                reject(e);
+            }
+        };
+        script.onerror = reject;
+        document.body.appendChild(script);
+    });
+}, 'import.meta.url should be redirected url');
+</script>
+</body>
+</html>

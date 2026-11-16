@@ -1,0 +1,10 @@
+Verifies the order of attributes in markup is the same as the order they are added
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frame.outerHTML is "<iframe id=\"frameID\" crossorigin=\"anonymous\" src=\"http://localhost:8000/dom/resources/simple-iframe.html\"></iframe>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

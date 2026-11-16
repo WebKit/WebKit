@@ -1,0 +1,11 @@
+15.5.5.5.2-7-3 (TestCases/chapter15/15.5/15.5.5/15.5.5.2/15.5.5.5.2-7-3.js) String object indexing returns undefined if the numeric index is greater than the string length
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,9 @@
+This test ensures beforeunload event does NOT fire for a subframe that has been adopted by a document outside of the frame hierarchy that is about to unload.
+
+PASS: fired on parent
+PASS: fired on a
+adopting
+adopted
+PASS: fired on b
+DONE
+

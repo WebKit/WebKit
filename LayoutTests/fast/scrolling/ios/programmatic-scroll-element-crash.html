@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ]-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  .scrollable {
+    overflow: auto;
+    width: 400px;
+    height: 200px;
+  }
+</style>
+Test passes if it does not crash.
+<div id="overflowNode" class="scrollable">
+  <div style="width: 2000px; height: 1000px;">
+  </div>
+</div>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  document.getElementById('overflowNode').scrollTo(500, 250);
+</script>
+</html>

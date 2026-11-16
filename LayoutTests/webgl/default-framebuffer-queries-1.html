@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL default framebuffer queries, part 1 of 4</title>
+<script src="../resources/js-test.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+<script src="resources/default-framebuffer-queries.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that the WebGL 1 and WebGL 2 queries involving the default framebuffer of a canvas element and of an OffscreenCanvas give the same answers in every state of the context and for every alpha, premultipliedAlpha, antialias and preserveDrawingBuffer value: fresh, drawn, presented, after internal reads, resized, restored and with a zero size canvas. Part 1 of 4.");
+
+jsTestIsAsync = true;
+startBufferingOutput();
+runDefaultFramebufferQueryTests(1, 4);
+</script>
+</body>
+</html>

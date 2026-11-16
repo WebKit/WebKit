@@ -1,0 +1,10 @@
+Tests that a page loads and runs script in an Enhanced Security web process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 1 + 1 is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

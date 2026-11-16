@@ -1,0 +1,75 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true allowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+<script src="resources/now-playing-test-helpers.js"></script>
+</head>
+<body>
+<video id="video" loop src="/media-resources/content/test.mp4" style="width: 640px; height: 480px"></video>
+<script>
+description("Under site isolation, a system remote-control command received by the GPU process is delivered to the GPU-elected NowPlaying session, even when that session lives in a different web process than the one that injects the command. The main-frame video plays first, then the cross-site subframe video, which becomes the elected session; a pause command injected from the main frame's process must reach and pause the subframe's session. (The main frame's own playback state is not asserted: platforms that forbid concurrent playback, e.g. iOS, pause it when the subframe starts.)");
+jsTestIsAsync = true;
+
+let video = document.getElementById("video");
+let iframe;
+let subframeElectedInitially = true;
+let subframePausedAfterCommand = false;
+
+onload = async () => {
+    if (!window.internals) {
+        testFailed("This test requires the Internals API");
+        finishJSTest();
+        return;
+    }
+
+    try {
+        const frameLoaded = waitForSubframeMessage("loaded");
+        iframe = document.createElement("iframe");
+        iframe.style.width = "700px";
+        iframe.style.height = "520px";
+        iframe.src = "http://localhost:8000/site-isolation/resources/now-playing-frame.html?noConcurrencyRestriction";
+        document.body.appendChild(iframe);
+        await frameLoaded;
+
+        // The main-frame video plays first, so the subframe video's user-interaction time is more recent.
+        await new Promise(resolve => {
+            video.addEventListener("canplaythrough", resolve, { once: true });
+            video.load();
+        });
+        video.volume = 0.001;
+        internals.withUserGesture(() => video.play());
+        await new Promise(resolve => video.addEventListener("playing", resolve, { once: true }));
+
+        const framePlaying = waitForSubframeMessage("playing");
+        iframe.contentWindow.postMessage("play", "*");
+        await framePlaying;
+
+        // The subframe becomes the elected NowPlaying session (on platforms that allow concurrent playback it
+        // wins on more-recent interaction; where it is not permitted it interrupts the main frame).
+        await waitUntil(async () => {
+            subframeElectedInitially = await subframeIsActiveNowPlaying(iframe);
+            return subframeElectedInitially;
+        }, { tries: 200, intervalMs: 10 });
+        shouldBeTrue("subframeElectedInitially");
+
+        // Inject a pause command at the GPU from the main frame's process. The GPU routes it to the elected
+        // session, which lives in the subframe's process.
+        internals.postSystemRemoteControlCommand("pause");
+
+        await waitUntil(async () => {
+            subframePausedAfterCommand = await subframeIsPaused(iframe);
+            return subframePausedAfterCommand;
+        }, { tries: 200, intervalMs: 10 });
+        shouldBeTrue("subframePausedAfterCommand");
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+    video.pause();
+    finishJSTest();
+};
+</script>
+</body>
+</html>

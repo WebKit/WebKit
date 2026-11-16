@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>CustomEffect</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+test(t => {
+    const animation = document.timeline.animate(progress => { }, { duration: 1 });
+    assert_array_equals(document.getAnimations(), [animation]);
+}, "Animation created with document.timeline.animate() appears in getAnimations() result.");
+
+</script>
+</body>

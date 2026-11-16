@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Subresource Integrity: script already loaded without integrity metadata</title>
+<link rel="author" title="Sam Weinig" href="mailto:sam@webkit.org">
+<link rel="help" href="https://fetch.spec.whatwg.org/#main-fetch">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script>
+function loadScript(src, integrity) {
+    return new Promise(resolve => {
+        const script = document.createElement("script");
+        script.src = src;
+        if (integrity !== undefined)
+            script.integrity = integrity;
+        script.onload = () => resolve("load");
+        script.onerror = () => resolve("error");
+        document.head.appendChild(script);
+    });
+}
+
+promise_test(async () => {
+    const src = `script.js?${token()}`;
+    assert_equals(await loadScript(src), "load");
+    assert_equals(await loadScript(src, "sha256-Bu681KMnQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA="), "load");
+}, "A script already loaded without integrity metadata loads again with a matching hash.");
+
+promise_test(async () => {
+    const src = `script.js?${token()}`;
+    assert_equals(await loadScript(src), "load");
+    assert_equals(await loadScript(src, "sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead"), "error");
+}, "A script already loaded without integrity metadata does not load again with a non-matching hash.");
+</script>

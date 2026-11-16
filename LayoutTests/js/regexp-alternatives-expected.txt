@@ -1,0 +1,18 @@
+Test regular expression processing with alternatives.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS s1.match(/<((\/([^>]+)>)|(([^>]+)>))/) is ["<p>","p>",undefined,undefined,"p>","p"]
+PASS s1.match(/<((ABC>)|(\/([^>]+)>)|(([^>]+)>))/) is ["<p>","p>",undefined,undefined,undefined,"p>","p"]
+PASS s1.match(/<(a|\/p|.+?)>/) is ["<p>","p"]
+PASS s1.match(/<((\/([^>]+)>)|((([^>])+)>))/) is ["<p>","p>",undefined,undefined,"p>","p","p"]
+PASS s1.match(/<((ABC>)|(\/([^>]+)>)|((([^>])+)>))/) is ["<p>","p>",undefined,undefined,undefined,"p>","p","p"]
+PASS s1.match(/<(a|\/p|(.)+?)>/) is ["<p>","p","p"]
+PASS s2.match(/<((\/([^>]+)>)|(([^>]+)>))\5/) is ["<p>p","p>",undefined,undefined,"p>","p"]
+PASS s2.match(/<((ABC>)|(\/([^>]+)>)|(([^>]+)>))\6/) is ["<p>p","p>",undefined,undefined,undefined,"p>","p"]
+PASS s2.match(/<(a|\/p|.+?)>\1/) is ["<p>p","p"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

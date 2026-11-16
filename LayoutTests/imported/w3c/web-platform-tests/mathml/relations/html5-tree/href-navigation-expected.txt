@@ -1,0 +1,4 @@
+Click Me
+
+PASS Test MathMLAnchorElement _blank navigation via BroadcastChannel
+

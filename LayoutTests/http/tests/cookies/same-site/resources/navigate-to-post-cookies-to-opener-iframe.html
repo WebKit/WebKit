@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<a id="testLink" href="../../resources/post-cookies-to-opener.py" target="foo">Click me</a>
+<script>
+
+window.addEventListener("message", (e) => {
+    top.postMessage(e.data, "*");
+});
+
+onload = () => {
+    setTimeout(() => {
+        document.getElementById("testLink").click();
+    }, 0);
+};
+</script>
+</body>
+</html>

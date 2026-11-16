@@ -1,0 +1,6 @@
+Tapping this should not hang
+
+PASS mouse on a popover button that is its own target should open it.
+FAIL touch on a popover button that is its own target should open it. assert_true: Button should be open after touch expected true got false
+PASS click on a popover button that is its own target should open it.
+

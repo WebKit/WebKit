@@ -1,0 +1,64 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    extendSelectionForwardByLineCommand();
+    boldCommand();
+    moveSelectionForwardByCharacterCommand();
+    insertParagraphCommand();
+    boldCommand();
+    typeCharacterCommand();
+    moveSelectionBackwardByCharacterCommand();
+    deleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Inserting blocks for paragraphs should do a better job of finding a block to insert after.
+<a href="rdar://problem/3996605">&lt;rdar://problem/3996605&gt;</a> Insert paragraph command puts new block in wrong place, creating difficult-to-handle HTML
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+Should see this content in the red box below: <b>fo</b>x
+</div>
+</div>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+fo
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

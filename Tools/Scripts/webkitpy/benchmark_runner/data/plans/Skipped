@@ -1,0 +1,2 @@
+# This file contains the plans that should not be run automatically with the --allplans command line switch.
+content-animation

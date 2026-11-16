@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<style>
+.first {
+    display: inline-block;
+    width: 50px;
+    background: lime;
+}
+
+.second {
+    display: inline-block;
+    width: 50px;
+    background: cyan;
+}
+</style>
+
+<p>This test checks that flex items text and background are not interleaved.</p>
+<p>The test passes if you see "Item2" on top of "VeryLongItem1".</p>
+<div>
+    <div class="first">VeryLongItem1</div><div class="second">Item2</div>
+</div>

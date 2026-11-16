@@ -1,0 +1,28 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    name = "graphite_dawn_testutils",
+    testonly = True,
+    srcs = [
+        "GraphiteDawnTestContext.cpp",
+        "GraphiteDawnToggles.cpp",
+    ],
+    hdrs = [
+        "GraphiteDawnTestContext.h",
+        "GraphiteDawnToggles.h",
+    ],
+    visibility = ["//tools/window:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/gpu/graphite:graphite_TEST_UTIL",
+        "//src/gpu/graphite/dawn:graphite_native_dawn_TEST_UTIL",
+        "//tools/graphite:graphite_utils",
+        "@dawn",
+    ],
+)

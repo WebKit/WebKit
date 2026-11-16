@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!-- webkit-test-runner [ BuiltInNotifications=false ] -->
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This test checks that a request for permission is made.");
+
+if (!window.internals)
+    finishJSTest();
+
+function step1() {
+    debug("Requesting permission with default permission without user gesture");
+    shouldBeEqualToString("Notification.permission", "default");
+    internals.withoutUserGesture(() => {
+        Notification.requestPermission(function(permission) {
+            if (permission == 'denied')
+                testPassed("permission is denied");
+            else
+                testFailed("permission should be denied, but is " + permission);
+            shouldBeEqualToString("Notification.permission", "default");
+            setTimeout(step2, 0);
+        });
+    });
+}
+
+function step2() {
+    debug("Requesting permission with default permission with user gesture");
+    shouldBeEqualToString("Notification.permission", "default");
+    internals.withUserGesture(() => {
+        Notification.requestPermission(function(permission) {
+            if (permission == 'granted')
+                testPassed("permission is granted");
+            else
+                testFailed("permission should be granted, but is " + permission);
+            shouldBeEqualToString("Notification.permission", "granted");
+            setTimeout(step3, 0);
+        });
+    });
+}
+
+function step3() {
+    debug("Requesting permission with non-default permission");
+    testRunner.denyWebNotificationPermission(testURL);
+    internals.withUserGesture(() => {
+        Notification.requestPermission(function(permission) {
+            if (permission == 'denied')
+                testPassed("permission is denied");
+            else
+                testFailed("permission should be denied, but is " + permission);
+            shouldBeEqualToString("Notification.permission", "denied");
+            testCompleted();
+        });
+    });
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    step1();
+}
+</script>

@@ -1,0 +1,5 @@
+This page should be green.
+
+
+PASS Root element background-color
+

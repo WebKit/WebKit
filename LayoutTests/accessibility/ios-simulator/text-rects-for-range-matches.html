@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+    <body id="body" tabindex="0">
+        <div tabindex="0" id="text">
+        This is some testing content. 
+        </div>
+
+        <p id="description"></p>
+        <div id="console"></div>
+
+        <script>
+
+            description("This tests that we are able to get the rects for a range correctly with matching text.");
+
+            if (window.accessibilityController) {
+                accessibilityController.enableEnhancedAccessibility(true);
+                var text = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+
+                var rectsForRange = text.rectsForTextMarkerRange(text.textMarkerRangeForElement(text), "testing");
+                var size = rectsForRange.match(/{[\d]+, [\d]+}, {([\d]+), ([\d]+)}/);
+                debug("Rect for range should not be empty: width > 0: " + (size[1] > 0));
+                debug("Rect for range should not be empty: height > 0: " + (size[2] > 0));
+            }
+
+            </script>
+
+        <script src="../../resources/js-test-post.js"></script>
+
+    </body>
+</html>
+

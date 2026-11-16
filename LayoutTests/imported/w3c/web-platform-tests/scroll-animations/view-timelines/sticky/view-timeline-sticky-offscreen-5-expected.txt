@@ -1,0 +1,4 @@
+Subject
+
+PASS View timeline bottom-sticky before entry and top-sticky after exit.
+

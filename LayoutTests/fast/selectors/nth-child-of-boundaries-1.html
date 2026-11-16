@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-root * {
+    background-color: red;
+}
+</style>
+<style id="style">
+</style>
+</head>
+<body>
+    <div style="display:none" id="test-root">
+    </div>
+</body>
+<script>
+description('Test boundaries of :nth-child(An+B).');
+
+// First, let's generate a giant DOM tree to have something to match.
+
+function generateSubtree(parent, level) {
+    if (level < 0)
+        return;
+
+    for (var i = 0; i < level; ++i) {
+        var testCase = document.createElement("testcase");
+        testCase.className="testclass"
+        generateSubtree(testCase, level - 1);
+        parent.appendChild(testCase);
+    }
+}
+
+var testRoot = document.getElementById('test-root');
+generateSubtree(testRoot, 7);
+
+// Let's chain a lot of :nth-child().
+shouldBe('document.querySelectorAll("testcase:nth-child(n+1 of testcase):nth-child(n+2 of testcase):nth-child(n+3 of testcase):nth-child(n+4 of testcase):nth-child(n+5 of testcase):nth-child(n+6 of testcase):nth-child(n+7 of testcase)").length', '1');
+shouldBe('document.querySelectorAll("testcase:nth-child(n+1 of testcase):nth-child(n+2 of testcase):nth-child(n+3 of testcase):nth-child(n+4 of testcase):nth-child(n+5 of testcase):nth-child(n+6 of testcase):nth-child(n+7 of testcase):nth-child(n+1 of .testclass):nth-child(n+2 of .testclass):nth-child(n+3 of .testclass):nth-child(n+4 of .testclass):nth-child(n+5 of .testclass):nth-child(n+6 of .testclass):nth-child(n+7 of .testclass)").length', '1');
+shouldBe('document.querySelectorAll("testcase:nth-child(n+1 of testcase):nth-child(n+2 of testcase):nth-child(n+3 of testcase):nth-child(n+4 of testcase):nth-child(n+5 of testcase):nth-child(n+6 of testcase):nth-child(n+7 of testcase):nth-child(n+1 of .testclass):nth-child(n+2 of .testclass):nth-child(n+3 of .testclass):nth-child(n+4 of .testclass):nth-child(n+5 of .testclass):nth-child(n+6 of .testclass):nth-child(n+7 of .testclass):nth-child(n+1 of [class]):nth-child(n+2 of [class]):nth-child(n+3 of [class]):nth-child(n+4 of [class]):nth-child(n+5 of [class]):nth-child(n+6 of [class]):nth-child(n+7 of [class])").length', '1');
+shouldBe('document.querySelectorAll("testcase:nth-child(n+1 of testcase):nth-child(n+2 of testcase):nth-child(n+3 of testcase):nth-child(n+4 of testcase):nth-child(n+5 of testcase):nth-child(n+6 of testcase):nth-child(n+7 of testcase):nth-child(n+1 of .testclass):nth-child(n+2 of .testclass):nth-child(n+3 of .testclass):nth-child(n+4 of .testclass):nth-child(n+5 of .testclass):nth-child(n+6 of .testclass):nth-child(n+7 of .testclass):nth-child(n+1 of [class]):nth-child(n+2 of [class]):nth-child(n+3 of [class]):nth-child(n+4 of [class]):nth-child(n+5 of [class]):nth-child(n+6 of [class]):nth-child(n+7 of [class]):nth-child(n+1 of :not([class=\\\"\\\"])):nth-child(n+2 of :not([class=\\\"\\\"])):nth-child(n+3 of :not([class=\\\"\\\"])):nth-child(n+4 of :not([class=\\\"\\\"])):nth-child(n+5 of :not([class=\\\"\\\"])):nth-child(n+6 of :not([class=\\\"\\\"])):nth-child(n+7 of :not([class=\\\"\\\"]))").length', '1');
+
+shouldBe('document.querySelectorAll("testcase:nth-child(n+1 of testcase):nth-child(n+2 of testcase):nth-child(n+3 of testcase):nth-child(n+4 of testcase):nth-child(n+5 of testcase):nth-child(n+6 of testcase):nth-child(n+7 of testcase):nth-child(n+8 of testcase)").length', '0');
+shouldBe('document.querySelectorAll("testcase:nth-child(n+1 of testcase):nth-child(n+2 of testcase):nth-child(n+3 of testcase):nth-child(n+4 of testcase):nth-child(n+5 of testcase):nth-child(n+6 of testcase):nth-child(n+7 of testcase):nth-child(n+1 of .testclass):nth-child(n+2 of .testclass):nth-child(n+3 of .testclass):nth-child(n+4 of .testclass):nth-child(n+5 of .testclass):nth-child(n+6 of .testclass):nth-child(n+7 of .testclass):nth-child(n+1 of [class]):nth-child(n+2 of [class]):nth-child(n+3 of [class]):nth-child(n+4 of [class]):nth-child(n+5 of [class]):nth-child(n+6 of [class]):nth-child(n+7 of [class]):nth-child(n+1 of :not([class=\\\"\\\"])):nth-child(n+2 of :not([class=\\\"\\\"])):nth-child(n+3 of :not([class=\\\"\\\"])):nth-child(n+4 of :not([class=\\\"\\\"])):nth-child(n+5 of :not([class=\\\"\\\"])):nth-child(n+6 of :not([class=\\\"\\\"])):nth-child(n+7 of :not([class=\\\"\\\"])):nth-child(n+8 of testcase)").length', '0');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+  <div data-foobar>
+    <div data-webkit><div>
+    <div data-webkit>
+      <div>
+        <div data-webkit><div>
+        <div data-webkit><p id="target1">Target 1</p><div>
+        <div data-webkit><div>
+      <div>
+    <div>
+    <div data-webkit><div>
+  <div>
+  <div data-foobar>
+    <div data-webkit>
+      <div>
+        <div data-webkit><p id="target2">Target 2</p><div>
+      <div>
+    <div>
+  <div>
+</div>
+</body>
+<script>
+description('Test backtracking of matching attributes with a single child selector relation.');
+
+// Define the style dynamically to test lazy attributes.
+document.getElementById('target1').style.textDecoration='underline';
+document.getElementById('target2').style.textDecoration='underline';
+
+shouldBe('document.querySelectorAll("[data-foobar]>[data-webkit] [style]").length', '2');
+shouldBeEqualToString('document.querySelectorAll("[data-foobar]>[data-webkit] [style]")[0].id', 'target1');
+shouldBeEqualToString('document.querySelectorAll("[data-foobar]>[data-webkit] [style]")[1].id', 'target2');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,8 @@
+abc
+start unselectable nested text end
+selectable unselectable text
+
+PASS Selection.toString() excludes basic user-select: none content
+PASS Selection.toString() excludes nested user-select: none content
+PASS Selection.toString() includes selectable children in unselectable container
+

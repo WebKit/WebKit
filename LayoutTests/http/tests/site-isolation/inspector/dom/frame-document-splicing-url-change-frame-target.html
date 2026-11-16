@@ -1,0 +1,117 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-document-splicing-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDocumentSplicing.URLChange");
+
+    let childTarget = null;
+    let grandchildTarget = null;
+    let targetNames = new Map;
+
+    async function pageIframeElement(pageDocument) {
+        return descendFromPageBody(pageDocument, (node) => node.nodeName() === "IFRAME");
+    }
+
+    async function nestedIframeElement() {
+        let childDocument = WI.domManager.frameTargetDocumentForTarget(childTarget);
+        let childHTML = childDocument.children.find((node) => node.nodeName() === "HTML");
+        let childBody = await childElement(childHTML, (node) => node.nodeName() === "BODY");
+        return childElement(childBody, (node) => node.nodeName() === "IFRAME");
+    }
+
+    async function expectChildSpliced(pageDocument) {
+        let iframeElement = await pageIframeElement(pageDocument);
+        InspectorTest.expectNotNull(iframeElement, "Should find the page's <iframe>.");
+
+        let childDocument = WI.domManager.frameTargetDocumentForTarget(childTarget);
+        InspectorTest.expectEqual(childDocument.parentNode, iframeElement, "The child frame's document should be spliced into the page's <iframe>.");
+        InspectorTest.expectEqual(treeContainingNode(childDocument, targetNames), "page", "The child frame's document should be in the page tree.");
+    }
+
+    async function expectGrandchildSpliced() {
+        let iframeElement = await nestedIframeElement();
+        InspectorTest.expectNotNull(iframeElement, "Should find the child frame's <iframe>.");
+
+        let grandchildDocument = WI.domManager.frameTargetDocumentForTarget(grandchildTarget);
+        InspectorTest.expectEqual(grandchildDocument.parentNode, iframeElement, "The grandchild frame's document should be spliced into the child frame's <iframe>.");
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Wait until both nested frame targets have produced a document, and check the initial splice.",
+        async test() {
+            childTarget = await frameTargetForURLContainingWhenReady("splice-child-frame.html");
+            grandchildTarget = await frameTargetForURLContainingWhenReady("dom-frame.html");
+
+            InspectorTest.expectNotNull(childTarget, "Should find the child frame target.");
+            InspectorTest.expectNotNull(grandchildTarget, "Should find the grandchild frame target.");
+
+            targetNames.set(childTarget, "child frame target");
+            targetNames.set(grandchildTarget, "grandchild frame target");
+
+            let pageDocument = await WI.domManager.requestDocument();
+            await expectChildSpliced(pageDocument);
+            await expectGrandchildSpliced();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.URLChange.TitleChange",
+        description: "Changing `document.title` in the grandchild frame does not change its URL, so it should still splice after a reopen.",
+        async test() {
+            await evaluateInFrameTarget(grandchildTarget, `document.title = "Changed Title"`);
+
+            let pageDocument = await simulateInspectorReopen();
+            await expectChildSpliced(pageDocument);
+            await expectGrandchildSpliced();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.URLChange.ReplaceStateInChild",
+        description: "After `history.replaceState` in the child frame, its document should still splice after a reopen.",
+        async test() {
+            let originalURL = await evaluateInFrameTarget(childTarget, "location.href");
+            await evaluateInFrameTarget(childTarget, `history.replaceState(null, "", location.pathname + "?state=1")`);
+
+            let pageDocument = await simulateInspectorReopen();
+            await expectChildSpliced(pageDocument);
+
+            await evaluateInFrameTarget(childTarget, `history.replaceState(null, "", ${JSON.stringify(originalURL)})`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.URLChange.HashChangeInGrandchild",
+        description: "After a fragment change in the nested grandchild frame, its document should still splice after a reopen.",
+        async test() {
+            await evaluateInFrameTarget(grandchildTarget, `location.hash = "changed"`);
+
+            let pageDocument = await simulateInspectorReopen();
+            await expectChildSpliced(pageDocument);
+            await expectGrandchildSpliced();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.URLChange.PushStateInGrandchild",
+        description: "After `history.pushState` in the nested grandchild frame, its document should still splice after a reopen.",
+        async test() {
+            await evaluateInFrameTarget(grandchildTarget, `history.pushState(null, "", "dom-frame-pushed.html")`);
+
+            let pageDocument = await simulateInspectorReopen();
+            await expectChildSpliced(pageDocument);
+            await expectGrandchildSpliced();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a frame target's document is still spliced under its &lt;iframe&gt; after the frame's URL changes in place and Web Inspector is reopened.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/splice-child-frame.html"></iframe>
+</body>

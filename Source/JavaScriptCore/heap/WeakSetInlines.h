@@ -1,0 +1,81 @@
+/*
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <JavaScriptCore/CellContainerInlines.h>
+#include <JavaScriptCore/JSCell.h>
+#include <JavaScriptCore/MarkedBlock.h>
+
+namespace JSC {
+
+inline Lock& WeakBlock::weakBlockLock() const
+{
+    return m_heap.weakBlockLock();
+}
+
+inline void WeakBlock::assertWorldIsStopped() const
+{
+    ASSERT(m_heap.worldIsStopped());
+}
+
+inline Lock& WeakSet::weakBlockLock() const
+{
+    return heap()->weakBlockLock();
+}
+
+inline void WeakSet::assertIsHoldingWeakBlockLock() const
+{
+    assertIsHeld(weakBlockLock());
+}
+
+inline void WeakSet::assertWorldIsStopped() const
+{
+    ASSERT(heap()->worldIsStopped());
+}
+
+inline void WeakSet::assertIsExclusiveAccessHolder() const
+{
+    heap()->assertIsExclusiveAccessHolder();
+}
+
+inline WeakImpl* WeakSet::allocate(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)
+{
+    CellContainer container = jsValue.asCell()->cellContainer();
+    ASSERT(container.vm().currentThreadIsHoldingAPILock());
+    WeakSet& weakSet = container.weakSet();
+    weakSet.assertIsExclusiveAccessHolder();
+    WeakBlock* block = weakSet.m_currentBlock;
+    WeakImpl* weakImpl = block ? block->takeFreeCell() : nullptr;
+    if (!weakImpl) [[unlikely]] {
+        weakImpl = weakSet.findAllocator(container)->takeFreeCell();
+        ASSERT(weakImpl);
+    }
+    container.vm().heap.didAllocate(sizeof(WeakImpl));
+    weakImpl->initialize(jsValue, weakHandleOwner, context);
+    return weakImpl;
+}
+
+} // namespace JSC

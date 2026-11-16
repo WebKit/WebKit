@@ -1,0 +1,11 @@
+Smart-list conversion should work inside a right-to-left contenteditable. Typing "1. تفاحة" + Enter + "2. برتقال" should produce an ordered list containing the Arabic text.
+| <ol>
+|   class="Apple-decimal-list"
+|   start="1"
+|   style="list-style-type: decimal;"
+|   <li>
+|     "تفاحة"
+|     <br>
+|   <li>
+|     style="text-align: start;"
+|     "برتقال<#selection-caret>"

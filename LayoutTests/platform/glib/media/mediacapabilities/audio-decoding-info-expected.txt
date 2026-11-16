@@ -1,0 +1,30 @@
+
+MP3 audio should be supported without hardware decoding
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp3' } });)
+Promise resolved OK
+info.supported == true OK
+info.smooth == true OK
+info.powerEfficient == false OK
+
+MPEG audio should be supported without hardware decoding
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mpeg' } });)
+Promise resolved OK
+info.supported == true OK
+info.smooth == true OK
+info.powerEfficient == false OK
+
+MP4 container with mp4a.40.2 audio should be supported without hardware decoding
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs="mp4a.40.2"' } });)
+Promise resolved OK
+info.supported == true OK
+info.smooth == true OK
+info.powerEfficient == false OK
+
+MP4 container with a fictional codec should not be supported
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs="fictional"' } });)
+Promise resolved OK
+info.supported == false OK
+info.smooth == false OK
+info.powerEfficient == false OK
+END OF TEST
+

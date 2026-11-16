@@ -1,0 +1,3 @@
+
+PASS Reading a worker WebGPU canvas's placeholder sees its last frame after the canvas stops drawing
+

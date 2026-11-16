@@ -1,0 +1,8 @@
+
+PASS Property link-parameters value 'none'
+PASS Property link-parameters value 'param(--a, orange)'
+PASS Property link-parameters value 'param(--a, orange), param(--b, blue)'
+PASS Property link-parameters value 'param(--a, )'
+PASS Property link-parameters value 'param(--a, ), param(--b, )'
+PASS Property link-parameters value 'param(--a, var(--custom))'
+

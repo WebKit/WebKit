@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=false ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+const computed = element => getComputedStyle(element).positionAnchor;
+
+test(t => {
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    element.style.positionAnchor = "--macbook#lid-attachment";
+    assert_false(CSS.supports("position-anchor", "--macbook#lid-attachment"), "CSS.supports");
+    assert_equals(element.style.positionAnchor, "", "specified value is not accepted");
+    assert_equals(computed(element), "normal", "the initial value is left in place");
+}, "position-anchor rejects an attachment point when the spatial portal feature is off");
+
+test(t => {
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    for (const value of ["normal", "none", "auto", "--macbook"]) {
+        element.style.positionAnchor = value;
+        assert_true(CSS.supports("position-anchor", value), `CSS.supports("${value}")`);
+        assert_equals(element.style.positionAnchor, value, `specified value of "${value}"`);
+        assert_equals(computed(element), value, `computed value of "${value}"`);
+    }
+}, "position-anchor still accepts its keywords and a bare anchor name when the feature is off");
+
+</script>
+</body>
+</html>

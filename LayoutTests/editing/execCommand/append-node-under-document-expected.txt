@@ -1,0 +1,2 @@
+This test ensures WebKit does not crash when replacing contents in a document whose the only content is a nested iframes.
+PASS.

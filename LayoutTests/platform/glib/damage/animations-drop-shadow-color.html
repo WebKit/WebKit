@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          margin-top: 50px;
+      }
+      .rect {
+          width: 64px;
+          height: 64px;
+          margin-left: 50px;
+          background-color: green;
+          animation-name: animate;
+          animation-duration: 1s;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;
+      }
+      /* Only the colour animates, so the filter outsets stay the same for the whole animation and the
+         layer's painted rect never changes. The damage has to come from the filter value changing. */
+      @keyframes animate {
+          from {
+              filter: drop-shadow(0 0 5px red);
+          }
+          to {
+              filter: drop-shadow(0 0 5px blue);
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rect"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      // Two frames can sample the same colour, so only the frames with damage are checked.
+      waitForDamagedAnimationFrames(3, damages => {
+          for (const damage of damages) {
+              if (damage.rects.length && !assertContains([37, 37, 90, 90], damage.bounds)) {
+                  failTest(`FAIL: ${failure}`);
+                  return;
+              }
+          }
+          passTest();
+      });
+    </script>
+  </body>
+</html>

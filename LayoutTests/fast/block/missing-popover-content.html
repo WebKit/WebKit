@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.host {
+  position: relative;
+  width: 300px;
+  height: 32px;
+}
+
+.menu-container {
+  position: absolute;
+  top: 32px;
+  left: 0;
+}
+
+.calendar-wrapper {
+  position: relative;
+  will-change: transform;
+}
+
+.date-picker {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+</head>
+<body>
+<div class="host">
+  <div class="menu-container" popover="manual" id="menu" style="display: block;">
+    <div class="calendar-wrapper">
+      <div class="date-picker" id="picker"></div>
+    </div>
+  </div>
+</div>
+<script>
+window.testRunner?.dumpAsText();
+
+// Renderer exists in host's OOF list before entering top layer.
+document.body.offsetHeight;
+
+document.getElementById('menu').showPopover();
+
+// Add content after entering the top layer. The new content needs
+// a full layout pass through the correct containing block (RenderView).
+document.getElementById('picker').innerHTML = '<div style="width: 200px; height: 200px; background: green;">content</div>';
+document.body.offsetHeight;
+
+const picker = document.getElementById('picker');
+if (picker.offsetWidth === 200 && picker.offsetHeight === 200)
+    document.body.innerText = 'PASS';
+else
+    document.body.innerText = 'FAIL: picker size is ' + picker.offsetWidth + 'x' + picker.offsetHeight;
+</script>
+</body>
+</html>

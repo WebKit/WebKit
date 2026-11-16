@@ -1,0 +1,8 @@
+
+PASS animation-composition: replace of property filter
+PASS animation-composition: add of property filter
+PASS animation-composition: accumulate of property filter
+PASS animation-composition: replace of property width
+PASS animation-composition: add of property width
+PASS animation-composition: accumulate of property width
+

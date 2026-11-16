@@ -1,0 +1,6 @@
+float foo(float v) { return v; }
+void func() { float x = foo(x); }
+
+/*%%*
+unknown identifier 'x'
+*%%*/

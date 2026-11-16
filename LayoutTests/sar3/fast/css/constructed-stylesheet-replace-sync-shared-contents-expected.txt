@@ -1,0 +1,20 @@
+replaceSync() on a detached constructed stylesheet must not mutate contents shared with another sheet or published to the stylesheet contents cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sheet.cssRules.length is 1
+PASS sheet.cssRules[0].cssText is ".y { color: blue; }"
+PASS nested.cssRules.length is 1
+PASS nested.cssRules[0].selectorText is ".r"
+PASS adopted.cssRules.length is 1
+PASS adopted.cssRules[0].selectorText is ".u"
+PASS other.cssRules.length is 1
+PASS other.cssRules[0].cssText is ".x { color: red; }"
+PASS second.cssRules.length is 1
+PASS second.insertRule('.r { color: green; }', 2) threw exception IndexSizeError: The index is not in the allowed range..
+PASS second.cssRules.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

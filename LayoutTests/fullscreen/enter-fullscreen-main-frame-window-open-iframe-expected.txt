@@ -1,0 +1,8 @@
+To test manually, click the "Open window" button - the page should exit fullscreen mode.
+
+EVENT(fullscreenchange)
+TEST(document.fullscreenElement===document.body) OK
+EVENT(fullscreenchange)
+TEST(document.fullscreenElement===null) OK
+END OF TEST
+

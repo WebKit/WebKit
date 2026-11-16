@@ -1,0 +1,6 @@
+
+PASS Animation start and current times are correct for each animation state.
+PASS Animation start and current times are correct for each animation state when the animation starts playing with advanced scroller.
+PASS Finished animation plays on reverse scrolling.
+PASS Sending animation finished events by finished animation on reverse scrolling.
+

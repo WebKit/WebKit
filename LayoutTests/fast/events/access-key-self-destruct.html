@@ -1,0 +1,22 @@
+<script>
+function replace()
+{
+    document.getElementById("target").innerHTML = "If you can see this text and there was no crash, the test was a success.";
+}
+function test()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+            modifiers = ["ctrlKey", "altKey"];
+        else
+            modifiers = ["altKey"];
+        eventSender.keyDown("a", modifiers);
+    }
+}
+</script>
+<body onload="test()">
+<p>This tests what happens when you use accesskey to trigger a script that causes a node to get destroyed
+without ever having a reference to it from JavaScript. With older versions of WebKit this used to cause a crash.</p>
+<p id="target"><a href="javascript:replace()" accesskey="a"></a>If you can see this text, the test was a failure.</p>
+</body>

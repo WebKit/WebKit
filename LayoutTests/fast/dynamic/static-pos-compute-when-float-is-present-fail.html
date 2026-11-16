@@ -1,0 +1,39 @@
+<style>
+#main {
+  position: relative;
+}
+
+.container {
+  position: relative;
+  clear: both;
+}
+
+.content {
+  float: left;
+  width: 50px;
+  height: 50px;
+  background-color: blue;
+}
+
+#content {
+  float: left;
+  padding-top: 20px;
+  height: 10%;
+  width: 50px;
+  background-color: green;
+}
+</style>
+<div id=main>
+  <div class=content></div>
+  <div class=container>
+    <div id=content></div>
+  </div>
+</div>
+<pre>PASS if green box is right under the blue box.</pre>
+<script>
+document.body.offsetHeight;
+
+let foobar = document.createElement("div");
+foobar.style.position = "absolute";
+main.appendChild(foobar);
+</script>

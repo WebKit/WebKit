@@ -1,0 +1,5 @@
+
+PASS transitionrun event has animation property and its value is the corresponding CSSTransition object
+PASS transitionstart event has animation property and its value is the corresponding CSSTransition object
+PASS transitionend event has animation property and its value is the corresponding CSSTransition object
+

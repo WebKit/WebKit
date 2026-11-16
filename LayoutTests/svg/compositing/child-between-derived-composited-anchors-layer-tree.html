@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+    .anchor { transform: translateZ(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => {
+            document.body.offsetTop;
+            document.getElementById('ar').setAttribute('class', 'anchor');
+            document.getElementById('cr').setAttribute('class', 'anchor');
+            if (window.internals)
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+</script>
+</head>
+<body>
+<!-- Plain middle rect between two composited anchors gets no layer. An overlay "(svg segment N)" GraphicsLayer paints it in DOM order. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g style="isolation: isolate">
+        <rect id="ar" x="10" y="10" width="120" height="120" fill="red"/>
+    </g>
+    <rect x="40" y="40" width="120" height="120" fill="green"/>
+    <g style="isolation: isolate">
+        <rect id="cr" x="70" y="70" width="120" height="120" fill="blue"/>
+    </g>
+</svg>
+<pre id="layers"></pre>
+</body>
+</html>

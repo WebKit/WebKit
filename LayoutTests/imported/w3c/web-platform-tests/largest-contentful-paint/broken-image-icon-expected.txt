@@ -1,0 +1,4 @@
+
+
+PASS The broken image icon should not emit an LCP entry.
+

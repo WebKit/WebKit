@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+setTimeout(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 1000);
+</script>
+</head>
+<body>
+<p>Tests that a blob: URL iframe inherits ALL CSP policies from its creator document,
+not just the last one. When the creator has two enforced CSP headers where one blocks
+inline scripts, inline scripts inside the blob document should be blocked.</p>
+<iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-multiple-csp-blob-iframe.py"></iframe>
+</body>
+</html>

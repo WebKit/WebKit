@@ -1,0 +1,6 @@
+
+PASS Initialize global state
+PASS HTMLLinkElement rel=compression-dictionary
+PASS HTMLLinkElement rel=compression-dictionary crossorigin=anonymous
+PASS HTMLLinkElement rel=compression-dictionary crossorigin=use-credentials
+

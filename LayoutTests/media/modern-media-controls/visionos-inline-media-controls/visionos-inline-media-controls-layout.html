@@ -1,0 +1,39 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>VisionInlineMediaControls</code> layout.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new VisionInlineMediaControls({ width: 680, height: 350 });
+
+let frameCount = 0;
+scheduler.frameDidFire = async function()
+{
+    frameCount++;
+
+    if (frameCount == 1) {
+        shouldBeType("mediaControls.timeControl.scrubber", "VisionSlider");
+        shouldBe("mediaControls.timeControl.children[1]", "mediaControls.timeControl.scrubber");
+        shouldBeType("mediaControls.volumeSlider", "VisionSlider");
+
+        shouldBe("mediaControls.timeControl.scrubber.recessed", "false");
+        shouldBe("mediaControls.volumeSlider.recessed", "true");
+
+        mediaControls.timeControl.scrubber.value = 0.5;
+        mediaControls.volumeSlider.value = 0.5;
+        return;
+    }
+
+    shouldBeEqualToString(`mediaControls.timeControl.scrubber.element.querySelector(".fill").style.width`, "calc(50% + 0px)");
+    shouldBeEqualToString(`mediaControls.volumeSlider.element.querySelector(".fill").style.width`, "75px");
+
+    finishMediaControlsTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

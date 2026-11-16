@@ -1,0 +1,7 @@
+
+
+FAIL Event order: OpaqueRange updates between beforeinput and input (input). promise_test: Unhandled rejection with value: object "TypeError: element.createValueRange is not a function. (In 'element.createValueRange(1, 3)', 'element.createValueRange' is undefined)"
+FAIL Canceled beforeinput leaves OpaqueRange unchanged (input). promise_test: Unhandled rejection with value: object "TypeError: element.createValueRange is not a function. (In 'element.createValueRange(1, 3)', 'element.createValueRange' is undefined)"
+FAIL Event order: OpaqueRange updates between beforeinput and input (textarea). promise_test: Unhandled rejection with value: object "TypeError: element.createValueRange is not a function. (In 'element.createValueRange(1, 3)', 'element.createValueRange' is undefined)"
+FAIL Canceled beforeinput leaves OpaqueRange unchanged (textarea). promise_test: Unhandled rejection with value: object "TypeError: element.createValueRange is not a function. (In 'element.createValueRange(1, 3)', 'element.createValueRange' is undefined)"
+

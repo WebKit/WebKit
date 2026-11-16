@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+</body>
+<script>
+description("This test makes sure that width calculations when shaping in the fast codepath have enough precision.");
+
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+
+const font1 = '200 72px myFunFont, ct_noexist, sans-serif';
+const font2 = '200 72px ct_noexist, sans-serif';
+
+const testString = '1234567abcdefg!@#$%^&*()_+􏿢􏿣􏿤􏿥􏿦􏿧􏿨􏿩􏿪􏿫􏿬􏿭􏿮􏿯􏿰􏿱􏿲􏿳􏿴􏿵􏿶􏿷􏿸􏿹􏿺􏿻􏿼􏿽';
+
+ctx.font = font1;
+const beforeWidth = ctx.measureText(testString).width;
+ctx.font = font2;
+ctx.measureText(testString).width;
+
+const tag = document.createElement('style');
+tag.textContent = `
+    @font-face {
+        font-family: "myFunFont";
+        src: url("/some/path/to/myFunFont.woff") format("woff");
+    }
+`;
+tag.type = 'text/css';
+document.head.appendChild(tag);
+
+ctx.font = font1;
+const afterWidth = ctx.measureText(testString).width;
+
+shouldBe("beforeWidth", "afterWidth");
+
+</script>
+</body>
+</html>

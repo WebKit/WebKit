@@ -1,0 +1,16 @@
+This tests that when seeking and play into unbuffered time, currentTime doesn't appear to go backward.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = loader.duration())
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Seek and append a media segment.
+RUN(video.currentTime = 0.8)
+RUN(sourceBuffer.appendBuffer(loader.concatenateMediaSegments([loader.mediaSegment(0), loader.mediaSegment(1)])))
+EVENT(seeked)
+RUN(sourceBuffer.remove(0.5, 2))
+EXPECTED (oldCurrentTime <= video.currentTime == 'true') OK
+END OF TEST
+

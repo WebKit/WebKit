@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+PASS PerformanceObserver with buffered flag sees previous Event Timing entries
+

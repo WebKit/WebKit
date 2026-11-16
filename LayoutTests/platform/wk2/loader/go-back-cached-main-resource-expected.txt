@@ -1,0 +1,12 @@
+This test check the following situation:
+
+First you navigate to a page (first-page.html).
+Then you go to another page (other-page.html).
+You repeat previous steps again (going to first-page.html and then to other-page.html).
+Finally you click back.
+The problem was that the resource load callbacks when going back to the cached main resource were not being called.
+
+See bug #112418.
+go-back-cached-main-resource.html - willSendRequest <NSURLRequest URL go-back-cached-main-resource.html, main document URL go-back-cached-main-resource.html, http method GET> redirectResponse (null)
+go-back-cached-main-resource.html - didReceiveResponse <NSURLResponse go-back-cached-main-resource.html, http status code 0>
+go-back-cached-main-resource.html - didFinishLoading

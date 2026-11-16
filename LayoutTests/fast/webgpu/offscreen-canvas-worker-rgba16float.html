@@ -1,0 +1,41 @@
+<!-- webkit-test-runner [ WebGPUHDREnabled=true ] -->
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<meta charset="utf-8">
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-10000">
+<title>An rgba16float WebGPU OffscreenCanvas in a worker shows its frames in its placeholder</title>
+<style>
+  body { margin: 0; }
+  canvas { position: absolute; top: 0; left: 0; }
+</style>
+</head>
+<body>
+  <canvas id="canvas" width="100" height="100"></canvas>
+  <script>
+    // The placeholder's layer shows the worker's WebGPU render buffer itself, as a canvas element's
+    // layer does, rather than a copy read back from it.
+    function done() {
+      document.documentElement.classList.remove("reftest-wait");
+    }
+
+    const worker = new Worker("resources/offscreen-canvas-solid-color-worker.js");
+    worker.onmessage = event => {
+      if (event.data === "configured") {
+        worker.postMessage({ color: { r: 0, g: 1, b: 0, a: 1 }, frames: 10 });
+        return;
+      }
+      if (event.data === "rendered") {
+        // Lets the last frame reach the compositor before the snapshot.
+        requestAnimationFrame(() => requestAnimationFrame(done));
+        return;
+      }
+      done();
+    };
+    worker.onerror = done;
+
+    const offscreen = document.getElementById("canvas").transferControlToOffscreen();
+    worker.postMessage({ canvas: offscreen, format: "rgba16float" }, [offscreen]);
+  </script>
+</body>
+</html>

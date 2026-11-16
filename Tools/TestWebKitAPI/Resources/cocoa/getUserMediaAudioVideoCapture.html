@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            let stream = null;
+
+            function promptForAudioAndVideo()
+            {
+                navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then((s) => {
+                    stream = s;
+                    console.log("Got user media");
+                }).catch((error) => console.log(`Failed with error: ${error}`));
+            }
+
+            function promptForAudioOnly()
+            {
+                navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then((s) => {
+                    stream = s;
+                    console.log("Got user media");
+                }).catch((error) => console.log(`Failed with error: ${error}`));
+            }
+
+            function haveStream()
+            {
+                return stream !== null;
+            }
+        </script>
+    <head>
+
+    <body onload="promptForAudioAndVideo()">
+    </body>
+</html>

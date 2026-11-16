@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<datalist id="datalist"></datalist>
+<input list="datalist">
+<script>
+clone = datalist.cloneNode();
+document.body.before(clone);
+document.querySelector('input').remove();
+
+if (window.GCController)
+    GCController.collect();
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+setTimeout(() => {
+    document.body.textContent = '<p>This tests dynamically inserting a matching datalist element. WebKit should not crash.<br>PASS</p>';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 10);
+</script>
+</body>
+</html>

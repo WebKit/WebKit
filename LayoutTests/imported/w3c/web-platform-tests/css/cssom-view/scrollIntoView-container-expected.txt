@@ -1,0 +1,8 @@
+
+
+PASS scrollIntoView() defaults to scrolling ancestors
+PASS scrollIntoView({container: 'all'}) scrolls ancestors
+PASS scrollIntoView({container: 'nearest'}) only scrolls nearest scroll container
+PASS scrollIntoView({container: 'nearest'}) doesn't stop at itself
+PASS scrollIntoView({container: 'nearest'}) doesn't propagate to outer frames
+

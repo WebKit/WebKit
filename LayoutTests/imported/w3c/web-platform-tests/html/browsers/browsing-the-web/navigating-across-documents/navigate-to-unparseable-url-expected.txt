@@ -1,0 +1,4 @@
+
+PASS location.href setter throws a SyntaxError DOMException for unparseable URLs
+PASS <a> tag navigate fails for unparseable URLs
+

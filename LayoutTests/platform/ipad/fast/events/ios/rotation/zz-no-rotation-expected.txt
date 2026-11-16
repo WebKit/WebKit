@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: window.innerWidth: 810
+CONSOLE MESSAGE: window.innerHeight: 1060
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test checks that the view is not left in a rotated state after the previous tests.

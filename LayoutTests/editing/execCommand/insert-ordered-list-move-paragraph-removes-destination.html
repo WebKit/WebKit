@@ -1,0 +1,20 @@
+<style>
+*+* {display: contents}
+</style>
+<script>
+function main() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.designMode = "on";
+    window.find(" ");
+    document.execCommand("insertOrderedList",false,null);
+    document.open();
+    document.write('<!DOCTYPE html><p>PASS');
+    document.close();
+}
+</script>
+<body onload="main()">
+<dl><input id="x15">
+Pass if no crash.
+</dl>

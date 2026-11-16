@@ -1,0 +1,4 @@
+
+
+PASS Element#requestFullscreen() works properly with a tree of cross-origin iframes
+

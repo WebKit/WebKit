@@ -1,0 +1,10 @@
+Tests that the requestIdleCallback callback does not leak the document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The iframe document didn't leak.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

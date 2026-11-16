@@ -1,0 +1,16 @@
+The test to ensure that each call to getTransform returns a new object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS transform1 is not transform2
+PASS transform1.a is transform2.a
+PASS transform1.b is transform2.b
+PASS transform1.c is transform2.c
+PASS transform1.d is transform2.d
+PASS transform1.e is transform2.e
+PASS transform1.f is transform2.f
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

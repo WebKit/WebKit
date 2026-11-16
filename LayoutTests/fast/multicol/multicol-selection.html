@@ -1,0 +1,19 @@
+<head>
+<script>
+if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</head>
+This test passes if it doesn't crash.
+<style id="style">
+#elm::before, #elm::after { display:block; -webkit-column-span:all; content:".........."; }
+:last-of-type { position: absolute;}
+</style>
+<div id="div" style="visibility:hidden; -webkit-columns:4; columns:4;">
+   <span id="elm">&nbsp;</span>
+</div>
+<script>
+document.execCommand("SelectAll");
+var elem = document.getElementById("style");
+elem.innerHTML="%a%b3%bf%5c";
+</script>

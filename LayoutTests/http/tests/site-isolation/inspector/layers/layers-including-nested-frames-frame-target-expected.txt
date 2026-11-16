@@ -1,0 +1,26 @@
+Test that the Layers tab includes the layers of a same-origin frame nested in a cross-origin frame under site isolation.
+
+
+
+== Running test suite: SiteIsolation.LayerTree.LayersIncludingNestedFrames
+-- Running test case: SiteIsolation.LayerTree.LayersIncludingNestedFrames.Setup
+PASS: Should find the outer frame target.
+PASS: Should find the inner frame target.
+
+-- Running test case: SiteIsolation.LayerTree.LayersIncludingNestedFrames.InnerFrameLayers
+PASS: Should include the inner frame's layers.
+PASS: Inner frame's composited layer should map to its element.
+PASS: Inner frame's composited element should belong to the inner frame target.
+
+-- Running test case: SiteIsolation.LayerTree.LayersIncludingNestedFrames.OuterFrameExcludesInnerFrameLayers
+PASS: Should include the outer frame's layers.
+PASS: Every outer frame layer should map to a node of the outer frame target.
+
+-- Running test case: SiteIsolation.LayerTree.LayersIncludingNestedFrames.Placement
+PASS: Outer frame owner should report the frame's content box.
+PASS: Inner frame owner should report the frame's content box.
+PASS: Inner frame owner should be at the outer frame's left edge.
+PASS: Inner frame owner should be below the outer frame's 100px tall composited element.
+PASS: Inner frame's composited layer should be offset horizontally by its owner's content box.
+PASS: Inner frame's composited layer should be offset vertically by its owner's content box.
+

@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style>
+            html {
+                scroll-snap-type: y mandatory;
+                margin: 0;
+            }
+            .verticalGallery {
+                width: 100vw;
+                height: 600vh;
+                margin: 0;
+                padding: 0;
+            }
+            .colorBox {
+                height: 90vh;
+                width: 100vw;
+                float: left;
+                scroll-snap-align: start;
+            }
+            #item0 { background-color: red; }
+            #item1 { background-color: green; }
+            #item2 { background-color: blue; }
+            #item3 { background-color: aqua; }
+            #item4 { background-color: yellow; }
+            #item5 { background-color: fuchsia; }
+        </style>
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script src="resources/mainframe-scroll-snap-test.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function runTest()
+        {
+            // These arrays are arguments that will be passed to eventSender.mouseScrollByWithWheelAndMomentumPhases.
+            let scrollMotions = [
+                [0, -1, 'began', 'none'],
+                [0, -1, 'changed', 'none'],
+                [-1, 0, 'changed', 'none'],
+                [-1, 0, 'changed', 'none'],
+                [-1, 0, 'changed', 'none'],
+                [0, 0, 'ended', 'none'],
+                [-1, 0, 'none', 'begin'],
+                [-4, 0, 'none', 'continue'],
+                [0, 0, 'none', 'end'],
+            ];
+
+            await UIHelper.delayFor(0);
+            await doScrollTest(document.scrollingElement, VERTICAL_AND_HORIZONTAL, scrollMotions);
+
+            if (document.scrollingElement.scrollTop == 0)
+                testPassed("scroll offset snapped back to top.");
+            else
+                testFailed(`did not honor snap points (expected 0, observed ${document.scrollingElement.scrollTop}).`);
+
+            finishJSTest();
+        }
+
+        function onLoad()
+        {
+            if (window.eventSender) {
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
+                runTest();
+            } else {
+                var messageLocation = document.getElementById('item0');
+                var message = document.createElement('div');
+                message.innerHTML = `<p>This test is better run under DumpRenderTree. To manually test it, scroll down
+                slightly, and then directly to the left or right with momentum without lifting your fingers from the
+                trackpad. The scroll offset should animate to the nearest snap offset.</p>`;
+                messageLocation.appendChild(message);
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();" class="verticalGallery">
+        <div id="item0" class="colorBox"><div id="console"></div></div>
+        <div id="item1" class="colorBox"></div>
+        <div id="item2" class="colorBox"></div>
+        <div id="item3" class="colorBox"></div>
+        <div id="item4" class="colorBox"></div>
+        <div id="item5" class="colorBox"></div>
+    </body>
+</html>

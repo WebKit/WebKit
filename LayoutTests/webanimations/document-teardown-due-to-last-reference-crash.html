@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<p>PASS if this test does not crash.</p>
+<script>
+
+(async function() {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    setTimeout(() => globalThis.testRunner?.notifyDone(), 5000);
+
+    window.history.back();
+    let timeline = new ScrollTimeline({ source: new Document().createElement('h4') });
+    let animationWeakRef = new WeakRef(new Animation());
+    animationWeakRef.deref().pause();
+    animationWeakRef.deref().timeline = timeline;
+    for (let i = 0; i < 40; ++i)
+        await true;
+    await animationWeakRef.deref().ready;
+    globalThis.testRunner?.notifyDone();
+})();
+
+</script>

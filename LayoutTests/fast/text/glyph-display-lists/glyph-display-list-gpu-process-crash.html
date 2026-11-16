@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true ] -->
+<script>
+if (window.testRunner && window.internals) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    internals.setForceUseGlyphDisplayListForTesting(true);
+}
+</script>
+<body onload="run()">
+<p>Test passes if the Web process doesn't crash.</p>
+<pre id=log></pre>
+<script>
+function run() {
+    if (window.internals && window.testRunner) {
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                if (!internals.cachedGlyphDisplayListsForTextNode(document.querySelector("p").firstChild))
+                    log.textContent = "FAIL: GlyphDisplayList not created";
+                testRunner.terminateGPUProcess();
+                requestAnimationFrame(function() {
+                    internals.setForceUseGlyphDisplayListForTesting(false);
+                    internals.clearGlyphDisplayListCacheForTesting();
+                    testRunner.notifyDone();
+                });
+            });
+        });
+    }
+}
+</script>

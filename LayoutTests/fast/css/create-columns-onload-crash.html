@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+  }
+  onload = () => {
+    function run() {
+      try {
+        let cssStyleValue = CSSMathValue.parseAll('columns', 'auto')[0];
+        document.body.attributeStyleMap.append('grid-auto-columns', cssStyleValue);
+      } finally {
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }
+    }
+    setTimeout(run, 20);
+  };
+</script>
+<div>This test should not crash</div>

@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ dumpResourceResponseMIMETypes=nosniff-html.html ] -->
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+</script>
+<body>
+<script>
+function runTests() {
+    let iframe = document.createElement("iframe");
+    iframe.src = 'resources/nosniff-html.html';
+    document.body.appendChild(iframe);
+}
+
+window.onload = () => {
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+
+runTests();
+</script>
+</body>
+</html>
+

@@ -1,0 +1,5 @@
+t1 t2
+t3 t4
+
+FAIL CSS Overflow Test: scroll-target-group property invalidation of :target-current assert_equals: link2 should be :target-current after clicking link2 expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

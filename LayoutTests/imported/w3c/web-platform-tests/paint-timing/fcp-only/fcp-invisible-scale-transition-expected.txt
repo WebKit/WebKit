@@ -1,0 +1,4 @@
+TEXT
+
+PASS First contentful paint fires when revealed during transition.
+

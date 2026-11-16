@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .container {
+    width: 80px;
+    height: 80px;
+    transform: rotateZ(270deg);
+    overflow: hidden;
+  }
+
+  .composited {
+    position: absolute;
+    transform: rotateY(0deg);
+    width: 151px;
+    height: 151px;
+    background-color: red;
+  }
+
+  .overlap {
+    position: absolute;
+    width: 114px;
+    height: 114px;
+    background-color: green;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="composited"></div>
+  <div class="overlap"></div>
+</div>
+
+</body>
+</html>
+

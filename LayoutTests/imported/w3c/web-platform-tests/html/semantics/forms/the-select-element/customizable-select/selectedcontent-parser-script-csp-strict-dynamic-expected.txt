@@ -1,0 +1,4 @@
+
+
+PASS Cloning a selected option into selectedcontent doesn't run parser-inserted scripts blocked by 'strict-dynamic'
+

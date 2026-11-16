@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function runTest() {
+    var bounds = fileInputElement.getBoundingClientRect();
+    range = document.caretRangeFromPoint(bounds.left + 10, bounds.top + 10);
+    shouldBe("range.commonAncestorContainer", "fileInputElement");
+    finishJSTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <input type="file" id="fileInputElement" style="position:absolute; height: 100px; width: 100px;">
+</body>
+</html>

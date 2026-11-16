@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <style>
+            video { background-color: red; }
+            .clip {
+                width: 352;
+                height: 200;
+                overflow: hidden;
+            }
+        </style>
+        <script src="media-file.js"></script>
+        <script type="text/javascript">
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            function doTest() {
+                video = document.getElementsByTagName('video')[0];
+                video.addEventListener('canplaythrough', canPlayThrough, false);
+                video.src = findMediaFile('video', 'content/counting');
+            }
+            function canPlayThrough() {
+                video.addEventListener('seeked', seeked, false);
+                video.currentTime = 0.01;
+            }
+            function seeked() {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        </script>
+    </head>
+    <body onload="doTest()">
+        <!-- This tests whether a video with a poster attribute correctly paints its background color after a video frame is painted. The page should render only a red box 352x200. -->
+        <div class="clip">
+            <video width=352 height=688 poster="content/counting.jpg"></video>
+        </div>
+    </body>
+</html>

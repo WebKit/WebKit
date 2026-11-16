@@ -1,0 +1,8 @@
+
+PASS Same Origin Worker
+PASS Same Origin SharedWorker
+PASS Data Url Worker
+PASS Data Url SharedWorker
+PASS Blob Url Worker
+PASS Blob Url SharedWorker
+

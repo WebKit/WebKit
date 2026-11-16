@@ -1,0 +1,37 @@
+Test the parsing of :not(selectorList) for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+1 invalid selectors
+selector ':not(::first-letter) { }' parsed: NO
+selector ':not(::first-line) { }' parsed: NO
+selector ':not(::before) { }' parsed: NO
+selector ':not(::after) { }' parsed: NO
+selector ':not(:first-letter) { }' parsed: NO
+selector ':not(:first-line) { }' parsed: NO
+selector ':not(:before) { }' parsed: NO
+selector ':not(:after) { }' parsed: NO
+selector ':not() { }' parsed: NO
+selector ':not(    ) { }' parsed: NO
+selector ':not(,) { }' parsed: NO
+selector ':not(.123class) { }' parsed: NO
+selector ':not(#123id) { }' parsed: NO
+selector ':not([]) { }' parsed: NO
+selector ':not(()) { }' parsed: NO
+selector ':not()) { }' parsed: NO
+selector ':not({}) { }' parsed: NO
+selector ':not(}) { }' parsed: NO
+selector ':not(:not()) { }' parsed: NO
+selector ':not(:is()) { }' parsed: YES
+selector ':not(:matches()) { }' parsed: YES
+selector ':not(:nth-child()) { }' parsed: NO
+selector ':not(:nth-child(2n of)) { }' parsed: NO
+selector ':not(:not() { }' parsed: NO
+selector ':not(:is() { }' parsed: NO
+selector ':not(:matches() { }' parsed: NO
+selector ':not(:nth-child(2n+1 of) { }' parsed: NO
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

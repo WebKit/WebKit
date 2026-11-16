@@ -1,0 +1,3 @@
+
+PASS Empty <text> does not contribute to ancestor bounding boxes.
+

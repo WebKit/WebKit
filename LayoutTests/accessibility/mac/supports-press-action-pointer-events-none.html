@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+#inaccessible-button {
+    cursor: pointer;
+    width: 60px;
+    height: 30px;
+    border: 3px solid black;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+    <div id="inaccessible-button" onclick="console.log('perform important action')" role="group">
+        Press to perform important action.
+    </div>
+</div>
+
+<script>
+var output = "This test ensures we don't consider things that are pointer-events:none to support press action.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var text = accessibilityController.accessibleElementById("inaccessible-button").childAtIndex(0);
+    output += expect("text.role", "'AXRole: AXStaticText'");
+    output += expect("text.isPressActionSupported()", "true");
+
+    document.getElementById("container").setAttribute("style", "pointer-events: none;");
+    setTimeout(async function() {
+        output += await expectAsync("text.isPressActionSupported()", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

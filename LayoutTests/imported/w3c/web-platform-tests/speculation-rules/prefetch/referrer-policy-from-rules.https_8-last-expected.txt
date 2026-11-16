@@ -1,0 +1,3 @@
+
+PASS with empty string referrer policy in rule set defaulting to "strict-origin" of referring page
+

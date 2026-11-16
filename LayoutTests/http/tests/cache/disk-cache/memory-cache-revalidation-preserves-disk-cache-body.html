@@ -1,0 +1,60 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+// Regression test for a 304 revalidation response that carries explicit freshness
+// (Cache-Control: max-age / Expires) clobbering the cached body with an empty one.
+//
+// A memory-cache-driven revalidation sends a conditional request that reaches the network
+// process as originalRequest().isConditional(). On a 304, NetworkResourceLoader clears
+// m_cacheEntryForValidation (so the 304 is forwarded to WebCore) and then falls through to
+// tryStoreAsCacheEntry(). Since 315450@main, makeStoreDecision() accepts a 304 that carries
+// explicit freshness, so the bodiless 304 is stored over the good disk entry. The corruption
+// is invisible until a cold-memory-cache load reads it back from disk -- hence the
+// internals.clearMemoryCache() before the final load (and why this can't be a pure WPT test).
+
+var bodyContents = "selector-color-green-0123456789";
+
+var tests =
+[
+ { responseHeaders: { 'Expires': 'now(0)', 'ETag': 'match' }, expiresInFutureIn304: true, body: bodyContents },
+];
+
+description("Tests that a 304 revalidation carrying explicit freshness does not overwrite the cached body with an empty body.");
+
+debug("running " + tests.length + " tests");
+debug("");
+
+function runTests()
+{
+    debug("Warming up cache: the initial network load stores the resource, with its body, in the disk cache.");
+    loadResources(tests, function () {
+        shouldBeEqualToString("tests[0].xhr.responseText", bodyContents);
+
+        debug("");
+        debug("Revalidate through the memory cache: the 304 (carrying a future Expires) updates the disk cache.");
+        loadResourcesWithOptions(tests, { "SubresourceValidationPolicy": true }, function () {
+            shouldBeEqualToString("tests[0].xhr.responseText", bodyContents);
+
+            debug("");
+            debug("Clear the memory cache and load again: this comes from the disk cache and must still have the full body.");
+            loadResourcesWithOptions(tests, { "ClearMemoryCache": true }, function () {
+                debug("response source: " + internals.xhrResponseSource(tests[0].xhr));
+                shouldBeEqualToString("tests[0].xhr.responseText", bodyContents);
+                finishJSTest();
+            });
+        });
+    });
+}
+
+// Wait for the load event: CachedResourceLoader::determineRevalidationPolicy() aggressively
+// reuses resources (without revalidating) until the load event has fired, which would skip
+// the memory-cache revalidation this test depends on.
+if (document.readyState == 'complete')
+    runTests();
+else
+    addEventListener("load", runTests);
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

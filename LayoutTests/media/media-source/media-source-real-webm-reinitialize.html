@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-reinitialize</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests that appending a second initialization segment with matching tracks
+    // succeeds and doesn't disrupt existing buffered data.
+    // MSE spec section 3.3.2 "Initialization Segment Received" — when a second
+    // init segment arrives, track count and types must match the first.
+    // Weakly tested — minimal real-parser coverage.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+
+        // First init
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.videoTracks.length', 1);
+
+        // Append media
+        var media = WebM.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 4, 0.05);
+
+        // Second init — same tracks, should succeed without disrupting buffered data
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('source.readyState', 'open');
+        testExpected('sourceBuffer.videoTracks.length', 1);
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 4, 0.05);
+
+        // Append more media after re-init — should extend the buffer
+        var media2 = WebM.mediaSegment({
+            sequenceNumber: 2,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 4000, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media2);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('source.readyState', 'open');
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 6, 0.05);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

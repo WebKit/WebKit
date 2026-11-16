@@ -1,0 +1,38 @@
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<script>
+function wait(ms)
+{
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function test()
+{
+    // Run the service worker in its own process so that terminating it below forces the next
+    // navigation fetch to wait for a new service worker process to be launched. The fetch task
+    // is kept alive by that pending launch, so it outlives the loader cancelled below.
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+    await registerAndWaitForActive("resources/fetch-timeout-after-cancel-worker.js", "resources/fetch-timeout-after-cancel-frame.html");
+
+    testRunner.setServiceWorkerFetchTimeout(0.1);
+    testRunner.terminateServiceWorkers();
+
+    const frame = document.createElement("iframe");
+    frame.src = "resources/fetch-timeout-after-cancel-frame.html";
+    document.body.appendChild(frame);
+    await wait(25);
+
+    // Cancels the navigation load in the network process, which must also stop the fetch task's
+    // timeout timer: the task's loader is about to go away.
+    frame.remove();
+    await wait(600);
+
+    log("PASS if no crash");
+    finishSWTest();
+}
+
+test();
+</script>
+</body>
+</html>

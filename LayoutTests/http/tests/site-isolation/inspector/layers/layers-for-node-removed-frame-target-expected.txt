@@ -1,0 +1,8 @@
+Test that fetching a cross-origin frame's layers finishes when the frame is removed under site isolation.
+
+
+== Running test suite: SiteIsolation.LayerTree.RemovedFrameTarget
+-- Running test case: SiteIsolation.LayerTree.RemovedFrameTarget.LayersForNodeSettles
+PASS: Should find the child frame target.
+PASS: Fetching layers should finish when the frame target is removed around the request.
+

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<style>
+section > div, section > div {
+  display: inline-block;
+  height: 100px;
+  width: 100px;
+  outline: 1px solid black;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  margin: 10px 10px 0 0;
+}
+
+.square {
+  width: 20px;
+  height: 20px;
+  background-color: orange;
+}
+
+.ltr { direction: ltr; }
+.rtl { direction: rtl; }
+.h-tb { writing-mode: horizontal-tb; }
+.h-bt { -webkit-writing-mode: horizontal-bt; }
+.v-rl { writing-mode: vertical-rl; }
+.v-lr { writing-mode: vertical-lr; }
+</style>
+<section class="right">
+  <p>These four containers should have a vertical scrollbar on the right.</p>
+  <div class="h-tb ltr"><div class="square" data-expected="0"></div></div>
+  <div class="h-bt ltr"><div class="square" data-expected="0"></div></div>
+  <div class="v-lr ltr"><div class="square" data-expected="0"></div></div>
+  <div class="v-lr rtl"><div class="square" data-expected="0"></div></div>
+</section>
+
+<section class="left">
+  <p>These four containers should have a vertical scrollbar on the left.</p>
+  <div class="h-tb rtl"><div class="square" data-expected="80"></div></div>
+  <div class="h-bt rtl"><div class="square" data-expected="80"></div></div>
+  <div class="v-rl ltr"><div class="square" data-expected="80"></div></div>
+  <div class="v-rl rtl"><div class="square" data-expected="80"></div></div>
+</section>
+
+<pre id="results">FAIL</pre>
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText(true);
+}
+
+let text = "";
+for (let square of document.querySelectorAll(".square")) {
+    let actual = square.getBoundingClientRect().x - square.parentNode.offsetLeft;
+    let expected = square.getAttribute("data-expected");
+    if (actual != expected) {
+        text += `Position of square in '${square.parentNode.className}' - expected ${expected}, got ${actual}\n`;
+    }
+}
+results.textContent = text || "PASS";
+</script>

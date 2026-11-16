@@ -1,0 +1,3 @@
+
+PASS Setting and removing 'overflow' on an ancestor fires no scroll event.
+

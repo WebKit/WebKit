@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<svg>
+    <g id="a">
+        <use/>
+    </g>
+    <use xlink:href="#a"/>
+    <text x="0" y="20">This test PASSED if it does not crash.</text>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        var body = document.body;
+        var parent = body.parentNode;
+        var newElement = document.createElement("dir");
+        newElement.innerHTML = body.innerHTML;
+        parent.insertBefore(newElement, body);
+        parent.removeChild(body);
+    </script>
+</svg>
+</html>

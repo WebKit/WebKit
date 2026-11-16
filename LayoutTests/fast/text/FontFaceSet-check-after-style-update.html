@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head id="head">
+<script>
+if (window.internals) {
+    internals.invalidateFontCache();
+    internals.clearMemoryCache();
+}
+</script>
+<style id="style">
+@font-face {
+    font-family: "WebFont";
+    src: url("../../resources/Ahem.ttf") format("truetype");
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This function makes sure document.fonts.check() is affected by style changes.");
+let fonts = document.fonts;
+shouldBeTrue("fonts.check('12px ThisIsNotARealFont')");
+shouldBeFalse("fonts.check('12px WebFont')");
+fonts.values().next().value.load();
+shouldBeFalse("fonts.check('12px WebFont')");
+document.getElementById("head").removeChild(document.getElementById("style"));
+// https://drafts.csswg.org/css-font-loading-3/#font-face-set-check
+// "if none of the specified fonts exist (for example, names are mis-spelled), the method also returns true"
+shouldBeTrue("fonts.check('12px WebFont')");
+</script>
+</body>
+</html>

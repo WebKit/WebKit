@@ -1,0 +1,8 @@
+
+PASS getBoundingClientRect for element inside scroll container
+PASS getBoundingClientRect for absolute element inside scroll container
+PASS getBoundingClientRect for fixed element inside scroll container
+PASS getBoundingClientRect for a scrolled scroll container
+PASS getBoundingClientRect for a scrolled display none box
+PASS getBoundingClientRect for a scrolled display content box
+

@@ -1,0 +1,5 @@
+frame "<!--frame1-->" - has 1 onunload handler(s)
+
+Events dispatched to the navigated-away iframe: pagehide
+PASS: unload event was not dispatched
+PASS: pagehide event was dispatched

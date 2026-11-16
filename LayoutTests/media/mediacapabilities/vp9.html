@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script src=../../resources/testharness.js></script>
+    <script src=../../resources/testharnessreport.js></script>
+    <script type="text/javascript">
+promise_test(async (test) => {
+    if (!window.internals || !internals.settings.vp9DecoderEnabled)
+        return;
+
+    const info = { type: 'file', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08\"', bitrate: 800000, height: 1080, bitrate: 800000, width: 3180, framerate: 30 } };
+    let result = await navigator.mediaCapabilities.decodingInfo(info);
+    assert_true(result.supported);
+
+    internals.settings.setVP9DecoderEnabled(false);
+
+    result = await navigator.mediaCapabilities.decodingInfo(info);
+    assert_false(result.supported);
+}, "Media capabilities in case of disabled VP9");
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+Test that plug-in doesn't get a new browser object instance each time
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS embed.getAndForgetRememberedObject().foo is 'bar'
+PASS embed.refCount(obj) is 1
+PASS embed.refCount(obj) is 1
+FAIL embed.refCount(obj) should be 2. Was 1.
+PASS embed.getRememberedObject() is obj
+PASS embed.getRememberedObject() is obj
+FAIL embed.refCount(obj) should be 2. Was 1.
+PASS embed.getAndForgetRememberedObject() is obj
+PASS embed.refCount(obj) is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

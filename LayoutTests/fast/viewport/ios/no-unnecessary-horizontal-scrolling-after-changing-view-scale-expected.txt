@@ -1,0 +1,15 @@
+This test verifies that the width of the viewport and the content width are consistent when zooming out by changing the view scale in a responsive viewport that doesn't lay out wider than the viewport.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Set view scale: 0.85
+PASS visualViewport.width is bodyWidth()
+PASS Set view scale: 0.75
+PASS visualViewport.width is bodyWidth()
+PASS Set view scale: 0.5
+PASS visualViewport.width is bodyWidth()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

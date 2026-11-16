@@ -1,0 +1,11 @@
+[
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": "should-not-load",
+            "resource-type": ["ping"]
+        }
+    }
+]

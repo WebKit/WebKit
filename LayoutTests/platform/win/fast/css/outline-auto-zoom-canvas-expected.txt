@@ -1,0 +1,12 @@
+This test ensures that the canvas drawFocusIfNeeded focus ring scales with CSS zoom and canvas scale.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL pixels2xZoom > pixels1x should be true. Was false.
+PASS pixels2xScale > pixels1x is true
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

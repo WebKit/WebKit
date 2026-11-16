@@ -1,0 +1,76 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsSameProcessPages");
+
+    let frameATarget;
+    let frameBTarget;
+
+    function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function evaluate(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    async function pauseFrameA() {
+        let paused = new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (event.data.target !== frameATarget || !WI.debuggerManager.dataForTarget(frameATarget).paused)
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+                resolve();
+            });
+        });
+        frameATarget.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+        await paused;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsSameProcessPages.Setup",
+        description: "Find the frame targets of two same-origin iframes, and open a same-origin popup.",
+        async test() {
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            frameBTarget = await frameTargetForURLContaining("same-process-frame.html?B");
+
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+            InspectorTest.expectNotNull(frameBTarget, "Should find the frame target for frame B.");
+
+            await evaluate(InspectorTest.mainFrameTarget, "window.popup = window.open('resources/same-process-frame.html?popup'), 0");
+            InspectorTest.expectThat(await waitForExpressionInTarget(InspectorTest.mainFrameTarget, "window.popup?.ticks > 2"), "The popup's interval should be running.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsSameProcessPages.Popup",
+        description: "While frame A is paused, a same-origin popup in the same process should be held along with frame A's sibling, and should run again after resuming.",
+        async test() {
+            await pauseFrameA();
+
+            let siblingTicks = await evaluate(frameBTarget, "window.ticks");
+            let popupTicks = await evaluate(InspectorTest.mainFrameTarget, "window.popup.ticks");
+            await sleep(300);
+            InspectorTest.expectEqual(await evaluate(frameBTarget, "window.ticks"), siblingTicks, "Frame B's interval should not advance while frame A is paused.");
+            InspectorTest.expectEqual(await evaluate(InspectorTest.mainFrameTarget, "window.popup.ticks"), popupTicks, "The popup's interval should not advance while frame A is paused.");
+
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            await WI.debuggerManager.resume();
+            await resumed;
+            InspectorTest.expectThat(await waitForExpressionInTarget(InspectorTest.mainFrameTarget, `window.popup.ticks > ${popupTicks}`), "The popup's interval should advance after resuming.");
+            await evaluate(InspectorTest.mainFrameTarget, "window.popup.close()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that pausing a frame holds every page in its process, including a same-origin popup, which is a different page.</p>
+<iframe id="frameA" src="resources/same-process-frame.html?A"></iframe>
+<iframe id="frameB" src="resources/same-process-frame.html?B"></iframe>
+</body>

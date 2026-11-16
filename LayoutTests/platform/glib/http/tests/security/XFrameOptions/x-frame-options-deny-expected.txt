@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi' in a frame because it set 'X-Frame-Options' to 'deny'.
+CONSOLE MESSAGE: SecurityError: Sandbox access violation: Blocked a frame at "http://127.0.0.1:8000" from accessing a cross-origin frame.  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+CONSOLE MESSAGE: PASS: Could not read contentWindow.location.href
+There should be no content in the iframe below
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny.html, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny.html, http status code 200>
+http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny.html - didFinishLoading
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny.html, http method GET> redirectResponse (null)

@@ -1,0 +1,10 @@
+This test ensures that scrolling a PDF with accessibility enabled does not cause a crash.
+
+PASS: pageOne.role === 'AXRole: AXPage'
+PASS: pageTwo.role === 'AXRole: AXPage'
+PASS: Scrolling to the second page of the PDF didn't cause a crash.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

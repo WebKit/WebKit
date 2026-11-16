@@ -1,0 +1,57 @@
+Test that animations created in iframes are reported through the frame target's Animation domain under site isolation.
+
+
+== Running test suite: SiteIsolation.Animation.IFrame
+-- Running test case: SiteIsolation.Animation.MainFrame.ReportedOnce
+PASS: Main frame's target should have Frame type.
+PASS: The animation that existed before the domain was enabled should be reported once.
+PASS: Both main frame animations should be reported once.
+PASS: The page target should not report any animation.
+PASS: There should be no other animation.
+PASS: Should produce an exception.
+Error: Missing animation for given animationId
+
+-- Running test case: SiteIsolation.Animation.CrossOrigin.AnimationCreated
+PASS: Animation target should have Frame type.
+PASS: Frame target should have the Animation domain.
+PASS: Animation should be a web animation.
+
+-- Running test case: SiteIsolation.Animation.CrossOrigin.StackTrace
+PASS: Animation should be reported by the same frame target.
+  0: animate - [native code]
+  1: createAnimation - iframe-with-animation.html
+  2: Global Code - [program code]
+
+-- Running test case: SiteIsolation.Animation.CrossOrigin.RequestEffect
+PASS: Animation should have two keyframes.
+PASS: Animation should have the iteration duration of its effect.
+
+-- Running test case: SiteIsolation.Animation.CrossOrigin.RequestEffectTarget
+PASS: Animation should have an effect target.
+PASS: Effect target node should be owned by the frame target.
+PASS: Effect target node should be the animated element.
+
+-- Running test case: SiteIsolation.Animation.CrossOrigin.ResolveAnimation
+PASS: Should resolve the animation.
+PASS: Remote object should belong to the frame target.
+PASS: Remote object should be an Animation.
+
+-- Running test case: SiteIsolation.Animation.CrossOrigin.IdUniqueness
+PASS: Animation identifiers should be unique across the main frame and the cross-origin iframe.
+PASS: Animation identifiers should have the form animation:<process>.<object>.
+PASS: Main frame animations should share one process part.
+PASS: Iframe animations should share one process part.
+PASS: Main frame and iframe animations should have different process parts.
+
+-- Running test case: SiteIsolation.Animation.CrossOrigin.RemoveIFrame
+PASS: Frame target should have no animations.
+
+-- Running test case: SiteIsolation.Animation.SameOrigin.AnimationCreated
+PASS: Animation target should have Frame type.
+PASS: Animation target should not be the main frame's target.
+PASS: Animation target should not be the removed cross-origin frame target.
+
+-- Running test case: SiteIsolation.Animation.SameOrigin.Navigate
+PASS: Iframe should have its animation.
+PASS: Iframe should have no animations after navigating.
+

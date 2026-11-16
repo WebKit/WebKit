@@ -1,0 +1,5 @@
+
+PASS Test circle with negative easing on shape-outside
+PASS Test ellipse with negative easing on shape-outside
+PASS Test inset with negative easing on shape-outside
+

@@ -1,0 +1,22 @@
+<style>
+.inlineContextRoot {
+	border: 1px solid green;
+	width: 200px;
+	height: 200px;
+	overflow: hidden;
+}
+
+.blockContextRoot {
+	position: absolute;
+	left: 50px;
+	top: 50px;
+	border: 1px solid blue;
+}
+
+.inlineBlock {
+	display: inline-block;
+	position: relative;
+}
+</style>
+
+<div class=inlineContextRoot>inline<span class=inlineBlock><span class=blockContextRoot>absolute positioned content</span></span>content</div>

@@ -1,0 +1,33 @@
+Test that an <iframe> in the page tree holds its frame's current document as the frame moves between processes, and that removing an <iframe> unsplices its frame target's document.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDocumentSplicing.RemoteTransition
+-- Running test case: Setup
+PASS: Should find #late-frame.
+PASS: #late-frame should have a content document.
+PASS: #late-frame's child should be a document.
+PASS: #late-frame's document should come from the page agent.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.RemoteTransition.NavigateCrossOrigin
+PASS: Should find the cross-origin frame target.
+PASS: Should still find #late-frame.
+PASS: The cross-origin frame's document should be spliced into #late-frame.
+PASS: #late-frame should have exactly one child.
+PASS: #late-frame's only child should be the cross-origin frame's document.
+PASS: The cross-origin frame's document should be in the page tree.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.RemoteTransition.NavigateToAnotherRemoteProcess
+PASS: Should find the frame target in the third process.
+PASS: Should still find #late-frame.
+PASS: The third-process frame's document should be spliced into #late-frame.
+PASS: #late-frame should have exactly one child.
+PASS: #late-frame's only child should be the third-process frame's document.
+PASS: The third-process frame's document should be in the page tree.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.RemoteTransition.RemoveOwnerElement
+PASS: Should find #removed-frame's frame target.
+PASS: #removed-frame's document should be spliced into it.
+PASS: #removed-frame should be gone from the page tree.
+PASS: #removed-frame's document should no longer be spliced.
+

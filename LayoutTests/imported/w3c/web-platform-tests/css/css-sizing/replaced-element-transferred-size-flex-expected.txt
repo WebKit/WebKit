@@ -1,0 +1,11 @@
+
+text
+
+text
+
+text
+
+PASS Replaced element in flex: min-height transfers to preferred width via aspect ratio
+PASS Replaced element in grid: min-height transfers to preferred width via aspect ratio
+PASS Replaced element in flex: min-height with 3:1 ratio
+

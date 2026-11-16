@@ -1,0 +1,36 @@
+<!doctype quirks>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<link rel="match" href="quirks-percentage-height-in-flex-item-expected.html">
+<style>
+.flex {
+    display: flex;
+    font: 20px/1 Ahem;
+}
+
+.wrapper {
+    background: red;
+}
+
+.pct {
+    height: 100%;
+    min-height: 10px;
+    width: 50px;
+    display: inline-block;
+    vertical-align: top;
+    background: green;
+}
+
+.px {
+    height: 50px;
+    width: 50px;
+    display: inline-block;
+    vertical-align: top;
+    background: green;
+}
+</style>
+<p>Test passes if there is a filled green square and no red.</p>
+<!-- In quirks mode, the percentage height calculation quirk (§3.5) walks up the
+     containing block chain, skipping auto-height block containers, and stops at
+     flex containers because they are not block containers (step 4). The percentage
+     should resolve against the flex container's used content height. -->
+<div class="flex"><div class="wrapper"><div class="pct"></div><div class="px"></div></div></div>

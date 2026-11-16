@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+#container, #iframe, object, summary {
+ float: right;
+}
+summary {
+  animation-duration: 300ms;
+  animation-name: keyframesBorder;
+}
+@keyframes keyframesBorder {
+  0% { border: solid }
+  100% { border: none; }
+}
+</style>
+<div id="container"><audio controls></audio><iframe id="iframe" width="0"></iframe><br/><object data="invalid"></object><br/>A<details id="details" open><summary></summary></details></div>
+<script>
+  window.testRunner?.dumpAsText();
+  window.testRunner?.waitUntilDone();
+  details.addEventListener("toggle", _ => {
+    details.open = false;
+    iframe.remove();
+  }, {once: true});
+  window.addEventListener("animationend", _ => {
+    document.body.innerHTML = "PASS if no crash.";
+    window.testRunner?.notifyDone();
+  });
+</script>

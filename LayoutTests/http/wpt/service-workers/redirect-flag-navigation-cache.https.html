@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script src="resources/routines.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+var url = new URL("/WebKit/service-workers/resources/", location);
+url = url.toString();
+const urlFinal = url + "cached-after-redirection.html";
+const urlInitial = url + "redirect-to-cached-after-redirection.py";
+
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.getRegistration(url);
+    if (registration)
+        registration.unregister();
+}, "Unregister service worker if needed");
+
+promise_test(async (test) => {
+    const iframe = await withIframe(urlInitial);
+    //iframe.remove();
+}, "Navigate to iframe with a redirection URL - final URL is cached");
+
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("/WebKit/service-workers/redirect-flag-navigation-cache-worker.js", { scope : url });
+    const activeWorker = registration.installing;
+    await waitForState(activeWorker, "activated");
+    await registration.navigationPreload.enable();
+}, "Setup activating worker");
+
+promise_test(async (test) => {
+    const iframe = await withIframe(urlFinal);
+    assert_equals(iframe.contentDocument.body.innerHTML.trim(), "PASS");
+    //iframe.remove();
+}, "Navigate to cached final URL directly");
+</script>
+</body>
+</html>

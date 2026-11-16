@@ -1,0 +1,3 @@
+
+PALL removing a loading <track> from its media element clears the pending-list entry
+

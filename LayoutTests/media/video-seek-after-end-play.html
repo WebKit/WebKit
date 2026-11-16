@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            async function start()
+            {
+                findMediaElement();
+
+                waitForEvent('play');
+                waitForEvent('seeking');
+                waitForEvent('seeked');
+                waitForEvent('playing');
+                video.src = findMediaFile('audio', 'content/short');
+                await video.play();
+                await waitFor(video, 'ended');
+                video.currentTime = 0;
+                await waitFor(video, "seeked", true);
+                video.currentTime = 0;
+                video.play();
+                waitForEventAndEnd('ended');
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that calling play while a seek is ongoing will resume.</p>
+        <video controls></video>
+    </body>
+</html>

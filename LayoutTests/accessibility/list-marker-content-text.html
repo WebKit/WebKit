@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.content::marker { content: "foo"; }
+.alt::marker { content: "*" / "foo"; }
+.type { list-style-type: "foo"; }
+.inside { list-style-position: inside; }
+</style>
+</head>
+<body>
+
+<ul>
+<li id="outsideContent" class="content">bar</li>
+<li id="outsideType" class="type">bar</li>
+<li id="insideContent" class="content inside">bar</li>
+<li id="insideType" class="type inside">bar</li>
+<li id="outsideAlt" class="alt">bar</li>
+<li id="insideAlt" class="alt inside">bar</li>
+</ul>
+
+<script>
+let output = "This test makes sure the text of a ::marker with content is part of its list item's text, the way the text of a list-style-type marker is.\n\n";
+
+function textOf(id) {
+    let item = accessibilityController.accessibleElementById(id);
+    return item.stringForTextMarkerRange(item.textMarkerRangeForElement(item));
+}
+
+if (window.accessibilityController) {
+    output += expect("textOf('outsideContent')", "'foobar'");
+    output += expect("textOf('outsideType')", "'foobar'");
+    output += expect("textOf('insideContent')", "'foobar'");
+    output += expect("textOf('insideType')", "'foobar'");
+    output += expect("textOf('outsideAlt')", "'foobar'");
+    output += expect("textOf('insideAlt')", "'foobar'");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>

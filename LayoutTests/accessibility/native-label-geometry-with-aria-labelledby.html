@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+.visible-label {
+    display: block;
+    width: 200px;
+    height: 50px;
+    background: lightblue;
+}
+</style>
+</head>
+<body>
+
+<input class="visually-hidden" type="radio" id="radio-input" aria-labelledby="hidden-label-text" name="test" value="test">
+<label for="radio-input" class="visible-label">
+    <span id="hidden-label-text" class="visually-hidden">Sky Blue</span>
+</label>
+
+<script>
+var output = "This test ensures an input that has both aria-labelledby pointing to a visually-hidden element, and a native label with visible geometry, gets geometry from the native label.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var pageX, pageY;
+    var radioInput = accessibilityController.accessibleElementById("radio-input");
+    setTimeout(async function() {
+        // The width should be approximately 200 (the label width), but leave a little buffer since the exact value doesn't
+        // matter much.
+        output += await expectAsync("radioInput.width >= 195", "true");
+        // The height should be approximately 50 (the label height).
+        output += await expectAsync("radioInput.height >= 45", "true");
+        output += await expectAsync("Math.abs(radioInput.pageX - 8) <= 2", "true");
+        output += await expectAsync("Math.abs(radioInput.pageY - 8) <= 2", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+
+}
+</script>
+</body>
+</html>
+

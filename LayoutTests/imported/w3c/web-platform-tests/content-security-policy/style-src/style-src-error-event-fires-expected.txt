@@ -1,0 +1,4 @@
+
+PASS Test error event fires on stylesheet link
+PASS Test error event fires on inline style
+Lorem ipsum

@@ -1,0 +1,5 @@
+
+PASS flip-block does not affect sizing
+PASS flip-inline does not affect sizing
+PASS flip-start affects sizing
+

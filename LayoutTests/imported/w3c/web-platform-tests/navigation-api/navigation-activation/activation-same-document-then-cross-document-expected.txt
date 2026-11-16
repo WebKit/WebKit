@@ -1,0 +1,4 @@
+
+
+PASS navigation.activation same-document then cross-document
+

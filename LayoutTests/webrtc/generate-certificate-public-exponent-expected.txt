@@ -1,0 +1,7 @@
+
+PASS The canonical public exponent 65537 is accepted
+PASS Leading zero padding is accepted
+PASS Padding longer than the value is accepted
+PASS A publicExponent with more significant bytes than an int is rejected
+PASS A publicExponent that does not fit an int is rejected
+

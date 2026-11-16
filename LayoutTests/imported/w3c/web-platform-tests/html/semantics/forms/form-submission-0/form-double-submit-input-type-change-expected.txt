@@ -1,0 +1,22 @@
+
+PASS default submit action should supersede input onclick submit() and change the input type from text to submit
+PASS default submit action should supersede input onclick submit() and change the input type from search to submit
+PASS default submit action should supersede input onclick submit() and change the input type from tel to submit
+PASS default submit action should supersede input onclick submit() and change the input type from url to submit
+PASS default submit action should supersede input onclick submit() and change the input type from email to submit
+PASS default submit action should supersede input onclick submit() and change the input type from password to submit
+PASS default submit action should supersede input onclick submit() and change the input type from date to submit
+PASS default submit action should supersede input onclick submit() and change the input type from month to submit
+PASS default submit action should supersede input onclick submit() and change the input type from week to submit
+PASS default submit action should supersede input onclick submit() and change the input type from time to submit
+PASS default submit action should supersede input onclick submit() and change the input type from datetime-local to submit
+PASS default submit action should supersede input onclick submit() and change the input type from number to submit
+PASS default submit action should supersede input onclick submit() and change the input type from range to submit
+PASS default submit action should supersede input onclick submit() and change the input type from color to submit
+PASS default submit action should supersede input onclick submit() and change the input type from checkbox to submit
+PASS default submit action should supersede input onclick submit() and change the input type from radio to submit
+PASS default submit action should supersede input onclick submit() and change the input type from file to submit
+PASS default submit action should supersede input onclick submit() and change the input type from image to submit
+PASS default submit action should supersede input onclick submit() and change the input type from reset to submit
+PASS default submit action should supersede input onclick submit() and change the input type from button to submit
+

@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    max-width: 64em;
+    margin: 2em auto;
+    padding: 0 1em;
+}
+
+h1 {
+    letter-spacing: -3px;
+    font-size: 3.23em;
+    font-weight: bold;
+    margin: 0;
+}
+
+textarea {
+    width: 100%;
+    min-height: 10em;
+    font-family: Menlo, monospace;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+}
+
+#preview {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    margin-top: 0.5em;
+}
+
+#preview > img {
+    width: var(--image-size);
+    height: var(--image-size);
+    margin: 4px;
+    border: 0.5px solid lightgrey;
+    cursor: pointer;
+}
+
+#preview > img.light {
+    background-color: white;
+}
+
+#preview > img.dark {
+    background-color: black;
+}

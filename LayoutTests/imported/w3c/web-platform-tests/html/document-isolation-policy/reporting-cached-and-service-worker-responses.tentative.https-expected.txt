@@ -1,0 +1,12 @@
+
+PASS Document-Isolation-Policy-Report-Only reports an image that another document loaded before
+PASS Document-Isolation-Policy-Report-Only reports an image the document uses twice once
+PASS Document-Isolation-Policy-Report-Only reports an image the document loaded with CORS before
+PASS Document-Isolation-Policy-Report-Only reports an image the document is still loading with CORS once
+PASS Document-Isolation-Policy reports an image that another document loaded before
+PASS Document-Isolation-Policy reports a cross-origin response a service worker responds with
+PASS Document-Isolation-Policy reports a redirected response a service worker responds with by its first URL
+PASS Document-Isolation-Policy reports a response a service worker fetched from another URL by that URL
+PASS Document-Isolation-Policy reports a redirected response a service worker fetched from another URL by that URL
+PASS Document-Isolation-Policy reports a Cache API response a service worker responds with by its URL
+

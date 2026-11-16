@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+  description("Tests that we do not crash when trying to access an Event's relatedTarget when the target is an AudioNode and we have GC'd.");
+
+  let focusEvent = new FocusEvent('', {relatedTarget: new DelayNode(new AudioContext({sampleRate: 3000}))});
+  gc();
+  shouldBe("focusEvent.relatedTarget.delayTime.value", "0");
+  shouldBe("focusEvent.relatedTarget.__proto__", "DelayNode.prototype");
+  shouldBe("focusEvent.relatedTarget.channelCount", "2");
+  shouldBe("focusEvent.relatedTarget.context.sampleRate", "3000");
+</script>
+</body>
+</html>

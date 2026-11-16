@@ -1,0 +1,4 @@
+
+
+PASS Pasting three times content with a newline at the end, the insertion caret keeps positioned at the end.
+

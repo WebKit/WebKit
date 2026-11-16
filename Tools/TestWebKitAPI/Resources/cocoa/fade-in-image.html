@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+img {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+div, img {
+    width: 215px;
+    height: 174px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+div {
+    background: red;
+}
+</style>
+<script>
+addEventListener("load", () => {
+    setTimeout(() => document.querySelector("img").style.opacity = 1, 500);
+});
+</script>
+</head>
+<body>
+<div></div>
+<img src="icon.png"></img>
+</body>
+</html>

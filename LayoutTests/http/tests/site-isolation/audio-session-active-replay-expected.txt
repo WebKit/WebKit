@@ -1,0 +1,11 @@
+Under site isolation, stopping audio and immediately starting it again re-activates the audio session, without racing the stale in-flight deactivation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS the audio session is active
+PASS the audio session is active after replay
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

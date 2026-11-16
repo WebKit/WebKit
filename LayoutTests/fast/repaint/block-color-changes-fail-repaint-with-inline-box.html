@@ -1,0 +1,37 @@
+<style>
+body {
+  font-family: Ahem;
+  font-size: 20px;
+}
+div {
+  text-decoration: underline;
+  text-decoration-color: black;
+}
+</style>
+<div id=change_this><span>PASS if this is red</span></div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  window.internals?.startTrackingRepaints();
+
+  change_this.style.textDecorationColor = "red";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  window.testRunner?.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

@@ -1,0 +1,6 @@
+text
+
+PASS dominant-baseline does not support the SVG 1.1 values removed in SVG 2
+PASS dominant-baseline removed values are not parsed in a style declaration
+PASS dominant-baseline removed values are not supported SVG presentation attributes
+

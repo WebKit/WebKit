@@ -1,0 +1,32 @@
+<html>
+<body>
+<canvas width="100" height="100" style="border: solid 1px gray"></canvas>
+<script>
+const clip = 20;
+const shadowOffsetX = -20;
+const iterations = 10;
+const increment = 4;
+
+const canvas = document.getElementsByTagName('canvas')[0];
+const width = canvas.width - clip;
+const ctx = canvas.getContext('2d');
+
+let region = new Path2D();
+region.rect(0, 0, width, canvas.height);
+ctx.clip(region);
+
+ctx.shadowColor = "black";
+ctx.shadowOffsetX = shadowOffsetX;
+
+ctx.font = "10px monospace";
+ctx.fillStyle = "blue";
+
+for (let i = 0; i < iterations; ++i) {
+  const x = width + (i - iterations / 2) * increment;
+  const y = i * 10;
+  ctx.fillText("Hi", x, y);
+}
+
+</script>
+</body>
+</html>

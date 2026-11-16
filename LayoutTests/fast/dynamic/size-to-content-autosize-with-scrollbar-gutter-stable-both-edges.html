@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Size-to-content autosize should account for scrollbar-gutter: stable both-edges</title>
+<style>
+html, body {
+    width: 450px;
+    margin: 0;
+    scrollbar-gutter: stable both-edges;
+}
+body::before {
+    content: "";
+    position: fixed;
+    display: block;
+    width: 400px;
+    height: 50px;
+    background: green;
+}
+body::after {
+    content: "";
+    display: block;
+    min-height: 2000px;
+    background: blue;
+}
+#probe {
+    position: absolute;
+    visibility: hidden;
+    width: 100px;
+    height: 100px;
+    overflow: scroll;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.enableSizeToContentAutoSizeMode(true, 800, 600);
+</script>
+</head>
+<body>
+<div id="probe"></div>
+<pre id="log"></pre>
+<script>
+function log(s) { document.getElementById("log").textContent += s + "\n"; }
+
+onload = () => {
+    let probe = document.getElementById("probe");
+    // Thickness of a classic scrollbar; 0 with overlay scrollbars, in which case there is no gutter.
+    let gutter = probe.offsetWidth - probe.clientWidth;
+    let contentWidth = 450;
+
+    log("gutter width is " + (gutter ? "non-zero" : "zero (overlay scrollbars)"));
+    // Reserved gutters on both edges must be part of the auto-sized view width.
+    log((innerWidth >= contentWidth + 2 * gutter ? "PASS" : "FAIL") + ": view width fits content plus both gutters");
+    // The layout viewport excludes the gutters, so the root must not be narrower than its specified width.
+    log((document.documentElement.clientWidth >= contentWidth ? "PASS" : "FAIL") + ": layout viewport is not narrower than the content");
+
+    if (window.internals)
+        internals.enableSizeToContentAutoSizeMode(false, 0, 0);
+};
+</script>
+</body>
+</html>

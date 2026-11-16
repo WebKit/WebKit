@@ -1,0 +1,7 @@
+AAA
+BBB
+
+PASS caretPositionFromPoint just inside a tall flex child resolves to that child
+PASS caretPositionFromPoint well inside a tall flex child resolves to that child
+PASS caretPositionFromPoint inside the short flex child resolves correctly
+

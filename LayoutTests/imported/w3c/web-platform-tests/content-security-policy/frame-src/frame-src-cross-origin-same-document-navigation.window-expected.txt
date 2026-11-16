@@ -1,0 +1,3 @@
+
+PASS frame-src-cross-origin-same-document-navigation
+

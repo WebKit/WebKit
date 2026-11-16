@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+body { transition: background-color 1s }
+.green { background-color: green }
+</style>
+<style id="sheet"></style>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+onload = function(){
+    document.body.className = "green";
+    // Needs these frames to establish a baseComputedStyle.
+    requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+            requestAnimationFrame(function(){
+                sheet.innerText = "@font-face { font-family: notfound; src: url(notfound.ttf) }";
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        });
+    });
+};
+</script>
+<p>Pass if no crash or assert</p>

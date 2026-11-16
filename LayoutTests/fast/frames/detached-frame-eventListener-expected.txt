@@ -1,0 +1,12 @@
+Tests that the EventTarget API is no longer working on detached frames.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+addEventListenerFunction.call(childWindow, 'myevent', function() { callbackCalled = true; });
+PASS dispatchEventFunc.call(childWindow, new Event('myevent')) is undefined.
+PASS callbackCalled is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+
+PASS Duplicate stylesheets have the right cascade position in the Document
+PASS Appending duplicate stylesheets yields the correct cascade position in the Document
+PASS Duplicate stylesheets have the right cascade position in the ShadowRoot
+PASS Appending duplicate stylesheets yields the correct cascade position in the ShadowRoot
+

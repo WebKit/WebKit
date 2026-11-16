@@ -1,0 +1,9 @@
+This test makes sure that the AX parent chain hierarchy with iframes is correct
+
+PASS: parentIframeWebArea.isEqual(iframeScrollArea) === true
+PASS: parentIframeScrollArea.isEqual(webArea) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,101 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "linear"
+PASS Executing "exponential"
+PASS Executing "setTarget"
+PASS Executing "setValueCurve"
+PASS Audit report
+PASS > [linear]
+PASS   Initialize linearRamp(100, 0.058594) with setValueAtTime(0.25, 0)
+PASS   linearRamp(100, 0.058594) at frame 127 is 6.848047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 255 is 13.498047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 383 is 20.148047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 511 is 26.798047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 639 is 33.448047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 767 is 40.098047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 895 is 46.748047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 1023 is 53.398047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 1151 is 60.048047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 1279 is 66.698047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 1407 is 73.348047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 1535 is 79.998047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 1663 is 86.648047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 1791 is 93.298047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 1919 is 99.948047 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 2047 is 100 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 2175 is 100 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 2303 is 100 within an error of 0.000001.
+PASS   linearRamp(100, 0.058594) at frame 2431 is 100 within an error of 0.000001.
+PASS   Gain .value attribute for linearRamp(100, 0.058594) correctly updated during automation
+PASS < [linear] All assertions passed. (total 21 assertions)
+PASS > [exponential]
+PASS   Initialize exponentialRamp(100, 0.058594) with setValueAtTime(0.25, 0)
+PASS   exponentialRamp(100, 0.058594) at frame 127 is 0.371583 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 255 is 0.554021 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 383 is 0.826032 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 511 is 1.231594 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 639 is 1.836277 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 767 is 2.737844 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 895 is 4.082060 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 1023 is 6.086254 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 1151 is 9.074459 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 1279 is 13.529802 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 1407 is 20.172610 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 1535 is 30.076879 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 1663 is 44.843905 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 1791 is 66.861189 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 1919 is 99.688431 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 2047 is 100 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 2175 is 100 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 2303 is 100 within an error of 7.4601e-7.
+PASS   exponentialRamp(100, 0.058594) at frame 2431 is 100 within an error of 7.4601e-7.
+PASS   Gain .value attribute for exponentialRamp(100, 0.058594) correctly updated during automation
+PASS < [exponential] All assertions passed. (total 21 assertions)
+PASS > [setTarget]
+PASS   Initialize setTargetAtTime(0, 0, 0.1) with setValueAtTime(0.25, 0)
+PASS   setTargetAtTime(0, 0, 0.1) at frame 127 is 0.240496 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 255 is 0.231283 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 383 is 0.222422 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 511 is 0.213902 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 639 is 0.205707 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 767 is 0.197827 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 895 is 0.190248 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 1023 is 0.182960 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 1151 is 0.175951 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 1279 is 0.169210 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 1407 is 0.162728 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 1535 is 0.156494 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 1663 is 0.150499 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 1791 is 0.144733 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 1919 is 0.139188 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 2047 is 0.133856 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 2175 is 0.128728 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 2303 is 0.123797 within an error of 0.000002.
+PASS   setTargetAtTime(0, 0, 0.1) at frame 2431 is 0.119054 within an error of 0.000002.
+PASS   Gain .value attribute for setTargetAtTime(0, 0, 0.1) correctly updated during automation
+PASS < [setTarget] All assertions passed. (total 21 assertions)
+PASS > [setValueCurve]
+PASS   Initialize setValueCurveAtTime([1,1.5,4], 0, 0.058594) with setValueAtTime(0.25, 0)
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 127 is 1.066146 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 255 is 1.132813 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 383 is 1.199479 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 511 is 1.266146 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 639 is 1.332812 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 767 is 1.399479 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 895 is 1.466146 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 1023 is 1.664063 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 1151 is 1.997396 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 1279 is 2.330729 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 1407 is 2.664063 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 1535 is 2.997396 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 1663 is 3.330729 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 1791 is 3.664062 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 1919 is 3.997396 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 2047 is 4 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 2175 is 4 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 2303 is 4 within an error of 7.9577e-8.
+PASS   setValueCurveAtTime([1,1.5,4], 0, 0.058594) at frame 2431 is 4 within an error of 7.9577e-8.
+PASS   Gain .value attribute for setValueCurveAtTime([1,1.5,4], 0, 0.058594) correctly updated during automation
+PASS < [setValueCurve] All assertions passed. (total 21 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
+

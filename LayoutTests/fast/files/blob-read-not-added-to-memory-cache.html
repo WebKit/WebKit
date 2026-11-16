@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Reading a Blob should not add a resource to the memory cache, because each read uses a unique temporary URL that will never be requested again.");
+jsTestIsAsync = true;
+
+const blobCount = 100;
+const blobSize = 1000;
+
+function readWithFileReader(blob)
+{
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader;
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsArrayBuffer(blob);
+    });
+}
+
+onload = async () => {
+    if (!window.internals) {
+        testFailed("This test requires window.internals");
+        finishJSTest();
+        return;
+    }
+
+    internals.clearMemoryCache();
+    initialMemoryCacheSize = internals.memoryCacheSize();
+
+    const payload = "a".repeat(blobSize);
+    for (let i = 0; i < blobCount; i++) {
+        await new Blob([payload]).arrayBuffer();
+        await new Blob([payload]).text();
+        await readWithFileReader(new Blob([payload]));
+    }
+
+    memoryCacheSizeAfterReads = internals.memoryCacheSize();
+    shouldBe("memoryCacheSizeAfterReads", "initialMemoryCacheSize");
+    finishJSTest();
+};
+</script>
+</body>
+</html>

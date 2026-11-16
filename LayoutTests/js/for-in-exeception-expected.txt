@@ -1,0 +1,12 @@
+Test for (foo in somethingWhichThrows) to catch ASSERT
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test(throwUndefinedException) is undefined.
+PASS test(throwNullException) is undefined.
+PASS test(throwStringException) threw exception PASSED.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

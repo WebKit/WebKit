@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .target {
+            margin: 100px;
+            width: 400px;
+            height: 400px;
+            background-color: silver;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function doTest()
+        {
+            const output = [];
+
+            await UIHelper.setWebViewAllowsMagnification(true);
+
+            await UIHelper.smartMagnifyAt(300, 300);
+            output.push('Zoomed in: ' + (window.visualViewport.scale > 1));
+
+            await UIHelper.smartMagnifyAt(400, 300);
+            output.push('Double tap on the same element zoomed back out: ' + (window.visualViewport.scale == 1));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="target"></div>
+    <pre id="output"></pre>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<table style="border-collapse:collapse; border:1px solid #ccc;">
+  <tr>
+    <td style="padding:8px; border:1px solid #ddd;">Cell 1</td>
+    <td style="padding:8px; border:1px solid #ddd;">Cell 2</td>
+  </tr>
+</table>
+
+Text outside table
+
+<script>
+var output = "This test ensures we return the right attributes for text within tables.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var markerRange = webArea.textMarkerRangeForElement(webArea);
+    output += webArea.attributedStringForTextMarkerRange(markerRange);
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

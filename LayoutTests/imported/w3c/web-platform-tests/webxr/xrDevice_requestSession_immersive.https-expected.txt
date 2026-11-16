@@ -1,0 +1,8 @@
+
+PASS Tests requestSession resolves when supported - webgl
+PASS Tests requestSession resolves when supported - webgl2
+PASS Tests requestSession accepts XRSessionInit dictionary - webgl
+PASS Tests requestSession accepts XRSessionInit dictionary - webgl2
+PASS Tests requestSession ignores unknown optionalFeatures - webgl
+PASS Tests requestSession ignores unknown optionalFeatures - webgl2
+

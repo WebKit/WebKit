@@ -1,0 +1,3 @@
+
+PASS Test SVGNumber to-animation with a valid value still animates.
+

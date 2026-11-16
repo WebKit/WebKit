@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+iframe {
+    width: 200px;
+    height: 100px;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+    <iframe id="iframe" title="CVV Input" onload="runTest()" src="../resources/local-frame-text-input.html"></iframe>
+</div>
+
+<script>
+var output = "Ensures a caret/selection move inside a text input in an in-process (local) iframe posts AXSelectedTextChanged on the main-frame web area. Regression test for VoiceOver character navigation being silent inside a local iframe: the child frame's selection change was posted only on the child frame's own web area, never on the main web area (the document text-selection context VoiceOver tracks), so nothing was announced.\n";
+
+window.jsTestIsAsync = true;
+
+var mainWebArea;
+var receivedSelectionChangedOnMainWebArea = false;
+
+function notificationCallback(element, notificationName) {
+    if (notificationName !== "AXSelectedTextChanged")
+        return;
+
+    // With the fix, a selection change inside the local child frame is also posted on this (main) frame's
+    // web area. Without it, the notification is posted only on the child frame's own web area and never
+    // reaches the main web area here, so the test times out.
+    if (!receivedSelectionChangedOnMainWebArea && element && mainWebArea && element.isEqual(mainWebArea)) {
+        receivedSelectionChangedOnMainWebArea = true;
+        output += expect("receivedSelectionChangedOnMainWebArea", "true");
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }
+}
+
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    setTimeout(async function() {
+        await waitForIframeAccessibilityReady("container", "cvv");
+
+        mainWebArea = accessibilityController.rootElement.childAtIndex(0);
+        accessibilityController.addNotificationListener(notificationCallback);
+
+        // Put content in the iframe's input, focus it, then move the caret. The selection change happens
+        // inside the child frame; the fix relays AXSelectedTextChanged up to the main web area. Deferred
+        // so we don't dirty the selection in the middle of AX notification dispatch.
+        var input = document.getElementById("iframe").contentDocument.getElementById("cvv");
+        input.value = "123";
+        input.focus();
+        setTimeout(() => { input.setSelectionRange(1, 3); }, 0);
+    }, 0);
+}
+</script>
+</body>
+</html>

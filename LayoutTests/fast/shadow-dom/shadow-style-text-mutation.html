@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.test {
+    width: 100px;
+    height: 25px;
+    background: red;
+}
+#host4 { background: green };
+</style>
+</head>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p> 
+<div id="host1" class="test"></div>
+<div id="host2" class="test"></div>
+<div id="host3" class="test"></div>
+<div id="host4" class="test"></div>
+<script>
+{
+    var host = document.getElementById('host1');
+    var shadow = host.attachShadow({mode: 'closed'});
+    shadow.innerHTML = `
+        <div style="height:100%"></div>
+    `;
+    document.body.offsetWidth;
+    var style = document.createElement("style");
+    style.textContent = "div { background: green; }";
+    shadow.appendChild(style);
+}
+{
+    var host = document.getElementById('host2');
+    var shadow = host.attachShadow({mode: 'closed'});
+    shadow.innerHTML = `
+        <style></style>
+        <div style="height:100%"></div>
+    `;
+    document.body.offsetWidth;
+    shadow.querySelector('style').textContent = "div { background: green; }";
+}
+{
+    var host = document.getElementById('host3');
+    var shadow = host.attachShadow({mode: 'closed'});
+    shadow.innerHTML = `
+        <style>div { background: red; }</style>
+        <div style="height:100%"></div>
+    `;
+    document.body.offsetWidth;
+    shadow.querySelector('style').textContent = "div { background: green; }";
+}
+{
+    var host = document.getElementById('host4');
+    var shadow = host.attachShadow({mode: 'closed'});
+    shadow.innerHTML = `
+    <style>div { background: red; }</style>
+    <div style="height:100%"></div>
+    `;
+    document.body.offsetWidth;
+    shadow.querySelector('style').textContent = "";
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+PASS getSelection().toString() is ""
+PASS sliderPosition is 180
+PASS isDraggingSlider is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Hello world

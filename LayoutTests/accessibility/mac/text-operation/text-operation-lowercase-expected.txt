@@ -1,0 +1,23 @@
+Tests that a Lowercase text operation transforms text to lowercase as expected.
+
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'brown fo'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: THE QUICK brown foX JUMPS OVER THE LAZY DOG.'
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'er the la'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: THE QUICK brown foX JUMPS OV er the la ZY DOG.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === 'lazy'
+PASS: operationResult[1] === 'ps over'
+PASS: operationResult[2] === 'e quick bro'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT2: THe quick broWN FOX JUMps over THE lazy DOG.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === 'lazy'
+PASS: operationResult[1] === 'ps over'
+PASS: operationResult[2] === 'e quick bro'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT3: TH e quick bro WN FOX JUM ps over THE lazy DOG.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

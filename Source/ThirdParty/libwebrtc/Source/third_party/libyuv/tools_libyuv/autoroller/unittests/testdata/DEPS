@@ -1,0 +1,21 @@
+# DEPS file for unit tests.
+
+vars = {
+  'chromium_git': 'https://chromium.googlesource.com',
+  'chromium_revision': '1b9c098a08e40114e44b6c1ec33ddf95c40b901d',
+  'ignored_str': Str(''),
+}
+
+deps = {
+  # Entry that is a directory in Chromium, so we're using a Git subtree mirror for it.
+  'src/build':
+    Var('chromium_git') + '/chromium/src/build' + '@' + '52f7afeca991d96d68cf0507e20dbdd5b845691f',
+
+  # Entry that's also a DEPS entry in the Chromium DEPS file.
+  'src/buildtools':
+    Var('chromium_git') + '/chromium/buildtools.git' + '@' + '64e38f0cebdde27aa0cfb405f330063582f9ac76',
+
+  # Entry only present in libyuv, not Chromium.
+  'src/third_party/gflags/src':
+    Var('chromium_git') + '/external/github.com/gflags/gflags@03bebcb065c83beff83d50ae025a55a4bf94dfca',
+}

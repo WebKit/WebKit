@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Numbers larger than 999 (more than 3 digits) are not valid ordered-list markers; typing "1000. hi" should not trigger smart-list conversion.');
+
+var test = document.getElementById('test');
+test.focus();
+[...'1000. hi'].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+security.resize.cross
+Resizing the canvas dimensions resets the origin-clean flag
+Actual output:
+
+PASS Resizing the canvas dimensions resets the origin-clean flag
+

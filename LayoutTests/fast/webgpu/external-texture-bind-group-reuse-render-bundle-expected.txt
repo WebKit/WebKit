@@ -1,0 +1,2 @@
+reused with no render bundle recorded: true
+reused after the bind group was recorded into a render bundle: false

@@ -1,0 +1,3 @@
+
+PASS Browsers must ignore <title> elements after the first one.
+

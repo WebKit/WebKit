@@ -1,0 +1,3 @@
+
+FAIL selectionchange event fired on a shadow dom bubble to the document assert_equals: expected 1 but got 0
+

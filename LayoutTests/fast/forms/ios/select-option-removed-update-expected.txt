@@ -1,0 +1,13 @@
+This test verifies that a <select> element's menu is updated if options are removed while it is visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "Option 1"
+PASS areArraysEqual(items, ["Option 1", "Option 2", "Option 3"]) is true
+PASS areArraysEqual(items, ["Option 2", "Option 3"]) is true
+PASS select.value is "Option 3"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

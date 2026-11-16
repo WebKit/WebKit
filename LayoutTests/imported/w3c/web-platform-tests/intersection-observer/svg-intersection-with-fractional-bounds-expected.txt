@@ -1,0 +1,6 @@
+
+PASS IntersectionObserver observing an SVG <rect> with fractional bounds element
+PASS Initial Observation
+PASS Intersection observation after scrolling 300
+PASS Intersection observation after scrolling 100
+

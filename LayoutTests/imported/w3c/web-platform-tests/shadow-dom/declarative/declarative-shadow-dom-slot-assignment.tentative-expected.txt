@@ -1,0 +1,10 @@
+
+PASS shadowrootslotassignment reflection
+PASS shadowrootslotassignment reflection, setter
+PASS Declarative Shadow DOM: shadowrootslotassignment=manual
+PASS Declarative Shadow DOM: shadowrootslotassignment=named
+PASS Declarative Shadow DOM: shadowrootslotassignment is case insensitive
+PASS Declarative Shadow DOM: shadowrootslotassignment invalid value defaults to named
+PASS Declarative Shadow DOM: shadowrootslotassignment on closed shadows can be set to manual
+PASS Declarative Shadow DOM: missing shadowrootslotassignment defaults to named
+

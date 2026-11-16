@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+  </head>
+  <body>
+    <input id="testInput" maxlength="10" />
+    <script>
+        description("Tests that input length limits use code units and not grapheme clusters.");
+        jsTestIsAsync = true;
+        async function runTest() {
+            testInput = document.getElementById("testInput");
+            await UIHelper.copyText("👨‍👩‍👧‍👦");
+            await UIHelper.activateElementAndWaitForInputSession(testInput);
+            await UIHelper.paste();
+            shouldBeEqualToString("testInput.value", "👨‍👩‍👧‍");
+            finishJSTest();
+        }
+        addEventListener("load", runTest);
+    </script>
+  </body>
+</html>

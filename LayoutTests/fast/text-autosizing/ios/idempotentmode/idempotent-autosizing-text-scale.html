@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true contentMode=desktop ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=0.5">
+<meta name="text-scale" content="scale">
+<script>
+if (window.internals) {
+    internals.settings.setTextAutosizingEnabled(true);
+    internals.settings.setTextAutosizingUsesIdempotentMode(true);
+}
+</script>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+#text { font-size: 8px; }
+</style>
+</head>
+<body>
+<p id="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+<script>
+async function textFontSize() {
+    await UIHelper.ensurePresentationUpdate();
+    return parseFloat(getComputedStyle(document.getElementById("text")).fontSize);
+}
+
+promise_test(async () => {
+    assert_equals(await textFontSize(), 8);
+}, "Idempotent text autosizing does not inflate text with <meta name=text-scale content=scale>");
+
+promise_test(async t => {
+    const meta = document.querySelector("meta[name=text-scale]");
+    meta.remove();
+    t.add_cleanup(() => {
+        document.head.appendChild(meta);
+        document.getElementById("text").remove();
+    });
+    assert_greater_than(await textFontSize(), 8, "after removing the meta");
+    document.head.appendChild(meta);
+    assert_equals(await textFontSize(), 8, "after adding the meta back");
+}, "Removing and adding the text-scale meta toggles idempotent text autosizing");
+</script>
+</body>
+</html>

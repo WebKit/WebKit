@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+        
+        .changer {
+            background-color: cyan;
+            width: 200px;
+            height: 200px;
+        }
+
+        .anchor {
+            background-color: green;
+            width: 200px;
+            height: 200px;
+        }
+            
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="resources/scroll-anchoring-utils.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        async function doAdjustments(numAdjustments, amount, expectAnchoring)
+        {
+            const changer = document.querySelector('.changer');
+            
+            window.scrollTo(0, 250);
+            
+            for (let i = 0; i < numAdjustments - 1; ++i) {
+                toggleHeight(changer, amount);
+                await UIHelper.renderingUpdate();
+            }
+
+            // Test whether anchoring is active on the last one.
+            const currentScrollY = window.scrollY;
+            const adjustment = toggleHeight(changer, amount);
+            anchoringActive = window.scrollY === (currentScrollY + adjustment);
+
+            if (expectAnchoring)
+                shouldBeTrue('anchoringActive');
+            else
+                shouldBeFalse('anchoringActive');
+        }
+
+        window.addEventListener('load', async () => {
+            await UIHelper.delayFor(0);
+
+            const amount = 10;
+            let iterations = 11;
+            let expectAnchor = false;
+            debug(`\nTesting anchoring with ${iterations} of size ${amount} - expect anchoring ${expectAnchor}`);
+            await doAdjustments(iterations, amount, expectAnchor);
+
+            window.scrollTo(0, 0);
+            
+            debug(`\nWaiting for just over 3s`);
+            await UIHelper.delayFor(3050);
+
+            iterations = 3;
+            expectAnchor = true;
+            debug(`\nTesting anchoring with ${iterations} of size ${amount} - expect anchoring ${expectAnchor}`);
+            await doAdjustments(iterations, amount, expectAnchor);
+
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="changer"></div>
+    <div class="anchor"></div>
+    <div id="console"></div>
+</body>
+</html>

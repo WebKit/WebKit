@@ -1,0 +1,36 @@
+Test passes if there are green rectangles and no red.
+
+
+PASS height: auto; width: 160px; aspect-ratio: 16 / 9 — the block size comes from the ratio
+PASS height: min-content; width: 160px; aspect-ratio: 16 / 9 — the block size comes from the ratio
+PASS height: max-content; width: 160px; aspect-ratio: 16 / 9 — the block size comes from the ratio
+PASS height: fit-content; width: 160px; aspect-ratio: 16 / 9 — the block size comes from the ratio
+PASS height: auto; width: 160px; aspect-ratio: 16 / 9; bottom: -90px — the ratio wins over the insets
+PASS height: min-content; width: 160px; aspect-ratio: 16 / 9; bottom: -90px — the ratio wins over the insets
+PASS height: max-content; width: 160px; aspect-ratio: 16 / 9; bottom: -90px — the ratio wins over the insets
+PASS height: fit-content; width: 160px; aspect-ratio: 16 / 9; bottom: -90px — the ratio wins over the insets
+PASS height: auto; width: 160px; aspect-ratio: 16 / 9 — the automatic minimum size keeps the content from overflowing
+PASS height: min-content; width: 160px; aspect-ratio: 16 / 9 — the automatic minimum size keeps the content from overflowing
+PASS height: max-content; width: 160px; aspect-ratio: 16 / 9 — the automatic minimum size keeps the content from overflowing
+PASS height: fit-content; width: 160px; aspect-ratio: 16 / 9 — the automatic minimum size keeps the content from overflowing
+PASS height: auto; width: 160px; aspect-ratio: 16 / 9; min-height: 0 — no automatic minimum size, the content overflows
+PASS height: min-content; width: 160px; aspect-ratio: 16 / 9; min-height: 0 — no automatic minimum size, the content overflows
+PASS height: max-content; width: 160px; aspect-ratio: 16 / 9; min-height: 0 — no automatic minimum size, the content overflows
+PASS height: fit-content; width: 160px; aspect-ratio: 16 / 9; min-height: 0 — no automatic minimum size, the content overflows
+PASS height: auto; width: 160px; aspect-ratio: 16 / 9; padding: 10px — the ratio applies to the content box
+PASS height: min-content; width: 160px; aspect-ratio: 16 / 9; padding: 10px — the ratio applies to the content box
+PASS height: max-content; width: 160px; aspect-ratio: 16 / 9; padding: 10px — the ratio applies to the content box
+PASS height: fit-content; width: 160px; aspect-ratio: 16 / 9; padding: 10px — the ratio applies to the content box
+PASS height: auto; width: 160px; aspect-ratio: 16 / 9; padding: 10px; box-sizing: border-box — the ratio applies to the border box
+PASS height: min-content; width: 160px; aspect-ratio: 16 / 9; padding: 10px; box-sizing: border-box — the ratio applies to the border box
+PASS height: max-content; width: 160px; aspect-ratio: 16 / 9; padding: 10px; box-sizing: border-box — the ratio applies to the border box
+PASS height: fit-content; width: 160px; aspect-ratio: 16 / 9; padding: 10px; box-sizing: border-box — the ratio applies to the border box
+PASS height: auto; width: 160px; aspect-ratio: 16 / 9; display: flex — flex container
+PASS height: min-content; width: 160px; aspect-ratio: 16 / 9; display: flex — flex container
+PASS height: max-content; width: 160px; aspect-ratio: 16 / 9; display: flex — flex container
+PASS height: fit-content; width: 160px; aspect-ratio: 16 / 9; display: flex — flex container
+PASS width: auto; height: 90px; aspect-ratio: 16 / 9 — vertical writing mode
+PASS width: min-content; height: 90px; aspect-ratio: 16 / 9 — vertical writing mode
+PASS width: max-content; height: 90px; aspect-ratio: 16 / 9 — vertical writing mode
+PASS width: fit-content; height: 90px; aspect-ratio: 16 / 9 — vertical writing mode
+

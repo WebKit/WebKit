@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <script>
+            function playVideo() {
+                document.getElementById("video").play().then(function() {
+                    try {
+                        window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
+                    } catch(e) { }
+                }).catch(function() {
+                    try {
+                        window.webkit.messageHandlers.testHandler.postMessage("did-not-play");
+                    } catch(e) { }
+                });
+            }
+
+            function pauseVideo() {
+                document.getElementById("video").pause();
+            }
+
+            function videoDidPause() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("on-pause");
+                } catch(e) { }
+            }
+        </script>
+    </head>
+    <body onload="playVideo()">
+        <video id="video" onpause=videoDidPause() playsinline src="test.mp4" />
+    </body>
+</html>

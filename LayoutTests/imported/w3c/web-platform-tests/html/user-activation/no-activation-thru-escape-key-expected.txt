@@ -1,0 +1,8 @@
+No user activation through 'Escape' key
+
+Tests that pressing/releasing 'Escape' key is not treated as a user activation.
+
+
+
+PASS 'Escape' key doesn't activate a page.
+

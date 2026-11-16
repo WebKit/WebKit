@@ -1,0 +1,5 @@
+
+PASS scrollIntoView({block: "center", inline: "center"})
+PASS scrollIntoView({block: "start", inline: "start"})
+PASS scrollIntoView({block: "end", inline: "end"})
+

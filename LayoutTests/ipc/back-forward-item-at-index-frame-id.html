@@ -1,0 +1,123 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>BackForwardItemAtIndexForWebContent and BackForwardAllItems only describe frames of the page</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+const MAIN_SENTINEL = "BFLIST-MAIN-SENTINEL";
+const SUBFRAME_SENTINEL = "back-forward-item-at-index-subframe";
+const NO_SUCH_FRAME = [0xdeadbeefdeadbeefn];
+
+function sendSync(messageName, args)
+{
+    const reply = IPC.sendSyncMessage("UI", IPC.pageID, IPC.messages[messageName].name, 1000, args)?.arguments?.[0];
+    if (!(reply instanceof ArrayBuffer))
+        throw new Error(`No reply to ${messageName}`);
+    const bytes = new Uint8Array(reply);
+    const text = new TextDecoder("latin1").decode(bytes);
+    return {
+        nonEmpty: !!bytes[0],
+        hasMainFrameState: text.includes(MAIN_SENTINEL),
+        hasSubframeState: text.includes(SUBFRAME_SENTINEL),
+    };
+}
+
+function itemAtIndex(delta, frameID)
+{
+    return sendSync("WebBackForwardList_BackForwardItemAtIndexForWebContent",
+        [{ type: "int32_t", value: delta }, { type: "FrameID", value: frameID }]);
+}
+
+function allItems(frameID)
+{
+    return sendSync("WebBackForwardList_BackForwardAllItems", [{ type: "FrameID", value: frameID }]);
+}
+
+function takeInvalidMessageString()
+{
+    const reply = IPC.sendSyncMessage("UI", 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply?.arguments?.[0]?.value ?? "";
+}
+
+const setupPromise = (async () => {
+    history.pushState(null, "", "#" + MAIN_SENTINEL);
+    const iframe = document.createElement("iframe");
+    const iframeLoaded = new Promise(resolve => iframe.onload = resolve);
+    iframe.src = "resources/back-forward-item-at-index-subframe.html";
+    document.body.appendChild(iframe);
+    await iframeLoaded;
+
+    if (!window.IPC)
+        return null;
+
+    takeInvalidMessageString();
+
+    const otherWindow = window.open("resources/back-forward-item-at-index-subframe.html");
+    let otherPageFrameID = null;
+    for (let i = 0; i < 100 && !otherPageFrameID; ++i) {
+        try {
+            otherPageFrameID = otherWindow.IPC.frameID;
+        } catch (e) {
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
+    }
+    if (!otherPageFrameID)
+        throw new Error("Could not get the frame identifier of a second page");
+
+    return { mainFrameID: IPC.frameID, subframeID: iframe.contentWindow.IPC.frameID, otherPageFrameID };
+})();
+
+function backForwardTest(name, body)
+{
+    promise_test(async () => {
+        const context = await setupPromise;
+        if (context)
+            body(context);
+    }, name);
+}
+
+backForwardTest("BackForwardItemAtIndexForWebContent serves the main frame", context => {
+    assert_true(itemAtIndex(0, context.mainFrameID).hasMainFrameState);
+});
+
+backForwardTest("BackForwardAllItems serves the main frame", context => {
+    assert_true(allItems(context.mainFrameID).hasMainFrameState);
+});
+
+backForwardTest("BackForwardItemAtIndexForWebContent serves a subframe its own state", context => {
+    const result = itemAtIndex(0, context.subframeID);
+    assert_true(result.hasSubframeState, "subframe state was returned");
+    assert_false(result.hasMainFrameState, "main frame state was not returned");
+});
+
+backForwardTest("BackForwardAllItems serves a subframe its own state", context => {
+    const result = allItems(context.subframeID);
+    assert_true(result.hasSubframeState, "subframe state was returned");
+    assert_false(result.hasMainFrameState, "main frame state was not returned");
+});
+
+backForwardTest("BackForwardItemAtIndexForWebContent returns nothing for a subframe missing from the entry", context => {
+    assert_true(itemAtIndex(-1, context.mainFrameID).nonEmpty, "the previous entry exists");
+    assert_false(itemAtIndex(-1, context.subframeID).nonEmpty, "main frame state was not substituted");
+});
+
+backForwardTest("BackForwardItemAtIndexForWebContent returns nothing for a frameID naming no frame", () => {
+    assert_false(itemAtIndex(0, NO_SUCH_FRAME).nonEmpty);
+});
+
+backForwardTest("BackForwardAllItems returns nothing for a frameID naming no frame", () => {
+    assert_false(allItems(NO_SUCH_FRAME).hasMainFrameState);
+});
+
+backForwardTest("BackForwardItemAtIndexForWebContent returns nothing for another page's main frame", context => {
+    assert_false(itemAtIndex(0, context.otherPageFrameID).nonEmpty);
+});
+
+backForwardTest("BackForwardAllItems returns nothing for another page's main frame", context => {
+    assert_false(allItems(context.otherPageFrameID).hasMainFrameState);
+});
+
+backForwardTest("Rejecting a frameID is not a message check", () => {
+    assert_equals(takeInvalidMessageString(), "");
+});
+</script>

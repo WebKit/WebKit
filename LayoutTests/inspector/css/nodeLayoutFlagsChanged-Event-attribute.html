@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.nodeLayoutFlagsChanged.Event");
+
+    function addTestCase({name, description, selector, setup, domNodeHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            setup,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+                await domNodeHandler(domNode);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Event.Attribute.Initial",
+        description: "Test node with an attribute event listener.",
+        selector: "#target",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should have Event layout flag.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Event.Attribute.Removed.Parent",
+        description: "Test that removing an attribute event listener from a parent has no effect on the child.",
+        selector: "#target",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should have Event layout flag.");
+
+            InspectorTest.log("Removing attribute event listener from parent...");
+            let listener = domNode.singleFireEventListener(WI.DOMNode.Event.LayoutFlagsChanged, (event) => {
+                InspectorTest.fail("Should not change layout flags of child.");
+            });
+            await InspectorTest.evaluateInPage(`document.querySelector("#parent").onclick = null`);
+            domNode.removeEventListener(WI.DOMNode.Event.LayoutFlagsChanged, listener);
+
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should have Event layout flag.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Event.Attribute.Removed.Child",
+        description: "Test that removing an attribute event listener from a child has no effect on the parent.",
+        selector: "#target",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should have Event layout flag.");
+
+            InspectorTest.log("Removing attribute event listener from child...");
+            let listener = domNode.singleFireEventListener(WI.DOMNode.Event.LayoutFlagsChanged, (event) => {
+                InspectorTest.fail("Should not change layout flags of parent.");
+            });
+            await InspectorTest.evaluateInPage(`document.querySelector("#child").onclick = null`);
+            domNode.removeEventListener(WI.DOMNode.Event.LayoutFlagsChanged, listener);
+
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should have Event layout flag.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Event.Attribute.Removed",
+        description: "Test removing an attribute event listener.",
+        selector: "#target",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should have Event layout flag.");
+
+            InspectorTest.log("Removing attribute event listener...");
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                InspectorTest.evaluateInPage(`document.querySelector("#target").onclick = null`),
+            ]);
+
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should not have Event layout flag.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Event.Attribute.Added.Parent",
+        description: "Test that adding an attribute event listener to a parent has no effect on the child.",
+        selector: "#target",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(!domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should not have Event layout flag.");
+
+            InspectorTest.log("Adding attribute event listener to parent...");
+            let listener = domNode.singleFireEventListener(WI.DOMNode.Event.LayoutFlagsChanged, (event) => {
+                InspectorTest.fail("Should not change layout flags of child.");
+            });
+            await InspectorTest.evaluateInPage(`document.querySelector("#parent").onclick = (function parentClick2() { })`);
+            domNode.removeEventListener(WI.DOMNode.Event.LayoutFlagsChanged, listener);
+
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should not have Event layout flag.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Event.Attribute.Added.Child",
+        description: "Test that adding an attribute event listener to a child has no effect on the parent.",
+        selector: "#target",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(!domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should not have Event layout flag.");
+
+            InspectorTest.log("Adding attribute event listener to child...");
+            let listener = domNode.singleFireEventListener(WI.DOMNode.Event.LayoutFlagsChanged, (event) => {
+                InspectorTest.fail("Should not change layout flags of parent.");
+            });
+            await InspectorTest.evaluateInPage(`document.querySelector("#child").onclick = (function childClick2() { })`);
+            domNode.removeEventListener(WI.DOMNode.Event.LayoutFlagsChanged, listener);
+
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should not have Event layout flag.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Event.Attribute.Added",
+        description: "Test adding an attribute event listener.",
+        selector: "#target",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(!domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should not have Event layout flag.");
+
+            InspectorTest.log("Adding attribute event listener...");
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                InspectorTest.evaluateInPage(`document.querySelector("#target").onclick = (function targetClick2() { })`),
+            ]);
+
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should have Event layout flag.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Event.Attribute.RapidChange",
+        description: "Test rapidly removing and adding an attribute event listener.",
+        selector: "#target",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should have Event layout flag.");
+
+            InspectorTest.log("Rapidly changing attribute event listener...");
+            let listener = domNode.singleFireEventListener(WI.DOMNode.Event.LayoutFlagsChanged, (event) => {
+                InspectorTest.fail("Should not change layout flags.");
+            });
+            await InspectorTest.evaluateInPage(`for (let i = 0; i < 10; ++i) { let old = document.querySelector("#target").onclick; document.querySelector("#target").onclick = null; document.querySelector("#target").onclick = old; }`);
+            domNode.removeEventListener(WI.DOMNode.Event.LayoutFlagsChanged, listener);
+
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Event), "Should have Event layout flag.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.nodeLayoutFlagsChanged event with the Event enum.</p>
+
+    <div id="parent" onclick="(function parentClick(event) { })()">
+        <div id="target" onclick="(function targetClick(event) { })()">
+            <div id="child" onclick="(function childClick(event) { })()">
+        </div>
+    </div>
+</body>
+</html>

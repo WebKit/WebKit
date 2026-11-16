@@ -1,0 +1,10 @@
+
+PASS initial position
+PASS scroll to 100
+PASS scroll to 101
+FAIL scroll back to 100 assert_equals: expected 150 but got 149
+PASS redisplay at 100
+PASS scroll to 200
+PASS scroll to 300
+PASS scroll back to 0
+

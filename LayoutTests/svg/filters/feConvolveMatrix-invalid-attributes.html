@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<style>
+.target {
+    width: 60px;
+    height: 60px;
+    margin: 10px;
+    display: inline-block;
+    background-color: green;
+    border: 10px solid black;
+}
+</style>
+</head>
+<body>
+<!--
+The spec says an invalid divisor (0) or kernelUnitLength (negative or zero) is
+replaced by the default value. Each target must render the same as the filter
+without the invalid attribute, whether the value is in the markup, set with
+setAttribute() after the filter has been rendered, or set through the SVG DOM
+after the filter has been rendered.
+-->
+<svg width="0" height="0" style="position: absolute">
+    <filter id="markup-divisor-zero-filter">
+        <feConvolveMatrix id="markup-divisor-zero" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" divisor="0"/>
+    </filter>
+    <filter id="markup-divisor-zero-zero-sum-kernel-filter">
+        <feConvolveMatrix id="markup-divisor-zero-zero-sum-kernel" order="3" kernelMatrix="1 0 0 0 1 0 0 0 -2" divisor="0"/>
+    </filter>
+    <filter id="markup-kernelUnitLength-zero-filter">
+        <feConvolveMatrix id="markup-kernelUnitLength-zero" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" kernelUnitLength="0"/>
+    </filter>
+    <filter id="markup-kernelUnitLength-negative-filter">
+        <feConvolveMatrix id="markup-kernelUnitLength-negative" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" kernelUnitLength="-1"/>
+    </filter>
+    <filter id="markup-kernelUnitLength-zero-x-filter">
+        <feConvolveMatrix id="markup-kernelUnitLength-zero-x" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" kernelUnitLength="0 1"/>
+    </filter>
+    <filter id="markup-kernelUnitLength-zero-y-filter">
+        <feConvolveMatrix id="markup-kernelUnitLength-zero-y" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" kernelUnitLength="1 0"/>
+    </filter>
+
+    <filter id="attribute-divisor-zero-filter">
+        <feConvolveMatrix id="attribute-divisor-zero" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-divisor-zero-zero-sum-kernel-filter">
+        <feConvolveMatrix id="attribute-divisor-zero-zero-sum-kernel" order="3" kernelMatrix="1 0 0 0 1 0 0 0 -2"/>
+    </filter>
+    <filter id="attribute-kernelUnitLength-zero-filter">
+        <feConvolveMatrix id="attribute-kernelUnitLength-zero" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-kernelUnitLength-negative-filter">
+        <feConvolveMatrix id="attribute-kernelUnitLength-negative" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-kernelUnitLength-zero-x-filter">
+        <feConvolveMatrix id="attribute-kernelUnitLength-zero-x" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-kernelUnitLength-zero-y-filter">
+        <feConvolveMatrix id="attribute-kernelUnitLength-zero-y" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+
+    <filter id="dom-divisor-zero-filter">
+        <feConvolveMatrix id="dom-divisor-zero" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-divisor-zero-zero-sum-kernel-filter">
+        <feConvolveMatrix id="dom-divisor-zero-zero-sum-kernel" order="3" kernelMatrix="1 0 0 0 1 0 0 0 -2"/>
+    </filter>
+    <filter id="dom-kernelUnitLength-zero-filter">
+        <feConvolveMatrix id="dom-kernelUnitLength-zero" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-kernelUnitLength-negative-filter">
+        <feConvolveMatrix id="dom-kernelUnitLength-negative" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-kernelUnitLength-zero-x-filter">
+        <feConvolveMatrix id="dom-kernelUnitLength-zero-x" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-kernelUnitLength-zero-y-filter">
+        <feConvolveMatrix id="dom-kernelUnitLength-zero-y" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+
+    <filter id="markup-divisor-zero-to-valid-filter">
+        <feConvolveMatrix id="markup-divisor-zero-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" divisor="0"/>
+    </filter>
+    <filter id="markup-kernelUnitLength-zero-to-valid-filter">
+        <feConvolveMatrix id="markup-kernelUnitLength-zero-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" kernelUnitLength="0"/>
+    </filter>
+</svg>
+
+<div class="target" style="filter: url(#markup-divisor-zero-filter)"></div>
+<div class="target" style="filter: url(#markup-divisor-zero-zero-sum-kernel-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelUnitLength-zero-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelUnitLength-negative-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelUnitLength-zero-x-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelUnitLength-zero-y-filter)"></div>
+
+<div class="target" style="filter: url(#attribute-divisor-zero-filter)"></div>
+<div class="target" style="filter: url(#attribute-divisor-zero-zero-sum-kernel-filter)"></div>
+<div class="target" style="filter: url(#attribute-kernelUnitLength-zero-filter)"></div>
+<div class="target" style="filter: url(#attribute-kernelUnitLength-negative-filter)"></div>
+<div class="target" style="filter: url(#attribute-kernelUnitLength-zero-x-filter)"></div>
+<div class="target" style="filter: url(#attribute-kernelUnitLength-zero-y-filter)"></div>
+
+<div class="target" style="filter: url(#dom-divisor-zero-filter)"></div>
+<div class="target" style="filter: url(#dom-divisor-zero-zero-sum-kernel-filter)"></div>
+<div class="target" style="filter: url(#dom-kernelUnitLength-zero-filter)"></div>
+<div class="target" style="filter: url(#dom-kernelUnitLength-negative-filter)"></div>
+<div class="target" style="filter: url(#dom-kernelUnitLength-zero-x-filter)"></div>
+<div class="target" style="filter: url(#dom-kernelUnitLength-zero-y-filter)"></div>
+
+<div class="target" style="filter: url(#markup-divisor-zero-to-valid-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelUnitLength-zero-to-valid-filter)"></div>
+<script>
+function setKernelUnitLength(id, x, y)
+{
+    const convolveMatrix = document.getElementById(id);
+    convolveMatrix.kernelUnitLengthX.baseVal = x;
+    convolveMatrix.kernelUnitLengthY.baseVal = y;
+}
+
+onload = () => requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.getElementById("attribute-divisor-zero").setAttribute("divisor", "0");
+    document.getElementById("attribute-divisor-zero-zero-sum-kernel").setAttribute("divisor", "0");
+    document.getElementById("attribute-kernelUnitLength-zero").setAttribute("kernelUnitLength", "0");
+    document.getElementById("attribute-kernelUnitLength-negative").setAttribute("kernelUnitLength", "-1");
+    document.getElementById("attribute-kernelUnitLength-zero-x").setAttribute("kernelUnitLength", "0 1");
+    document.getElementById("attribute-kernelUnitLength-zero-y").setAttribute("kernelUnitLength", "1 0");
+
+    document.getElementById("dom-divisor-zero").divisor.baseVal = 0;
+    document.getElementById("dom-divisor-zero-zero-sum-kernel").divisor.baseVal = 0;
+    setKernelUnitLength("dom-kernelUnitLength-zero", 0, 0);
+    setKernelUnitLength("dom-kernelUnitLength-negative", -1, -1);
+    setKernelUnitLength("dom-kernelUnitLength-zero-x", 0, 1);
+    setKernelUnitLength("dom-kernelUnitLength-zero-y", 1, 0);
+
+    document.getElementById("markup-divisor-zero-to-valid").setAttribute("divisor", "9");
+    document.getElementById("markup-kernelUnitLength-zero-to-valid").setAttribute("kernelUnitLength", "1");
+
+    requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.remove("reftest-wait")));
+}));
+</script>
+</body>
+</html>

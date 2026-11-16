@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>test</title>
+  <script>
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+    }
+
+    function doTest()
+    {
+      document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
+      if (window.testRunner) {
+        testRunner.notifyDone();
+      }
+    }
+    
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+
+<body style="position:fixed">
+  <div id="container" style="transform-origin: left top; transform: scale(5); ">
+    <div id="negative" style="position: relative; z-index: -1;"></div>
+    <div id="positive" style="position: relative">
+      <iframe srcdoc="Hello, world" style="width: 200px; height: 100px;"></iframe>
+    </div>
+  </div>
+<pre id="results"></pre>
+</body>
+
+</html>
+

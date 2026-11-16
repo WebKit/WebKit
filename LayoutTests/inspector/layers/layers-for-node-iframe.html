@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/layer-utilities.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("LayerTree.layersForNode.IFrame");
+
+    suite.addTestCase({
+        name: "LayerTree.layersForNode.IFrame.IncludesFrameLayers",
+        description: "Layers for a document should include the layers of its same-process frames, in the document's coordinates.",
+        async test() {
+            let {documentNode, layers} = await getDocumentAndLayers();
+            let nodes = layers.map((layer) => WI.domManager.nodeForId(layer.nodeId));
+
+            let iframeLayer = layers.find((layer, i) => nodes[i]?.localName() === "iframe");
+            InspectorTest.expectNotNull(iframeLayer, "Should report the layer hosting the iframe.");
+            InspectorTest.expectNull(iframeLayer?.contentFrameRect || null, "Layer hosting the iframe should not report a content box, since the frame's layers are included.");
+
+            let innerLayers = layers.filter((layer, i) => nodes[i]?.getAttribute("id") === "inner");
+            InspectorTest.expectEqual(innerLayers.length, 1, "Should report the frame's composited element exactly once.");
+            InspectorTest.expectThat(innerLayers[0] && nodes[layers.indexOf(innerLayers[0])].ownerDocument !== documentNode, "Frame's composited element should belong to the frame's document.");
+            InspectorTest.expectEqual(innerLayers[0]?.bounds.x, iframeLayer?.bounds.x, "Frame's composited element should be at the frame's left edge.");
+            InspectorTest.expectEqual(innerLayers[0]?.bounds.y, iframeLayer?.bounds.y, "Frame's composited element should be at the frame's top edge.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+};
+
+</script>
+</head>
+<body onload="runTest()">
+
+    <p>Test that LayerTree.layersForNode includes the layers of a same-process frame.</p>
+    <iframe style="width: 200px; height: 150px; border: 0;" srcdoc="<body style='margin: 0'><div id='inner' style='width: 50px; height: 50px; will-change: transform;'></div></body>"></iframe>
+
+</body>
+</html>

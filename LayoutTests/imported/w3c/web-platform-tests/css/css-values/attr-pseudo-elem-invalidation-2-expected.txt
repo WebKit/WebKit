@@ -1,0 +1,16 @@
+Some text
+Item
+
+Some content
+
+
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 1
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 2
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 3
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 4
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 5
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 6
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 7
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 8
+

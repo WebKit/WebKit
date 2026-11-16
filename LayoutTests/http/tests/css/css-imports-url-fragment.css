@@ -1,0 +1,2 @@
+@import url("#foo");
+@import url("../resources/redirect.py?url=../css/css-imports-url-fragment.css#foo");

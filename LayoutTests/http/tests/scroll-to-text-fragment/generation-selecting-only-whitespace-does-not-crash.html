@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8" />
+<title>Scroll to text fragment generation - ensure that we trim whitespace from the generated fragments.</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', () => {
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById("test"));
+    document.body.innerText = "No Crash";
+});
+</script>
+</head>
+<body>This is a very simple<span id="test"> </span>document.There is no text before 'this'.</body>
+</html>
+

@@ -1,0 +1,10 @@
+
+PASS :basic:isAsync=true
+PASS :basic:isAsync=false
+PASS :precision:isAsync=true
+PASS :precision:isAsync=false
+PASS :shared_shader_module:isAsync=true
+PASS :shared_shader_module:isAsync=false
+PASS :multi_entry_points:isAsync=true
+PASS :multi_entry_points:isAsync=false
+

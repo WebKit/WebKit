@@ -1,0 +1,14 @@
+<style>
+div {
+  display: flex;
+}
+ruby {
+  ruby-position: over;
+}
+</style>
+<div><ruby id=foobar>base<rt>annotation</rt></ruby></div>
+PASS if annotation is below base.
+<script>
+document.body.offsetHeight;
+foobar.style.rubyPosition = "under";
+</script>

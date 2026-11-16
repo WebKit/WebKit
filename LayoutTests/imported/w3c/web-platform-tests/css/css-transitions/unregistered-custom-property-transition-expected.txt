@@ -1,0 +1,5 @@
+
+PASS unset -> first value transition with allow-discrete
+PASS first value -> unset transition with allow-discrete
+PASS retargeting a running transition with allow-discrete
+

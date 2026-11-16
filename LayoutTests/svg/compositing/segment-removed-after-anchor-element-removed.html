@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html class="reftest-wait">
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+    .anchor { transform: translateZ(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsPixels = true;
+    }
+
+    // Removing the only composited child before the plain middle rect tears down its overlay segment layer. The remaining green and blue must still match the uncomposited scene.
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            document.getElementById('first-anchor').remove();
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                document.documentElement.classList.remove('reftest-wait');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }));
+        }));
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g id="first-anchor" class="anchor"><rect x="10" y="10" width="120" height="120" fill="red"/></g>
+    <rect x="40" y="40" width="120" height="120" fill="green"/>
+    <g id="last-anchor" class="anchor"><rect x="70" y="70" width="120" height="120" fill="blue"/></g>
+</svg>
+</body>
+</html>

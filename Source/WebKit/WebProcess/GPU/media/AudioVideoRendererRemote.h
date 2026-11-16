@@ -1,0 +1,402 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+
+#include "GPUProcessConnection.h"
+#include "LayerHostingContext.h"
+#include "RemoteAudioVideoRendererIdentifier.h"
+#include "RemoteAudioVideoRendererState.h"
+#include "VideoLayerRemote.h"
+#include "WorkQueueMessageReceiver.h"
+#include <WebCore/AudioVideoRenderer.h>
+#include <WebCore/FourCC.h>
+#include <WebCore/HTMLMediaElementIdentifier.h>
+#include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/MediaSampleConverter.h>
+#include <WebCore/PacedMediaSamplesDecoder.h>
+#include <WebCore/SharedTimebase.h>
+#include <WebCore/VideoPlaybackQualityMetrics.h>
+#include <wtf/CanBorrow.h>
+#include <wtf/Forward.h>
+#include <wtf/LoggerHelper.h>
+#include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
+
+namespace IPC {
+class Connection;
+class Decoder;
+}
+
+namespace WebCore {
+struct HostingContext;
+class VideoLayerManager;
+class CDMInstance;
+class LegacyCDMSession;
+}
+
+namespace WebKit {
+
+class AudioVideoRendererRemote final
+    : public WebCore::AudioVideoRenderer
+    , public VideoLayerRemoteParent
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+    , public GPUProcessConnection::Client
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioVideoRendererRemote> {
+public:
+    static Ref<AudioVideoRendererRemote> create(LoggerHelper*, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, GPUProcessConnection&);
+    ~AudioVideoRendererRemote();
+
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
+
+    class MessageReceiver final : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
+    public:
+        static Ref<MessageReceiver> create(AudioVideoRendererRemote& parent)
+        {
+            return adoptRef(*new MessageReceiver(parent));
+        }
+
+    private:
+        MessageReceiver(AudioVideoRendererRemote&);
+        void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+        void firstFrameAvailable(RemoteAudioVideoRendererState);
+        void hasAvailableVideoFrame(MediaTime, double, RemoteAudioVideoRendererState, std::optional<WebCore::VideoPlaybackQualityMetrics>);
+        void requiresFlushToResume(RemoteAudioVideoRendererState);
+        void renderingModeChanged(RemoteAudioVideoRendererState);
+        void sizeChanged(MediaTime, WebCore::FloatSize, RemoteAudioVideoRendererState);
+        void trackNeedsReenqueuing(WebCore::SamplesRendererTrackIdentifier, MediaTime, RemoteAudioVideoRendererState);
+        void effectiveRateChanged(RemoteAudioVideoRendererState);
+        void taskTimeReached(MediaTime, RemoteAudioVideoRendererState);
+        void errorOccurred(WebCore::PlatformMediaError);
+        void readyForMoreMediaData(WebCore::SamplesRendererTrackIdentifier);
+        void stateUpdate(RemoteAudioVideoRendererState);
+        void updatePlaybackQualityMetrics(WebCore::VideoPlaybackQualityMetrics);
+
+#if PLATFORM(COCOA)
+        void layerHostingContextChanged(RemoteAudioVideoRendererState, WebCore::HostingContext&&, const WebCore::FloatSize&);
+#endif
+        ThreadSafeWeakPtr<AudioVideoRendererRemote> m_parent;
+    };
+
+private:
+    friend class MessageReceiver;
+    AudioVideoRendererRemote(LoggerHelper*, GPUProcessConnection&, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, RemoteAudioVideoRendererIdentifier);
+
+    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
+
+    void shutdown() final;
+
+    void setVolume(float) final;
+    void setMuted(bool) final;
+    void setPreservesPitchAndCorrectionAlgorithm(bool, std::optional<PitchCorrectionAlgorithm>) final;
+#if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
+    void setOutputDeviceId(const String&) final;
+#endif
+
+    void setIsVisible(bool) final;
+    void setPresentationSize(const WebCore::IntSize&) final;
+    void setShouldMaintainAspectRatio(bool) final;
+    void renderingCanBeAcceleratedChanged(bool) final;
+    void contentBoxRectChanged(const WebCore::LayoutRect&) final;
+    void notifyFirstFrameAvailable(Function<void()>&&) final;
+    void notifyWhenHasAvailableVideoFrame(Function<void(const MediaTime&, double)>&&) final;
+    void notifyWhenRequiresFlushToResume(Function<void()>&&) final;
+    void notifyRenderingModeChanged(Function<void()>&&) final;
+    void expectMinimumUpcomingPresentationTime(const MediaTime&) final;
+    void notifySizeChanged(Function<void(const MediaTime&, WebCore::FloatSize)>&&) final;
+    void setShouldDisableHDR(bool) final;
+    void setPlatformDynamicRangeLimit(const WebCore::PlatformDynamicRangeLimit&) final;
+    void setResourceOwner(const WebCore::ProcessIdentity&) final;
+    void flushAndRemoveImage() final;
+    RefPtr<WebCore::VideoFrame> currentVideoFrame() const final;
+    void paintCurrentVideoFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
+    RefPtr<WebCore::NativeImage> currentNativeImage() const final;
+    Ref<BitmapImagePromise> currentBitmapImage() const final;
+    std::optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+    PlatformLayer* platformVideoLayer() const final;
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&&) final;
+    void setVideoFullscreenFrame(const WebCore::FloatRect&) final;
+    void isInFullscreenOrPictureInPictureChanged(bool) final;
+#endif
+
+    void play(std::optional<MonotonicTime>) final;
+    void pause(std::optional<MonotonicTime>) final;
+    bool paused() const final;
+    void setRate(double) final;
+    double effectiveRate() const final;
+    void stall() final;
+    Ref<WebCore::MediaTimePromise> prepareToSeek(const MediaTime&) final;
+    Ref<GenericPromise> finishSeek(const MediaTime&) final;
+    bool seeking() const final;
+    void setScreenReserved(bool) final;
+    WebCore::SharedTimebase* sharedTimebase() final { return nullptr; }
+
+    void setPreferences(WebCore::VideoRendererPreferences) final;
+    void setHasProtectedVideoContent(bool) final;
+
+    std::optional<TrackIdentifier> addTrack(TrackType) final;
+    void removeTrack(TrackIdentifier) final;
+
+    void enqueueSample(TrackIdentifier, Ref<WebCore::MediaSample>&&, std::optional<MediaTime>) final;
+    bool isReadyForMoreSamples(TrackIdentifier) final;
+    Ref<RequestPromise> requestMediaDataWhenReady(TrackIdentifier) final;
+    void notifyTrackNeedsReenqueuing(TrackIdentifier, Function<void(TrackIdentifier, const MediaTime&)>&&) final;
+
+    bool timeIsProgressing() const final;
+    void notifyEffectiveRateChanged(Function<void(double)>&&) final;
+    MediaTime currentTime() const final;
+    WebCore::PacedMediaSamplesDecoder::PlaybackPosition playbackPosition() const;
+    Ref<WebCore::MediaTimePromise> notifyTimeReachedAndStall(const MediaTime&) final;
+    void cancelTimeReachedAction() final;
+    void performTaskAtTime(const MediaTime&, Function<void(const MediaTime&)>&&) final;
+
+    void flush() final;
+    void flushTrack(TrackIdentifier) final;
+
+    void applicationWillResignActive() final;
+
+    void notifyWhenErrorOccurs(Function<void(WebCore::PlatformMediaError)>&&) final;
+
+    using SoundStageSize = WebCore::MediaPlayerSoundStageSize;
+    void setSpatialTrackingInfo(bool, SoundStageSize, const String&, const String&, const String&) final;
+
+    // Remote Layers
+    Ref<HostingContextPromise> requestHostingContext() final;
+    WebCore::HostingContext hostingContext() const final;
+    void setLayerHostingContext(WebCore::HostingContext&&);
+#if PLATFORM(COCOA)
+    WebCore::FloatSize videoLayerSize() const;
+    void setVideoLayerSize(const WebCore::FloatSize&) final;
+    void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&) final;
+#endif
+    void notifyVideoLayerSizeChanged(Function<void(const MediaTime&, WebCore::FloatSize)>&& callback) final;
+    // VideoLayerRemoteParent
+    bool inVideoFullscreenOrPictureInPicture() const final;
+    WebCore::FloatSize naturalSize() const final;
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    void setCDMInstance(WebCore::CDMInstance*) final;
+    Ref<WebCore::MediaPromise> setInitData(Ref<WebCore::SharedBuffer>) final;
+    void attemptToDecrypt() final;
+#endif
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void setCDMSession(WebCore::LegacyCDMSession*) final;
+#endif
+
+    // Logger
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    ASCIILiteral logClassName() const final { return "AudioVideoRendererRemote"_s; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
+    void setState(RemoteAudioVideoRendererState);
+
+    // Runs the function on the queue as long as the renderer is alive.
+    void ensureWeakOnDispatcher(Function<void(AudioVideoRendererRemote&)>&&);
+    static void ensureOnDispatcher(Function<void()>&&);
+    void ensureOnDispatcherSync(NOESCAPE Function<void()>&&);
+    void ensureOnDispatcherWithConnection(Function<void(AudioVideoRendererRemote&, IPC::Connection&)>&&);
+    static WorkQueue& queueSingleton();
+    bool isGPURunning() const { return !m_gpuProcessConnectionShutDown; }
+
+    void updateCacheState(const RemoteAudioVideoRendererState&);
+    void updateVideoPlaybackMetricsUpdateInterval(const Seconds&);
+    // Pending samples are those accepted from the caller that neither the GPU process nor the decoder has consumed yet.
+    class ReadyForMoreDataState {
+    public:
+        static constexpr size_t kMaxPendingSamples = 20;
+        bool isReadyForMoreData() const { return m_pendingSampleCount < kMaxPendingSamples && m_remoteReadyForMoreData && m_decoderReadyForMoreData && !m_awaitingFlush; }
+        void setRemoteReadyForMoreData(bool ready) { m_remoteReadyForMoreData = ready; }
+        void setDecoderReadyForMoreData(bool ready) { m_decoderReadyForMoreData = ready; }
+        void setAwaitingFlush(bool awaitingFlush) { m_awaitingFlush = awaitingFlush; }
+        void addPendingSample() { m_pendingSampleCount++; }
+        void removePendingSamples(size_t count = 1) { m_pendingSampleCount -= count; }
+        size_t pendingSampleCount() const { return m_pendingSampleCount; }
+    private:
+        size_t m_pendingSampleCount { 0 };
+        bool m_remoteReadyForMoreData { true };
+        bool m_decoderReadyForMoreData { true };
+        bool m_awaitingFlush { false };
+    };
+    ReadyForMoreDataState& readyForMoreDataState(TrackIdentifier);
+    void resolveRequestMediaDataWhenReadyIfNeeded(TrackIdentifier);
+
+    struct PendingSample {
+        WebCore::MediaSamplesBlock sample;
+        std::optional<MediaTime> expectedMinimum;
+    };
+    // A track's state for one format. A format change or a flush replaces it.
+    struct TrackState : CanBorrow {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(TrackState);
+        enum class Mode : uint8_t { Compressed, Creating, Decoding, Draining, Failed };
+        TrackState(Ref<const WebCore::TrackInfo>&& info, bool isProtected, uint64_t generation, Mode mode, RefPtr<WebCore::PacedMediaSamplesDecoder>&& decoder = nullptr)
+            : info(WTF::move(info))
+            , isProtected(isProtected)
+            , generation(generation)
+            , mode(mode)
+            , decoder(WTF::move(decoder))
+        {
+        }
+        bool matches(const WebCore::TrackInfo& otherInfo, bool otherIsProtected) const { return info.ptr() == &otherInfo && isProtected == otherIsProtected; }
+
+        const Ref<const WebCore::TrackInfo> info;
+        const bool isProtected;
+        // Decoder callbacks are ignored unless their generation is the current state's.
+        const uint64_t generation;
+        Mode mode;
+        RefPtr<WebCore::PacedMediaSamplesDecoder> decoder;
+        // Samples received while the decoder is created or drained.
+        Vector<PendingSample> waiting;
+        // The decoder whose requestMediaDataWhenReady() promise is outstanding.
+        ThreadSafeWeakPtr<WebCore::PacedMediaSamplesDecoder> decoderAwaitingReadiness;
+    };
+    TrackState* trackStateIfExists(TrackIdentifier) LIFETIME_BOUND;
+    TrackState* trackStateIfCurrent(TrackIdentifier, uint64_t generation) LIFETIME_BOUND;
+    TrackState& setTrackState(TrackIdentifier, UniqueRef<TrackState>&&) LIFETIME_BOUND;
+    std::unique_ptr<TrackState> takeTrackState(TrackIdentifier);
+    bool isVideoTrack(TrackIdentifier) const;
+    template<typename Function> void forEachTrackState(NOESCAPE const Function&);
+    TrackState& trackStateForFormat(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected) LIFETIME_BOUND;
+    TrackState& createTrackState(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected) LIFETIME_BOUND;
+    TrackState& replaceDecodingTrackState(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected, uint64_t generation) LIFETIME_BOUND;
+    bool shouldDecodeInContentProcess(const WebCore::TrackInfo&, bool isProtected) const;
+    static void releaseDecoder(TrackState&);
+    RefPtr<GPUProcessConnection> activeConnection();
+    void processSample(TrackIdentifier, Ref<WebCore::MediaSample>&&, std::optional<MediaTime>);
+    void dispatchSample(TrackIdentifier, PendingSample&&);
+    void drainDecoder(TrackIdentifier, TrackState&, bool isProtected);
+    void didCreateDecoder(TrackIdentifier, Ref<WebCore::PacedMediaSamplesDecoder>&&);
+    void didDrainDecoder(TrackIdentifier, Vector<WebCore::MediaSamplesBlock>&&);
+    void resumeWaitingSamples(TrackIdentifier);
+    void dropWaitingSamples(TrackIdentifier);
+    void decoderFailed(TrackIdentifier, WebCore::PlatformMediaError);
+    void failTrack(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected, WebCore::PlatformMediaError, size_t droppedSamples);
+    void hardwareDecoderUnavailable();
+    void requestVideoReenqueue(TrackIdentifier);
+    void setVideoAwaitingFlush(TrackIdentifier, bool);
+    void resetVideoFallbackState();
+    void removePendingSamples(TrackIdentifier, size_t count = 1);
+    void sendSample(TrackIdentifier, WebCore::MediaSamplesBlock&&, std::optional<MediaTime>);
+    void sendDecodedSamples(TrackIdentifier, Vector<WebCore::MediaSamplesBlock>&&);
+    void willFlushTrack(TrackIdentifier);
+    void sendFlushTrack(TrackIdentifier);
+    void releaseTrackState(TrackIdentifier);
+    void releaseAllDecoders();
+    void notifyDecodersOfTimeChange();
+    void updateDecoderReadiness(TrackIdentifier);
+
+    void cancelPendingSeek();
+
+    const ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    const Ref<MessageReceiver> m_receiver;
+    const RemoteAudioVideoRendererIdentifier m_identifier;
+
+    std::atomic<bool> m_gpuProcessConnectionShutDown { false };
+    std::atomic<bool> m_isShutdown { false };
+
+    mutable Lock m_lock;
+    struct CachedState {
+        bool paused { false };
+        std::optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics;
+    };
+    CachedState m_cachedState WTF_GUARDED_BY_LOCK(m_lock);
+    MonotonicTime m_lastPlaybackQualityMetricsQueryTime WTF_GUARDED_BY_LOCK(m_lock);
+    Seconds m_videoPlaybackMetricsUpdateInterval WTF_GUARDED_BY_LOCK(m_lock);
+    const std::unique_ptr<WebCore::SharedTimebaseReader> m_sharedTimebaseReader WTF_GUARDED_BY_LOCK(m_lock);
+    // Upper bound on currentTime() so the SharedTimebaseReader's wall-clock
+    // extrapolation can't overshoot a stall boundary (e.g. the start of a
+    // buffered gap). Set by notifyTimeReachedAndStall, cleared by
+    // cancelTimeReachedAction or a seek that crosses it.
+    std::optional<MediaTime> m_stallCap WTF_GUARDED_BY_LOCK(m_lock);
+
+    Function<void(WebCore::PlatformMediaError)> m_errorCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Function<void()> m_firstFrameAvailableCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Function<void(const MediaTime&, double)> m_hasAvailableVideoFrameCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Function<void()> m_notifyWhenRequiresFlushToResumeCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Function<void()> m_renderingModeChangedCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Function<void(const MediaTime&, WebCore::FloatSize)> m_sizeChangedCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Function<void(const MediaTime&)> m_currentTimeDidChangeCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Function<void(double)> m_effectiveRateChangedCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    std::optional<WebCore::MediaTimePromise::Producer> m_stallProducer WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Ref<NativePromiseRequest> m_stallRequest WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Function<void(const MediaTime&)> m_performTaskAtTimeCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    MediaTime m_performTaskAtTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Function<void(const MediaTime&, WebCore::FloatSize)> m_videoLayerSizeChangedCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+
+    HashMap<TrackIdentifier, ReadyForMoreDataState> m_readyForMoreDataStates WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<TrackIdentifier, std::unique_ptr<RequestPromise::AutoRejectProducer>> m_requestMediaDataWhenReadyDataPromises WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    HashMap<TrackIdentifier, Function<void(TrackIdentifier, const MediaTime&)>> m_trackNeedsReenqueuingCallbacks WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    HashMap<TrackIdentifier, WebCore::MediaSampleConverter> m_mediaSampleConverters WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    HashMap<TrackIdentifier, UniqueRef<TrackState>> m_audioTrackStates WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    // Only a single video track can be active at a time.
+    std::optional<TrackIdentifier> m_videoTrackIdentifier WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    std::unique_ptr<TrackState> m_videoTrackState WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    uint64_t m_nextTrackStateGeneration WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { 0 };
+    // The format last sent to the GPU process for each track.
+    HashMap<TrackIdentifier, Ref<const WebCore::TrackInfo>> m_lastSentInfos WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    // Video codecs the GPU process has no hardware decoder for; they are decoded in the content process.
+    Vector<WebCore::FourCC> m_hardwareUnavailableVideoCodecs WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    // Video samples are dropped until the client flushes the video track, or until the next keyframe if it can't be asked to.
+    bool m_videoAwaitingFlush WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
+    bool m_videoAwaitingKeyframe WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
+    const bool m_audioDecodingInContentProcess;
+    const Vector<WebCore::FourCC> m_videoCodecsDecodedInContentProcess;
+
+    WebCore::HostingContext m_layerHostingContext WTF_GUARDED_BY_LOCK(m_lock);
+    WebCore::FloatSize m_naturalSize WTF_GUARDED_BY_LOCK(m_lock);
+
+    // Seek Tracking
+    Ref<NativePromiseRequest> m_prepareSeekRequest WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    std::optional<WebCore::MediaTimePromise::Producer> m_prepareSeekPromise WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Ref<NativePromiseRequest> m_finishSeekRequest WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    std::optional<GenericPromise::Producer> m_finishSeekPromise WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    std::atomic<bool> m_seeking { false };
+    MediaTime m_lastSeekTime WTF_GUARDED_BY_LOCK(m_lock);
+
+#if PLATFORM(COCOA)
+    const UniqueRef<WebCore::VideoLayerManager> m_videoLayerManager WTF_GUARDED_BY_LOCK(m_lock);
+    mutable PlatformLayerContainer m_videoLayer WTF_GUARDED_BY_LOCK(m_lock);
+    WebCore::FloatSize m_videoLayerSize WTF_GUARDED_BY_LOCK(m_lock);
+#endif
+#if !RELEASE_LOG_DISABLED
+    const Ref<const Logger> m_logger;
+    const uint64_t m_logIdentifier;
+#endif
+    bool m_keyframeNeeded { true };
+};
+
+}
+
+#endif

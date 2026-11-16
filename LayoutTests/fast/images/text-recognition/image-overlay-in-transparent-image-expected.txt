@@ -1,0 +1,6 @@
+PASS boundingRect.width is 250
+PASS boundingRect.height is 200
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

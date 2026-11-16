@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+@keyframes test {
+    to { content: "" }
+}
+
+p {
+    position: relative;
+    block-size: 2rem;
+    transform: translate3d(0, 0, 0);
+    top: 0;
+}
+
+p:first-child {
+    animation: test 400ms infinite;
+}
+
+input {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    font-size: 18px;
+    padding: 4px;
+    height: 100px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that edit menu can be shown when tapping in a text field with a looping animation.");
+
+    const container = document.querySelector(".input-container");
+
+    await UIHelper.activateElementAndWaitForInputSession(container);
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.activateElement(container);
+    await UIHelper.waitForMenuToShow();
+
+    testPassed("Revealed edit menu");
+    document.querySelector("input").blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<p class="input-container"><input placeholder="Try to paste here" /></p>
+</body>
+</html>

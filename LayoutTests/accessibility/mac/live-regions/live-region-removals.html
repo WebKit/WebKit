@@ -1,0 +1,55 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+<meta charset="utf-8" />
+</head>
+<body>
+
+<ul id="team-list" aria-live="polite" aria-relevant="removals" style="list-style-type: none;">
+    <li>Giants</li>
+    <li>Cubs</li>
+    <li>Orioles</li>
+    <li>Tigers</li>
+</ul>
+
+<script>
+var output = "This tests that the notifications for aria-relevant=removals are correct.\n\n";    
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAnnouncementUserInfo(userInfo);
+        output += `\n`;
+        
+        testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("team-list");
+
+    // Adding an element shouldn't speak anything when aria-relevant="removals" is set.
+    const newTeam = document.createElement("li");
+    newTeam.textContent = "Mariners";
+    document.getElementById("team-list").appendChild(newTeam);
+ 
+    setTimeout(async function() {
+        await waitFor(() => accessibilityController.accessibleElementById("team-list") != null);
+        // We should speak a remove notification for this item because of aria-relevant="removals".
+        document.getElementById("team-list").lastElementChild.remove();
+    
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

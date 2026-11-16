@@ -1,0 +1,4 @@
+
+PASS Re-entrant createElement() of the same element before super()
+PASS Re-entrant createElement() of the same element after super()
+

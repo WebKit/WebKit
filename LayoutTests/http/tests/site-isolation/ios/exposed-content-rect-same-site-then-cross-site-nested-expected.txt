@@ -1,0 +1,4 @@
+
+
+PASS exposedContentRect is mapped down a frame tree that leaves the main frame's process and comes back
+

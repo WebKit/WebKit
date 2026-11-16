@@ -1,0 +1,5 @@
+Enough text for multiple lines.
+
+
+FAIL drawElementImage does not reveal visited link colors first-line assert_false: The canvas should not reflect the visited state. expected false got true
+

@@ -1,0 +1,7 @@
+word-break: break-all should not put CJK close punctuation at the start of a line.
+
+あえ、かけ
+あ。か
+PASS: 'あえ、かけ' lines=4
+PASS: 'あ。か' lines=2
+

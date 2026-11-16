@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="outer-ancestor">
+    <div id="inner-ancestor" contenteditable="true">
+        <button id="button">Click me</button>
+    </div>
+</div>
+
+<script>
+var output = "This test ensures we compute the correct editable ancestor.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('button').editableAncestor().domIdentifier", "'inner-ancestor'");
+    output += expect("accessibilityController.accessibleElementById('button').highestEditableAncestor().domIdentifier", "'inner-ancestor'");
+
+    output += evalAndReturn("document.getElementById('outer-ancestor').setAttribute('contenteditable', 'true')");
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('button').highestEditableAncestor().domIdentifier", "'outer-ancestor'");
+        output += expect("accessibilityController.accessibleElementById('button').editableAncestor().domIdentifier", "'inner-ancestor'");
+
+        output += evalAndReturn("document.getElementById('inner-ancestor').removeAttribute('contenteditable')");
+        output += await expectAsync("accessibilityController.accessibleElementById('button').editableAncestor().domIdentifier", "'outer-ancestor'");
+        output += await expectAsync("accessibilityController.accessibleElementById('button').highestEditableAncestor().domIdentifier", "'outer-ancestor'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,8 @@
+
+PASS lang only on slot
+PASS lang only on host
+PASS lang on host and slot
+PASS lang on host and slotted element
+PASS lang on host and slot and slotted element
+PASS lang on slot inherits from parent
+

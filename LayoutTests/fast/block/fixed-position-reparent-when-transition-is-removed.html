@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests the case when fixed positioned elements has a new containing block.</title>
+<style>
+div {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+</style>
+</head>
+<body>
+PASS if no crash or assert.
+<div id=container style="position: absolute; transform: rotate(10deg);">
+  <div id=fixedChild style="position: fixed;"></div>
+</div>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+var container = document.getElementById("container"); 
+setTimeout(function() {
+  container.style.transform = "";
+  setTimeout(function() {
+    var removeThis = document.getElementById("fixedChild");
+    removeThis.parentNode.removeChild(removeThis);
+      setTimeout(function() {
+        var newChild = document.createElement("div");
+        newChild.style.position = "absolute";
+        container.appendChild(newChild);
+        if (window.testRunner)
+          testRunner.notifyDone();
+    }, 0);
+  }, 0);
+}, 0);
+</script>
+</body>
+</html>

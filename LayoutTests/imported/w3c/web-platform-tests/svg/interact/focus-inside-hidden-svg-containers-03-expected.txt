@@ -1,0 +1,6 @@
+start
+middle
+end
+
+PASS Hidden SVG Tab focus test
+

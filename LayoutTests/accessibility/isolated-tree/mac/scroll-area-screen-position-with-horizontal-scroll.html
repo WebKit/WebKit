@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true viewWidth=800 viewHeight=600 ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body style="margin: 0">
+
+<div style="width: 3000px; height: 1000px">
+    <!-- Sits exactly at the left edge of the viewport once the page is scrolled right by 400px. -->
+    <a href="#" id="left-edge" style="position: absolute; left: 400px; top: 100px">flush left</a>
+</div>
+
+<script>
+// The scroll area's frame is in view space, so converting it to screen space means undoing the
+// scroll offset baked into the frame's cached screen position. macOS screen coordinates are
+// bottom-left origin, so the horizontal and vertical offsets have to be undone with opposite signs.
+var output = "This test ensures a horizontal scroll offset does not displace the accessibility scroll area.\n\n";
+
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+// Poll with a gap rather than using waitFor(), whose tight setInterval(0) loop starves the
+// rendering update that refreshes the cached frame geometry.
+async function waitForGently(condition) {
+    for (let i = 0; i < 60 && !condition(); i++)
+        await sleep(50);
+}
+
+var scrollArea, leftEdge;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        scrollArea = accessibilityController.rootElement;
+        leftEdge = accessibilityController.accessibleElementById("left-edge");
+        await waitForFrameGeometryReady();
+        await waitForGently(() => leftEdge.x !== 0);
+        const unscrolledX = leftEdge.x;
+
+        window.scrollTo(400, 0);
+        // The frame's screen position is refreshed asynchronously by the UI process, so wait for it
+        // to reflect the new scroll offset before measuring anything.
+        await waitForGently(() => leftEdge.x === unscrolledX - 400);
+
+        output += expect("scrollArea.role", "'AXRole: AXScrollArea'");
+        // #left-edge is now flush with the left edge of the viewport, so it and the scroll area must
+        // start at the same screen position.
+        output += expect("scrollArea.x === leftEdge.x", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

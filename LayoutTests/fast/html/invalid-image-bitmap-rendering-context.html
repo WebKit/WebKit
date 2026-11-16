@@ -1,0 +1,13 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+frames.document.getCSSCanvasContext('2d', 'name', 3, 3);
+frames.document.getCSSCanvasContext('bitmaprenderer', 'name', 3, 3);
+
+globalThis.testRunner?.notifyDone();
+</script>
+
+<body>
+    <p>This test passes if WebKit does not crash.</p>
+</body>

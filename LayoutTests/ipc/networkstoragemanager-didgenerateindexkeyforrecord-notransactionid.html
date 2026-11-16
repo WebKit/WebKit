@@ -1,0 +1,82 @@
+<script>
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
+
+    function test() {
+        var pass = document.getElementById('pass');
+        if (window.IPC) {
+            import('./coreipc.js').then(({
+                CoreIPC
+            }) => {
+                CoreIPC.Networking.NetworkStorageManager.DidGenerateIndexKeyForRecord(IPC.webPageProxyID, {
+                    transactionIdentifier: {
+                        m_idbConnectionIdentifier: {},
+                        m_resourceNumber: {}
+                    },
+                    requestIdentifier: {
+                        m_idbConnectionIdentifier: {},
+                        m_resourceNumber: {}
+                    },
+                    indexInfo: {
+                        identifier: 262145,
+                        objectStoreIdentifier: 17482,
+                        name: 'A',
+                        keyPath: {
+                            alias: {
+                                variantType: 'Vector<String>', variant: []
+                            }
+                        },
+                        unique: true,
+                        multiEntry: true
+                    },
+                    key: {
+                        isPlaceholder: true,
+                        value: {
+                            variantType: 'WebCore::ThreadSafeDataBuffer',
+                            variant: {
+                                m_impl: {
+                                    optionalValue: {
+                                        m_data: [180]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    indexKey: {
+                        data: {
+                            variantType: 'Vector<WebCore::IDBKeyData>',
+                            variant: [
+                                {
+                                    isPlaceholder: false,
+                                    value: {
+                                        variantType: 'WebCore::IDBKeyData::Min',
+                                        variant: {}
+                                    }
+                                },
+                                {
+                                    isPlaceholder: true, value: { variantType: 'String', variant: 'A' }
+                                },
+                                {
+                                    isPlaceholder: false, value: { variantType: 'double', variant: 84 }
+                                },
+                                {
+                                    isPlaceholder: false, value: { variantType: 'std::nullptr_t', variant: null }
+                                }]
+                        }
+                    }, recordID: {}
+                })
+                pass.innerText = "PASS";
+                window.testRunner?.notifyDone();
+            });
+
+        } else {
+            pass.innerText = "PASS";
+            window.testRunner?.notifyDone();
+        }
+    }
+</script>
+
+<body onload="test()">
+    <p>This test passes if webkit does not crash</p>
+    <div id="pass"></div>
+</body>

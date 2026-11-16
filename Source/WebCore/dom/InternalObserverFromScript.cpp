@@ -1,0 +1,133 @@
+/*
+ * Copyright (C) 2024 Keith Cirkel <webkit@keithcirkel.co.uk>. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "InternalObserverFromScript.h"
+
+#include "JSSubscriptionObserverCallback.h"
+#include "ScriptExecutionContext.h"
+#include "Subscriber.h"
+#include "SubscriptionObserver.h"
+
+namespace WebCore {
+
+Ref<InternalObserverFromScript> InternalObserverFromScript::create(ScriptExecutionContext& context, RefPtr<JSSubscriptionObserverCallback> callback)
+{
+    Ref internalObserver = adoptRef(*new InternalObserverFromScript(context, callback));
+    internalObserver->suspendIfNeeded();
+    return internalObserver;
+}
+
+Ref<InternalObserverFromScript> InternalObserverFromScript::create(ScriptExecutionContext& context, SubscriptionObserver&& subscription)
+{
+    Ref internalObserver = adoptRef(*new InternalObserverFromScript(context, WTF::move(subscription)));
+    internalObserver->suspendIfNeeded();
+    return internalObserver;
+}
+
+void InternalObserverFromScript::next(JSC::JSValue value)
+{
+    RefPtr<SubscriptionObserverCallback> next;
+    {
+        Locker locker { m_callbacksLock };
+        next = m_next;
+    }
+    if (next)
+        next->invoke(value);
+}
+
+void InternalObserverFromScript::error(JSC::JSValue value)
+{
+    RefPtr<SubscriptionObserverCallback> error;
+    {
+        Locker locker { m_callbacksLock };
+        error = m_error;
+    }
+    if (error) {
+        error->invoke(value);
+        return;
+    }
+
+    InternalObserver::error(value);
+}
+
+void InternalObserverFromScript::complete()
+{
+    RefPtr<VoidCallback> complete;
+    {
+        Locker locker { m_callbacksLock };
+        complete = m_complete;
+    }
+    if (complete)
+        complete->invoke();
+
+    m_active = false;
+}
+
+void InternalObserverFromScript::stop()
+{
+    RefPtr<SubscriptionObserverCallback> next;
+    RefPtr<SubscriptionObserverCallback> error;
+    RefPtr<VoidCallback> complete;
+    {
+        Locker locker { m_callbacksLock };
+        next = std::exchange(m_next, nullptr);
+        error = std::exchange(m_error, nullptr);
+        complete = std::exchange(m_complete, nullptr);
+    }
+    // The callbacks are destroyed here, outside of the lock.
+}
+
+void InternalObserverFromScript::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const
+{
+    // Do not ref anything in this function, which runs in a GC thread concurrently to the main thread.
+    Locker locker { m_callbacksLock };
+    if (m_next)
+        SUPPRESS_UNCOUNTED_ARG m_next->visitJSFunctionInGCThread(visitor);
+
+    if (m_error)
+        SUPPRESS_UNCOUNTED_ARG m_error->visitJSFunctionInGCThread(visitor);
+
+    if (m_complete)
+        SUPPRESS_UNCOUNTED_ARG m_complete->visitJSFunctionInGCThread(visitor);
+}
+
+InternalObserverFromScript::InternalObserverFromScript(ScriptExecutionContext& context, RefPtr<JSSubscriptionObserverCallback> callback)
+    : InternalObserver(context)
+    , m_next(callback)
+    , m_error(nullptr)
+    , m_complete(nullptr)
+{
+}
+
+InternalObserverFromScript::InternalObserverFromScript(ScriptExecutionContext& context, SubscriptionObserver&& subscription)
+    : InternalObserver(context)
+    , m_next(WTF::move(subscription.next))
+    , m_error(WTF::move(subscription.error))
+    , m_complete(WTF::move(subscription.complete))
+{
+}
+
+} // namespace WebCore

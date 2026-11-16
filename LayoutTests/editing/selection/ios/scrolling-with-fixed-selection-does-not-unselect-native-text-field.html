@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 1000vh;
+}
+
+.fixed {
+    position: fixed;
+    width: 100%;
+    height: 100px;
+    bottom: 0;
+    left: 0;
+    background-color: tomato;
+    text-align: center;
+    font-size: 100px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that scrolling while there is a selection in a fixed position container does not unselect text in a focused native text field. This test requires WebKitTestRunner.");
+    if (!window.testRunner)
+        return;
+
+    getSelection().selectAllChildren(document.querySelector(".fixed"));
+
+    await UIHelper.addChromeInputField();
+    await UIHelper.setTextInChromeInputField("Foo bar");
+    await UIHelper.selectChromeInputField();
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(150, 350)
+        .move(150, 100, 0.25)
+        .move(150, 350, 0.25)
+        .end()
+        .takeResult());
+
+    await UIHelper.ensureStablePresentationUpdate();
+
+    selectedTextInInputField = await UIHelper.getSelectedTextInChromeInputField();
+    shouldBeEqualToString("selectedTextInInputField", "Foo bar");
+
+    await UIHelper.removeChromeInputField();
+    await UIHelper.becomeFirstResponder();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div class="fixed">Hello</div>
+</body>
+</html>

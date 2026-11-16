@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+body {
+    height: 2000px;
+}
+
+.target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const make_target = t => {
+    const target = createDiv(t);
+    target.className = "target";
+    return target;
+};
+
+promise_test(async t => {
+    const source = document.documentElement;
+    const maxScrollTop = source.scrollHeight - window.innerHeight;
+    window.scrollTo(0, maxScrollTop / 2);
+
+    const target = make_target(t);
+    const timeline = new ScrollTimeline({ source });
+    const animation = target.animate({ translate: '100px' }, { timeline });
+    await animationAcceleration(animation);
+    const initialTimeline = await UIHelper.remoteTimeline(timeline);
+    assert_not_equals(initialTimeline, undefined, "Remote timeline was created.");
+
+    document.body.style.height = "3000px";
+    await threadedAnimationsCommit();
+    const updatedTimeline = await UIHelper.remoteTimeline(timeline);
+    assert_not_equals(updatedTimeline.currentTime, initialTimeline.currentTime, "Changing a timeline's source size changes the remote timeline's current time.");
+
+    animation.cancel();
+    await threadedAnimationsCommit();
+    const removedTimeline = await UIHelper.remoteTimeline(timeline);
+    assert_equals(removedTimeline, undefined, "Canceling an animaiton removes its remote timelines.");
+}, "A remote timeline gets created, updated and removed during the lifecycle of its associated animation.");
+
+</script>
+</body>

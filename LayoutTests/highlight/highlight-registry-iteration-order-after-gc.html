@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description("CSS.highlights must iterate in registration order after its wrapper and backing map have been garbage collected.");
+
+const names = [];
+for (let i = 0; i < 32; ++i)
+    names.push(`highlight-${i}`);
+
+(function populateRegistry() {
+    for (const name of names)
+        CSS.highlights.set(name, new Highlight());
+    CSS.highlights.wrapperMarker = "original wrapper";
+})();
+
+shouldBeEqualToString("CSS.highlights.wrapperMarker", "original wrapper");
+
+if (window.GCController)
+    GCController.collect();
+
+debug("The marker below must be gone, otherwise the backing map was never rebuilt and this test proves nothing:");
+shouldBeUndefined("CSS.highlights.wrapperMarker");
+
+shouldBe("CSS.highlights.size", "32");
+shouldBeEqualToString("Array.from(CSS.highlights.keys()).join(',')", names.join(","));
+
+</script>
+</body>
+</html>

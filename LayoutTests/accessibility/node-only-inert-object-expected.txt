@@ -1,0 +1,11 @@
+This test ensures that a node-only object (e.g. one with display:contents) that is inert is ignored.
+
+PASS: accessibilityController.accessibleElementById('button') === null
+
+Removing inert from #button
+PASS: accessibilityController.accessibleElementById('button').role.includes('Button') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me

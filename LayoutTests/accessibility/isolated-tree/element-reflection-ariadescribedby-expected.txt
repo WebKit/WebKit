@@ -1,0 +1,21 @@
+Checks that element reflection is exposed to the a11y tree for 'ariaDescribedByElements'
+
+PASS: axTarget1.helpText === 'AXHelp: First description'
+PASS: axTarget2.helpText === 'AXHelp: Second description'
+PASS: axTarget2.helpText === 'AXHelp: First description'
+PASS: axInnerTarget.helpText === 'AXHelp: Third description'
+PASS: axTarget2.helpText === 'AXHelp: First description Second description Third description'
+PASS: axTarget4.helpText === 'AXHelp: Fourth description'
+PASS: axTarget5.helpText === 'AXHelp: Fifth description'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First description
+Target 1
+Second description
+Target 2
+Third description
+Fourth description
+Target 4
+Fifth description

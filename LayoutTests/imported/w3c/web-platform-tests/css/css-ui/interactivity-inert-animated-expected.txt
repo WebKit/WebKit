@@ -1,0 +1,3 @@
+
+PASS Click event should work for interactivity:auto animation
+

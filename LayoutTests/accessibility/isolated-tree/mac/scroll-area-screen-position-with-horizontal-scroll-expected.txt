@@ -1,0 +1,9 @@
+This test ensures a horizontal scroll offset does not displace the accessibility scroll area.
+
+PASS: scrollArea.role === 'AXRole: AXScrollArea'
+PASS: scrollArea.x === leftEdge.x === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+flush left

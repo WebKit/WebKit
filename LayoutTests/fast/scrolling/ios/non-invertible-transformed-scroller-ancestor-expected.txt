@@ -1,0 +1,11 @@
+An overflow scrolling inside a scale(0) layer should not hit-test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS windowScrollTop > 0 is true
+PASS overflowScrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

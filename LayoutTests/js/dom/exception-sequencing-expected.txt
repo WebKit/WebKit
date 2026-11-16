@@ -1,0 +1,164 @@
+Test exception handling with various arithmetic and logic operators, it checks the following things:
+In assignment expressions the lefthand side is not modified if the right hand side throws
+If the left hand side of a binary operator throws then the right hand should not be executed
+If valueOf/toString throws in the left hand expression of a binop it does not prevent evaluation of the right hand expression, but does prevent evaluation of toString/valueOf on the rhs.
+PASS: Handled "throwingProperty" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "!undefinedProperty" correctly.
+PASS: local = ~valueOfThrower worked as expected;
+PASS: local = +valueOfThrower worked as expected;
+PASS: local = -valueOfThrower worked as expected;
+PASS: local = ++valueOfThrower worked as expected;
+PASS: local = --valueOfThrower worked as expected;
+PASS: local = ~globalValueOfThrower worked as expected;
+PASS: local = +globalValueOfThrower worked as expected;
+PASS: local = -globalValueOfThrower worked as expected;
+PASS: local = ++globalValueOfThrower worked as expected;
+PASS: local = --globalValueOfThrower worked as expected;
+PASS: local = ~this.globalValueOfThrower worked as expected;
+PASS: local = +this.globalValueOfThrower worked as expected;
+PASS: local = -this.globalValueOfThrower worked as expected;
+PASS: local = ++this.globalValueOfThrower worked as expected;
+PASS: local = --this.globalValueOfThrower worked as expected;
+PASS: local = ~this['globalValueOfThrower'] worked as expected;
+PASS: local = +this['globalValueOfThrower'] worked as expected;
+PASS: local = -this['globalValueOfThrower'] worked as expected;
+PASS: local = ++this['globalValueOfThrower'] worked as expected;
+PASS: local = --this['globalValueOfThrower'] worked as expected;
+PASS: local = ~throwingProperty worked as expected;
+PASS: local = +throwingProperty worked as expected;
+PASS: local = -throwingProperty worked as expected;
+PASS: local = ++throwingProperty worked as expected;
+PASS: local = --throwingProperty worked as expected;
+PASS: local = ~this.throwingProperty worked as expected;
+PASS: local = +this.throwingProperty worked as expected;
+PASS: local = -this.throwingProperty worked as expected;
+PASS: local = ++this.throwingProperty worked as expected;
+PASS: local = --this.throwingProperty worked as expected;
+PASS: local = ~this['throwingProperty'] worked as expected;
+PASS: local = +this['throwingProperty'] worked as expected;
+PASS: local = -this['throwingProperty'] worked as expected;
+PASS: local = ++this['throwingProperty'] worked as expected;
+PASS: local = --this['throwingProperty'] worked as expected;
+PASS: Handled "~undefinedProperty" correctly.
+PASS: Handled "~undefinedProperty.imaginaryProperty" correctly.
+PASS: Handled "~undefinedProperty['imaginaryProperty']" correctly.
+PASS: Handled "~valueOfThrower" correctly.
+PASS: Handled "~toStringThrower" correctly.
+PASS: Handled "~throwingProperty" correctly.
+PASS: Handled "~({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "~this.valueOfThrower" correctly.
+PASS: Handled "~this.toStringThrower" correctly.
+PASS: Handled "~this.throwingProperty" correctly.
+PASS: Handled "~this[valueOfThrowerStr]" correctly.
+PASS: Handled "~this[toStringThrowerStr]" correctly.
+PASS: Handled "~this[throwingPropStr]" correctly.
+PASS: Handled "~throwingProperty.imaginaryProperty" correctly.
+PASS: Handled "~({get throwingProperty(){ throw "throwing property" }}).throwingProperty.imaginaryProperty" correctly.
+PASS: Handled "~throwingProperty['imaginaryProperty']" correctly.
+PASS: Handled "~({get throwingProperty(){ throw "throwing property" }}).throwingProperty['imaginaryProperty']" correctly.
+PASS: Handled "+undefinedProperty" correctly.
+PASS: Handled "+undefinedProperty.imaginaryProperty" correctly.
+PASS: Handled "+undefinedProperty['imaginaryProperty']" correctly.
+PASS: Handled "+valueOfThrower" correctly.
+PASS: Handled "+toStringThrower" correctly.
+PASS: Handled "+throwingProperty" correctly.
+PASS: Handled "+({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "+this.valueOfThrower" correctly.
+PASS: Handled "+this.toStringThrower" correctly.
+PASS: Handled "+this.throwingProperty" correctly.
+PASS: Handled "+this[valueOfThrowerStr]" correctly.
+PASS: Handled "+this[toStringThrowerStr]" correctly.
+PASS: Handled "+this[throwingPropStr]" correctly.
+PASS: Handled "+throwingProperty.imaginaryProperty" correctly.
+PASS: Handled "+({get throwingProperty(){ throw "throwing property" }}).throwingProperty.imaginaryProperty" correctly.
+PASS: Handled "+throwingProperty['imaginaryProperty']" correctly.
+PASS: Handled "+({get throwingProperty(){ throw "throwing property" }}).throwingProperty['imaginaryProperty']" correctly.
+PASS: Handled "-undefinedProperty" correctly.
+PASS: Handled "-undefinedProperty.imaginaryProperty" correctly.
+PASS: Handled "-undefinedProperty['imaginaryProperty']" correctly.
+PASS: Handled "-valueOfThrower" correctly.
+PASS: Handled "-toStringThrower" correctly.
+PASS: Handled "-throwingProperty" correctly.
+PASS: Handled "-({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "-this.valueOfThrower" correctly.
+PASS: Handled "-this.toStringThrower" correctly.
+PASS: Handled "-this.throwingProperty" correctly.
+PASS: Handled "-this[valueOfThrowerStr]" correctly.
+PASS: Handled "-this[toStringThrowerStr]" correctly.
+PASS: Handled "-this[throwingPropStr]" correctly.
+PASS: Handled "-throwingProperty.imaginaryProperty" correctly.
+PASS: Handled "-({get throwingProperty(){ throw "throwing property" }}).throwingProperty.imaginaryProperty" correctly.
+PASS: Handled "-throwingProperty['imaginaryProperty']" correctly.
+PASS: Handled "-({get throwingProperty(){ throw "throwing property" }}).throwingProperty['imaginaryProperty']" correctly.
+PASS: Handled "++undefinedProperty" correctly.
+PASS: Handled "++undefinedProperty.imaginaryProperty" correctly.
+PASS: Handled "++undefinedProperty['imaginaryProperty']" correctly.
+PASS: Handled "++valueOfThrower" correctly.
+PASS: Handled "++toStringThrower" correctly.
+PASS: Handled "++throwingProperty" correctly.
+PASS: Handled "++({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "++this.valueOfThrower" correctly.
+PASS: Handled "++this.toStringThrower" correctly.
+PASS: Handled "++this.throwingProperty" correctly.
+PASS: Handled "++this[valueOfThrowerStr]" correctly.
+PASS: Handled "++this[toStringThrowerStr]" correctly.
+PASS: Handled "++this[throwingPropStr]" correctly.
+PASS: Handled "++throwingProperty.imaginaryProperty" correctly.
+PASS: Handled "++({get throwingProperty(){ throw "throwing property" }}).throwingProperty.imaginaryProperty" correctly.
+PASS: Handled "++throwingProperty['imaginaryProperty']" correctly.
+PASS: Handled "++({get throwingProperty(){ throw "throwing property" }}).throwingProperty['imaginaryProperty']" correctly.
+PASS: Handled "--undefinedProperty" correctly.
+PASS: Handled "--undefinedProperty.imaginaryProperty" correctly.
+PASS: Handled "--undefinedProperty['imaginaryProperty']" correctly.
+PASS: Handled "--valueOfThrower" correctly.
+PASS: Handled "--toStringThrower" correctly.
+PASS: Handled "--throwingProperty" correctly.
+PASS: Handled "--({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "--this.valueOfThrower" correctly.
+PASS: Handled "--this.toStringThrower" correctly.
+PASS: Handled "--this.throwingProperty" correctly.
+PASS: Handled "--this[valueOfThrowerStr]" correctly.
+PASS: Handled "--this[toStringThrowerStr]" correctly.
+PASS: Handled "--this[throwingPropStr]" correctly.
+PASS: Handled "--throwingProperty.imaginaryProperty" correctly.
+PASS: Handled "--({get throwingProperty(){ throw "throwing property" }}).throwingProperty.imaginaryProperty" correctly.
+PASS: Handled "--throwingProperty['imaginaryProperty']" correctly.
+PASS: Handled "--({get throwingProperty(){ throw "throwing property" }}).throwingProperty['imaginaryProperty']" correctly.
+PASS: Handled "undefinedProperty++" correctly.
+PASS: Handled "undefinedProperty.imaginaryProperty++" correctly.
+PASS: Handled "valueOfThrower++" correctly.
+PASS: Handled "toStringThrower++" correctly.
+PASS: Handled "throwingProperty++" correctly.
+PASS: Handled "this.valueOfThrower++" correctly.
+PASS: Handled "this.toStringThrower++" correctly.
+PASS: Handled "this.throwingProperty++" correctly.
+PASS: Handled "this[valueOfThrowerStr]++" correctly.
+PASS: Handled "this[toStringThrowerStr]++" correctly.
+PASS: Handled "this[throwingPropStr]++" correctly.
+PASS: Handled "undefinedProperty--" correctly.
+PASS: Handled "undefinedProperty.imaginaryProperty--" correctly.
+PASS: Handled "valueOfThrower--" correctly.
+PASS: Handled "toStringThrower--" correctly.
+PASS: Handled "throwingProperty--" correctly.
+PASS: Handled "this.valueOfThrower--" correctly.
+PASS: Handled "this.toStringThrower--" correctly.
+PASS: Handled "this.throwingProperty--" correctly.
+PASS: Handled "this[valueOfThrowerStr]--" correctly.
+PASS: Handled "this[toStringThrowerStr]--" correctly.
+PASS: Handled "this[throwingPropStr]--" correctly.
+PASS: nonThrowingIndexBase[nonThrowingIndexNoThrowProperty]
+PASS: nonThrowingIndexBase[nonThrowingIndexThrowProperty]
+PASS: nonThrowingIndexBase[throwingIndex]
+PASS: throwingIndexBase[nonThrowingIndexNoThrowProperty]
+PASS: throwingIndexBase[nonThrowingIndexThrowProperty]
+PASS: throwingIndexBase[throwingIndex]
+PASS: nonThrowingIndexBase[nonThrowingIndexNoThrowProperty] = valueForAssignment
+PASS: nonThrowingIndexBase[nonThrowingIndexThrowProperty] = valueForAssignment
+PASS: nonThrowingIndexBase[throwingIndex] = valueForAssignment
+PASS: throwingIndexBase[nonThrowingIndexNoThrowProperty] = valueForAssignment
+PASS: throwingIndexBase[nonThrowingIndexThrowProperty] = valueForAssignment
+PASS: throwingIndexBase[throwingIndex] = valueForAssignment
+PASS: Number.prototype.toString.call(false)
+Passed 158 of 158 tests.
+

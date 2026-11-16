@@ -1,0 +1,10 @@
+# Copyright 2024 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  # Build with BoringSSL by default, allow WebRTC to override
+  # this and the include path from rtc_build_ssl and rtc_ssl_root
+  libsrtp_build_boringssl = true
+  libsrtp_ssl_root = ""
+}

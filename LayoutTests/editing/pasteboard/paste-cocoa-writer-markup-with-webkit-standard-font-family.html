@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<button id="start">Start</button>
+<div id="editor" style="font-family: Arial" contenteditable>hello</div>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description(`This tests pasting a markup with -webkit-standard font family name. WebKit should not strip it away upon paste.<br>
+To manually test, click on "start" first then trigger paste from menu or callout bar or press cmd+v`);
+
+const markup = `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="Generator" content="Cocoa HTML Writer">
+</head>
+<body>
+<p style="margin: 0.0px 0.0px 0.0px 0.0px; font: 17.0px '-webkit-standard'; color: #454545">Hello</p>
+</body>
+</html>`;
+
+editor.focus();
+start.addEventListener('click', () => {
+    editor.focus();
+    document.execCommand('selectAll');
+    document.execCommand('copy');
+    if (window.testRunner)
+        document.execCommand('paste');
+});
+editor.addEventListener('copy', (event) => {
+    event.clipboardData.setData('text/html', markup);
+    event.preventDefault();
+});
+editor.addEventListener('paste', (event) => {
+    shouldBe(`event.clipboardData.getData('text/html')`, `markup`);
+    document.execCommand('insertHTML', false, event.clipboardData.getData('text/html'));
+    shouldBeTrue(`editor.innerHTML.includes('-webkit-standard')`);
+    editor.innerHTML = '';
+    event.preventDefault();
+    start.style.display = 'none';
+    finishJSTest();
+});
+
+if (window.testRunner)
+    start.click();
+
+</script>
+</body>
+</html>

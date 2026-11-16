@@ -1,0 +1,16 @@
+
+PASS Plain var()
+PASS Whole-value block with var()
+PASS Whole-value block with var() (spaces)
+PASS Trailing block, leading var()
+PASS Leading block, trailing var()
+PASS In-block var() with trailing token
+PASS In-block var() with leading token
+PASS Plain var() (custom property)
+PASS Whole-value block with var() (custom property)
+PASS Whole-value block with var() (spaces, custom property)
+PASS Trailing block, leading var() (custom property)
+PASS Leading block, trailing var() (custom property)
+PASS In-block var() with trailing token (custom property)
+PASS In-block var() with leading token (custom property)
+

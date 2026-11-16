@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    const videoContainer = document.getElementById('videoContainer');
+    iframeContainer.appendChild(iframe);
+    setTimeout(() => {
+        // Removing iframe here triggers WebKitTestRunner/DumpRenderTree to update rendering synchronously.
+        try {
+            document.body.insertBefore(iframe, videoContainer);
+        } catch (error) { }
+    }, 0);
+    requestAnimationFrame(() => {
+        videoContainer.remove();
+    });
+}
+</script>
+<body onload="runTest()">
+<p>This tests scheduling requestAnimationFrame right before removing an iframe, which synchronously trigger the update rendering steps.<br>
+WebKit should not hit any debug assertions or crash.</p>
+<iframe id="iframe" srcdoc="abc"></iframe>
+<span id="videoContainer"></span>
+<span id="iframeContainer"></span>
+<video id="video" controls></video>

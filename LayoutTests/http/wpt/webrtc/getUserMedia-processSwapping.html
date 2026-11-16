@@ -1,0 +1,41 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>getUserMedia on process swapping</title>
+<body>
+<video id="local"></video>
+<script src="/common/get-host-info.sub.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function getUserMediaAndNavigate()
+{
+    local.srcObject = await navigator.mediaDevices.getUserMedia({video: true});
+    await local.play();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (window.testRunner && !testRunner.isDoingMediaCapture) {
+        document.body.innerHTML = "FAIL: no capture state";
+        testRunner.notifyDone();
+        return;
+    }
+    window.location = get_host_info().HTTPS_ORIGIN + "/WebKit/webrtc/getUserMedia-processSwapping.html";
+}
+
+function validateMediaCaptureStateAfterNavigation()
+{
+    if (!window.testRunner) {
+        document.body.innerHTML = "FAIL: Need testRunner API";
+        return;
+    }
+    document.body.innerHTML = testRunner.isDoingMediaCapture ? "FAIL" : "PASS";
+    testRunner.notifyDone();
+}
+
+if (window.location.protocol === "http:")
+    getUserMediaAndNavigate();
+else
+    validateMediaCaptureStateAfterNavigation();
+</script>
+</body>

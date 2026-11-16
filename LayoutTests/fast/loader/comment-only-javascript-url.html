@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+jsTestIsAsync = true;
+var count = 0;
+</script>
+</head>
+<body>
+<script>
+function maybeClick(url) {
+    const parser = document.createElement('a');
+    parser.href = url;
+    parser.click();
+}
+
+description("Tests that we properly handle JavaScript URLs containing comment characters, newlines, and carriage returns.");
+
+const ignoreCases = [
+    "javascript:// A fun test%0aalert(count); ++count;",
+    "javascript://:%0aalert(count); ++count;",
+    "javascript://:%0dalert(count); ++count;",
+    "javascript://:%0a%0dalert(count); ++count;"
+];
+
+const executeCases = [
+    "javascript:alert(count); ++count;",
+    "javascript://%0a://%0dalert(count); ++count;",
+    "javascript://%0d//:%0aalert(count); ++count;"
+];
+
+for (const c of ignoreCases)
+    maybeClick(c);
+
+setTimeout(function () {
+    if (count)
+        testFailed("A to be ignored JavaScript URL was executed.");
+    else
+        testPassed("Ignorable JavaScript URLs were ignored.");
+
+    for (const c of executeCases)
+        maybeClick(c);
+
+    setTimeout(() => {
+        if (count != executeCases.length)
+            testFailed("An executable JavaScript URLs was ignored.");
+        else
+            testPassed("All executable JavaScript URLs were executed.");
+
+        finishJSTest();
+    }, 0);
+}, 0);
+</script>
+</body>
+</html>

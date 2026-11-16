@@ -1,0 +1,73 @@
+<!--
+ Copyright (C) 2019 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <title>JetStream 2</title>
+
+    <link rel="stylesheet" href="JetStream.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, viewport-fit=cover">
+
+    <script>
+    const isInBrowser = true;
+    var allIsGood = true;
+    window.onerror = function() { allIsGood = false; }
+
+    async function initialize() {
+        if (allIsGood)
+            await JetStream.initialize();
+        else {
+            let statusElement = document.getElementById("status");
+            statusElement.classList.remove('loading');
+            statusElement.classList.add('error');
+            statusElement.innerHTML = "<h2>ERROR</h2><p>Errors were encountered during page load. Refusing to run a partial benchmark suite.</p>";
+        }
+    }
+    </script>
+
+    <script src="JetStreamDriver.js"></script>
+
+</head>
+<body onload="initialize()">
+<h1 class="logo">
+    <div id="jetstreams">
+        <a href="index.html" class="logo-image">JetStream 2</a>
+    </div>
+</h1>
+
+<main>
+    <p class="summary">JetStream 2 is a JavaScript and WebAssembly benchmark suite focused on the most advanced web applications. It rewards browsers that start up quickly, execute code quickly, and run smoothly. For more information, read the <a href="in-depth.html">in-depth analysis</a>. Bigger scores are better.</p>
+    <p class="summary" id="mode-description"></p>
+
+    <div id="result-summary"></div>
+    <div id="status" class="loading">Loading Benchmark...</div>
+
+    <div id="results"></div>
+</main>
+<iframe id="magic"></iframe>
+</body>
+</html>

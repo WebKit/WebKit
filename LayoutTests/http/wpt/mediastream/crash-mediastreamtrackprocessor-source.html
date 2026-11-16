@@ -1,0 +1,52 @@
+<html>
+<body>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const WORKER_SOURCE = `
+self.onmessage = event => {
+    const processor = new MediaStreamTrackProcessor({ track: event.data });
+
+    function overflowStack() {
+        try {
+            overflowStack();
+        } catch {
+            try {
+                processor.readable;
+            } catch {
+                self.postMessage("done");
+            }
+        }
+    }
+
+    overflowStack();
+};
+`;
+
+const WORKER_URL = URL.createObjectURL(new Blob([WORKER_SOURCE], { type: 'text/javascript' }));
+
+async function sleep(ms) {
+    await new Promise(resolve => {
+        setTimeout(() => {
+            resolve();
+        }, ms);
+    });
+}
+
+promise_test(async () => {
+    const canvas = document.createElement('canvas');
+    const [track] = canvas.captureStream(30).getVideoTracks();
+
+    const worker = new Worker(WORKER_URL);
+
+    worker.postMessage(track, [track]);
+
+    await new Promise(resolve => worker.onmessage = resolve);
+
+    worker.terminate();
+
+    sleep(100);
+});
+</script>
+</body>
+</html>

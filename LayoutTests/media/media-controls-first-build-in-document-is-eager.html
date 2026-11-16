@@ -1,0 +1,64 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>The first media controls in each document are built at once, later ones are deferred</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<div id="spacer" style="height: 20000px"></div>
+<script>
+function hasBuiltControls(element) {
+    // Unlike internals.shadowRoot(), this does not build deferred controls.
+    return !!internals.ensureUserAgentShadowRoot(element).querySelector(".media-controls");
+}
+
+function animationFrames(count) {
+    return new Promise(resolve => {
+        const step = () => count-- > 0 ? requestAnimationFrame(step) : resolve();
+        step();
+    });
+}
+
+function appendOffscreen(targetDocument, tagName) {
+    const element = targetDocument.createElement(tagName);
+    element.controls = true;
+    targetDocument.body.appendChild(element);
+    return element;
+}
+
+async function createFrameDocument(t) {
+    const frame = document.body.insertBefore(document.createElement("iframe"), spacer);
+    t.add_cleanup(() => frame.remove());
+    const frameDocument = frame.contentDocument;
+    frameDocument.body.innerHTML = "<div style='height: 20000px'></div>";
+    return frameDocument;
+}
+
+async function testFirstBuildIsEager(targetDocument, firstTagName, secondTagName) {
+    const first = appendOffscreen(targetDocument, firstTagName);
+    assert_true(hasBuiltControls(first), "the first element builds its controls at once, even off-screen");
+    const second = appendOffscreen(targetDocument, secondTagName);
+    assert_false(hasBuiltControls(second), "a later element defers its controls");
+    await animationFrames(3);
+    assert_false(hasBuiltControls(second), "the later off-screen element is still deferred");
+}
+
+promise_test(async () => {
+    await testFirstBuildIsEager(document, "audio", "audio");
+}, "In the main document, the first audio element builds its controls at once and the next one defers");
+
+promise_test(async t => {
+    await testFirstBuildIsEager(await createFrameDocument(t), "audio", "audio");
+}, "In a new frame's document, the first audio element builds its controls at once and the next one defers");
+
+promise_test(async t => {
+    await testFirstBuildIsEager(await createFrameDocument(t), "video", "audio");
+}, "A video's controls count as the first build in a document");
+
+promise_test(async t => {
+    const frameDocument = await createFrameDocument(t);
+    const withoutControls = frameDocument.body.appendChild(frameDocument.createElement("audio"));
+    assert_false(hasBuiltControls(withoutControls), "an element without the controls attribute builds nothing");
+    await testFirstBuildIsEager(frameDocument, "audio", "audio");
+}, "An element without the controls attribute does not use up the first build");
+</script>
+</body>

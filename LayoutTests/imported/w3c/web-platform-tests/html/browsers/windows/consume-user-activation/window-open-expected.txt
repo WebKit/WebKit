@@ -1,0 +1,4 @@
+
+PASS Opening a new window should consume user activation
+PASS Opening an existing window should not consume user activation
+

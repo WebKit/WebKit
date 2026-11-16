@@ -1,0 +1,149 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.field-error { color: #c62828; }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <label for="username">Username</label><input id="username" type="text">
+  <div id="username-error" class="field-error"></div>
+  <label for="password">Password</label><input id="password" type="password">
+  <div id="sign-in" role="button" tabindex="0">Sign in</div>
+</div>
+
+<div id="checkout">
+  <div class="row">
+    <label for="first">First name</label><input id="first" type="text">
+    <label for="last">Last name</label><input id="last" type="text">
+  </div>
+  <label for="email">Email</label><input id="email" type="text">
+  <div id="email-error" class="field-error"></div>
+  <div id="place-order" role="button" tabindex="0">Place order</div>
+</div>
+
+<div id="shipping">
+  <label for="address">Street address</label><input id="address" type="text">
+  <div id="address-error" class="field-error"></div>
+  <label for="city">City</label><input id="city" type="text">
+  <div id="city-error" class="field-error"></div>
+  <div id="continue" role="button" tabindex="0">Continue</div>
+</div>
+
+<form id="account">
+  <label for="new-username">Username</label><input id="new-username" type="text">
+  <div id="new-username-error"></div>
+  <label for="new-password">Password</label><input id="new-password" type="password">
+  <div id="create-account" role="button" tabindex="0">Create account</div>
+</form>
+
+<script>
+var output = "This tests that errors are found when the user submits from the keyboard, which can leave no click to watch for. Enter in a text field submits the fields around it, reaching past a row of fields to the whole group holding the button it stands in for. Space on a control the page built itself is handled by the page's own key listener. Enter in a form's field is a submission even when the form has no submit button to submit it with, so the message it brings counts whatever its color.\n\n";
+
+if (window.accessibilityController && window.eventSender) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var notifications = 0;
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification != "AXPossibleFormValidationError")
+            return;
+        ++notifications;
+        payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    function writeMessage(id, text) {
+        document.getElementById(id).textContent = text;
+    }
+
+    var handledKeys = 0;
+    function onKey(id, keys, handler) {
+        document.getElementById(id).addEventListener("keydown", (event) => {
+            if (!keys.includes(event.key))
+                return;
+            ++handledKeys;
+            event.preventDefault();
+            handler();
+        });
+    }
+
+    onKey("password", ["Enter"], () => writeMessage("username-error", "Enter your username."));
+    onKey("first", ["Enter"], () => writeMessage("email-error", "Enter a valid email address."));
+    onKey("continue", [" ", "Enter"], () => {
+        writeMessage("address-error", "Enter your street address.");
+        writeMessage("city-error", "Enter your city.");
+    });
+    onKey("new-username", ["Enter"], () => writeMessage("new-username-error", "Choose a username."));
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    function invalidStatus(id) {
+        return axElement(id).stringAttributeValue("AXInvalid");
+    }
+
+    function isWatching() {
+        return internals.isWatchingForAccessibilityFormErrors();
+    }
+
+    // Detection decides whether to watch before the page's own listener runs, so once that listener has, it has decided.
+    async function pressKeyIn(id, key) {
+        var handled = handledKeys;
+        document.getElementById(id).focus();
+        eventSender.keyDown(key);
+        await waitFor(() => handledKeys > handled);
+    }
+
+    async function pressEnterIn(id) {
+        await pressKeyIn(id, "\r");
+        return `pressEnterIn('${id}');\n`;
+    }
+
+    async function pressSpaceOn(id) {
+        await pressKeyIn(id, " ");
+        return `pressSpaceOn('${id}');\n`;
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("invalidStatus('username')", "'false'");
+
+        output += await pressEnterIn("password");
+        output += expect("isWatching()", "true");
+        output += await expectAsync("notifications", "1");
+        output += expect("payload", "'AXFormValidationUnannouncedText: Enter your username.\\nAXFormValidationErrorFieldCount: 1\\n'");
+        output += await expectAsync("errorMessageText(axElement('username'))", "'Enter your username.'");
+
+        output += await pressEnterIn("first");
+        output += expect("isWatching()", "true");
+        output += await expectAsync("notifications", "2");
+        output += expect("payload", "'AXFormValidationUnannouncedText: Enter a valid email address.\\nAXFormValidationErrorFieldCount: 1\\n'");
+        output += await expectAsync("invalidStatus('email')", "'true'");
+        output += expect("invalidStatus('first')", "'false'");
+
+        output += await pressSpaceOn("continue");
+        output += expect("isWatching()", "true");
+        output += await expectAsync("notifications", "3");
+        output += expect("payload", "'AXFormValidationUnannouncedText: Enter your street address. | Enter your city.\\nAXFormValidationErrorFieldCount: 2\\n'");
+        output += await expectAsync("invalidStatus('address')", "'true'");
+        output += await expectAsync("invalidStatus('city')", "'true'");
+
+        output += await pressEnterIn("new-username");
+        output += expect("isWatching()", "true");
+        output += await expectAsync("notifications", "4");
+        output += expect("payload", "'AXFormValidationUnannouncedText: Choose a username.\\nAXFormValidationErrorFieldCount: 1\\n'");
+        output += await expectAsync("invalidStatus('new-username')", "'true'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

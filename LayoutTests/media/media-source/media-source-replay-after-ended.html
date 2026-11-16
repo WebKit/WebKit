@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-replay-after-ended</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var audioSourceBuffer;
+    var audioLoader;
+    var finished = false;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    function waitForLoop(video) {
+        return new Promise((resolve) => {
+            let lastTime = video.currentTime;
+            const listener = () => {
+                // Time going back by a large amount means the video looped.
+                if (video.currentTime < lastTime - 0.5) {
+                    video.removeEventListener("timeupdate", listener);
+                    resolve();
+                    return;
+                }
+                lastTime = video.currentTime;
+            };
+            video.addEventListener("timeupdate", listener);
+        });
+    }
+
+    function waitForTimeupdateGreaterThan(video, refTime) {
+        return new Promise((resolve) => {
+            const listener = () => {
+                if (video.currentTime < refTime)
+                    return;
+                video.removeEventListener("timeupdate", listener);
+                resolve();
+            };
+            video.addEventListener("timeupdate", listener);
+        });
+    }
+
+    async function setupMediaSource() {
+        audioLoader = new MediaSourceLoader("content/test-48khz-manifest.json");
+        await loaderPromise(audioLoader);
+
+        findMediaElement();
+
+        source = new MediaSource();
+        run("video.src = URL.createObjectURL(source)");
+        await waitFor(source, "sourceopen");
+        run("audioSourceBuffer = source.addSourceBuffer(audioLoader.type())");
+        waitFor(video, "error").then(failTest);
+
+        run("audioSourceBuffer.appendBuffer(audioLoader.initSegment())");
+        await waitFor(audioSourceBuffer, "update", true);
+        for (let i = 0; i < 2; i++) {
+            run(`audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(${i}))`);
+            await waitFor(audioSourceBuffer, "update", true);
+        }
+        run("source.endOfStream()");
+    }
+
+
+    async function runTest() {
+        await setupMediaSource();
+
+        for (let i = 1; i <= 3; i++) {
+            consoleWrite("-");
+            consoleWrite(`Play ${i}.`);
+            const ended = waitFor(video, "ended");
+            run("video.play()");
+            await ended;
+            testExpected("video.ended", true);
+            testExpected("video.currentTime == video.duration", true);
+        }
+    }
+
+    window.addEventListener("load", event => {
+        setTimeout(() => {
+            if (!finished)
+                failTest(`Timed out; currentTime = ${video.currentTime}, duration = ${video.duration}, paused = ${video.paused}, ended = ${video.ended}, seeking = ${video.seeking}`);
+        }, 20000);
+        runTest().then(() => { finished = true; endTest(); }).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <div>
+        This tests that a MediaSource video that has ended plays through to the end again each time play() is called.
+    </div>
+    <video muted></video>
+</body>
+</html>

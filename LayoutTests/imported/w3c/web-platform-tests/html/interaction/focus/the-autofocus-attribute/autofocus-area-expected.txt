@@ -1,0 +1,4 @@
+
+
+PASS autofocus works on area element
+

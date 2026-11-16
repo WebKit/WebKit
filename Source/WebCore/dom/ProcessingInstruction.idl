@@ -1,0 +1,41 @@
+/*
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2013 Samsung Electronics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+[
+    Exposed=Window
+] interface ProcessingInstruction : CharacterData {
+    [CallWith=CurrentDocument, EnabledBySetting=HTMLProcessingInstructionEnabled] constructor([AtomString] DOMString target, optional DOMString data = "");
+
+    readonly attribute DOMString target;
+
+    // https://dom.spec.whatwg.org/#processinginstruction
+    [EnabledBySetting=HTMLProcessingInstructionEnabled, ImplementedAs=hasPseudoAttributes] boolean hasAttributes();
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] sequence<DOMString> getAttributeNames();
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] DOMString? getAttribute([AtomString] DOMString name);
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] undefined setAttribute([AtomString] DOMString name, [AtomString] DOMString value);
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] undefined removeAttribute([AtomString] DOMString name);
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] boolean toggleAttribute([AtomString] DOMString name, optional boolean force);
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] boolean hasAttribute([AtomString] DOMString name);
+
+    // Extension from CSSOM (https://drafts.csswg.org/cssom/#linkstyle).
+    readonly attribute StyleSheet? sheet;
+};
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                const urlPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        resolve(url);
+                    });
+                });
+
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+                testExpected('internals.activeVideoRouteSupportsAirPlayVideo()', true);
+
+                video = document.createElement('video');
+                video.playsInline = true;
+                video.src = findMediaFile('video', '../content/test');
+                document.body.appendChild(video);
+
+                await waitFor(video, 'canplaythrough');
+
+                run(`internals.simulateActiveOutputDeviceChange()`);
+                testExpected('internals.activeVideoRouteSupportsAirPlayVideo()', true);
+
+                if (!internals.activeVideoRouteSupportsAirPlayVideo()) {
+                    endTest();
+                    return;
+                }
+
+                run(`video.play()`);
+                await urlPromise;
+                consoleWrite('Route received the video URL');
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <p>Test that an audio output device change while a MediaDeviceRoute is active does not replace the route,
+        so a video that starts playing afterward is played on the route.</p>
+    </body>
+</html>

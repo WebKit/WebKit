@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<title>Request URL Modifiers: integrity() for a background-image already loaded without integrity()</title>
+<link rel="author" title="Sam Weinig" href="mailto:sam@webkit.org">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier-integrity-modifier">
+<link rel="help" href="https://fetch.spec.whatwg.org/#main-fetch">
+<link rel="match" href="/css/reference/ref-filled-green-100px-square.xht">
+<meta name="assert" content="An image already loaded without integrity metadata should load for a later url with a matching integrity() modifier.">
+<style>
+iframe {
+  display: block;
+  width: 100px;
+  height: 100px;
+  border: none;
+}
+</style>
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+<script>
+const image = new Image;
+image.src = "/css/support/1x1-green.png";
+image.decode().then(() => {
+  const iframe = document.createElement("iframe");
+  iframe.onload = () => document.documentElement.classList.remove("reftest-wait");
+  iframe.src = "../support/image-integrity-match-frame.html";
+  document.body.appendChild(iframe);
+});
+</script>
+</html>

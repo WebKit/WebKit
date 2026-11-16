@@ -1,0 +1,5 @@
+
+PASS Long-lived GPUQuerySets used by occlusion queries keep working across many command encoders
+PASS A command buffer recorded before many other command encoders used the same GPUQuerySets still submits
+PASS GPUQuerySet.destroy() still invalidates a command buffer recorded before many other command encoders used the same GPUQuerySets
+

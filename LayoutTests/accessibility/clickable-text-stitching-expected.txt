@@ -1,0 +1,33 @@
+Tests text stitching around clickable elements.
+
+Scenario 1 (handler on <ul>, .btn signals the target):
+
+{AXRole: AXStaticText AXValue: before stitched-with-before}
+
+{AXRole: AXStaticText AXValue: clickable-not-stitched-with-anything}
+
+{AXRole: AXStaticText AXValue:  afterstitched-with-after}
+
+Scenario 2 (handler on <body> via delegation, cursor:pointer signals the target):
+
+{AXRole: AXStaticText AXValue: Foo stitched-with-foo }
+
+{AXRole: AXStaticText AXValue: button-not-stitched-with-anything}
+
+{AXRole: AXStaticText AXValue:  barstitched-with-bar}
+
+Scenario 3 (handler directly on an inline element wrapping multiple texts):
+
+{AXRole: AXStaticText AXValue: Foo stitched-with-foo }
+
+{AXRole: AXStaticText AXValue: btn should-be-stitched-with-btn}
+
+{AXRole: AXStaticText AXValue:  barstitched-with-bar}
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+before stitched-with-beforeclickable-not-stitched-with-anything afterstitched-with-after
+Foo stitched-with-foo button-not-stitched-with-anything barstitched-with-bar
+Foo stitched-with-foo btn should-be-stitched-with-btn barstitched-with-bar

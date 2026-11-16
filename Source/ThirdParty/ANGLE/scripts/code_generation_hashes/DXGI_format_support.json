@@ -1,0 +1,8 @@
+{
+  "src/libANGLE/renderer/dxgi_support_data.json":
+    "ddd9e8fa2a556101b211035b788f1562",
+  "src/libANGLE/renderer/dxgi_support_table_autogen.cpp":
+    "c7e7ba24c9095ce4edbf168b2fee9c62",
+  "src/libANGLE/renderer/gen_dxgi_support_tables.py":
+    "66efd22762f48c01726120b221d6c68d"
+}

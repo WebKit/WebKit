@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<script src="/resources/gc.js"></script>
+<body>
+<script>
+
+let frameIdentifiers = [];
+let framesLeftToRemove = 0;
+let allFramesRemoved;
+
+// Ensure that each subframe is removed before any rendering update can deliver an observation.
+function subframeDidStartObserving(subframeWindow)
+{
+    frameIdentifiers.push(internals.documentIdentifier(subframeWindow.document));
+    subframeWindow.frameElement.remove();
+    if (!--framesLeftToRemove)
+        allFramesRemoved();
+}
+
+function report(passed, message)
+{
+    parent.postMessage({ passed, message }, "*");
+}
+
+onload = async () => {
+    if (!window.internals) {
+        report(false, "Test requires internals");
+        return;
+    }
+
+    try {
+        let message = await testDocumentIsNotLeaked(async documentCount => {
+            framesLeftToRemove = documentCount;
+            let removed = new Promise(resolve => allFramesRemoved = resolve);
+            for (let i = 0; i < documentCount; ++i) {
+                let frame = document.createElement("iframe");
+                frame.src = "remote-observer-document-leak-subframe.html";
+                document.body.appendChild(frame);
+            }
+            await removed;
+            return frameIdentifiers;
+        }, { documentCount: 20 });
+        report(true, message);
+    } catch (error) {
+        report(false, error.message);
+    }
+};
+</script>

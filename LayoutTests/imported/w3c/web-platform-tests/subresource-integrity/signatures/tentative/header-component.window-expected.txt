@@ -1,0 +1,22 @@
+
+PASS `fetch()`: Valid signature (signature=("content-type" "unencoded-digest";sf);keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), no integrity check: loads.
+FAIL `fetch()`: Valid signature (signature=("content-type" "unencoded-digest";sf);keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), matching integrity check: loads. assert_equals: `accept-signature` was set. expected "sig0=(\"unencoded-digest\";sf);keyid=\"JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=\";tag=\"ed25519-integrity\"" but got ""
+FAIL `fetch()`: Valid signature (signature=("content-type" "unencoded-digest";sf);keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), mismatched integrity check: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS `<script>`: Valid signature (signature=("content-type" "unencoded-digest";sf);keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), no integrity check: loads.
+PASS `<script>`: Valid signature (signature=("content-type" "unencoded-digest";sf);keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), matching integrity check: loads.
+FAIL `<script>`: Valid signature (signature=("content-type" "unencoded-digest";sf);keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), mismatched integrity check: blocked. assert_unreached: Script should not execute. Reached unreachable code
+PASS `fetch()`: Valid signature (signature=("unencoded-digest";sf "content-type");keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), no integrity check: loads.
+FAIL `fetch()`: Valid signature (signature=("unencoded-digest";sf "content-type");keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), matching integrity check: loads. assert_equals: `accept-signature` was set. expected "sig0=(\"unencoded-digest\";sf);keyid=\"JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=\";tag=\"ed25519-integrity\"" but got ""
+FAIL `fetch()`: Valid signature (signature=("unencoded-digest";sf "content-type");keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), mismatched integrity check: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS `<script>`: Valid signature (signature=("unencoded-digest";sf "content-type");keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), no integrity check: loads.
+PASS `<script>`: Valid signature (signature=("unencoded-digest";sf "content-type");keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), matching integrity check: loads.
+FAIL `<script>`: Valid signature (signature=("unencoded-digest";sf "content-type");keyid="JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=";tag="sri"), mismatched integrity check: blocked. assert_unreached: Script should not execute. Reached unreachable code
+FAIL `fetch()`: Mismatched header value: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Mismatched header value with matching integrity: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `<script>`: Mismatched header value: blocked. assert_unreached: Script should not execute. Reached unreachable code
+FAIL `<script>`: Mismatched header value with matching integrity: blocked. assert_unreached: Script should not execute. Reached unreachable code
+FAIL `fetch()`: Missing signed header: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Missing signed header with matching integrity: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `<script>`: Missing signed header: blocked. assert_unreached: Script should not execute. Reached unreachable code
+FAIL `<script>`: Missing signed header with matching integrity: blocked. assert_unreached: Script should not execute. Reached unreachable code
+

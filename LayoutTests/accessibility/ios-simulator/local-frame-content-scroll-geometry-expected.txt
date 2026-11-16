@@ -1,0 +1,10 @@
+This test verifies that an element inside a local iframe never exposes stale geometry, even after a scroll of the iframe's contents.
+
+PASS: iframe.contentWindow.scrollX === 500
+PASS: scrolledX < initialX === true
+PASS: delta > 400 && delta < 600 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Verifies that the iframe receives wheel events with the expected coordinates.");
+jsTestIsAsync = true;
+
+addEventListener("message", (event) => {
+    shouldBe("event.data", "'40,54'");
+    finishJSTest();
+});
+
+async function onLoad() {
+    await UIHelper.statelessMouseWheelScrollAt(50, 100, 0, -1);
+}
+</script>
+<iframe onload="onLoad()" src="http://localhost:8000/site-isolation/resources/post-message-wheel-coordinates.html"></iframe>

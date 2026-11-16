@@ -1,0 +1,3 @@
+
+PASS initial computed value of content for elements is not none
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseSystemAppearance=true ] -->
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="test"></div>
+<script>
+
+var testDiv = document.querySelector('#test');
+
+function testAppleVisualEffectParsing(value, expected, name)
+{
+    test(() => {
+        testDiv.style.setProperty("-apple-visual-effect", "");
+        testDiv.style.setProperty("-apple-visual-effect", value);
+        var computedStyle = getComputedStyle(testDiv).getPropertyValue("-apple-visual-effect");
+        assert_equals(computedStyle, expected);
+    }, name);
+}
+
+// Valid
+testAppleVisualEffectParsing("-apple-system-blur-material-ultra-thin", "-apple-system-blur-material-ultra-thin", "Parse with -apple-system-blur-material-ultra-thin");
+testAppleVisualEffectParsing("-apple-system-blur-material-thin", "-apple-system-blur-material-thin", "Parse with -apple-system-blur-material-thin");
+testAppleVisualEffectParsing("-apple-system-blur-material", "-apple-system-blur-material", "Parse with -apple-system-blur-material");
+testAppleVisualEffectParsing("-apple-system-blur-material-thick", "-apple-system-blur-material-thick", "Parse with -apple-system-blur-material-thick");
+testAppleVisualEffectParsing("-apple-system-blur-material-chrome", "-apple-system-blur-material-chrome", "Parse with -apple-system-blur-material-chrome");
+testAppleVisualEffectParsing("-apple-system-vibrancy-label", "-apple-system-vibrancy-label", "Parse with -apple-system-vibrancy-label");
+testAppleVisualEffectParsing("-apple-system-vibrancy-secondary-label", "-apple-system-vibrancy-secondary-label", "Parse with -apple-system-vibrancy-secondary-label");
+testAppleVisualEffectParsing("-apple-system-vibrancy-tertiary-label", "-apple-system-vibrancy-tertiary-label", "Parse with -apple-system-vibrancy-tertiary-label");
+testAppleVisualEffectParsing("-apple-system-vibrancy-quaternary-label", "-apple-system-vibrancy-quaternary-label", "Parse with -apple-system-vibrancy-quaternary-label");
+testAppleVisualEffectParsing("-apple-system-vibrancy-fill", "-apple-system-vibrancy-fill", "Parse with -apple-system-vibrancy-fill");
+testAppleVisualEffectParsing("-apple-system-vibrancy-secondary-fill", "-apple-system-vibrancy-secondary-fill", "Parse with -apple-system-vibrancy-secondary-fill");
+testAppleVisualEffectParsing("-apple-system-vibrancy-tertiary-fill", "-apple-system-vibrancy-tertiary-fill", "Parse with -apple-system-vibrancy-tertiary-fill");
+testAppleVisualEffectParsing("-apple-system-vibrancy-separator", "-apple-system-vibrancy-separator", "Parse with -apple-system-vibrancy-separator");
+
+// Invalid
+testAppleVisualEffectParsing("garbage", "none", "-apple-visual-effect does not accept invalid values");
+testAppleVisualEffectParsing("blue", "none", "-apple-visual-effect does not accept keywords for other properties");
+testAppleVisualEffectParsing("-apple-system-blur-material-ultra-thin()", "none", "-apple-visual-effect does not accept function syntax");
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test script.onerror will be fired when the resource specified by "src" is not found.');
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+debug('Module is not executed yet.');
+var error = null;
+function onError()
+{
+    error = window.event;
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script type="module" src="not-found.js" onerror="onError()"></script>
+<script type="module">
+shouldNotBe(`error`, `null`);
+shouldBe(`error.type`, `"error"`);
+finishJSTest()
+</script>
+</body>
+</html>

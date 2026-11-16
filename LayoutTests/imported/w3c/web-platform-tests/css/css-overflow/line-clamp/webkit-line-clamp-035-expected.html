@@ -1,0 +1,24 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS reference</title>
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+#parent {
+  display: inline-block;
+  background: green;
+}
+#clamp {
+  font-family: Ahem;
+  display: block;
+  width: 4ch;
+  overflow: hidden; /* can be removed once implementations update their old -webkit-line-clamp implementations */
+}
+</style>
+<div id="parent">
+  <div id="clamp">
+    AAA<br>
+    BBB<br>
+    <!-- The ellipsis displaces the whole unbreakable CCCCCCCCC, so the line only contains the (hidden) ellipsis. -->
+    <span style="visibility: hidden">…</span>
+  </div>
+</div>

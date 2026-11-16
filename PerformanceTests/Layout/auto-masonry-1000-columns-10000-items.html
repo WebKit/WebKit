@@ -1,0 +1,40 @@
+<!-- webkit-test-runner [ MasonryEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<!-- This test focuses on testing the performance of large numbers of columns in CSS Masonry. -->
+<title>Masonry Test: 1,000 Columns and 10,000 Items</title>
+<script src="../resources/runner.js"></script>
+</head>
+
+<style>
+    grid {
+        display: grid;
+        grid-template-columns: repeat(1000, auto);
+        grid-template-rows: masonry;
+        gap: 5px;
+    }
+</style>
+
+<div id="testGrid"></div>
+
+<script>
+    // Construct the grid
+    grid = document.createElement("grid")
+    for (let i = 0; i < 10000; i++) {
+        let div = document.createElement("div");
+        div.innerText = i;
+        grid.appendChild(div);
+    }
+
+    function test() {
+        document.getElementById("testGrid").appendChild(grid);
+        document.body.offsetHeight;
+        document.getElementById("testGrid").removeChild(grid);
+        document.body.offsetHeight;
+    }
+
+    PerfTestRunner.measureRunsPerSecond({ run: test });
+</script>
+
+</html>

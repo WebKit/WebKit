@@ -1,0 +1,43 @@
+<!doctype html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> HTTP 404 error handling</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(t => {
+    return new Promise((resolve, reject) => {
+        const model = document.createElement("model");
+        document.body.appendChild(model);
+        t.add_cleanup(() => model.remove());
+
+        assert_false(model.complete, "model.complete is false before load.");
+
+        model.addEventListener("error", () => {
+            assert_false(model.complete, "model.complete is false after receiving error event.");
+            resolve();
+        });
+        model.addEventListener("load", () => reject("received unexpected load event"));
+
+        const source = document.createElement("source");
+        source.src = "resources/does-not-exist.usdz";
+        model.appendChild(source);
+    });
+}, "<model> dispatches an \"error\" event when the server returns HTTP 404.");
+
+promise_test(async t => {
+    const model = document.createElement("model");
+    document.body.appendChild(model);
+    t.add_cleanup(() => model.remove());
+
+    const source = document.createElement("source");
+    source.src = "resources/does-not-exist.usdz";
+    model.appendChild(source);
+
+    await promise_rejects_dom(t, "NetworkError", model.ready);
+}, "<model> ready promise rejects with NetworkError when the server returns HTTP 404.");
+
+</script>
+</body>

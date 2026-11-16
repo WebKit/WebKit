@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/dump-as-markup.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <details id="details">
+        <summary>Show content</summary>
+        <div id="editor" contenteditable>
+            <p>Apple banana orange.</p>
+        </div>
+    </details>
+    <details id="otherDetails">
+        <summary>Show content</summary>
+        <div id="otherEditor" contenteditable>
+            <p>Kiwi banana pear.</p>
+        </div>
+    </details>
+    <div id="log"></div>
+</body>
+<script>
+Markup.waitUntilDone();
+Markup.description("Verifies that find and replace can be used to replace words in an editable area. This test requires WebKitTestRunner.");
+
+function waitForDetailsOpening(element) {
+    return new Promise(resolve => {
+        element.ontoggle = () => {
+            if (element.open)
+                resolve();
+        }
+    });
+}
+
+onload = async () => {
+    testRunner.findStringMatchesInPage("orange", []);
+    testRunner.indicateFindMatch(0);
+    await Promise.all([waitForDetailsOpening(details), UIHelper.ensurePresentationUpdate()]);
+    testRunner.replaceFindMatchesAtIndices([0], "apricot", false);
+    Markup.dump("editor", "After replacing 'orange' with 'apricot'");
+
+    if (!details.open) {
+        log.textContent += "FAIL because first element didn't expand after first replacement.\n";
+    }
+
+    if (otherDetails.open) {
+        log.textContent += "FAIL because second element expanded after first replacement, despite word not matching in second element.\n";
+    }
+
+    details.open = false;
+
+    testRunner.findStringMatchesInPage("banana", []);
+    testRunner.indicateFindMatch(0);
+    await Promise.all([waitForDetailsOpening(details), UIHelper.ensurePresentationUpdate()]);
+    testRunner.indicateFindMatch(1);
+    await Promise.all([waitForDetailsOpening(otherDetails), UIHelper.ensurePresentationUpdate()]);
+    testRunner.replaceFindMatchesAtIndices([0, 1], "watermelon", false);
+    Markup.dump("editor", "First editor after replacing 'banana' with 'watermelon'");
+    Markup.dump("otherEditor", "Second editor after replacing 'banana' with 'watermelon'");
+
+    if (!details.open) {
+        log.textContent += "FAIL because first element didn't expand after second replacement.\n";
+    }
+
+    if (!otherDetails.open) {
+        log.textContent += "FAIL because second element didn't expand after second replacement.\n";
+    }
+
+    if (log.textContent)
+        Markup.dump("log");
+
+    Markup.notifyDone();
+};
+</script>
+</html>

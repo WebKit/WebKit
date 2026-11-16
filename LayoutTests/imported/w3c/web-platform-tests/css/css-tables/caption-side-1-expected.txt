@@ -1,0 +1,16 @@
+Caption-side
+
+Checks that browsers implement properly the caption-side property
+
+This should read ABC:
+The first caption (C) should be put on the bottom because it inherits caption-side:bottom from the table;
+The second captin (A) should be put on the top because it has caption-side:top specified;
+
+<table style="caption-side:bottom"><caption>C</caption><tbody><tr><td>B</td></tr></tbody><caption style="caption-side:top">A</caption></table>
+C
+B
+A
+
+PASS Caption-side inherits and reorder captions properly
+PASS Multiple captions can be rendered
+

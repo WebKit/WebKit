@@ -1,0 +1,29 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices
+current-version: 0
+reexported-libraries:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        libraries: [/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard, /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices]
+exports:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        symbols: [_FBSOpenApplicationOptionKeyLaunchIntent, _FBSOpenApplicationOptionKeyUnlockDevice, _FBSSceneVisibilityEndowmentNamespace]
+        objc-classes: [FBSOpenApplicationOptions, FBSOpenApplicationService]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard
+current-version: 0
+exports:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        objc-classes: [BSAuditToken]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices
+current-version: 0
+exports: []
+...

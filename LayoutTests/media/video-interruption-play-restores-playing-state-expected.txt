@@ -1,0 +1,18 @@
+
+RUN(internals.setMediaElementRestrictions(video, 'NoRestrictions'))
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.mediaSessionState(video) == 'Playing') OK
+RUN(video.pause())
+EVENT(pause)
+EXPECTED (internals.mediaSessionState(video) == 'Paused') OK
+RUN(internals.beginMediaSessionInterruption("System"))
+EXPECTED (internals.mediaSessionState(video) == 'Interrupted') OK
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+EXPECTED (internals.mediaSessionState(video) == 'Playing') OK
+END OF TEST
+

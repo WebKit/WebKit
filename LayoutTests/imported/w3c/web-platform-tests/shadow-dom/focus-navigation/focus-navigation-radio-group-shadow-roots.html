@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ TabsToLinks=true ] -->
+<title>Focus navigation treats same-name radio buttons in separate shadow roots as separate groups</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/input.html#radio-button-group">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="resources/shadow-dom.js"></script>
+<script src="resources/focus-utils.js"></script>
+
+<input id="before" value="Before">
+<div id="first">
+  <template shadowrootmode="open">
+    <input type="radio" name="group" id="radio" checked>
+    <input type="radio" name="group">
+  </template>
+</div>
+<div id="second">
+  <template shadowrootmode="open">
+    <input type="radio" name="group" id="radio" checked>
+    <input type="radio" name="group">
+  </template>
+</div>
+<input id="after" value="After">
+
+<script>
+promise_test(async () => {
+  await assert_focus_navigation_bidirectional([
+    'before',
+    'first/radio',
+    'second/radio',
+    'after',
+  ]);
+}, 'Same-name radio buttons in separate shadow roots are separate groups for focus navigation');
+</script>

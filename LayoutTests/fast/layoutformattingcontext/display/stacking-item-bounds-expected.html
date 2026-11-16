@@ -1,0 +1,80 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<html>
+<head>
+    <style>
+        .container {
+            opacity: 0.75;
+            width: 198px;
+            height: 250px;
+            float: left;
+        }
+
+        .stacking {
+            border: 5px solid blue;
+            height: 20px;
+            margin: 10px;
+            will-change: z-index;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            border: 2px solid blue;
+            background-color: green;
+        }
+    
+        .positioned {
+            position: relative;
+        }
+        </style>
+</head>
+<body>
+    <div class="container">
+        <div class="stacking">
+            <div class="positioned box">text here</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stacking">
+            <div class="box">text here</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stacking">
+            <div class="positioned box"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stacking">
+            <div class="box"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stacking">
+            <img class="box">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stacking">
+            <img class="positioned box">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stacking">
+            <img class="positioned box" style="display:block">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stacking">
+            <img class="box" style="display:block">
+        </div>
+    </div>
+</body>
+</html>

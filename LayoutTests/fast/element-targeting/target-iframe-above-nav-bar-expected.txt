@@ -1,0 +1,9 @@
+
+Navigation Bar
+This test requires WebKitTestRunner.
+
+PASS targetSelector is "DIV.frame-wrapper"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

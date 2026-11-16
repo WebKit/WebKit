@@ -1,0 +1,9 @@
+
+PASS Cross-realm IDBIndex::get() method from detached <iframe> works as expected
+PASS Cross-realm IDBIndex::getKey() method from detached <iframe> works as expected
+PASS Cross-realm IDBIndex::getAll() method from detached <iframe> works as expected
+PASS Cross-realm IDBIndex::getAllKeys() method from detached <iframe> works as expected
+PASS Cross-realm IDBIndex::count() method from detached <iframe> works as expected
+PASS Cross-realm IDBIndex::openCursor() method from detached <iframe> works as expected
+PASS Cross-realm IDBIndex::openKeyCursor() method from detached <iframe> works as expected
+

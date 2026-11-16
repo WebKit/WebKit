@@ -1,0 +1,52 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    name = "testutils",
+    testonly = True,
+    srcs = [
+        "VkTestMemoryAllocator.cpp",
+        "VkTestMemoryAllocator.h",
+        "VkTestUtils.cpp",
+        "VulkanDefines.h",
+    ],
+    hdrs = ["VkTestUtils.h"],
+    visibility = [
+        "//tools:__subpackages__",
+    ],
+    deps = [
+        "//:core",
+        "//src/gpu/ganesh/vk:ganesh_vulkan_TEST_UTIL",
+        "//tools/library:load_dynamic_library",
+        "@vulkan_headers",
+        "@vulkanmemoryallocator//:hdrs",
+    ],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        "VkTestHelper.h",
+        "VkTestMemoryAllocator.h",
+        "VkTestUtils.h",
+        "VkYcbcrSamplerHelper.h",
+        "VulkanDefines.h",
+    ],
+    visibility = ["//tools/gpu:__pkg__"],
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "VkTestHelper.cpp",
+        "VkTestMemoryAllocator.cpp",
+        "VkTestUtils.cpp",
+        "VkYcbcrSamplerHelper.cpp",
+    ],
+    visibility = ["//tools/gpu:__pkg__"],
+)

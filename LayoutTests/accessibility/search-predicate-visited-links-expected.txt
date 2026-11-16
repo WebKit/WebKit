@@ -1,0 +1,15 @@
+This tests the ability to search for accessible elements by key or text.
+
+PASS: resultElement.boolAttributeValue('AXVisited') === false
+PASS: resultElement.domIdentifier === 'link'
+PASS: resultElement.boolAttributeValue('AXVisited') === false
+PASS: resultElement.domIdentifier === 'display-contents-link'
+PASS: resultElement.boolAttributeValue('AXVisited') === true
+PASS: resultElement.domIdentifier === 'link'
+PASS: resultElement.boolAttributeValue('AXVisited') === true
+PASS: resultElement.domIdentifier === 'display-contents-link'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+link display:contents link

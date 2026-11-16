@@ -1,0 +1,38 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  #    fields: Array of hashes. Each hash contains only one key, "name."
+  #            The names are the same as the keys from field_descs 
+  #            (see global/field-descs.html.tmpl).
+  #%]
+
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+
+[% PROCESS global/header.html.tmpl
+  title = "Edit values for which field?"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% columns = [
+     { 
+       name => "name"
+       heading => "Edit field values for..."
+       content_use_field = 1
+       contentlink => "editvalues.cgi?field=%%name%%"
+     }
+   ]
+%]
+
+[% PROCESS admin/table.html.tmpl
+     columns = columns
+     data = fields
+%]
+
+[% PROCESS global/footer.html.tmpl %]

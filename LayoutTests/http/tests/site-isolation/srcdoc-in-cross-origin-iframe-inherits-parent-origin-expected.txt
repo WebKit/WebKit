@@ -1,0 +1,17 @@
+Setting srcdoc on an already cross-site (out-of-process) iframe must bring the frame back into the parent's origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS childDoc is not null
+PASS childDoc.URL is "about:srcdoc"
+PASS targetElem is not null
+PASS targetElem && targetElem.textContent is "mutated by parent"
+PASS iframeElem.contentWindow.parentIsReachable is true
+PASS iframeElem.contentWindow.origin === window.origin is true
+PASS childDoc.baseURI === document.baseURI is true
+PASS iframeElem.contentWindow.internals.processIdentifier === window.internals.processIdentifier is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

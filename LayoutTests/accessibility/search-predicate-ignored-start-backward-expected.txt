@@ -1,0 +1,12 @@
+This test ensures that a backward AnyType immediate-descendants search whose start element has become ignored resumes from the correct direct child of the container, instead of jumping to the container's last child.
+
+
+Backward (start between two direct children): PASS: prevDOMId === 'b2'
+
+Backward from the first child (nothing precedes the start): PASS: frontPrevDOMId === 'null'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button 1  Button 2    Button 3  Button 4
+  Front Button 1  Front Button 2

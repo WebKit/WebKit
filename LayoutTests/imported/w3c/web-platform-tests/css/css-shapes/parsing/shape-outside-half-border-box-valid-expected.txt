@@ -1,0 +1,6 @@
+
+PASS e.style['shape-outside'] = "half-border-box" should set the property value
+PASS e.style['shape-outside'] = "circle() half-border-box" should set the property value
+PASS e.style['shape-outside'] = "half-border-box circle()" should set the property value
+PASS e.style['shape-outside'] = "inset(10px) half-border-box" should set the property value
+

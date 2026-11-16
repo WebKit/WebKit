@@ -1,0 +1,7 @@
+2d.filter.canvasFilterObject.componentTransfer.gamma.tentative
+
+Test pixels on CanvasFilter() componentTransfer with gamma type
+
+
+FAIL Test pixels on CanvasFilter() componentTransfer with gamma type Can't find variable: CanvasFilter
+

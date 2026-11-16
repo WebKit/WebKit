@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodeinsertbefore07
+Status	failure
+Message	WRONG_DOCUMENT_ERR_nodeinsertbefore07: assertTrue failed

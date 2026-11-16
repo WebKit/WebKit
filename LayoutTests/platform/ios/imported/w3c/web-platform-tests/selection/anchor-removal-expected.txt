@@ -1,0 +1,9 @@
+Parent paragraph
+Child paragraph one Paragraph two
+
+FAIL anchorNode snaps up to parent when removed (no asserts) assert_equals: anchorNode snaps up to parent expected Element node <div id="parentDiv">
+
+    <div id="childDiv">
+      <... but got null
+FAIL anchorNode snaps up to parent when removed (with asserts) assert_equals: anchorNode before move expected Text node "Parent paragraph" but got null
+

@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true BidiContentAwarePasteEnabled=true ] -->
+<html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+div[contenteditable] {
+    border: 1px solid orange;
+    padding: 1em;
+    outline: none;
+}
+
+.rtl {
+    direction: rtl;
+    margin: 1em;
+}
+
+button {
+    font-size: 20px;
+}
+</style>
+<script>
+window.testRunner?.waitUntilDone();
+
+addEventListener("load", async () => {
+    const source = document.getElementById("source");
+    const copyButton = document.querySelector("button");
+    copyButton.addEventListener("click", () => {
+        getSelection().selectAllChildren(source);
+        document.execCommand("Copy");
+    });
+
+    await UIHelper.activateElement(copyButton);
+    await UIHelper.ensurePresentationUpdate();
+    const destination = document.getElementById("destination");
+    getSelection().selectAllChildren(destination);
+    document.execCommand("Paste");
+    await UIHelper.ensurePresentationUpdate();
+    document.execCommand("InsertParagraph");
+    await UIHelper.ensurePresentationUpdate();
+    document.execCommand("Paste");
+    await UIHelper.ensurePresentationUpdate();
+
+    getSelection().removeAllRanges();
+    document.getElementById("removeAfterTest").remove();
+    window.testRunner?.notifyDone();
+});
+</script>
+</head>
+<body>
+    <div class="rtl" id="removeAfterTest">
+        <p id="source">الإنجليزي مثل<strong>الإنجليزي مثل “hello world” يُكتب من اليسار إلى</strong>الاتجاهين</p>
+        <button>Click to copy</button>
+    </div>
+    <div contenteditable id="destination" spellcheck="false" autocorrect="off"></div>
+</body>
+</html>

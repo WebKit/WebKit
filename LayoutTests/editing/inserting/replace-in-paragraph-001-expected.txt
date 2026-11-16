@@ -1,0 +1,5 @@
+PASS $("destination").textContent is "source"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

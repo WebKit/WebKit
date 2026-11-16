@@ -1,0 +1,3 @@
+
+PASS Dynamically created defer scripts inserted after DOMContentLoaded
+

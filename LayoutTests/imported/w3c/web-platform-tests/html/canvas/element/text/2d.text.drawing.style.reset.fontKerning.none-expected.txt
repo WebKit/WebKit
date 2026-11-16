@@ -1,0 +1,6 @@
+2d.text.drawing.style.reset.fontKerning.none
+crbug/338965374, fontKerning still works after setting font for a second time.
+Actual output:
+
+PASS crbug/338965374, fontKerning still works after setting font for a second time.
+

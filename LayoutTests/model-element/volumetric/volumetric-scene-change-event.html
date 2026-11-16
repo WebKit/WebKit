@@ -1,0 +1,224 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true MockVolumetricSceneEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>The volumetricchange event and inVolumetricScene state</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="resources/volumetric-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+    const watcher = new EventWatcher(t, model, "volumetricchange");
+
+    assert_false(model.inVolumetricScene, 'A model starts outside of a volumetric scene');
+
+    const entered = nextVolumetricChange(watcher);
+    await requestVolumetricScene(model);
+    assert_true(model.inVolumetricScene, 'The model is in a volumetric scene once the request resolves');
+
+    const { event, inVolumetricScene } = await entered;
+    assert_equals(event.type, "volumetricchange");
+    assert_equals(event.target, model, 'The event targets the presented model');
+    assert_true(event.isTrusted, 'The event is trusted');
+    assert_true(event.bubbles, 'The event bubbles');
+    assert_true(event.composed, 'The event is composed');
+    assert_false(event.cancelable, 'The event is not cancelable');
+    assert_true(inVolumetricScene, 'The model is in a volumetric scene when the event fires');
+}, 'Entering a volumetric scene fires volumetricchange on the model');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    const watcher = new EventWatcher(t, model, "volumetricchange");
+
+    const entered = nextVolumetricChange(watcher);
+    await requestVolumetricScene(model);
+    await entered;
+
+    const exited = nextVolumetricChange(watcher);
+    model.exitVolumetricScene();
+    assert_true(model.inVolumetricScene, 'The model stays in its volumetric scene until it closes');
+
+    const { event, inVolumetricScene } = await exited;
+    assert_equals(event.target, model, 'The event targets the model that left its scene');
+    assert_false(inVolumetricScene, 'The model is no longer in a volumetric scene when the event fires');
+    assert_equals(presentationMode(model), "inline", 'The model is back inline');
+}, 'Exiting a volumetric scene fires volumetricchange on the model');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    const watcher = new EventWatcher(t, document, "volumetricchange");
+
+    const entered = nextVolumetricChange(watcher);
+    await requestVolumetricScene(model);
+    const enter = await entered;
+    assert_equals(enter.event.target, model, 'The bubbling enter event targets the model');
+    assert_true(enter.inVolumetricScene, 'The document observes the enter change');
+
+    const exited = nextVolumetricChange(watcher);
+    model.exitVolumetricScene();
+    const exit = await exited;
+    assert_equals(exit.event.target, model, 'The bubbling exit event targets the model');
+    assert_false(exit.inVolumetricScene, 'The document observes the exit change');
+}, 'volumetricchange bubbles to the document');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    assert_equals(model.onvolumetricchange, null, 'The event handler starts unset');
+
+    const states = [];
+    model.onvolumetricchange = () => states.push(model.inVolumetricScene);
+
+    await requestVolumetricScene(model);
+    await t.step_wait(() => states.length === 1, 'the handler observes the enter change');
+
+    model.exitVolumetricScene();
+    await t.step_wait(() => states.length === 2, 'the handler observes the exit change');
+
+    assert_array_equals(states, [true, false], 'The handler observes both changes in order');
+}, 'The onvolumetricchange event handler is invoked for each change');
+
+promise_test(async t => {
+    const [portal, model] = await createPortalWithReadyModel(t);
+    const portalWatcher = new EventWatcher(t, portal, "volumetricchange");
+    const modelWatcher = new EventWatcher(t, model, "volumetricchange");
+
+    assert_false(portal.inVolumetricScene, 'A portal starts outside of a volumetric scene');
+
+    const entered = nextVolumetricChange(portalWatcher);
+    await requestVolumetricScene(portal);
+    assert_true(portal.inVolumetricScene, 'The portal is in a volumetric scene once the request resolves');
+    assert_false(model.inVolumetricScene, 'The hosted model is not itself in a volumetric scene');
+    assert_true((await entered).inVolumetricScene, 'The portal observes the enter change');
+
+    const exited = nextVolumetricChange(portalWatcher);
+    portal.exitVolumetricScene();
+    assert_false((await exited).inVolumetricScene, 'The portal observes the exit change');
+    assert_false(model.inVolumetricScene, 'The hosted model never entered a volumetric scene');
+}, 'Entering and exiting a volumetric scene fires volumetricchange on the portal only');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    const watcher = new EventWatcher(t, model, "volumetricchange");
+
+    internals.consumeTransientActivation();
+    await promise_rejects_dom(t, "NotAllowedError", model.requestVolumetricScene(),
+        'Should reject without transient activation');
+    assert_false(model.inVolumetricScene, 'A rejected request leaves the model outside of a volumetric scene');
+
+    const entered = nextVolumetricChange(watcher);
+    await requestVolumetricScene(model);
+    assert_true((await entered).inVolumetricScene, 'The first change comes from the successful request');
+
+    const exited = nextVolumetricChange(watcher);
+    model.exitVolumetricScene();
+    assert_false((await exited).inVolumetricScene, 'The second change comes from the exit');
+}, 'A rejected request does not fire volumetricchange');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    const watcher = new EventWatcher(t, model, "volumetricchange");
+
+    const request = requestVolumetricScene(model);
+    model.exitVolumetricScene();
+    await promise_rejects_dom(t, "InvalidStateError", request,
+        'Should reject a request that was exited before its scene opened');
+    assert_false(model.inVolumetricScene, 'The cancelled request leaves the model outside of a volumetric scene');
+
+    const entered = nextVolumetricChange(watcher);
+    await requestVolumetricScene(model);
+    assert_true((await entered).inVolumetricScene, 'The first change comes from the successful request');
+
+    const exited = nextVolumetricChange(watcher);
+    model.exitVolumetricScene();
+    assert_false((await exited).inVolumetricScene, 'The second change comes from the exit');
+}, 'A request cancelled before its scene opens does not fire volumetricchange');
+
+promise_test(async t => {
+    const [first] = await createPortalWithReadyModel(t);
+    const [second] = await createPortalWithReadyModel(t);
+    t.add_cleanup(() => first.exitVolumetricScene());
+    const firstWatcher = new EventWatcher(t, first, "volumetricchange");
+    const secondWatcher = new EventWatcher(t, second, "volumetricchange");
+
+    const entered = nextVolumetricChange(firstWatcher);
+    await requestVolumetricScene(first);
+    await entered;
+
+    await promise_rejects_dom(t, "InvalidStateError", requestVolumetricScene(second),
+        'Should reject while another element is presented');
+    assert_true(first.inVolumetricScene, 'The established scene is left alone');
+    assert_false(second.inVolumetricScene, 'The rejected portal is not in a volumetric scene');
+
+    const exited = nextVolumetricChange(firstWatcher);
+    first.exitVolumetricScene();
+    assert_false((await exited).inVolumetricScene, 'The first portal observes the exit change');
+}, 'A request rejected because another element is presented does not fire volumetricchange');
+
+promise_test(async t => {
+    const [portal] = await createPortalWithReadyModel(t);
+    const watcher = new EventWatcher(t, portal, "volumetricchange");
+
+    const entered = nextVolumetricChange(watcher);
+    await requestVolumetricScene(portal);
+    await entered;
+
+    const exited = nextVolumetricChange(watcher);
+    portal.remove();
+    const { event, inVolumetricScene } = await exited;
+
+    assert_equals(event.target, portal, 'The event targets the removed portal');
+    assert_false(inVolumetricScene, 'The removed portal is no longer in a volumetric scene');
+}, 'Removing a presented portal from the document fires volumetricchange');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    const watcher = new EventWatcher(t, model, "volumetricchange");
+    const documentWatcher = new EventWatcher(t, document, "volumetricchange");
+
+    const entered = nextVolumetricChange(watcher);
+    const documentEntered = nextVolumetricChange(documentWatcher);
+    await requestVolumetricScene(model);
+    await Promise.all([entered, documentEntered]);
+
+    const exited = nextVolumetricChange(watcher);
+    model.remove();
+    const { event, inVolumetricScene } = await exited;
+
+    assert_equals(event.target, model, 'The event targets the removed model');
+    assert_false(inVolumetricScene, 'The removed model is no longer in a volumetric scene');
+    assert_equals(presentationMode(model), "inline", 'The removed model is back inline');
+}, 'Removing a presented model from the document fires volumetricchange on the disconnected model');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    t.add_cleanup(() => testRunner.setPageVisibility("visible"));
+    const watcher = new EventWatcher(t, model, "volumetricchange");
+
+    const entered = nextVolumetricChange(watcher);
+    await requestVolumetricScene(model);
+    await entered;
+
+    const exited = nextVolumetricChange(watcher);
+    testRunner.setPageVisibility("hidden");
+    assert_false((await exited).inVolumetricScene, 'Hiding the page takes the model out of its volumetric scene');
+}, 'Hiding the page fires volumetricchange');
+</script>
+</body>

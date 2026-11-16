@@ -1,0 +1,18 @@
+😀
+𠀀
+𝄞
+𝐀
+𐀀
+一😀𝐀
+😀𠀀𝐀
+一😀A𝐀
+
+PASS U+1F600 GRINNING FACE is upright (VO=U, surrogate pair)
+PASS U+20000 CJK Ext-B ideograph is upright (VO=U, surrogate pair)
+PASS U+1D11E MUSICAL SYMBOL G CLEF is upright (VO=U, surrogate pair)
+PASS U+1D400 MATHEMATICAL BOLD CAPITAL A is sideways (VO=R, surrogate pair)
+PASS U+10000 LINEAR B SYLLABLE B008 A is sideways (VO=R, surrogate pair)
+PASS Mixed string with BMP and surrogate pair characters
+PASS Consecutive surrogate pairs: offset arithmetic across back-to-back pairs
+PASS Interleaved BMP and surrogate pairs: BMP-surrogate-BMP-surrogate
+

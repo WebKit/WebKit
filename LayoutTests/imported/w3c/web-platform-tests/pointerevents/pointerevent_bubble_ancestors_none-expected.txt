@@ -1,0 +1,4 @@
+click me
+
+PASS PointerEvent: Events still bubble to ancestors with pointer-events: none
+

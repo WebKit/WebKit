@@ -1,0 +1,6 @@
+2d.text.measure.text-clusters-exceptions.tentative
+Check that TextMetrics::getTextClusters() throws when using invalid indexes.
+Actual output:
+
+FAIL Check that TextMetrics::getTextClusters() throws when using invalid indexes. assert_throws_dom: function "() => tm.getTextClusters(text.length, 0)" threw object "TypeError: tm.getTextClusters is not a function. (In 'tm.getTextClusters(text.length, 0)', 'tm.getTextClusters' is undefined)" that is not a DOMException IndexSizeError: property "code" is equal to undefined, expected 1
+

@@ -1,0 +1,6 @@
+
+PASS CustomStateSet behavior of ElementInternals.states: Initial state
+PASS CustomStateSet behavior of ElementInternals.states: Exceptions
+PASS CustomStateSet behavior of ElementInternals.states: Modifications
+PASS Updating a CustomStateSet while iterating it should work
+

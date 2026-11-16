@@ -1,0 +1,1590 @@
+# Finnish translation for webkit.
+# Copyright (C) 2016 webkit's COPYRIGHT HOLDER
+# This file is distributed under the same license as the webkit package.
+# Jiri Grönroos <jiri.gronroos+l10n@iki.fi>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit HEAD\n"
+"Report-Msgid-Bugs-To: https://bugs.webkit.org\n"
+"POT-Creation-Date: 2016-01-24 15:13+0000\n"
+"PO-Revision-Date: 2016-01-24 18:17+0200\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos+l10n@iki.fi>\n"
+"Language-Team: suomi <gnome-fi-laatu@lists.sourceforge.net>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.7\n"
+
+#: ../ErrorsGtk.cpp:32
+msgid "Load request cancelled"
+msgstr "Latauspyyntö peruttu"
+
+#: ../ErrorsGtk.cpp:37
+msgid "Not allowed to use restricted network port"
+msgstr "Rajoitetun verkkoportin käyttö ei ole sallittua"
+
+#: ../ErrorsGtk.cpp:42
+msgid "Blocked by content blocker"
+msgstr "Estetty sisällönestäjän toimesta"
+
+#: ../ErrorsGtk.cpp:47
+msgid "URL cannot be shown"
+msgstr "Osoitetta ei voi näyttää"
+
+#: ../ErrorsGtk.cpp:52
+msgid "Frame load was interrupted"
+msgstr "Kehyksen lataaminen keskeytettiin"
+
+#: ../ErrorsGtk.cpp:57
+msgid "Content with the specified MIME type cannot be shown"
+msgstr "Sisältöä määritetyllä MIME-tyypillä ei voi näyttää"
+
+#: ../ErrorsGtk.cpp:62
+msgid "File does not exist"
+msgstr "Tiedostoa ei ole olemassa"
+
+#: ../ErrorsGtk.cpp:67
+msgid "Plugin will handle load"
+msgstr ""
+
+#: ../ErrorsGtk.cpp:77
+msgid "User cancelled the download"
+msgstr "Käyttäjä perui latauksen"
+
+#: ../ErrorsGtk.cpp:92
+msgid "Printer not found"
+msgstr "Tulostinta ei löytynyt"
+
+#: ../ErrorsGtk.cpp:97
+msgid "Invalid page range"
+msgstr "Virheellinen sivualue"
+
+#: ../LocalizedStringsGtk.cpp:55 ../LocalizedStringsGtk.cpp:60
+msgid "Submit"
+msgstr "Lähetä"
+
+#: ../LocalizedStringsGtk.cpp:65
+msgid "Reset"
+msgstr "Nollaa"
+
+#: ../LocalizedStringsGtk.cpp:70
+msgid "Details"
+msgstr "Tiedot"
+
+#: ../LocalizedStringsGtk.cpp:75
+msgid "This is a searchable index. Enter search keywords: "
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:80
+msgid "Choose File"
+msgstr "Valitse tiedosto"
+
+#: ../LocalizedStringsGtk.cpp:85
+msgid "Choose Files"
+msgstr "Valitse tiedostot"
+
+#: ../LocalizedStringsGtk.cpp:90 ../LocalizedStringsGtk.cpp:95
+msgid "(None)"
+msgstr "(ei mitään)"
+
+#: ../LocalizedStringsGtk.cpp:100
+msgid "Open Link in New _Window"
+msgstr "Avaa _uudessa ikkunassa"
+
+#: ../LocalizedStringsGtk.cpp:105
+msgid "_Download Linked File"
+msgstr "_Lataa linkitetty tiedosto"
+
+#: ../LocalizedStringsGtk.cpp:110
+msgid "Copy Link Loc_ation"
+msgstr "Kopioi linkin _sijainti"
+
+#: ../LocalizedStringsGtk.cpp:115
+msgid "Open _Image in New Window"
+msgstr "Avaa _kuva uudessa ikkunassa"
+
+#: ../LocalizedStringsGtk.cpp:120
+msgid "Sa_ve Image As"
+msgstr "_Tallenna kuva nimellä"
+
+#: ../LocalizedStringsGtk.cpp:125
+msgid "Cop_y Image"
+msgstr "_Kopioi kuva"
+
+#: ../LocalizedStringsGtk.cpp:130
+msgid "Copy Image _Address"
+msgstr "Kopioi kuvan _osoite"
+
+#: ../LocalizedStringsGtk.cpp:135
+msgid "Open _Video in New Window"
+msgstr "Avaa _video uudessa ikkunassa"
+
+#: ../LocalizedStringsGtk.cpp:140
+msgid "Open _Audio in New Window"
+msgstr "Avaa _ääni uudessa ikkunassa"
+
+#: ../LocalizedStringsGtk.cpp:145
+msgid "Download _Video"
+msgstr "Lataa _video"
+
+#: ../LocalizedStringsGtk.cpp:150
+msgid "Download _Audio"
+msgstr "Lataa _ääni"
+
+#: ../LocalizedStringsGtk.cpp:155
+msgid "Cop_y Video Link Location"
+msgstr "_Kopioi videolinkin sijainti"
+
+#: ../LocalizedStringsGtk.cpp:160
+msgid "Cop_y Audio Link Location"
+msgstr "_Kopioi äänilinkin sijainti"
+
+#: ../LocalizedStringsGtk.cpp:165
+msgid "_Toggle Media Controls"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:170
+msgid "_Show Media Controls"
+msgstr "_Näytä mediaohjaimet"
+
+#: ../LocalizedStringsGtk.cpp:175
+msgid "_Hide Media Controls"
+msgstr "_Piilota mediaohjaimet"
+
+#: ../LocalizedStringsGtk.cpp:180
+msgid "Toggle Media _Loop Playback"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:185
+msgid "Switch Video to _Fullscreen"
+msgstr "Vaihda video koko _näyttöön"
+
+#: ../LocalizedStringsGtk.cpp:190
+msgid "_Play"
+msgstr "_Toista"
+
+#: ../LocalizedStringsGtk.cpp:195
+msgid "_Pause"
+msgstr "_Keskeytä"
+
+#: ../LocalizedStringsGtk.cpp:200
+msgid "_Mute"
+msgstr "_Vaimenna"
+
+#: ../LocalizedStringsGtk.cpp:205
+msgid "Open _Frame in New Window"
+msgstr "Avaa ke_hys uudessa ikkunassa"
+
+#: ../LocalizedStringsGtk.cpp:228
+msgid "_Insert Unicode Control Character"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:233
+msgid "Input _Methods"
+msgstr "_Syötetavat"
+
+#: ../LocalizedStringsGtk.cpp:256
+msgid "_Reload"
+msgstr "_Päivitä"
+
+#: ../LocalizedStringsGtk.cpp:273
+msgid "No Guesses Found"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:278
+msgid "_Ignore Spelling"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:283
+msgid "_Learn Spelling"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:288
+msgid "_Search the Web"
+msgstr "_Etsi verkosta"
+
+#: ../LocalizedStringsGtk.cpp:293
+msgid "_Look Up in Dictionary"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:298
+msgid "_Open Link"
+msgstr "_Avaa linkki"
+
+#: ../LocalizedStringsGtk.cpp:303
+msgid "Ignore _Grammar"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:308
+msgid "Spelling and _Grammar"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:313
+msgid "_Show Spelling and Grammar"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:313
+msgid "_Hide Spelling and Grammar"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:318
+msgid "_Check Document Now"
+msgstr "_Tarkista asiakirja nyt"
+
+#: ../LocalizedStringsGtk.cpp:323
+msgid "Check Spelling While _Typing"
+msgstr "Tarkista oikeinkirjoitus _kirjoittaessa"
+
+#: ../LocalizedStringsGtk.cpp:328
+msgid "Check _Grammar With Spelling"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:333
+msgid "_Font"
+msgstr "_Fontti"
+
+#: ../LocalizedStringsGtk.cpp:356
+msgid "_Outline"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:361
+msgid "Inspect _Element"
+msgstr "Tutki _elementti"
+
+#: ../LocalizedStringsGtk.cpp:366
+msgid "LRM _Left-to-right mark"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:371
+msgid "RLM _Right-to-left mark"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:376
+msgid "LRE Left-to-right _embedding"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:381
+msgid "RLE Right-to-left e_mbedding"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:386
+msgid "LRO Left-to-right _override"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:391
+msgid "RLO Right-to-left o_verride"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:396
+msgid "PDF _Pop directional formatting"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:401
+msgid "ZWS _Zero width space"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:406
+msgid "ZWJ Zero width _joiner"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:411
+msgid "ZWNJ Zero width _non-joiner"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:416
+msgid "No recent searches"
+msgstr "Ei hakuja"
+
+#: ../LocalizedStringsGtk.cpp:421
+msgid "Recent searches"
+msgstr "Viimeisimmät haut"
+
+#: ../LocalizedStringsGtk.cpp:426
+msgid "_Clear recent searches"
+msgstr "_Tyhjennä viimeisimmät haut"
+
+#: ../LocalizedStringsGtk.cpp:431
+msgid "definition"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:436
+msgid "description list"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:441
+msgid "term"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:446
+msgid "description"
+msgstr "kuvaus"
+
+#: ../LocalizedStringsGtk.cpp:451
+msgid "footer"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:456
+msgid "cancel"
+msgstr "peru"
+
+#: ../LocalizedStringsGtk.cpp:461
+msgid "press"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:466
+msgid "select"
+msgstr "valitse"
+
+#: ../LocalizedStringsGtk.cpp:471
+msgid "activate"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:476
+msgid "uncheck"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:481
+msgid "check"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:486
+msgid "jump"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:506
+msgid "Missing Plug-in"
+msgstr "Puuttuva liitännäinen"
+
+#: ../LocalizedStringsGtk.cpp:512
+msgid "Plug-in Failure"
+msgstr "Liitännäisvirhe"
+
+#. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
+#: ../LocalizedStringsGtk.cpp:530
+msgid " files"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:535
+msgid "Unknown"
+msgstr "Tuntematon"
+
+#: ../LocalizedStringsGtk.cpp:540
+#, c-format
+msgctxt "Title string for images"
+msgid "%s  (%dx%d pixels)"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:551
+msgid "Loading..."
+msgstr "Ladataan..."
+
+#: ../LocalizedStringsGtk.cpp:556
+msgid "Live Broadcast"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:562
+msgid "audio playback"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:564
+msgid "video playback"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:566
+msgid "mute"
+msgstr "vaimenna"
+
+#: ../LocalizedStringsGtk.cpp:568
+msgid "unmute"
+msgstr "palauta ääni"
+
+#: ../LocalizedStringsGtk.cpp:570
+msgid "play"
+msgstr "toista"
+
+#: ../LocalizedStringsGtk.cpp:572
+msgid "pause"
+msgstr "keskeytä"
+
+#: ../LocalizedStringsGtk.cpp:574
+msgid "movie time"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:576
+msgid "timeline slider thumb"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:578
+msgid "back 30 seconds"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:580
+msgid "return to realtime"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:582
+msgid "elapsed time"
+msgstr "kulunut aika"
+
+#: ../LocalizedStringsGtk.cpp:584
+msgid "remaining time"
+msgstr "aikaa jäljellä"
+
+#: ../LocalizedStringsGtk.cpp:586
+msgid "status"
+msgstr "tila"
+
+#: ../LocalizedStringsGtk.cpp:588
+msgid "enter fullscreen"
+msgstr "siirry koko näyttöön"
+
+#: ../LocalizedStringsGtk.cpp:590
+msgid "exit fullscreen"
+msgstr "poistu koko näytöstä"
+
+#: ../LocalizedStringsGtk.cpp:592
+msgid "fast forward"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:594
+msgid "fast reverse"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:596
+msgid "show closed captions"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:598
+msgid "hide closed captions"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:600
+msgid "media controls"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:609
+msgid "audio element playback controls and status display"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:611
+msgid "video element playback controls and status display"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:613
+msgid "mute audio tracks"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:615
+msgid "unmute audio tracks"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:617
+msgid "begin playback"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:619
+msgid "pause playback"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:621
+msgid "movie time scrubber"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:623
+msgid "movie time scrubber thumb"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:625
+msgid "seek movie back 30 seconds"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:627
+msgid "return streaming movie to real time"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:629
+msgid "current movie time in seconds"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:631
+msgid "number of seconds of movie remaining"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:633
+msgid "current movie status"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:635
+msgid "seek quickly back"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:637
+msgid "seek quickly forward"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:639
+msgid "Play movie in fullscreen mode"
+msgstr "Toista video koko näytön tilassa"
+
+#: ../LocalizedStringsGtk.cpp:641
+msgid "Exit fullscreen mode"
+msgstr "Poistu koko näytön tilasta"
+
+#: ../LocalizedStringsGtk.cpp:643
+msgid "start displaying closed captions"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:645
+msgid "stop displaying closed captions"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:654
+msgid "indefinite time"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:684
+msgid "value missing"
+msgstr "arvo puuttuu"
+
+#: ../LocalizedStringsGtk.cpp:720
+msgid "type mismatch"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:743
+msgid "pattern mismatch"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:748
+msgid "too long"
+msgstr "liian pitkä"
+
+#: ../LocalizedStringsGtk.cpp:753
+msgid "range underflow"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:758
+msgid "range overflow"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:763
+msgid "step mismatch"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:768
+msgid "Unacceptable TLS certificate"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:785
+msgctxt "Menu section heading for subtitles"
+msgid "Subtitles"
+msgstr "Tekstitys"
+
+#: ../LocalizedStringsGtk.cpp:790
+msgctxt ""
+"Menu item label for the track that represents disabling closed captions"
+msgid "Off"
+msgstr "Pois"
+
+#: ../LocalizedStringsGtk.cpp:795
+msgctxt "Menu item label for the automatically choosen track"
+msgid "Auto"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:800
+msgctxt "Menu item label for a closed captions track that has no other name"
+msgid "No label"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:805
+msgctxt "Menu item label for an audio track that has no other name"
+msgid "No label"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:811
+msgctxt "Snapshotted Plug-In"
+msgid "Title of the label to show on a snapshotted plug-in"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:816
+msgctxt "Click to restart"
+msgid "Subtitle of the label to show on a snapshotted plug-in"
+msgstr ""
+
+#: ../../../../WebKit2/NetworkProcess/Downloads/soup/DownloadSoup.cpp:100
+#, c-format
+msgid ""
+"Cannot determine destination URI for download with suggested filename %s"
+msgstr ""
+
+#. Title of the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:93
+msgid "Authentication Required"
+msgstr "Tunnistautuminen vaaditaan"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:104
+msgid "_Cancel"
+msgstr "_Peru"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:110
+msgid "_Authenticate"
+msgstr "_Tunnistaudu"
+
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:122
+#, c-format
+msgid "Authentication required by %s:%i"
+msgstr ""
+
+#. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:131
+#, c-format
+msgid "The site says: “%s”"
+msgstr "Sivusto sanoo: “%s”"
+
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:138
+msgid "_Remember password"
+msgstr "_Muista salasana"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:147
+msgid "_Username"
+msgstr "_Käyttäjätunnus"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:159
+msgid "_Password"
+msgstr "_Salasana"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:164
+msgid "Destination"
+msgstr "Kohde"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:165
+msgid "The local URI to where the download will be saved"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:177
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
+msgid "Response"
+msgstr "Vastaus"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:178
+msgid "The response of the download"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:195
+msgid "Estimated Progress"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:196
+msgid "Determines the current progress of the download"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:214
+msgid "Allow Overwrite"
+msgstr "Salli korvaaminen"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:215
+msgid "Whether the destination may be overwritten"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:142
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:322
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:148
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:278
+#, c-format
+msgid "Page %s does not have a favicon"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:272
+msgid "Favicons database not initialized yet"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:129
+msgid "MIME types filter"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:130
+msgid "The filter currently associated with the request"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:143
+msgid "MIME types"
+msgstr "MIME-tyypit"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:144
+msgid "The list of MIME types associated with the request"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:158
+msgid "Select multiple files"
+msgstr "Valitse useita tiedostoja"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:159
+msgid "Whether the file chooser should allow selecting multiple files"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:172
+msgid "Selected files"
+msgstr "Valitut tiedostot"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:173
+msgid "The list of selected files associated with the request"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:190
+msgid "Search text"
+msgstr "Hakuteksti"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:191
+msgid "Text to search for in the view"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:203
+msgid "Search Options"
+msgstr "Hakuvalinnat"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:204
+msgid "Search options to be used in the search operation"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:217
+msgid "Maximum matches count"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:218
+msgid "The maximum number of matches in a given text to report"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:230
+msgid "WebView"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:231
+msgid "The WebView associated with this find controller"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
+msgid "Context"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
+msgid "Flags with the context of the WebKitHitTestResult"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
+msgid "Link URI"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
+msgid "The link URI"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
+msgid "Link Title"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
+msgid "The link title"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
+msgid "Link Label"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
+msgid "The link label"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
+msgid "Image URI"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
+msgid "The image URI"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:218
+msgid "Media URI"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
+msgid "The media URI"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:113
+msgid "Navigation action"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:114
+msgid "The WebKitNavigationAction triggering this decision"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:130
+msgid "Navigation type"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:131
+msgid "The type of navigation triggering this decision"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:150
+msgid "Mouse button"
+msgstr "Hiiren painike"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:151
+msgid "The mouse button used if this decision was triggered by a mouse event"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:169
+msgid "Mouse event modifiers"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:170
+msgid "The modifiers active if this decision was triggered by a mouse event"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:185
+msgid "Navigation URI request"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:186
+msgid "The URI request that is associated with this navigation"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:201
+msgid "Frame name"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:202
+msgid "The name of the new frame this navigation action targets"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:146
+msgid "Web View"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:147
+msgid "The web view that will be printed"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
+msgid "Print Settings"
+msgstr "Tulostusasetukset"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:160
+msgid "The initial print settings for the print operation"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:171
+msgid "Page Setup"
+msgstr "Sivun asetukset"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:172
+msgid "The initial page setup for the print operation"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:91
+msgid "Response URI request"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:92
+msgid "The URI request that is associated with this policy decision"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:105
+msgid "URI response"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:106
+msgid "The URI response that is associated with this policy decision"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:501
+msgid "Enable JavaScript"
+msgstr "Käytä JavaScriptiä"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:502
+msgid "Enable JavaScript."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:516
+msgid "Auto load images"
+msgstr "Lataa kuvat automaattisesti"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:517
+msgid "Load images automatically."
+msgstr "Lataa kuvat automaattisesti."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:530
+msgid "Load icons ignoring image load setting"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:531
+msgid "Whether to load site icons ignoring image load setting."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:548
+msgid "Enable offline web application cache"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:549
+msgid "Whether to enable offline web application cache."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:565
+msgid "Enable HTML5 local storage"
+msgstr "Käytä HTML5:n paikallistallennusta"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:566
+msgid "Whether to enable HTML5 Local Storage support."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:583
+msgid "Enable HTML5 database"
+msgstr "Käytä HTML5:n tietokantatukea"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:584
+msgid "Whether to enable HTML5 database support."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:597
+msgid "Enable XSS auditor"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:598
+msgid "Whether to enable the XSS auditor."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:613
+msgid "Enable frame flattening"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:614
+msgid "Whether to enable frame flattening."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:626
+msgid "Enable plugins"
+msgstr "Käytä liitännäisiä"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:627
+msgid "Enable embedded plugin objects."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:639
+msgid "Enable Java"
+msgstr "Käytä Javaa"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:640
+msgid "Whether Java support should be enabled."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:653
+msgid "JavaScript can open windows automatically"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:654
+msgid "Whether JavaScript can open windows automatically."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:669
+msgid "Enable hyperlink auditing"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:670
+msgid "Whether <a ping> should be able to send pings."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:682
+msgid "Default font family"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:683
+msgid ""
+"The font family to use as the default for content that does not specify a "
+"font."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:696
+msgid "Monospace font family"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:697
+msgid "The font family used as the default for content using monospace font."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:709
+msgid "Serif font family"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:710
+msgid "The font family used as the default for content using serif font."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:722
+msgid "Sans-serif font family"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:723
+msgid "The font family used as the default for content using sans-serif font."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:735
+msgid "Cursive font family"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:736
+msgid "The font family used as the default for content using cursive font."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:748
+msgid "Fantasy font family"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:749
+msgid "The font family used as the default for content using fantasy font."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:761
+msgid "Pictograph font family"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:762
+msgid "The font family used as the default for content using pictograph font."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:775
+msgid "Default font size"
+msgstr "Fontin oletuskoko"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:776
+msgid "The default font size used to display text."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:789
+msgid "Default monospace font size"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:790
+msgid "The default font size used to display monospace text."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:804
+msgid "Minimum font size"
+msgstr "Fontin vähimmäiskoko"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:805
+msgid "The minimum font size used to display text."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:817
+msgid "Default charset"
+msgstr "Oletusmerkistö"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:818
+msgid ""
+"The default text charset used when interpreting content with unspecified "
+"charset."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:831
+msgid "Enable private browsing"
+msgstr "Käytä yksityistä selausta"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:832
+msgid "Whether to enable private browsing"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:844
+msgid "Enable developer extras"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:845
+msgid "Whether to enable developer extras"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:857
+msgid "Enable resizable text areas"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:858
+msgid "Whether to enable resizable text areas"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:873
+msgid "Enable tabs to links"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:874
+msgid "Whether to enable tabs to links"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:887
+msgid "Enable DNS prefetching"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:888
+msgid "Whether to enable DNS prefetching"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:900
+msgid "Enable Caret Browsing"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:901
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:916
+msgid "Enable Fullscreen"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:917
+msgid "Whether to enable the Javascript Fullscreen API"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:929
+msgid "Print Backgrounds"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:930
+msgid "Whether background images should be drawn during printing"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:948
+msgid "Enable WebAudio"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:949
+msgid "Whether WebAudio content should be handled"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:963
+msgid "Enable WebGL"
+msgstr "Käytä WebGL:ää"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:964
+msgid "Whether WebGL content should be rendered"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:981
+msgid "Allow modal dialogs"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:982
+msgid "Whether it is possible to create modal dialogs"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:997
+msgid "Zoom Text Only"
+msgstr "Suurenna vain tekstiä"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:998
+msgid "Whether zoom level of web view changes only the text size"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1012
+msgid "JavaScript can access clipboard"
+msgstr "JavaScript voi käyttää leikepöytää"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1013
+msgid "Whether JavaScript can access Clipboard"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1029
+msgid "Media playback requires user gesture"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1030
+msgid "Whether media playback requires user gesture"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1044
+msgid "Media playback allows inline"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1045
+msgid "Whether media playback allows inline"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1059
+msgid "Draw compositing indicators"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1060
+msgid "Whether to draw compositing borders and repaint counters"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1079
+msgid "Enable Site Specific Quirks"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1080
+msgid "Enables the site-specific compatibility workarounds"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1100
+msgid "Enable page cache"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1101
+msgid "Whether the page cache should be used"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1120
+msgid "User agent string"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1121
+msgid "The user agent string"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1133
+msgid "Enable smooth scrolling"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1134
+msgid "Whether to enable smooth scrolling"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1151
+msgid "Enable accelerated 2D canvas"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1152
+msgid "Whether to enable accelerated 2D canvas"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1167
+msgid "Write console messages on stdout"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1168
+msgid "Whether to write console messages on stdout"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1186
+msgid "Enable MediaStream"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1187
+msgid "Whether MediaStream content should be handled"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1206
+msgid "Enable Spatial Navigation"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1207
+msgid "Whether to enable Spatial Navigation support."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1226
+msgid "Enable MediaSource"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1227
+msgid "Whether MediaSource should be enabled."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1245
+msgid "Allow file access from file URLs"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1246
+msgid "Whether file access is allowed from file URLs."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:105
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:917
+msgid "URI"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:97
+msgid "The URI to which the request will be made."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:106
+msgid "The URI for which the response was made."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:117
+msgid "Status Code"
+msgstr "Tilakoodi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:118
+msgid "The status code of the response as returned by the server."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:130
+msgid "Content Length"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:131
+msgid "The expected content length of the response."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:143
+msgid "MIME Type"
+msgstr "MIME-tyyppi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:144
+msgid "The MIME type of the response"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:156
+msgid "Suggested Filename"
+msgstr "Ehdotettu tiedostonimi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:157
+msgid "The suggested filename for the URI response"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:173
+msgid "HTTP Headers"
+msgstr "HTTP-otsakkeet"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:174
+msgid "The The HTTP headers of the response"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:127
+msgid "Inspected URI"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:128
+msgid "The URI that is currently being inspected"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:139
+msgid "Attached Height"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:140
+msgid "The height that the inspector view should have when it is attached"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:157
+msgid "Can Attach"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+msgid ""
+"Whether the inspector can be attached to the same window that contains the "
+"inspected view"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:111
+msgid "The current active URI of the resource"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:124
+msgid "The response of the resource"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1167
+msgid "Website running in fullscreen mode"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:362
+msgid "Are you sure you want to leave this page?"
+msgstr "Haluatko varmasti poistua tältä sivulta?"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:363
+msgid "Stay on Page"
+msgstr "Pysy sivulla"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:363
+msgid "Leave Page"
+msgstr "Poistu sivulta"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:558
+msgid "Select Files"
+msgstr "Valitse tiedostot"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:558
+msgid "Select File"
+msgstr "Valitse tiedosto"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:620
+msgid "Acknowledge"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:807
+msgid "Web Context"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:808
+msgid "The web context for the view"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:825
+msgid "Related WebView"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:826
+msgid ""
+"The related WebKitWebView used when creating the view to share the same web "
+"process"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:842
+msgid "WebView settings"
+msgstr "WebView-asetukset"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:843
+msgid "The WebKitSettings of the view"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:859
+msgid "WebView user content manager"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:860
+msgid "The WebKitUserContentManager of the view"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:873
+msgid "Title"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:874
+msgid "Main frame document title"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:892
+msgid "Estimated Load Progress"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:893
+msgid "An estimate of the percent completion for a document load"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:905
+msgid "Favicon"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:906
+msgid "The favicon associated to the view, if any"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:918
+msgid "The current active URI of the view"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:933
+msgid "Zoom level"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:934
+msgid "The zoom level of the view content"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:953
+msgid "Is Loading"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:954
+msgid "Whether the view is loading a page"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:974
+msgid "Whether the view is playing audio"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:991
+msgid "Editable"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:992
+msgid "Whether the content can be modified by the user."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2954
+msgid "An exception was raised in JavaScript"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3414
+msgid "There was an error creating the snapshot"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
+msgid "Geometry"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:211
+msgid "The size and position of the window on the screen."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
+msgid "Toolbar Visible"
+msgstr "Työkalupalkki näkyvissä"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:224
+msgid "Whether the toolbar should be visible for the window."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
+msgid "Statusbar Visible"
+msgstr "Tilapalkki näkyvissä"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:237
+msgid "Whether the statusbar should be visible for the window."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
+msgid "Scrollbars Visible"
+msgstr "Vierityspalkit näkyvissä"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:250
+msgid "Whether the scrollbars should be visible for the window."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
+msgid "Menubar Visible"
+msgstr "Valikkopalkki näkyvissä"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:263
+msgid "Whether the menubar should be visible for the window."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
+msgid "Locationbar Visible"
+msgstr "Sijaintipalkki näkyvissä"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:276
+msgid "Whether the locationbar should be visible for the window."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
+msgid "Resizable"
+msgstr "Muutettava koko"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:288
+msgid "Whether the window can be resized."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
+msgid "Fullscreen"
+msgstr "Koko näyttö"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:301
+msgid "Whether window will be displayed fullscreen."
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:179
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:184
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:187
+msgid "Web Inspector"
+msgstr ""

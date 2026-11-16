@@ -1,0 +1,21 @@
+name: Check Formatting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: check clang-format
+      uses: jidicula/clang-format-action@v4.15.0
+      with:
+        clang-format-version: "17"
+        exclude-regex: "gsl-lite.hpp"
+

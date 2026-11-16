@@ -1,0 +1,4 @@
+getComputedStyle should return lime for background-color on this element
+
+PASS Property background-color value 'rgb(from currentcolor r g b)' should not leak :visited for computed style
+

@@ -1,0 +1,11 @@
+
+PASS Modify a record in the object store
+PASS Attempt to modify a record in a read-only transaction
+PASS Attempt to modify a record in an inactive transaction
+PASS Attempt to modify a record after the cursor's source or effective object store has been deleted. The implementation MUST throw a DOMException of type InvalidStateError
+PASS Throw DataCloneError
+PASS No argument
+PASS Throw DataError
+PASS Throw InvalidStateError when the cursor is being iterated
+PASS Modify records during cursor iteration and verify updated records
+

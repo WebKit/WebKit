@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: Hello from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=leave
+CONSOLE MESSAGE: Warning from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=leave
+CONSOLE MESSAGE: Error from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=leave
+CONSOLE MESSAGE: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html?step=return
+CONSOLE MESSAGE: Warning from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html?step=return
+CONSOLE MESSAGE: Error from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html?step=return
+CONSOLE MESSAGE: Hello from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=back
+CONSOLE MESSAGE: Warning from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=back
+CONSOLE MESSAGE: Error from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=back
+
+
+== Running test suite: SiteIsolation.Console.FrameReturningToProcess
+-- Running test case: SiteIsolation.Console.FrameReturningToProcess.LeaveMainFrameProcess
+Got message from frame target: Error from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=leave
+Got message from frame target: Hello from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=leave
+Got message from frame target: Warning from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=leave
+PASS: The moving iframe should share a process with the keeper iframe.
+
+-- Running test case: SiteIsolation.Console.FrameReturningToProcess.ReturnToMainFrameProcess
+Got message from frame target: Error from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html?step=return
+Got message from frame target: Hello from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html?step=return
+Got message from frame target: Warning from http://127.0.0.1:8000/site-isolation/inspector/console/resources/console-messages.html?step=return
+
+-- Running test case: SiteIsolation.Console.FrameReturningToProcess.ReturnToCrossOriginProcess
+Got message from frame target: Error from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=back
+Got message from frame target: Hello from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=back
+Got message from frame target: Warning from http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html?step=back
+

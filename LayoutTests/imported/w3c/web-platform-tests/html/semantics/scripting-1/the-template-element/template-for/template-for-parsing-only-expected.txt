@@ -1,0 +1,10 @@
+Old target 1
+Old target 2
+Old target 3
+Old target 4
+
+PASS Creating a template and appending it does not trigger declarative partial update
+PASS Setting 'for' dynamically on an existing template does not trigger update
+PASS Inserting an already parsed template for element does not trigger update
+PASS Inserting a template element via insertAdjacentElement does not trigger update
+

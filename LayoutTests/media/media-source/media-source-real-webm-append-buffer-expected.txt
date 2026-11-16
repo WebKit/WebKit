@@ -1,0 +1,13 @@
+
+EVENT(sourceopen)
+EXPECTED (sourceBuffer.updating == 'true') OK
+EVENT(updateend)
+EXPECTED (sourceBuffer.updating == 'false') OK
+EXPECTED (sourceBuffer.updating == 'true') OK
+EVENT(updateend)
+EXPECTED (sourceBuffer.updating == 'false') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '4') OK
+END OF TEST
+

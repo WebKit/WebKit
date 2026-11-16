@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+window.addEventListener("message", function pageMessage(event) {
+    TestPage.dispatchEventToFrontend(event.data);
+});
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.BlackboxedScript");
+
+    const url = "BlackboxedScript.js";
+    const sourceURL = `//# sourceURL=${url}`;
+
+    async function setShouldBlackboxURL(shouldBlackbox) {
+        for (let target of WI.targets) {
+            if (target.hasDomain("Debugger"))
+                await target.DebuggerAgent.setShouldBlackboxURL(url, shouldBlackbox);
+        }
+    }
+
+    function addTestCase({name, description, code, blackbox, expectedFunctionName}) {
+        suite.addTestCase({
+            name,
+            description,
+            async setup() {
+                await setShouldBlackboxURL(blackbox);
+            },
+            async test() {
+                let context = WI.networkManager.mainFrame.executionContextList.pageExecutionContext;
+
+                let postMessagePromise = InspectorTest.awaitEvent("blackboxed-program-complete");
+                let pausePromise = WI.debuggerManager.pause();
+                let evaluatePromise = context.target.RuntimeAgent.evaluate.invoke({
+                    contextId: context.id,
+                    expression: `${sourceURL}
+                        ${code}
+                        setTimeout("window.postMessage('blackboxed-program-complete', '*');\\n${sourceURL}");
+                    `,
+                });
+
+                await pausePromise;
+                InspectorTest.expectEqual(WI.debuggerManager.activeCallFrame.functionName, expectedFunctionName, `Should pause in ${expectedFunctionName}.`);
+
+                await WI.debuggerManager.resume();
+                await evaluatePromise;
+                await postMessagePromise;
+            },
+            async teardown() {
+                await setShouldBlackboxURL(false);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "Debugger.BlackboxedScript.NotBlackboxed",
+        description: "Pausing at the next statement should stop in a script that is not blackboxed.",
+        code: `class NotBlackboxed { } globalThis.notBlackboxed = new NotBlackboxed();`,
+        blackbox: false,
+        expectedFunctionName: "Global Code",
+    });
+
+    addTestCase({
+        name: "Debugger.BlackboxedScript.ClassWithoutConstructor",
+        description: "Pausing at the next statement should skip the default constructor of a class in a blackboxed script.",
+        code: `class WithoutConstructor { } globalThis.withoutConstructor = new WithoutConstructor();`,
+        blackbox: true,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.BlackboxedScript.ClassWithPrivateFields",
+        description: "Pausing at the next statement should skip the default constructor of a class with private fields in a blackboxed script.",
+        code: `class WithPrivateFields { #field = []; } globalThis.withPrivateFields = new WithPrivateFields();`,
+        blackbox: true,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.BlackboxedScript.DerivedClassWithoutConstructor",
+        description: "Pausing at the next statement should skip the default constructor of a derived class in a blackboxed script.",
+        code: `class Base { constructor() { this.base = 1; } } class Derived extends Base { } globalThis.derived = new Derived();`,
+        blackbox: true,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.BlackboxedScript.FunctionConstructor",
+        description: "Pausing at the next statement should stop in a function that a blackboxed script creates with the Function constructor, because it does not have the blackboxed URL.",
+        code: `new Function("return 2")();`,
+        blackbox: true,
+        expectedFunctionName: "anonymous",
+    });
+
+    addTestCase({
+        name: "Debugger.BlackboxedScript.FunctionConstructorWithSourceURL",
+        description: "Pausing at the next statement should skip a function that a blackboxed script creates with the Function constructor and the blackboxed URL.",
+        code: `new Function("${sourceURL}\\nreturn 2")();`,
+        blackbox: true,
+        expectedFunctionName: "pageMessage",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests pausing at the next statement in a script that is blackboxed by its URL, with a class that has no constructor and with the Function constructor.</p>
+</body>
+</html>

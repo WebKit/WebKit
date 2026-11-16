@@ -1,0 +1,7 @@
+
+EXPECTED (video.textTracks.length == '2') OK
+RUN(video.textTracks[1].mode = "showing")
+EVENT(cuechange)
+EXPECTED (video.textTracks[1].cues.length >= '1') OK
+END OF TEST
+

@@ -1,0 +1,3 @@
+
+PASS Mid-transition transition changes affect subsequent transitions
+

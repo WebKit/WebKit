@@ -1,0 +1,5 @@
+
+PASS Typing simulation 1
+PASS Typing simulation 2
+PASS Typing simulation 3
+

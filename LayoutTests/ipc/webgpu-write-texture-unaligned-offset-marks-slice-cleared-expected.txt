@@ -1,0 +1,4 @@
+This test passes if a RemoteQueue::WriteTexture() whose dataLayout.offset is not a multiple of the texel block size does not record the destination slice as previously-cleared without writing it.
+
+PASS
+

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="container">
+    <span>text node</span>
+    <!-- a comment -->
+</div>
+<script>
+description("Tests internals.dumpJSNodeStatistics()");
+
+if (!window.internals)
+    testFailed("This test requires internals object.");
+else {
+    class MyElement extends HTMLElement {}
+    customElements.define("a-b", MyElement);
+    var before = internals.dumpJSNodeStatistics();
+
+    shouldBeTrue("before.nodes.count > 0");
+
+    let disconnected = document.createElement("A-B");
+
+    var after = internals.dumpJSNodeStatistics();
+    shouldBe("after[\"A-B\"].count - (before[\"A-B\"]?.count || 0)", "1");
+    shouldBe("after[\"A-B\"].connected - (before[\"A-B\"]?.connected || 0)", "0");
+
+    window.container.innerHTML = "<a-b>Hi!</a-b>"
+    after = internals.dumpJSNodeStatistics();
+    shouldBe("after[\"A-B\"].count - (before[\"A-B\"]?.count || 0)", "2");
+    shouldBe("after[\"A-B\"].connected - (before[\"A-B\"]?.connected || 0)", "1");
+}
+</script>
+</body>
+</html>

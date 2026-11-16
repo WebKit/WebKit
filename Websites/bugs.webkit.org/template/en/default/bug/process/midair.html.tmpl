@@ -1,0 +1,92 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # operations: array; bug activity since the user last displayed the bug form,
+  #   used by bug/activity/table.html.tmpl to display recent changes that will
+  #   be overwritten if the user submits these changes.  See that template
+  #   for further documentation.
+  # comments: array; all the comments on the bug.
+  # bug: Bugzilla::Bug; the bug being changed.
+  #%]
+
+[%# The global Bugzilla->cgi object is used to obtain form variable values. %]
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+
+[% UNLESS header_done %]
+  [% PROCESS bug/process/header.html.tmpl %]
+[% END %]
+
+<h1>Mid-air collision detected!</h1>
+
+<p>
+  Someone else has made changes to
+  [%+ "$terms.bug $bug.id" FILTER bug_link(bug) FILTER none %]
+  at the same time you were trying to.
+  The changes made were:
+</p>
+
+<p>
+  [% PROCESS "bug/activity/table.html.tmpl" incomplete_data=0 %]
+</p>
+
+[% IF comments.size %]
+<p>
+  Added the comment(s):
+  <blockquote>
+    [% PROCESS "bug/comments.html.tmpl" %]
+  </blockquote>
+</p>
+[% END %]
+
+[% IF cgi.param("comment") %]
+<p>
+  Your comment was:<br>
+  <blockquote><pre class="bz_comment_text">
+    [% cgi.param("comment") FILTER html %]
+  </pre></blockquote>
+</p>
+[% END %]
+
+<p>
+You have the following choices:
+</p>
+
+<ul>
+  <li>
+    <form method="post" action="process_bug.cgi">
+      <input type="hidden" name="delta_ts" 
+             value="[% bug.delta_ts FILTER html %]">
+      [% PROCESS "global/hidden-fields.html.tmpl" 
+          exclude="^Bugzilla_login|Bugzilla_password|delta_ts$" %]
+      <input type="submit" id="process" value="Submit my changes anyway">
+        This will cause all of the above changes to be overwritten
+        [% ", except for the added comment(s)" IF comments.size %].
+    </form>
+  </li>
+  [% IF cgi.param("comment") %]
+    <li>
+      <form method="post" action="process_bug.cgi">
+        <input type="hidden" name="id" value="[% cgi.param("id") FILTER html %]">
+        <input type="hidden" name="delta_ts" value="[% bug.delta_ts FILTER html %]">
+        <input type="hidden" name="comment" value="[% cgi.param("comment") FILTER html %]">
+        <input type="hidden" name="comment_is_private"
+               value="[% cgi.param("comment_is_private") FILTER html %]">
+        <input type="hidden" name="token" value="[% cgi.param("token") FILTER html %]">
+        <input type="submit" id="process_comment" value="Submit only my new comment">
+      </form>
+    </li>
+  [% END %]
+  <li>
+    Throw away my changes, and
+    [%+ "revisit $terms.bug $bug.id" FILTER bug_link(bug) FILTER none %]
+  </li>
+</ul>
+
+[% PROCESS global/footer.html.tmpl %]

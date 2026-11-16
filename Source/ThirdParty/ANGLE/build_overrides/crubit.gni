@@ -1,0 +1,14 @@
+# Copyright 2026 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+crubit_src_dir = "//third_party/rust-toolchain/lib/third_party/crubit"
+crubit_absl_dep_target = "//third_party/abseil-cpp:absl"
+crubit_gn_configs_to_remove = [
+  "//build/config/compiler:chromium_code",
+  "//build/config/compiler:disallow_unstable_features",
+]
+crubit_gn_support_configs_to_add = [
+  "//build/config/compiler:no_chromium_code",
+  "//build/rust/crubit:allow_unstable_features_required_by_crubit",
+]

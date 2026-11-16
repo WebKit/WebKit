@@ -1,0 +1,35 @@
+<html>
+<head>
+<style>
+.body, #shadow { -webkit-user-modify: read-write; }
+</style>
+<script>
+function testonload() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.all[0].appendChild(lieditable);
+    listatic.before("PASS");
+    window.find("PASS", false, true, true, false);
+    document.execCommand("outdent", false);
+}
+</script>
+</head>
+<body onload=testonload()>
+This tests that we do not crash while moving paragraphs.
+<div><font></font></div>
+<input>
+<shadow id="shadow">
+<ul>
+<li>
+<dir>
+<li contenteditable="false" id="listatic">
+<li id="lieditable"></li>
+</li>
+</dir>
+</li>
+</ul>
+</shadow>
+</input>
+</body>
+</html>

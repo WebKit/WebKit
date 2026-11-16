@@ -1,0 +1,80 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<!-- FIXME: make it work for ITM off. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="text">abcdefghij</p>
+
+<textarea id="textarea" rows="10" cols="50">Write something here.</textarea>
+
+<script>
+let output = "Tests the intersectTextMarkerRanges method.\n\n";
+
+function moveTextMarker(axElement, marker, number) {
+    for (i = 0; i < Math.abs(number); ++i) {
+        if (number > 0)
+            marker = axElement.nextTextMarker(marker);
+        else
+            marker = axElement.previousTextMarker(marker);
+    }
+    return marker;
+}
+
+function testIntersectRanges(axElement, elementRange, range1, range2) {
+    output += `${axElement.domIdentifier}, ${axElement.role}\n`;
+    output += `elementRange: '${axElement.stringForTextMarkerRange(elementRange)}'\n`;
+    output += `range1: '${axElement.stringForTextMarkerRange(range1)}'\n`;
+    output += `range2: '${axElement.stringForTextMarkerRange(range2)}'\n`;
+
+    intersection = axElement.intersectTextMarkerRanges(elementRange, range1);
+    output += `elementRange range1 intersection: '${axElement.stringForTextMarkerRange(intersection)}'\n`;
+
+    intersection = axElement.intersectTextMarkerRanges(elementRange, range2);
+    output += `elementRange range2 intersection: '${axElement.stringForTextMarkerRange(intersection)}'\n`;
+
+    intersection = axElement.intersectTextMarkerRanges(range1, range2);
+    output += `range1 range2 intersection: '${axElement.stringForTextMarkerRange(intersection)}'\n\n`;
+}
+
+if (window.accessibilityController) {
+    axElement = accessibilityController.accessibleElementById("text");
+    range = axElement.textMarkerRangeForElement(axElement);
+    start = axElement.startTextMarkerForTextMarkerRange(range);
+    end = axElement.endTextMarkerForTextMarkerRange(range);
+    range1 = axElement.textMarkerRangeForMarkers(start, moveTextMarker(axElement, start, 3));
+    range2 = axElement.textMarkerRangeForMarkers(moveTextMarker(axElement, end, -3), end);
+    testIntersectRanges(axElement, range, range1, range2);
+
+    range1 = axElement.textMarkerRangeForMarkers(moveTextMarker(axElement, start, 3), moveTextMarker(axElement, start, 6));
+    range2 = axElement.textMarkerRangeForMarkers(moveTextMarker(axElement, end, -6), end);
+    testIntersectRanges(axElement, range, range1, range2);
+
+    axElement = accessibilityController.accessibleElementById("textarea");
+    range = axElement.textMarkerRangeForElement(axElement);
+    start = axElement.startTextMarkerForTextMarkerRange(range);
+    end = axElement.endTextMarkerForTextMarkerRange(range);
+    range1 = axElement.textMarkerRangeForMarkers(start, moveTextMarker(axElement, start, 10));
+    range2 = axElement.textMarkerRangeForMarkers(moveTextMarker(axElement, end, -11), end);
+    testIntersectRanges(axElement, range, range1, range2);
+
+    start = axElement.startTextMarkerForTextMarkerRange(range2);
+    start = moveTextMarker(axElement, start, -4);
+    range2 = axElement.textMarkerRangeForMarkers(start, end);
+    testIntersectRanges(axElement, range, range1, range2);
+
+    start = axElement.startTextMarkerForTextMarkerRange(range1);
+    start = moveTextMarker(axElement, start, 3);
+    end = axElement.endTextMarkerForTextMarkerRange(range1);
+    end = moveTextMarker(axElement, end, 7);
+    range1 = axElement.textMarkerRangeForMarkers(start, end);
+    testIntersectRanges(axElement, range, range1, range2);
+
+    debug(output);
+}
+</script>
+</body>
+</html>

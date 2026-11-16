@@ -1,0 +1,4 @@
+Orphan Pointerup
+
+PASS Event Timing: Orphan pointerup should not be measured as an interaction.
+

@@ -1,0 +1,202 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "FrameDebugger.h"
+
+#include "CommonVM.h"
+#include "DOMWrapperWorld.h"
+#include "DebuggerSuspensionController.h"
+#include "DocumentPage.h"
+#include "JSDOMExceptionHandling.h"
+#include "JSDOMWindowCustom.h"
+#include "JSWindowProxy.h"
+#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
+#include "Page.h"
+#include "PageInspectorController.h"
+#include "Timer.h"
+#include "WindowProxy.h"
+#include <JavaScriptCore/JSLock.h>
+#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
+
+#if PLATFORM(IOS_FAMILY)
+#include "WebCoreThreadInternal.h"
+#endif
+
+namespace WebCore {
+using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameDebugger);
+
+static FrameDebugger* s_pausedFrameDebugger;
+
+FrameDebugger::FrameDebugger(LocalFrame& frame)
+    : Debugger(WebCore::commonVM())
+    , m_frame(frame)
+{
+}
+
+FrameDebugger::~FrameDebugger()
+{
+    ASSERT(s_pausedFrameDebugger != this);
+    if (s_pausedFrameDebugger == this)
+        s_pausedFrameDebugger = nullptr;
+}
+
+void FrameDebugger::attachDebugger()
+{
+    JSC::Debugger::attachDebugger();
+
+    m_isAttachedToFrame = true;
+
+    Ref windowProxy = protect(m_frame)->windowProxy();
+    for (auto& jsWindowProxy : windowProxy->jsWindowProxiesAsVector()) {
+        auto* globalObject = jsWindowProxy->window();
+        if (globalObject && !globalObject->debugger())
+            attach(globalObject);
+    }
+}
+
+void FrameDebugger::detachDebugger(bool isBeingDestroyed)
+{
+    JSC::Debugger::detachDebugger(isBeingDestroyed);
+
+    m_isAttachedToFrame = false;
+
+    // Undo attachDebugger(), skipping global objects it left to another debugger (detach() asserts membership).
+    Ref windowProxy = m_frame->windowProxy();
+    for (auto& jsWindowProxy : windowProxy->jsWindowProxiesAsVector()) {
+        auto* globalObject = jsWindowProxy->window();
+        if (globalObject && isAttached(globalObject))
+            detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
+    }
+
+    if (!isBeingDestroyed)
+        recompileAllJSFunctions();
+}
+
+void FrameDebugger::recompileAllJSFunctions()
+{
+    JSLockHolder lock(vm());
+    Debugger::recompileAllJSFunctions();
+}
+
+void FrameDebugger::didPause(JSGlobalObject* globalObject)
+{
+    JSC::Debugger::didPause(globalObject);
+
+    ASSERT(!s_pausedFrameDebugger);
+    s_pausedFrameDebugger = this;
+
+    if (RefPtr page = protect(m_frame.get())->page()) {
+        if (auto* client = page->inspectorController().inspectorBackendClient())
+            client->debuggerDidPause();
+    }
+
+    DebuggerSuspensionController::frameDebuggerDidPause(protect(m_frame.get()));
+}
+
+void FrameDebugger::didContinue(JSGlobalObject* globalObject)
+{
+    JSC::Debugger::didContinue(globalObject);
+
+    if (s_pausedFrameDebugger == this)
+        s_pausedFrameDebugger = nullptr;
+
+    DebuggerSuspensionController::frameDebuggerDidContinue();
+}
+
+bool FrameDebugger::isPauseBlockedByAnotherDebugger() const
+{
+    return s_pausedFrameDebugger && s_pausedFrameDebugger != this;
+}
+
+void FrameDebugger::runEventLoopWhilePaused()
+{
+    JSC::Debugger::runEventLoopWhilePaused();
+
+#if PLATFORM(IOS_FAMILY)
+    if (WebThreadIsEnabled()) {
+        ASSERT(WebThreadIsLockedOrDisabled());
+        JSC::JSLock::DropAllLocks dropAllLocks(vm());
+        WebRunLoopEnableNested();
+
+        runEventLoopWhilePausedInternal();
+
+        WebRunLoopDisableNested();
+        ASSERT(WebThreadIsLockedOrDisabled());
+        return;
+    }
+#endif
+
+    runEventLoopWhilePausedInternal();
+}
+
+void FrameDebugger::runEventLoopWhilePausedInternal()
+{
+    TimerBase::fireTimersInNestedEventLoop();
+
+    Ref protectedFrame = m_frame;
+    while (!m_doneProcessingDebuggerEvents) {
+        if (!platformShouldContinueRunningEventLoopWhilePaused())
+            break;
+    }
+}
+
+bool FrameDebugger::isContentScript(JSGlobalObject* state) const
+{
+    return &currentWorld(*state) != &mainThreadNormalWorldSingleton() || JSC::Debugger::isContentScript(state);
+}
+
+bool FrameDebugger::isInternalScript(JSGlobalObject* state) const
+{
+    return currentWorld(*state).type() == DOMWrapperWorld::Type::Internal || JSC::Debugger::isInternalScript(state);
+}
+
+URL FrameDebugger::sourceURLBase(JSGlobalObject* state) const
+{
+    if (RefPtr context = uncheckedDowncast<JSDOMGlobalObject>(state)->scriptExecutionContext())
+        return context->url();
+    return { };
+}
+
+void FrameDebugger::reportException(JSGlobalObject* state, JSC::Exception* exception) const
+{
+    JSC::Debugger::reportException(state, exception);
+
+    WebCore::reportException(state, exception);
+}
+
+#if !PLATFORM(MAC)
+bool FrameDebugger::platformShouldContinueRunningEventLoopWhilePaused()
+{
+    return RunLoop::cycle() != RunLoop::CycleResult::Stop;
+}
+#endif // !PLATFORM(MAC)
+
+} // namespace WebCore

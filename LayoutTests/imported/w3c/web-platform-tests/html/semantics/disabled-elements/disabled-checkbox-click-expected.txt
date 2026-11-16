@@ -1,0 +1,4 @@
+
+
+PASS Disabled checkbox does not change state when clicked
+

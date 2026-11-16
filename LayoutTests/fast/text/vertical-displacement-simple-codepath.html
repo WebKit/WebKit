@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "LiebeTest-calt";
+    src: url("resources/LiebeTest-calt.woff") format("woff");
+}
+@font-face {
+    font-family: "LiebeTest-dlig";
+    src: url("resources/LiebeTest-dlig.woff") format("woff");
+}
+@font-face {
+    font-family: "LiebeTest-liga";
+    src: url("resources/LiebeTest-liga.woff") format("woff");
+}
+@font-face {
+    font-family: "LiebeTest-swsh";
+    src: url("resources/LiebeTest-swsh.woff") format("woff");
+}
+</style>
+</head>
+<body>
+This test makes sure that vertical displacements in our fast text codepath are using the correct coordinate system. The test passes if this text you are reading right now is the only thing on the page.
+<div style="position: relative;">
+<span style="font: 100px 'LiebeTest-calt';">cba</span><span style="font: 100px 'LiebeTest-dlig'; font-feature-settings: 'dlig';">cba</span><span style="font: 100px 'LiebeTest-liga';">cba</span><span style="font: 100px 'LiebeTest-swsh'; font-feature-settings: 'swsh';">cba</span>
+<div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 102px; background: white;"></div>
+</div>
+</body>
+</html>

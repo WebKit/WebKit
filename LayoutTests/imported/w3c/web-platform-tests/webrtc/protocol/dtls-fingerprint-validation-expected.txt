@@ -1,0 +1,7 @@
+
+PASS Connection fails if one side provides a wrong DTLS fingerprint
+PASS SDP negotiation with a sha-1 fingerprint succeds
+PASS SDP negotiation with a sha-256 fingerprint succeds
+PASS SDP negotiation with a sha-384 fingerprint succeds
+PASS SDP negotiation with a sha-512 fingerprint succeds
+

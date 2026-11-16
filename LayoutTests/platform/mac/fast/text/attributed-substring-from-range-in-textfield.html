@@ -1,0 +1,43 @@
+<html>
+<body>
+<input id="textfield" type="text">abcd</input>
+<script type="text/javascript">
+
+    var console_messages = document.createElement("ol");
+    var console = document.createElement("pre");
+    console.appendChild(console_messages);
+    document.body.appendChild(console);
+
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(String(message).replace(/\n/g, "\\n")));
+        console_messages.appendChild(item);
+    }
+    
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    
+        log("Testing that attributedSubstringFromRange returns a string of the correct length");
+        log("The results for oversized requests are incorrect due to <rdar://problem/5400551> which causes a \\n to be appended to the result.");
+        document.getElementById("textfield").focus();
+        textInputController.setMarkedText("abcd", 4, 0);
+
+        for (var offset = 0; offset <= 4; offset++) {
+            for (var length = 0; length <= 4; length++) {
+                var substring = textInputController.attributedSubstringFromRange(offset, length);
+                try {
+                     var expectedLength = (offset + length > 4) ? 4 - offset : length
+                     var passed = expectedLength == substring.getLength();
+                     log("(offset: " + offset + "  length: " + length + ") [" + (passed ? "PASSED" : "FAILED") + "]: \"" + substring.string() + "\"");
+                } catch (e) {
+                     log("(offset: " + offset + "  length: " + length + ") [FAILED]: threw exception");
+                }
+            }
+        }
+    } else {
+        document.write("This must be run by DRT.");
+    }
+</script>
+</body>
+</html>

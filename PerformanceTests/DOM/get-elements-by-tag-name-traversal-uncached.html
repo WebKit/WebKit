@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<script>
+function runTest() {
+    PerfTestRunner.measureRunsPerSecond({
+        description: "This benchmark covers 'getElementsByTagName'.",
+        run: function() {
+            var testDocument = document.getElementById("testFrame").contentDocument;
+            for (var i = 0; i < 10; i++) {
+                var elements = testDocument.getElementsByTagName("p");
+                // Do not access length so that we do not cache the elements.
+                var j = 0;
+                while (elements.item(j++)) { }
+            }
+        }
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<iframe id="testFrame" src="../Parser/resources/html5.html" style="display:none" sandbox></iframe>
+</body>
+</html>

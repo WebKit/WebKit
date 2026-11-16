@@ -1,0 +1,4 @@
+PASS: No exception thrown when accessing a worker from another domain.
+PASS: No exception throw when accessing a same-origin URL after setting document.domain.
+PASS: Got error event
+

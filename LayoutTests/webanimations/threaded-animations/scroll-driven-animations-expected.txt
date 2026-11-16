@@ -1,0 +1,5 @@
+
+PASS A scroll-driven CSS animation can be accelerated.
+PASS A scroll-driven JS-originated animation can be accelerated.
+PASS A scroll-driven JS-originated animation yields a remote animation with a progress-based timeline.
+

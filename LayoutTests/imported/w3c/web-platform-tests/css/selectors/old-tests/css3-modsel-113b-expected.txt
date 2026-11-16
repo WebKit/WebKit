@@ -1,0 +1,8 @@
+This paragraph should have a green background.
+
+This address should be unstyled.
+This paragraph should have a green background.
+This paragraph should be unstyled.
+
+PASS Attribute space-separated value selector without declared namespace
+

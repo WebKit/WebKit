@@ -1,0 +1,8 @@
+
+PASS I420P10 is rejected when high bit depth formats are disabled
+PASS I420P12 is rejected when high bit depth formats are disabled
+PASS I422P10 is rejected when high bit depth formats are disabled
+PASS I422P12 is rejected when high bit depth formats are disabled
+PASS I444P10 is rejected when high bit depth formats are disabled
+PASS I444P12 is rejected when high bit depth formats are disabled
+

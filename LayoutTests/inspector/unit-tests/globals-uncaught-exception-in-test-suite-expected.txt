@@ -1,0 +1,8 @@
+Test that the unhandled promise rejection hook will immediately terminate the test and print the associated exception and stack trace.
+
+
+== Running test suite: UncaughtExceptionInsideTestCase
+-- Running test case: CatchRejectedPromise
+!! EXCEPTION: This promise is rejected with an Error object.
+Stack Trace: (suppressed)
+

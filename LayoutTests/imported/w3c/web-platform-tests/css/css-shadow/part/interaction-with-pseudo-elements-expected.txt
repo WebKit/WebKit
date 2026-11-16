@@ -1,0 +1,8 @@
+
+PASS ::before in selected host is styled
+PASS ::after in selected host is styled
+PASS ::placeholder in selected host is styled
+PASS ::selection in selected host is styled
+PASS ::first-line in selected host is styled
+PASS ::first-letter in selected host is styled
+

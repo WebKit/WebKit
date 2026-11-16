@@ -1,0 +1,3 @@
+
+PASS same-origin: AudioContext should not be interrupted when its iframe is scrolled out of view
+

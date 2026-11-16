@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=video-test.js></script>
+    <script>
+        var wrapCount = 0;
+        var lastTime = 0;
+        var finished = false;
+
+        function timeupdate()
+        {
+            // Time going back by a large amount means the video looped.
+            if (video.currentTime < lastTime - 1) {
+                ++wrapCount;
+                consoleWrite("++ loop " + wrapCount + " completed.");
+                testExpected("video.paused", false);
+                testExpected("video.ended", false);
+                if (wrapCount == 2) {
+                    finished = true;
+                    endTest();
+                }
+            }
+            lastTime = video.currentTime;
+        }
+
+        function bufferedRanges()
+        {
+            let ranges = [];
+            for (let i = 0; i < video.buffered.length; ++i)
+                ranges.push("[" + video.buffered.start(i) + ", " + video.buffered.end(i) + "]");
+            return ranges.join(" ");
+        }
+
+        function start()
+        {
+            findMediaElement();
+            video.loop = true;
+            video.muted = true;
+            video.addEventListener("canplaythrough", function() {
+                consoleWrite("<em>++ seek to near the end once, then play without any further seek.</em>");
+                video.addEventListener("seeked", function() {
+                    run("video.play()");
+                    video.addEventListener("timeupdate", timeupdate);
+                }, { once: true });
+                run("video.currentTime = video.duration - 0.5");
+            }, { once: true });
+            video.src = "content/test-vp8.webm";
+
+            setTimeout(function() {
+                if (finished)
+                    return;
+                failTest("Video looped " + wrapCount + " time(s) instead of 2; currentTime = " + video.currentTime + ", duration = " + video.duration + ", paused = " + video.paused + ", ended = " + video.ended + ", readyState = " + video.readyState + ", seeking = " + video.seeking + ", buffered = " + bufferedRanges());
+            }, 25000);
+        }
+    </script>
+</head>
+<body onload="start()">
+    <video></video>
+    <p>Test that a looping WebM video keeps looping while playing through its whole duration.</p>
+</body>
+</html>

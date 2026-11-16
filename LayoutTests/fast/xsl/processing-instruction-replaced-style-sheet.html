@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that a processing instruction clears the owner node of a style sheet it replaces. The test passes if it does not crash.</p>
+<pre id="result">FAIL: did not finish</pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const href = "data:text/xml,%3C?xml version=%271.0%27?%3E%3Cxsl:stylesheet xmlns:xsl=%27http://www.w3.org/1999/XSL/Transform%27 version=%271.0%27%3E%3Cxsl:template match=%27/%27%3E%3Cxsl:copy-of select=%27.%27/%3E%3C/xsl:template%3E%3C/xsl:stylesheet%3E";
+
+function createProcessingInstruction()
+{
+    const processingInstruction = document.createProcessingInstruction("xml-stylesheet", "type='text/xsl' href='" + href + "'");
+    document.insertBefore(processingInstruction, document.firstChild);
+    return processingInstruction;
+}
+
+function finish(message)
+{
+    document.getElementById("result").textContent = message;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+// The style sheet has to be in the memory cache for the rest of the test, so that the
+// processing instructions below get their sheet synchronously.
+const warmUp = createProcessingInstruction();
+
+function runTest()
+{
+    if (!warmUp.sheet) {
+        finish("FAIL: no style sheet was created");
+        return;
+    }
+    warmUp.remove();
+
+    for (let i = 0; i < 50; ++i) {
+        let processingInstruction = createProcessingInstruction();
+
+        // Hold on to the sheet so that it outlives the processing instruction. Changing the
+        // data makes the processing instruction take a second sheet and drop this one.
+        let orphanedSheet = processingInstruction.sheet;
+        processingInstruction.appendData(" ");
+
+        processingInstruction.remove();
+        processingInstruction = null;
+        orphanedSheet = null;
+    }
+
+    if (window.GCController)
+        GCController.collect();
+
+    finish("PASS: did not crash");
+}
+
+window.addEventListener("load", () => setTimeout(runTest, 0));
+</script>
+</body>
+</html>

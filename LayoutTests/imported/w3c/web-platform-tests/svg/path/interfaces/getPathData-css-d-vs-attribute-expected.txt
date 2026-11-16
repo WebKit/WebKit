@@ -1,0 +1,4 @@
+
+FAIL path.getPathData() returns attribute value, not CSS d value path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+FAIL path.getPathData() returns [] when only CSS d is set (no d attribute) cssOnly.getPathData is not a function. (In 'cssOnly.getPathData()', 'cssOnly.getPathData' is undefined)
+

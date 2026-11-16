@@ -1,0 +1,6 @@
+
+PASS Subresource load matched with the requestMethod GET condition
+PASS Subresource load matched with the requestMethod POST condition
+PASS Subresource load matched with the requestMethod PUT condition
+PASS Subresource load matched with the requestMethod DELETE condition
+

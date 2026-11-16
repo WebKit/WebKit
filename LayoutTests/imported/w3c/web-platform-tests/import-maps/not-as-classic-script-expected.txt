@@ -1,0 +1,5 @@
+
+PASS Import maps shouldn't be parsed as scripts
+PASS Import maps shouldn't be executed as scripts
+PASS External import maps shouldn't be executed as scripts
+

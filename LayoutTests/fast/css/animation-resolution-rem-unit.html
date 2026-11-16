@@ -1,0 +1,26 @@
+<style>
+html {
+    --rem: 1rem;
+}
+
+body {
+    font-size: 6em;
+    timeline-scope: --foo;
+}
+
+.test {
+    font-size: var(--rem);
+
+    animation: --test;
+    animation-timeline: --foo;
+}
+
+@keyframes --test {
+    0% {
+        --foo: unused;
+    }
+}
+</style>
+<div class="test">
+This should be small.
+</div>

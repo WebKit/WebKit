@@ -1,0 +1,5 @@
+
+PASS Window timeOrigin is close to Date.now() when there is no system clock adjustment.
+PASS Window and worker timeOrigins are close when created one after another.
+PASS Window and worker timeOrigins differ when worker is created after a delay.
+

@@ -1,0 +1,5 @@
+This test ensures WebKit removes implicitly styled elements even if they had class="Apple-style-span". There should be no span below.
+| <i>
+|   "<#selection-anchor>hello "
+|   "world"
+|   " WebKit<#selection-focus>"

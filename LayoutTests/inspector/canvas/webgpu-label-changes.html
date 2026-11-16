@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/shaderProgram-utilities-webgpu.js"></script>
+<script>
+async function load()
+{
+    await initializeWebGPU();
+    runTest();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Canvas.WebGPU");
+    suite.addTestCase({
+        name: "Canvas.WebGPU.LabelChanges",
+        async test() {
+            let canvas = InspectorTest.WebGPU.canvas();
+            let compute = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Compute);
+            let render = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Render);
+            let originalDeviceName = canvas.displayName;
+            let objects = [
+                {object: canvas, expression: "device", event: WI.Canvas.Event.NameChanged, name: "Renamed device"},
+                {object: compute, expression: "computePipelines[0]", event: WI.ShaderProgram.Event.NameChanged, name: "Renamed compute"},
+                {object: render, expression: "renderPipelines[0]", event: WI.ShaderProgram.Event.NameChanged, name: "Renamed render"},
+            ];
+            for (let {object, expression, event, name} of objects) {
+                let changed = object.awaitEvent(event);
+                await InspectorTest.evaluateInPage(`${expression}.label = ${JSON.stringify(name)}`);
+                await changed;
+                InspectorTest.expectEqual(object.displayName, name, `${name} should update the existing model.`);
+            }
+
+            InspectorTest.expectEqual(canvas.shaderProgramCollection.size, 2, "Renaming should not recreate or duplicate pipelines.");
+
+            for (let {object, expression, event} of objects) {
+                let changed = object.awaitEvent(event);
+                await InspectorTest.evaluateInPage(`${expression}.label = ""`);
+                await changed;
+            }
+            InspectorTest.expectEqual(canvas.displayName, originalDeviceName, "Clearing the device label should restore its original generated name.");
+            InspectorTest.expectTrue(compute.displayName.startsWith("Compute Pipeline "), "Clearing a compute label should restore a generated name.");
+            InspectorTest.expectTrue(render.displayName.startsWith("Render Pipeline "), "Clearing a render label should restore a generated name.");
+        },
+    });
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()"></body>
+</html>

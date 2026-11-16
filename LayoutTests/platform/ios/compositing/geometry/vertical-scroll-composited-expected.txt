@@ -1,0 +1,8 @@
+layer at (0,0) size 962x1122
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x616
+  RenderBlock {HTML} at (0,0) size 800x616
+    RenderBody {BODY} at (8,8) size 784x600
+layer at (8,8) size 806x1006
+  RenderBlock {DIV} at (0,0) size 806x1006 [border: (3px solid #FF0000)]
+scrolled to 0,200

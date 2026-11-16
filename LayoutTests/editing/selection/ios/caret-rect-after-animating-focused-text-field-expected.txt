@@ -1,0 +1,10 @@
+This test verifies that the caret view is updated following a CSS animation. To manually run the test, tap the button to focus the offscreen input field; after the input field is animated onto the screen, the caret should become visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The caret became visible
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

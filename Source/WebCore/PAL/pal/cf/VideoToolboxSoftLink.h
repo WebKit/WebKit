@@ -1,0 +1,152 @@
+/*
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
+#include <wtf/Platform.h>
+
+#if USE(AVFOUNDATION)
+
+#include <VideoToolbox/VTCompressionSession.h>
+
+#include <pal/spi/cf/VideoToolboxSPI.h>
+#include <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, VideoToolbox)
+
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_ExpectedFrameRate, CFStringRef)
+#define kVTCompressionPropertyKey_ExpectedFrameRate get_VideoToolbox_kVTCompressionPropertyKey_ExpectedFrameRateSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_MaxKeyFrameInterval, CFStringRef)
+#define kVTCompressionPropertyKey_MaxKeyFrameInterval get_VideoToolbox_kVTCompressionPropertyKey_MaxKeyFrameIntervalSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, CFStringRef)
+#define kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration get_VideoToolbox_kVTCompressionPropertyKey_MaxKeyFrameIntervalDurationSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_RealTime, CFStringRef)
+#define kVTCompressionPropertyKey_RealTime get_VideoToolbox_kVTCompressionPropertyKey_RealTimeSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_AverageBitRate, CFStringRef)
+#define kVTCompressionPropertyKey_AverageBitRate get_VideoToolbox_kVTCompressionPropertyKey_AverageBitRateSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_ProfileLevel, CFStringRef)
+#define kVTCompressionPropertyKey_ProfileLevel get_VideoToolbox_kVTCompressionPropertyKey_ProfileLevelSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_AllowFrameReordering, CFStringRef)
+#define kVTCompressionPropertyKey_AllowFrameReordering get_VideoToolbox_kVTCompressionPropertyKey_AllowFrameReorderingSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_BaseLayerFrameRateFraction, CFStringRef)
+#define kVTCompressionPropertyKey_BaseLayerFrameRateFraction get_VideoToolbox_kVTCompressionPropertyKey_BaseLayerFrameRateFractionSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_ColorPrimaries, CFStringRef)
+#define kVTCompressionPropertyKey_ColorPrimaries get_VideoToolbox_kVTCompressionPropertyKey_ColorPrimariesSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_TransferFunction, CFStringRef)
+#define kVTCompressionPropertyKey_TransferFunction get_VideoToolbox_kVTCompressionPropertyKey_TransferFunctionSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_YCbCrMatrix, CFStringRef)
+#define kVTCompressionPropertyKey_YCbCrMatrix get_VideoToolbox_kVTCompressionPropertyKey_YCbCrMatrixSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder, CFStringRef)
+#define kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder get_VideoToolbox_kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoderSingleton()
+
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTEncodeFrameOptionKey_ForceKeyFrame, CFStringRef)
+#define kVTEncodeFrameOptionKey_ForceKeyFrame get_VideoToolbox_kVTEncodeFrameOptionKey_ForceKeyFrameSingleton()
+
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, CFStringRef)
+#define kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder get_VideoToolbox_kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoderSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_3_0, CFStringRef)
+#define kVTProfileLevel_H264_Baseline_3_0 get_VideoToolbox_kVTProfileLevel_H264_Baseline_3_0Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_3_1, CFStringRef)
+#define kVTProfileLevel_H264_Baseline_3_1 get_VideoToolbox_kVTProfileLevel_H264_Baseline_3_1Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_3_2, CFStringRef)
+#define kVTProfileLevel_H264_Baseline_3_2 get_VideoToolbox_kVTProfileLevel_H264_Baseline_3_2Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_4_0, CFStringRef)
+#define kVTProfileLevel_H264_Baseline_4_0 get_VideoToolbox_kVTProfileLevel_H264_Baseline_4_0Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_4_1, CFStringRef)
+#define kVTProfileLevel_H264_Baseline_4_1 get_VideoToolbox_kVTProfileLevel_H264_Baseline_4_1Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_4_2, CFStringRef)
+#define kVTProfileLevel_H264_Baseline_4_2 get_VideoToolbox_kVTProfileLevel_H264_Baseline_4_2Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_5_0, CFStringRef)
+#define kVTProfileLevel_H264_Baseline_5_0 get_VideoToolbox_kVTProfileLevel_H264_Baseline_5_0Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_5_1, CFStringRef)
+#define kVTProfileLevel_H264_Baseline_5_1 get_VideoToolbox_kVTProfileLevel_H264_Baseline_5_1Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_5_2, CFStringRef)
+#define kVTProfileLevel_H264_Baseline_5_2 get_VideoToolbox_kVTProfileLevel_H264_Baseline_5_2Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Baseline_AutoLevel, CFStringRef)
+#define kVTProfileLevel_H264_Baseline_AutoLevel get_VideoToolbox_kVTProfileLevel_H264_Baseline_AutoLevelSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_3_0, CFStringRef)
+#define kVTProfileLevel_H264_High_3_0 get_VideoToolbox_kVTProfileLevel_H264_High_3_0Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_3_1, CFStringRef)
+#define kVTProfileLevel_H264_High_3_1 get_VideoToolbox_kVTProfileLevel_H264_High_3_1Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_3_2, CFStringRef)
+#define kVTProfileLevel_H264_High_3_2 get_VideoToolbox_kVTProfileLevel_H264_High_3_2Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_4_0, CFStringRef)
+#define kVTProfileLevel_H264_High_4_0 get_VideoToolbox_kVTProfileLevel_H264_High_4_0Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_4_1, CFStringRef)
+#define kVTProfileLevel_H264_High_4_1 get_VideoToolbox_kVTProfileLevel_H264_High_4_1Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_4_2, CFStringRef)
+#define kVTProfileLevel_H264_High_4_2 get_VideoToolbox_kVTProfileLevel_H264_High_4_2Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_5_0, CFStringRef)
+#define kVTProfileLevel_H264_High_5_0 get_VideoToolbox_kVTProfileLevel_H264_High_5_0Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_5_1, CFStringRef)
+#define kVTProfileLevel_H264_High_5_1 get_VideoToolbox_kVTProfileLevel_H264_High_5_1Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_5_2, CFStringRef)
+#define kVTProfileLevel_H264_High_5_2 get_VideoToolbox_kVTProfileLevel_H264_High_5_2Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_High_AutoLevel, CFStringRef)
+#define kVTProfileLevel_H264_High_AutoLevel get_VideoToolbox_kVTProfileLevel_H264_High_AutoLevelSingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_3_0, CFStringRef)
+#define kVTProfileLevel_H264_Main_3_0 get_VideoToolbox_kVTProfileLevel_H264_Main_3_0Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_3_1, CFStringRef)
+#define kVTProfileLevel_H264_Main_3_1 get_VideoToolbox_kVTProfileLevel_H264_Main_3_1Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_3_2, CFStringRef)
+#define kVTProfileLevel_H264_Main_3_2 get_VideoToolbox_kVTProfileLevel_H264_Main_3_2Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_4_0, CFStringRef)
+#define kVTProfileLevel_H264_Main_4_0 get_VideoToolbox_kVTProfileLevel_H264_Main_4_0Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_4_1, CFStringRef)
+#define kVTProfileLevel_H264_Main_4_1 get_VideoToolbox_kVTProfileLevel_H264_Main_4_1Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_4_2, CFStringRef)
+#define kVTProfileLevel_H264_Main_4_2 get_VideoToolbox_kVTProfileLevel_H264_Main_4_2Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_5_0, CFStringRef)
+#define kVTProfileLevel_H264_Main_5_0 get_VideoToolbox_kVTProfileLevel_H264_Main_5_0Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_5_1, CFStringRef)
+#define kVTProfileLevel_H264_Main_5_1 get_VideoToolbox_kVTProfileLevel_H264_Main_5_1Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_5_2, CFStringRef)
+#define kVTProfileLevel_H264_Main_5_2 get_VideoToolbox_kVTProfileLevel_H264_Main_5_2Singleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, VideoToolbox, kVTProfileLevel_H264_Main_AutoLevel, CFStringRef)
+#define kVTProfileLevel_H264_Main_AutoLevel get_VideoToolbox_kVTProfileLevel_H264_Main_AutoLevelSingleton()
+
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionCreate, OSStatus, (CFAllocatorRef allocator, int32_t width, int32_t height, CMVideoCodecType codecType, CFDictionaryRef encoderSpecification, CFDictionaryRef sourceImageBufferAttributes, CFAllocatorRef compressedDataAllocator, VTCompressionOutputCallback outputCallback, void* outputCallbackRefCon, CF_RETURNS_RETAINED VTCompressionSessionRef* compressionSessionOut), (allocator, width, height, codecType, encoderSpecification, sourceImageBufferAttributes, compressedDataAllocator, outputCallback, outputCallbackRefCon, compressionSessionOut))
+#define VTCompressionSessionCreate softLink_VideoToolbox_VTCompressionSessionCreate
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionCompleteFrames, OSStatus, (VTCompressionSessionRef session, CMTime completeUntilPresentationTimeStamp), (session, completeUntilPresentationTimeStamp))
+#define VTCompressionSessionCompleteFrames softLink_VideoToolbox_VTCompressionSessionCompleteFrames
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionEncodeFrame, OSStatus, (VTCompressionSessionRef session, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime duration, CFDictionaryRef frameProperties, void* sourceFrameRefcon, VTEncodeInfoFlags* infoFlagsOut), (session, imageBuffer, presentationTimeStamp, duration, frameProperties, sourceFrameRefcon, infoFlagsOut))
+#define VTCompressionSessionEncodeFrame softLink_VideoToolbox_VTCompressionSessionEncodeFrame
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionEncodeFrameWithOutputHandler, OSStatus, (VTCompressionSessionRef session, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime duration, CFDictionaryRef frameProperties, VTEncodeInfoFlags* infoFlagsOut, VTCompressionOutputHandler outputHandler), (session, imageBuffer, presentationTimeStamp, duration, frameProperties, infoFlagsOut, outputHandler))
+#define VTCompressionSessionEncodeFrameWithOutputHandler softLink_VideoToolbox_VTCompressionSessionEncodeFrameWithOutputHandler
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionPrepareToEncodeFrames, OSStatus, (VTCompressionSessionRef session), (session))
+#define VTCompressionSessionPrepareToEncodeFrames softLink_VideoToolbox_VTCompressionSessionPrepareToEncodeFrames
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionInvalidate, void, (VTCompressionSessionRef session), (session))
+#define VTCompressionSessionInvalidate softLink_VideoToolbox_VTCompressionSessionInvalidate
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTGetDefaultColorAttributesWithHints, OSStatus, (OSType codecTypeHint, CFStringRef colorSpaceNameHint, size_t widthHint, size_t heightHint, CFStringRef* colorPrimariesOut, CFStringRef* transferFunctionOut, CFStringRef* yCbCrMatrixOut), (codecTypeHint, colorSpaceNameHint, widthHint, heightHint, colorPrimariesOut, transferFunctionOut, yCbCrMatrixOut))
+#define VTGetDefaultColorAttributesWithHints softLink_VideoToolbox_VTGetDefaultColorAttributesWithHints
+
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, VideoToolbox, VTRestrictVideoDecoders, OSStatus, (VTVideoDecoderRestrictions restrictionFlags, const CMVideoCodecType* allowedCodecTypeList, CMItemCount allowedCodecTypeCount), (restrictionFlags, allowedCodecTypeList, allowedCodecTypeCount));
+
+#endif // USE(AVFOUNDATION)
+
+#endif // !__has_feature(modules)

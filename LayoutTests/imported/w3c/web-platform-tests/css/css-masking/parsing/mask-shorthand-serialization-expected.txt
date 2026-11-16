@@ -1,0 +1,6 @@
+
+PASS all initial values
+PASS mask-size with every earlier component omitted
+PASS mask-size with a mask-image
+PASS the serialized shorthand parses back to itself
+

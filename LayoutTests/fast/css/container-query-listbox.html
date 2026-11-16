@@ -1,0 +1,35 @@
+<style>
+#select {
+    width: 100px;
+    container-type: inline-size;
+}
+
+#option {
+    color: red;
+}
+
+@container (min-width: 200px) {
+    #option {
+        color: blue;
+    }
+}
+</style>
+<p>Test passes if there is the second option is blue.</p>
+<select multiple id="select">
+    <option>A</option>
+    <option id="option">B</option>
+    <option>C</option>
+    <option>D</option>
+</select>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+requestAnimationFrame(() => {
+    select.style.width = "300px";
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>

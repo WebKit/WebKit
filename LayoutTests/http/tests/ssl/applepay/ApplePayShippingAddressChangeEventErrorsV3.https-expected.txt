@@ -1,0 +1,24 @@
+Test specifying Apple Pay errors in response to the shippingaddresschange event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing PaymentDetailsUpdate with null payment method errors.
+PASS internals.mockPaymentCoordinator.errors.length is 0
+
+Testing PaymentDetailsUpdate with invalid payment method errors.
+PASS internals.mockPaymentCoordinator.errors.length is 0
+
+Testing PaymentDetailsUpdate with Apple Pay payment method errors.
+PASS internals.mockPaymentCoordinator.errors.length is 2
+PASS internals.mockPaymentCoordinator.errors[0].code is 'addressUnserviceable'
+PASS internals.mockPaymentCoordinator.errors[0].message is ''
+PASS internals.mockPaymentCoordinator.errors[0].contactField is undefined
+PASS internals.mockPaymentCoordinator.errors[1].code is 'shippingContactInvalid'
+PASS internals.mockPaymentCoordinator.errors[1].message is 'Apple Pay error'
+PASS internals.mockPaymentCoordinator.errors[1].contactField is 'phoneticName'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

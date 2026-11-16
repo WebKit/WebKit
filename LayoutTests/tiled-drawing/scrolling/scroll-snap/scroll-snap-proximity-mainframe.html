@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style>
+            html {
+                scroll-snap-type: y proximity;
+            }
+            body {
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                overflow-x: none;
+                overflow-y: scroll;
+                position: absolute;
+            }
+
+            .area {
+                width: 100%;
+                height: 100%;
+                float: left;
+                opacity: 0.5;
+                scroll-snap-align: start;
+            }
+
+            #output {
+                position: fixed;
+            }
+        </style>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script>
+        let write = s => output.innerHTML += s + "<br>";
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function verticalScrollInBody(dragDeltas)
+        {
+            write(`Scrolling body with ${dragDeltas.length} drag ticks`);
+            internals.setPlatformMomentumScrollingPredictionEnabled(false);
+            await UIHelper.startMonitoringWheelEvents();
+            eventSender.mouseMoveTo(window.innerWidth / 2, window.innerHeight / 2);
+            dragDeltas.forEach((delta, i) => eventSender.mouseScrollByWithWheelAndMomentumPhases(0, delta, i == 0 ? "began" : "changed", "none"));
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+
+            await UIHelper.waitForScrollCompletion();
+
+            let areaHeight = document.querySelector(".area").clientHeight;
+            write(`- Did the scrolling snap to the top? ${document.scrollingElement.scrollTop == 0 ? "YES" : "NO"}`);
+            write(`- Did scrolling snap to the second box? ${document.scrollingElement.scrollTop == areaHeight ? "YES" : "NO"}`);
+            document.scrollingElement.scrollTop = 0;
+
+            await UIHelper.delayFor(0);
+        }
+
+        async function run()
+        {
+            if (!window.testRunner || !window.eventSender) {
+                write("To manually test, verify that scrolling near one of the boundaries between the colored boxes");
+                write("snaps to the edge of the nearest colored box, but scrolling somewhere near the middle of two");
+                write("boxes does not cause the scroll offset to snap.");
+                return;
+            }
+
+            let areaHeight = document.querySelector(".area").clientHeight;
+            
+            await verticalScrollInBody(new Array(2).fill(-1));
+            await verticalScrollInBody(new Array(Math.round(areaHeight / 20)).fill(-1));
+            await verticalScrollInBody(new Array(Math.round(areaHeight / 10)).fill(-1));
+            testRunner.notifyDone();
+        }
+        </script>
+    </head>
+    <body onload=run()>
+        <div class="area" style="background-color: red;"></div>
+        <div class="area" style="background-color: green;"></div>
+        <div class="area" style="background-color: blue;"></div>
+        <div class="area" style="background-color: aqua;"></div>
+        <div class="area" style="background-color: yellow;"></div>
+        <div class="area" style="background-color: fuchsia;"></div>
+    </body>
+    <div id="output"></div>
+</html>

@@ -1,0 +1,6 @@
+Foo
+
+Bar
+
+PASS :not() with multiple selectors in the list
+

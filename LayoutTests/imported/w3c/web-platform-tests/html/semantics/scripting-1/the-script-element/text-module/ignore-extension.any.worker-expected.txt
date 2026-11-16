@@ -1,0 +1,6 @@
+
+PASS Extension: file
+PASS Extension: file.js
+PASS Extension: file.json
+PASS Extension: file.txt
+

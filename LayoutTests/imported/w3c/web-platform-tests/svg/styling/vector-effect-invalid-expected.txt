@@ -1,0 +1,12 @@
+
+PASS e.style['vector-effect'] = "none none" should not set the property value
+PASS e.style['vector-effect'] = "none non-scaling-stroke" should not set the property value
+PASS e.style['vector-effect'] = "non-scaling-stroke viewport screen" should not set the property value
+PASS e.style['vector-effect'] = "none viewport" should not set the property value
+PASS e.style['vector-effect'] = "none screen" should not set the property value
+PASS e.style['vector-effect'] = "viewport" should not set the property value
+PASS e.style['vector-effect'] = "screen" should not set the property value
+PASS e.style['vector-effect'] = "screen non-scaling-stroke" should not set the property value
+PASS e.style['vector-effect'] = "non-scaling-stroke viewport" should not set the property value
+PASS e.style['vector-effect'] = "non-scaling-stroke screen" should not set the property value
+

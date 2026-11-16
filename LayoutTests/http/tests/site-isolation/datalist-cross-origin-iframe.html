@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+description("Test that selecting a datalist option in a cross-origin iframe updates the input value when site isolation is enabled.");
+jsTestIsAsync = true;
+
+window.addEventListener("message", async (event) => {
+    if (event.data.type === "result") {
+        window.selectedValue = event.data.value;
+        shouldBeEqualToString("selectedValue", "Apple");
+        finishJSTest();
+    }
+});
+
+async function runTest() {
+    const iframe = document.getElementById("frame");
+    const iframeRect = iframe.getBoundingClientRect();
+
+    const clickX = iframeRect.left + 50;
+    const clickY = iframeRect.top + 25;
+    await UIHelper.activateAndWaitForInputSessionAt(clickX, clickY);
+
+    if (UIHelper.isIOSFamily())
+        await UIHelper.tapAt(iframeRect.left + 290, iframeRect.top + 25);
+
+    await UIHelper.waitForDataListSuggestionsToChangeVisibility(true);
+
+    await UIHelper.activateDataListSuggestion(0);
+
+    await UIHelper.waitForDataListSuggestionsToChangeVisibility(false);
+}
+</script>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/datalist-iframe.html" onload="runTest()"></iframe>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px;
+    word-wrap: break-word;
+    -khtml-nbsp-mode: space;
+    -khtml-line-break: after-white-space;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    selectAllCommand();
+    deleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+
+<!-- 
+
+Expected results:
+
+All the content in the contenteditable div should be deleted, 
+including the table structure.
+
+-->
+
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<table border="1">
+<tr><td id="test">One</td><td>Two</td><td>Three</td></tr>
+<tr><td>One</td><td>Two</td><td>Three</td></tr>
+<tr><td>One</td><td>Two</td><td>Three</td></tr>
+</table>
+</div>
+
+<script>
+runDumpAsTextEditingTest();
+</script>
+
+</body>
+</html>

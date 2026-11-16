@@ -1,0 +1,3 @@
+
+PASS same-document navigate.traverseTo(), back(), and forward()
+

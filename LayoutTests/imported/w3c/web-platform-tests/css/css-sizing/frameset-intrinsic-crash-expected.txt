@@ -1,0 +1,7 @@
+layer at (0,0) size 793x608
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x608
+  RenderBlock {HTML} at (0,0) size 785x608
+    RenderBody {BODY} at (8,8) size 769x0
+      RenderBlock (floating) {DIV} at (0,0) size 0x600
+        RenderFrameSet {FRAMESET} at (0,0) size 785x600

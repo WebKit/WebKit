@@ -1,0 +1,8 @@
+
+
+Harness Error (FAIL), message = SyntaxError: Unexpected end of script
+
+... childDoc.getSelection().collapse( testingBackspace ? script2.firstChild : script1.firstChild, testingBackspace ? 0 : script1.firstChild.length ); await (testingBackspace ? utils.sendBackspaceKey() : utils.sendDeleteKey()); removeResourceScriptElements(childDoc); childDoc.head.removeAttribute("style"); script1.removeAttribute("style"); script2.removeAttribute("style"); assert_equals( childDoc.documentElement.innerHTML, "
+// def
+... childDoc.getSelection().collapse( testingBackspace ? div.firstChild : script.firstChild, testingBackspace ? 0 : script.firstChild.length ); await (testingBackspace ? utils.sendBackspaceKey() : utils.sendDeleteKey()); removeResourceScriptElements(childDoc); childDoc.head.removeAttribute("style"); script.removeAttribute("style"); assert_equals( childDoc.documentElement.innerHTML, "... childDoc.getSelection().collapse( testingBackspace ? script.firstChild : div.firstChild, testingBackspace ? 0 : div.firstChild.length ); await (testingBackspace ? utils.sendBackspaceKey() : utils.sendDeleteKey()); removeResourceScriptElements(childDoc); childDoc.head.removeAttribute("style"); script.removeAttribute("style"); assert_equals( childDoc.documentElement.innerHTML, "
+// abc

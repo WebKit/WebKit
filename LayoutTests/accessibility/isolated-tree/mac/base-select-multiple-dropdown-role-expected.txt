@@ -1,0 +1,12 @@
+This test ensures that a base appearance multi-select dropdown box is exposed as a pop-up button, like a single-select one.
+
+PASS: axDropdown?.role === 'AXRole: AXPopUpButton'
+PASS: axDropdown?.isExpanded === false
+PASS: axDropdown.isExpanded === true
+PASS: axDropdown?.childAtIndex(0)?.role === 'AXRole: AXMenu'
+PASS: axListBox?.role === 'AXRole: AXList'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+A first address with normal background
+A second address with normal background
+A third address that should have a green background
+This div contains 3 addresses above this sentence.
+
+PASS :last-of-type
+

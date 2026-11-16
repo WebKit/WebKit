@@ -1,0 +1,3 @@
+
+PASS Wheel-scroll triggers snap to target position without intermediate pause.
+

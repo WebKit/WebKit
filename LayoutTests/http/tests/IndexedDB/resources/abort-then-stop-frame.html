@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script>
+var dbName = "abort-then-stop-db-" + Math.random();
+var openReq = indexedDB.open(dbName, 1);
+
+openReq.onupgradeneeded = function(e) {
+    var db = e.target.result;
+    var store = db.createObjectStore("store");
+    for (var i = 0; i < 10; i++)
+        store.put("value" + i, i);
+};
+
+openReq.onsuccess = function(e) {
+    var db = e.target.result;
+    var txn = db.transaction("store", "readonly");
+    var store = txn.objectStore("store");
+
+    for (var i = 0; i < 10; i++)
+        store.get(i);
+
+    txn.abort();
+
+    parent.postMessage("aborted", "*");
+};
+
+openReq.onerror = function(e) {
+    parent.postMessage("error: " + e.target.error, "*");
+};
+</script>

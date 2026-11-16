@@ -1,0 +1,297 @@
+/*
+ * WebKit UA overrides for a customizable <select> (appearance: base-select),
+ * extracted from Source/WebCore/css/html.css.
+ *
+ * Extraction rules:
+ *   - macOS variants only (the non-WTF_PLATFORM_IOS_FAMILY branches).
+ *   - The base-appearance value of -internal-auto-base(auto, base) i.e. the
+ *     second argument.
+ *   - UA-stylesheet-only selectors rewritten to standard CSS:
+ *       select:-internal-uses-menulist  ->  select
+ *       :-internal-select-popover        ->  select::picker(select)
+ *     and the native listbox fallback (::-internal-fallback-popup-menu-*) and
+ *     non-menulist (multiple/size) rules are omitted as they are not part of
+ *     base-select.
+ *
+ * Each rule additionally targets the .customizable-select-* classes used by the
+ * div-based reference reconstructions in this directory.
+ *
+ * Cascade: the div-based -expected files link this file immediately AFTER
+ * resources/customizable-select-styles.css. Because these rules mirror that
+ * file's selectors at equal specificity, they win over the shared reference
+ * styles by source order, while still losing to the unlayered inline styles
+ * that come later in each individual reference. (The real-<select> references
+ * link this file on its own, for the element-based rules below.)
+ *
+ * Lastly, we force transition-duration to zero at the end, so that reftests
+ * snapshot correctly.
+ */
+
+/* ---- Select button ---- */
+
+select,
+.customizable-select-button {
+  box-sizing: border-box;
+  border: 1px solid color-mix(currentColor 50%);
+  border-radius: 4px;
+  padding-block: 0.5rem;
+  padding-inline: 0.7rem;
+  color: inherit;
+  font: inherit;
+  background-color: light-dark(transparent, color-mix(currentColor 4%));
+  align-items: unsafe center;
+  align-content: unsafe center;
+  white-space: nowrap;
+  cursor: pointer;
+  gap: 0.7rem;
+  min-block-size: 24px;
+  min-inline-size: 4em;
+  overflow: clip;
+  text-overflow: ellipsis;
+  -webkit-rtl-ordering: inherit;
+  text-shadow: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+}
+
+select:not([popover]),
+.customizable-select-button {
+  display: inline-flex;
+}
+
+select:is(:hover, :focus),
+.customizable-select-button:is(.hover, :focus) {
+  border-color: color-mix(currentColor 80%);
+}
+
+/* The shared reference sheet tints the button background on hover, but WebKit's
+   base-select hover only changes the border-color. Restore the base background
+   so the div-based .customizable-select-button.hover reference matches (this
+   rule follows customizable-select-styles.css, so it wins at equal specificity). */
+.customizable-select-button.hover {
+  background-color: light-dark(transparent, color-mix(currentColor 4%));
+}
+
+select:active,
+.customizable-select-button.active {
+  background-color: color-mix(currentColor 8%);
+}
+
+select:user-invalid {
+  border-color: light-dark(oklch(56% 0.2 26), oklch(66% 0.17 24));
+}
+
+select:disabled,
+.customizable-select-button.disabled {
+  background-color: color-mix(currentColor 6%);
+  color: color-mix(currentColor 55%);
+  border-color: color-mix(currentColor 25%);
+  cursor: not-allowed;
+}
+
+select:not([multiple]) > button:first-child {
+  all: unset;
+  display: contents;
+}
+
+/* ---- selectedcontent ---- */
+
+select selectedcontent,
+.customizable-select-selectedcontent {
+  overflow: clip;
+  text-overflow: inherit;
+  min-inline-size: 0;
+  flex: 1;
+}
+
+/* ---- Picker icon ---- */
+
+/* The real icon is a glyph the UA draws itself (see RenderGlyph and TextBoxPainter::paintSynthesizedGlyph)
+   from `content: picker-down`, which is user-agent-stylesheet-only. So for a real <select> only the icon's
+   box is mirrored here, leaving the UA to draw the glyph. */
+select::picker-icon {
+  font: 100% system-ui;
+  text-orientation: sideways;
+}
+
+/* The div-based reconstruction cannot name that glyph, so it approximates the drawing with a mask, and
+   borrows the glyph's own fallback character so that the box geometry matches by construction rather than
+   by magic numbers: the character gives the box the same line box (block size), while inline-size is the
+   0.52em advance RenderGlyph::advanceRatio() reserves. The character itself is never painted, because the
+   real icon paints a glyph in its place.
+
+   The mask is the same chevron TextBoxPainter::paintSynthesizedGlyph() strokes: 0.5em x 0.25em plus 1px
+   for the stroke it centers on that path. The glyph centered on the central baseline, and nudged an extra
+   0.0625em towards its point for better optical centering.
+
+   At a 16px font the mask box is 9x7 px against a 9x7 viewBox, so the path lands on integer coordinates
+   with a 1px stroke, matching the drawing exactly; the stroke stays 1px rather than following
+   max(1px, 0.05em), so a larger font needs more tolerance. */
+.customizable-select-button::after {
+  content: "\2304";
+  -webkit-text-fill-color: transparent;
+  font: 100% system-ui;
+  margin-inline-start: auto;
+  /* inline-block so the box sizes the same whether the button lays it out as a flex item or, as in the
+     select-clipping reference, as an inline. min-inline-size pins the automatic minimum size a flex item
+     would otherwise take from the borrowed character, which is wider than the glyph's advance. */
+  display: inline-block;
+  inline-size: 0.52em;
+  min-inline-size: 0.52em;
+  background-color: currentColor;
+  mask: no-repeat center / calc(0.5em + 1px) calc(0.375em + 1px) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 7" preserveAspectRatio="none"><path d="M0.5 2.5 4.5 6.5 8.5 2.5" fill="none" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>');
+}
+
+.customizable-select-button.vertical-lr::after {
+  rotate: -90deg;
+}
+
+.customizable-select-button.open::after {
+  mask: no-repeat center / calc(0.5em + 2px) calc(0.375em) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 7" preserveAspectRatio="none"><path d="M0.5 4.5 4.5 0.5 8.5 4.5" fill="none" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>');
+}
+
+.customizable-select-button.open.vertical-rl::after {
+  rotate: none;
+  mask: no-repeat calc(50% - 1px) calc(50% - 1px) / calc(0.375em + 1px) calc(0.5em + 1px) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7 9" preserveAspectRatio="none"><path d="M2.5 0.5 6.5 4.5 2.5 8.5" fill="none" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>');
+}
+
+/* ---- Picker popover ---- */
+
+select::picker(select),
+.customizable-select-popover {
+  box-sizing: border-box;
+  border: 1px solid color-mix(currentColor 50%);
+  border-radius: 4px;
+  padding: 0;
+  color: inherit;
+  background-color: color-mix(contrast-color(currentColor), white 15%);
+  margin: 0;
+  margin-block: 4px;
+  inset: auto;
+  min-inline-size: anchor-size(self-inline);
+  min-block-size: 1lh;
+  max-block-size: calc(100svb - 8px);
+  overflow: auto;
+  align-self: safe normal;
+  overscroll-behavior: contain;
+  box-shadow:
+    0 4px 6px -1px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.35)),
+    0 8px 16px -4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.25));
+  position-area: self-block-end span-self-inline-end;
+  position-try-order: most-block-size;
+  position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+}
+
+select::picker(select):popover-open {
+  display: block;
+}
+
+/* ---- Options ---- */
+
+option {
+  display: block;
+}
+
+select option,
+.customizable-select-option {
+  min-inline-size: 24px;
+  min-block-size: max(24px, 1lh);
+  padding-block: 0.5rem;
+  padding-inline: 0.7rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  box-sizing: border-box;
+  outline-offset: inset;
+  cursor: pointer;
+}
+
+select option:hover,
+select option:focus-visible {
+  background-color: color-mix(currentColor 6%);
+}
+
+select option:active {
+  background-color: color-mix(currentColor 15%);
+}
+
+select option:disabled,
+.customizable-select-option.disabled {
+  color: color-mix(currentColor 55%);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+select option::checkmark,
+.customizable-select-option::before {
+  content: "\2713" / "";
+  font: 100% system-ui;
+}
+
+select option:not(:checked)::checkmark,
+.customizable-select-option:not(.selected)::before {
+  visibility: hidden;
+}
+
+/* ---- Optgroups ---- */
+
+optgroup,
+.customizable-select-optgroup {
+  display: block;
+  font-weight: bolder;
+  box-sizing: border-box;
+  cursor: default;
+}
+
+select :is(optgroup, option) + optgroup,
+select optgroup + option,
+:is(.customizable-select-optgroup, .customizable-select-option) + .customizable-select-optgroup,
+.customizable-select-optgroup + .customizable-select-option {
+  border-block-start: 1px solid color-mix(currentColor 12%);
+}
+
+select optgroup option,
+.customizable-select-optgroup .customizable-select-option {
+  font-weight: normal;
+}
+
+select optgroup legend,
+.customizable-select-legend {
+  box-sizing: border-box;
+  padding-block: 0.6em 0.15em;
+  padding-inline: 0.7rem;
+  min-block-size: 1lh;
+  font-size: 0.85em;
+  font-weight: 400;
+  color: color-mix(currentColor 70%);
+}
+
+/* ---- Media adjustments ---- */
+
+@media (prefers-contrast: more) {
+  select,
+  .customizable-select-button,
+  select::picker(select),
+  .customizable-select-popover {
+    border-color: currentColor;
+  }
+  select:disabled,
+  .customizable-select-button.disabled {
+    border-color: color-mix(currentColor 40%);
+    color: color-mix(currentColor 60%);
+    background-color: color-mix(currentColor 10%);
+  }
+}
+
+/* Ensure stable reftest snapshotting */
+
+select::picker(select),
+select::picker(select):popover-open,
+select::picker-icon,
+select:open::picker-icon,
+.customizable-select-popover,
+.customizable-select-button::after,
+.customizable-select-button.open::after {
+  transition-duration: 0s !important;
+}

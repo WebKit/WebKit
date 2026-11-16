@@ -1,0 +1,7 @@
+This test ensures we don't crash when accessibility relations are rebuilt while nodes that participate in relations are being removed.
+
+PASS: No crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,54 @@
+This tests that persistent notifications created by a service worker are visible to getNotifications()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Notification.permission is "granted"
+Got notifications
+There are 0 notifications
+
+Notification was shown
+Notification was shown
+Notification was shown
+Got notifications
+There are 3 notifications
+Title: Hello
+Body: Body1
+Tag: tag-a
+Data: null
+Title: There
+Body: Body2
+Tag: tag-b
+Data: null
+Title: Buddy
+Body: Body3
+Tag: tag-b
+Data: Data3
+
+Got notifications
+There are 1 notifications
+Title: Hello
+Body: Body1
+Tag: tag-a
+Data: null
+
+Got notifications
+There are 2 notifications
+Title: There
+Body: Body2
+Tag: tag-b
+Data: null
+Title: Buddy
+Body: Body3
+Tag: tag-b
+Data: Data3
+
+Retrieving notifications from page registration object - 3
+Notification: Hello / Body1 / tag-a / null
+Notification: There / Body2 / tag-b / null
+Notification: Buddy / Body3 / tag-b / Data3
+Retrieving notifications from page registration object - end
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

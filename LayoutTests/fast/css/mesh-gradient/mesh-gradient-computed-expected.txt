@@ -1,0 +1,12 @@
+
+PASS Property background-image value 'mesh-gradient(red, blue; green, yellow)'
+PASS Property background-image value 'mesh-gradient(currentcolor, blue; green, yellow)'
+PASS Property background-image value 'mesh-gradient(red 0px 0px, blue 100% 0%; green left bottom, yellow right bottom)'
+PASS Property background-image value 'mesh-gradient(red 0px 0px with 1in 0px / calc(10px + 10%) 0px, blue; green, yellow)'
+PASS Property background-image value 'mesh-gradient(red 0px 0px with 1in 0px / 2px 2px / 1in 0px / 2px 2px, blue; green, yellow)'
+PASS Property background-image value 'mesh-gradient(red, blue by 1in 0px with 1px 2px from origin / 3px 4px; green, yellow by 10% 1in)'
+PASS Property background-image value 'mesh-gradient(red, blue by 0px 0px with 1in 0px; green, yellow)'
+PASS Property background-image value 'mesh-gradient(in oklab, red, blue; green, yellow)'
+PASS Property background-image value 'mesh-gradient(in hsl longer hue, red, blue; green, yellow)'
+PASS Property background-image value 'mesh-gradient(white in srgb, red, blue; green, yellow)'
+

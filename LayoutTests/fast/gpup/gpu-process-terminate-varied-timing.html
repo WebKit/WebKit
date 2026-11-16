@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true ] -->
+<style>
+.layer { position: absolute; top: 10px; width: 300px; height: 200px; background-color: rgba(255, 255, 0, 0.5); will-change: transform; }
+.dot { position: absolute; left: 20px; top: 20px; width: 20px; height: 20px; }
+</style>
+<div id="result"></div>
+<div class="layer" style="left: 10px"><div class="dot" id="d1"></div></div>
+<div class="layer" style="left: 320px"><div class="dot" id="d2"></div></div>
+<script src="resources/stress.js"></script>
+<script>
+// Terminates the GPU process at varied points within the frame, with busy main-thread work after some terminations.
+function busy(ms) { const end = performance.now() + ms; while (performance.now() < end) { } }
+runStress(200, i => {
+    poke(d1, i);
+    poke(d2, i);
+    if (!window.testRunner || i % 10 != 3)
+        return;
+    const variant = (i / 10) % 4;
+    if (variant == 0)
+        testRunner.terminateGPUProcess();
+    else if (variant == 1)
+        setTimeout(() => testRunner.terminateGPUProcess(), (i % 7) * 2);
+    else if (variant == 2) {
+        testRunner.terminateGPUProcess();
+        busy(30);
+    } else
+        setTimeout(() => { testRunner.terminateGPUProcess(); busy(8); }, 5);
+});
+</script>

@@ -1,0 +1,5 @@
+
+PASS Setting currentTime is ignored on a <model> nested in a spatial portal that has no animation
+PASS Setting currentTime on a <model> nested in a spatial portal seeks its animation
+PASS Siblings in a spatial portal seek independently
+

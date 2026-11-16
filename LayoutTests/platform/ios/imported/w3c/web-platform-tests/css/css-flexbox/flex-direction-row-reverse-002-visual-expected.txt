@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 306x19
+          text run at (0,0) width 306: "Test passes if both the lines below are identical."
+      RenderFlexibleBox {DIV} at (0,36) size 48x20
+        RenderBlock {SPAN} at (0,0) size 16x20
+          RenderText {#text} at (0,0) size 12x19
+            text run at (0,0) width 12: "A"
+        RenderBlock {SPAN} at (16,0) size 16x20
+          RenderText {#text} at (0,0) size 11x19
+            text run at (0,0) width 11: "B"
+        RenderBlock {SPAN} at (32,0) size 16x20
+          RenderText {#text} at (0,0) size 11x19
+            text run at (0,0) width 11: "C"
+      RenderFlexibleBox {DIV} at (0,56) size 48x20
+        RenderBlock {SPAN} at (32,0) size 16x20
+          RenderText {#text} at (0,0) size 11x19
+            text run at (0,0) width 11: "C"
+        RenderBlock {SPAN} at (16,0) size 16x20
+          RenderText {#text} at (0,0) size 11x19
+            text run at (0,0) width 11: "B"
+        RenderBlock {SPAN} at (0,0) size 16x20
+          RenderText {#text} at (0,0) size 12x19
+            text run at (0,0) width 12: "A"

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<div id="container"></div>
+<svg id="outer" width="200" height="200"></svg>
+<script>
+description("A transform list set through the SVG DOM, without a transform attribute, maps to the CSS transform property only while the svg element is outermost, including after the element moves.");
+
+var container = document.getElementById("container");
+var outer = document.getElementById("outer");
+
+// Do not read the transform attribute, as that would synchronize it from the transform list.
+function createSVGWithTransform(parent) {
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    parent.appendChild(svg);
+    var transform = outer.createSVGTransform();
+    transform.setTranslate(10, 20);
+    svg.transform.baseVal.appendItem(transform);
+    return svg;
+}
+
+function computedTransform(svg) {
+    return svg.computedStyleMap().get("transform").toString();
+}
+
+var becomesInner = createSVGWithTransform(container);
+shouldBeEqualToString("computedTransform(becomesInner)", "translate(10px, 20px)");
+outer.appendChild(becomesInner);
+shouldBeEqualToString("computedTransform(becomesInner)", "none");
+
+var becomesOutermost = createSVGWithTransform(outer);
+shouldBeEqualToString("computedTransform(becomesOutermost)", "none");
+container.appendChild(becomesOutermost);
+shouldBeEqualToString("computedTransform(becomesOutermost)", "translate(10px, 20px)");
+</script>

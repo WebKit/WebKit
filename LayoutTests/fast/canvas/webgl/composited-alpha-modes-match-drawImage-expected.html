@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<style>
+body { margin: 0; background-color: black; }
+div { line-height: 0; }
+</style>
+</head>
+<body>
+<script>
+// Reference for composited-alpha-modes-match-drawImage.html: both canvases of a row are
+// the WebGL canvas drawn to a 2D canvas, so the reference does not depend on how the
+// platform composites a WebGL canvas.
+const testCases = [
+    { attributes: { alpha: false }, clearColor: [0, 1, 0, 1] },
+    { attributes: { alpha: true, premultipliedAlpha: false }, clearColor: [0, 1, 0, 128 / 255] },
+    { attributes: { alpha: true, premultipliedAlpha: true }, clearColor: [0, 128 / 255, 0, 128 / 255] },
+];
+
+function createWebGLCanvas(testCase)
+{
+    const canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+    const gl = canvas.getContext("webgl", testCase.attributes);
+    gl.clearColor(...testCase.clearColor);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    return canvas;
+}
+
+function drawToCanvas2D(source)
+{
+    const canvas = document.createElement("canvas");
+    canvas.width = source.width;
+    canvas.height = source.height;
+    canvas.getContext("2d").drawImage(source, 0, 0);
+    return canvas;
+}
+
+for (const testCase of testCases) {
+    const row = document.createElement("div");
+    // The WebGL canvas is not added to the document, so it is never composited.
+    const webGLCanvas = createWebGLCanvas(testCase);
+    row.appendChild(drawToCanvas2D(webGLCanvas));
+    row.appendChild(drawToCanvas2D(webGLCanvas));
+    document.body.appendChild(row);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+
+This test requires WebKitTestRunner. To manually test, load the page in a configuration where drag and drop is enabled by default; long press the image to show the context menu, and verify that the context menu remains visible
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS startedDrag became true
+PASS previewBounds.width is >= 0
+PASS previewBounds.height is >= 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

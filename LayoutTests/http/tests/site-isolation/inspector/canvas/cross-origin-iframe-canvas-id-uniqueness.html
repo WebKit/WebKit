@@ -1,0 +1,80 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function createCanvas() {
+    let context = document.createElement("canvas").getContext("2d");
+    (window.contexts ??= []).push(context);
+}
+
+function test()
+{
+    const canvasesPerFrame = 5;
+
+    function awaitCanvas(predicate) {
+        return new Promise((resolve) => {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find(predicate);
+            if (canvas) {
+                resolve(canvas);
+                return;
+            }
+
+            let listener = WI.canvasManager.canvasCollection.addEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                if (!predicate(event.data.item))
+                    return;
+                WI.canvasManager.canvasCollection.removeEventListener(WI.Collection.Event.ItemAdded, listener);
+                resolve(event.data.item);
+            });
+        });
+    }
+
+    async function awaitCanvasCollectionSize(size) {
+        while (WI.canvasManager.canvasCollection.size < size)
+            await WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Canvas.CrossOriginIFrame.CanvasIdUniqueness");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Canvas.CrossOriginIFrame.CanvasIdsAreUnique",
+        description: "Canvases in the main frame and in a cross-origin iframe should have distinct identifiers, although each web process numbers its own canvases.",
+        async test() {
+            // The main frame creates no canvas until the expression below runs, so the first one is the iframe's.
+            let iframeCanvas = await awaitCanvas((canvas) => canvas.target.type === WI.TargetType.Frame);
+            let iframeTarget = iframeCanvas.target;
+
+            let expression = `for (let i = 0; i < ${canvasesPerFrame}; ++i) createCanvas();`;
+            await Promise.all([
+                InspectorTest.evaluateInPage(expression),
+                iframeTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"}),
+                awaitCanvasCollectionSize(1 + 2 * canvasesPerFrame),
+            ]);
+
+            let canvases = Array.from(WI.canvasManager.canvasCollection);
+            let identifiers = canvases.map((canvas) => canvas.identifier);
+            InspectorTest.expectEqual(identifiers.length, 1 + 2 * canvasesPerFrame, "Should have canvases from both frames.");
+            InspectorTest.expectEqual(new Set(canvases.map((canvas) => canvas.target)).size, 2, "Canvases should come from two frame targets.");
+            InspectorTest.expectEqual(new Set(identifiers).size, identifiers.length, "Canvas identifiers should be unique across the main frame and the cross-origin iframe.");
+
+            // Unlike uniqueness, this also fails without process qualification when the two processes' counters happen not to overlap.
+            let processPart = (canvas) => /^canvas:(\d+)\.\d+$/.exec(canvas.identifier)?.[1];
+            let mainFrameProcessParts = new Set(canvases.filter((canvas) => canvas.target !== iframeTarget).map(processPart));
+            let iframeProcessParts = new Set(canvases.filter((canvas) => canvas.target === iframeTarget).map(processPart));
+            InspectorTest.expectThat(canvases.every(processPart), "Canvas identifiers should have the form canvas:<process>.<object>.");
+            InspectorTest.expectEqual(mainFrameProcessParts.size, 1, "Main frame canvases should share one process part.");
+            InspectorTest.expectEqual(iframeProcessParts.size, 1, "Iframe canvases should share one process part.");
+            InspectorTest.expectEqual(new Set(canvases.map(processPart)).size, 2, "Main frame and iframe canvases should have different process parts.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that canvases in a cross-origin iframe, which run in another web process under site isolation, do not reuse the main frame's canvas identifiers.</p>
+<script>
+let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+let iframe = document.createElement("iframe");
+iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/canvas/resources/iframe-with-canvas.html`;
+document.body.appendChild(iframe);
+</script>
+</body>

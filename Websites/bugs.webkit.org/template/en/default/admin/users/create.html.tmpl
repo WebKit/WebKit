@@ -1,0 +1,50 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  #
+  # listselectionvalues: selection values to recreate the current user list.
+  # editusers:           is viewing user member of editusers?
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Add user"
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "administering/users.html#creating-new-users"
+%]
+
+[% PROCESS admin/users/listselectvars.html.tmpl
+  listselectionvalues = listselectionvalues
+%]
+
+<form method="post" action="editusers.cgi">
+  <table id="admin_table_edit">
+    [% PROCESS admin/users/userdata.html.tmpl
+      editform  = 0
+      editusers = editusers
+      otheruser = []
+    %]
+  </table>
+  <p>
+    <input type="submit" id="add" value="Add">
+    <input type="hidden" name="action" value="new">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
+    [% INCLUDE listselectionhiddenfields %]
+  </p>
+</form>
+
+<p>
+  You can also <a href="editusers.cgi">find a user</a>
+  [% IF listselectionvalues %],
+    or
+    <a href="editusers.cgi?action=list[% INCLUDE listselectionurlparams %]">go
+    back to the user list</a>
+  [% END %].
+</p>
+
+[% PROCESS global/footer.html.tmpl %]

@@ -1,0 +1,15 @@
+This test ensures we parse contenteditable correctly.
+
+PASS: element.role === 'AXRole: AXTextArea'
+PASS: element.role === 'AXRole: AXGroup'
+PASS: element.role === 'AXRole: AXTextArea'
+PASS: element.role === 'AXRole: AXGroup'
+PASS: element.role === 'AXRole: AXTextArea'
+PASS: element.role === 'AXRole: AXGroup'
+PASS: element.role === 'AXRole: AXTextArea'
+PASS: element.role === 'AXRole: AXGroup'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

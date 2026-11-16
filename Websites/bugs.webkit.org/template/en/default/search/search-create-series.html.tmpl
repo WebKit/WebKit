@@ -1,0 +1,57 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # This template has no interface. However, to use it, you need to fulfill
+  # the interfaces of search/form.html.tmpl, reports/series.html.tmpl and
+  # search/boolean-charts.html.tmpl.
+  #%]
+
+[% js_data = BLOCK %]
+    var queryform = "chartform";
+[% END %]
+
+[% PROCESS global/header.html.tmpl 
+  title = "Create New Data Set"
+  onload = "doOnSelectProduct(0);"
+  yui = [ 'autocomplete', 'calendar' ]
+  javascript = js_data 
+  javascript_urls = [ "js/util.js", "js/TUI.js", "js/field.js" ]
+  style_urls = ['skins/standard/buglist.css']
+  doc_section = "using/reports-and-charts.html#creating-charts"
+%]
+
+<form method="get" action="chart.cgi" name="chartform">
+  
+[% PROCESS search/form.html.tmpl %]
+
+<p>
+  <input type="submit" id="action-search" name="action-search" value="Run Search">
+  to see which [% terms.bugs %] would be included in this data set.
+</p>
+    
+<h3>Data Set Parameters</h3>
+      
+[% PROCESS reports/series.html.tmpl 
+   button_name = "Create Data Set" %]
+  <input type="hidden" name="action" value="create">
+  <input type="hidden" name="token" value="[% issue_hash_token(['create-series']) FILTER html %]">
+
+<script type="text/javascript">
+  document.chartform.category[0].selected = true;
+  catSelected();
+  checkNewState();
+</script>
+      
+<hr>
+
+[% PROCESS "search/boolean-charts.html.tmpl" %]
+
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

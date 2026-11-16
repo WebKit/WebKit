@@ -1,0 +1,6 @@
+
+FAIL [inert] { interactivity: inert } assert_equals: expected (string) "inert" but got (undefined) undefined
+FAIL [inert] { interactivity: inert } inherited assert_equals: expected (string) "inert" but got (undefined) undefined
+FAIL Author interactivity:auto on a descendant can override inherited UA [inert] { interactivity: inert } assert_equals: expected (string) "auto" but got (undefined) undefined
+FAIL Author interactivity:auto does not override UA [inert] { interactivity: inert } on the element itself assert_equals: expected (string) "inert" but got (undefined) undefined
+

@@ -1,0 +1,15 @@
+Toggling :checked must update the input's own style, now that HTMLInputElement::setChecked relies on PseudoClassChangeInvalidation instead of invalidateStyle().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Unchecked.
+PASS getComputedStyle(document.getElementById("checkbox")).color is "rgb(0, 0, 0)"
+Checked.
+PASS getComputedStyle(document.getElementById("checkbox")).color is "rgb(255, 0, 0)"
+Unchecked again.
+PASS getComputedStyle(document.getElementById("checkbox")).color is "rgb(0, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

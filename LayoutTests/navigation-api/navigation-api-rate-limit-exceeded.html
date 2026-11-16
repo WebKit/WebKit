@@ -1,0 +1,66 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that navigation.navigate() is rate-limited after exceeding the configured window threshold");
+
+// Rate limit details (see Source/WebCore/page/Navigation.h RateLimiter):
+// - maxNavigationsPerWindow = 200
+// - windowDuration = 10 seconds
+// This test verifies the limit is enforced by attempting 210 rapid navigations.
+
+jsTestIsAsync = true;
+
+const EXPECTED_LIMIT = 200; // RateLimiter::maxNavigationsPerWindow
+const TEST_ATTEMPTS = EXPECTED_LIMIT + 10;
+
+var successfulNavigations = 0;
+var failedNavigations = 0;
+var quotaExceededErrors = 0;
+var lastError = null;
+
+window.onload = async () => {
+
+    // Try to navigate more than the limit
+    for (let i = 0; i < TEST_ATTEMPTS; i++) {
+        try {
+            const result = navigation.navigate(`#url${i}`);
+            await result.committed;
+            successfulNavigations++;
+        } catch (error) {
+            failedNavigations++;
+            if (error.name === "QuotaExceededError")
+                quotaExceededErrors++;
+        }
+    }
+
+    debug(`Successful navigations: ${successfulNavigations}`);
+    debug(`Failed navigations: ${failedNavigations}`);
+    debug(`QuotaExceededError count: ${quotaExceededErrors}`);
+
+    // Verify that approximately EXPECTED_LIMIT succeeded (allow small margin for timing)
+    shouldBeTrue(`successfulNavigations >= ${EXPECTED_LIMIT - 5} && successfulNavigations <= ${EXPECTED_LIMIT}`);
+
+    // Verify that remaining failed
+    const expectedFailures = TEST_ATTEMPTS - EXPECTED_LIMIT;
+    shouldBeTrue(`failedNavigations >= ${expectedFailures - 5} && failedNavigations <= ${expectedFailures + 5}`);
+
+    // Verify all failures were QuotaExceededError
+    shouldBe("quotaExceededErrors", "failedNavigations");
+
+    // Verify error message
+    try {
+        // Try one more navigation to get the error
+        for (let i = 0; i < 5; i++) {
+            await navigation.navigate(`#extra${i}`).committed;
+        }
+    } catch (error) {
+        lastError = error;
+    }
+
+    shouldBe("lastError.name", "'QuotaExceededError'");
+    shouldBe("lastError.message", "'Navigation rate limit exceeded'");
+
+    finishJSTest();
+};
+</script>

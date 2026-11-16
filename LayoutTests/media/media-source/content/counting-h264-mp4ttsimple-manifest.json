@@ -1,0 +1,23 @@
+{
+  "url": "content/counting-h264-mp4ttsimple.mp4",
+  "type": "video/mp4; codecs=\"avc1.640014,tx3g\"",
+  "init": {
+    "offset": 0,
+    "size": 1458
+  },
+  "duration": 10.0,
+  "media": [
+    {
+      "offset": 1458,
+      "size": 545029,
+      "timestamp": 0.0,
+      "duration": 5.0
+    },
+    {
+      "offset": 546487,
+      "size": 650180,
+      "timestamp": 5.0,
+      "duration": 10.0
+    }
+  ]
+}

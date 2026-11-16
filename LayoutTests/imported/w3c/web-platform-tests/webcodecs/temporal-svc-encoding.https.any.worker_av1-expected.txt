@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = Error in remote https://localhost:9443/resources/testharness.js: Error: assert_unreached: Decoder failure Reached unreachable code
+
+FAIL SVC L1T2 promise_test: Unhandled rejection with value: object "EncodingError: Decoder failure"
+FAIL SVC L1T3 promise_test: Unhandled rejection with value: object "EncodingError: Decoder failure"
+

@@ -1,0 +1,18 @@
+<style>
+* {
+  border-block-start: 4px solid;
+  -webkit-line-grid: simple;
+  transition: border-width 100ms linear;
+  column-width: 1000px;
+  cursor: auto;
+  padding-top: 10000000000px;
+}
+*::after {
+  content: 'a'
+}
+</style>
+PASS if no crash or assert.
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText()
+</script>

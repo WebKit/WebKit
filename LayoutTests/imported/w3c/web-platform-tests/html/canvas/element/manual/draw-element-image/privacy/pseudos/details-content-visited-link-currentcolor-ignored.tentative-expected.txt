@@ -1,0 +1,9 @@
+Details
+A
+
+Details
+-
+
+
+FAIL drawElementImage does not reveal visited link colors in ::details-content promise_test: Unhandled rejection with value: object "InvalidStateError: CanvasRenderingContext2DBase failed to get a snapshot for a drawableElement."
+

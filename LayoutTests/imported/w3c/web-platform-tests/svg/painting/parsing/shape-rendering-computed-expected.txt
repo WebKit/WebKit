@@ -1,0 +1,6 @@
+
+PASS Property shape-rendering value 'auto'
+PASS Property shape-rendering value 'optimizespeed'
+PASS Property shape-rendering value 'crispedges'
+PASS Property shape-rendering value 'geometricprecision'
+

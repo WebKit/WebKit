@@ -1,0 +1,8 @@
+
+PASS JS-created ScrollTimeline for a non-scrollable axis is inactive
+FAIL CSS anonymous ScrollTimeline falls back when no ancestor matches the axis assert_equals: expected Element node <html><head><meta charset="utf-8">
+<title>ScrollTimeline ... but got Element node <div id="scroller">
+  <div id="subject"></div>
+</div>
+PASS ScrollTimeline becomes inactive when the reference element has display:none
+

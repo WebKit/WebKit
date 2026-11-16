@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-seek-repeatedly-then-play</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var audioSourceBuffer;
+    var audioLoader;
+    var finished = false;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    function waitForLoop(video) {
+        return new Promise((resolve) => {
+            let lastTime = video.currentTime;
+            const listener = () => {
+                // Time going back by a large amount means the video looped.
+                if (video.currentTime < lastTime - 0.5) {
+                    video.removeEventListener("timeupdate", listener);
+                    resolve();
+                    return;
+                }
+                lastTime = video.currentTime;
+            };
+            video.addEventListener("timeupdate", listener);
+        });
+    }
+
+    function waitForTimeupdateGreaterThan(video, refTime) {
+        return new Promise((resolve) => {
+            const listener = () => {
+                if (video.currentTime < refTime)
+                    return;
+                video.removeEventListener("timeupdate", listener);
+                resolve();
+            };
+            video.addEventListener("timeupdate", listener);
+        });
+    }
+
+    async function setupMediaSource() {
+        audioLoader = new MediaSourceLoader("content/test-48khz-manifest.json");
+        await loaderPromise(audioLoader);
+
+        findMediaElement();
+
+        source = new MediaSource();
+        run("video.src = URL.createObjectURL(source)");
+        await waitFor(source, "sourceopen");
+        run("audioSourceBuffer = source.addSourceBuffer(audioLoader.type())");
+        waitFor(video, "error").then(failTest);
+
+        run("audioSourceBuffer.appendBuffer(audioLoader.initSegment())");
+        await waitFor(audioSourceBuffer, "update", true);
+        for (let i = 0; i < 2; i++) {
+            run(`audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(${i}))`);
+            await waitFor(audioSourceBuffer, "update", true);
+        }
+        run("source.endOfStream()");
+    }
+
+
+    async function runTest() {
+        await setupMediaSource();
+
+        consoleWrite("-");
+        consoleWrite("Seek back and forth, each seek starting when the previous one completed.");
+        const targets = [video.duration - 0.5, 0, video.duration - 0.5, 0, video.duration - 0.5];
+        for (let i = 0; i < targets.length; i++) {
+            const seeked = waitFor(video, "seeked", true);
+            video.currentTime = targets[i];
+            await seeked;
+            consoleWrite(`++ seek ${i} completed.`);
+        }
+
+        consoleWrite("-");
+        const ended = waitFor(video, "ended", true);
+        run("video.play()");
+        await ended;
+        consoleWrite("++ ended.");
+        testExpected("video.currentTime == video.duration", true);
+    }
+
+    window.addEventListener("load", event => {
+        setTimeout(() => {
+            if (!finished)
+                failTest(`Timed out; currentTime = ${video.currentTime}, duration = ${video.duration}, paused = ${video.paused}, ended = ${video.ended}, seeking = ${video.seeking}`);
+        }, 20000);
+        runTest().then(() => { finished = true; endTest(); }).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <div>
+        This tests that playback after repeated back-to-back seeks in a MediaSource video is not stalled and reaches the end.
+    </div>
+    <video muted></video>
+</body>
+</html>

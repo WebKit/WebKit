@@ -1,0 +1,93 @@
+/*
+ * Copyright (C) 2024 Keith Cirkel <webkit@keithcirkel.co.uk>. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "AbortController.h"
+#include "ActiveDOMObject.h"
+#include "InternalObserver.h"
+#include "ScriptWrappable.h"
+#include "SubscribeOptions.h"
+#include "VoidCallback.h"
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+
+namespace WebCore {
+
+class ScriptExecutionContext;
+
+class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public RefCounted<Subscriber> {
+    WTF_MAKE_TZONE_ALLOCATED(Subscriber);
+
+public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    void next(JSC::JSValue);
+    void complete();
+    void error(JSC::JSValue);
+    void addTeardown(Ref<VoidCallback>);
+
+    bool active() { return m_active; }
+    AbortSignal& signal() { return m_signal.get(); }
+
+    static Ref<Subscriber> create(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
+
+    ~Subscriber();
+
+    void reportErrorObject(JSC::JSValue);
+
+    // JSCustomMarkFunction; for JSSubscriberCustom
+    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
+
+private:
+    explicit Subscriber(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
+
+    void followSignal(AbortSignal&);
+    void close(JSC::JSValue);
+
+    bool isActive() const
+    {
+        return m_active && !isInactiveDocument();
+    }
+
+    bool isInactiveDocument() const;
+
+    // ActiveDOMObject
+    void stop() final
+    {
+        Locker locker { m_teardownsLock };
+        m_teardowns.clear();
+    }
+    bool virtualHasPendingActivity() const final { return m_active; }
+
+    bool m_active = true;
+    Lock m_teardownsLock;
+    const Ref<AbortSignal> m_signal;
+    const Ref<InternalObserver> m_observer;
+    SubscribeOptions m_options;
+    Vector<Ref<VoidCallback>> m_teardowns WTF_GUARDED_BY_LOCK(m_teardownsLock);
+};
+
+} // namespace WebCore

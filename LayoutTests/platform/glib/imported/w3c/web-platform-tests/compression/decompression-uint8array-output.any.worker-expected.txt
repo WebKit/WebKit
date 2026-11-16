@@ -1,0 +1,6 @@
+
+PASS decompressing deflate output should give Uint8Array chunks
+PASS decompressing gzip output should give Uint8Array chunks
+PASS decompressing deflate-raw output should give Uint8Array chunks
+FAIL decompressing brotli output should give Uint8Array chunks promise_test: Unhandled rejection with value: object "NotSupportedError: Unsupported algorithm"
+

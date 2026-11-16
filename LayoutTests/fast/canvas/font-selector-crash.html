@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style id="styleElement">
+p {
+    font-family: helvetica;
+}
+</style>
+<style>
+@font-face {
+    font-family: 'WebAhem';
+    src: url('resources/font-selector-crash.ttf') format('truetype');
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test makes sure there is no crash when the CSSFontSelector is cleared in between two canvas setFont() calls. The test is successful if there is no crash.</p>
+<span id="sleepOnMe" style="font-family: WebAhem;">Test</span>
+<canvas id="canvas"></canvas>
+<script>
+function clearFontSelector() {
+    var e = document.getElementById("styleElement");
+    e.setAttribute("media", "print");
+}
+
+window.jsTestIsAsync = true;
+
+var canvasElement = document.getElementById("canvas");
+var context = canvasElement.getContext('2d');
+
+// Step 1: Create a State object.
+context.save();
+// Step 2: Make the CSSFontSelector have a pointer to the State object.
+context.font = "15px Times";
+// Step 3: Create a second CSSFontSelector.
+clearFontSelector();
+// Step 4: Make the second CSSFontSelector have a pointer to the State object.
+context.font = "15px Helvetica";
+// Step 5: Destroy the State object.
+context.restore();
+// Step 6: When a font finishes downloading, the CSSFontSelector will call back the
+// State object it has a pointer to. When we destroyed the State object, we unregistered
+// it from the second CSSFontSelector, but not the first (which is the problem). The font
+// load was already kicked off earlier because of sleepOnMe, so it targets the first
+// CSSFontSelector, which now has a dangling pointer to the State object.
+
+// Wait for the font to download
+var initialWidth = document.getElementById('sleepOnMe').getClientRects()[0].width;
+shouldBecomeDifferent("document.getElementById('sleepOnMe').getClientRects()[0].width", "initialWidth", finishJSTest);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

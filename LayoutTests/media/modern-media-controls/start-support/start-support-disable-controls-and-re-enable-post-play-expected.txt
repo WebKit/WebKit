@@ -1,0 +1,18 @@
+Testing the StartSupport behavior when the media starts playing while controls are disabled and controls become active post-play.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Disabling controls.
+Starting the video.
+
+Obtained the 'play' event.
+PASS mediaController.controls.showsStartButton is true
+
+Turning controls back on.
+PASS mediaController.controls.showsStartButton became false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

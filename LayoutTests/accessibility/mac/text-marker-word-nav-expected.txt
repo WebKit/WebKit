@@ -1,0 +1,109 @@
+This tests that word navigation is working correctly.
+Current character is: w
+Left word is: word1
+Right word is: word1
+
+Current character is: t
+Left word is: test
+Right word is:
+
+Current character is: T
+Left word is: Thisislongword
+Right word is: Thisislongword
+
+Current character is:
+Left word is:
+Right word is: I'll
+
+Current character is:
+Left word is:
+Right word is: try
+
+Current character is: e
+Left word is: editable
+Right word is: editable
+
+Current character is:
+Left word is:
+Right word is: [ATTACHMENT]
+
+Current character is: [ATTACHMENT]
+Left word is: [ATTACHMENT]
+Right word is: d
+
+Current character is: c
+Left word is: can't
+Right word is: can't
+
+Current character is:
+Left word is: 巧克力
+Right word is: 巧克力
+
+Current character is: 克
+Left word is: 巧克力
+Right word is: 巧克力
+
+Current character is: 力
+Left word is: 巧克力
+Right word is: 是
+
+Current character is: 是
+Left word is: 是
+Right word is: 食物
+
+Current character is: ف
+Left word is: كيف
+Right word is:
+
+Current character is:
+Left word is:
+Right word is: حالك
+
+Current character is: h
+Left word is: both
+Right word is:
+
+Current character is: s
+Left word is: spaces
+Right word is:
+
+Current character is: e
+Left word is: some
+Right word is:
+
+Current character is: 'line break'
+Left word is:
+Right word is:
+
+Current character is:
+Left word is:
+Right word is: [ATTACHMENT]
+
+Current character is: [ATTACHMENT]
+Left word is: [ATTACHMENT]
+Right word is: file
+
+Current character is: f
+Left word is: file
+Right word is: file
+
+Current character is: t
+Left word is: Edit
+Right word is:
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+word1 test
+Thisislongword I'll try. Test Contenteditable is working.
+c d
+can't select
+巧克力是食物吗？
+كيف حالك؟
+both   spaces
+line breaks
+some
+text
+test audio file
+Edit text End

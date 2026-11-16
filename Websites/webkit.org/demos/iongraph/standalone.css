@@ -1,0 +1,32 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 0.875rem;
+}
+
+body {
+  margin: 0;
+  background-color: #e5e8ea;
+  /* Font, and many other styles, taken from the Firefox Profiler/ */
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Noto Sans, Liberation Sans, Cantarell, Helvetica Neue, sans-serif;
+}
+
+#container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.tweaks-panel {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 1rem;
+  border: 1px solid black;
+  border-width: 1px 0 0 1px;
+  background-color: white;
+}

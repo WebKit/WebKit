@@ -1,0 +1,7 @@
+
+PASS Computed value for `text-combine-upright: none` is `none`
+PASS Computed value for `text-combine-upright: all` is `all`
+PASS Computed value for `text-combine-upright: initial` is `none`
+PASS Computed value for `text-combine-upright: inherit` is `all` which is inherited from the parent element
+PASS Computed value for `text-combine-upright: unset` is `all` which is inherited from the parent element
+

@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true suppressInputAccessoryView=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+async function tapBottomOfScreenAndWaitForScrolling() {
+    const scrollTopBefore = document.scrollingElement.scrollTop;
+    await UIHelper.activateAndWaitForInputSessionAt(160, document.scrollingElement.scrollTop + screen.height - 50);
+    while (true) {
+        if (document.scrollingElement.scrollTop > scrollTopBefore) {
+            testPassed("Scrolled after focusing editable web view");
+            break;
+        }
+        await UIHelper.delayFor(100);
+    }
+    await UIHelper.ensureStablePresentationUpdate();
+    document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that tapping near the bottom of an editable web view configured similarly to Mail compose causes us to scroll to reveal the selection. To manually run the test on iOS, compose a new Mail message that contains enough content to require scrolling, and tap near the bottom of the message.");
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await UIHelper.setWebViewEditable(true);
+    await UIHelper.setScrollViewKeyboardAvoidanceEnabled(false);
+
+    await tapBottomOfScreenAndWaitForScrolling();
+    await tapBottomOfScreenAndWaitForScrolling();
+
+    document.getElementById("content").remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<pre id="console"></pre>
+<div id="content" style="font-size: 24px;">
+    <p>Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+    <p>Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+    <p>Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+    <p>Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+</div>
+</body>
+</html>

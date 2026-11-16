@@ -1,0 +1,9 @@
+123
+123
+
+PASS An empty orthogonal block level box on a line does not stretch its containing block (nested)
+PASS Text after an empty orthogonal block level box stays on the first line (nested)
+PASS An empty orthogonal block level box on a line does not stretch its containing block (sibling)
+PASS Text after an empty orthogonal block level box stays on the first line (sibling)
+PASS The empty orthogonal box behaves the same whether it is nested in an inline box or a sibling of inline content
+

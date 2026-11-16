@@ -1,0 +1,6 @@
+PASS div.children.length is 0
+PASS docFragment.firstElementChild.tagName is "H1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

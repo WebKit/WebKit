@@ -1,0 +1,19 @@
+Tests that an origin's third-party sessionStorage area is partitioned from its first-party storage area.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS expectedResultStrings[currentStep-1] is undefined.
+PASS event.data.result is "1: Successfully retrieved sessionStorage from localhost frame: 1234."
+PASS event.data.result is "2: Retrieving sessionStorage from loopback failed: null"
+PASS event.data.result is "3: Successfully retrieved sessionStorage from localhost frame: 4321, http://localhost:8000."
+PASS event.data.result is "4: Retrieving sessionStorage from loopback failed: null"
+PASS expectedResultStrings[currentStep-1] is undefined.
+PASS expectedResultStrings[currentStep-1] is undefined.
+PASS expectedResultStrings[currentStep-1] is undefined.
+PASS event.data.result is "8: Retrieving sessionStorage from localhost failed: null"
+PASS event.data.result is "9: Retrieving sessionStorage from loopback failed: null"
+PASS expectedResultStrings[currentStep-1] is undefined.
+PASS event.data.result is "11: Successfully retrieved sessionStorage from localhost frame: 4321, http://localhost:8000."
+PASS event.data.result is "12: Successfully retrieved sessionStorage from loopback frame: 4321, http://127.0.0.1:8000."
+

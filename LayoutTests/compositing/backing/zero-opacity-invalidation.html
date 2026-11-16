@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    transform: translateZ(0px);
+}
+#opacity {
+    opacity: 0;
+}
+.second {
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function() {
+    if (!window.testRunner)
+        return;
+  
+    requestAnimationFrame(function() {
+        document.getElementById('opacity').style.opacity = 0.5;
+
+        let out = document.getElementById('out');
+        out.textContent = internals.layerTreeAsText(document);
+        testRunner.notifyDone();
+    });
+};
+</script>
+</head>
+<body>
+<pre id="out"></pre>
+    <div id="opacity">First</div>
+</body>
+</html>

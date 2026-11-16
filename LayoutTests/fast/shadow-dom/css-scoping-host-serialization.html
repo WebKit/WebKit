@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style id="ref">
+:host, :host(.hidden) {
+    display: none;
+}
+</style>
+</head>
+<body>
+<pre id="out"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const el = document.getElementById('ref');
+const out = document.getElementById('out');
+
+const rule = el.sheet.rules[0];
+out.innerText = rule.cssText;
+</script>
+</body>
+</html>
+

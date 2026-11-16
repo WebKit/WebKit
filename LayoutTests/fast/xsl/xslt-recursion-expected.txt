@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
+Success!

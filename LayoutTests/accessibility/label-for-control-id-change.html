@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container">
+    <label id="label" for="target">Label</label>
+    <input id="control" type="text">
+</div>
+
+<script>
+var output = "This tests that a label-for association updates when a control's id attribute changes to (or away from) the label's for value.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    function isLabelledBy(controlId, labelId) {
+        var control = accessibilityController.accessibleElementById(controlId);
+        if (!control)
+            return false;
+        var title = control.titleUIElement();
+        return title != null && title.isEqual(accessibilityController.accessibleElementById(labelId));
+    }
+
+    function hasNoTitleUIElement(controlId) {
+        var control = accessibilityController.accessibleElementById(controlId);
+        return control != null && control.titleUIElement() == null;
+    }
+
+    // Force the initial relations build. The label's for="target" matches no control yet.
+    output += expect("hasNoTitleUIElement('control')", "true");
+
+    setTimeout(async function() {
+        // Give the control the id the label points at. This is an id-attribute change (not a change to
+        // the label's for attribute), which must still re-resolve the label -> control relation.
+        output += evalAndReturn("document.getElementById('control').id = 'target';");
+        output += await expectAsync("isLabelledBy('target', 'label')", "true");
+
+        // Change the id away again. The association must be removed.
+        output += evalAndReturn("document.getElementById('target').id = 'control';");
+        output += await expectAsync("hasNoTitleUIElement('control')", "true");
+
+        document.getElementById('container').style.display = 'none';
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

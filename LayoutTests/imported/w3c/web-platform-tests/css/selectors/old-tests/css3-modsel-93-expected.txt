@@ -1,0 +1,4 @@
+This paragraph has no declared namespace and should have a green background.
+
+PASS Type element selector without declared namespace
+

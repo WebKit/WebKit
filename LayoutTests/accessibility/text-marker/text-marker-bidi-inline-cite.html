@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=false ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+    <p dir="auto" id="content">The alphabet is <cite dir="rtl">ABC DEF GHI <span dir="ltr">JKL MNO PQR STU VWX YZ</span></cite>.</p>
+
+<script>
+var output = "This test verifies that a paragraph with ltr text in English, containining a cite element with dir=\"rtl\", containing a span element with dir=\"ltr\" is read correctly by accessibility.\n\n";
+
+if (window.accessibilityController) {
+    var staticText = accessibilityController.accessibleElementById("content").childAtIndex(0);
+    var staticTextTextMarkerRange = staticText.textMarkerRangeForElement(staticText);
+    output += expect("staticText.textMarkerRangeLength(staticTextTextMarkerRange)", "16");
+
+    var startMarker = staticText.startTextMarkerForTextMarkerRange(staticTextTextMarkerRange);
+    var endMarker = staticText.endTextMarkerForTextMarkerRange(staticTextTextMarkerRange);
+    output += expect("staticText.accessibilityElementForTextMarker(startMarker).isEqual(staticText)", "true");
+    output += expect("staticText.accessibilityElementForTextMarker(endMarker).isEqual(staticText)", "true");
+    output += expect("staticText.stringForTextMarkerRange(staticTextTextMarkerRange).trim()", "'The alphabet is'")
+
+    var citeRTL = accessibilityController.accessibleElementById("content").childAtIndex(1);
+    var citeTextMarkerRange = staticText.textMarkerRangeForElement(citeRTL);
+    output += expect("citeRTL.textMarkerRangeLength(citeTextMarkerRange)", "34");
+    output += expect("citeRTL.stringForTextMarkerRange(citeTextMarkerRange).trim()", "'ABC DEF GHI JKL MNO PQR STU VWX YZ'")
+
+    debug(output);
+}
+</script>
+</body>
+</html>

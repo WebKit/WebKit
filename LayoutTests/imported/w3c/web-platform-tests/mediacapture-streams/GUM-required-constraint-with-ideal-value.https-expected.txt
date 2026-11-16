@@ -1,0 +1,9 @@
+When prompted, accept to share your video stream.
+
+Description
+
+This test checks that setting a required constraint with an ideal value in getUserMedia works
+
+
+PASS Tests that setting a required constraint with an ideal value in getUserMedia works
+

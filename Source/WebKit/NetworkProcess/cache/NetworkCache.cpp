@@ -1,0 +1,1159 @@
+/*
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "NetworkCache.h"
+
+#include "AsyncRevalidation.h"
+#include "Logging.h"
+#include "NetworkCacheSpeculativeLoad.h"
+#include "NetworkCacheSpeculativeLoadManager.h"
+#include "NetworkCacheStorage.h"
+#include "NetworkCacheValidation.h"
+#include "NetworkProcess.h"
+#include "NetworkSession.h"
+#include "NetworkStorageSession.h"
+#include "WebsiteDataType.h"
+#include <WebCore/CacheValidation.h>
+#include <WebCore/ExceptionOr.h>
+#include <WebCore/HTTPHeaderNames.h>
+#include <WebCore/HTTPStatusCodes.h>
+#include <WebCore/LowPowerModeNotifier.h>
+#include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/SharedBuffer.h>
+#include <WebCore/ThermalMitigationNotifier.h>
+#include <WebCore/URLPattern.h>
+#include <WebCore/URLPatternOptions.h>
+#include <wtf/Borrow.h>
+#include <wtf/FileSystem.h>
+#include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
+#include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
+
+#if PLATFORM(COCOA)
+#include <notify.h>
+#include <wtf/darwin/DispatchExtras.h>
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include <wtf/glib/GLibExtras.h>
+#endif
+
+namespace WebKit {
+namespace NetworkCache {
+
+using namespace FileSystem;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Cache::RetrieveInfo);
+
+const AtomString& recordTypeName(RecordType recordType)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    static NeverDestroyed<const AtomString> resource("Resource"_s);
+    static NeverDestroyed<const AtomString> compressionDictionary("CompressionDictionary"_s);
+    return recordType == RecordType::CompressionDictionary ? compressionDictionary : resource;
+}
+
+static size_t computeCapacity(CacheModel cacheModel, const String& cachePath)
+{
+    if (auto diskFreeSize = FileSystem::volumeFreeSpace(cachePath)) {
+        // As a fudge factor, use 1000 instead of 1024, in case the reported byte
+        // count doesn't align exactly to a megabyte boundary.
+        *diskFreeSize /= KB * 1000;
+        return calculateURLCacheDiskCapacity(cacheModel, *diskFreeSize);
+    }
+    return 0;
+}
+
+RefPtr<Cache> Cache::open(const String& cachePath, OptionSet<CacheOption> options, PAL::SessionID sessionID)
+{
+    if (!FileSystem::makeAllDirectories(cachePath))
+        return nullptr;
+
+    auto cacheModel = NetworkProcess::singleton().cacheModel();
+    auto capacity = computeCapacity(cacheModel, cachePath);
+
+    // Cache a small number of recently used memory mapped main resource blobs to speed up hot loads of
+    // recently visited websites.
+    size_t mainResourceBlobMemoryCacheFileLimit = cacheModel == CacheModel::PrimaryWebBrowser ? 32 : 0;
+
+    auto storage = Storage::open(cachePath, options.contains(CacheOption::TestingMode) ? Storage::Mode::AvoidRandomness : Storage::Mode::Normal, capacity, mainResourceBlobMemoryCacheFileLimit);
+
+    LOG(NetworkCache, "(NetworkProcess) opened cache storage, success %d", !!storage);
+
+    if (!storage)
+        return nullptr;
+
+    return adoptRef(*new Cache(cachePath, storage.releaseNonNull(), options, sessionID));
+}
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+static void dumpFileChanged(Cache* cache)
+{
+    cache->dumpContentsToFile();
+}
+#endif
+
+NetworkProcess& Cache::networkProcess()
+{
+    return NetworkProcess::singleton();
+}
+
+Cache::Cache(const String& storageDirectory, Ref<Storage>&& storage, OptionSet<CacheOption> options, PAL::SessionID sessionID)
+    : m_storage(WTF::move(storage))
+    , m_sessionID(sessionID)
+    , m_storageDirectory(storageDirectory)
+{
+    if (options.contains(CacheOption::SpeculativeRevalidation)) {
+        lazyInitialize(m_lowPowerModeNotifier, makeUnique<WebCore::LowPowerModeNotifier>([weakThis = WeakPtr { *this }](bool) {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->updateSpeculativeLoadManagerEnabledState();
+        }));
+        lazyInitialize(m_thermalMitigationNotifier, WebCore::ThermalMitigationNotifier::create([weakThis = WeakPtr { *this }](bool) {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->updateSpeculativeLoadManagerEnabledState();
+        }));
+        if (shouldUseSpeculativeLoadManager())
+            m_speculativeLoadManager = makeUnique<SpeculativeLoadManager>(*this, protect(m_storage));
+    }
+
+    populateCompressionDictionaryIndex();
+
+    if (options.contains(CacheOption::RegisterNotify)) {
+#if PLATFORM(COCOA)
+        // Triggers with "notifyutil -p com.apple.WebKit.Cache.dump".
+        int token;
+        notify_register_dispatch("com.apple.WebKit.Cache.dump", &token, mainDispatchQueueSingleton(), ^(int) {
+            dumpContentsToFile();
+        });
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        // Triggers with "touch $cachePath/dump".
+        auto dumpFilePath = fileSystemRepresentation(pathByAppendingComponent(m_storage->basePathIsolatedCopy(), "dump"_s));
+        GRefPtr<GFile> dumpFile = gFileNewForPath(dumpFilePath);
+        GFileMonitor* monitor = g_file_monitor_file(dumpFile.get(), G_FILE_MONITOR_NONE, nullptr, nullptr);
+        g_signal_connect_swapped(monitor, "changed", G_CALLBACK(dumpFileChanged), this);
+#endif
+    }
+}
+
+Cache::~Cache() = default;
+
+size_t Cache::capacity() const
+{
+    return m_storage->capacity();
+}
+
+void Cache::updateCapacity()
+{
+    auto newCapacity = computeCapacity(NetworkProcess::singleton().cacheModel(), m_storage->basePathIsolatedCopy());
+    m_storage->setCapacity(newCapacity);
+}
+
+Key Cache::makeCacheKey(RecordType recordType, const WebCore::ResourceRequest& request)
+{
+    // FIXME: This implements minimal Range header disk cache support. We don't parse
+    // ranges so only the same exact range request will be served from the cache.
+    String range = request.httpHeaderField(WebCore::HTTPHeaderName::Range);
+    auto includesCredentials = recordType == RecordType::Resource && !request.allowCookies() ? WebCore::IncludesCredentials::No : WebCore::IncludesCredentials::Yes;
+    return { request.cachePartition(), recordTypeName(recordType), range, request.url().stringWithoutFragmentIdentifier(), m_storage->salt(), includesCredentials };
+}
+
+NODELETE static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
+{
+    switch (policy) {
+    case WebCore::ResourceRequestCachePolicy::ReturnCacheDataElseLoad:
+    case WebCore::ResourceRequestCachePolicy::ReturnCacheDataDontLoad:
+        return true;
+    case WebCore::ResourceRequestCachePolicy::UseProtocolCachePolicy:
+    case WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData:
+    case WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData:
+        return false;
+    case WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    return false;
+}
+
+static UseDecision responseNeedsRevalidation(NetworkSession& networkSession, const WebCore::ResourceResponse& response, WallTime timestamp, const WebCore::CacheControlDirectives& requestDirectives)
+{
+    if (response.cacheControlContainsNoCache())
+        return UseDecision::Validate;
+
+    auto age = WebCore::computeCurrentAge(response, timestamp);
+    auto lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(response, timestamp);
+
+    // Request max-age=0 (like no-cache) always forces revalidation.
+    if (requestDirectives.maxAge && requestDirectives.maxAge.value() == 0_ms)
+        return UseDecision::Validate;
+
+    if (age <= lifetime) {
+        if (requestDirectives.maxAge && age > requestDirectives.maxAge.value())
+            return UseDecision::Validate;
+
+        if (requestDirectives.minFresh && age + requestDirectives.minFresh.value() > lifetime)
+            return UseDecision::Validate;
+    }
+
+    auto maxStale = requestDirectives.maxStale;
+    auto maximumStaleness = maxStale ? maxStale.value() : 0_ms;
+    bool hasExpired = age - lifetime > maximumStaleness;
+    if (hasExpired && !maxStale && networkSession.isStaleWhileRevalidateEnabled()) {
+        auto responseMaxStaleness = response.cacheControlStaleWhileRevalidate();
+        maximumStaleness += responseMaxStaleness ? responseMaxStaleness.value() : 0_ms;
+        bool inResponseStaleness = age - lifetime < maximumStaleness;
+        if (inResponseStaleness)
+            return UseDecision::AsyncRevalidate;
+    }
+
+    if (hasExpired) {
+#ifndef LOG_DISABLED
+        LOG(NetworkCache, "(NetworkProcess) needsRevalidation hasExpired age=%f lifetime=%f max-staleness=%f", age, lifetime, maximumStaleness);
+#endif
+        return UseDecision::Validate;
+    }
+
+    return UseDecision::Use;
+}
+
+static UseDecision responseNeedsRevalidation(NetworkSession& networkSession, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, WallTime timestamp)
+{
+    auto requestDirectives = WebCore::parseCacheControlDirectives(request.httpHeaderFields());
+    if (requestDirectives.noCache)
+        return UseDecision::Validate;
+    // A request carrying no-store must not be satisfied from cache.
+    if (requestDirectives.noStore)
+        return UseDecision::Validate;
+
+    return responseNeedsRevalidation(networkSession, response, timestamp, requestDirectives);
+}
+
+static UseDecision makeUseDecision(PAL::SessionID sessionID, const Entry& entry, const WebCore::ResourceRequest& request)
+{
+    // The request is conditional so we force revalidation from the network. We merely check the disk cache
+    // so we can update the cache entry.
+    if (request.isConditional() && !entry.redirectRequest())
+        return UseDecision::Validate;
+
+    if (!verifyVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(sessionID)), entry.varyingRequestHeaders(), request))
+        return UseDecision::NoDueToVaryingHeaderMismatch;
+
+    // We never revalidate in the case of a history navigation.
+    if (cachePolicyAllowsExpired(request.cachePolicy()))
+        return UseDecision::Use;
+
+    // We could have cached a redirect without a fragment and now may have
+    // a fragment in the URL.
+    if (request.url().hasFragmentIdentifier() && entry.redirectRequest())
+        return UseDecision::NoDueToRequestContainingFragments;
+
+    auto decision = responseNeedsRevalidation(*protect(NetworkProcess::singleton().networkSession(sessionID)), entry.response(), request, entry.timeStamp());
+    if (decision != UseDecision::Validate)
+        return decision;
+
+    if (!entry.response().hasCacheValidatorFields())
+        return UseDecision::NoDueToMissingValidatorFields;
+
+    return entry.redirectRequest() ? UseDecision::NoDueToExpiredRedirect : UseDecision::Validate;
+}
+
+static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& request)
+{
+    ASSERT(request.cachePolicy() != WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache);
+
+    // FIXME: Support HEAD requests.
+    if (request.httpMethod() != "GET"_s)
+        return RetrieveDecision::NoDueToHTTPMethod;
+    if (request.cachePolicy() == WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData && !request.isConditional())
+        return RetrieveDecision::NoDueToReloadIgnoringCache;
+
+    return RetrieveDecision::Yes;
+}
+
+static bool isMediaMIMEType(const String& type)
+{
+    return startsWithLettersIgnoringASCIICase(type, "video/"_s) || startsWithLettersIgnoringASCIICase(type, "audio/"_s);
+}
+
+static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, size_t bodySize)
+{
+    if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isInHTTPFamily())
+        return StoreDecision::NoDueToProtocol;
+
+    if (originalRequest.httpMethod() != "GET"_s)
+        return StoreDecision::NoDueToHTTPMethod;
+
+    auto requestDirectives = WebCore::parseCacheControlDirectives(originalRequest.httpHeaderFields());
+    if (requestDirectives.noStore)
+        return StoreDecision::NoDueToNoStoreRequest;
+
+    if (response.cacheControlContainsNoStore())
+        return StoreDecision::NoDueToNoStoreResponse;
+
+    if (response.httpStatusCode() == httpStatus304NotModified)
+        return StoreDecision::NoDueToHTTPStatusCode;
+
+    if (!WebCore::isStatusCodeCacheableByDefault(response.httpStatusCode())) {
+        // http://tools.ietf.org/html/rfc7234#section-4.3.2
+        bool hasExpirationHeaders = response.expires() || response.cacheControlMaxAge();
+        if (!hasExpirationHeaders && !response.cacheControlContainsPublic())
+            return StoreDecision::NoDueToMissingExpirationHeaders;
+    }
+
+    // FIXME: We are not correctly computing the redirected request URL in case original request
+    // has a fragment identifier and response location URL does not have one. Let's not store it for now.
+    if ((response.isRedirection() || response.isRedirected()) && originalRequest.url().hasFragmentIdentifier())
+        return StoreDecision::NoDueToRequestContainingFragments;
+
+    bool isMainResource = originalRequest.requester() == WebCore::ResourceRequestRequester::Main;
+    bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.priority() == WebCore::ResourceLoadPriority::VeryHigh;
+    if (!storeUnconditionallyForHistoryNavigation) {
+        auto now = WallTime::now();
+        Seconds allowedStale { 0_ms };
+        if (auto value = response.cacheControlStaleWhileRevalidate())
+            allowedStale = value.value();
+        bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && (WebCore::computeFreshnessLifetimeForHTTPFamily(response, now) > 0_ms || allowedStale > 0_ms);
+        bool possiblyReusable = response.hasCacheValidatorFields() || hasNonZeroLifetime;
+        if (!possiblyReusable)
+            return StoreDecision::NoDueToUnlikelyToReuse;
+    }
+
+    // Media loaded via XHR is likely being used for MSE streaming (YouTube and Netflix for example).
+    // Streaming media fills the cache quickly and is unlikely to be reused.
+    // FIXME: We should introduce a separate media cache partition that doesn't affect other resources.
+    // FIXME: We should also make sure make the MSE paths are copy-free so we can use mapped buffers from disk effectively.
+    auto requester = originalRequest.requester();
+    bool isDefinitelyStreamingMedia = requester == WebCore::ResourceRequestRequester::Media;
+    bool isLikelyStreamingMedia = requester == WebCore::ResourceRequestRequester::XHR && isMediaMIMEType(response.mimeType());
+    if (isLikelyStreamingMedia || isDefinitelyStreamingMedia)
+        return StoreDecision::NoDueToStreamingMedia;
+
+    return StoreDecision::Yes;
+}
+
+bool Cache::shouldUseSpeculativeLoadManager() const
+{
+    CheckedPtr lowPowerModeNotifier = m_lowPowerModeNotifier.get();
+    bool isLowPowerModeEnabled = lowPowerModeNotifier && lowPowerModeNotifier->isLowPowerModeEnabled();
+    bool isThermalMitigationEnabled = m_thermalMitigationNotifier && m_thermalMitigationNotifier->isThermalMitigationEnabled();
+    return !isLowPowerModeEnabled && !isThermalMitigationEnabled;
+}
+
+void Cache::updateSpeculativeLoadManagerEnabledState()
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(WTF::RunLoop::isMain());
+
+    bool shouldEnable = shouldUseSpeculativeLoadManager();
+    if (!shouldEnable && m_speculativeLoadManager) {
+        m_speculativeLoadManager = nullptr;
+        RELEASE_LOG(NetworkCacheSpeculativePreloading, "%p - Cache::updateSpeculativeLoadManagerEnabledState: disabling speculative loads due to low power mode or thermal change", this);
+    } else if (shouldEnable && !m_speculativeLoadManager) {
+        m_speculativeLoadManager = makeUnique<SpeculativeLoadManager>(*this, protect(m_storage));
+        RELEASE_LOG(NetworkCacheSpeculativePreloading, "%p - Cache::updateSpeculativeLoadManagerEnabledState: enabling speculative loads due to low power mode or thermal change", this);
+    }
+}
+
+static bool inline canRequestUseSpeculativeRevalidation(const WebCore::ResourceRequest& request)
+{
+    if (request.isConditional())
+        return false;
+
+    if (!request.allowCookies())
+        return false;
+
+    if (request.requester() == WebCore::ResourceRequestRequester::XHR || request.requester() == WebCore::ResourceRequestRequester::Fetch)
+        return false;
+
+    switch (request.cachePolicy()) {
+    case WebCore::ResourceRequestCachePolicy::ReturnCacheDataElseLoad:
+    case WebCore::ResourceRequestCachePolicy::ReturnCacheDataDontLoad:
+    case WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData:
+        return false;
+    case WebCore::ResourceRequestCachePolicy::UseProtocolCachePolicy:
+    case WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData:
+        return true;
+    case WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    return false;
+}
+
+void Cache::startAsyncRevalidationIfNeeded(const WebCore::ResourceRequest& request, const NetworkCache::Key& key, std::unique_ptr<Entry>&& entry, const GlobalFrameID& frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
+{
+    m_pendingAsyncRevalidations.ensure(key, [&] {
+        auto addResult = m_pendingAsyncRevalidationByPage.ensure(frameID, [] {
+            return WeakHashSet<AsyncRevalidation>();
+        });
+        Ref revalidation = AsyncRevalidation::create(*this, frameID, request, WTF::move(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, [weakThis = WeakPtr { *this }, key](auto result) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            ASSERT(protectedThis->m_pendingAsyncRevalidations.contains(key));
+            protectedThis->m_pendingAsyncRevalidations.remove(key);
+            LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) revalidation completed for '"_s << key.identifier() << "' with result "_s << static_cast<int>(result));
+        });
+        addResult.iterator->value.add(revalidation.get());
+        return revalidation;
+    });
+}
+
+void Cache::browsingContextRemoved(WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID)
+{
+    auto loaders = m_pendingAsyncRevalidationByPage.take({ webPageProxyID, webPageID, webFrameID });
+    for (Ref loader : loaders)
+        loader->cancel();
+}
+
+void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<GlobalFrameID> frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, RetrieveCompletionHandler&& completionHandler)
+{
+    ASSERT(request.url().protocolIsInHTTPFamily());
+
+    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", request.url().stringWithoutFragmentIdentifier().utf8(), static_cast<int>(request.priority()));
+
+    Key storageKey = makeCacheKey(RecordType::Resource, request);
+    auto priority = static_cast<unsigned>(request.priority());
+
+    RetrieveInfo info;
+    info.url = request.url();
+    info.startTime = MonotonicTime::now();
+    info.priority = priority;
+
+    CheckedPtr speculativeLoadManager = m_speculativeLoadManager.get();
+    bool canUseSpeculativeRevalidation = frameID && speculativeLoadManager && canRequestUseSpeculativeRevalidation(request);
+    if (canUseSpeculativeRevalidation)
+        speculativeLoadManager->registerLoad(*frameID, request, storageKey, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections);
+
+    auto retrieveDecision = makeRetrieveDecision(request);
+    info.retrieveDecision = retrieveDecision;
+    if (retrieveDecision != RetrieveDecision::Yes) {
+        completeRetrieve(WTF::move(completionHandler), nullptr, info);
+        return;
+    }
+
+    info.speculativeLoadDecision = SpeculativeLoadDecision::NoDueToCannotUse;
+    if (canUseSpeculativeRevalidation && speculativeLoadManager->canRetrieve(storageKey, request, *frameID)) {
+        speculativeLoadManager->retrieve(storageKey, [request, completionHandler = WTF::move(completionHandler), info = crossThreadCopy(WTF::move(info)), sessionID = m_sessionID](std::unique_ptr<Entry> entry) mutable {
+            if (entry && verifyVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(sessionID)), entry->varyingRequestHeaders(), request)) {
+                info.speculativeLoadDecision = SpeculativeLoadDecision::Yes;
+                completeRetrieve(WTF::move(completionHandler), WTF::move(entry), info);
+            } else {
+                info.speculativeLoadDecision = SpeculativeLoadDecision::NoDueToVaryingHeaderMismatch;
+                completeRetrieve(WTF::move(completionHandler), nullptr, info);
+            }
+        });
+        return;
+    }
+
+    m_storage->retrieve(storageKey, priority, [this, protectedThis = Ref { *this }, request, completionHandler = WTF::move(completionHandler), info = crossThreadCopy(WTF::move(info)), storageKey, sessionID = m_sessionID, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections](auto record, auto timings) mutable {
+        info.storageTimings = timings;
+
+        if (record.isNull()) {
+            LOG(NetworkCache, "(NetworkProcess) not found in storage");
+            completeRetrieve(WTF::move(completionHandler), nullptr, info);
+            return false;
+        }
+
+        ASSERT(record.key == storageKey);
+
+        auto entry = Entry::decodeStorageRecord(record);
+
+        // FIXME: This is a workaround for rdar://181130091, which we can drop after a release.
+        if (entry && entry->response().httpStatusCode() == httpStatus304NotModified) {
+            LOG(NetworkCache, "(NetworkProcess) discarding poisoned 304 entry from disk cache (rdar://181130091)");
+            completeRetrieve(WTF::move(completionHandler), nullptr, info);
+            return false;
+        }
+
+        auto useDecision = entry ? makeUseDecision(sessionID, *entry, request) : UseDecision::NoDueToDecodeFailure;
+        info.useDecision = useDecision;
+
+        switch (useDecision) {
+        case UseDecision::AsyncRevalidate: {
+            auto entryCopy = makeUnique<Entry>(*entry);
+            entryCopy->setNeedsValidation(true);
+            startAsyncRevalidationIfNeeded(request, storageKey, WTF::move(entryCopy), *frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections);
+            [[fallthrough]];
+        }
+        case UseDecision::Use:
+            break;
+        case UseDecision::Validate:
+            entry->setNeedsValidation(true);
+            break;
+        default:
+            entry = nullptr;
+        };
+
+#if !LOG_DISABLED
+        auto elapsed = MonotonicTime::now() - info.startTime;
+        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(request.priority()), elapsed.millisecondsAs<int64_t>());
+#endif
+        completeRetrieve(WTF::move(completionHandler), WTF::move(entry), info);
+
+        return useDecision != UseDecision::NoDueToDecodeFailure;
+    });
+}
+
+void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_ptr<Entry> entry, RetrieveInfo& info)
+{
+    info.completionTime = MonotonicTime::now();
+
+#if ENABLE(NETWORK_CACHE_SIGNPOSTS)
+    if (WTFSignpostsEnabled()) [[unlikely]] {
+        auto retrieveDecision = info.retrieveDecision ? static_cast<int>(*info.retrieveDecision) : -1;
+        auto speculativeLoadDecision = info.speculativeLoadDecision ? static_cast<int>(*info.speculativeLoadDecision) : -1;
+        auto useDecision = info.useDecision ? static_cast<int>(*info.useDecision) : -1;
+
+        if (entry) {
+            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheHit, info.startTime - info.completionTime, "Network cache hit for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", info.url.string().utf8(), retrieveDecision, speculativeLoadDecision, useDecision);
+            WTFEndSignpostAlways(&info, NetworkCacheHit);
+        } else {
+            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheMiss, info.startTime - info.completionTime, "Network cache miss for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", info.url.string().utf8(), retrieveDecision, speculativeLoadDecision, useDecision);
+            WTFEndSignpostAlways(&info, NetworkCacheMiss);
+        }
+    }
+#endif
+
+    handler(WTF::move(entry), info);
+}
+    
+std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData)
+{
+    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request), response, privateRelayed, WTF::move(responseData), collectVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(m_sessionID)), request, response));
+}
+
+std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
+{
+    auto cachedRedirectRequest = redirectRequest;
+    cachedRedirectRequest.clearHTTPAuthorization();
+    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request), response, WTF::move(cachedRedirectRequest), collectVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(m_sessionID)), request, response));
+}
+
+std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&&)>&& completionHandler)
+{
+    ASSERT(responseData);
+
+    LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) storing "_s << request.url().stringWithoutFragmentIdentifier() << ", partition "_s << (makeCacheKey(RecordType::Resource, request).partition()));
+
+    StoreDecision storeDecision = makeStoreDecision(request, response, responseData ? responseData->size() : 0);
+    if (storeDecision != StoreDecision::Yes) {
+        LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", static_cast<int>(storeDecision));
+        auto key = makeCacheKey(RecordType::Resource, request);
+
+        auto isSuccessfulRevalidation = response.httpStatusCode() == httpStatus304NotModified;
+        if (!isSuccessfulRevalidation) {
+            // Make sure we don't keep a stale entry in the cache.
+            remove(key);
+        }
+
+        return nullptr;
+    }
+
+    auto cacheEntry = makeEntry(request, response, privateRelayed, WTF::move(responseData));
+    auto record = cacheEntry->encodeAsStorageRecord();
+    bool storeBlobInMemoryCache = request.isTopSite();
+
+    m_storage->store(record, [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](const Data& bodyData) mutable {
+        MappedBody mappedBody;
+#if ENABLE(SHAREABLE_RESOURCE)
+        if (auto sharedMemory = bodyData.tryCreateSharedMemory()) {
+            mappedBody.shareableResource = WebCore::ShareableResource::create(sharedMemory.releaseNonNull(), 0, bodyData.size());
+            if (!mappedBody.shareableResource) {
+                if (completionHandler)
+                    completionHandler(WTF::move(mappedBody));
+                return;
+            }
+            if (auto handle = Ref { *mappedBody.shareableResource }->createHandle())
+                mappedBody.shareableResourceHandle = WTF::move(*handle);
+        }
+#endif
+        if (completionHandler)
+            completionHandler(WTF::move(mappedBody));
+        LOG(NetworkCache, "(NetworkProcess) stored");
+    }, storeBlobInMemoryCache);
+
+    return cacheEntry;
+}
+
+std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest, std::optional<Seconds> maxAgeCap)
+{
+    LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) storing redirect "_s << request.url().string() << " -> "_s << redirectRequest.url().string());
+
+    StoreDecision storeDecision = makeStoreDecision(request, response, 0);
+    if (storeDecision != StoreDecision::Yes) {
+        LOG(NetworkCache, "(NetworkProcess) didn't store redirect, storeDecision=%d", static_cast<int>(storeDecision));
+        return nullptr;
+    }
+
+    auto cacheEntry = makeRedirectEntry(request, response, redirectRequest);
+
+    if (maxAgeCap) {
+        LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) capping max age for redirect "_s << request.url().string() << " -> "_s << redirectRequest.url().string());
+        cacheEntry->capMaxAge(maxAgeCap.value());
+    }
+
+    auto record = cacheEntry->encodeAsStorageRecord();
+
+    m_storage->store(record, nullptr);
+
+    return cacheEntry;
+}
+
+void Cache::storeCompressionDictionary(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, CompressionDictionaryEntry::Info&& info)
+{
+    ASSERT(responseData);
+
+    auto key = makeCacheKey(RecordType::CompressionDictionary, request);
+
+    LOG(NetworkCache, "(NetworkProcess) storing compression dictionary %s, partition %s", request.url().stringWithoutFragmentIdentifier().utf8(), key.partition().utf8());
+
+    StoreDecision storeDecision = makeStoreDecision(request, response, responseData ? responseData->size() : 0);
+    if (storeDecision != StoreDecision::Yes) {
+        LOG(NetworkCache, "(NetworkProcess) didn't store compression dictionary, storeDecision=%d", static_cast<int>(storeDecision));
+        // Make sure we don't keep a stale dictionary in the cache.
+        remove(key);
+        return;
+    }
+
+    auto cacheEntry = makeUnique<CompressionDictionaryEntry>(key, WTF::move(info), WTF::move(responseData));
+    auto record = cacheEntry->encodeAsStorageRecord();
+
+    m_storage->store(record, nullptr);
+
+    addToCompressionDictionaryIndex(*cacheEntry);
+}
+
+// https://www.rfc-editor.org/rfc/rfc9842#name-multiple-matching-dictionar
+bool Cache::isBetterCompressionDictionaryMatch(const CompressionDictionaryIndexEntry& candidate, const CompressionDictionaryIndexEntry& best)
+{
+    if (candidate.matchDest.isEmpty() != best.matchDest.isEmpty())
+        return !candidate.matchDest.isEmpty();
+    if (candidate.matchLength != best.matchLength)
+        return candidate.matchLength > best.matchLength;
+    return candidate.timeStamp > best.timeStamp;
+}
+
+void Cache::addToCompressionDictionaryIndex(const CompressionDictionaryEntry& entry)
+{
+    removeFromCompressionDictionaryIndex(entry.key());
+
+    if (entry.info().expirationTime <= WallTime::now()) {
+        m_storage->remove(entry.key());
+        return;
+    }
+
+    auto patternOrException = WebCore::URLPattern::createWithoutRegExpSupport(entry.info().match, String { entry.key().identifier() }, { });
+    if (patternOrException.hasException())
+        return;
+
+    m_compressionDictionaryIndex.ensure(entry.key().partition(), [] {
+        return Vector<CompressionDictionaryIndexEntry> { };
+    }).iterator->value.append(CompressionDictionaryIndexEntry {
+        { entry.key(), entry.hash(), entry.info().id },
+        patternOrException.releaseReturnValue().ptr(),
+        entry.info().matchDest,
+        entry.info().match.length(),
+        entry.info().expirationTime,
+        entry.timeStamp()
+    });
+}
+
+bool Cache::removeFromCompressionDictionaryIndex(const Key& key, WallTime registeredNotAfter)
+{
+    if (key.type() != recordTypeName(RecordType::CompressionDictionary))
+        return true;
+
+    auto it = m_compressionDictionaryIndex.find(key.partition());
+    if (it != m_compressionDictionaryIndex.end()) {
+        auto index = it->value.findIf([&](auto& entry) {
+            return entry.match.key == key;
+        });
+        if (index != notFound) {
+            if (it->value[index].timeStamp > registeredNotAfter)
+                return false;
+            it->value.removeAt(index);
+            if (it->value.isEmpty())
+                m_compressionDictionaryIndex.remove(it);
+        }
+    }
+
+    if (m_compressionDictionaryIndexPopulation)
+        m_compressionDictionaryIndexPopulation->removedKeys.set(key, WallTime::now());
+    return true;
+}
+
+Vector<Key> Cache::compressionDictionaryKeys(const String& partition) const
+{
+    auto it = m_compressionDictionaryIndex.find(partition);
+    if (it == m_compressionDictionaryIndex.end())
+        return { };
+
+    return it->value.map([](auto& entry) {
+        return entry.match.key;
+    });
+}
+
+Vector<Key> Cache::pendingKeys(OptionSet<RecordType> types, const std::optional<String>& partition) const
+{
+    Vector<Key> keys;
+    for (auto type : types)
+        keys.appendVector(m_storage->pendingWriteKeys(recordTypeName(type), partition));
+    return keys;
+}
+
+void Cache::populateCompressionDictionaryIndex()
+{
+    m_compressionDictionaryIndexPopulation.emplace();
+    traverseRecordsOfTypes({ RecordType::CompressionDictionary }, std::nullopt, { }, [this, protectedThis = Ref { *this }](const TraversalRecord* traversalRecord) {
+        if (!traversalRecord) {
+            m_compressionDictionaryIndexPopulation.reset();
+            return;
+        }
+
+        auto entry = CompressionDictionaryEntry::decodeStorageRecord(traversalRecord->record);
+        if (!entry)
+            return;
+
+        auto& population = *m_compressionDictionaryIndexPopulation;
+        if (entry->timeStamp() >= population.clearedSince)
+            return;
+        if (auto it = population.removedKeys.find(entry->key()); it != population.removedKeys.end() && entry->timeStamp() <= it->value)
+            return;
+
+        addToCompressionDictionaryIndex(*entry);
+    });
+}
+
+// https://fetch.spec.whatwg.org/#find-the-best-matching-dictionary
+std::optional<Cache::CompressionDictionaryMatch> Cache::bestCompressionDictionaryMatch(const WebCore::ResourceRequest& request, WebCore::FetchOptions::Destination destination)
+{
+    if (m_compressionDictionaryIndex.isEmpty())
+        return std::nullopt;
+
+    auto it = m_compressionDictionaryIndex.find(request.cachePartition());
+    if (it == m_compressionDictionaryIndex.end())
+        return std::nullopt;
+
+    // https://www.rfc-editor.org/rfc/rfc9842#name-dictionary-freshness-requir
+    auto now = WallTime::now();
+    it->value.removeAllMatching([&](auto& entry) {
+        if (entry.expirationTime > now)
+            return false;
+        m_storage->remove(entry.match.key);
+        return true;
+    });
+    if (it->value.isEmpty()) {
+        m_compressionDictionaryIndex.remove(it);
+        return std::nullopt;
+    }
+
+    Borrow entries = it->value;
+    const CompressionDictionaryIndexEntry* bestMatch = nullptr;
+    for (auto& entry : entries) {
+        // https://www.rfc-editor.org/rfc/rfc9842#name-match-dest
+        if (!entry.matchDest.isEmpty() && !entry.matchDest.contains(destination))
+            continue;
+
+        if (bestMatch && !isBetterCompressionDictionaryMatch(entry, *bestMatch))
+            continue;
+
+        if (!m_storage->mayContain(entry.match.key))
+            continue;
+
+        if (!protect(entry.pattern)->testWithoutRegExp(request.url()))
+            continue;
+
+        bestMatch = &entry;
+    }
+
+    if (!bestMatch)
+        return std::nullopt;
+
+    return bestMatch->match;
+}
+
+void Cache::retrieveCompressionDictionary(const Key& key, const CompressionDictionaryHash& hash, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+{
+    m_storage->retrieve(key, 1, [protectedThis = Ref { *this }, key, hash, retrieveStartTime = WallTime::now(), completionHandler = WTF::move(completionHandler)](Storage::Record&& record, const Storage::Timings&) mutable {
+        auto entry = record.isNull() ? nullptr : CompressionDictionaryEntry::decodeStorageRecord(record);
+        if (!entry) {
+            // A storage shrink can evict a record without telling the cache, so the index outlives it.
+            protectedThis->removeFromCompressionDictionaryIndex(key, retrieveStartTime);
+            completionHandler(nullptr);
+            return false;
+        }
+
+        RefPtr<WebCore::SharedBuffer> buffer;
+        if (entry->hash() == hash)
+            buffer = entry->buffer();
+        completionHandler(WTF::move(buffer));
+        return true;
+    });
+}
+
+std::optional<RecordType> Cache::TraversalRecord::type() const
+{
+    auto& typeName = record.key.type();
+    if (typeName == recordTypeName(RecordType::Resource))
+        return RecordType::Resource;
+    if (typeName == recordTypeName(RecordType::CompressionDictionary))
+        return RecordType::CompressionDictionary;
+    return std::nullopt;
+}
+
+std::optional<URL> Cache::TraversalRecord::url() const
+{
+    auto recordType = type();
+    if (!recordType)
+        return std::nullopt;
+
+    std::optional<URL> url;
+    if (*recordType == RecordType::CompressionDictionary)
+        url = URL { record.key.identifier() };
+    else
+        url = Entry::decodeStorageRecordResponseURL(record);
+
+    if (url && !url->isValid())
+        return std::nullopt;
+
+    return url;
+}
+
+std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalRequest, const Entry& existingEntry, const WebCore::ResourceResponse& validatingResponse, PrivateRelayed privateRelayed)
+{
+    LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) updating "_s << originalRequest.url().string());
+
+    WebCore::ResourceResponse response = existingEntry.response();
+    WebCore::updateResponseHeadersAfterRevalidation(response, validatingResponse);
+    response.setIPAddressSpace(validatingResponse.ipAddressSpace());
+
+    auto updateEntry = makeUnique<Entry>(existingEntry.key(), response, privateRelayed, existingEntry.buffer(), collectVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(m_sessionID)), originalRequest, response));
+    auto updateRecord = updateEntry->encodeAsStorageRecord();
+    bool storeBlobInMemoryCache = originalRequest.isTopSite();
+
+    m_storage->store(updateRecord, { }, storeBlobInMemoryCache);
+
+    return updateEntry;
+}
+
+void Cache::remove(const Key& key)
+{
+    removeFromCompressionDictionaryIndex(key);
+    m_storage->remove(key);
+}
+
+void Cache::remove(const WebCore::ResourceRequest& request)
+{
+    remove(makeCacheKey(RecordType::Resource, request));
+}
+
+void Cache::remove(const Vector<Key>& keys, Function<void()>&& completionHandler, WallTime dictionariesRegisteredNotAfter)
+{
+    auto keysToRemove = WTF::compactMap(keys, [&](auto& key) -> std::optional<Key> {
+        if (!removeFromCompressionDictionaryIndex(key, dictionariesRegisteredNotAfter))
+            return std::nullopt;
+        return key;
+    });
+    m_storage->remove(keysToRemove, WTF::move(completionHandler));
+}
+
+void Cache::traverseRecords(Function<void(const TraversalRecord*)>&& traverseHandler)
+{
+    // Protect against clients making excessive traversal requests.
+    const unsigned maximumTraverseCount = 3;
+    if (m_traverseCount >= maximumTraverseCount) {
+        WTFLogAlways("Maximum parallel cache traverse count exceeded. Ignoring traversal request.");
+
+        RunLoop::mainSingleton().dispatch([traverseHandler = WTF::move(traverseHandler)] () mutable {
+            traverseHandler(nullptr);
+        });
+        return;
+    }
+
+    ++m_traverseCount;
+
+    traverseRecordsOfTypes({ RecordType::Resource, RecordType::CompressionDictionary }, std::nullopt, { }, [this, protectedThis = Ref { *this }, traverseHandler = WTF::move(traverseHandler)] (const TraversalRecord* traversalRecord) mutable {
+        if (!traversalRecord)
+            --m_traverseCount;
+
+        traverseHandler(traversalRecord);
+    });
+}
+
+void Cache::traverseRecords(const String& partition, Function<void(const TraversalRecord*)>&& traverseHandler)
+{
+    traverseRecordsOfTypes({ RecordType::Resource, RecordType::CompressionDictionary }, partition, { }, WTF::move(traverseHandler));
+}
+
+void Cache::traverseCompressionDictionaryRecords(const String& partition, Function<void(const TraversalRecord*)>&& traverseHandler)
+{
+    traverseRecordsOfTypes({ RecordType::CompressionDictionary }, partition, { }, WTF::move(traverseHandler));
+}
+
+void Cache::traverseRecordsOfTypes(OptionSet<RecordType> types, const std::optional<String>& partition, OptionSet<Storage::TraverseFlag> flags, Function<void(const TraversalRecord*)>&& traverseHandler)
+{
+    ASSERT(!types.isEmpty());
+
+    auto recordHandler = [types, traverseHandler = WTF::move(traverseHandler)] (const Storage::Record* record, const Storage::RecordInfo& recordInfo) mutable {
+        if (!record) {
+            traverseHandler(nullptr);
+            return;
+        }
+
+        TraversalRecord traversalRecord { *record, recordInfo };
+        auto recordType = traversalRecord.type();
+        if (recordType && types.contains(*recordType))
+            traverseHandler(&traversalRecord);
+    };
+
+    // Storage takes one type name, or an empty one to walk every type.
+    auto type = types.toSingleValue();
+    auto& typeName = type ? recordTypeName(*type) : emptyAtom();
+    if (partition)
+        m_storage->traverse(typeName, *partition, flags, WTF::move(recordHandler));
+    else
+        m_storage->traverse(typeName, flags, WTF::move(recordHandler));
+}
+
+String Cache::dumpFilePath() const
+{
+    return pathByAppendingComponent(m_storage->versionPath(), "dump.json"_s);
+}
+
+void Cache::dumpContentsToFile()
+{
+    auto fileHandle = openFile(dumpFilePath(), FileOpenMode::Truncate);
+    if (!fileHandle)
+        return;
+
+    constexpr auto prologue = "{\n\"entries\": [\n"_span;
+    fileHandle.write(byteCast<uint8_t>(prologue));
+
+    struct Totals {
+        unsigned count { 0 };
+        double worth { 0 };
+        size_t bodySize { 0 };
+    };
+    Totals totals;
+    OptionSet<Storage::TraverseFlag> flags { Storage::TraverseFlag::ComputeWorth, Storage::TraverseFlag::ShareCount };
+    size_t capacity = m_storage->capacity();
+    traverseRecordsOfTypes({ RecordType::Resource, RecordType::CompressionDictionary }, std::nullopt, flags, [fileHandle = WTF::move(fileHandle), totals, capacity](const TraversalRecord* traversalRecord) mutable {
+        if (!traversalRecord) {
+            auto writeData = makeString(
+                "{}\n"
+                "],\n"
+                "\"totals\": {\n"
+                "\"capacity\": "_s, capacity, ",\n"
+                "\"count\": "_s, totals.count, ",\n"
+                "\"bodySize\": "_s, totals.bodySize, ",\n"
+                "\"averageWorth\": "_s, totals.count ? totals.worth / totals.count : 0, "\n"
+                "}\n}\n"_s
+            ).utf8();
+            fileHandle.write(byteCast<uint8_t>(writeData.span()));
+            fileHandle = { };
+            return;
+        }
+        auto& info = traversalRecord->recordInfo;
+        StringBuilder json;
+        if (traversalRecord->type() == RecordType::CompressionDictionary) {
+            auto entry = CompressionDictionaryEntry::decodeStorageRecord(traversalRecord->record);
+            if (!entry)
+                return;
+            entry->asJSON(json, info);
+        } else {
+            auto entry = Entry::decodeStorageRecord(traversalRecord->record);
+            if (!entry)
+                return;
+            entry->asJSON(json, info);
+        }
+
+        ++totals.count;
+        totals.worth += info.worth;
+        totals.bodySize += info.bodySize;
+
+        json.append(",\n"_s);
+        fileHandle.write(byteCast<uint8_t>(json.toString().utf8().span()));
+    });
+}
+
+void Cache::deleteDumpFile()
+{
+    WorkQueue::create("com.apple.WebKit.Cache.delete"_s)->dispatch([path = dumpFilePath().isolatedCopy()] {
+        deleteFile(path);
+    });
+}
+
+void Cache::clear(WallTime modifiedSince, Function<void()>&& completionHandler)
+{
+    LOG(NetworkCache, "(NetworkProcess) clearing cache");
+
+    m_compressionDictionaryIndex.removeIf([&](auto& partitionEntries) {
+        partitionEntries.value.removeAllMatching([&](auto& entry) {
+            return entry.timeStamp >= modifiedSince;
+        });
+        return partitionEntries.value.isEmpty();
+    });
+    if (m_compressionDictionaryIndexPopulation)
+        m_compressionDictionaryIndexPopulation->clearedSince = std::min(m_compressionDictionaryIndexPopulation->clearedSince, modifiedSince);
+
+    String anyType;
+    m_storage->clear(WTF::move(anyType), modifiedSince, WTF::move(completionHandler));
+
+    deleteDumpFile();
+}
+
+void Cache::clear()
+{
+    clear(-WallTime::infinity(), nullptr);
+}
+
+String Cache::recordsPathIsolatedCopy() const
+{
+    return m_storage->recordsPathIsolatedCopy();
+}
+
+void Cache::fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&& completionHandler)
+{
+    HashMap<WebCore::SecurityOriginData, uint64_t> originsAndSizes;
+    traverseRecords([shouldComputeSize, completionHandler = WTF::move(completionHandler), originsAndSizes = WTF::move(originsAndSizes)](auto* traversalRecord) mutable {
+        if (traversalRecord) {
+            auto url = traversalRecord->url();
+            if (!url)
+                return;
+
+            auto origin = WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(*url);
+            if (origin.isNull() || origin.isOpaque())
+                return;
+
+            auto result = originsAndSizes.add(WTF::move(origin), 0);
+            if (shouldComputeSize)
+                result.iterator->value += traversalRecord->record.header.size() + traversalRecord->recordInfo.bodySize;
+            return;
+        }
+
+        auto entries = WTF::map(originsAndSizes, [](auto& originAndSize) {
+            return WebsiteData::Entry { originAndSize.key, WebsiteDataType::DiskCache, originAndSize.value };
+        });
+        completionHandler(WTF::move(entries));
+    });
+}
+
+void Cache::fetchOriginAccessTimes(CompletionHandler<void(HashMap<WebCore::RegistrableDomain, WallTime>&&)>&& completionHandler)
+{
+    HashMap<WebCore::RegistrableDomain, WallTime> originAccessTimes;
+    m_storage->traverse(recordTypeName(RecordType::Resource), { Storage::TraverseFlag::LastAccessedRecordPerPartition }, [completionHandler = WTF::move(completionHandler), originAccessTimes = WTF::move(originAccessTimes)](const Storage::Record* record, const Storage::RecordInfo& recordInfo) mutable {
+        if (!record) {
+            completionHandler(WTF::move(originAccessTimes));
+            return;
+        }
+
+        auto& partition = record->key.partition();
+        if (partition.isEmpty())
+            return;
+
+        auto domain = WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(partition);
+        originAccessTimes.set(WTF::move(domain), recordInfo.lastAccessTime);
+    });
+}
+
+void Cache::deleteData(const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
+{
+    HashSet<WebCore::SecurityOriginData> originSet;
+    for (auto& origin : borrow(origins))
+        originSet.add(origin);
+
+    auto matches = [originSet = WTF::move(originSet)](const URL& url) {
+        return originSet.contains(WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(url));
+    };
+
+    Vector<NetworkCache::Key> keysToDelete;
+    for (auto& key : pendingKeys({ RecordType::Resource, RecordType::CompressionDictionary })) {
+        if (matches(URL { key.identifier() }))
+            keysToDelete.append(key);
+    }
+
+    traverseRecords([this, protectedThis = Ref { *this }, matches = WTF::move(matches), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete)](auto* traversalRecord) mutable {
+        if (traversalRecord) {
+            auto url = traversalRecord->url();
+            if (url && matches(*url))
+                keysToDelete.append(traversalRecord->record.key);
+            return;
+        }
+
+        remove(keysToDelete, WTF::move(completionHandler));
+    });
+}
+
+void Cache::deleteDataForRegistrableDomains(const Vector<WebCore::RegistrableDomain>& domains, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+    HashSet<WebCore::RegistrableDomain> domainSet;
+    for (auto& domain : borrow(domains))
+        domainSet.add(domain);
+
+    auto matchingDomain = [domainSet = WTF::move(domainSet)](const URL& url) -> std::optional<WebCore::RegistrableDomain> {
+        WebCore::RegistrableDomain domain { url };
+        if (!domainSet.contains(domain))
+            return std::nullopt;
+        return domain;
+    };
+
+    Vector<NetworkCache::Key> keysToDelete;
+    HashSet<WebCore::RegistrableDomain> domainsDeleted;
+    for (auto& key : pendingKeys({ RecordType::Resource, RecordType::CompressionDictionary })) {
+        if (auto domain = matchingDomain(URL { key.identifier() })) {
+            keysToDelete.append(key);
+            domainsDeleted.add(WTF::move(*domain));
+        }
+    }
+
+    traverseRecords([this, protectedThis = Ref { *this }, matchingDomain = WTF::move(matchingDomain), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete), domainsDeleted = WTF::move(domainsDeleted)](auto* traversalRecord) mutable {
+        if (traversalRecord) {
+            auto url = traversalRecord->url();
+            if (!url)
+                return;
+
+            if (auto domain = matchingDomain(*url)) {
+                keysToDelete.append(traversalRecord->record.key);
+                domainsDeleted.add(WTF::move(*domain));
+            }
+            return;
+        }
+
+        remove(keysToDelete, [completionHandler = WTF::move(completionHandler), domainsDeleted = WTF::move(domainsDeleted)]() mutable {
+            completionHandler(WTF::move(domainsDeleted));
+        });
+    });
+}
+
+} // namespace NetworkCache
+} // namespace WebKit

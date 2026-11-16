@@ -1,0 +1,14 @@
+Test that Page.setCookie does not terminate the WebProcess when the inspected page has a cross-origin iframe.
+
+
+== Running test suite: Page.setCookie.CrossOriginIframe
+-- Running test case: Page.setCookie.LoadCrossOriginFrame
+Loaded third-party iframe.
+
+-- Running test case: Page.setCookie.FirstPartyCookieWithCrossOriginFrame
+PASS: Should have set the first-party cookie.
+PASS: Cookie should have value 'PASS'.
+
+-- Running test case: Page.setCookie.UnrelatedDomain
+PASS: Should not have set a cookie for an unrelated domain.
+

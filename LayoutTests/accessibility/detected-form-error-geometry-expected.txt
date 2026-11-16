@@ -1,0 +1,14 @@
+This tests that a message is paired with the field it lines up with on screen rather than the field before it in the document. The two columns are reordered by CSS, so document order pairs both messages with the wrong field, and a message in one column must not claim the field beside it.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: errorMessageText(axElement('destination')) === 'Please enter a valid destination.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+To
+Please enter a valid destination.
+Search

@@ -1,0 +1,34 @@
+
+PASS "::part(--foo)" should be a valid selector
+PASS "::part(bar)" should be a valid selector
+PASS "::part(--)" should be a valid selector
+PASS "::part(--0)" should be a valid selector
+PASS "::part(foo bar)" should be a valid selector
+PASS "::part(-foo bar)" should be a valid selector
+PASS "::part(foo):focus" should be a valid selector
+PASS "::part(foo):hover" should be a valid selector
+PASS "::part(foo):focus-within" should be a valid selector
+PASS "::part(foo)::before" should be a valid selector
+PASS "::part(foo)::after" should be a valid selector
+PASS "::part(foo)::placeholder" should be a valid selector
+PASS "::part(foo)::first-line" should be a valid selector
+PASS "::part(foo)::first-letter" should be a valid selector
+PASS "::part(foo)::file-selector-button" should be a valid selector
+PASS "::part(foo):is(:focus)" should be a valid selector
+PASS ":lang(en)::part(foo)" should be a valid selector
+PASS ":dir(ltr)::part(foo)" should be a valid selector
+PASS "::part(foo):lang(en)" should be a valid selector
+PASS "::part(foo):dir(ltr)" should be a valid selector
+PASS "::part(foo):disabled" should be a valid selector
+PASS "::part(foo):checked" should be a valid selector
+PASS ":part()" should be an invalid selector
+PASS ":part(0)" should be an invalid selector
+PASS ":part('foo')" should be an invalid selector
+PASS ":part([foo])" should be an invalid selector
+PASS "::part(foo) + ::part(bar)" should be an invalid selector
+FAIL "::part(foo):is(ul)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
+FAIL "::part(foo):is(nav ul)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
+FAIL "::part(foo):where(ul)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
+FAIL "::part(foo):where(nav ul)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
+FAIL "::part(foo):has(li)" should be an invalid selector assert_throws_dom: "::part(foo):has(li)" should throw in querySelector function "() => document.querySelector(selector)" did not throw
+

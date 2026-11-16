@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container { container-type: inline-size; }
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="other" style="height: 10px"></div>
+<div id="dirty-container" class="container"><div id="child">Text in a container that changes.</div></div>
+<div id="clean-container" class="container">Text in a container that doesn't change.</div>
+<div id="console"></div>
+<script>
+description("Tests that the layout that resolves size container queries doesn't make query containers that it didn't need to lay out do layout afterwards.");
+jsTestIsAsync = true;
+
+let sequenceNumberBefore;
+
+window.addEventListener("load", async () => {
+    if (!window.internals) {
+        finishJSTest();
+        return;
+    }
+    internals.setInlineLayoutInfoCollectionEnabled(true);
+    const cleanContainer = document.getElementById("clean-container");
+    await UIHelper.renderingUpdate();
+    sequenceNumberBefore = internals.lastInlineLayoutInfo(cleanContainer).sequenceNumber;
+
+    // Needs layout outside the containers, a style change on one container and a layout change inside it.
+    document.getElementById("other").style.height = "20px";
+    document.getElementById("dirty-container").style.setProperty("--generation", "1");
+    document.getElementById("child").style.height = "30px";
+    await UIHelper.renderingUpdate();
+
+    shouldBe("document.getElementById('child').getBoundingClientRect().height", "30");
+    shouldBe("internals.lastInlineLayoutInfo(document.getElementById('clean-container')).sequenceNumber", "sequenceNumberBefore");
+
+    internals.setInlineLayoutInfoCollectionEnabled(false);
+    finishJSTest();
+});
+</script>
+</body>
+</html>

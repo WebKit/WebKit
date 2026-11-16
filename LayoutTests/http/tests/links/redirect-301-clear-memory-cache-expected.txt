@@ -1,0 +1,2 @@
+
+PASS: document.getElementById("first_load").contentWindow.location.hash should be #key=foo and is. PASS: document.getElementById("second_load").contentWindow.location.hash should be #key=bar and is.

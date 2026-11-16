@@ -1,0 +1,7 @@
+Tests announcement notifications.
+
+Received announcement request.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

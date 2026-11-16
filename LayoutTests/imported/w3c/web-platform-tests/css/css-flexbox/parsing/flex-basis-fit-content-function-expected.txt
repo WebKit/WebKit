@@ -1,0 +1,19 @@
+
+PASS e.style['flex-basis'] = "fit-content(10px)" should set the property value
+PASS e.style['flex-basis'] = "fit-content(10%)" should set the property value
+PASS e.style['flex-basis'] = "fit-content(calc(10% - 0.5em))" should set the property value
+PASS e.style['flex-basis'] = "fit-content(-10px)" should not set the property value
+PASS e.style['flex-basis'] = "fit-content(auto)" should not set the property value
+PASS e.style['flex-basis'] = "fit-content()" should not set the property value
+PASS Property flex-basis value 'fit-content(10px)'
+PASS Property flex-basis value 'fit-content(20%)'
+PASS Property flex-basis value 'fit-content(calc(10px + 0.5em))'
+PASS e.style['flex'] = "1 fit-content(10px)" should set flex-basis
+PASS e.style['flex'] = "1 fit-content(10px)" should set flex-grow
+PASS e.style['flex'] = "1 fit-content(10px)" should set flex-shrink
+PASS e.style['flex'] = "1 fit-content(10px)" should not set unrelated longhands
+PASS e.style['flex'] = "fit-content(10%) 2 3" should set flex-basis
+PASS e.style['flex'] = "fit-content(10%) 2 3" should set flex-grow
+PASS e.style['flex'] = "fit-content(10%) 2 3" should set flex-shrink
+PASS e.style['flex'] = "fit-content(10%) 2 3" should not set unrelated longhands
+

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/document-leak-test.js"></script>
+<script>
+    description("Tests that LayoutTests/editing/mac/selection/word-thai.html does not leak the document object when double clicking on the text element.");
+    onload = () => runDocumentLeakTest({ frameURL: "word-thai.html", framesToCreate: 20 });
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

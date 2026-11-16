@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<div id="console"></div>
+
+<fieldset name=name01></fieldset>
+<input name=name02 type=hidden>
+<input name=name03 type=text>
+<input name=name04 type=tel>
+<input name=name05 type=url>
+<input name=name06 type=email>
+<input name=name07 type=password>
+<!-- Don't test optional types.
+<input name=name08 type=datetime>
+<input name=name09 type=date>
+<input name=name10 type=month>
+<input name=name11 type=week>
+<input name=name12 type=time>
+<input name=name13 type=datetime-local>
+-->
+<input name=name14 type=number>
+<input name=name15 type=range>
+<!-- <input name=name16 type=color> -->
+<input name=name17 type=checkbox>
+<input name=name18 type=radio>
+<input name=name19 type=file>
+<input name=name20 type=submit>
+<input name=name21 type=reset>
+<input name=name22 type=button>
+<button name=name23 type=submit></button>
+<button name=name24 type=reset></button>
+<button name=name25 type=button></button>
+<select name=name26 ></select>
+<select name=name27 multiple></select>
+<textarea name=name28></textarea>
+<keygen name=name29>
+<output name=name30></output>
+
+<script>
+console.log('Test if state of stateless form control types are not saved.');
+jsTestIsAsync = true;
+
+window.onload = function() {
+    setTimeout(function() {
+        location.href = 'resources/state-restore-skip-stateless-dump.html';
+    }, 0);
+};
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,4 @@
+
+PASS serialization test X25519
+PASS serialization test {name: X25519}
+

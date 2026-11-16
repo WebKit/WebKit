@@ -1,0 +1,23 @@
+
+Test that the element does not report HAVE_ENOUGH_DATA until the MediaDeviceRoute publishes a seekable time range, so a seek issued as soon as the element becomes playable is honored rather than silently dropped.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(route.playbackRate = 1)
+RUN(route.timeRange = { start: 0, duration: 0 })
+RUN(video.play())
+A route that is ready but has published no seekable range should not make the element playable.
+RUN(route.ready = true)
+EXPECTED (video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA == 'true') OK
+EXPECTED (video.seekable.length == '0') OK
+Publishing a time range should make the element playable and seekable.
+RUN(route.timeRange = { start: 0, duration: 60 })
+EXPECTED (video.readyState == '4') OK
+EXPECTED (video.seekable.length == '1') OK
+EXPECTED (video.seekable.end(0) == '60') OK
+A seek issued once the element is playable should be honored, not silently dropped.
+RUN(video.currentTime = 30)
+EVENT(seeked)
+EXPECTED (video.currentTime > 29) OK
+END OF TEST
+

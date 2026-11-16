@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    div {
+        width: 200px;
+        height: 200px;
+    }
+
+    /* Reference: same OKLab interpolation path as the test, but with both
+       stops sharing the white hue (L=1). Component-wise lerp without premul
+       happens to produce the correct result here, so this case is unaffected
+       by the SampledGradientBuilder bug exercised by the test. */
+
+    #linear {
+        background-image: linear-gradient(in oklab to bottom, rgba(255, 255, 255, 0), #fff);
+        background-color: #f0a500;
+    }
+</style>
+</head>
+<body>
+<div id="linear"></div>
+</body>
+</html>

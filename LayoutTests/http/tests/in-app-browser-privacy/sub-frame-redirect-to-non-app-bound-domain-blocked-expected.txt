@@ -1,0 +1,10 @@
+Test subframe redirects disable app-bound mode
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Subframe does not have app-bound session.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

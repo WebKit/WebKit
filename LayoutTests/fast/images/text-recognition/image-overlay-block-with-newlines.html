@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+</style>
+</head>
+<body>
+<img src="../resources/green-400x400.png">
+<textarea id="textarea"></textarea>
+<script>
+addEventListener("load", () => {
+    let image = document.querySelector("img");
+    internals.installImageOverlay(image, [], [
+        {
+            topLeft : new DOMPointReadOnly(0.1, 0.1),
+            topRight : new DOMPointReadOnly(0.4, 0.1),
+            bottomRight : new DOMPointReadOnly(0.4, 0.4),
+            bottomLeft : new DOMPointReadOnly(0.1, 0.4),
+            text : "Hello\nworld",
+        }
+    ]);
+    const imageOverlay = internals.shadowRoot(image).getElementById("image-overlay");
+    internals.setSelectionWithoutValidation(imageOverlay, 0, imageOverlay, imageOverlay.childNodes.length);
+    testRunner.execCommand("Copy");
+
+    textarea.focus();
+    testRunner.execCommand("Paste");
+
+    shouldBeEqualToString("textarea.value", "Hello\nworld");
+});
+</script>
+</body>
+</html>

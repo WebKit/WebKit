@@ -1,0 +1,5 @@
+{
+  "name": "reduce-header-includes",
+  "description": "Remove unused #includes from WebKit sources via clang-include-cleaner with WebKit-specific FP filters and a -k 0 fix loop",
+  "version": "1.0.0"
+}

@@ -1,0 +1,12 @@
+
+FAIL performance.getSpeculations() basic shape assert_true: SpeculationMeasurement feature must be enabled expected true got false
+FAIL Unused preload: as=script, no crossorigin promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Unused preload: as=script, crossorigin=anonymous promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Unused preload: as=script, crossorigin=use-credentials promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Unused preload: as=style, no crossorigin promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Unused preload: as=style, crossorigin=anonymous promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Unused preload: as=style, crossorigin=use-credentials promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Unused preload: as=fetch, no crossorigin promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Unused preload: as=fetch, crossorigin=anonymous promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Unused preload: as=fetch, crossorigin=use-credentials promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+

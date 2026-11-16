@@ -1,0 +1,18 @@
+Tests that cloneNode produces the correct document type for XML, XHTML, and SVG documents.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS xmlClone.contentType is "application/xml"
+PASS xmlClone.__proto__ is XMLDocument.prototype
+PASS xmlClone.documentElement.localName is "root"
+PASS xhtmlClone.contentType is "application/xhtml+xml"
+PASS xhtmlClone.__proto__ is XMLDocument.prototype
+PASS xhtmlClone.documentElement.localName is "html"
+PASS svgClone.contentType is "image/svg+xml"
+PASS svgClone.__proto__ is XMLDocument.prototype
+PASS svgClone.documentElement.localName is "svg"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

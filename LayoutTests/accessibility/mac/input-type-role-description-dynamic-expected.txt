@@ -1,0 +1,9 @@
+This tests that the role description is correct when the input type changes.
+
+PASS: input.roleDescription === 'AXRoleDescription: telephone number field'
+PASS: input.roleDescription === 'AXRoleDescription: email field'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

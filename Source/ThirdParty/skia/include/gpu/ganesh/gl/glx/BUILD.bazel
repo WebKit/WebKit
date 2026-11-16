@@ -1,0 +1,16 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "public_hdrs",
+    srcs = ["GrGLMakeGLXInterface.h"],
+    visibility = [
+        "//src/gpu/ganesh/gl/glx:__pkg__",
+        "//tools/ganesh/gl/glx:__pkg__",
+    ],
+)

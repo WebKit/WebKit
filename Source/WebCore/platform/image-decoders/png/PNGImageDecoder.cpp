@@ -1,0 +1,1086 @@
+/*
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2009 Torch Mobile, Inc.
+ * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
+ *
+ * Portions are Copyright (C) 2001 mozilla.org
+ *
+ * Other contributors:
+ *   Stuart Parmenter <stuart@mozilla.com>
+ *   Max Stepin <maxstepin@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * Alternatively, the contents of this file may be used under the terms
+ * of either the Mozilla Public License Version 1.1, found at
+ * http://www.mozilla.org/MPL/ (the "MPL") or the GNU General Public
+ * License Version 2.0, found at http://www.fsf.org/copyleft/gpl.html
+ * (the "GPL"), in which case the provisions of the MPL or the GPL are
+ * applicable instead of those above.  If you wish to allow use of your
+ * version of this file only under the terms of one of those two
+ * licenses (the MPL or the GPL) and not to allow others to use your
+ * version of this file under the LGPL, indicate your decision by
+ * deletingthe provisions above and replace them with the notice and
+ * other provisions required by the MPL or the GPL, as the case may be.
+ * If you do not delete the provisions above, a recipient may use your
+ * version of this file under any of the LGPL, the MPL or the GPL.
+ */
+
+#include "config.h"
+#include "PNGImageDecoder.h"
+
+#include "Color.h"
+#include <png.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/UniqueArray.h>
+
+#if USE(LCMS)
+#include "LCMSUniquePtr.h"
+#endif
+
+namespace WebCore {
+
+// Gamma constants.
+const double cMaxGamma = 21474.83;
+const double cDefaultGamma = 2.2;
+const double cInverseGamma = 0.45455;
+
+// Protect against APNGs with huge amounts of frames, and PNGs with large amounts
+// of pixel data in general. See bug #302220 and Mozilla's bug #251381 for more info.
+//
+// The maximum frame count limits the memory used for array of ScalableImageDecoderFrames
+// to take at most 10MiB on 64-bit platforms, and it is large enough to cover ~70 minutes
+// of animation at 60 FPS.
+static constexpr uint32_t cMaxFrameCount = (1 << 18) - 1;
+static constexpr uint32_t cMaxPNGSize = 1000000;
+static constexpr size_t cMaxDecodedPixels = cMaxPNGSize * cMaxPNGSize;
+
+// Called if the decoding of the image fails.
+static void PNGAPI decodingFailed(png_structp png, png_const_charp)
+{
+    longjmp(png_jmpbuf(png), 1);
+}
+
+// Callbacks given to the read struct.  The first is for warnings (we want to
+// treat a particular warning as an error, which is why we have to register this
+// callback).
+static void PNGAPI decodingWarning(png_structp png, png_const_charp warningMsg)
+{
+    // Mozilla did this, so we will too.
+    // Convert a tRNS warning to be an error (see
+    // http://bugzilla.mozilla.org/show_bug.cgi?id=251381 )
+    if (spanHasPrefix(unsafeSpan(byteCast<char>(warningMsg)), "Missing PLTE before tRNS"_span))
+        png_error(png, warningMsg);
+}
+
+// Called when we have obtained the header information (including the size).
+static void PNGAPI headerAvailable(png_structp png, png_infop)
+{
+    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->headerAvailable();
+}
+
+// Called when a row of the canvas is ready.
+static void PNGAPI rowAvailable(png_structp png, png_bytep rowBuffer, png_uint_32 rowIndex, int interlacePass)
+{
+    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->rowAvailable(rowBuffer, rowIndex, interlacePass);
+}
+
+// Called when a row of an animation frame is ready. A frame's rows are as wide as the frame and are
+// painted at the frame's own offset.
+static void PNGAPI frameRowAvailable(png_structp png, png_bytep rowBuffer, png_uint_32 rowIndex, int interlacePass)
+{
+    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->frameRowAvailable(rowBuffer, rowIndex, interlacePass);
+}
+
+// Called when we have completely finished decoding the image.
+static void PNGAPI pngComplete(png_structp png, png_infop)
+{
+    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->pngComplete();
+}
+
+// Called when an animation frame's stream has delivered every row it is going to.
+static void PNGAPI frameEnd(png_structp png, png_infop)
+{
+    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->paintFrame();
+}
+
+// Called when we have the frame header.
+static void PNGAPI frameHeader(png_structp png, png_infop)
+{
+    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->frameHeader();
+}
+
+// Called when we found user chunks.
+static int PNGAPI readChunks(png_structp png, png_unknown_chunkp chunk)
+{
+    static_cast<PNGImageDecoder*>(png_get_user_chunk_ptr(png))->readChunks(chunk);
+    return 1;
+}
+
+class PNGImageReader {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PNGImageReader);
+public:
+    PNGImageReader(PNGImageDecoder* decoder)
+        : m_png(png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning))
+        , m_info(png_create_info_struct(m_png))
+        , m_readOffset(0)
+        , m_currentBufferSize(0)
+        , m_decodingSizeOnly(false)
+        , m_hasAlpha(false)
+    {
+        png_set_progressive_read_fn(m_png, decoder, headerAvailable, rowAvailable, pngComplete);
+        png_byte apngChunks[]= {"acTL\0fcTL\0fdAT\0"};
+        png_set_keep_unknown_chunks(m_png, 1, apngChunks, 3);
+        png_set_read_user_chunk_fn(m_png, static_cast<png_voidp>(decoder), readChunks);
+        decoder->init();
+    }
+
+    ~PNGImageReader()
+    {
+        close();
+    }
+
+    void close()
+    {
+        if (m_png && m_info)
+            // This will zero the pointers.
+            png_destroy_read_struct(&m_png, &m_info, 0);
+        m_interlaceBuffer.reset();
+        m_readOffset = 0;
+    }
+
+    bool decode(const SharedBuffer& data, bool sizeOnly, unsigned haltAtFrame)
+    {
+        m_decodingSizeOnly = sizeOnly;
+        PNGImageDecoder* decoder = static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_png));
+
+        // We need to do the setjmp here. Otherwise bad things will happen.
+        if (setjmp(png_jmpbuf(m_png)))
+            return decoder->setFailed();
+
+        auto bytesToSkip = m_readOffset;
+        auto bytesToUse = data.size() - bytesToSkip;
+        m_readOffset += bytesToUse;
+        m_currentBufferSize = m_readOffset;
+        png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<uint8_t*>(data.span().subspan(bytesToSkip).data())), bytesToUse);
+        // We explicitly specify the superclass encodedDataStatus() because we
+        // merely want to check if we've managed to set the size, not
+        // (recursively) trigger additional decoding if we haven't.
+        if (sizeOnly ? decoder->ScalableImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable : decoder->isCompleteAtIndex(haltAtFrame))
+            return true;
+
+        return false;
+    }
+
+    png_structp pngPtr() const { return m_png; }
+    png_infop infoPtr() const { return m_info; }
+
+    void setReadOffset(unsigned offset) { m_readOffset = offset; }
+    unsigned currentBufferSize() const { return m_currentBufferSize; }
+    bool decodingSizeOnly() const { return m_decodingSizeOnly; }
+    void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
+    bool hasAlpha() const { return m_hasAlpha; }
+
+    png_bytep interlaceBuffer() const { return m_interlaceBuffer.get(); }
+    void createInterlaceBuffer(int size) { m_interlaceBuffer = makeUniqueArray<png_byte>(size); }
+
+private:
+    png_structp m_png;
+    png_infop m_info;
+    unsigned m_readOffset;
+    unsigned m_currentBufferSize;
+    bool m_decodingSizeOnly;
+    bool m_hasAlpha;
+    UniqueArray<png_byte> m_interlaceBuffer;
+};
+
+PNGImageDecoder::PNGImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+    : ScalableImageDecoder(alphaOption, gammaAndColorProfileOption)
+    , m_doNothingOnFailure(false)
+    , m_currentFrame(0)
+    , m_png(nullptr)
+    , m_info(nullptr)
+    , m_isAnimated(false)
+    , m_frameInfo(false)
+    , m_frameIsHidden(false)
+    , m_hasInfo(false)
+    , m_gamma(45455)
+    , m_frameCount(1)
+    , m_decodedPixelCount(0)
+    , m_playCount(0)
+    , m_totalFrames(0)
+    , m_sizePLTE(0)
+    , m_sizetRNS(0)
+    , m_sequenceNumber(0)
+    , m_width(0)
+    , m_height(0)
+    , m_xOffset(0)
+    , m_yOffset(0)
+    , m_delayNumerator(1)
+    , m_delayDenominator(1)
+    , m_dispose(0)
+    , m_blend(0)
+{
+}
+
+PNGImageDecoder::~PNGImageDecoder()
+{
+    clear();
+}
+
+RepetitionCount PNGImageDecoder::repetitionCount() const
+{
+    // Signal no repetition if the PNG image is not animated.
+    if (!m_isAnimated)
+        return RepetitionCountNone;
+
+    // APNG format uses 0 to indicate that an animation must play indefinitely. But
+    // the RepetitionCount enumeration uses RepetitionCountInfinite, so we need to adapt this.
+    if (!m_playCount)
+        return RepetitionCountInfinite;
+
+    return m_playCount;
+}
+
+ScalableImageDecoderFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
+{
+    assertIsHeld(m_lock);
+    if (ScalableImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
+        return nullptr;
+
+    if (m_frameBufferCache.isEmpty())
+        m_frameBufferCache.grow(1);
+
+    // A malformed acTL can advertise more frames than there are buffers.
+    index = std::min(index, m_frameBufferCache.size() - 1);
+
+    auto& frame = m_frameBufferCache[index];
+    if (!frame.isComplete())
+        decode(false, index, isAllDataReceived());
+    return &frame;
+}
+
+ScalableImageDecoderFrame* PNGImageDecoder::firstFrameBuffer()
+{
+    Locker locker { m_lock };
+    return frameBufferAtIndex(0);
+}
+
+void PNGImageDecoder::clear()
+{
+    m_reader = nullptr;
+#if USE(LCMS)
+    m_iccTransform.reset();
+#endif
+}
+
+bool PNGImageDecoder::setFailed()
+{
+    if (m_doNothingOnFailure)
+        return false;
+    clear();
+    return ScalableImageDecoder::setFailed();
+}
+
+void PNGImageDecoder::headerAvailable()
+{
+    png_structp png = m_reader->pngPtr();
+    png_infop info = m_reader->infoPtr();
+    png_uint_32 width = png_get_image_width(png, info);
+    png_uint_32 height = png_get_image_height(png, info);
+
+    // Protect against large images.
+    const auto pixelCount = checkedSum<size_t>(checkedProduct<size_t>(width, height), m_decodedPixelCount);
+    if (pixelCount.hasOverflowed() || pixelCount > cMaxDecodedPixels) {
+        longjmp(png_jmpbuf(png), 1);
+        return;
+    }
+    m_decodedPixelCount = pixelCount;
+
+    // We can fill in the size now that the header is available.  Avoid memory
+    // corruption issues by returning early from setFailed() during this call; if we don't
+    // do this, failures will cause |m_reader| to be deleted, and our jmpbuf
+    // will cease to exist.  Note that we'll still properly set the failure flag
+    // in this case as soon as we longjmp().
+    m_doNothingOnFailure = true;
+    bool result = setSize(IntSize(width, height));
+    m_doNothingOnFailure = false;
+    if (!result) {
+        longjmp(png_jmpbuf(png), 1);
+        return;
+    }
+
+    int bitDepth, colorType, interlaceType, compressionType, filterType, channels;
+    png_get_IHDR(png, info, &width, &height, &bitDepth, &colorType, &interlaceType, &compressionType, &filterType);
+
+    // The options we set here match what Mozilla does.
+
+    m_hasInfo = true;
+    if (m_isAnimated) {
+        png_save_uint_32(m_dataIHDR.data(), 13);
+        memcpySpan(std::span { m_dataIHDR }.subspan(4), "IHDR"_span);
+        png_save_uint_32(&m_dataIHDR[8], width);
+        png_save_uint_32(&m_dataIHDR[12], height);
+        m_dataIHDR[16] = bitDepth;
+        m_dataIHDR[17] = colorType;
+        m_dataIHDR[18] = compressionType;
+        m_dataIHDR[19] = filterType;
+        m_dataIHDR[20] = interlaceType;
+    }
+
+    // Expand to ensure we use 24-bit for RGB and 32-bit for RGBA.
+    if (colorType == PNG_COLOR_TYPE_PALETTE) {
+        if (m_isAnimated) {
+            png_colorp palette;
+            int paletteSize = 0;
+            png_get_PLTE(png, info, &palette, &paletteSize);
+            paletteSize *= 3;
+            png_save_uint_32(m_dataPLTE.data(), paletteSize);
+            memcpySpan(std::span { m_dataPLTE }.subspan(4), "PLTE"_span);
+            memcpySpan(std::span { m_dataPLTE }.subspan(8), unsafeMakeSpan(reinterpret_cast<png_byte*>(palette), paletteSize));
+            m_sizePLTE = paletteSize + 12;
+        }
+        png_set_expand(png);
+    }
+
+    if (colorType == PNG_COLOR_TYPE_GRAY && bitDepth < 8)
+        png_set_expand(png);
+
+    png_bytep trns = 0;
+    int trnsCount = 0;
+    png_color_16p transValues;
+    if (png_get_valid(png, info, PNG_INFO_tRNS)) {
+        png_get_tRNS(png, info, &trns, &trnsCount, &transValues);
+        if (m_isAnimated) {
+            if (colorType == PNG_COLOR_TYPE_RGB) {
+                png_save_uint_16(&m_datatRNS[8], transValues->red);
+                png_save_uint_16(&m_datatRNS[10], transValues->green);
+                png_save_uint_16(&m_datatRNS[12], transValues->blue);
+                trnsCount = 6;
+            } else if (colorType == PNG_COLOR_TYPE_GRAY) {
+                png_save_uint_16(&m_datatRNS[8], transValues->gray);
+                trnsCount = 2;
+            } else if (colorType == PNG_COLOR_TYPE_PALETTE)
+                memcpySpan(std::span { m_datatRNS }.subspan(8), unsafeMakeSpan(trns, trnsCount));
+
+            png_save_uint_32(m_datatRNS.data(), trnsCount);
+            memcpySpan(std::span { m_datatRNS }.subspan(4), "tRNS"_span);
+            m_sizetRNS = trnsCount + 12;
+        }
+        png_set_expand(png);
+    }
+
+    if (bitDepth == 16)
+        png_set_strip_16(png);
+
+    if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+        png_set_gray_to_rgb(png);
+
+    // Deal with gamma and keep it under our control.
+    double gamma;
+    if (!m_ignoreGammaAndColorProfile && png_get_gAMA(png, info, &gamma)) {
+        if ((gamma <= 0.0) || (gamma > cMaxGamma)) {
+            gamma = cInverseGamma;
+            png_set_gAMA(png, info, gamma);
+        }
+        png_set_gamma(png, cDefaultGamma, gamma);
+        m_gamma = static_cast<int>(gamma * 100000);
+    } else
+        png_set_gamma(png, cDefaultGamma, cInverseGamma);
+
+#if USE(LCMS)
+    if (!m_ignoreGammaAndColorProfile) {
+        char* iccProfileTitle;
+        unsigned char* iccProfileData;
+        png_uint_32 iccProfileDataSize;
+        int compressionType;
+        if (png_get_iCCP(png, info, &iccProfileTitle, &compressionType, &iccProfileData, &iccProfileDataSize)) {
+            auto iccProfile = LCMSProfilePtr(cmsOpenProfileFromMem(iccProfileData, iccProfileDataSize));
+            if (iccProfile && cmsGetColorSpace(iccProfile.get()) == cmsSigRgbData) {
+                auto srgbProfile = LCMSProfilePtr(cmsCreate_sRGBProfile());
+                m_iccTransform = LCMSTransformPtr(cmsCreateTransform(iccProfile.get(), TYPE_BGRA_8, srgbProfile.get(), TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0));
+            }
+        }
+    }
+#endif
+
+    // Tell libpng to send us rows for interlaced pngs.
+    if (interlaceType == PNG_INTERLACE_ADAM7)
+        png_set_interlace_handling(png);
+
+    // Update our info now.
+    png_read_update_info(png, info);
+    channels = png_get_channels(png, info);
+    ASSERT(channels == 3 || channels == 4);
+
+    m_reader->setHasAlpha(channels == 4);
+
+    if (m_reader->decodingSizeOnly()) {
+        // If we only needed the size, halt the reader.
+        // '0' argument to png_process_data_pause means: Do not cache unprocessed data.
+        m_reader->setReadOffset(m_reader->currentBufferSize() - png_process_data_pause(png, 0));
+    }
+}
+
+// Returns the buffer the frame being decoded is painted into, or null if there is no such frame.
+ScalableImageDecoderFrame* PNGImageDecoder::currentFrameBuffer()
+{
+    assertIsHeld(m_lock);
+    if (m_frameBufferCache.isEmpty() || m_currentFrame >= decodeIfNeededAndGetFrameCount())
+        return nullptr;
+
+    RELEASE_ASSERT(m_currentFrame < m_frameBufferCache.size());
+    auto& buffer = m_frameBufferCache[m_currentFrame];
+    if (buffer.isInvalid()) {
+        if (!buffer.initialize(size(), m_premultiplyAlpha)) {
+            longjmp(png_jmpbuf(m_reader->pngPtr()), 1);
+            return nullptr;
+        }
+
+        buffer.setDecodingStatus(DecodingStatus::Partial);
+        buffer.setHasAlpha(false);
+    }
+
+    return &buffer;
+}
+
+// An interlaced pass covers part of a row and an animation frame covers part of the width, so those
+// rows are combined into whole canvas rows here before they are painted.
+void PNGImageDecoder::ensureInterlaceBuffer()
+{
+    if (m_reader->interlaceBuffer())
+        return;
+
+    unsigned colorChannels = m_reader->hasAlpha() ? 4 : 3;
+    m_reader->createInterlaceBuffer(colorChannels * size().width() * size().height());
+    if (!m_reader->interlaceBuffer())
+        longjmp(png_jmpbuf(m_reader->pngPtr()), 1);
+}
+
+void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int)
+{
+    assertIsHeld(m_lock);
+    auto* frameBuffer = currentFrameBuffer();
+    if (!frameBuffer)
+        return;
+    auto& buffer = *frameBuffer;
+
+    if (PNG_INTERLACE_ADAM7 == png_get_interlace_type(m_reader->pngPtr(), m_reader->infoPtr()))
+        ensureInterlaceBuffer();
+
+    /* libpng comments (here to explain what follows).
+     *
+     * this function is called for every row in the image. If the
+     * image is interlacing, and you turned on the interlace handler,
+     * this function will be called for every row in every pass.
+     * Some of these rows will not be changed from the previous pass.
+     * When the row is not changed, the new_row variable will be NULL.
+     * The rows and passes are called in order, so you don't really
+     * need the row_num and pass, but I'm supplying them because it
+     * may make your life easier.
+     */
+
+    // Nothing to do if the row is unchanged, or the row is outside
+    // the image bounds: libpng may send extra rows, ignore them to
+    // make our lives easier.
+    if (!rowBuffer)
+        return;
+    if (rowIndex >= (unsigned)size().height())
+        return;
+
+    /* libpng comments (continued).
+     *
+     * For the non-NULL rows of interlaced images, you must call
+     * png_progressive_combine_row() passing in the row and the
+     * old row.  You can call this function for NULL rows (it will
+     * just return) and for non-interlaced images (it just does the
+     * memcpy for you) if it will make the code easier. Thus, you
+     * can just do this for all cases:
+     *
+     *    png_progressive_combine_row(png_ptr, old_row, new_row);
+     *
+     * where old_row is what was displayed for previous rows. Note
+     * that the first pass (pass == 0 really) will completely cover
+     * the old row, so the rows do not have to be initialized. After
+     * the first pass (and only for interlaced images), you will have
+     * to pass the current row, and the function will combine the
+     * old row and the new row.
+     */
+
+    bool hasAlpha = m_reader->hasAlpha();
+    png_bytep row = rowBuffer;
+
+    if (png_bytep interlaceBuffer = m_reader->interlaceBuffer()) {
+        unsigned colorChannels = hasAlpha ? 4 : 3;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        row = interlaceBuffer + (rowIndex * colorChannels * size().width());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        png_progressive_combine_row(m_reader->pngPtr(), row, rowBuffer);
+    }
+
+    // Write the decoded row pixels to the frame buffer.
+    auto destinationRow = buffer.backingStore()->pixelsStartingAt(0, rowIndex);
+    auto address = destinationRow;
+    ASSERT(size().width() == static_cast<int>(png_get_image_width(m_reader->pngPtr(), m_reader->infoPtr())));
+    int width = std::min<int>(size().width(), png_get_image_width(m_reader->pngPtr(), m_reader->infoPtr()));
+    unsigned char nonTrivialAlphaMask = 0;
+
+    png_bytep pixel = row;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    if (hasAlpha) {
+        for (int x = 0; x < width; ++x, pixel += 4, address = address.subspan(1)) {
+            unsigned alpha = pixel[3];
+            buffer.backingStore()->setPixel(address[0], pixel[0], pixel[1], pixel[2], alpha);
+            nonTrivialAlphaMask |= (255 - alpha);
+        }
+    } else {
+        for (int x = 0; x < width; ++x, pixel += 3, address = address.subspan(1))
+            address[0] = 0xFF000000 | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
+    }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#if USE(LCMS)
+    if (m_iccTransform)
+        cmsDoTransform(m_iccTransform.get(), destinationRow.data(), destinationRow.data(), width);
+#endif
+
+    if (nonTrivialAlphaMask && !buffer.hasAlpha())
+        buffer.setHasAlpha(true);
+}
+
+void PNGImageDecoder::frameRowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int)
+{
+    assertIsHeld(m_lock);
+    // Nothing to do if the row is unchanged, or the row is outside the image bounds: libpng may
+    // send extra rows, ignore them to make our lives easier.
+    if (!rowBuffer || rowIndex >= static_cast<unsigned>(size().height()))
+        return;
+
+    // The frame's rows are combined here and painted at the frame's offset once its stream ends.
+    png_bytep interlaceBuffer = m_reader->interlaceBuffer();
+    if (!interlaceBuffer)
+        return;
+
+    unsigned colorChannels = m_reader->hasAlpha() ? 4 : 3;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    png_progressive_combine_row(m_png, interlaceBuffer + (rowIndex * colorChannels * size().width()), rowBuffer);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
+void PNGImageDecoder::pngComplete()
+{
+    assertIsHeld(m_lock);
+    if (m_isAnimated) {
+        if (!processingFinish() && m_frameCount == m_currentFrame)
+            return;
+
+        fallbackNotAnimated();
+    }
+    if (!m_frameBufferCache.isEmpty())
+        m_frameBufferCache.first().setDecodingStatus(DecodingStatus::Complete);
+}
+
+void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataReceived)
+{
+    if (failed())
+        return;
+
+    if (!m_reader) {
+        clear();
+        m_reader = makeUnique<PNGImageReader>(this);
+    }
+
+    // If we couldn't decode the image but we've received all the data, decoding
+    // has failed.
+    if (!m_reader->decode(*m_data, onlySize, haltAtFrame) && allDataReceived)
+        setFailed();
+    // If we're done decoding the image, we don't need the PNGImageReader
+    // anymore.  (If we failed, |m_reader| has already been cleared.)
+    else if (isComplete())
+        clear();
+}
+
+// Helper functions to extract values from PNG chunk payloads, modifying the
+// input span in-place by advancing it by the amount of bytes for the extracted
+// values (the same convention followed by WTF). The naming follows the wording
+// of the PNG/APNG specifications, i.e. an "unsigned int" is a 32-bit value,
+// "short" is a 16-bit value and so on.
+
+static inline uint32_t consumePNGUnsignedInt(std::span<const png_byte>& data)
+{
+    auto value = consumeSpan(data, sizeof(uint32_t));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    return png_get_uint_32(value.data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
+static inline uint16_t consumePNGUnsignedShort(std::span<const png_byte>& data)
+{
+    auto value = consumeSpan(data, sizeof(uint16_t));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    return png_get_uint_16(value.data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
+static inline uint8_t consumePNGUnsignedByte(std::span<const png_byte>& data)
+{
+    return consume(data);
+}
+
+static inline std::span<const png_byte> chunkDataSpan(const png_unknown_chunk& chunk)
+{
+    return unsafeMakeSpan(chunk.data, chunk.size);
+}
+
+static inline std::span<png_byte> mutableChunkDataSpan(const png_unknown_chunk& chunk)
+{
+    return unsafeMakeSpan(chunk.data, chunk.size);
+}
+
+void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
+{
+    assertIsHeld(m_lock);
+    if (chunk->size == 8 && spanHasPrefix(byteCast<char>(std::span { chunk->name }), "acTL"_span)) {
+        if (m_hasInfo || m_isAnimated)
+            return;
+
+        // frameCount() reports m_frameCount and callers size per-frame containers from it, so a
+        // rejected count must not be stored.
+        auto chunkData = chunkDataSpan(*chunk);
+        size_t frameCount = consumePNGUnsignedInt(chunkData);
+        unsigned playCount = consumePNGUnsignedInt(chunkData);
+
+        if (!frameCount || frameCount > cMaxFrameCount || playCount > PNG_UINT_31_MAX) {
+            fallbackNotAnimated();
+            return;
+        }
+
+        m_frameCount = frameCount;
+        m_playCount = playCount;
+
+        m_isAnimated = true;
+        if (!m_frameInfo)
+            m_frameIsHidden = true;
+
+        if (m_frameBufferCache.size() == m_frameCount)
+            return;
+
+        m_frameBufferCache.resize(m_frameCount);
+    } else if (chunk->size == 26 && spanHasPrefix(byteCast<char>(std::span { chunk->name }), "fcTL"_span)) {
+        if (m_hasInfo && !m_isAnimated)
+            return;
+
+        m_frameInfo = false;
+
+        if (processingFinish()) {
+            fallbackNotAnimated();
+            return;
+        }
+
+        // At this point the old frame is done. Let's start a new one.
+        auto chunkData = chunkDataSpan(*chunk);
+        unsigned sequenceNumber = consumePNGUnsignedInt(chunkData);
+        if (sequenceNumber != m_sequenceNumber++) {
+            fallbackNotAnimated();
+            return;
+        }
+
+        m_width = consumePNGUnsignedInt(chunkData);
+        m_height = consumePNGUnsignedInt(chunkData);
+        m_xOffset = consumePNGUnsignedInt(chunkData);
+        m_yOffset = consumePNGUnsignedInt(chunkData);
+        m_delayNumerator = consumePNGUnsignedShort(chunkData);
+        m_delayDenominator = consumePNGUnsignedShort(chunkData);
+        m_dispose = consumePNGUnsignedByte(chunkData);
+        m_blend = consumePNGUnsignedByte(chunkData);
+
+        png_structp png = m_reader->pngPtr();
+        png_infop info = m_reader->infoPtr();
+        png_uint_32 width = png_get_image_width(png, info);
+        png_uint_32 height = png_get_image_height(png, info);
+
+        // Protect against large images.
+        const auto pixelCount = checkedSum<size_t>(checkedProduct<size_t>(width, height), m_decodedPixelCount);
+        if (pixelCount.hasOverflowed() || pixelCount > cMaxDecodedPixels
+            || m_xOffset > cMaxPNGSize || m_yOffset > cMaxPNGSize
+            || static_cast<uint64_t>(m_xOffset) + m_width > width
+            || static_cast<uint64_t>(m_yOffset) + m_height > height
+            || m_dispose > 2 || m_blend > 1) {
+            fallbackNotAnimated();
+            return;
+        }
+        m_decodedPixelCount = pixelCount;
+
+        if (m_frameBufferCache.isEmpty())
+            m_frameBufferCache.grow(1);
+
+        if (m_currentFrame < m_frameBufferCache.size()) {
+            auto& buffer = m_frameBufferCache[m_currentFrame];
+
+            if (!m_delayDenominator)
+                buffer.setDuration(Seconds::fromMilliseconds(m_delayNumerator * 10));
+            else
+                buffer.setDuration(Seconds::fromMilliseconds(m_delayNumerator * 1000 / m_delayDenominator));
+
+            if (m_dispose == 2)
+                buffer.setDisposalMethod(ScalableImageDecoderFrame::DisposalMethod::RestoreToPrevious);
+            else if (m_dispose == 1)
+                buffer.setDisposalMethod(ScalableImageDecoderFrame::DisposalMethod::RestoreToBackground);
+            else
+                buffer.setDisposalMethod(ScalableImageDecoderFrame::DisposalMethod::DoNotDispose);
+        }
+
+        m_frameInfo = true;
+        m_frameIsHidden = false;
+
+        if (processingStart(chunk)) {
+            fallbackNotAnimated();
+            return;
+        }
+    } else if (chunk->size >= 4 && spanHasPrefix(byteCast<char>(std::span { chunk->name }), "fdAT"_span)) {
+        if (!m_frameInfo || !m_isAnimated)
+            return;
+
+        auto chunkData = chunkDataSpan(*chunk);
+        unsigned sequenceNumber = consumePNGUnsignedInt(chunkData);
+        if (sequenceNumber != m_sequenceNumber++) {
+            fallbackNotAnimated();
+            return;
+        }
+
+        if (setjmp(png_jmpbuf(m_png))) {
+            fallbackNotAnimated();
+            return;
+        }
+
+        png_save_uint_32(chunk->data, chunk->size - 4);
+        png_process_data(m_png, m_info, chunk->data, 4);
+        memcpySpan(mutableChunkDataSpan(*chunk), "IDAT"_span);
+        png_process_data(m_png, m_info, chunk->data, chunk->size);
+        png_process_data(m_png, m_info, chunk->data, 4);
+    }
+}
+
+void PNGImageDecoder::frameHeader()
+{
+    assertIsHeld(m_lock);
+    int colorType = png_get_color_type(m_png, m_info);
+
+    if (colorType == PNG_COLOR_TYPE_PALETTE)
+        png_set_expand(m_png);
+
+    int bitDepth = png_get_bit_depth(m_png, m_info);
+    if (colorType == PNG_COLOR_TYPE_GRAY && bitDepth < 8)
+        png_set_expand(m_png);
+
+    if (png_get_valid(m_png, m_info, PNG_INFO_tRNS))
+        png_set_expand(m_png);
+
+    if (bitDepth == 16)
+        png_set_strip_16(m_png);
+
+    if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+        png_set_gray_to_rgb(m_png);
+
+    double gamma;
+    if (png_get_gAMA(m_png, m_info, &gamma))
+        png_set_gamma(m_png, cDefaultGamma, gamma);
+
+    png_set_interlace_handling(m_png);
+
+    png_read_update_info(m_png, m_info);
+
+    beginFrame();
+}
+
+// libpng calls frameHeader() once per frame, after its header and before its first row, so a
+// frame's buffer is set up exactly once.
+void PNGImageDecoder::beginFrame()
+{
+    assertIsHeld(m_lock);
+    auto* buffer = currentFrameBuffer();
+    if (!buffer)
+        return;
+
+    ensureInterlaceBuffer();
+
+    // The interlace buffer outlives each frame, so anything this frame does not deliver still holds
+    // the pixels of the frame before it, which paintFrame() would paint as this frame's own.
+    ASSERT(m_width <= static_cast<unsigned>(size().width()));
+    ASSERT(m_height <= static_cast<unsigned>(size().height()));
+    unsigned colorChannels = m_reader->hasAlpha() ? 4 : 3;
+    unsigned stride = colorChannels * size().width();
+    unsigned rowBytes = colorChannels * std::min<unsigned>(m_width, size().width());
+    png_bytep row = m_reader->interlaceBuffer();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    for (unsigned y = std::min<unsigned>(m_height, size().height()); y; --y, row += stride)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        zeroSpan(unsafeMakeSpan(row, rowBytes));
+
+    // initFrameBuffer() starts a frame from the one before it, which frame 0 does not have: a
+    // hidden default image leaves the first animation frame at 0.
+    if (m_currentFrame)
+        initFrameBuffer(m_currentFrame);
+    else
+        updateFrameRect(*buffer);
+}
+
+void PNGImageDecoder::init()
+{
+    m_isAnimated = false;
+    m_frameInfo = false;
+    m_frameIsHidden = false;
+    m_hasInfo = false;
+    m_currentFrame = 0;
+    m_totalFrames = 0;
+    m_sequenceNumber = 0;
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+void PNGImageDecoder::clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame)
+{
+    assertIsHeld(m_lock);
+    if (m_frameBufferCache.isEmpty())
+        return;
+
+    // See GIFImageDecoder for full explanation.
+    clearBeforeFrame = std::min(clearBeforeFrame, m_frameBufferCache.size() - 1);
+    const Vector<ScalableImageDecoderFrame>::iterator end(m_frameBufferCache.begin() + clearBeforeFrame);
+
+    Vector<ScalableImageDecoderFrame>::iterator i(end);
+    for (; (i != m_frameBufferCache.begin()) && (i->isInvalid() || (i->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToPrevious)); --i) {
+        if (i->isComplete() && (i != end))
+            i->clear();
+    }
+
+    // Now |i| holds the last frame we need to preserve; clear prior frames.
+    for (Vector<ScalableImageDecoderFrame>::iterator j(m_frameBufferCache.begin()); j != i; ++j) {
+        ASSERT(!j->isPartial());
+        if (j->isInvalid())
+            j->clear();
+    }
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
+{
+    assertIsHeld(m_lock);
+    if (frameIndex >= decodeIfNeededAndGetFrameCount())
+        return;
+
+    auto& buffer = m_frameBufferCache[frameIndex];
+
+    // The starting state for this frame depends on the previous frame's
+    // disposal method.
+    //
+    // Frames that use the DisposalMethod::RestoreToPrevious method are effectively
+    // no-ops in terms of changing the starting state of a frame compared to
+    // the starting state of the previous frame, so skip over them.  (If the
+    // first frame specifies this method, it will get treated like
+    // DisposeOverwriteBgcolor below and reset to a completely empty image.)
+    const auto* prevBuffer = &m_frameBufferCache[--frameIndex];
+    auto prevMethod = prevBuffer->disposalMethod();
+    while (frameIndex && (prevMethod == ScalableImageDecoderFrame::DisposalMethod::RestoreToPrevious)) {
+        prevBuffer = &m_frameBufferCache[--frameIndex];
+        prevMethod = prevBuffer->disposalMethod();
+    }
+
+    png_structp png = m_reader->pngPtr();
+
+    if (!prevBuffer->backingStore())
+        longjmp(png_jmpbuf(png), 1);
+
+    if (prevMethod == ScalableImageDecoderFrame::DisposalMethod::DoNotDispose) {
+        // Preserve the last frame as the starting state for this frame.
+        if (!buffer.initialize(*prevBuffer->backingStore()))
+            longjmp(png_jmpbuf(png), 1);
+    } else {
+        // We want to clear the previous frame to transparent, without
+        // affecting pixels in the image outside of the frame.
+        IntRect prevRect = prevBuffer->backingStore()->frameRect();
+        if (!frameIndex || prevRect.contains(IntRect(IntPoint(), size()))) {
+            // Clearing the first frame, or a frame the size of the whole
+            // image, results in a completely empty image.
+            buffer.backingStore()->clear();
+            buffer.setHasAlpha(true);
+        } else {
+            // Copy the whole previous buffer, then clear just its frame.
+            if (!buffer.initialize(*prevBuffer->backingStore())) {
+                longjmp(png_jmpbuf(png), 1);
+                return;
+            }
+            buffer.backingStore()->clearRect(prevRect);
+            buffer.setHasAlpha(true);
+        }
+    }
+    
+    updateFrameRect(buffer);
+}
+
+void PNGImageDecoder::updateFrameRect(ScalableImageDecoderFrame& buffer)
+{
+    IntRect frameRect(m_xOffset, m_yOffset, m_width, m_height);
+
+    // Painting walks this rect with no further bounds check. readChunks() rejects an fcTL that
+    // reaches past the canvas, in arithmetic wide enough not to wrap.
+    ASSERT(IntRect(IntPoint(), size()).contains(frameRect));
+    frameRect.intersect(IntRect(IntPoint(), size()));
+
+    buffer.backingStore()->setFrameRect(frameRect);
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+// Paints what a frame's stream delivered, at the frame's own offset. It is registered only on a
+// frame's stream, so the canvas, which is painted a row at a time, never reaches it.
+void PNGImageDecoder::paintFrame()
+{
+    assertIsHeld(m_lock);
+    ASSERT(m_png);
+    auto* frameBuffer = currentFrameBuffer();
+    png_bytep interlaceBuffer = m_reader->interlaceBuffer();
+    if (!frameBuffer || !interlaceBuffer)
+        return;
+    auto& buffer = *frameBuffer;
+
+    // beginFrame() gave this frame the rect its fcTL asked for, and nothing writes those fields
+    // again until the next fcTL, which paints this frame before it reads them.
+    IntRect rect = buffer.backingStore()->frameRect();
+    ASSERT(rect == IntRect(m_xOffset, m_yOffset, m_width, m_height));
+
+    bool hasAlpha = m_reader->hasAlpha();
+    bool nonTrivialAlpha = false;
+    if (m_blend && !hasAlpha)
+        m_blend = 0;
+
+    png_bytep row = interlaceBuffer;
+    unsigned colorChannels = hasAlpha ? 4 : 3;
+    for (int y = rect.y(); y < rect.maxY(); ++y, row += colorChannels * size().width()) {
+        png_bytep pixel = row;
+        auto destinationRow = buffer.backingStore()->pixelsStartingAt(rect.x(), y);
+        auto address = destinationRow;
+        for (int x = rect.x(); x < rect.maxX(); ++x, pixel += colorChannels) {
+            unsigned alpha = hasAlpha ? pixel[3] : 255;
+            nonTrivialAlpha |= alpha < 255;
+            if (!m_blend)
+                buffer.backingStore()->setPixel(address[0], pixel[0], pixel[1], pixel[2], alpha);
+            else
+                buffer.backingStore()->blendPixel(address[0], pixel[0], pixel[1], pixel[2], alpha);
+            address = address.subspan(1);
+        }
+#if USE(LCMS)
+        if (m_iccTransform)
+            cmsDoTransform(m_iccTransform.get(), destinationRow.data(), destinationRow.data(), rect.width());
+#endif
+    }
+
+    if (!nonTrivialAlpha) {
+        if (rect.contains(IntRect(IntPoint(), size())))
+            buffer.setHasAlpha(false);
+        // Frame 0 has no previous frame whose disposal could have left the rest of the canvas opaque.
+        else if (m_currentFrame) {
+            size_t frameIndex = m_currentFrame;
+            const auto* prevBuffer = &m_frameBufferCache[--frameIndex];
+            while (frameIndex && (prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToPrevious))
+                prevBuffer = &m_frameBufferCache[--frameIndex];
+
+            if (frameIndex && prevBuffer->backingStore()) {
+                IntRect prevRect = prevBuffer->backingStore()->frameRect();
+                if ((prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToBackground) && !prevBuffer->hasAlpha() && rect.contains(prevRect))
+                    buffer.setHasAlpha(false);
+            }
+        }
+    } else if (!m_blend && !buffer.hasAlpha())
+        buffer.setHasAlpha(nonTrivialAlpha);
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+void PNGImageDecoder::frameComplete()
+{
+    assertIsHeld(m_lock);
+    if (m_frameIsHidden || m_currentFrame >= decodeIfNeededAndGetFrameCount())
+        return;
+
+    RELEASE_ASSERT(m_currentFrame < m_frameBufferCache.size());
+    m_frameBufferCache[m_currentFrame].setDecodingStatus(DecodingStatus::Complete);
+    m_currentFrame++;
+}
+
+int PNGImageDecoder::processingStart(png_unknown_chunkp chunk)
+{
+    static constexpr std::array<png_byte, 8> dataPNG = { 137, 80, 78, 71, 13, 10, 26, 10 };
+    std::array<png_byte, 16> datagAMA = { 0, 0, 0, 4, 103, 65, 77, 65 };
+
+    if (!m_hasInfo)
+        return 0;
+
+    m_totalFrames++;
+
+    m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, 0);
+    m_info = png_create_info_struct(m_png);
+    if (setjmp(png_jmpbuf(m_png)))
+        return 1;
+
+    png_set_crc_action(m_png, PNG_CRC_QUIET_USE, PNG_CRC_QUIET_USE);
+    png_set_progressive_read_fn(m_png, static_cast<png_voidp>(this),
+        WebCore::frameHeader, WebCore::frameRowAvailable, WebCore::frameEnd);
+
+    // Copy the frame width/height from the fcTL chunk into IHDR chunk data.
+    memcpySpan(std::span { m_dataIHDR }.subspan(8), chunkDataSpan(*chunk).subspan(4, 8));
+
+    png_save_uint_32(std::span(datagAMA).subspan(8, sizeof(uint32_t)).data(), m_gamma);
+
+    png_process_data(m_png, m_info, const_cast<png_byte*>(dataPNG.data()), dataPNG.size());
+    png_process_data(m_png, m_info, m_dataIHDR.data(), m_dataIHDR.size());
+    png_process_data(m_png, m_info, datagAMA.data(), datagAMA.size());
+    if (m_sizePLTE > 0)
+        png_process_data(m_png, m_info, m_dataPLTE.data(), m_sizePLTE);
+    if (m_sizetRNS > 0)
+        png_process_data(m_png, m_info, m_datatRNS.data(), m_sizetRNS);
+
+    return 0;
+}
+
+int PNGImageDecoder::processingFinish()
+{
+    static constexpr std::array<png_byte, 12> dataIEND = { 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130 };
+
+    if (!m_hasInfo)
+        return 0;
+
+    if (m_totalFrames) {
+        if (setjmp(png_jmpbuf(m_png)))
+            return 1;
+
+        png_process_data(m_png, m_info, const_cast<png_byte*>(dataIEND.data()), dataIEND.size());
+        png_destroy_read_struct(&m_png, &m_info, 0);
+    }
+
+    frameComplete();
+    return 0;
+}
+
+void PNGImageDecoder::fallbackNotAnimated()
+{
+    m_isAnimated = false;
+    m_playCount = 0;
+    m_currentFrame = 0;
+}
+
+} // namespace WebCore

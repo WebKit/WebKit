@@ -1,0 +1,4 @@
+Test if an invalid multi-byte sequence is onverconsumed leading to an XSS vector
+
+ABCD" onchange="test='Failed'" using malformed byte sequence 0x83 0x22
+Passed

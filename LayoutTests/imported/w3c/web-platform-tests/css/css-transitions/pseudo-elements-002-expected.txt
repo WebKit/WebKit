@@ -1,0 +1,3 @@
+
+PASS Check that transitions run on a pseudo element whose ancestor changes display type.
+

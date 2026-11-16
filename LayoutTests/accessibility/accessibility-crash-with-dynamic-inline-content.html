@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests accessibility with dynamic inline content.</title>
+</head>
+<body>
+PASS if no crash or assert.
+<span id="ariafoo">foo</span><div aria-labeledby = "ariafoo">foobar<details id="details" open="true">
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+setTimeout(function() {
+  details.open = false;
+  testRunner.notifyDone();
+}, 0);
+</script>

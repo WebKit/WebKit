@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that NodeIterator.detach() is a no-op.");
+
+var iter = document.createNodeIterator(document);
+shouldNotThrow("iter.detach()");
+shouldNotThrow("iter.detach()");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

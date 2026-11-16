@@ -1,0 +1,99 @@
+# -----------------------------------------------------------------------------
+# Add module directories
+# -----------------------------------------------------------------------------
+if (USE_APPLE_INTERNAL_SDK)
+    add_subdirectory(../../Internal/WebKit/WebKitAdditions ${CMAKE_BINARY_DIR}/WebKitAdditions)
+endif ()
+
+if (WEBKIT_PLATFORM_FEATURE_DEFINES_FILE)
+    webkit_generate_platform_feature_defines_file()
+endif ()
+
+add_subdirectory(bmalloc)
+add_subdirectory(WTF)
+
+if (USE_CAPSTONE)
+    add_subdirectory(ThirdParty/capstone)
+endif ()
+
+if (USE_SYSTEM_UNIFDEF)
+  find_package(Unifdef REQUIRED)
+else ()
+  add_subdirectory(ThirdParty/unifdef)
+endif ()
+
+add_subdirectory(JavaScriptCore)
+
+# Every port installs the WebGPU C++ API header, which WebCore uses even when WebGPU is disabled.
+add_subdirectory(WebGPU)
+
+if (ENABLE_WEBGL OR USE_ANGLE_EGL)
+    add_subdirectory(ThirdParty/ANGLE)
+    foreach (_angle_target IN ITEMS ANGLE ANGLEFramework GLESv2Framework EGLFramework)
+        webkit_scope_target_interface_definitions(${_angle_target})
+    endforeach ()
+endif ()
+
+if (ENABLE_API_TESTS)
+    add_subdirectory(ThirdParty/gtest)
+    webkit_scope_target_interface_definitions(gtestFramework)
+    add_subdirectory(ThirdParty/gmock)
+endif ()
+
+if (USE_XDGMIME)
+    add_subdirectory(ThirdParty/xdgmime)
+endif ()
+
+# dav1d must be declared before libwebrtc and WebCore so target_link_libraries can resolve it.
+if (ENABLE_AV1)
+    add_subdirectory(ThirdParty/dav1d)
+endif ()
+
+if (USE_LIBWEBRTC)
+    add_subdirectory(ThirdParty/libwebrtc)
+    include_directories(${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/libwebrtc)
+endif ()
+
+if (USE_SKIA)
+    add_subdirectory(ThirdParty/skia)
+    webkit_scope_target_interface_definitions(Skia)
+endif ()
+
+if (USE_SYSTEM_SYSPROF_CAPTURE)
+    find_package(SysProfCapture)
+    if (NOT SysProfCapture_FOUND)
+        message(FATAL_ERROR "system libsysprof-capture-4 not found, "
+                            "consider using USE_SYSTEM_SYSPROF_CAPTURE=NO")
+    endif ()
+elseif (USE_SYSPROF_CAPTURE)
+    add_subdirectory(ThirdParty/libsysprof-capture)
+endif ()
+
+if (ENABLE_WEBINSPECTORUI)
+    add_subdirectory(WebInspectorUI)
+endif ()
+
+if (ENABLE_WEBCORE)
+    add_subdirectory(WebCore)
+    if (ENABLE_WEBINSPECTORUI)
+        add_dependencies(WebInspectorUI WebCore_CopyPrivateHeaders)
+    endif ()
+endif ()
+
+if (ENABLE_WEBKIT_LEGACY)
+    add_subdirectory(WebKitLegacy)
+endif ()
+
+if (ENABLE_WEBKIT)
+    add_subdirectory(WebKit)
+endif ()
+
+if (ENABLE_WEBDRIVER)
+    add_subdirectory(WebDriver)
+endif ()
+
+if (USE_APPLE_INTERNAL_SDK)
+    WEBKITADDITIONS_ADD_SUBDIRECTORIES()
+endif ()
+
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

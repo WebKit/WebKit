@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<iframe onload="runTest()" id="iframe" width="200" height="200" srcdoc="<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-size: 50px;
+        }
+        .page1 {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .page2 {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class='page1'>hello</div>
+    <div class='page2'>world</div>
+</body>
+</html>">
+</iframe>
+
+<script>
+var output = "This test verifies that hit testing returns the right element when an iframe is scrolled.\n\n";
+
+var iframeCenterx, iframeCenterY;
+
+function runTest() {
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        let iframe = document.getElementById('iframe');
+        iframeCenterX = iframe.getBoundingClientRect().left;
+        iframeCenterY = iframe.getBoundingClientRect().top;
+
+        setTimeout(async function () {
+            output += await expectAsync("accessibilityController.elementAtPoint(iframeCenterX + 100, iframeCenterY + 100).stringValue", "'AXValue: hello'");
+
+            // Scroll iframe to bottom.
+            iframe.contentWindow.scrollTo(0, iframe.contentDocument.body.scrollHeight);
+            output += await expectAsync("accessibilityController.elementAtPoint(iframeCenterX + 100, iframeCenterY + 100).stringValue", "'AXValue: world'");
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+}
+</script>
+</body>
+</html>

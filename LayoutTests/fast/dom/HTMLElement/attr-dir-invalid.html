@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<body>
+<div id="container" dir="auto">
+    <span id="rtl" dir="x">&#1514;</span>
+    <span>a</span>
+</div>
+<style>
+#container { width: 100px; }
+</style>
+<script>
+
+requestAnimationFrame(() => {
+    setTimeout(() => {
+        rtl.dir = 'x';
+        const span = document.createElement('span');
+        span.append('b');
+        rtl.after(span);
+        document.documentElement.className = '';
+    }, 0);
+});
+
+</script>
+</body>
+</html>

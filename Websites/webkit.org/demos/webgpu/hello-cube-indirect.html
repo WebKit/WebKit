@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=600">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>WebGPU Hello Cube Indirect drawing</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body {
+    font-family: system-ui;
+    color: #f7f7ff;
+    background-color: rgb(38, 38, 127);
+    text-align: center;
+}
+canvas {
+    margin: 0 auto;
+}
+</style>
+</head>
+<body>
+<div id="contents">
+    <h1>Rotating Cube with Indirect buffers</h1>
+    <canvas></canvas>
+</div>
+<div id="error">
+    <h2>WebGPU not available</h2>
+    <p>
+        Make sure you are on a system with WebGPU enabled. In
+        Safari, first make sure the Developer Menu is visible (Preferences >
+        Advanced), then Develop > Experimental Features > WebGPU.
+    </p>
+    <p>
+        In addition, you must be using Safari Technology Preview 92 or above.
+        You can get the latest STP <a href="https://developer.apple.com/safari/download/">here</a>.
+    </p>
+</div>
+<script src="scripts/hello-cube-indirect.js"></script>
+</body>
+</html>

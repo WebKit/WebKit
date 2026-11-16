@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/document-leak-test.js"></script>
+<script>
+ description("Tests that lazy image loading doesn't cause Document leaks.");
+ onload = () => runDocumentLeakTest({ frameURL: "resources/lazy-image-loading-document-leak-frame.html", framesToCreate: 10 });
+</script>
+</body>
+</html>

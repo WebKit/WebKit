@@ -1,0 +1,15 @@
+
+PASS [[SetPrototypeOf]] and [[GetPrototypeOf]]
+PASS [[PreventExtensions]] and [[IsExtensible]]
+PASS [[GetOwnProperty]]
+PASS [[GetOwnProperty]] (named property visibility algorithm)
+PASS [[DefineOwnProperty]]
+PASS [[HasProperty]]
+PASS [[Get]]
+PASS [[Get]] (named property visibility algorithm)
+PASS [[Set]] (direct)
+PASS [[Set]] (prototype chain)
+PASS [[Set]] (Reflect.set)
+PASS [[Delete]]
+PASS [[OwnPropertyKeys]]
+

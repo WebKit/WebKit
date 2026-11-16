@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: HierarchyRequestError: The operation would yield an incorrect node tree.
+CONSOLE MESSAGE: HierarchyRequestError: The operation would yield an incorrect node tree.
+CONSOLE MESSAGE: HierarchyRequestError: The operation would yield an incorrect node tree.
+CONSOLE MESSAGE: HierarchyRequestError: The operation would yield an incorrect node tree.
+CONSOLE MESSAGE: HierarchyRequestError: The operation would yield an incorrect node tree.
+PASS document.replaceChild(document.body, document.documentElement) threw exception HierarchyRequestError: The operation would yield an incorrect node tree..
+

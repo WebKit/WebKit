@@ -1,0 +1,10 @@
+Numbers with leading zero, a minus sign, or a plus sign are not valid ordered-list markers; typing them should not trigger smart-list conversion.
+
+Zero:
+| "0. Hello<#selection-caret>"
+
+Negative number:
+| "-42. Hello<#selection-caret>"
+
+Plus-prefixed number:
+| "+42. Hello<#selection-caret>"

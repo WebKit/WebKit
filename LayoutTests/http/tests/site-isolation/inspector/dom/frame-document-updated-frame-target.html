@@ -1,0 +1,173 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function addCrossOriginIFrame(name) {
+    let iframe = document.createElement("iframe");
+    iframe.id = name + "-frame";
+    // Unique per run, so repeated runs in one process don't load the frame from the memory cache.
+    iframe.src = "http://localhost:8000/site-isolation/inspector/dom/resources/slow-parse-frame.html?" + name + "&" + Math.random();
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDocumentUpdated");
+
+    let pageBody = null;
+    let staticTarget = null;
+    let staticIFrame = null;
+
+    // Copied from frame-document-splicing-frame-target.html.
+    async function frameTargetForURLContainingWhenReady(substring, maxAttempts = 50) {
+        for (let attempt = 0; attempt < maxAttempts; ++attempt) {
+            let target = await frameTargetForURLContaining(substring);
+            if (target && WI.domManager.frameTargetDocumentForTarget(target))
+                return target;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return null;
+    }
+
+    async function childElement(parent, predicate) {
+        await new Promise((resolve) => parent.getChildNodes(resolve));
+        return (parent.children || []).find(predicate) || null;
+    }
+
+    // Dispatches the replies and events for commands sent to the target's DOM agent before this, and for any they sent.
+    async function flushFrameDOMAgent(target) {
+        await target.DOMAgent.getSupportedEventNames();
+        await target.DOMAgent.getSupportedEventNames();
+    }
+
+    // Evaluating in every frame target instead can hang on the parent-process target, destroyed when the provisional one commits.
+    async function awaitFrameDocumentForURL(substring) {
+        while (true) {
+            let target = WI.targets.find((target) => WI.domManager.frameTargetDocumentForTarget(target)?.documentURL?.includes(substring));
+            if (target)
+                return target;
+            await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+        }
+    }
+
+    async function waitForFrameLoaded(target) {
+        let loaded = await waitForExpressionInTarget(target, `document.readyState === "complete"`, 50);
+        InspectorTest.assert(loaded, "Timed out waiting for the frame to finish loading.");
+        await flushFrameDOMAgent(target);
+    }
+
+    async function expectCompleteFrameDocument(iframeElement, target) {
+        let frameDocument = WI.domManager.frameTargetDocumentForTarget(target);
+        InspectorTest.expectEqual(frameDocument?.parentNode ?? null, iframeElement, "The frame target's current document should be spliced into the <iframe>.");
+
+        let shownDocument = iframeElement.children?.[0] ?? null;
+        InspectorTest.expectEqual(shownDocument, frameDocument, "The <iframe> should show the frame target's current document.");
+
+        let html = shownDocument ? await childElement(shownDocument, (node) => node.nodeName() === "HTML") : null;
+        let head = html ? await childElement(html, (node) => node.nodeName() === "HEAD") : null;
+        let title = head ? await childElement(head, (node) => node.nodeName() === "TITLE") : null;
+        InspectorTest.expectNotNull(title, "<head> should contain <title>.");
+
+        let body = html ? await childElement(html, (node) => node.nodeName() === "BODY") : null;
+        InspectorTest.expectNotNull(body, "<html> should contain <body>.");
+
+        let marker = body ? await childElement(body, (node) => node.getAttribute("id") === "parsed-after-stall") : null;
+        InspectorTest.expectNotNull(marker, "<body> should contain the content parsed after the stall.");
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        async test() {
+            staticTarget = await frameTargetForURLContainingWhenReady("slow-parse-frame.html?static");
+            InspectorTest.expectNotNull(staticTarget, "Should find the static frame's target.");
+            await waitForFrameLoaded(staticTarget);
+
+            let pageDocument = await WI.domManager.requestDocument();
+            pageBody = pageDocument.body;
+            staticIFrame = await childElement(pageBody, (node) => node.getAttribute("id") === "static-frame");
+            InspectorTest.expectNotNull(staticIFrame, "Should find the static <iframe> in the page tree.");
+
+            await expectCompleteFrameDocument(staticIFrame, staticTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentUpdated.ReloadInSameProcess",
+        description: "Reloading a cross-origin iframe after its document was requested should leave the new document complete in the tree.",
+        async test() {
+            let documentUpdatedCount = 0;
+            let originalHandler = WI.domManager._frameTargetDocumentUpdated;
+            WI.domManager._frameTargetDocumentUpdated = function(target) {
+                if (target === staticTarget)
+                    ++documentUpdatedCount;
+                return originalHandler.call(this, target);
+            };
+
+            await staticTarget.RuntimeAgent.evaluate.invoke({expression: "location.reload()", objectGroup: "test"});
+            let reloaded = await waitForExpressionInTarget(staticTarget, `performance.getEntriesByType("navigation")[0]?.type === "reload" && document.readyState === "complete"`, 50);
+            InspectorTest.assert(reloaded, "Timed out waiting for the frame to finish reloading.");
+            await flushFrameDOMAgent(staticTarget);
+
+            WI.domManager._frameTargetDocumentUpdated = originalHandler;
+            InspectorTest.expectEqual(documentUpdatedCount, 1, "A reload should send `DOM.documentUpdated` once.");
+
+            await expectCompleteFrameDocument(staticIFrame, staticTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentUpdated.SupersededGetDocumentIgnored",
+        description: "When two `DOM.documentUpdated` arrive within one round trip, only the newest `DOM.getDocument` reply should be used.",
+        async test() {
+            // Simulated in the frontend, so two requests are in flight whatever the backend sends.
+            WI.domManager._frameTargetDocumentUpdated(staticTarget);
+            WI.domManager._frameTargetDocumentUpdated(staticTarget);
+            await flushFrameDOMAgent(staticTarget);
+
+            await expectCompleteFrameDocument(staticIFrame, staticTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentUpdated.DynamicallyInsertedIFrame",
+        description: "A cross-origin iframe inserted while Web Inspector is open should show its complete document.",
+        async test() {
+            await InspectorTest.evaluateInPage(`addCrossOriginIFrame("dynamic")`);
+            let target = await awaitFrameDocumentForURL("slow-parse-frame.html?dynamic");
+            await waitForFrameLoaded(target);
+
+            let iframeElement = (pageBody.children || []).find((node) => node.getAttribute("id") === "dynamic-frame") || null;
+            InspectorTest.expectNotNull(iframeElement, "Should find the inserted <iframe> in the page tree.");
+            if (iframeElement)
+                await expectCompleteFrameDocument(iframeElement, target);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentUpdated.NestedSameProcessIFrame",
+        description: "An iframe inserted inside a cross-origin iframe, in that iframe's process, should show its complete document.",
+        async test() {
+            // With <body>'s children loaded, the nested <iframe> arrives without an inline contentDocument, so its target's document can splice.
+            let staticDocument = WI.domManager.frameTargetDocumentForTarget(staticTarget);
+            let staticHTML = await childElement(staticDocument, (node) => node.nodeName() === "HTML");
+            let staticBody = await childElement(staticHTML, (node) => node.nodeName() === "BODY");
+            await new Promise((resolve) => staticBody.getChildNodes(resolve));
+
+            await staticTarget.RuntimeAgent.evaluate.invoke({expression: "addNestedFrame()", objectGroup: "test"});
+            let target = await awaitFrameDocumentForURL("slow-parse-frame.html?nested");
+            await waitForFrameLoaded(target);
+
+            let nestedIFrame = (staticBody.children || []).find((node) => node.getAttribute("id") === "nested-frame") || null;
+            InspectorTest.expectNotNull(nestedIFrame, "Should find the nested <iframe> in the static frame's tree.");
+            if (nestedIFrame)
+                await expectCompleteFrameDocument(nestedIFrame, target);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a cross-origin iframe's document stays complete in the DOM tree when the iframe reloads or is inserted while Web Inspector is open.</p>
+<script>addCrossOriginIFrame("static");</script>
+</body>

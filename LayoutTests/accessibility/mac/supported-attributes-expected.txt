@@ -1,0 +1,23 @@
+This test checks that various element types support the expected attributes.
+
+Static text:
+PASS: staticText.role === 'AXRole: AXStaticText'
+PASS: staticText.isAttributeSupported('AXIntersectionWithSelectionRange') === true
+PASS: staticText.isAttributeSupported('AXIntersectTextMarkerRanges') === true
+
+Text field:
+PASS: textField.role === 'AXRole: AXTextField'
+PASS: textField.isAttributeSupported('AXIntersectionWithSelectionRange') === true
+PASS: textField.isAttributeSupported('AXIntersectTextMarkerRanges') === true
+
+Text area:
+PASS: textArea.role === 'AXRole: AXTextArea'
+PASS: textArea.isAttributeSupported('AXIntersectionWithSelectionRange') === true
+PASS: textArea.isAttributeSupported('AXIntersectTextMarkerRanges') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is static text.
+
+

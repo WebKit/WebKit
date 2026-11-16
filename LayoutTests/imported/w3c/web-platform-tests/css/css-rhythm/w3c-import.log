@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-establishes-block-formatting-context-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-establishes-block-formatting-context-list-item-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-establishes-block-formatting-context-list-item.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-establishes-block-formatting-context.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-establishes-independent-formatting-context-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-establishes-independent-formatting-context-list-item-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-establishes-independent-formatting-context-list-item.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-establishes-independent-formatting-context.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-none-does-not-establish-block-formatting-context-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-none-does-not-establish-block-formatting-context.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-none-does-not-establish-indepdendent-formatting-context-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/block-step-size-none-does-not-establish-indepdendent-formatting-context.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/content-based-height-rounds-up-to-step-unit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/content-based-height-rounds-up-to-step-unit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/definite-height-rounds-up-to-next-multiple-of-step-unit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/definite-height-rounds-up-to-next-multiple-of-step-unit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/definite-height-rounds-up-to-step-unit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/definite-height-rounds-up-to-step-unit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/definite-height-same-as-step-unit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/definite-height-same-as-step-unit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/zero-outer-size-rounded-up-to-block-step-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-rhythm/zero-outer-size-rounded-up-to-block-step-size.html

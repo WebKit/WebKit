@@ -1,0 +1,12 @@
+Tests the behavior of Accept Headers in Lockdown Mode. We do not restrict our Accept Headers to only the allowed formats when requested by an insecure source.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Confirmed Lockdown Mode process
+PASS HEIC failed to parse.
+PASS Image failed to parse.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

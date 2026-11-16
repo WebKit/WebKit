@@ -1,0 +1,47 @@
+This test checks that grid-template-areas is properly parsed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting grid-template-areas set through CSS.
+PASS getComputedStyle(gridWithDefaultTemplate).getPropertyValue('grid-template-areas') is "none"
+PASS getComputedStyle(gridWithSingleStringTemplate).getPropertyValue('grid-template-areas') is "\"area\""
+PASS getComputedStyle(gridWithTwoColumnsTemplate).getPropertyValue('grid-template-areas') is "\"first second\""
+PASS getComputedStyle(gridWithTwoRowsTemplate).getPropertyValue('grid-template-areas') is "\"first\" \"second\""
+PASS getComputedStyle(gridWithSpanningColumnsTemplate).getPropertyValue('grid-template-areas') is "\"span span\""
+PASS getComputedStyle(gridWithSpanningRowsDotTemplate).getPropertyValue('grid-template-areas') is "\"span\" \".\""
+PASS getComputedStyle(gridWithSpanningRowsDotsTemplate).getPropertyValue('grid-template-areas') is "\"span\" \".\""
+PASS getComputedStyle(gridWithDotColumn).getPropertyValue('grid-template-areas') is "\"header .\" \"footer .\""
+PASS getComputedStyle(gridWithDotsColumn).getPropertyValue('grid-template-areas') is "\"header .\" \"footer .\""
+PASS getComputedStyle(gridWithDotCells).getPropertyValue('grid-template-areas') is "\"first .\" \". second\""
+PASS getComputedStyle(gridWithDotsCells).getPropertyValue('grid-template-areas') is "\"first .\" \". second\""
+PASS getComputedStyle(gridWithComplexDotAreas).getPropertyValue('grid-template-areas') is "\". header header .\" \". . . .\" \"nav main main aside\" \"nav main main aside\" \". . . aside\" \". footer footer aside\""
+PASS getComputedStyle(gridWithComplexDotsAreas).getPropertyValue('grid-template-areas') is "\". header header .\" \". . . .\" \"nav main main aside\" \"nav main main aside\" \". . . aside\" \". footer footer aside\""
+PASS getComputedStyle(gridWithMixedDotAndDotsAreas).getPropertyValue('grid-template-areas') is "\". title .\" \". main main\" \"nav . aside\" \". footer .\""
+PASS getComputedStyle(gridWithDotsNoSpaceTwoColumns).getPropertyValue('grid-template-areas') is "\". A\" \". A\" \"B .\" \"B .\""
+PASS getComputedStyle(gridWithDotsNoSpaceThreeColumns).getPropertyValue('grid-template-areas') is "\". A .\" \". A .\" \"B . C\" \"B . C\""
+PASS getComputedStyle(gridWithDotsNoSpaceFourColumns).getPropertyValue('grid-template-areas') is "\". A . B\" \". A . B\" \". A . B\" \". A . B\" \"C . D .\" \"C . D .\" \"C . D .\" \"C . D .\""
+PASS getComputedStyle(gridWithDotsNoSpaceComplex).getPropertyValue('grid-template-areas') is "\". title . nav . . main test\" \". title . nav . . main test\" \". title . nav . . main test\" \". title . nav . . main test\""
+PASS getComputedStyle(gridWithHorizontalRectangle).getPropertyValue('grid-template-areas') is "\"a a a\" \"a a a\""
+PASS getComputedStyle(gridWithVerticalRectangle).getPropertyValue('grid-template-areas') is "\"a a\" \"a a\" \"a a\""
+Test grid-template-areas: initial
+PASS getComputedStyle(element).getPropertyValue('grid-template-areas') is "\"foobar\""
+PASS getComputedStyle(element).getPropertyValue('grid-template-areas') is "none"
+PASS getComputedStyle(element).getPropertyValue('grid-template-areas') is "\"foobar\""
+PASS getComputedStyle(element).getPropertyValue('grid-template-areas') is "none"
+Test grid-template-areas: inherit
+PASS getComputedStyle(parentElement).getPropertyValue('grid-template-areas') is "\"foo bar\""
+PASS getComputedStyle(element).getPropertyValue('grid-template-areas') is "\"foo bar\""
+Test invalid grid-template-areas values.
+PASS getComputedStyle(element).getPropertyValue('grid-template-areas') is "none"
+PASS getComputedStyle(element).getPropertyValue('grid-template-areas') is "none"
+PASS getComputedStyle(element).getPropertyValue('grid-template-areas') is "none"
+PASS getComputedStyle(element).getPropertyValue('grid-template-areas') is "none"
+PASS getComputedStyle(element).getPropertyValue('grid-template-areas') is "none"
+
+FIXME: We currently don't validate that the named grid areas are <indent>.
+FAIL getComputedStyle(element).getPropertyValue('grid-template-areas') should be none. Was "nav-up".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+;
+
+PASS Live range updates properly when its boundaries span multiple merged text nodes
+PASS Live range updates properly when collapsed into single merged text node in range of multiple
+PASS Live range updates properly when its boundaries are initially indices to merged nodes
+PASS Live range updates properly when text nodes merged before and after them
+

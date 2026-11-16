@@ -1,0 +1,14 @@
+This test ensures flipping direction to right-to-left after load rearranges where the children are drawn without rearranging the order the accessibility tree reports them in.
+
+Left to right: DOM order and drawing order agree.
+PASS: childTitles() === 'One, Two, Three'
+PASS: firstIsDrawnLeftOfThird() === true
+
+Right to left: the first child is now drawn rightmost, and the reported order is unchanged.
+PASS: firstIsDrawnLeftOfThird() === false
+PASS: childTitles() === 'One, Two, Three'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

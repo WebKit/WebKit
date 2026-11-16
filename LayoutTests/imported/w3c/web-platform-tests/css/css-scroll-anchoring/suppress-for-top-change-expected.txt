@@ -1,0 +1,3 @@
+
+PASS Changing `top` on a positioned anchor should not trigger anchoring
+

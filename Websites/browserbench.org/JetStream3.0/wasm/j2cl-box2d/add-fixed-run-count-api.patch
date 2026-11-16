@@ -1,0 +1,77 @@
+diff --git a/benchmarking/java/com/google/j2cl/benchmarking/benchmarks.bzl b/benchmarking/java/com/google/j2cl/benchmarking/benchmarks.bzl
+index 04c4c72007..601cafdcb5 100644
+--- a/benchmarking/java/com/google/j2cl/benchmarking/benchmarks.bzl
++++ b/benchmarking/java/com/google/j2cl/benchmarking/benchmarks.bzl
+@@ -95,6 +95,7 @@ def benchmark(name, deps = [], data = [], jvm_only = False, perfgate_test_tags =
+             "%s.%sLauncher#execute" % (benchmark_java_package, name),
+             "%s.%sLauncher#prepareForRunOnce" % (benchmark_java_package, name),
+             "%s.%sLauncher#runOnce" % (benchmark_java_package, name),
++            "%s.%sLauncher#runFixedCount" % (benchmark_java_package, name),
+         ],
+     )
+ 
+diff --git a/benchmarking/java/com/google/j2cl/benchmarking/templates.bzl b/benchmarking/java/com/google/j2cl/benchmarking/templates.bzl
+index b75b8567dd..8e083f9aa2 100644
+--- a/benchmarking/java/com/google/j2cl/benchmarking/templates.bzl
++++ b/benchmarking/java/com/google/j2cl/benchmarking/templates.bzl
+@@ -34,6 +34,17 @@ public class #benchmarkName#Launcher {
+     benchmark.run();
+     benchmark = null; // Make sure it is only executed once.
+   }
++
++  public static void runFixedCount(int count) {
++    AbstractBenchmark bench = new #benchmarkName#();
++    bench.setupOneTime();
++    for (int i = 0; i < count; i++) {
++      bench.setup();
++      bench.run();
++      bench.tearDown();
++    }
++    bench.tearDownOneTime();
++  }
+ }
+ """
+ 
+@@ -54,7 +65,12 @@ goog.module('#benchmarkName#_launcher')
+ 
+ const j2wasm = goog.require('#wasm_module_name#');
+ 
+-if (typeof read == 'undefined') {
++if (typeof isJetStreamDriver !== 'undefined') {
++  // Running as a JetStream benchmark; expose "instantiateAsync" to JetStream driver.
++  goog.global['instantiateAsync'] = async function(buffer) {
++    return j2wasm.instantiate(await j2wasm.compile(buffer));
++  }
++} else if (typeof read == 'undefined') {
+   // Running on browser, fetch the file from server.
+   j2wasm.instantiateStreaming("#wasm_url#")
+       .then((instance) => Object.assign(goog.global, instance.exports));
+diff --git a/build_defs/internal_do_not_use/j2wasm_application.bzl b/build_defs/internal_do_not_use/j2wasm_application.bzl
+index 36d3abaacd..211319deb9 100644
+--- a/build_defs/internal_do_not_use/j2wasm_application.bzl
++++ b/build_defs/internal_do_not_use/j2wasm_application.bzl
+@@ -50,6 +50,15 @@ async function compileStreaming(urlOrResponse) {
+   return WebAssembly.compileStreaming(response, options);
+ }
+ 
++/**
++ * @param {!BufferSource} moduleBuffer
++ * @return {!Promise<!WebAssembly.Module>}
++ * @suppress {checkTypes} Externs are missing options parameter (phase 2)
++ */
++async function compile(moduleBuffer) {
++  return WebAssembly.compile(moduleBuffer, options);
++}
++
+ /**
+  * @param {!WebAssembly.Module} module
+  * @return {!Promise<!WebAssembly.Instance>}
+@@ -91,7 +100,7 @@ function prepareImports(module) {
+   return imports;
+ }
+ 
+-exports = {compileStreaming, instantiate, instantiateStreaming, instantiateBlocking};
++exports = {compile, compileStreaming, instantiate, instantiateStreaming, instantiateBlocking};
+ """
+ 
+ def _impl_j2wasm_application(ctx):

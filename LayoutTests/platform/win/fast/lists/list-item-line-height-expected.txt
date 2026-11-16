@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 654x19
+          text run at (0,0) width 654: "This test demonstrates that list items are not affected by the quirk that shrinks line boxes with no text children."
+      RenderBlock {UL} at (0,36) size 784x60
+        RenderListItem {LI} at (40,0) size 744x30
+          RenderListMarker at (-17,10) size 10x10
+          RenderInline {SPAN} at (0,0) size 26x19
+            RenderText {#text} at (0,5) size 26x19
+              text run at (0,5) width 26: "One"
+          RenderText {#text} at (0,0) size 0x0
+        RenderListItem {LI} at (40,30) size 744x30
+          RenderListMarker at (-17,10) size 10x10
+          RenderInline {SPAN} at (0,0) size 28x19
+            RenderText {#text} at (0,5) size 28x19
+              text run at (0,5) width 28: "Two"
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {UL} at (0,112) size 784x60
+        RenderListItem {LI} at (40,0) size 744x30
+          RenderInline {SPAN} at (0,0) size 35x19
+            RenderText {#text} at (0,5) size 35x19
+              text run at (0,5) width 35: "Three"
+          RenderText {#text} at (0,0) size 0x0
+        RenderListItem {LI} at (40,30) size 744x30
+          RenderInline {SPAN} at (0,0) size 29x19
+            RenderText {#text} at (0,5) size 29x19
+              text run at (0,5) width 29: "Four"
+          RenderText {#text} at (0,0) size 0x0

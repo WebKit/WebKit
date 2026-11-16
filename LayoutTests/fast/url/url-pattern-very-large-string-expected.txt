@@ -1,0 +1,12 @@
+Test that trying to create a URLPattern with a very large input string will not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Attemping to set large string as input to URLPattern...
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+PASS url-pattern-very-large-string
+

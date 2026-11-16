@@ -1,0 +1,13 @@
+This tests that the prefers non-blinking cursor setting stops and starts caret blinking as expected.
+
+PASS: internals.isCaretBlinkingSuspended(document) === false
+PASS: internals.isCaretBlinkingSuspended(document) === true
+PASS: internals.isCaretBlinkingSuspended(document) === false
+PASS: internals.isCaretBlinkingSuspended(iframe.contentDocument) === false
+PASS: internals.isCaretBlinkingSuspended(iframe.contentDocument) === true
+PASS: internals.isCaretBlinkingSuspended(iframe.contentDocument) === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

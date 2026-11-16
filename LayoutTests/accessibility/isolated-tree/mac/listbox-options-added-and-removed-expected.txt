@@ -1,0 +1,16 @@
+This test ensures that a list box exposes options that are added to it or removed from it, also inside an optgroup or a div.
+
+PASS: axSelect.childrenCount === 4
+PASS: axSelect.childrenCount === 5
+PASS: axSelect.childAtIndex(4)?.domIdentifier === 'cherry'
+PASS: axSelect.childrenCount === 6
+PASS: axSelect.childAtIndex(3)?.domIdentifier === 'date'
+PASS: axSelect.childrenCount === 7
+PASS: axSelect.childAtIndex(5)?.domIdentifier === 'elderberry'
+PASS: axSelect.childrenCount === 6
+PASS: axSelect.childAtIndex(0)?.domIdentifier === 'group'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+This paragraph should have a green background and a green thick solid border because it carries both classes t1 and t2.
+
+This line should be green.
+
+PASS p.t1.t2 should have green background and border
+PASS div.test should have green background
+

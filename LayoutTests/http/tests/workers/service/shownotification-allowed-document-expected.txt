@@ -1,0 +1,13 @@
+This tests that a notification shown by a service worker registration in a document can be clicked and closed, with those actions being observable by the service worker
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Notification.permission is "granted"
+PASS threwDataCloneError is true
+PASS gotClicked is false
+PASS gotClosed is false
+PASS gotClicked is true
+PASS gotClosed is false
+PASS Close has been observed
+

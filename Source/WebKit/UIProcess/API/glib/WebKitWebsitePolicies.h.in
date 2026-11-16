@@ -1,0 +1,117 @@
+/*
+ * Copyright (C) 2020 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#pragma once
+
+#include <gio/gio.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_WEBSITE_POLICIES            (webkit_website_policies_get_type())
+#if !ENABLE(2022_GLIB_API)
+#define WEBKIT_WEBSITE_POLICIES(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEBSITE_POLICIES, WebKitWebsitePolicies))
+#define WEBKIT_IS_WEBSITE_POLICIES(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEBSITE_POLICIES))
+#define WEBKIT_WEBSITE_POLICIES_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEBSITE_POLICIES, WebKitWebsitePoliciesClass))
+#define WEBKIT_IS_WEBSITE_POLICIES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEBSITE_POLICIES))
+#define WEBKIT_WEBSITE_POLICIES_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEBSITE_POLICIES, WebKitWebsitePoliciesClass))
+
+struct _WebKitWebsitePoliciesClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebsitePolicies, webkit_website_policies, WEBKIT, WEBSITE_POLICIES, GObject)
+
+/**
+ * WebKitAutoplayPolicy:
+ * @WEBKIT_AUTOPLAY_ALLOW: Do not restrict autoplay.
+ * @WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND: Allow videos to autoplay if
+ *     they have no audio track, or if their audio track is muted.
+ * @WEBKIT_AUTOPLAY_DENY: Never allow autoplay.
+ *
+ * Enum values used to specify autoplay policies.
+ *
+ * Since: 2.30
+ */
+typedef enum {
+    WEBKIT_AUTOPLAY_ALLOW,
+    WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND,
+    WEBKIT_AUTOPLAY_DENY
+} WebKitAutoplayPolicy;
+
+/**
+ * WebKitUpgradeToHTTPSPolicy:
+ * @WEBKIT_UPGRADE_TO_HTTPS_POLICY_KEEP_AS_REQUESTED: Do not request an upgrade.
+ *     Note that this does not disable HSTS, which applies to every navigation.
+ * @WEBKIT_UPGRADE_TO_HTTPS_POLICY_AUTOMATIC_FALLBACK_TO_HTTP: Upgrade HTTP
+ *     navigations to HTTPS, silently falling back to HTTP if the HTTPS load
+ *     fails. Cleartext HTTP is still allowed for navigations that cannot be
+ *     upgraded.
+ * @WEBKIT_UPGRADE_TO_HTTPS_POLICY_ERROR_ON_FAILURE: Upgrade HTTP navigations to
+ *     HTTPS and never load insecurely. Navigations that cannot be upgraded, and
+ *     upgraded navigations whose HTTPS load fails, fail with
+ *     %WEBKIT_NETWORK_ERROR_HTTP_NAVIGATION_WITH_HTTPS_ONLY. This applies to
+ *     every scheme that is not registered as secure, not only HTTP, so custom
+ *     schemes need [method@SecurityManager.register_uri_scheme_as_secure] to
+ *     remain loadable.
+ *
+ * Enum values used to specify how HTTP navigations are upgraded to HTTPS.
+ *
+ * This is an optimistic upgrade attempted without any prior knowledge about the
+ * host. This is unlike and independent of HSTS which will never downgrade to
+ * HTTP.
+ *
+ * Only main frame navigations are upgraded; requests to localhost and to IP
+ * addresses are never upgraded. Falling back to HTTP is never done for TLS
+ * failures, which always fail the load.
+ *
+ * Since: 2.56
+ */
+typedef enum {
+    WEBKIT_UPGRADE_TO_HTTPS_POLICY_KEEP_AS_REQUESTED,
+    WEBKIT_UPGRADE_TO_HTTPS_POLICY_AUTOMATIC_FALLBACK_TO_HTTP,
+    WEBKIT_UPGRADE_TO_HTTPS_POLICY_ERROR_ON_FAILURE
+} WebKitUpgradeToHTTPSPolicy;
+
+WEBKIT_API WebKitWebsitePolicies *
+webkit_website_policies_new                                   (void);
+
+WEBKIT_API WebKitWebsitePolicies *
+webkit_website_policies_new_with_policies                     (const gchar           *first_policy_name,
+                                                               ...);
+
+WEBKIT_API WebKitAutoplayPolicy
+webkit_website_policies_get_autoplay_policy                   (WebKitWebsitePolicies *policies);
+
+WEBKIT_API const gchar *
+webkit_website_policies_get_custom_user_agent                 (WebKitWebsitePolicies *policies);
+
+WEBKIT_API WebKitUpgradeToHTTPSPolicy
+webkit_website_policies_get_upgrade_to_https_policy           (WebKitWebsitePolicies *policies);
+
+G_END_DECLS

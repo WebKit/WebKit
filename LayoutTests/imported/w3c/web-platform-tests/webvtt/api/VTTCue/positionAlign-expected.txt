@@ -1,0 +1,3 @@
+
+PASS VTTCue.positionAlign, script-created cue
+

@@ -1,0 +1,50 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+  const format = 'bgra8unorm';
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let commandEncoder = device.createCommandEncoder();
+    let module = device.createShaderModule({
+      code: `
+@group(0) @binding(0) var<storage, read> o: vec4f;
+
+@vertex
+fn v() -> @builtin(position) vec4f {
+  return vec4();
+}
+
+@fragment
+fn f() -> @location(0) vec4f {
+  return o;
+}
+`,
+    });
+    let renderPipeline = device.createRenderPipeline({
+      layout: device.createPipelineLayout({bindGroupLayouts:[]}),
+      vertex: {module, buffers: [{arrayStride: 0, attributes: []}]},
+      fragment: {module, targets: [{format}]},
+      primitive: {topology: 'point-list'},
+    });
+
+    let texture = device.createTexture({format, size: [1, 1, 1], usage: GPUTextureUsage.RENDER_ATTACHMENT});
+    let view = texture.createView();
+    let renderPassEncoder = commandEncoder.beginRenderPass({colorAttachments: [{view, loadOp: 'clear', storeOp: 'store'}]});
+    renderPassEncoder.setPipeline(renderPipeline);
+    renderPassEncoder.draw(1);
+    renderPassEncoder.end();
+    let commandBuffer = commandEncoder.finish();
+    device.queue.submit([commandBuffer]);
+    await device.queue.onSubmittedWorkDone();
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log(`no validation error`);
+    }
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

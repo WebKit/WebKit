@@ -1,0 +1,4 @@
+
+FAIL markers are respected in declarative shadow root assert_equals: expected "abc" but got "b"
+FAIL markers are respected in imperative shadow root with streaming promise_test: Unhandled rejection with value: object "TypeError: shadow.streamAppendHTMLUnsafe is not a function. (In 'shadow.streamAppendHTMLUnsafe()', 'shadow.streamAppendHTMLUnsafe' is undefined)"
+

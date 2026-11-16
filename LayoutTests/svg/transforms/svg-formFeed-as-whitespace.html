@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div>Form-feed should be treated as whitespace. Only green rects should be visible.</div>
+
+<svg xmlns="http://www.w3.org/2000/svg">
+<rect x="100" y="100" width="50" height="50" fill="red"/>
+<!-- Use char code for HORIZONTAL TAB &#09; -->
+<rect x="50" y="50" width="50" height="50" fill="green" transform="translate(50&#09;50)"/>
+
+<rect x="200" y="100" width="50" height="50" fill="red"/>
+<!-- Use char code for LINE FEED &#10; -->
+<rect x="50" y="50" width="50" height="50" fill="green" transform="translate(150&#10;50)"/>
+
+<rect x="300" y="100" width="50" height="50" fill="red"/>
+<!-- Use char code for FORM FEED &#12; -->
+<rect x="50" y="50" width="50" height="50" fill="green" transform="translate(250&#12;50)"/>
+
+<rect x="400" y="100" width="50" height="50" fill="red"/>
+<!-- Use char code for CARRIAGE RETURN &#13; -->
+<rect x="50" y="50" width="50" height="50" fill="green" transform="translate(350&#13;50)"/>
+
+<rect x="500" y="100" width="50" height="50" fill="red"/>
+<!-- Use char code for SPACE &#32; -->
+<rect x="50" y="50" width="50" height="50" fill="green" transform="translate(450&#32;50)"/>
+</svg>
+</body>
+</html>

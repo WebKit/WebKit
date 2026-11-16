@@ -1,0 +1,4 @@
+
+PASS sendBeacon should not throw.
+PASS redirect case
+

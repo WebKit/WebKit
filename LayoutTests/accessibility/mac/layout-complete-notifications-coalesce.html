@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<script>
+var output = "This test ensures that repeatedly forcing synchronous layout without returning to the run loop (as happens when JavaScript forces layout in a loop) does not accumulate one AXLayoutComplete notification per layout.\n\n\n\n";
+
+var layoutCompleteCount = 0;
+function notificationCallback(element, notification) {
+    if (notification == "AXLayoutComplete")
+        layoutCompleteCount++;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // Build the root accessibility object so LayoutComplete notifications are actually posted.
+    accessibilityController.rootElement;
+    accessibilityController.addNotificationListener(notificationCallback);
+
+    var forcedLayoutCount = 1000;
+    setTimeout(async function() {
+        // Ignore any AXLayoutComplete from the initial page load.
+        layoutCompleteCount = 0;
+
+        // Force many synchronous layouts in a tight loop without yielding to the run loop, so the
+        // zero-delay notification-post timer never fires between layouts. Each forced layout posts an
+        // AXLayoutComplete for the same (root) object; without coalescing these would accumulate
+        // one-per-layout in m_notificationsToPost.
+        for (var i = 0; i < forcedLayoutCount; i++) {
+            document.body.appendChild(document.createElement("div"));
+            document.body.offsetHeight; // Force synchronous layout.
+        }
+
+        // Yield to the run loop so the notification-post timer fires and the pending notifications post.
+        await waitFor(() => layoutCompleteCount >= 1);
+
+        // With coalescing we expect roughly one AXLayoutComplete (per object) for the whole batch.
+        output += expect("layoutCompleteCount < 50", "true");
+
+        accessibilityController.removeNotificationListener(notificationCallback);
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

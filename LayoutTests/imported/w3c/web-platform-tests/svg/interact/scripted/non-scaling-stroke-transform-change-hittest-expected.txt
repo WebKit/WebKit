@@ -1,0 +1,5 @@
+
+PASS elementFromPoint(...) on non-scaling strokes after a transform change, initial scale(4)
+FAIL elementFromPoint(...) on non-scaling strokes after a transform change, after changing to scale(2) assert_equals: ancestor transform change expected Element node <rect id="groupRect" x="10" y="10" width="20" height="20"... but got Element node <svg id="svg" width="400" height="400">
+  <g id="group" t...
+

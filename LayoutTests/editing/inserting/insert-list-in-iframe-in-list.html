@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+<script>
+function testonload() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.getSelection().setBaseAndExtent(dd, 0, iframe, 0);
+    document.execCommand("insertOrderedList", false);
+}
+function iframehandler() {
+    document.execCommand("insertUnorderedList", false);
+}
+</script>
+</head>
+<body onload=testonload()>
+    <dd id="dd" contenteditable="true">
+        <li>
+        <iframe id="iframe" onload="iframehandler()"></iframe>
+        </li>
+    </dd>
+    <p>This tests that we do not crash while inserting either list.</p>
+    PASS
+</body>
+</html>

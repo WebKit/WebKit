@@ -1,0 +1,8 @@
+
+PASS Zero initial, no maximum
+PASS Non-zero initial, no maximum
+PASS Zero maximum
+PASS None-zero maximum
+PASS non-shared memory
+PASS shared memory
+

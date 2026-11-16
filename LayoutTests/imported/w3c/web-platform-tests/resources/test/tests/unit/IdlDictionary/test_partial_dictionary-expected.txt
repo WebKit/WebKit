@@ -1,0 +1,14 @@
+dictionary A {};
+partial dictionary A {
+  boolean B;
+};
+partial dictionary A {
+  boolean C;
+};
+
+PASS Partial dictionaries
+PASS Partial dictionary A: original dictionary defined
+PASS Partial dictionary A: member names are unique
+PASS Partial dictionary A[2]: original dictionary defined
+PASS Partial dictionary A[2]: member names are unique
+

@@ -1,0 +1,27 @@
+
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureToStartAudiblePlaybackWhenHidden"))
+RUN(internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 0.5))
+RUN(video.play())
+Promise resolved OK
+RUN(testRunner.setPageVisibility("hidden"))
+play() requested within the grace period, data arrives after it
+RUN(video.pause())
+RUN(video.play())
+Promise resolved OK
+autoplay requested within the grace period, data arrives after it
+RUN(video.pause())
+RUN(video.autoplay = true)
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+script play() during a granted autoplay load, after the grace period
+RUN(video.pause())
+RUN(video.play())
+Promise rejected correctly OK
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+autoplay removed before data arrives
+RUN(video.pause())
+RUN(video.autoplay = false)
+EXPECTED (video.paused == 'true') OK
+END OF TEST
+

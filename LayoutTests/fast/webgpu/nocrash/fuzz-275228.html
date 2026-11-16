@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice({ requiredLimits: { maxTextureArrayLayers: 1875 } });
+    let texture = device.createTexture({ size: { width: 604 }, mipLevelCount: 2, format: 'rg16uint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView({ baseMipLevel: 1, arrayLayerCount: 1 });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: []});
+    let shaderModule = device.createShaderModule({ code: `
+        @fragment fn fragment0() -> @location(0) vec4u {
+            return vec4u();
+        }
+        @vertex fn vertex0() -> @builtin(position) vec4<f32> {
+            return vec4();
+        }
+    `});
+    let pipeline = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'rg16uint', writeMask: GPUColorWrite.RED }] },
+        vertex: { module: shaderModule, buffers: [, , , , { arrayStride: 1004, attributes: [{ format: 'float32x3', offset: 256, shaderLocation: 0 }] }] },
+    });
+    let buffer = device.createBuffer({ size: 280, usage: GPUBufferUsage.VERTEX });
+    let buffer2 = device.createBuffer({ size: 320, usage: GPUBufferUsage.INDEX });
+    let renderPassEncoder = device.createCommandEncoder().beginRenderPass({
+        colorAttachments: [{ view: textureView, loadOp: 'load', storeOp: 'store' }]
+    });
+    renderPassEncoder.setPipeline(pipeline);
+    renderPassEncoder.setIndexBuffer(buffer2, 'uint16');
+    renderPassEncoder.setVertexBuffer(4, buffer);
+    device.destroy();
+    renderPassEncoder.drawIndexed(153);
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

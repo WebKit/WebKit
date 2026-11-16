@@ -1,0 +1,23 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # name: string; the name of the extension.
+  #%]
+
+[% USE String('#') %]
+[% name %]
+[%+ String.repeat(name.length) %]
+
+This is a sample User documentation file for the [% name %] extension.
+Like all of the Bugzilla docs, it's written in
+`reStructured Text (reST) format <http://sphinx-doc.org/latest/rest.html>`_
+and will be compiled by `Sphinx <http://sphinx-doc.org/>`_.
+
+If you build the docs yourself using :file:`makedocs.pl`, this file will get
+incorporated into the Installed Extensions chapter of the User Guide.

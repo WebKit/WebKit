@@ -1,0 +1,4 @@
+
+PASS Idempotent text autosizing does not inflate text with <meta name=text-scale content=scale>
+PASS Removing and adding the text-scale meta toggles idempotent text autosizing
+

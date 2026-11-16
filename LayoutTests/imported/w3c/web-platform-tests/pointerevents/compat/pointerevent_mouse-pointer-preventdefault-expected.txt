@@ -1,0 +1,9 @@
+
+PASS Effect of canceling pointerdown on compat mouse events
+PASS Effect of canceling pointermove on compat mouse events
+PASS Effect of canceling pointerup on compat mouse events
+PASS Effect of canceling pointerenter on compat mouse events
+PASS Effect of canceling pointerleave on compat mouse events
+PASS Effect of canceling pointerover on compat mouse events
+PASS Effect of canceling pointerout on compat mouse events
+

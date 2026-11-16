@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="presentation" id="div-1" style="font-family:sans-serif;">One</div>
+<div role="presentation" style="font-family:serif;">Two</div>
+<div role="presentation" style="font-family:sans-serif;">Three</div>
+<div role="presentation" id="div-4" style="font-family:serif;">Four</div>
+
+<script>
+var output = "This test ensures that the AXFontChangeSearchKey works correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var firstText = webArea.childAtIndex(0);
+    output += expect("firstText.stringValue", "'AXValue: One'");
+    var resultText = webArea.uiElementForSearchPredicate(firstText, true, "AXFontChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Two'");
+    var resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXFontChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Three'");
+    var resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXFontChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Four'");
+
+    // Move the last div to be right after the first.
+    document.getElementById("div-1").after(document.getElementById("div-4"));
+    setTimeout(async function() {
+        await waitFor(() => {
+            resultText = webArea.uiElementForSearchPredicate(firstText, true, "AXFontChangeSearchKey", "", false);
+            return resultText && resultText.stringValue === "AXValue: Four";
+        });
+        output += "PASS: Found #div-4 text after #div-1 after dynamic change.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

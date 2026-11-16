@@ -1,0 +1,10 @@
+
+PASS id("test1"): <root><div id="test1">Match</div></root>
+PASS id("test1 test2"): <root><div id="test1">First</div><div id="test2">Second</div></root>
+PASS id("nonexistent"): <root><div id="test1">No match</div></root>
+PASS id("Test1"): <root><div id="test1">No match</div></root>
+FAIL id("duplicate"): <root><div id="duplicate">First</div><div id="duplicate">Second</div></root> assert_array_equals: Expected IDs duplicate,duplicate, got duplicate lengths differ, expected array ["duplicate", "duplicate"] length 2, got ["duplicate"] length 1
+PASS id("test-1"): <root><div id="test-1">Match</div></root>
+PASS id(""): <root><div id="">Empty ID</div></root>
+PASS id(" test1 "): <root><div id="test1">Match</div></root>
+

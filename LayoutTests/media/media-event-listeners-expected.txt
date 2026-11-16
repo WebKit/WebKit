@@ -1,0 +1,15 @@
+
+LISTENER(durationchange)
+LISTENER(loadedmetadata)
+LISTENER(loadeddata)
+LISTENER(canplay)
+LISTENER(canplaythrough)
+LISTENER(play)
+LISTENER(playing)
+LISTENER(ratechange)
+LISTENER(timeupdate)
+LISTENER(pause)
+LISTENER(ended)
+LISTENER(volumechange)
+END OF TEST
+

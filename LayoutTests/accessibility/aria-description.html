@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="button" role="button" aria-description="Longer description">button</div>
+
+<div id="button1" role="button" aria-describedby="label1">button</div>
+<div id="label1">text</div>
+
+<div id="button2" role="button" aria-describedby="label2" aria-description="Longer description ignored">button</div>
+<div id="label2">text</div>
+
+<script>
+var output = "This test ensures that aria-description maps to appropriate attributes and works with aria-describedby correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    const isCocoa = accessibilityController.platformName == "mac" || accessibilityController.platformName == "ios";
+
+    // aria-description case.
+    var button = accessibilityController.accessibleElementById("button");
+    output += isCocoa ? `Custom content: ${button.customContent}\n` : `Help text: ${button.helpText}\n`;
+
+    // aria-describedby case.
+    const button1 = accessibilityController.accessibleElementById("button1");
+    output += isCocoa ? `Custom content: ${button1.customContent}\n` : `Help text: ${button1.helpText}\n`;
+
+    // aria-describedby and aria-description case.
+    const button2 = accessibilityController.accessibleElementById("button2");
+    output += isCocoa ? `Custom content: ${button2.customContent}\n` : `Help text: ${button2.helpText}\n`;
+
+    var newDescription = "Newly added description";
+    document.getElementById("button").setAttribute("aria-description", newDescription);
+    setTimeout(async function() {
+        // GTK / WPE seems to expect aria-description to have no effect.
+        if (isCocoa)
+            output += await expectAsync("button.customContent.includes(newDescription)", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

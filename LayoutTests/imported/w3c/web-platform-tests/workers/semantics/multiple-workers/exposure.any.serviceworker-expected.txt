@@ -1,0 +1,4 @@
+
+PASS Worker exposure
+PASS SharedWorker exposure
+

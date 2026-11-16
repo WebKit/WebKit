@@ -1,0 +1,156 @@
+/*
+ * Copyright (C) 2026 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; see the file COPYING.LIB.  If not,
+ * write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitApplicationManifest_h
+#define WebKitApplicationManifest_h
+
+#if ENABLE(2022_GLIB_API)
+
+#include <gio/gio.h>
+#include <glib-object.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+#if PLATFORM(GTK)
+#include <gdk/gdk.h>
+#elif PLATFORM(WPE)
+#include <wpe/WebKitColor.h>
+#endif
+
+G_BEGIN_DECLS
+
+#define WEBKIT_APPLICATION_MANIFEST_ERROR     (webkit_application_manifest_error_quark())
+
+#define WEBKIT_TYPE_APPLICATION_MANIFEST      (webkit_application_manifest_get_type())
+WEBKIT_DECLARE_FINAL_TYPE(WebKitApplicationManifest, webkit_application_manifest, WEBKIT, APPLICATION_MANIFEST, GObject)
+
+#define WEBKIT_TYPE_APPLICATION_MANIFEST_ICON (webkit_application_manifest_icon_get_type())
+WEBKIT_DECLARE_FINAL_TYPE(WebKitApplicationManifestIcon, webkit_application_manifest_icon, WEBKIT, APPLICATION_MANIFEST_ICON, GObject)
+
+#define WEBKIT_TYPE_APPLICATION_MANIFEST_SHORTCUT (webkit_application_manifest_shortcut_get_type())
+WEBKIT_DECLARE_FINAL_TYPE(WebKitApplicationManifestShortcut, webkit_application_manifest_shortcut, WEBKIT, APPLICATION_MANIFEST_SHORTCUT, GObject)
+
+/**
+ * WebKitApplicationManifestError:
+ * @WEBKIT_APPLICATION_MANIFEST_ERROR_WEB_VIEW_CLOSED: The web view that loaded the manifest no longer exists
+ * @WEBKIT_APPLICATION_MANIFEST_ERROR_ICON_LOAD_FAILED: The icon resource could not be loaded
+ *
+ * Enum values used to denote the various errors related to a [class@ApplicationManifest].
+ *
+ * Since: 2.56
+ */
+typedef enum {
+    WEBKIT_APPLICATION_MANIFEST_ERROR_WEB_VIEW_CLOSED,
+    WEBKIT_APPLICATION_MANIFEST_ERROR_ICON_LOAD_FAILED
+} WebKitApplicationManifestError;
+
+WEBKIT_API GQuark
+webkit_application_manifest_error_quark      (void);
+
+WEBKIT_API GVariant *
+webkit_application_manifest_get_full_manifest(WebKitApplicationManifest *manifest);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_get_name         (WebKitApplicationManifest *manifest);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_get_short_name   (WebKitApplicationManifest *manifest);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_get_description  (WebKitApplicationManifest *manifest);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_get_start_uri    (WebKitApplicationManifest *manifest);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_get_scope        (WebKitApplicationManifest *manifest);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_get_manifest_uri (WebKitApplicationManifest *manifest);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_get_id           (WebKitApplicationManifest *manifest);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_get_display_mode (WebKitApplicationManifest *manifest);
+
+#if PLATFORM(GTK)
+WEBKIT_API const GdkRGBA *
+webkit_application_manifest_get_background_color(WebKitApplicationManifest *manifest);
+
+WEBKIT_API const GdkRGBA *
+webkit_application_manifest_get_background_color_dark(WebKitApplicationManifest *manifest);
+
+WEBKIT_API const GdkRGBA *
+webkit_application_manifest_get_theme_color   (WebKitApplicationManifest *manifest);
+
+WEBKIT_API const GdkRGBA *
+webkit_application_manifest_get_theme_color_dark(WebKitApplicationManifest *manifest);
+
+#elif PLATFORM(WPE)
+
+WEBKIT_API const WebKitColor *
+webkit_application_manifest_get_background_color(WebKitApplicationManifest *manifest);
+
+WEBKIT_API const WebKitColor *
+webkit_application_manifest_get_background_color_dark(WebKitApplicationManifest *manifest);
+
+WEBKIT_API const WebKitColor *
+webkit_application_manifest_get_theme_color   (WebKitApplicationManifest *manifest);
+
+WEBKIT_API const WebKitColor *
+webkit_application_manifest_get_theme_color_dark(WebKitApplicationManifest *manifest);
+#endif
+
+WEBKIT_API WebKitApplicationManifestIcon * const *
+webkit_application_manifest_get_icons        (WebKitApplicationManifest *manifest);
+
+WEBKIT_API WebKitApplicationManifestShortcut * const *
+webkit_application_manifest_get_shortcuts    (WebKitApplicationManifest *manifest);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_icon_get_uri     (WebKitApplicationManifestIcon *icon);
+
+WEBKIT_API const gchar * const *
+webkit_application_manifest_icon_get_sizes   (WebKitApplicationManifestIcon *icon);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_icon_get_mime_type(WebKitApplicationManifestIcon *icon);
+
+WEBKIT_API gboolean
+webkit_application_manifest_icon_get_is_maskable(WebKitApplicationManifestIcon *icon);
+
+WEBKIT_API gboolean
+webkit_application_manifest_icon_get_is_monochrome(WebKitApplicationManifestIcon *icon);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_shortcut_get_name(WebKitApplicationManifestShortcut *shortcut);
+
+WEBKIT_API const gchar *
+webkit_application_manifest_shortcut_get_uri (WebKitApplicationManifestShortcut *shortcut);
+
+WEBKIT_API WebKitApplicationManifestIcon * const *
+webkit_application_manifest_shortcut_get_icons(WebKitApplicationManifestShortcut *shortcut);
+
+G_END_DECLS
+
+#endif // ENABLE(2022_GLIB_API)
+
+#endif

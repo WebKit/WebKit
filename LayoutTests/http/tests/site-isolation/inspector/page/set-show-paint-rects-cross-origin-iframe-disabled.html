@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    // Resolve the committed frame target for the static cross-origin iframe by its document URL.
+    // See set-show-paint-rects-cross-origin-iframe.html for why filtering WI.targets by
+    // document.location.href (via frameTargetForURLContaining) picks the live committed target.
+    async function crossOriginTarget() {
+        let target = await frameTargetForURLContaining("paint-rects-frame.html");
+        InspectorTest.assert(target instanceof WI.FrameTarget, "Should resolve a cross-origin FrameTarget.");
+        return target;
+    }
+
+    async function paintRectCountInTarget(target) {
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: "window.internals.inspectorPaintRectCount()", objectGroup: "test", returnByValue: true});
+        return response.result.value;
+    }
+
+    async function triggerPaintInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({expression: `document.getElementById("target").style.backgroundColor = "rebeccapurple"`, objectGroup: "test", returnByValue: true});
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetShowPaintRectsCrossOriginIFrameDisabled");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetShowPaintRects.Disabled",
+        description: "A paint in a cross-origin iframe should NOT produce paint rects while disabled.",
+        async test() {
+            let target = await crossOriginTarget();
+
+            // Paint rects are off by default; assert explicitly so the disabled case never depends on
+            // a prior enable case's fade timing (this is a standalone file with fresh state).
+            InspectorTest.log("Disabling paint rects...");
+            await PageAgent.setShowPaintRects(false);
+
+            await triggerPaintInTarget(target);
+
+            // Give the async fan-out + paint-rect path a chance to (incorrectly) fire before asserting.
+            await new Promise((resolve) => { setTimeout(resolve, 500); });
+            InspectorTest.expectEqual(await paintRectCountInTarget(target), 0, "Cross-origin iframe should have no paint rects while disabled.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.setShowPaintRects(false) produces no paint rects in cross-origin iframes under site isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/page/resources/paint-rects-frame.html"></iframe>
+</body>

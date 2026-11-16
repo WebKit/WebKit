@@ -1,0 +1,5 @@
+
+PASS Interface with Constructor extended attribute.
+PASS Interface with constructor method
+PASS Interface with constructor overloads
+

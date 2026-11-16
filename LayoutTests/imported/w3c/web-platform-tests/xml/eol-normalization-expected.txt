@@ -1,0 +1,10 @@
+
+PASS CRLF should be normalized to LF in XML
+PASS CR should be normalized to LF in XML
+PASS Complex EOL sequences should be normalized correctly (\r\r
+
+ ->
+
+
+)
+

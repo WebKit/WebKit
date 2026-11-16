@@ -1,0 +1,6 @@
+Should be green. Should be green.
+
+PASS mutating constructed CSSStyleSheet applied to root invalidates styles
+PASS mutating constructed CSSStyleSheet applied to shadowdom invalidates styles
+PASS mutating dependent constructed CSSStyleSheet applied to shadowdom invalidates styles
+

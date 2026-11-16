@@ -1,0 +1,15 @@
+Tests that a static srcdoc iframe's content is available after reloading with the inspector open under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.SrcdocIFrameResourceContentAfterReload
+-- Running test case: SiteIsolation.Page.SrcdocIFrameResourceContentAfterReload.Reload
+Reloading...
+PASS: Main frame should commit the reload.
+PASS: srcdoc frame should be attached to the main frame.
+PASS: srcdoc frame's main resource should be its document.
+PASS: srcdoc document should finish loading.
+PASS: srcdoc document should carry the request identifier of its load.
+PASS: requestContent() should succeed.
+PASS: Content should contain "srcdoc-frame-marker".
+

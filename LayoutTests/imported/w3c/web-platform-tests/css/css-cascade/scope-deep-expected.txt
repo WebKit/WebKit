@@ -1,0 +1,3 @@
+
+PASS Deep @scope nesting
+

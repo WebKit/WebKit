@@ -1,0 +1,4 @@
+
+
+PASS currententrychange fires for navigation.reload() intercepted by intercept()
+

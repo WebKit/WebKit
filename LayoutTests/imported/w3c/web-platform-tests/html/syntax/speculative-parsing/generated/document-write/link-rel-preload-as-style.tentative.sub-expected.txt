@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <link rel=preload as=style href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=5cc3a725-d8f2-4412-8ecb-41927f289216&amp;encodingcheck=&Gbreve;">
+
+
+
+PASS Speculative parsing, document.write(): link-rel-preload-as-style
+

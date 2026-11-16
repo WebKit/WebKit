@@ -1,0 +1,23 @@
+<style>
+body {
+  margin: 0px;
+}
+
+div {
+  line-height: 0.5;
+  margin: 50px;
+  font-family: Monospace;
+  font-size: 40px;
+}
+</style>
+<!-- Pass if both lines are "underlined". -->
+<div><span id=box_shadow_horizontal>XXX<br>XXX</span></div>
+<div style="writing-mode: vertical-lr"><span id=box_shadow_vertical>XXX<br>XXX</span></div>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<script>
+repaintTest = function() {
+  box_shadow_horizontal.style.boxShadow = "inset green 0px -2px";
+  box_shadow_vertical.style.boxShadow = "inset green -2px 0px";
+};
+runRepaintTest();
+</script>

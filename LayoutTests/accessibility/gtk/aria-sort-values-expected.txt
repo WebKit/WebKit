@@ -1,0 +1,17 @@
+This verifies that explicitly-set values of aria-sort are exposed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1 AXRole: AXColumnHeader (sort attribute not exposed)
+test2 AXRole: AXColumnHeader sort:ascending
+test3 AXRole: AXColumnHeader sort:descending
+test4 AXRole: AXColumnHeader sort:other
+test5 AXRole: AXColumnHeader sort:none
+test6 AXRole: AXColumnHeader sort:none
+test7 AXRole: AXColumnHeader sort:none
+test8 AXRole: AXCell (sort attribute not exposed)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

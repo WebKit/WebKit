@@ -1,0 +1,8 @@
+
+
+PASS Baseline: adoption agency for <b>1<p>2</b>3</p> (no script)
+PASS Furthest block adopted into another Document before </b>
+PASS Common ancestor adopted into another Document before </b>
+PASS Furthest block detached before </b>
+PASS Adoption agency with a foster-parenting common ancestor (<tr>)
+

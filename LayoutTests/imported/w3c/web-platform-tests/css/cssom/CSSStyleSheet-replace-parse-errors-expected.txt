@@ -1,0 +1,10 @@
+
+PASS replace() with completely invalid CSS clears existing rules
+PASS replace() with empty string clears existing rules
+PASS replace() with mixed valid and invalid CSS keeps valid rules
+PASS replace() sheet remains usable after parse error
+PASS replaceSync() with completely invalid CSS clears existing rules
+PASS replaceSync() with empty string clears existing rules
+PASS replaceSync() with mixed valid and invalid CSS keeps valid rules
+PASS replaceSync() sheet remains usable after parse error
+

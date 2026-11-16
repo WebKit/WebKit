@@ -1,0 +1,285 @@
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+from typing import IO, Any, Iterator, Optional, Sequence
+
+from collections import defaultdict
+from webkitcorepy import string_utils
+
+
+class Contributor(object):
+    GIT_AUTHOR_RE = re.compile(r'Author: (?P<author>.*) <(?P<email>[^@,]+@[^@,]+)(@.*)?>')
+    AUTOMATED_CHECKIN_RE = re.compile(r'Author: (?P<author>.*) <devnull>')
+    UNKNOWN_AUTHOR = re.compile(r'Author: (?P<author>.*) <None>')
+    EMPTY_AUTHOR = re.compile(r'Author: (?P<author>.*) <>')
+    USERNAME_ONLY_AUTHOR_RE = re.compile(r'Author:\s+(?P<author>.*) <(?P<username>[^@<>\s]+)>')
+    MULTIPLE_EMAIL_RE = re.compile(r'Author: (?P<author>.*) <(?P<emails>([^@ ,]+@[^@ , ]+[, ]\s?)+[^@ ,]+@[^@ , ]+)>')
+    SVN_AUTHOR_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines?')
+    SVN_AUTHOR_Q_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*)')
+    SVN_PATCH_FROM_RE = re.compile(r'Patch by (?P<author>.*) <(?P<email>.*)> on \d+-\d+-\d+')
+    REVIEWER = 'reviewer'
+
+    class Encoder(json.JSONEncoder):
+
+        def default(self, obj: Any) -> Any:
+            if not isinstance(obj, Contributor):
+                return super(Contributor.Encoder, self).default(obj)
+
+            result: dict[str, Any] = dict(name=obj.name)
+            if obj.status:
+                result['status'] = obj.status
+            if obj.emails:
+                result['emails'] = [str(email) for email in obj.emails]
+            if obj.github:
+                result['github'] = obj.github
+            if obj.bitbucket:
+                result['bitbucket'] = obj.bitbucket
+
+            return result
+
+    # Maps each of a contributor's names, emails and usernames to that contributor.
+    class Mapping(defaultdict[str, Optional['Contributor']]):
+        @classmethod
+        def load(cls, file: IO[str]) -> Contributor.Mapping:
+            result = cls()
+            contents = json.load(file)
+            for contributor in contents:
+                name = contributor.get('name', None)
+                if not name:
+                    continue
+                created = result.create(name, *contributor.get('emails', []))
+                assert created is not None  # Contributors with names are always created.
+                created.status = contributor.get('status', created.status)
+                created.github = contributor.get('github', created.github)
+                created.bitbucket = contributor.get('bitbucket', created.bitbucket)
+
+                result.statuses.add(created.status)
+
+                if created.github:
+                    result[created.github] = created
+                if created.bitbucket:
+                    result[created.bitbucket] = created
+
+            for contributor in contents:
+                constructed = result.get(contributor.get('name'))
+                if not constructed:
+                    continue
+                for alias in contributor.get('aliases', []) + contributor.get('nicks', []):
+                    if alias in result:
+                        continue
+                    result[alias] = constructed
+            return result
+
+        def __init__(self) -> None:
+            super(Contributor.Mapping, self).__init__(lambda: None)
+            self.statuses: set[str | None] = set()
+
+        def save(self, file: IO[str]) -> None:
+            alias_to_name: defaultdict[str, list[str]] = defaultdict(list)
+            for alias, contributor in self.items():
+                if not contributor or alias in contributor.emails or alias == contributor.name:
+                    continue
+                alias_to_name[contributor.name].append(alias)
+
+            contributors: list[dict[str, Any]] = []
+            for alias, contributor in self.items():
+                if not contributor or alias != contributor.name:
+                    continue
+                contributors.append(Contributor.Encoder().default(contributor))
+                contributors[-1]['aliases'] = alias_to_name[contributor.name]
+
+            json.dump(contributors, file)
+
+        def add(self, contributor: Contributor) -> Contributor | None:
+            if not isinstance(contributor, Contributor):
+                raise ValueError("'{}' is not a Contributor object".format(type(contributor)))
+
+            result = self.create(contributor.name, *contributor.emails)
+            if not result:
+                sys.stderr.write("Failed to create contributor {} ({})\n".format(contributor.name, ', '.join(contributor.emails)))
+                return None
+
+            result.status = contributor.status or result.status
+            result.github = contributor.github or result.github
+            result.bitbucket = contributor.bitbucket or result.bitbucket
+
+            self.statuses.add(result.status)
+
+            if result.github:
+                self[result.github] = result
+            if result.bitbucket:
+                self[result.bitbucket] = result
+
+            return result
+
+        def create(self, name: str | None = None, *emails: str | None, **kwargs: Any) -> Contributor | None:
+            addresses = [email for email in emails if email]
+            if not name and not addresses:
+                return None
+
+            github = kwargs.pop('github', None)
+            bitbucket = kwargs.pop('bitbucket', None)
+            for key in kwargs.keys():
+                raise ValueError("'{}' is not a valid argument to Contributor.create".format(key))
+
+            contributor = None
+            for argument in [name, github, bitbucket] + addresses:
+                if not argument:
+                    continue
+                contributor = self[argument]
+                if contributor:
+                    break
+
+            if contributor:
+                for email in addresses:
+                    if email not in contributor.emails:
+                        contributor.emails.append(email)
+                if contributor.name in contributor.emails and name:
+                    contributor.name = name
+                if github:
+                    contributor.github = github
+                if bitbucket:
+                    contributor.bitbucket = bitbucket
+            else:
+                contributor = Contributor(name or addresses[0], emails=addresses, github=github, bitbucket=bitbucket)
+
+            self[contributor.name] = contributor
+            for email in contributor.emails or []:
+                if not email:
+                    continue
+                self[email] = contributor
+                self[email.lower()] = contributor
+            if contributor.github:
+                self[contributor.github] = contributor
+            if contributor.bitbucket:
+                self[contributor.bitbucket] = contributor
+            return contributor
+
+        # Iterating over a mapping yields each of its contributors once, rather than its keys.
+        def __iter__(self) -> Iterator[Contributor]:  # type: ignore[override]
+            yielded = set()
+            for contributor in self.values():
+                if not contributor or contributor.name in yielded:
+                    continue
+                yielded.add(contributor.name)
+                yield contributor
+
+    @classmethod
+    def from_scm_log(cls, line: str, contributors: Contributor.Mapping | None = None) -> Contributor | None:
+        emails: list[str] = []
+        author: str | None = None
+
+        for expression in [
+            cls.GIT_AUTHOR_RE,
+            cls.SVN_AUTHOR_RE,
+            cls.SVN_PATCH_FROM_RE,
+            cls.AUTOMATED_CHECKIN_RE,
+            cls.UNKNOWN_AUTHOR,
+            cls.EMPTY_AUTHOR,
+            cls.SVN_AUTHOR_Q_RE,
+            cls.MULTIPLE_EMAIL_RE,
+            cls.USERNAME_ONLY_AUTHOR_RE,
+        ]:
+            match = expression.match(line)
+            if match:
+                if 'author' in expression.groupindex:
+                    author = match.group('author').lstrip()
+                    if '(no author)' in author or 'Automated Checkin' in author or 'Unknown' in author:
+                        author = None
+                if 'email' in expression.groupindex:
+                    if '(no author)' not in match.group('email'):
+                        emails.append(match.group('email'))
+                if 'emails' in expression.groupindex:
+                    candidates = [email.rstrip().lstrip() for email in match.group('emails').split(',')]
+                    for candidate in candidates:
+                        if '(no author)' not in candidate:
+                            emails.append(candidate)
+                if 'username' in expression.groupindex:
+                    username = match.group('username')
+                    if username and '(no author)' not in username and not emails:
+                        emails.append(username)
+                break
+        else:
+            raise ValueError("'{}' does not match a known SCM log".format(line))
+
+        if not emails and not author:
+            return None
+
+        if contributors is not None:
+            return contributors.create(author, *emails)
+        return cls(author or emails[0], emails=emails)
+
+    def __init__(self, name: str | bytes, emails: Sequence[str | None] | None = None, status: str | None = None, github: str | None = None, bitbucket: str | None = None) -> None:
+        self.name = string_utils.decode(name)
+        self.emails: list[str] = [email for email in emails or [] if email]
+        self.status = status
+        self.github = github
+        self.bitbucket = bitbucket
+
+    @property
+    def email(self) -> str | None:
+        if not self.emails:
+            return None
+        return self.emails[0]
+
+    def __repr__(self) -> str:
+        return u'{} <{}>'.format(self.name, self.email or '?')
+
+    def __hash__(self) -> int:
+        return hash(self.name)
+
+    def __cmp__(self, other: object) -> int:
+        if isinstance(other, str):
+            ref_value = other
+        elif isinstance(other, Contributor):
+            ref_value = other.name
+        elif other is None:
+            ref_value = ''
+        else:
+            raise ValueError('Cannot compare {} with {}'.format(Contributor, type(other)))
+        for part in [self.name, self.emails, self.github, self.bitbucket]:
+            if part == ref_value:
+                return 0
+        return 1 if self.name > ref_value else -1
+
+    def __eq__(self, other: object) -> bool:
+        return self.__cmp__(other) == 0
+
+    def __ne__(self, other: object) -> bool:
+        return self.__cmp__(other) != 0
+
+    def __lt__(self, other: Contributor | str | None) -> bool:
+        return self.__cmp__(other) < 0
+
+    def __le__(self, other: Contributor | str | None) -> bool:
+        return self.__cmp__(other) <= 0
+
+    def __gt__(self, other: Contributor | str | None) -> bool:
+        return self.__cmp__(other) > 0
+
+    def __ge__(self, other: Contributor | str | None) -> bool:
+        return self.__cmp__(other) >= 0

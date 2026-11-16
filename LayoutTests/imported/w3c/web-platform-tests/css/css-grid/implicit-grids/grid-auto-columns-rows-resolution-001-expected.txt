@@ -1,0 +1,10 @@
+This test checks that implicit rows and columns obey grid-auto-rows and grid-auto-columns.
+
+XXXXX XXXXXX
+XXXXX XXXXXX
+XXXXX XXXXXX
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+

@@ -1,0 +1,18 @@
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.onload = () => {
+        window.getSelection().setBaseAndExtent(TH,1,STYLE,0);
+        document.execCommand("insertUnorderedList", false);
+        
+        requestAnimationFrame(function () {
+            document.body.innerHTML = "<p> Tests inserting list in table. The test passes if WebKit doesn't crash or hit an assertion.</p>";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    }
+</script>
+<body contenteditable="true"><table><th id=TH>a</th><style id=STYLE></style></table></body>

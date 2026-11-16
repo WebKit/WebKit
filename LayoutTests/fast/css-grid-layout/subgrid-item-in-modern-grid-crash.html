@@ -1,0 +1,22 @@
+<style>
+.grid {
+    display: grid;
+    grid-template-columns: 100px;
+    grid-template-rows: 100px;
+}
+.subgrid {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 1 / 2;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<div class="grid">
+    <div class="subgrid">
+        <div class="item"></div>
+    </div>
+</div>
+This test has PASSED if it does not CRASH.

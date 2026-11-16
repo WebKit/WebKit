@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/webxr_util.js"></script>
+<script src="../../webxr/resources/webxr_test_constants.js"></script>
+
+<script>
+// WebKit specific: relies on controller.updateWorld(), which unlike setWorld() keeps the identity of the planes
+// at the same region index, so the plane is upgraded in place like a real runtime does on every discovery snapshot.
+
+function nextFrame(session) {
+  return new Promise(resolve => session.requestAnimationFrame((time, frame) => resolve(frame)));
+}
+
+function onlyPlane(frame) {
+  assert_equals(frame.detectedPlanes.size, 1, "exactly one plane");
+  let result = null;
+  frame.detectedPlanes.forEach(p => { result = p; });
+  return result;
+}
+
+function floorWorld(planeInfoOverrides) {
+  let floor = structuredClone(DEFAULT_FLOOR_PLANE);
+  Object.assign(floor.planeInfo, planeInfoOverrides);
+  return { hitTestRegions: [ floor ] };
+}
+
+const IN_PLACE_TEST_PARAMS = [IMMERSIVE_AR_DEVICE, "immersive-ar", { requiredFeatures: ["plane-detection"] }];
+
+xr_session_promise_test("XRPlane is updated in place and lastChangedTime increases when the polygon changes",
+  async (session, controller, t) => {
+    controller.setWorld(floorWorld({}));
+    let first = onlyPlane(await nextFrame(session));
+    let firstTime = first.lastChangedTime;
+    assert_equals(first.polygon.length, 4);
+
+    controller.updateWorld(floorWorld({ polygon: [{x: -2, z: -2}, {x: 2, z: -2}, {x: 2, z: 2}] }));
+    let frame = await nextFrame(session);
+    let second = onlyPlane(frame);
+    assert_true(frame.detectedPlanes.has(first), "the plane of the previous frame is still in the set");
+    assert_equals(second, first, "same XRPlane object");
+    assert_greater_than(first.lastChangedTime, firstTime, "lastChangedTime increased");
+    assert_equals(first.polygon.length, 3, "polygon reflects the change");
+    assert_approx_equals(first.polygon[0].x, -2, FLOAT_EPSILON);
+  },
+  ...IN_PLACE_TEST_PARAMS);
+
+xr_session_promise_test("XRPlane lastChangedTime is unchanged when only the pose changes, and the plane space follows the new pose",
+  async (session, controller, t) => {
+    const refSpace = await session.requestReferenceSpace("local");
+    controller.setWorld(floorWorld({}));
+    let frame = await nextFrame(session);
+    let first = onlyPlane(frame);
+    let firstTime = first.lastChangedTime;
+    let pose = frame.getPose(first.planeSpace, refSpace);
+    assert_not_equals(pose, null);
+    assert_approx_equals(pose.transform.position.x, 0, FLOAT_EPSILON);
+
+    controller.updateWorld(floorWorld({ origin: { position: [0.5, 0.25, -2], orientation: [0, 0, 0, 1] } }));
+    frame = await nextFrame(session);
+    assert_true(frame.detectedPlanes.has(first), "the plane of the previous frame is still in the set");
+    assert_equals(first.lastChangedTime, firstTime, "lastChangedTime unchanged (plane-detection spec, XRPlane.planeSpace note)");
+    pose = frame.getPose(first.planeSpace, refSpace);
+    assert_not_equals(pose, null);
+    assert_approx_equals(pose.transform.position.x, 0.5, FLOAT_EPSILON);
+    assert_approx_equals(pose.transform.position.y, 0.25, FLOAT_EPSILON);
+    assert_approx_equals(pose.transform.position.z, -2, FLOAT_EPSILON);
+  },
+  ...IN_PLACE_TEST_PARAMS);
+
+xr_session_promise_test("XRPlane lastChangedTime increases when only the orientation or only the semanticLabel changes",
+  async (session, controller, t) => {
+    controller.setWorld(floorWorld({}));
+    let plane = onlyPlane(await nextFrame(session));
+    let previousTime = plane.lastChangedTime;
+
+    controller.updateWorld(floorWorld({ orientation: "vertical" }));
+    let frame = await nextFrame(session);
+    assert_true(frame.detectedPlanes.has(plane), "the plane of the previous frame is still in the set");
+    assert_equals(plane.orientation, "vertical");
+    assert_greater_than(plane.lastChangedTime, previousTime, "orientation change bumps lastChangedTime");
+    previousTime = plane.lastChangedTime;
+
+    controller.updateWorld(floorWorld({ orientation: "vertical", semanticLabel: "table" }));
+    frame = await nextFrame(session);
+    assert_true(frame.detectedPlanes.has(plane), "the plane of the previous frame is still in the set");
+    assert_equals(plane.semanticLabel, "table");
+    assert_greater_than(plane.lastChangedTime, previousTime, "semanticLabel change bumps lastChangedTime");
+  },
+  ...IN_PLACE_TEST_PARAMS);
+
+xr_session_promise_test("A plane removed from the world is gone from the next frame and its retained plane space has no pose",
+  async (session, controller, t) => {
+    const refSpace = await session.requestReferenceSpace("local");
+    controller.setWorld(floorWorld({}));
+    let frame = await nextFrame(session);
+    let plane = onlyPlane(frame);
+    let retainedSpace = plane.planeSpace;
+    assert_not_equals(frame.getPose(retainedSpace, refSpace), null);
+
+    controller.updateWorld({ hitTestRegions: [] });
+    frame = await nextFrame(session);
+    assert_equals(frame.detectedPlanes.size, 0, "the plane is gone");
+    assert_false(frame.detectedPlanes.has(plane));
+    assert_equals(frame.getPose(retainedSpace, refSpace), null, "no pose for the plane space of a removed plane");
+  },
+  ...IN_PLACE_TEST_PARAMS);
+</script>

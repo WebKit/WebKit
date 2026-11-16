@@ -1,0 +1,3 @@
+
+PASS getCurrentPosition() in an https: iframe with allow="geolocation" in a non-secure context fails with PERMISSION_DENIED.
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<canvas id="canvas"></canvas>
+<img>
+
+<script>
+if (location.search == "") {
+  const trigger = noWorkers => {
+  let canvas, ctx;
+  const window = {
+    CP: {
+      aa(a) {
+      },
+      ab(e) {} } };
+      requestAnimationFrame(function foo(){});
+};
+
+const createWorker = fn => {
+  const URL = window.URL || window.webkitURL;
+  return new Worker(URL.createObjectURL(new Blob(["(" + fn + ")()"])));
+};
+
+const texture = document.createElement("canvas");
+worker = createWorker(trigger);
+window.location.href += "?foo=bar";
+} else
+    opener.popupReloaded();
+</script>
+</html>

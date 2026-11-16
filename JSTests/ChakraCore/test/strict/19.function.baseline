@@ -1,0 +1,6 @@
+Return: function.caller get
+Return: function.caller set
+Return: function.arguments get
+Return: function.arguments get
+Exception: function.caller get TypeError
+Exception: function.arguments get TypeError

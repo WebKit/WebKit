@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape Room Game</title>
+    <link rel="stylesheet" href="styles/escape-room.css">
+</head>
+<body>
+    <header class="nav">A new kind of escape game</header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Step inside.<br>
+                <span class="hero-accent">Solve the mystery.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Immersive escape rooms designed for Apple Vision Pro.
+                Explore intricate environments, discover hidden clues,
+                and unravel the story — all around you.
+            </p>
+
+            <div class="hero-frame" data-state="enter-room">
+                <video id="video" src="videos/escape-room-trailer.mp4" playsinline></video>
+                <div class="frame-overlay">
+                    <div class="loading-spinner" data-show="loading"></div>
+                    <p class="overlay-message" data-show="loading">Entering immersive space…</p>
+                    <p class="overlay-message" data-show="unsupported">
+                        The full experience is not available in your browser.
+                        Give it a try on an Apple Vision Pro!
+                    </p>
+                    <button class="btn btn-primary" data-action="enter" data-show="enter-room">
+                        <span class="btn-icon">◈</span>
+                        Enter the Room
+                    </button>
+                    <button class="btn btn-primary" data-action="watch" data-show="immersive">
+                        <span class="btn-icon">▶</span>
+                        Watch Trailer
+                    </button>
+                    <button class="btn btn-ghost" data-action="exit" data-show="immersive">
+                        <span class="btn-icon">✕</span>
+                        Exit Immersive
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <model id="model"
+           src="models/escape-room.usdz"
+           environmentmap="images/hdr/escape-room-map.exr"
+           hidden></model>
+
+    <script>
+        // Immersive model API used in this demo:
+        //   - model.requestImmersive(), document.exitImmersive()
+        //   - document.immersiveEnabled, document.immersiveElement
+        //   - immersivechange event
+
+        const model = document.getElementById('model');
+        const frame = document.querySelector('.hero-frame');
+        const setState = (state) => { frame.dataset.state = state; };
+
+        if (!document.immersiveEnabled)
+            setState('unsupported');
+
+        async function enterImmersive() {
+            setState('loading');
+            try {
+                await model.requestImmersive();
+            } catch (err) {
+                console.error('Failed to enter immersive mode:', err);
+                setState('enter-room');
+            }
+        }
+
+        model.addEventListener('immersivechange', () => {
+            setState(document.immersiveElement ? 'immersive' : 'enter-room');
+        });
+
+        frame.querySelector('[data-action="enter"]').addEventListener('click', enterImmersive);
+        frame.querySelector('[data-action="exit"]').addEventListener('click', () => document.exitImmersive());
+
+        // Trailer playback (non-immersive)
+        const video = document.getElementById('video');
+
+        frame.querySelector('[data-action="watch"]').addEventListener('click', async () => {
+            await video.play();
+            video.webkitEnterFullscreen();
+        });
+
+        video.addEventListener('ended', async () => {
+            await video.webkitExitFullscreen();
+            await model.play();
+        });
+
+        video.addEventListener('webkitendfullscreen', () => {
+            video.pause();
+        });
+    </script>
+</body>
+</html>

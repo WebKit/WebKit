@@ -1,0 +1,3 @@
+
+PASS A 0ms timeout should not be clamped to 1ms
+

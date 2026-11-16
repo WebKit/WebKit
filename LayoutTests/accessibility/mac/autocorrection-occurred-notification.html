@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../editing/editing.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<div id="editor" contenteditable>
+    <div><br></div>
+    <div><br></div>
+</div>
+
+<script>
+var output = "This tests that autocorrection posts AXAutocorrectionOccurred, and that the corrected text is already exposed when the notification arrives.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var autocorrectionCount = 0;
+    var autocorrectionListener = null;
+    var editorTextAtDelivery = null;
+
+    function editorText() {
+        var editor = accessibilityController.accessibleElementById("editor");
+        var staticText = traverseChildrenToFirstStaticText(editor);
+        return staticText ? stripAXPrefix(staticText.stringValue) : "";
+    }
+
+    // Editor::markAndReplaceFor replaces the text before posting, so the corrected string must
+    // already be exposed by delivery time.
+    function autocorrectionDeliveries() {
+        if (!autocorrectionListener) {
+            autocorrectionListener = function(element, notification, userInfo) {
+                if (notification != "AXAutocorrectionOccurred")
+                    return;
+                autocorrectionCount++;
+                editorTextAtDelivery = editorText();
+            };
+            accessibilityController.addNotificationListener(autocorrectionListener);
+        }
+        return autocorrectionCount;
+    }
+
+    // Also installs the listener, which must happen before any text is typed.
+    output += expect("autocorrectionDeliveries()", "0");
+
+    setTimeout(async function() {
+        internals.settings.setUnifiedTextCheckerEnabled(true);
+        internals.settings.setAsynchronousSpellCheckingEnabled(false);
+        internals.setAutomaticTextReplacementEnabled(true);
+        internals.setAutomaticSpellingCorrectionEnabled(true);
+        await UIHelper.setSpellCheckerResults({
+            "YT?": [{ replacement: "You there?", type: "replacement", from: 0, to: 3 }],
+            "YT?\n": [{ replacement: "You there?", type: "replacement", from: 0, to: 3 }],
+        });
+
+        document.getElementById("editor").focus();
+        for (const character of "YT?")
+            typeCharacterCommand(character);
+        await UIHelper.delayFor(0);
+
+        // Autocorrection applies on the following newline, not while the word is still being typed.
+        insertParagraphCommand();
+
+        output += await expectAsync("autocorrectionDeliveries()", "1");
+        output += expect("editorTextAtDelivery", "'You there?'");
+
+        document.getElementById("editor").style.display = "none";
+        accessibilityController.removeNotificationListener(autocorrectionListener);
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

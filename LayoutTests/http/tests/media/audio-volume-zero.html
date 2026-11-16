@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+</script>
+</head>
+<body>
+    <audio id="audio" playsinline autoplay></audio>
+    <script>
+promise_test(async t => {
+    audio.muted = false;
+    audio.volume = 0;
+    audio.src = "128kbps-44khz.mp3";
+
+    await audio.play();
+
+    if (!window.internals)
+        return Promise.rejects("test needs internals, if manually testing, the page should not play any audio");
+
+    assert_equals(internals.privatePlayerVolume(audio), 0);
+}, "Verify audio internal volume stays at 0");
+    </script>
+</body>
+</html>

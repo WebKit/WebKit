@@ -1,0 +1,9 @@
+Test that a navigation keeps its loaderId when a cross-site redirect makes it continue in another process.
+
+
+== Running test suite: Target.PSON.LoaderId
+-- Running test case: CrossSiteRedirect
+PASS: Should create a provisional page target for the redirect target.
+PASS: Should start a provisional load for the initial request in the original target.
+PASS: Main frame loaded in the new target should have the loaderId of the initial request.
+

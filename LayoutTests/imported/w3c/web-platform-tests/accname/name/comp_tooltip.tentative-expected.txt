@@ -1,0 +1,6 @@
+Tests the tentative #comp_tooltip portions of the AccName Name Computation algorithm.
+
+
+
+PASS img with tooltip label with empty alt
+

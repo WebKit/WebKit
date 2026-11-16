@@ -1,0 +1,4 @@
+Content
+
+PASS Page with meta viewport "width=device-width, user-scalable=no" should scale document with very wide content to 1.0.
+

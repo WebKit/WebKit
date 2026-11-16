@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2200px;
+            margin: 0;
+        }
+        #subscroller {
+            width: 430px;
+            height: 300px;
+            overflow: auto;
+            margin: 20px;
+            border: 1px solid black;
+        }
+        #subscroller > .content {
+            height: 2000px;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        var subscroller;
+        var sawMainFrameStretch = false;
+
+        async function scrollTest()
+        {
+            if (!window.eventSender)
+                return;
+
+            description('Tests that when a gesture rubber-bands the main frame with the cursor over a subscroller, and the user holds at max stretch for longer than the latching-relevance timeout before releasing, the frame still snaps back on release.');
+
+            subscroller = document.getElementById('subscroller');
+
+            window.addEventListener('scroll', () => {
+                if (document.scrollingElement.scrollTop < 0)
+                    sawMainFrameStretch = true;
+            });
+
+            eventSender.mouseMoveTo(100, 100);
+
+            await UIHelper.startMonitoringWheelEvents();
+
+            // Start the upward scroll gesture.
+            await eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 2, 'began', 'none');
+            await eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'changed', 'none');
+            await eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'changed', 'none');
+            await eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'changed', 'none');
+
+            // Hold at max stretch for longer than the 100ms latching timeout in ScrollingTreeLatchingController.
+            await UIHelper.delayFor(150);
+
+            // Release.
+            await eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            await UIHelper.waitForScrollCompletion();
+
+
+            shouldBeTrue('sawMainFrameStretch');
+            shouldBe('document.scrollingElement.scrollTop', '0');
+            shouldBe('subscroller.scrollTop', '0');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', scrollTest);
+    </script>
+</head>
+<body>
+    <div id="subscroller"><div class="content"></div></div>
+    <div id="console"></div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+load("//crowbar", "crowbar_workflow")
+
+crowbar_workflow(
+    origin_files = glob([
+        "LICENSE.md",
+        "README.md",
+        "volk.c",
+        "volk.h",
+    ]),
+)

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<style>
+div { font: 40px serif; }
+/* Skips the width cache and the simplified measuring path. */
+.reference { word-spacing: 1px; }
+</style>
+<div><bdo dir="rtl" id="override">To</bdo></div>
+<div><bdo dir="rtl" id="reference" class="reference">To</bdo></div>
+<div><bdo dir="rtl"><span id="nested">To</span></bdo></div>
+<!-- The out-of-flow child makes the float compute its intrinsic width without inline layout. -->
+<div id="float" style="float: left"><span style="position: absolute"></span><bdo dir="rtl">To</bdo></div>
+<script>
+description("Tests that text with a right-to-left directional override is measured right-to-left.");
+
+function measure(id)
+{
+    return document.getElementById(id).getBoundingClientRect().width;
+}
+
+shouldBe("measure('override')", "measure('reference')");
+shouldBe("measure('nested')", "measure('reference')");
+shouldBeTrue("Math.abs(measure('float') - measure('reference')) < 0.1");
+</script>

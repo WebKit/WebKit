@@ -1,0 +1,12 @@
+Fetching Tests From a Child Context
+
+This test demonstrates the use of fetch_tests_from_window to pull tests from an iframe into the primary document.
+
+The test suite is expected to fail due to an unhandled exception in the child context.
+
+
+Harness Error (FAIL), message = Error in remote: Error: Example Error
+
+PASS Test executing in parent context
+NOTRUN This should show a harness status of 'Error' and a test status of 'Not Run'
+

@@ -1,0 +1,22 @@
+upstream {
+  version: "1.4.350"
+  artifacts {
+    git {
+      repository: "https://github.com/zeux/volk"
+      commit: "3ca312a4f38baa63d8006b6905abbeeb89c8087d"
+    }
+  }
+}
+stages {
+  input {
+    patch { copybara {} }
+  }
+  publish { git {} }
+}
+latest {
+  semver {}
+  git {
+    repository: "https://github.com/zeux/volk"
+    tags {}
+  }
+}

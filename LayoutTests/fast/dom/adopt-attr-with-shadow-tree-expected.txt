@@ -1,0 +1,10 @@
+This tests adopting a shadow tree with an Attr node.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS referenceCountInDestination is referenceCountInSource
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

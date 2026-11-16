@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8000/resources/Ahem.woff because it does not appear in the font-src directive of the Content Security Policy.
+Tests that a cross-origin CSS font loaded via a redirect is blocked by the Content Security Policy. This test PASSED if there is a console warning message.
+
+.
+
+blockedURI = http://127.0.0.1:8000/resources/redirect.py?code=307&url=http%3A//127.0.0.1%3A8000/resources/redirect.py%3Furl=http%3A//localhost%3A8000/resources/Ahem.woff
+
+

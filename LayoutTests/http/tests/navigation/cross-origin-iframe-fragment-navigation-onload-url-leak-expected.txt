@@ -1,0 +1,11 @@
+Tests that a cross-origin parent cannot use iframe.onload timing to infer an iframe's post-redirect URL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Probing with a different URL fired iframe.onload (cross-document navigation).
+PASS Probing with the iframe's post-redirect URL was observably indistinguishable from probing with any other URL (no oracle).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

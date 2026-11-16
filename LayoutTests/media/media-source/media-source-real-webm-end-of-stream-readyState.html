@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-end-of-stream-readyState</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-WebM equivalent of media-source-end-of-stream-readyState.html
+    // Tests that endOfStream() normalizes duration to the end of buffered data.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run(`sourceBuffer = source.addSourceBuffer('${WebM.VIDEO_TYPE}')`);
+
+        // Init with duration hint of 10 seconds
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Set explicit duration to 10
+        run('source.duration = 10');
+
+        // Append 5 seconds of data
+        var media = WebM.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('source.duration.toFixed(3)', 10);
+        testExpected('sourceBuffer.buffered.end(0).toFixed(3)', 5);
+
+        // endOfStream should normalize duration to end of buffered data
+        run('source.endOfStream()');
+        testExpected('source.duration.toFixed(3)', 5);
+        testExpected('sourceBuffer.updating', false);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

@@ -1,0 +1,67 @@
+Checking Web Inspector protocol (specifically mouseEventNodeId) for the Accessibility Node Inspector.
+
+Total elements to be tested: 21.
+
+<div>DOM2 mouseup on parent div.</div>
+    mouseEventNodeId: ancestor element
+
+<div>DOM2 mousedown on parent div.</div>
+    mouseEventNodeId: ancestor element
+
+<div>DOM2 click on parent div.</div>
+    mouseEventNodeId: ancestor element
+
+<div id="dom2mouseup">mouseup</div>
+    mouseEventNodeId: self
+
+<div id="dom2mousedown">mousedown</div>
+    mouseEventNodeId: self
+
+<div id="dom2click">click</div>
+    mouseEventNodeId: self
+
+<div>DOM1 mouseup on parent div</div>
+    mouseEventNodeId: ancestor element
+
+<div>DOM1 mousedown on parent div.</div>
+    mouseEventNodeId: ancestor element
+
+<div>DOM1 click on parent div.</div>
+    mouseEventNodeId: ancestor element
+
+<div id="dom1mouseup">mouseup</div>
+    mouseEventNodeId: self
+
+<div id="dom1mousedown">mousedown</div>
+    mouseEventNodeId: self
+
+<div id="dom1click">click</div>
+    mouseEventNodeId: self
+
+<span role="img">DOM1 inline click on parent span.</span>
+    mouseEventNodeId: ancestor element
+
+<div>DOM1 inline click on parent div with tabindex="0".</div>
+    mouseEventNodeId: ancestor element
+
+<div>DOM1 inline click on parent div with role="button".</div>
+    mouseEventNodeId: ancestor element
+
+<div>DOM1 inline click on parent div.</div>
+    mouseEventNodeId: ancestor element
+
+<span onclick="void(0);">click</span>
+    mouseEventNodeId: self
+
+<div tabindex="0" onclick="void(0);">click</div>
+    mouseEventNodeId: self
+
+<div role="button" onclick="void(0);">click</div>
+    mouseEventNodeId: self
+
+<div onclick="void(0);">click</div>
+    mouseEventNodeId: self
+
+<div>Click handler on body delegate.</div>
+    mouseEventNodeId: body element
+

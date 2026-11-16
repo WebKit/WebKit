@@ -1,0 +1,10 @@
+This tests that aria-label will become the accessible name of the AXWebArea when used on the HTML tag.
+
+PASS: root.role === 'AXRole: AXWebArea'
+PASS: root.description === 'AXDescription: Test Webpage'
+PASS: root.description === 'AXDescription: New Title'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Nothing to see.

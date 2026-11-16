@@ -1,0 +1,12 @@
+Sends ArrayBuffers through MessagePorts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS array[0] contains 3.141592653589793
+PASS successfully transferred array of length 0
+PASS successfully transferred array of length 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

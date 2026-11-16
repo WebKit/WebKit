@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const label = new URL(location.href).searchParams.get('label');
+parent.postMessage({ from: label, space: internals.documentIPAddressSpace() }, '*');
+</script>
+</body>
+</html>

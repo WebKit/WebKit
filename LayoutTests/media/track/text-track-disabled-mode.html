@@ -1,0 +1,237 @@
+<!doctype html>
+<html>
+<head>
+    <title>TextTrack disabled mode and cue active-flag clearing</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard:
+//   §4.8.13.7 "Text tracks" — text track mode, cue active flag
+//     https://html.spec.whatwg.org/multipage/media.html#text-track-mode
+//     https://html.spec.whatwg.org/multipage/media.html#text-track-cue-active-flag
+//   §4.8.13.10 "Text track API" — TextTrack.activeCues
+//     https://html.spec.whatwg.org/multipage/media.html#dom-texttrack-activecues
+//
+// In disabled mode: no cues are active, no events are fired, and the user
+// agent does not attempt to obtain cues.
+//
+// A cue's active flag is initially unset; it must be unset synchronously when:
+//   (a) the cue is removed from its track's list of cues
+//   (b) the track is removed from the media element's list of text tracks
+//   (c) the mode changes to disabled
+//   (d) readyState reverts to HAVE_NOTHING
+//
+// We observe the active flag through TextTrack.activeCues (a cue is in
+// activeCues iff its active flag is set).
+//
+// Cue activation requires the media element's readiness to be at least
+// HAVE_METADATA so time-marches-on can run. We attach a small video file
+// and seek to a known time, then assert against the cues active there.
+
+const MEDIA_SRC = "../content/test-25fps.mp4";
+
+function makeReadyVideo(t) {
+    const video = document.createElement("video");
+    video.muted = true;
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+    video.src = MEDIA_SRC;
+    return video;
+}
+
+function whenSeekedTo(video, time) {
+    return new Promise(resolve => {
+        const handler = () => {
+            video.removeEventListener("seeked", handler);
+            resolve();
+        };
+        video.addEventListener("seeked", handler);
+        if (video.readyState >= video.HAVE_METADATA)
+            video.currentTime = time;
+        else
+            video.addEventListener("loadedmetadata", () => { video.currentTime = time; }, { once: true });
+    });
+}
+
+function addShowingTrackWithCue(video, startTime, endTime, text) {
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+    const cue = new VTTCue(startTime, endTime, text);
+    tt.addCue(cue);
+    return { tt, cue };
+}
+
+test(() => {
+    // activeCues is null when mode is disabled. addTextTrack creates the
+    // track with mode="hidden" per spec; we set it to disabled.
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    try {
+        const tt = video.addTextTrack("captions", "test", "en");
+        tt.mode = "disabled";
+        assert_equals(tt.activeCues, null,
+            "TextTrack.activeCues is null when mode is disabled");
+    } finally {
+        video.remove();
+    }
+}, "disabled mode: activeCues returns null");
+
+async_test(t => {
+    // In disabled mode, the UA does not "attempt to obtain cues".
+    // For a track-element-backed track at default mode=disabled, no fetch
+    // should happen.
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.src = "data:text/vtt;charset=utf-8,"
+        + encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nx\n");
+    video.appendChild(track);
+    assert_equals(track.track.mode, "disabled", "default mode is disabled");
+
+    let loadFired = false;
+    track.onload = () => { loadFired = true; };
+    track.onerror = t.unreached_func("unexpected error");
+
+    t.step_timeout(t.step_func_done(() => {
+        assert_false(loadFired,
+            "disabled track must not trigger a fetch");
+        assert_equals(track.readyState, track.NONE);
+    }), 100);
+}, "disabled mode: UA does not attempt to obtain cues");
+
+promise_test(async t => {
+    // Per spec, removing a cue from its track's list must synchronously
+    // unset the cue's active flag.
+    //
+    // We can't observe `tt.activeCues` after removal (the cue is no longer
+    // in tt.cues, so it can never be in activeCues regardless of flag
+    // state). Instead, re-add the cue at a time outside its range and
+    // observe whether time-marches-on queues an 'exit' event: if the
+    // flag was preserved, the cue would be in "other cues" with active
+    // flag set, and time-marches-on (step 11) would queue exit. If the
+    // flag was correctly cleared, the cue is in "other cues" without
+    // active flag set, and no exit is queued.
+    const video = makeReadyVideo(t);
+    const { tt, cue } = addShowingTrackWithCue(video, 0, 0.5, "in-range");
+    await whenSeekedTo(video, 0.1);
+    await new Promise(r => t.step_timeout(r, 50));
+    assert_array_equals([...tt.activeCues], [cue], "cue is active at t=0.1");
+
+    let exitAfterRemove = false;
+    cue.onexit = () => { exitAfterRemove = true; };
+
+    tt.removeCue(cue);
+    // Move currentTime outside the cue's range, then re-add the cue.
+    // If the active flag survived removeCue, the next time-marches-on
+    // would queue exit (cue is in "other cues" with flag set).
+    await whenSeekedTo(video, 0.8);
+    await new Promise(r => t.step_timeout(r, 50));
+    tt.addCue(cue);
+    await new Promise(r => t.step_timeout(r, 100));
+
+    assert_false(exitAfterRemove,
+        "no 'exit' fires after removeCue + re-add at out-of-range time " +
+        "(active flag was correctly cleared on removeCue)");
+}, "active-flag clears synchronously when cue is removed from track");
+
+promise_test(async t => {
+    // mode->disabled -> activeCues becomes null and on re-enabling,
+    // time-marches-on recomputes the list from scratch.
+    const video = makeReadyVideo(t);
+    const { tt, cue } = addShowingTrackWithCue(video, 0, 1000, "always-on");
+    await whenSeekedTo(video, 0.1);
+
+    const before = tt.activeCues;
+    assert_not_equals(before, null);
+    assert_array_equals([...before], [cue], "cue active before mode flip");
+
+    tt.mode = "disabled";
+    assert_equals(tt.activeCues, null, "activeCues null while disabled");
+
+    // Re-enable. The active flag must have been cleared by the mode flip;
+    // a subsequent recomputation re-adds the cue based on currentTime.
+    tt.mode = "hidden";
+    // Recomputation happens off the next time-marches-on tick — wait a bit.
+    await new Promise(r => t.step_timeout(r, 50));
+    assert_array_equals([...tt.activeCues], [cue],
+        "after mode->hidden, activeCues recomputed from currentTime");
+}, "active-flag clears synchronously when mode changes to disabled");
+
+promise_test(async t => {
+    // Track removed from media element -> cue active flag is unset.
+    // <track> element removal is the only way to remove a text track
+    // from a media element's list of text tracks.
+    //
+    // Use addTextTrack (not a <track> element) plus removal-via-cleanup:
+    // we instead test cue active-flag clearing via the equivalent code path
+    // of marking the track as no-longer-attached. Since the spec gives no
+    // way to remove an addTextTrack-created TextTrack from textTracks
+    // either, we test the <track>-removal path but skip the activeCues
+    // assertion if it's null (which also satisfies the spec).
+    const video = makeReadyVideo(t);
+    const trackEl = document.createElement("track");
+    trackEl.kind = "subtitles";
+    trackEl.src = "data:text/vtt;charset=utf-8,"
+        + encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:01:00.000\nalways-on\n");
+    video.appendChild(trackEl);
+    const tt = trackEl.track;
+    tt.mode = "showing";
+
+    // Wait for both the video to be seekable and the track to be loaded.
+    await new Promise(resolve => {
+        if (trackEl.readyState === trackEl.LOADED)
+            resolve();
+        else
+            trackEl.addEventListener("load", resolve, { once: true });
+    });
+    await whenSeekedTo(video, 0.1);
+    // Give time-marches-on a tick to populate activeCues.
+    await new Promise(r => t.step_timeout(r, 50));
+
+    assert_equals(tt.activeCues.length, 1, "one cue active before removal");
+    const cue = tt.activeCues[0];
+
+    video.removeChild(trackEl);
+    // Per spec §4.8.13.7 "text track cue active flag", the flag must be
+    // synchronously unset when the track is removed from the media
+    // element's list of text tracks. The track's mode is preserved
+    // (still "showing"), so per §4.8.13.10 `activeCues` should still
+    // return a TextTrackCueList (not null — null is reserved for
+    // mode=disabled). The list must be empty since the flag was cleared.
+    assert_not_equals(tt.activeCues, null,
+        "activeCues is non-null (mode is still 'showing' on detached track)");
+    assert_equals(tt.activeCues.length, 0,
+        "cue active flag was synchronously cleared on track removal");
+}, "active-flag clears when track is removed from media element");
+
+promise_test(async t => {
+    // readyState reverts to HAVE_NOTHING -> cue active flag is unset.
+    // Triggered by reassigning video.src; the in-flight tracks' cues
+    // should lose their active flag synchronously.
+    const video = makeReadyVideo(t);
+    const { tt, cue } = addShowingTrackWithCue(video, 0, 1000, "always-on");
+    await whenSeekedTo(video, 0.1);
+
+    assert_array_equals([...tt.activeCues], [cue], "cue active before reload");
+
+    // Reassigning src triggers a load and resets readyState to HAVE_NOTHING.
+    video.src = "about:blank";
+    // Per spec §4.8.13.7 "text track cue active flag", the cue's active
+    // flag must be synchronously cleared when readyState reverts to
+    // HAVE_NOTHING. Track mode is still "showing" (a property of the
+    // TextTrack itself, not the media element), so activeCues must return
+    // a non-null list and that list must be empty.
+    assert_not_equals(tt.activeCues, null,
+        "activeCues is non-null after readyState->HAVE_NOTHING (mode still 'showing')");
+    assert_equals(tt.activeCues.length, 0,
+        "cue active flag was synchronously cleared on readyState->HAVE_NOTHING");
+}, "active-flag clears synchronously when readyState reverts to HAVE_NOTHING");
+</script>
+</body>
+</html>

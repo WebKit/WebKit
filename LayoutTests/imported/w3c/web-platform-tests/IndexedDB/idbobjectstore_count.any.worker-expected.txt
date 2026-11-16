@@ -1,0 +1,6 @@
+
+PASS Returns the number of records in the object store
+PASS Returns the number of records that have keys within the range
+PASS Returns the number of records that have keys with the key
+PASS If the object store has been deleted, the implementation must throw a DOMException of type InvalidStateError
+

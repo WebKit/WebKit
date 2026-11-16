@@ -1,0 +1,127 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+
+#include "JSWebExtensionAPIRuntime.h"
+#include "JSWebExtensionAPIWebPageRuntime.h"
+#include "Protected.h"
+#include "WebExtensionAPIEvent.h"
+#include "WebExtensionAPIObject.h"
+#include "WebPageProxyIdentifier.h"
+
+namespace WebKit {
+
+class WebExtensionAPIPort;
+class WebExtensionAPIRuntime;
+
+class WebExtensionAPIRuntimeBase : public JSWebExtensionWrappable {
+public:
+    JSValueRef reportError(String errorMessage, JSGlobalContextRef, NOESCAPE const Function<void()>& = nullptr);
+    JSValueRef reportError(const String& errorMessage, WebExtensionCallbackHandler&);
+
+private:
+    friend class WebExtensionAPIRuntime;
+
+    bool m_lastErrorAccessed = false;
+
+    Protected<JSValueRef> m_lastError;
+};
+
+class WebExtensionAPIRuntime : public WebExtensionAPIObject, public WebExtensionAPIRuntimeBase {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIRuntime, runtime, runtime);
+
+public:
+    WebExtensionAPIRuntime& runtime() final { return *this; }
+
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
+
+    URL getURL(const String& resourcePath, String& outExceptionString);
+    RefPtr<JSON::Object> getManifest();
+    String getVersion();
+    void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
+    void getBackgroundPage(Ref<WebExtensionCallbackHandler>&&);
+    double getFrameId(JSContextRef, JSValueRef);
+    String getDocumentId(JSContextRef, JSValueRef, String& outExceptionString);
+
+    void setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&&);
+
+    void openOptionsPage(Ref<WebExtensionCallbackHandler>&&);
+    void reload();
+
+    NODELETE String runtimeIdentifier();
+
+    NODELETE JSValueRef lastError();
+
+    JSValueRef onInstalledReason(JSContextRef);
+    JSValueRef platformArch(JSContextRef);
+    JSValueRef platformOS(JSContextRef);
+
+    void sendMessage(WebPageProxyIdentifier, WebFrame&, const String& extensionID, const WebExtensionMessage&, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    RefPtr<WebExtensionAPIPort> connect(WebPageProxyIdentifier, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);
+
+    void sendNativeMessage(WebFrame&, const String& applicationID, const String& messageJSON, Ref<WebExtensionCallbackHandler>&&);
+    RefPtr<WebExtensionAPIPort> connectNative(WebPageProxyIdentifier, JSContextRef, const String& applicationID);
+
+    WebExtensionAPIEvent& onConnect();
+    WebExtensionAPIEvent& onInstalled();
+    WebExtensionAPIEvent& onMessage();
+    WebExtensionAPIEvent& onStartup();
+    WebExtensionAPIEvent& onConnectExternal();
+    WebExtensionAPIEvent& onMessageExternal();
+
+private:
+    friend class WebExtensionAPIWebPageRuntime;
+
+    static bool parseConnectOptions(RefPtr<JSON::Value>, std::optional<String>& name, const String& sourceKey, String& outExceptionString);
+
+    const RefPtr<WebExtensionAPIEvent> m_onConnect;
+    const RefPtr<WebExtensionAPIEvent> m_onInstalled;
+    const RefPtr<WebExtensionAPIEvent> m_onMessage;
+    const RefPtr<WebExtensionAPIEvent> m_onStartup;
+    const RefPtr<WebExtensionAPIEvent> m_onConnectExternal;
+    const RefPtr<WebExtensionAPIEvent> m_onMessageExternal;
+};
+
+class WebExtensionAPIWebPageRuntime : public WebExtensionAPIObject, public WebExtensionAPIRuntimeBase {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebPageRuntime, webPageRuntime, webPageRuntime);
+
+public:
+    WebExtensionAPIWebPageRuntime& runtime() final { return *this; }
+
+    void sendMessage(WebPage&, WebFrame&, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    RefPtr<WebExtensionAPIPort> connect(WebPage&, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);
+};
+
+JSValueRef toWebAPI(JSContextRef, const WebExtensionMessageSenderParameters&);
+
+} // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_WEB_EXTENSION(WebExtensionAPIRuntime, runtime);
+SPECIALIZE_TYPE_TRAITS_WEB_EXTENSION(WebExtensionAPIWebPageRuntime, webPageRuntime);
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

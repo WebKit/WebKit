@@ -1,0 +1,31 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+.block-inline {
+  outline: 1px solid blue;
+  width: 140px;
+  height: 100px;
+}
+.float_box {
+  float: left;
+  width: 50px;
+  height: 60px;
+}
+</style>
+<div>
+  <span>
+    span<br>
+    <div class=float_box style="background-color: green;"></div>
+    start
+    <div class=float_box style="background-color: blue; width: 30px; height: 25px"></div>
+    <div class=block-inline>
+      <div class=float_box style="background-color: brown"></div>
+    </div>
+    span
+    <div class=float_box style="background-color: black; width: 10px; height: 80px"></div>
+    middle
+    <div class=block-inline>
+      <div class=float_box style="background-color: lime"></div>
+    </div>
+    span<br>end
+  </span>
+</div>

@@ -1,0 +1,11 @@
+This tests that using aria-describedby to refer to an element indirectly via referenceTarget causes the description to be computed correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: input1.customContent === 'description: Description 1'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

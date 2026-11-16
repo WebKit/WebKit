@@ -1,0 +1,8 @@
+This test ensures we don't hang when using the text-search API.
+
+PASS: webArea.stringForTextMarkerRange(markerRange[0]) === 'WebKit'
+PASS: Did not hang.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+WebKit WebKit

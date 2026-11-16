@@ -1,0 +1,14 @@
+This tests that blanking an error message's wording stops the field reporting invalid, without the element having to be taken off the page. Sites reuse the same container and just clear its text, and a field still reporting a problem while pointing at a message that says nothing leaves the user nothing to read.
+
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+document.getElementById('email-error').textContent = '';
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageText(axElement('email')) === 'no error messages'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email
+Sign in

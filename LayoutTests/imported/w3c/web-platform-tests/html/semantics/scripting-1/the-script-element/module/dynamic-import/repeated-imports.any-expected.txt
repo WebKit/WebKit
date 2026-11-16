@@ -1,0 +1,6 @@
+
+PASS An import should succeed even if the same specifier/type attribute pair previously failed due to a MIME type mismatch
+PASS An import should succeed even if the same specifier/type pair previously failed due to a network error (e.g. 404)
+PASS Multiple imports in sequence with the same specifier/type pair should only fetch the module once
+PASS Multiple concurrent imports with the same specifier/type pair should only fetch the module once
+

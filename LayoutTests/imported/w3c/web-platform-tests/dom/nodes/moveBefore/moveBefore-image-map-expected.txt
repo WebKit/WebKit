@@ -1,0 +1,5 @@
+
+PASS An image stops using a map that is moved into a shadow root
+PASS An image moved into a shadow root uses a map in the shadow root
+PASS An area whose image was moved into a shadow root is no longer focusable
+

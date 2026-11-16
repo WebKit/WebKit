@@ -1,0 +1,3 @@
+
+PASS Smooth scroll finishes correctly after hiding a tab with an iframe
+

@@ -1,0 +1,14 @@
+This test looks for the dispatch of the event handlers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Granting permission to http://127.0.0.1:8000
+PASS Notification.permission is "granted"
+PASS onshow event handler was called
+PASS onclick event handler was called
+PASS onclose event handler was called
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

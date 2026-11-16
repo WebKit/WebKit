@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource-streaming</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var ended = false;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (ManagedMediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            waitFor(video, 'error').then(failTest);
+
+            video.disableRemotePlayback = true;
+            source = new ManagedMediaSource();
+            run('video.src = URL.createObjectURL(source)');
+
+            await Promise.all([ waitFor(source, 'sourceopen'), waitFor(source, 'startstreaming')]);
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+            run('source.duration = 0.1');
+            await waitFor(video, 'durationchange');
+
+            // The endstreaming event shouldn't be fired even if we have appended data past the element's duration
+            // unless the mediasource is ended.
+            waitFor(source, 'endstreaming').then(() => {
+                if (!ended)
+                    failTest();
+                else
+                    endTest();
+            });
+
+            do {
+                sourceBuffer.appendBuffer(loader.mediaSegment(0));
+                await once(sourceBuffer, 'update');
+                sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1);
+            } while (source.duration <= 5);
+            run('ended = true');
+            run('source.endOfStream()');
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

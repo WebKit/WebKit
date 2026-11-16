@@ -1,0 +1,29 @@
+<html>
+<body>
+<p>Test worker invalid url exceptions. Should print one "PASS" statement.</p>
+<div id=result></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+try {
+    const worker = new Worker("http://example.com/worker.js");
+    log("PASS: No exception thrown when accessing a worker from another domain.");
+    worker.onerror = () => {
+        log("PASS: Got error event");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+} catch (error) {
+    log("FAIL: Got error code " + error.code + ". Expected error code 18.");
+}
+</script>
+</body>
+</html>

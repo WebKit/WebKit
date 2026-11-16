@@ -1,0 +1,5 @@
+
+PASS Create SharedWorker via ScriptTestUrl
+PASS Block SharedWorker creation via string
+PASS Create SharedWorker via string with default policy.
+

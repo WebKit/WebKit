@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 20px;
+    font-family: system-ui;
+}
+
+#editor {
+    border: solid 1px tomato;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that typing a word and then deleting backwards does not cause the keyboard to automatically enter shift state.");
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    const editor = document.getElementById("editor");
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+
+    for (let character of [..."Hello"]) {
+        await UIHelper.typeCharacter(character);
+        await UIHelper.ensurePresentationUpdate();
+    }
+
+    await UIHelper.keyDown("delete");
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.keyDown("delete");
+    await UIHelper.ensurePresentationUpdate();
+
+    isAutoShifted = await UIHelper.keyboardIsAutomaticallyShifted();
+    shouldBeFalse("isAutoShifted");
+
+    editor.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div contenteditable id="editor"><br></div>
+</body>
+</html>

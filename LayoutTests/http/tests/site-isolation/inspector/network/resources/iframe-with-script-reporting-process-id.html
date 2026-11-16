@@ -1,0 +1,11 @@
+<p>Iframe that reports its process identifier to its parent and loads a script.</p>
+
+<script>
+if (window.internals)
+    parent.postMessage({ type: "iframeProcessId", pid: internals.processIdentifier }, "*");
+
+// Reuse the query so the script's URL is as unique as the document's and isn't served from the memory cache.
+let script = document.createElement("script");
+script.src = "iframe-script.js" + location.search;
+document.body.appendChild(script);
+</script>

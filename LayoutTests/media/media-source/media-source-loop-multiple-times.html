@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-loop-multiple-times</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var audioSourceBuffer;
+    var audioLoader;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    function waitForLoop(video) {
+        return new Promise((resolve) => {
+            let lastTime = video.currentTime;
+            const listener = () => {
+                // Time going back by a large amount means the video looped.
+                if (video.currentTime < lastTime - 0.25) {
+                    video.removeEventListener('timeupdate', listener);
+                    resolve();
+                    return;
+                }
+                lastTime = video.currentTime;
+            };
+            video.addEventListener('timeupdate', listener);
+        });
+    }
+
+    async function runTest() {
+        audioLoader = new MediaSourceLoader('content/test-48khz-manifest.json');
+        await loaderPromise(audioLoader);
+
+        findMediaElement();
+        video.loop = true;
+        video.muted = true;
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run('audioSourceBuffer = source.addSourceBuffer(audioLoader.type())');
+        waitFor(video, 'error').then(failTest);
+
+        run('audioSourceBuffer.appendBuffer(audioLoader.initSegment())');
+        await waitFor(audioSourceBuffer, 'update', true);
+        for (let i = 0; i < 2; i++) {
+            run(`audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(${i}))`);
+            await waitFor(audioSourceBuffer, 'update', true);
+        }
+        run('source.endOfStream()');
+
+        consoleWrite('-');
+        consoleWrite('Seek near the end of a looping MediaSource and play.');
+        run('video.currentTime = video.duration - 0.5');
+        await waitFor(video, 'seeked', true);
+        run('video.play()');
+
+        for (let loop = 1; loop <= 2; loop++) {
+            await waitForLoop(video);
+            consoleWrite(`++ loop ${loop} completed.`);
+            testExpected('video.paused', false);
+            testExpected('video.ended', false);
+            if (loop == 1) {
+                // Seek near the end again so the second loop boundary is reached quickly.
+                run('video.currentTime = video.duration - 0.5');
+                await waitFor(video, 'seeked', true);
+            }
+        }
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    })
+    </script>
+</head>
+<body>
+    <div>
+        This tests that a looping MediaSource video loops more than once.
+    </div>
+    <video></video>
+</body>
+</html>

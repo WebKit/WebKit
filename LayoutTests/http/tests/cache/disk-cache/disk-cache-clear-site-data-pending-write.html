@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ ClearSiteDataHTTPHeaderEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var tests =
+[
+ { responseHeaders: {'Cache-control': 'max-age=100' } },
+];
+
+description("Test that Clear-Site-Data: \"cache\" removes resources that have not been written to the disk cache yet");
+
+debug("Loading resource");
+loadResources(tests, function () {
+    debug("Clearing the cache with Clear-Site-Data before the resource is written to disk");
+    loadResource({ url: "/clear-site-data/resources/clear-site-data-cache.py" }, function () {
+        debug("Loading resource again");
+        loadResources(tests, function () {
+            printResults(tests);
+            finishJSTest();
+        });
+    });
+});
+
+</script>

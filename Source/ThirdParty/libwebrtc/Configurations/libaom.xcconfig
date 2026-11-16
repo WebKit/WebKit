@@ -1,0 +1,47 @@
+// Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "BaseTarget-libaom.xcconfig"
+
+PRODUCT_NAME = aom;
+SKIP_INSTALL = YES;
+
+COMBINE_HIDPI_IMAGES = NO;
+
+INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(WK_LIBRARY_INSTALL_PATH);
+PUBLIC_HEADERS_FOLDER_PATH = $(INSTALL_PATH_PREFIX)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/libwebrtc;
+
+ARM_FILES = *_neon.c arm_cpudetect.c *_arm.c hash_arm_crc32.c *_neon_dotprod.c *_neon.c
+X86_FILES = *_sse2.c *_ssse3.c *_sse4.c *_avx2.c *_avx2.cc *_avx.c *.asm
+
+EXCLUDED_SOURCE_FILE_NAMES[arch=x86_64] = $(ARM_FILES) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_IS_CATALYST));
+EXCLUDED_SOURCE_FILE_NAMES_YES = *_sse4.c *_avx.c;
+EXCLUDED_SOURCE_FILE_NAMES[arch=arm64*] = $(X86_FILES) *_mmx.c
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=x86_64] = $(ARM_FILES) $(X86_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*] = $(X86_FILES) *_mmx.c hash_arm_crc32.c *_neon_dotprod.c
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=x86_64] = $(ARM_FILES) $(X86_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(X86_FILES) *_mmx.c *_neon_dotprod.c
+EXCLUDED_SOURCE_FILE_NAMES[sdk=xrsimulator*][arch=x86_64] = $(ARM_FILES) $(X86_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=xros*] = $(X86_FILES) *_mmx.c *_neon_dotprod.c
+
+OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS);

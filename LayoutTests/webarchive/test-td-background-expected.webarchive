@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+&lt;script&gt;
+    if (window.testRunner)
+        testRunner.dumpDOMAsWebArchive();
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;table&gt;
+    &lt;tbody&gt;&lt;tr&gt;
+      &lt;td background="resources/apple.gif"&gt;
+        &lt;p style="width: 52px; height: 64px;"&gt;&lt;/p&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;&lt;/table&gt;
+
+
+&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/test-td-background.html</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<data>
+			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
+			</data>
+			<key>WebResourceMIMEType</key>
+			<string>image/gif</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>image/gif</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
+				<key>expectedContentLength</key>
+				<integer>1476</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
+		</dict>
+	</array>
+</dict>
+</plist>

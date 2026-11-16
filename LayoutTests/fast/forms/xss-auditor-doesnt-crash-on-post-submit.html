@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ XSSAuditorEnabled=true ] -->
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+    window.jsTestIsAsync = true;
+    function test() {
+        if (document.location.hash !== '#submitted') {
+
+            var form = document.getElementById('form');
+            // Shouldn't trigger any assertions.
+            form.submit();
+        } else {
+            testPassed('No assertions raised.');
+            finishJSTest();
+        }
+    }
+    </script>
+</head>
+<body onload="test()">
+    This tests that no assertions are thrown when POST submitting a form.
+    <form method="post" id="form" action="#submitted">
+        <input type="text">
+    </form>
+    <div id="console"></div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test unwrapping a SPKI key with AES-CBC using an imported key");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var spkiKey = Base64URL.parse("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwCjRCtFwvSNYMZ07u5SxARxglJl75T7bUZXFsDVxHkMhpNC2RaN4jWE5bwYUDMeD2fVmxhpaUQn/6AbFLh6gHxtwrCfc7rIo/SfDdGd3GkRlXK5xXwGuM6MvP9nuZHaarIyArRFh2U2UZxFlVsKI0pSHo6n58W1fPZ1syOoVEZ/WYE6gLhMMwfpeAm97mro7mekRdMULOV/mR5Ul3CHm9Zt93Dc8GpnPA8bhLiB0VNyGTEMa06nJul4gj1sjxLDoUvZY2EWq7oUUnfLBUYMfiqK0kQcW94wvBrIq2DQUApLyTTbaAOY46TLwX6c8LtubJriYKTC5a9Bb0/7ovTWB0wIDAQAB");
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var aesCbcParams = {
+    name: "aes-cbc",
+    iv: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+}
+var wrappedKey = hexStringToUint8Array( "578a2ab61e1e4964362e4b26694f81269c7d7c007a4108b6daa078a4360e00ec15d26856934527339eff2a704d1abcd32cd3e7ce4d266bb19f9d2ddf4ebd743bf427c12fc0c787ca3815cd533b69a1e08093a417f19308ed811f192531ee3a477b16166fb77e438466cc7c7ce858e98e62f2e8e2add4ab99322e61c9b16c6c7991822994f9d007e5452abaf45426acaedbfb9b2cc7aec2fb01ff1a34ae434d600cce9c10c5db3235803412c5af890f135cc49d94694cef68a41b0e12b96f3cae8ca375f84495c78419cfaeec6b3762e4550c423392bfabd8f4b6617cc16b1adeb7f0cf55dfa9639957ebca7453fef05ab7e6da652618fd9d7c9f9a1a026397d047cdfb7a8520e11a61cc9714c414794f76cc4c36a8f1de59eb0f30f6d10a6f4108a2c2d6bce3539c02cac3aa7e3843da");
+
+
+crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["unwrapKey"]).then(function(unwrappingKey) {
+    return crypto.subtle.unwrapKey("spki", wrappedKey, unwrappingKey, aesCbcParams, {name: "rsa-oaep", hash: "sha-1"}, extractable, ["encrypt"]);
+}).then(function(cryptoKey) {
+    return crypto.subtle.exportKey("spki", cryptoKey);
+}).then(function(result) {
+    unwrappedKey = result;
+
+    shouldBe("new Uint8Array(unwrappedKey)", "spkiKey");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

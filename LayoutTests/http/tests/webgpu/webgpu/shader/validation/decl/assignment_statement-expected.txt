@@ -1,0 +1,9 @@
+
+PASS :scalar_assignment:
+PASS :vector_full_assignment:
+PASS :vector_indexed_assignment:
+PASS :vector_swizzle_assignment:case="single"
+PASS :vector_swizzle_assignment:case="multi"
+PASS :vector_swizzle_assignment:case="swizzleswizzle"
+PASS :compound_assignment_with_swizzle:
+

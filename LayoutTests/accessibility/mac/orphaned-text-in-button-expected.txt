@@ -1,0 +1,14 @@
+This test ensures that static text within a button can still return a valid parent.
+
+PASS: button.stringForTextMarkerRange(markerRange).length === 1 === true
+PASS: button.boundsForRange(1, 2) was equal or approximately equal to (x: -1, y: -1, w: 13, h: 13).
+PASS: textMarkerElement.role.toLowerCase().includes('statictext') === true
+PASS: textMarkerElement.parentElement().role.toLowerCase().includes('button') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Foo
+
+

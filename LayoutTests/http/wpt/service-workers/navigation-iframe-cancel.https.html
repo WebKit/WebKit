@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>Service Worker Fetch Event</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+async function registerServiceWorker(scope)
+{
+    var registration = await navigator.serviceWorker.register("navigation-iframe-site-worker.js", { scope : scope });
+    var activeWorker = registration.active;
+    if (!activeWorker) {
+        activeWorker = registration.installing;
+        registration = await new Promise(resolve => {
+            activeWorker.addEventListener('statechange', () => {
+                if (activeWorker.state === "activated")
+                  resolve(registration);
+            });
+        });
+    }
+    if (registration.navigationPreload)
+        await registration.navigationPreload.enable();
+    return registration;
+}
+
+promise_test(async (test) => {
+     const scope = "resources/";
+     await registerServiceWorker(scope);
+
+    let frames = [];
+    for (let i = 0; i < 20; ++i) {
+         const frame = document.createElement('iframe');
+         frame.src = "./resources/" + i;
+         document.body.appendChild(frame);
+         frames.push(frame);
+    }
+    await new Promise(resolve => setTimeout(resolve, 0));
+    for (let i = 19; i >= 0; --i) {
+         frames[i].remove();
+    }
+}, "Cancel frame loads with navigation preloads");
+</script>
+</body>
+</html>

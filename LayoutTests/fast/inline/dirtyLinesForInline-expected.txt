@@ -1,0 +1,5 @@
+To reproduce this bug outside of DumpRenderTree, mouse over the links below several times. The bug is fixed if we don't crash.
+
+this is the home pagehome
+this is the about us pageabout us
+

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
+CONSOLE MESSAGE: Blocked a frame with origin "https://127.0.0.1:8443" from accessing a same-origin frame in a different agent cluster, likely due to Document-Isolation-Policy.
+
+
+PASS The result of an XSLT transform in a same-origin frame with a Document-Isolation-Policy stays in that frame's agent cluster
+

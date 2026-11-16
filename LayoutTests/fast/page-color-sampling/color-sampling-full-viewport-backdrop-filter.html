@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=75 ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: system-ui;
+        }
+
+        .full-viewport-backdrop {
+            position: fixed;
+            inset: 0;
+            backdrop-filter: blur(40px);
+            pointer-events: none;
+        }
+
+        h1 {
+            margin-top: 100px;
+            text-align: center;
+            font-size: 40px;
+        }
+
+        .tall {
+            height: 200vh;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        await UIHelper.setObscuredInsets(75, 0, 75, 0);
+        await UIHelper.ensurePresentationUpdate();
+
+        colors = await UIHelper.fixedContainerEdgeColors();
+        shouldBeEqualToString("colors.top", "multiple");
+        shouldBeNull("colors.left");
+        shouldBeNull("colors.right");
+        shouldBeEqualToString("colors.bottom", "multiple");
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+<div class="full-viewport-backdrop"></div>
+<h1>Content underneath backdrop filter</h1>
+<div class="tall"></div>
+<pre id="console"></pre>
+<pre id="description"></pre>
+</body>
+</html>

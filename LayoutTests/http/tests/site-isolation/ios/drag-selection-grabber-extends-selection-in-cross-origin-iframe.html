@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Dragging a selection end grabber should extend the selection inside a cross-origin iframe, not leave it unchanged. The iframe is offset from the top-left so this also exercises the main-frame-to-subframe point conversion.");
+jsTestIsAsync = true;
+
+// The iframe is offset by (50, 100) in the main frame. UIKit reports grabber rects and delivers drag
+// points in main-frame coordinates; the web process must subtract the frame's offset to act on the
+// correct position inside the subframe.
+const iframeLeft = 50;
+const iframeTop = 100;
+
+let reportedSelection = "";
+let initialSelection = "";
+let extendedSelection = "";
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("selection:"))
+        reportedSelection = event.data.substring("selection:".length);
+});
+
+async function selectWord() {
+    // Long-press over the "Hello" text near the iframe's top-left. Retry until the word is selected,
+    // since the gesture can be delivered before the subframe is ready.
+    for (let attempt = 0; attempt < 20 && !reportedSelection.length; ++attempt) {
+        await UIHelper.longPressAtPoint(iframeLeft + 30, iframeTop + 12);
+        for (let frame = 0; frame < 10 && !reportedSelection.length; ++frame)
+            await UIHelper.animationFrame();
+    }
+}
+
+async function runTest() {
+    await UIHelper.ensurePresentationUpdate();
+    await selectWord();
+    await UIHelper.waitForSelectionToAppear();
+    initialSelection = reportedSelection;
+    shouldBeEqualToString("initialSelection", "Hello");
+
+    // Drag the end grabber to the right to extend the selection over more words. Retry the drag until
+    // the reported selection grows past the initial word.
+    for (let attempt = 0; attempt < 20 && reportedSelection === initialSelection; ++attempt) {
+        const grabber = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+        await UIHelper.dragFromPointToPoint(grabber.x, grabber.y, grabber.x + 120, grabber.y, 0.5);
+        for (let frame = 0; frame < 10 && reportedSelection === initialSelection; ++frame)
+            await UIHelper.animationFrame();
+    }
+
+    extendedSelection = reportedSelection;
+    shouldBeTrue("extendedSelection.length > initialSelection.length");
+    finishJSTest();
+}
+</script>
+<iframe style="position: absolute; left: 50px; top: 100px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/selectable-text-frame.html"></iframe>

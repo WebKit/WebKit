@@ -1,0 +1,16 @@
+A block-level child's justify-self:auto resolves to its parent's justify-items. A modern 'center' aligns it (fit-content, centered); a 'legacy center' value must NOT be treated as modern justify-self (it is the -webkit-* compatibility path), so the child stays full-width at the start.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Modern 'justify-items: center' -> child is fit-content and centered:
+PASS modern.offsetWidth < 300 is true
+PASS modern.offsetLeft > 0 is true
+Legacy 'justify-items: legacy center' -> child is NOT modern-aligned (full width, at start):
+PASS legacy.offsetWidth is 300
+PASS legacy.offsetLeft is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+modern
+legacy

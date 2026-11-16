@@ -1,0 +1,12 @@
+
+
+PASS Stream objects created in expected globals
+PASS Cancel promise is created in same global as stream
+PASS Closed Promise in correct global
+PASS Reader objects in correct global
+PASS Desired size can be grafted from one prototype to another
+PASS Closing errored stream throws object in appropriate global
+PASS Can enqueue chunks from multiple globals
+PASS Correct errors and globals for closed streams
+PASS Tee Branches in correct global
+

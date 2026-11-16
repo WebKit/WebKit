@@ -1,0 +1,18 @@
+This test verifies that live region notifications are properly formatted on iOS devices.
+
+Announcement received, notification: AXAnnouncementRequested, attributed string: Price: $10{
+    UIAccessibilitySpeechAttributeAnnouncementPriority = UIAccessibilityPriorityLow;
+    UIAccessibilitySpeechAttributeLanguage = en;
+    UIAccessibilityTokenLiveRegionAnnouncement = 1;
+}
+Announcement received, notification: AXAnnouncementRequested, attributed string: Count: 5{
+    UIAccessibilitySpeechAttributeAnnouncementPriority = UIAccessibilityPriorityDefault;
+    UIAccessibilitySpeechAttributeLanguage = en;
+    UIAccessibilityTokenLiveRegionAnnouncement = 1;
+}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Price: $10
+Count: 5

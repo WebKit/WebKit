@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+
+function makeOffscreenCanvas(width, height, timestamp) {
+  let canvas = new OffscreenCanvas(width, height);
+  let ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(50, 100, 150, 255)';
+  ctx.fillRect(0, 0, width, height);
+  return new VideoFrame(canvas, { timestamp, duration : 10 });
+}
+
+async function doEncodeDecode(encoderConfig, timestamp)
+{
+  let resolve, reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  const decoder = new VideoDecoder({
+    output(frame) {
+      resolve(frame);
+    },
+    error(e) {
+      reject(e.message);
+    }
+  });
+
+  const encoderInit = {
+    output(chunk, metadata) {
+      let config = metadata.decoderConfig;
+      if (config) {
+        decoder.configure(config);
+      }
+      decoder.decode(chunk);
+    },
+    error(e) {
+      reject(e.message);
+    }
+  };
+
+  const encoder = new VideoEncoder(encoderInit);
+  encoder.configure(encoderConfig);
+
+  const w = encoderConfig.width;
+  const h = encoderConfig.height;
+  const frame = makeOffscreenCanvas(w, h, timestamp);
+  encoder.encode(frame, { keyFrame: true });
+  frame.close();
+
+  await encoder.flush();
+  await decoder.flush();
+  encoder.close();
+  decoder.close();
+
+  return promise;
+}
+
+function doTest(codec, title)
+{
+  const config = { codec };
+  config.width = 320;
+  config.height = 200;
+  config.bitrate = 1000000;
+  config.framerate = 30;
+
+  promise_test(async t => {
+    const frame1 = await doEncodeDecode(config, -2);
+    t.add_cleanup(() => frame1.close());
+
+    const frame2 = await doEncodeDecode(config, -1);
+    t.add_cleanup(() => frame2.close());
+
+    const frame3 = await doEncodeDecode(config, 0);
+    t.add_cleanup(() => frame3.close());
+  }, title);
+}
+
+doTest('vp8', "VP8 decoded frames");
+doTest('vp09.00.10.08', "VP9 decoded frames");
+doTest('avc1.42001E', "H.264 decoded frames");
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+
+PASS A 'filter' animation using the same filter operations as the base value is accelerated.
+PASS A 'filter' animation using different filter operations than the base value is not accelerated.
+PASS A 'filter' animation with non-adjacent keyframes using different filter operations is not accelerated.
+PASS An additive 'filter' animation is not accelerated if there is an underlying filter.
+PASS A 'filter' animation is not accelerated if an effect higher up the stack also targets 'filter', even if it replaces it.
+

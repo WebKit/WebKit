@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html class="test-wait">
+<body>
+<div id='result'>FAIL</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = () => {
+    setTimeout(() => {
+        result.textContent = 'PASS';
+        document.documentElement.removeAttribute('class');
+    }, 10);
+}
+</script>
+</body>
+</html>

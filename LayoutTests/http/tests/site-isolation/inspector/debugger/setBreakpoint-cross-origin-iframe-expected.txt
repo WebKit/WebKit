@@ -1,0 +1,21 @@
+Test that breakpoints can be set and hit in cross-origin iframe scripts.
+
+
+
+== Running test suite: SiteIsolation.Debugger.SetBreakpoint
+-- Running test case: SiteIsolation.Debugger.SetBreakpoint.Setup
+PASS: Should find a cross-origin frame target.
+
+-- Running test case: SiteIsolation.Debugger.SetBreakpoint.SetByUrl
+PASS: Breakpoint should be set successfully.
+PASS: Breakpoint should have at least one resolved location.
+
+-- Running test case: SiteIsolation.Debugger.SetBreakpoint.HitsBreakpoint
+PASS: Debugger should be paused at breakpoint.
+PASS: Should be paused in 'breakpointTarget'.
+PASS: Parameter 'x' should have value 5.
+
+-- Running test case: SiteIsolation.Debugger.SetBreakpoint.RemoveBreakpoint
+PASS: Function should return correct result (10 * 2 + 1 = 21).
+PASS: Debugger should not pause after breakpoint removal.
+

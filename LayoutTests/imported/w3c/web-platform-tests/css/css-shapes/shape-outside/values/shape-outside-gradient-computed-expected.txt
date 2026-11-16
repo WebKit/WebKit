@@ -1,0 +1,8 @@
+
+PASS Property shape-outside value 'linear-gradient(45deg, red calc(25% + 10px), blue 80%)'
+PASS Property shape-outside value 'linear-gradient(calc(90deg - 45deg), rgb(0, 128, 0), rgb(0, 0, 255)'
+PASS Property shape-outside value 'radial-gradient(circle at calc(10px + 5%), red, blue)'
+PASS Property shape-outside value 'radial-gradient(ellipse calc(-0.5em + 10px) calc(0.5em + 10px) at 20px 30px, rgb(255, 0, 0), rgb(0, 0, 255))'
+PASS Property shape-outside value 'radial-gradient(black 0% 0.5em, 25%, green 30% 60%, calc(100% * 3 / 4), white calc(100% - 20%) 100%'
+PASS Property shape-outside value 'conic-gradient(from 0.5turn at 20% 30%, red, blue calc(50% - 25%))'
+

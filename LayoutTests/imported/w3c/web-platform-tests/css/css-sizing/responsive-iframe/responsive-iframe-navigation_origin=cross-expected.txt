@@ -1,0 +1,10 @@
+
+
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: Initial height should be 200px expected 200 but got 150
+
+TIMEOUT Responsive iframe preserves size during navigation Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: Initial height should be 200px expected 200 but got 150
+
+TIMEOUT Responsive iframe preserves size during navigation Test timed out
+

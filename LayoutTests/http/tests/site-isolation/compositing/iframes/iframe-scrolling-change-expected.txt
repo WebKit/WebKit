@@ -1,0 +1,11 @@
+Tests that changing the 'scrolling' attribute of a cross-origin iframe updates the scrollbar modes of the iframe's frame scrolling node.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS modesBefore is "horizontal AlwaysOff, vertical AlwaysOff"
+PASS modesAfter is "horizontal Auto, vertical Auto"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,20 @@
+Testing all methods of ResourceCollection.
+
+
+== Running test suite: ResourceCollection
+-- Running test case: WI.ResourceCollection.verifierForType
+["two"]
+
+-- Running test case: WI.ResourceCollection.prototype.resourceCollectionForType
+["one","three"]
+["one","three"]
+PASS: resourceCollectionForType will return `this` if a type is specified.
+
+-- Running test case: WI.ResourceCollection.prototype._resourceTypeDidChange
+["one"]
+[]
+["one"]
+["one"]
+["one"]
+[]
+

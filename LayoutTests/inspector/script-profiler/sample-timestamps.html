@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function triggerBusyTimer() {
+    setTimeout(() => {
+        // Spin for a fixed amount of wall-clock time so the sampling profiler, which samples
+        // about once per millisecond, collects a few hundred stack traces. The work happens
+        // inside a timer so that it runs as page script while the profiler is tracking.
+        let start = Date.now();
+        let accumulator = 0;
+        do {
+            for (let i = 0; i < 10000; ++i)
+                accumulator += Math.sqrt(i);
+        } while (Date.now() - start < 300);
+        console.log("busy timer done " + (accumulator > 0));
+        TestPage.dispatchEventToFrontend("TestPageBusyWorkDone");
+    }, 0);
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("ScriptProfiler.Samples.Timestamps");
+
+    suite.addTestCase({
+        name: "ScriptProfiler.Samples.Timestamps.WithinTrackingSession",
+        description: "Every sampled stack trace should have a timestamp between trackingStart and trackingComplete.",
+        async test() {
+            let startTimestamp = NaN;
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingStart"}).then((messageObject) => {
+                startTimestamp = messageObject.params.timestamp;
+            });
+
+            let trackingCompletePromise = InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"});
+
+            ProtocolTest.awaitEvent("TestPageBusyWorkDone").then(() => {
+                InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {});
+            });
+
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {includeSamples: true});
+            ProtocolTest.evaluateInPage("triggerBusyTimer()");
+
+            let messageObject = await trackingCompletePromise;
+            let endTimestamp = messageObject.params.timestamp;
+
+            // A stopwatch that is not running reports 0 for every timestamp, which would make
+            // the range check below pass no matter what.
+            ProtocolTest.expectGreaterThan(endTimestamp, startTimestamp, "The execution stopwatch should be running.");
+
+            let stackTraces = messageObject.params.samples?.stackTraces || [];
+            // The stack traces are stored in a Vector that is reallocated as it grows, so make
+            // sure there are enough of them for that to have happened several times.
+            ProtocolTest.expectGreaterThanOrEqual(stackTraces.length, 50, "Should have collected at least 50 stack traces.");
+
+            let outOfRangeCount = stackTraces.filter((stackTrace) => stackTrace.timestamp < startTimestamp || stackTrace.timestamp > endTimestamp).length;
+            ProtocolTest.expectEqual(outOfRangeCount, 0, "Every stack trace timestamp should be within the tracking session.");
+
+            let isSorted = stackTraces.every((stackTrace, i) => !i || stackTraces[i - 1].timestamp <= stackTrace.timestamp);
+            ProtocolTest.expectThat(isSorted, "Stack trace timestamps should be in increasing order.");
+        }
+    });
+
+    // The execution stopwatch only starts when the Page domain is enabled.
+    InspectorProtocol.sendCommand("Page.enable", {});
+
+    // FIXME: <https://webkit.org/b/155851> Web Inspector: We should separate out attaching the debugger from the Debugger.enable event
+    // Debugger should not need to be enabled for profiling to work.
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that every stack trace sampled during a ScriptProfiler tracking session has a timestamp within that session.</p>
+</body>
+</html>

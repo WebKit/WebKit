@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ContentInsetBackgroundFillEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+html {
+    width: 100%;
+    height: 100%;
+    scrollbar-width: none;
+}
+
+body {
+    margin: 0;
+    width: 200vw;
+    height: 200vh;
+}
+
+.outer, .inner {
+    content-visibility: auto;
+}
+
+.inner {
+    width: 50px;
+    height: 50px;
+    background: red;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the red square with content-visibility: auto; is visible, in a web view with obscured insets. Requires WebKitTestRunner");
+    await UIHelper.setObscuredInsets(100, 0, 0, 100);
+    await UIHelper.ensurePresentationUpdate();
+
+    isVisible = document.querySelector(".inner").checkVisibility({ contentVisibilityAuto: true });
+    shouldBeTrue("isVisible");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="outer">
+        <div class="outer">
+            <div class="inner outer"></div>
+        </div>
+    </div>
+</body>
+</html>

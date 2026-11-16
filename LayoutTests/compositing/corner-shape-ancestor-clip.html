@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Borders and Box Decorations 4: 'corner-shape' on a non-composited ancestor clips a composited descendant</title>
+    <meta name="fuzzy" content="maxDifference=0-45; totalPixels=0-191">
+    <style>
+        body {
+            margin: 0;
+            background-color: white;
+        }
+
+        .clipper {
+            position: relative;
+            width: 320px;
+            height: 240px;
+            margin: 20px;
+            border-radius: 80px;
+            corner-shape: notch scoop bevel squircle;
+            overflow: hidden;
+        }
+
+        .composited {
+            position: absolute;
+            left: -40px;
+            top: -40px;
+            width: 400px;
+            height: 320px;
+            background-color: blue;
+            transform: translateZ(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="clipper">
+        <div class="composited"></div>
+    </div>
+</body>
+</html>

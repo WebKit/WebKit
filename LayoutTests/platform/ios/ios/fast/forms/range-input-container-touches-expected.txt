@@ -1,0 +1,16 @@
+
+This tests touch events not on the slider thumb but on the slider are ignored by the thumb.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+First finger down on the slider's track.
+PASS #container touchstart
+Move that finger around. It should not do anything.
+Release the first finger.
+PASS #container touchend
+PASS sliderThumbMoved is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

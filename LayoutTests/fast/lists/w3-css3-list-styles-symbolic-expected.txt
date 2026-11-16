@@ -1,0 +1,37 @@
+CSS3 Symbolic list-style-type
+
+asterisks
+
+PASS list marker is *.
+PASS list marker is **.
+PASS list marker is ***.
+PASS list marker is ****.
+PASS list marker is *****.
+PASS list marker is ******.
+PASS list marker is *******.
+PASS list marker is ********.
+PASS list marker is *********.
+PASS list marker is **********.
+PASS list marker is 0.
+PASS list marker is -2.
+PASS list marker is -1.
+footnotes
+
+PASS list marker is *.
+PASS list marker is ⁑.
+PASS list marker is †.
+PASS list marker is ‡.
+PASS list marker is **.
+PASS list marker is ⁑⁑.
+PASS list marker is ††.
+PASS list marker is ‡‡.
+PASS list marker is ***.
+PASS list marker is ⁑⁑⁑.
+PASS list marker is †††.
+PASS list marker is ‡‡‡.
+PASS list marker is ****.
+PASS list marker is ⁑⁑⁑⁑.
+PASS list marker is 0.
+PASS list marker is -2.
+PASS list marker is -1.
+

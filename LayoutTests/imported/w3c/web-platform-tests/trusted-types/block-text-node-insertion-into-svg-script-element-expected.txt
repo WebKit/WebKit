@@ -1,0 +1,11 @@
+
+PASS Regression test: Bypass via insertAdjacentText, textContent. svg:script
+PASS Regression test: Bypass via appendChild into off-document script element. svg:script
+PASS Regression test: Bypass via appendChild into live script element. svg:script
+PASS Spot tests around script + innerHTML interaction.
+PASS Prep for subsequent tests: Create default policy.
+PASS Test that default policy applies. svg:script
+PASS Test that default policy applies with module script. svg:script
+PASS Test a failing default policy. svg:script
+PASS Spot tests around script + innerHTML interaction with default policy.
+

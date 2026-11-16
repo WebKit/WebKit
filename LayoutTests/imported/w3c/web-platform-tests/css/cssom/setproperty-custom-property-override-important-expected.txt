@@ -1,0 +1,7 @@
+
+PASS Inline style: setProperty() without priority overrides an important custom property
+PASS Style rule: setProperty() without priority overrides an important custom property
+PASS setProperty() without priority overrides an important custom property set via cssText
+PASS setProperty() without priority overrides an important standard property
+PASS Within one declaration block, a later normal custom property does not override an earlier important one
+

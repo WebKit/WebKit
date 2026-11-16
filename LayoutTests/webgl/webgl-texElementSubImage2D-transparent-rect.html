@@ -1,0 +1,64 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<meta name="fuzzy" content="maxDifference=0-96; totalPixels=0-1279">
+<style>
+    canvas {
+        width: 240px;
+        height: 240px;
+        border: solid 1px black;
+    }
+    .box {
+        height: 100px;
+        width: 100px;
+        background-color: rgb(0 255 0 / 0.5);
+        border: solid 10px rgb(0 0 255);
+    }
+    .right-bottom {
+        background-color: rgb(255 0 0 / 0.5);
+    }
+</style>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+<body>
+    <canvas id="canvas" width="240" height="240" content="drawable">
+        <div id="box1" class="box" drawable></div>
+        <div id="box2" class="right-bottom box" drawable></div>
+    </canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        const canvas = document.getElementById("canvas");
+        const gl = WebGLTestUtils.create3DContext(canvas, undefined, 2);
+
+        // A quad filling the canvas. The texture's first row is the top of the element,
+        // so flip the t coordinate: the lower left corner samples (0, 1), the upper right (1, 0).
+        const program = WebGLTestUtils.setupTexturedQuadWithTexCoords(gl, [0, 1], [1, 0]);
+        gl.useProgram(program);
+
+        // texElementSubImage2D() only replaces a region of an existing texture,
+        // so allocate empty storage for the whole canvas first.
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, canvas.width, canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+        function runTest() {
+            const box2Image = canvas.captureElementImage(box2);
+
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box1);
+            gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 120, 120, box2Image);
+
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            WebGLTestUtils.clearAndDrawUnitQuad(gl, [230, 230, 230, 255]);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        // Let the drawable child be painted so that a snapshot exists.
+        requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(runTest, 0))));
+    </script>
+</body>

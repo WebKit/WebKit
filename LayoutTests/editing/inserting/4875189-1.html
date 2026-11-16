@@ -1,0 +1,12 @@
+<p>This tests for a bug when replacing the contents of a list.  The list shouldn't be removed, just its contents.</p>
+<div contenteditable="true"><ul><li id="li">You shouldn't see this.</li></ul></div>
+
+<script>
+var r = document.createRange();
+var li = document.getElementById("li");
+r.setStart(li, 0);
+r.setEnd(li, li.childNodes.length);
+var selection = window.getSelection();
+selection.addRange(r);
+document.execCommand("InsertHTML", false, "This should be in a list item.")
+</script>

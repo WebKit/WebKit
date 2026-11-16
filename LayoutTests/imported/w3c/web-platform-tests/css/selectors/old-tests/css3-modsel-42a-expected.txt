@@ -1,0 +1,5 @@
+You should see after this paragraph the words GENERATED CONTENT over green background
+
+
+PASS p:after pseudo-element
+

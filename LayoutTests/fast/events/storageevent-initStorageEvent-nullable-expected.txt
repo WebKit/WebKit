@@ -1,0 +1,22 @@
+Tests nullable parameters to StorageEvent.initStorageEvent()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.__proto__ is StorageEvent.prototype
+event.initStorageEvent("storage", false, false, "key", "oldValue", "newValue", "url")
+PASS event.oldValue is "oldValue"
+PASS event.newValue is "newValue"
+event.initStorageEvent("storage", false, false, "key", null, null, "url")
+PASS event.oldValue is null
+PASS event.newValue is null
+event.initStorageEvent("storage", false, false, "key", "oldValue", "newValue", "url")
+PASS event.oldValue is "oldValue"
+PASS event.newValue is "newValue"
+event.initStorageEvent("storage", false, false, "key", undefined, undefined, "url")
+PASS event.oldValue is null
+PASS event.newValue is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

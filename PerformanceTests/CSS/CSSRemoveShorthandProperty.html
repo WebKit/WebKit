@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+</head>
+<body>
+<div id="test" style="--a: 1; --b: 2; --c: 3; direction: ltr"></div>
+</body>
+<script>
+var style = document.getElementById("test").style;
+var shorthands = [
+    'margin', 'padding', 'border', 'border-top', 'border-width', 'border-radius', 'background', 'font',
+    'outline', 'inset', 'flex', 'grid', 'grid-area', 'list-style', 'text-decoration', 'transition',
+    'animation', 'columns', 'overflow', 'place-items', 'gap', 'mask', 'scroll-margin', 'all',
+];
+PerfTestRunner.measureRunsPerSecond({run:function() {
+    for (var i = 0; i < 1000; ++i) {
+        for (var j = 0; j < shorthands.length; ++j)
+            style.removeProperty(shorthands[j]);
+    }
+}});
+</script>
+</html>

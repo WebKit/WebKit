@@ -1,0 +1,5 @@
+This very long paragraph should have a first line with green background. This very long paragraph should have a first line with green background. This very long paragraph should have a first line with green background. This very long paragraph should have a first line with green background. This very long paragraph should have a first line with green background. This very long paragraph should have a first line with green background. This very long paragraph should have a first line with green background.
+
+
+PASS ::first-line background-color should be lime
+

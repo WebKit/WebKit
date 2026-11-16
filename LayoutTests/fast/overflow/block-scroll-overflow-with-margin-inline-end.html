@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+  #scroller {
+    overflow: scroll;
+    width: 200px;
+    height: 200px;
+    background-color: gray;
+  }
+
+  #target {
+    margin-inline-start: 200px;
+    margin-inline-end: 200px;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+  }
+</style>
+<div id="scroller">
+    <div id="target"></div>
+</div>
+<pre id=result></pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+result.innerText = "scroll width: " + scroller.scrollWidth;
+</script>

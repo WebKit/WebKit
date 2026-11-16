@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<body style="margin: 0">
+<div id="visible" style="position: absolute; left: 0; top: 0; width: 100px; height: 100px; background: green"></div>
+<div id="clipped" style="position: absolute; left: 0; top: 250px; width: 100px; height: 100px; background: red"></div>
+<script>
+
+const isIntersecting = { };
+
+const observer = new IntersectionObserver(entries => {
+    for (const entry of entries)
+        isIntersecting[entry.target.id] = entry.isIntersecting;
+    window.top.postMessage(JSON.stringify(isIntersecting), "*");
+});
+
+observer.observe(document.getElementById("visible"));
+observer.observe(document.getElementById("clipped"));
+
+</script>

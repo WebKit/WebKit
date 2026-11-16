@@ -1,0 +1,4 @@
+https://bugs.webkit.org/show_bug.cgi?id=14762: There should be no red below.
+
+PASS
+PASS

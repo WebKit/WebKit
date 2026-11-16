@@ -1,0 +1,8 @@
+{
+    "version": 3,
+    "file": "add.wasm",
+    "sources": ["add.wat"],
+    "sourcesContent": ["(module\n  (func (export \"add\") (param i32 i32) (result i32)\n    local.get 0\n    local.get 1\n    i32.add))\n"],
+    "names": [],
+    "mappings": "iDAEA,EACA,EACA"
+}

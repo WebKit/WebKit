@@ -1,0 +1,35 @@
+
+baseannotation
+First line
+baseannotation
+Third line
+First line
+baseannotation
+Third line
+First line
+Second line
+baseannotation
+First line
+Second line
+baseannotation
+before
+baseannotation
+baseannotation
+n
+before baseannotation after
+baseannotation
+before baseannotation after
+baseannotation
+
+PASS Over ruby doesn't overflow the block
+PASS Over ruby + vertical-align doesn't overflow the block
+PASS Under ruby doesn't overflow the block
+PASS Under ruby + vertical-align doesn't overflow the block
+PASS Under ruby doesn't overwrap with the next block
+PASS Expand inter-lines spacing
+PASS Consume half-leading of the previous line
+FAIL Don't Consume half-leading of the previous line with text-emphasis assert_greater_than_equal: expected a number greater than or equal to 32 but got 28
+PASS Consume half-leading of the next line
+FAIL Don't Consume half-leading of the next line with text-emphasis assert_greater_than_equal: expected a number greater than or equal to 32 but got 28
+PASS An atomic-inline should not overlap with an annotation in the next line
+

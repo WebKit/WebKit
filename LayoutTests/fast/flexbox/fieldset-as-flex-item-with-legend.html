@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fieldset with legend as flex item should have correct height on first layout</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<style>
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+}
+fieldset {
+    font: 20px/1 Ahem;
+    margin: 0;
+}
+legend {
+    padding: 0;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>Fieldset with legend as a flex item in column direction should have the correct height on the first layout, without needing a relayout.</p>
+<div class="flex-column">
+    <fieldset id="fieldset1"><legend>X</legend></fieldset>
+</div>
+<div class="flex-column">
+    <fieldset id="fieldset2"><legend>X</legend><div style="height: 50px"></div></fieldset>
+</div>
+<div class="flex-column" style="flex-direction: row">
+    <fieldset id="fieldset3"><legend>X</legend></fieldset>
+</div>
+<pre id="result"></pre>
+<script>
+function test(id, expected) {
+    var el = document.getElementById(id);
+    var actual = el.offsetHeight;
+    var pass = actual === expected;
+    return (pass ? "PASS" : "FAIL") + ": " + id + " height is " + actual + (pass ? "" : " (expected " + expected + ")");
+}
+
+var fieldset1 = document.getElementById("fieldset1");
+var fieldset2 = document.getElementById("fieldset2");
+var fieldset3 = document.getElementById("fieldset3");
+
+// Fieldset with only legend: height should be legend + border/padding, not double-counted.
+var legendHeight = fieldset1.querySelector("legend").offsetHeight;
+var cs1 = getComputedStyle(fieldset1);
+var expectedEmpty = legendHeight + parseFloat(cs1.paddingTop) + parseFloat(cs1.paddingBottom) + parseFloat(cs1.borderBottomWidth);
+// Legend replaces border-top, so we don't add border-top separately when legend is taller.
+
+var results = [];
+// Compare fieldset1 against itself after a forced relayout (the known-good value).
+var heightBefore = fieldset1.offsetHeight;
+fieldset1.parentElement.style.width = "199px";
+void fieldset1.offsetHeight;
+fieldset1.parentElement.style.width = "";
+void fieldset1.offsetHeight;
+var heightAfterRelayout = fieldset1.offsetHeight;
+results.push(heightBefore === heightAfterRelayout
+    ? "PASS: fieldset1 height matches after relayout (" + heightBefore + "px)"
+    : "FAIL: fieldset1 height " + heightBefore + "px on first layout but " + heightAfterRelayout + "px after relayout");
+
+var heightBefore2 = fieldset2.offsetHeight;
+fieldset2.parentElement.style.width = "199px";
+void fieldset2.offsetHeight;
+fieldset2.parentElement.style.width = "";
+void fieldset2.offsetHeight;
+var heightAfterRelayout2 = fieldset2.offsetHeight;
+results.push(heightBefore2 === heightAfterRelayout2
+    ? "PASS: fieldset2 height matches after relayout (" + heightBefore2 + "px)"
+    : "FAIL: fieldset2 height " + heightBefore2 + "px on first layout but " + heightAfterRelayout2 + "px after relayout");
+
+var heightBefore3 = fieldset3.offsetHeight;
+fieldset3.parentElement.style.width = "199px";
+void fieldset3.offsetHeight;
+fieldset3.parentElement.style.width = "";
+void fieldset3.offsetHeight;
+var heightAfterRelayout3 = fieldset3.offsetHeight;
+results.push(heightBefore3 === heightAfterRelayout3
+    ? "PASS: fieldset3 (row) height matches after relayout (" + heightBefore3 + "px)"
+    : "FAIL: fieldset3 (row) height " + heightBefore3 + "px on first layout but " + heightAfterRelayout3 + "px after relayout");
+
+document.getElementById("result").textContent = results.join("\n") + "\n";
+</script>
+</body>
+</html>

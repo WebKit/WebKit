@@ -1,0 +1,40 @@
+<html>
+    <head>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+
+        <script>
+            function test()
+            {
+                var tbl1 = document.getElementById('tbl1');
+                var tbl2 = document.getElementById('tbl2');
+                var selection = window.getSelection();
+                selectAllCommand();
+                boldCommand();
+            }
+        </script>
+        <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+    </head>
+<body onload="test()" contenteditable>
+    <table id="tbl1" contenteditable=false>
+        <tr>
+            <td>This tests that a style can be applied to a selection that contains both editable and non-editable content.
+            </td>
+            <td>
+                <span contenteditable>Editable - line 1</span>
+            </td>
+        </tr>
+    </table>
+    <table id="tbl2" contenteditable=false>
+        <tr>
+            <td>The test passes if the editable content is bold, and the non editable content remains unchanged.
+            </td>
+            <td>
+                <span contenteditable>Editable - line 2</span>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,7 @@
+2d.imageData.get.nonpremul
+
+getImageData() returns non-premultiplied colors
+
+
+PASS getImageData() returns non-premultiplied colors
+

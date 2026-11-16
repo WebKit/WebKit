@@ -1,0 +1,69 @@
+Tests the IndexedDB domain against a cross-origin iframe's database under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.IndexedDB.FrameTarget
+-- Running test case: SiteIsolation.IndexedDB.FrameTarget.Setup
+PASS: Should find the cross-origin frame target.
+PASS: The iframe should be cross-origin to the main frame.
+PASS: The frame target should expose the IndexedDB domain.
+PASS: requestDatabaseNames should be available on a frame target.
+PASS: requestDatabase should be available on a frame target.
+PASS: requestData should be available on a frame target.
+PASS: clearObjectStore should be available on a frame target.
+
+-- Running test case: SiteIsolation.IndexedDB.FrameTarget.ManagerListsFrameDatabase
+PASS: The database version should be 1.
+Object store 'Empty' (autoIncrement: false), indexes: []
+Object store 'Reviewers' (autoIncrement: true), indexes: [Email Index, Name Index]
+
+-- Running test case: SiteIsolation.IndexedDB.FrameTarget.RequestDatabaseNames
+PASS: The frame target should list the iframe's database.
+
+-- Running test case: SiteIsolation.IndexedDB.FrameTarget.RequestDatabase
+PASS: The database name should match.
+PASS: The database should have 2 object stores.
+
+-- Running test case: SiteIsolation.IndexedDB.FrameTarget.ManagerRequestsData
+
+-- No Index
+PASS: Should have 4 entries.
+PASS: Should not have more entries.
+PASS: Values should be remote objects of the frame target.
+1: Thirsty Hamster
+2: Jamming Peacock
+3: Bustling Badger
+4: Monstrous Beaver
+
+-- Name Index
+PASS: Should have 4 entries.
+PASS: Should not have more entries.
+PASS: Values should be remote objects of the frame target.
+3: Bustling Badger
+2: Jamming Peacock
+4: Monstrous Beaver
+1: Thirsty Hamster
+
+-- Running test case: SiteIsolation.IndexedDB.FrameTarget.ManagerListsMainFrameDatabase
+PASS: The main frame's database should have the 'Hosts' object store.
+
+-- Running test case: SiteIsolation.IndexedDB.FrameTarget.ManagerRequestsMainFrameData
+PASS: Should have 2 entries.
+PASS: Should not have more entries.
+PASS: Values should not be remote objects of the cross-origin frame's target.
+1: Lucky Lemur
+2: Sleepy Sloth
+
+-- Running test case: SiteIsolation.IndexedDB.FrameTarget.ManagerClearsObjectStore
+PASS: The object store should be empty inside the cross-origin frame itself.
+
+-- Running test case: SiteIsolation.IndexedDB.FrameTarget.OriginsStayWithTheirTarget
+Requesting the main frame's origin from the frame target...
+PASS: Should produce an exception.
+Error: Frame target's document does not have given securityOrigin
+Requesting the iframe's origin from the page target...
+PASS: Should produce an exception.
+Error: Missing frame for given securityOrigin
+PASS: The main frame should see its own database.
+PASS: The main frame should not see the iframe's database.
+

@@ -1,0 +1,72 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("An about:blank iframe that inherited its parent's origin is still modifiable by the parent after going back to it from a cross-site document.");
+jsTestIsAsync = true;
+
+const crossSiteURL = "http://localhost:8000/site-isolation/resources/history-back-when-asked.html";
+
+let iframe;
+let initialHistoryLength;
+let historyEntriesAddedAfterAboutBlank;
+let historyEntriesAddedAfterCrossSiteNavigation;
+let parentCanModifyInheritedAboutBlank;
+let parentCanModifyCrossSiteIframe;
+let parentCanModifyAboutBlankRestoredFromHistory;
+
+function parentCanModifyIframeDOM()
+{
+    try {
+        iframe.contentDocument.body.setAttribute("data-modified-by-parent", "yes");
+        return iframe.contentDocument.body.getAttribute("data-modified-by-parent") === "yes";
+    } catch (e) {
+        return false;
+    }
+}
+
+function iframeLoaded()
+{
+    return new Promise(resolve => iframe.addEventListener("load", () => setTimeout(resolve, 0), { once: true }));
+}
+
+(async () => {
+    iframe = document.createElement("iframe");
+    let loaded = iframeLoaded();
+    iframe.src = crossSiteURL;
+    document.body.appendChild(iframe);
+    await loaded;
+    initialHistoryLength = history.length;
+
+    loaded = iframeLoaded();
+    iframe.contentWindow.location = "about:blank";
+    await loaded;
+    historyEntriesAddedAfterAboutBlank = history.length - initialHistoryLength;
+    shouldBe("historyEntriesAddedAfterAboutBlank", "1");
+    parentCanModifyInheritedAboutBlank = parentCanModifyIframeDOM();
+    shouldBeTrue("parentCanModifyInheritedAboutBlank");
+
+    loaded = iframeLoaded();
+    iframe.contentWindow.location = crossSiteURL;
+    await loaded;
+    historyEntriesAddedAfterCrossSiteNavigation = history.length - initialHistoryLength;
+    shouldBe("historyEntriesAddedAfterCrossSiteNavigation", "2");
+    parentCanModifyCrossSiteIframe = parentCanModifyIframeDOM();
+    shouldBeFalse("parentCanModifyCrossSiteIframe");
+
+    loaded = iframeLoaded();
+    iframe.contentWindow.postMessage("go-back", "*");
+    await loaded;
+    parentCanModifyAboutBlankRestoredFromHistory = parentCanModifyIframeDOM();
+    shouldBeTrue("parentCanModifyAboutBlankRestoredFromHistory");
+    shouldBeEqualToString("iframe.contentWindow.location.href", "about:blank");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

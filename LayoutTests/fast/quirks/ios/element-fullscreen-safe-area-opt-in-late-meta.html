@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ NeedsSiteSpecificQuirks=true FullscreenSafeAreaQuirkEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<!-- A bare viewport meta first, refined to opt in later in the same head. The platform honors the
+     last one during initial parse, so the quirk has to follow it back off again. -->
+<meta name="viewport" content="width=device-width">
+<script>
+// Results are buffered and reported once js-test.js has loaded at the end of <body>. Loading it here
+// would block the parser, and a blocked parser lets the preload scanner process the second <meta>
+// below before this script runs, which would defeat the point of this test.
+const results = [];
+function check(label, expected) {
+    const actual = "requestFullscreen" in Element.prototype ? "present" : "absent";
+    results.push({ label, expected, actual });
+}
+function report() {
+    for (const { label, expected, actual } of results) {
+        if (actual === expected)
+            testPassed(`${label}: requestFullscreen is ${actual}`);
+        else
+            testFailed(`${label}: requestFullscreen is ${actual}, expected ${expected}`);
+    }
+}
+
+// Touch Element.prototype here so it exists before the second meta tag is parsed. Without this the
+// prototype would simply be created later with the right answer and nothing would need reconciling.
+check("after bare viewport meta", "absent");
+</script>
+<meta name="viewport" content="width=device-width, viewport-fit=cover">
+<script>
+check("after viewport-fit=cover meta", "present");
+</script>
+<title>A later viewport meta in the same head re-enables element fullscreen</title>
+</head>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    check("DOMContentLoaded", "present");
+    report();
+});
+</script>
+<script src="../../../resources/js-test.js"></script>
+</body>
+</html>

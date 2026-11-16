@@ -1,0 +1,20 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Two connected iceTransports should have matching local/remote candidates returned assert_true: Expect RTCIceRole to be either controlling or controlled, found undefined expected true got false
+FAIL Unconnected iceTransport should have empty remote candidates and selected pair promise_test: Unhandled rejection with value: object "TypeError: iceTransport.getRemoteCandidates is not a function. (In 'iceTransport.getRemoteCandidates()', 'iceTransport.getRemoteCandidates' is undefined)"
+PASS RTCIceTransport should be in state "new" initially
+PASS RTCIceTransport should not transition to "checking" until after the answer is set _and_ the first remote candidate is received
+PASS RTCIceTransport should transition to "disconnected" if packets stop flowing
+PASS RTCIceTransport should transition to "disconnected" if packets stop flowing (DataChannel case)
+PASS Local ICE restart should not result in a different ICE transport
+PASS Local ICE restart should not result in a different ICE transport (DataChannel case)
+PASS Remote ICE restart should not result in a different ICE transport
+PASS Remote ICE restart should not result in a different ICE transport (DataChannel case)
+TIMEOUT RTCIceTransport should transition to "closed" if the underlying transport is closed because the answer used bundle Test timed out
+NOTRUN RTCIceTransport should synchronously transition to "closed" with no event if the underlying transport is closed due to PC.close()
+NOTRUN RTCIceTransport does not expose remote peer-reflexive candidates.
+NOTRUN RTCIceTransport.role should be "unknown" before the answer is applied
+NOTRUN RTCIceTransport.role should not change when the answerer initiates an ICE restart
+FAIL Validate selected candidate pair assert_true: pc1 selected local candidate in pc1 candidates expected true got false
+

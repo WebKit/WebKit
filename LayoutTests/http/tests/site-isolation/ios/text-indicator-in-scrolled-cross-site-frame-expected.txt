@@ -1,0 +1,4 @@
+
+
+PASS A text indicator for visible text in a scrolled cross-site frame isn't clipped to the unscrolled part of the frame
+

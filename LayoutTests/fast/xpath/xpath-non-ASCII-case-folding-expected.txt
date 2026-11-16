@@ -1,0 +1,15 @@
+Test XPath element tag and language matching to make sure only ASCII case is folded, and other non-ASCII case folding is not performed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.evaluate('count(.//span[attribute::id])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue is 1
+PASS document.evaluate('count(.//ſpan[attribute::id])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue is 0
+PASS document.evaluate('count(.//p[lang("en")])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue is 1
+PASS document.evaluate('count(.//p[lang("sv")])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue is 1
+PASS document.evaluate('count(.//p[lang("SV")])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue is 1
+PASS document.evaluate('count(.//p[lang("ſv")])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,10 @@
+<video><span id=span_copy><input id=input></input></span></video><button></button><audio><hr id=hr1 contentEditable="true"><hr id=hr2></audio><textarea></textarea>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    hr1.appendChild(span_copy);
+    input.setSelectionRange(-1,67);
+    hr2.appendChild(span_copy);
+    document.execCommand("insertImage", "#foo");
+    document.body.innerText = "Tests inserting paragraph separator when an editable canonical position is not found. The test passes if WebKit doesn't crash or hit an ssertion.";
+</script>

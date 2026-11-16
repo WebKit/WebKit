@@ -1,0 +1,114 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    .viewport {
+        border: 1px solid #000;
+        height: 200px;
+        width: 300px;
+        overflow: auto;
+    }
+
+    .grid {
+        position: relative;
+        background-color: red;
+        display: inline-grid;
+        grid-template-columns: repeat(2, 120px);
+        grid-template-rows: repeat(25px);
+        grid-gap: 1px;
+    }
+
+    .grid > div {
+        background-color: white;
+        box-sizing: border-box;
+        height: 25px;
+    }
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    jsTestIsAsync = true;
+        
+    window.addEventListener('load', () => {
+        let viewport = document.querySelector('.viewport');
+        let canvas = document.querySelector('.canvas');
+        let grid = document.querySelector('.grid');
+        const gridGap = 1;
+        const rowHeight = 25;
+        const rowHeightWithGridGap = rowHeight + gridGap;
+
+        let data = Array(500).fill(null).map((i, index) => [
+            index,
+            index + 1
+        ]);
+
+        canvas.style = `
+          height: ${(rowHeight + gridGap) * 500}px; 
+          width: ${(120 + gridGap) * 10}px
+        `;
+
+        viewport.addEventListener('scroll', getVisibleRows);
+
+        function getVisibleRows()
+        {
+          let { first, last } = getVisibleRowsRange();
+          let top = first * rowHeightWithGridGap;
+          redrawRows(data.slice(first, last), top);
+        }
+
+        function getVisibleRowsRange()
+        {
+          const { offsetHeight, scrollTop } = viewport;
+          const firstVisibleRow = Math.max(Math.floor((scrollTop + gridGap) / rowHeightWithGridGap), 0);
+          const lastVisibleRow = Math.min(Math.floor((scrollTop + offsetHeight) / rowHeightWithGridGap), data.length - 1);
+          return { first: firstVisibleRow, last: lastVisibleRow + 1 };
+        }
+
+        function redrawRows(rows, top)
+        {
+          clearExistingRows();
+          grid.style.top = `${top}px`;
+          drawRows(rows);
+        }
+
+        function clearExistingRows()
+        {
+          while (grid.firstChild)
+            grid.removeChild(grid.firstChild);
+        }
+
+        function drawRows(rows)
+        {
+          rows.forEach(row => {
+            row.forEach((cell, i) => {
+              let el = document.createElement('div');
+              el.style = i < 1 ? 'position: sticky' : '';
+              el.textContent = cell;
+              grid.appendChild(el);
+            });
+          });
+        }
+
+        getVisibleRows();
+        
+        requestAnimationFrame(() => {
+            viewport.scrollTo(0, 200);
+
+            requestAnimationFrame(() => {
+                viewport.scrollTo(0, 400);
+                shouldBeTrue("window.internals?.scrollingStateTreeAsText().indexOf('unparented node count') == -1");
+                finishJSTest();
+            })
+        })
+    }, false);
+</script>
+</head>
+<body>
+    <div class="viewport">
+        <div class="canvas">
+            <div class="grid"></div>
+        </div>
+    </div>
+<div id="console"></div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

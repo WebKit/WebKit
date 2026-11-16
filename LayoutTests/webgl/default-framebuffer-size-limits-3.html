@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL default framebuffer size limits, part 3 of 4</title>
+<script src="../resources/js-test.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+<script src="resources/default-framebuffer-size-limits.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that a canvas element or an OffscreenCanvas resized larger than the implementation limits gets a drawing buffer clamped to the limits, without errors or a context loss, and that the clamped drawing buffer renders, is read and is displayed with the clamped size. Part 3 of 4.");
+
+jsTestIsAsync = true;
+startBufferingOutput();
+runDefaultFramebufferSizeLimitTests(3, 4);
+</script>
+</body>
+</html>

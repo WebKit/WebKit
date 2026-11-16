@@ -1,0 +1,36 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS sec-fetch-site - Same origin no attributes
+PASS sec-fetch-site - Cross-site no attributes
+PASS sec-fetch-site - Same site no attributes
+TIMEOUT sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect no attributes Test timed out
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect no attributes
+NOTRUN sec-fetch-site - Cross-Site -> Same Origin no attributes
+NOTRUN sec-fetch-site - Cross-Site -> Same-Site no attributes
+NOTRUN sec-fetch-site - Cross-Site -> Cross-Site no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Same Origin no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Same-Site no attributes
+NOTRUN sec-fetch-site - Same-Origin -> Cross-Site no attributes
+NOTRUN sec-fetch-site - Same-Site -> Same Origin no attributes
+NOTRUN sec-fetch-site - Same-Site -> Same-Site no attributes
+NOTRUN sec-fetch-site - Same-Site -> Cross-Site no attributes
+NOTRUN sec-fetch-mode no attributes
+NOTRUN sec-fetch-mode attributes: crossorigin
+NOTRUN sec-fetch-mode attributes: crossorigin=anonymous
+NOTRUN sec-fetch-mode attributes: crossorigin=use-credentials
+NOTRUN sec-fetch-dest no attributes
+NOTRUN sec-fetch-dest attributes: as=audio
+NOTRUN sec-fetch-dest attributes: as=document
+NOTRUN sec-fetch-dest attributes: as=embed
+NOTRUN sec-fetch-dest attributes: as=fetch
+NOTRUN sec-fetch-dest attributes: as=font
+NOTRUN sec-fetch-dest attributes: as=image
+NOTRUN sec-fetch-dest attributes: as=object
+NOTRUN sec-fetch-dest attributes: as=script
+NOTRUN sec-fetch-dest attributes: as=style
+NOTRUN sec-fetch-dest attributes: as=track
+NOTRUN sec-fetch-dest attributes: as=video
+NOTRUN sec-fetch-dest attributes: as=worker
+NOTRUN sec-fetch-user no attributes
+

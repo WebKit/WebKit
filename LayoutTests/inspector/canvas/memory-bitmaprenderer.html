@@ -1,0 +1,56 @@
+<!-- webkit-test-runner [ OffscreenCanvasEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let sourceCanvas = null;
+let context = null;
+
+function load() {
+    sourceCanvas = new OffscreenCanvas(128, 128);
+    sourceCanvas.getContext("2d").fillRect(0, 0, sourceCanvas.width, sourceCanvas.height);
+    context = document.body.appendChild(document.createElement("canvas")).getContext("bitmaprenderer");
+    runTest();
+}
+
+function transferImageBitmap() {
+    context.transferFromImageBitmap(sourceCanvas.transferToImageBitmap());
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.MemoryBitmapRenderer");
+
+    suite.addTestCase({
+        name: "Canvas.MemoryBitmapRenderer.Transfer",
+        description: "Check that transferring an ImageBitmap updates the bitmap renderer's memory cost.",
+        async test() {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.BitmapRenderer);
+            let memoryChangedPromise = canvas.awaitEvent(WI.Canvas.Event.MemoryChanged);
+            InspectorTest.evaluateInPage("transferImageBitmap()");
+            await memoryChangedPromise;
+            InspectorTest.expectGreaterThan(canvas.memoryCost, 0, "Transferring an ImageBitmap should increase the memory cost.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.MemoryBitmapRenderer.Clear",
+        description: "Check that clearing an ImageBitmap updates the bitmap renderer's memory cost.",
+        async test() {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.BitmapRenderer);
+            let memoryChangedPromise = canvas.awaitEvent(WI.Canvas.Event.MemoryChanged);
+            InspectorTest.evaluateInPage("context.transferFromImageBitmap(null)");
+            await memoryChangedPromise;
+            InspectorTest.expectEqual(canvas.memoryCost, 0, "Clearing an ImageBitmap should clear the memory cost.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager tracks bitmap renderer memory costs.</p>
+</body>
+</html>
+

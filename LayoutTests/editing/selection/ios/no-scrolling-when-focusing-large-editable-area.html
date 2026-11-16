@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script src="../../../resources/ui-helper.js"></script>
+</head>
+<body style="margin: 0">
+    <div style="width: 100%; height: 50px; background-color: lightblue; opacity: 0.25"></div>
+    <pre id="editor" contenteditable style="line-height: 1.5em; border: silver dashed 2px; height: 100vh; margin-top: 0">
+    Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.
+    </pre>
+    <p id="description">
+    This test verifies that we avoid unnecessary scrolling when focusing large editable areas. To reproduce manually, scroll to the top and focus the first line of editable text in the dashed box. The blue box should still be visible.
+    </p>
+    <div>
+        <pre>The initial scroll offset is: <span id="initial"></span></pre>
+        <pre>The final scroll offset is: <span id="final"></span></pre>
+    </div>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    initial.textContent = [pageXOffset, pageYOffset].toString();
+
+    await UIHelper.activateAndWaitForInputSessionAt(100, 60);
+    editor.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    final.textContent = [pageXOffset, pageYOffset].toString();
+    testRunner.notifyDone();
+});
+</script>
+</html>

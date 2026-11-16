@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8000/plugins/resources/mock-plugin.pl because it does not appear in the object-src directive of the Content Security Policy.
+

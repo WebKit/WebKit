@@ -1,0 +1,6 @@
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(sourceclose)
+PASS: Collecting a detached detachable MediaSource with SourceBuffers did not crash.
+END OF TEST
+

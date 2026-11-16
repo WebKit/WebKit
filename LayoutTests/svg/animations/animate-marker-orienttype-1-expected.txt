@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x520
+  RenderBlock {HTML} at (0,0) size 800x520
+    RenderBody {BODY} at (8,8) size 784x504
+      RenderSVGRoot {svg} at (58,58) size 218x218
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceMarker {marker} [id="arrow"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=180.00]
+            RenderSVGPath {path} at (8,8) size 17x17 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [data="M 5 0 L 0 -5 L 0 5 Z"]
+        RenderSVGPath {path} at (58,58) size 218x218 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=arrow] [data="M 20 20 L 80 80"]
+      RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style></style>
+<title>InsertHRWithStyle</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = () => {
+    document.styleSheets[0].insertRule(`:not(:read-only) { display: inline-table; }`);
+    document.styleSheets[0].insertRule(`:not(:host) { border-top: 1px solid; }`);
+    document.styleSheets[0].insertRule(`:last-of-type { all: unset; }`);
+    document.querySelector('title').appendChild(document.createElement('div'));
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('InsertHorizontalRule');
+    document.head.replaceChildren();
+    document.body.textContent = 'This test passes if it does not crash. PASS';
+};
+</script>
+<script></script>
+</head>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .right {
+                position: relative;
+                width: 150px;
+                height: 150px;
+                -webkit-box-reflect: right 10px;
+            }
+            .below {
+                width: 150px;
+                height: 150px;
+                -webkit-box-reflect: below 10px;
+            }
+            .container {
+                height: 100px;
+                width: 100px;
+                background-color: green;
+                opacity: 0.5;
+            }
+            .container div {
+                position: relative;
+                top: 10px;
+                left: 10px;
+                height: 100px;
+                width: 100px;
+            }
+            .child1 {
+                background-color: blue;
+            }
+            .child2 {
+                opacity: 0.5;
+                background-color: yellow;
+            }
+            .child3 {
+                background-color: red;
+            }
+            .child4 {
+                background-color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="right">
+            <div class="below">
+                <div class="container">
+                    <div class="child1">
+                        <div class="child2">
+                            <div class="child3">
+                                <div class="child4">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

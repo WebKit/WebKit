@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Closing a worker while a navigator.storage.estimate() request is still in flight must not leave the estimate completion handler uncalled.");
+
+jsTestIsAsync = true;
+
+const worker = new Worker('resources/worker-close-with-pending-estimate.js');
+
+worker.onmessage = (event) => {
+    if (event.data === 'started-estimate')
+        testPassed('Worker closed with in-flight navigator.storage.estimate() requests without crashing the web process.');
+    else
+        testFailed('Unexpected message from worker: ' + event.data);
+
+    setTimeout(finishJSTest, 500);
+};
+
+worker.onerror = (event) => {
+    testFailed('Worker error: ' + (event.message || event));
+    finishJSTest();
+};
+</script>
+</body>
+</html>

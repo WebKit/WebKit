@@ -1,0 +1,6 @@
+
+PASS Test the Opus DTX flag works.
+PASS Test the Opus bitrateMode flag works.
+FAIL Test Opus valid frame durations. promise_test: Unhandled rejection with value: object "TypeError: Config is invalid"
+PASS Test the AAC bitrateMode flag works.
+

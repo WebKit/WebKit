@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<head>
+<title>This tests when input=range is block we issue correct repaint rects</title>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test.js"></script>
+<style>
+  input[type="range"] {
+    display: block;
+    width: 500px;
+  }
+</style>
+</head>
+<body>
+<input id=moveme type=range>
+<script>
+  window.internals?.startTrackingRepaints();
+  document.getElementById("moveme").value = 100;
+  document.body.offsetHeight;
+  function repaintTest() {
+    if (window.internals) {
+      repaintRects = window.internals.repaintRectsAsText();
+      window.internals.stopTrackingRepaints();
+
+      const sliderThumb = internals.shadowRoot(moveme).querySelector('[useragentpart="-webkit-slider-thumb"]');
+      const sliderThumbRect = sliderThumb.getBoundingClientRect();
+
+      let passed = false;
+      const tolerance = 2;
+      for (let i = 0; i <= tolerance; i++) {
+          const rectInfo = `${sliderThumbRect.x - i} ${sliderThumbRect.y - i} ${sliderThumbRect.width + i*2} ${sliderThumbRect.height + i*2}`;
+          if (repaintRects.indexOf(rectInfo) !== -1) {
+            passed = true;
+            testPassed("Slider thumb was repainted after movement.");
+            break;
+          }
+      }
+
+      if (!passed)
+        testFailed("Slider thumb was not repainted after movement.");
+    }
+    finishJSTest();
+  }
+  setTimeout(repaintTest, 0);
+</script>
+</body>
+</html>

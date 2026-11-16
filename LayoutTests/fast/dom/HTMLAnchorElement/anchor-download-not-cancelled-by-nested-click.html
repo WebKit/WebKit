@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.waitUntilDownloadFinished();
+}
+</script>
+</head>
+<body>
+<p>Test that a link with a download attribute clicked from another link's click handler starts a download.
+The outer link's default action performs a fragment navigation once the handler returns, which must not
+cancel the download. This is the form the bug was originally reported in.</p>
+<p>This test passes if you see a 'Download started' message above.</p>
+<a id="outerLink" href="#" onclick="downloadCSV()">Download CSV</a>
+<script>
+function downloadCSV()
+{
+    var link = document.createElement("a");
+    link.href = "data:text/csv;charset=utf-8,Name,Age%0AJohn,30";
+    link.target = "_blank";
+    link.download = "test.csv";
+    link.click();
+}
+document.getElementById("outerLink").click();
+</script>
+</body>
+</html>

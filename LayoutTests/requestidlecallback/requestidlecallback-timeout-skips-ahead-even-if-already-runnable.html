@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that a runnable idle callback can skip ahead of others in case of timeout.');
+
+jsTestIsAsync = true;
+
+function busyLoop(t) {
+    const start = performance.now();
+    while (performance.now() < start + t);
+}
+
+function becomeBusy() {
+    busyLoop(10);
+    setTimeout(becomeBusy, 0);
+}
+
+let firstIdlePeriodStarted = false;
+let secondIdlePeriodStarted = false;
+
+window.addEventListener('load', () => {
+    // We expect the third rIC to run before the second, due timeout:
+    requestIdleCallback(() => {
+        firstIdlePeriodStarted = true;
+        becomeBusy();
+    });
+    requestIdleCallback ( () => {
+        secondIdlePeriodStarted = true;
+    })
+    requestIdleCallback( () => {
+        shouldBeTrue('firstIdlePeriodStarted');
+        shouldBeFalse('secondIdlePeriodStarted');
+        finishJSTest();
+    }, { timeout : 50 });
+});
+
+</script>
+</body>
+</html>

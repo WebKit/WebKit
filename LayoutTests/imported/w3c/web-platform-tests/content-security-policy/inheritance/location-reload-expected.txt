@@ -1,0 +1,6 @@
+
+
+PASS location.reload() of empty iframe.
+PASS location.reload() of blob URL iframe.
+PASS location.reload() of srcdoc iframe.
+

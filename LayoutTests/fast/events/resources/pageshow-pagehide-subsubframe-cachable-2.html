@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Subsubframe 2</p>
+<script>
+window.onload = function (e) {
+    top.log("Subsubframe2 window.onload");
+}
+
+window.onpageshow = function (e) {
+    top.log(`Subsubframe2 window.onpageshow, target = ${e.target}, persisted = ${e.persisted}`);
+}
+
+window.onpagehide = function (e) {
+    top.log(`Subsubframe2 window.onpagehide, target = ${e.target}, persisted = ${e.persisted}`);
+}
+</script>
+</body>
+</html>

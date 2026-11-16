@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #x {
+                transform: translate(100px, 100px);
+            }
+            div div {
+                position: absolute;
+                width: 100px;
+                height: 100px;
+                background: green;
+            }
+            .a {
+                transform: translate(-60px, -60px);
+                filter: drop-shadow(-20px -20px 0px blue);
+            }
+            .b {
+                transform: translate(-60px, 60px);
+                filter: drop-shadow(-20px 20px 0px blue);
+            }
+            .c {
+                transform: translate(60px, -60px);
+                filter: drop-shadow(20px -20px 0px blue);
+            }
+            .d {
+                transform: translate(60px, 60px);
+                filter: drop-shadow(20px 20px 0px blue);
+            }
+        </style>
+    </head>
+    <body>
+        <div id=x>
+            <div class=a></div>
+            <div class=b></div>
+            <div class=c></div>
+            <div class=d></div>
+        </div>
+    </body>
+</html>

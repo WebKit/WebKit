@@ -1,0 +1,10 @@
+label for disabled button disabled
+child of disabled
+
+
+PASS Clicking on a disabled button should make it match the :active selector.
+PASS Clicking the label for a disabled button should make the button match the :active selector.
+PASS Clicking on a child of a disabled button should make the button match the :active selector.
+PASS Clicking on a disabled input should make it match the :active selector.
+PASS Clicking on a disabled textarea should make it match the :active selector.
+

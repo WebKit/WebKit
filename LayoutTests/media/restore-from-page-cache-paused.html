@@ -1,0 +1,73 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var mediaFile = "content/counting.mp4";
+            var loadCount = 0;
+
+            if (window.testRunner) {
+                testRunner.dumpAsText(true);
+                testRunner.waitUntilDone();
+            }
+
+            function pageshow(evt)
+            {
+                if (!evt.persisted) {
+                    // this is the first time the page has been loaded, setup the video element
+                    setup();
+                    return;
+                }
+
+                consoleWrite("*** Page returned from cache");
+                testExpected("loadCount", 1);
+
+                video = document.getElementsByTagName("video")[0];
+                testExpected("video.paused", true);
+
+                // Give the restored compositing layer a moment to settle before the harness
+                // forces a repaint and takes its snapshot.
+                requestAnimationFrame(function() {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                });
+            }
+
+            function pagehide()
+            {
+                consoleWrite("*** Page going into cache, video.paused = " + video.paused);
+            }
+
+            function loadeddata()
+            {
+                testExpected("loadCount", 0);
+                testExpected("video.paused", true);
+
+                if (!loadCount) {
+                    consoleWrite("*** Page going into cache while paused");
+                    setTimeout('window.location = "data:text/html,<script>history.back()<" + "/script>"', 0);
+                }
+                ++loadCount;
+            }
+
+            function setup()
+            {
+                video = document.getElementsByTagName("video")[0];
+                waitForEvent("loadeddata", loadeddata);
+                video.src = mediaFile;
+            }
+
+            window.onpageshow = pageshow;
+            window.onpagehide = pagehide;
+        </script>
+    </head>
+    <body>
+
+        <video></video>
+        <p>Test that a &lt;video&gt; that was paused before entering the back/forward cache is
+        still paused, and still visibly displaying its last frame, after being restored. The
+        visible-frame part of this is verified by the pixel/screenshot comparison against
+        restore-from-page-cache-paused-expected.png, not by anything in this script.</p>
+    </body>
+</html>

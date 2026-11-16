@@ -1,0 +1,15 @@
+
+
+PASS Does not block window.open(`resources/empty.html?
+<`,'_self')
+PASS Does not block location.replace(`resources/empty.html?
+<`)
+PASS Setup controlled frame
+PASS Does not block xhr
+PASS Does not block EventSource
+PASS Does not block fetch
+PASS Does not block Worker
+PASS Does not block importScripts
+PASS Clean up iframe
+PASS Does not block new URL()
+

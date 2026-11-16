@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL attrib location length tests</title>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"> </script>
+<script src="resources/webgl-test-utils.js"> </script>
+</head>
+<body>
+<canvas id="example" width="50" height="50">
+There is supposed to be an example drawing here, but it's not important.
+</canvas>
+<div id="description">Verify fix on substring-mached attrib locations.</div>
+<div id="console"></div>
+<script id="vertexShader" type="x-shader/x-vertex">
+// A shader where two attributes share the same substring.
+attribute vec4 attrib_name;
+attribute vec4 name;
+
+void main()
+{
+    gl_Position = attrib_name + name;
+}
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+precision mediump float;
+
+void main() {
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+</script>
+<script>
+if (window.initNonKhronosFramework) {
+    window.initNonKhronosFramework(false);
+}
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var wtu = WebGLTestUtils;
+var gl = wtu.create3DContext(document.getElementById("example"));
+
+debug("Test attrib names not incorrectly identified during renaming");
+var program = wtu.loadProgramFromScript(gl, "vertexShader", "fragmentShader");
+shouldBe('gl.getProgramParameter(program, gl.LINK_STATUS)', 'true');
+var attribLoc = gl.getAttribLocation(program, "attrib_name");
+var attribLoc2 = gl.getAttribLocation(program, "name");
+if (attribLoc == -1) {
+    testFailed("attrib location was -1, should not be");
+} else {
+    testPassed("attrib location should not be -1");
+}
+if (attribLoc2 == -1) {
+    testFailed("attrib 2 location was -1, should not be");
+} else {
+    testPassed("attrib 2 location should not be -1");
+}
+wtu.glErrorShouldBe(gl, gl.NONE);
+
+
+</script>
+</body>
+</html>

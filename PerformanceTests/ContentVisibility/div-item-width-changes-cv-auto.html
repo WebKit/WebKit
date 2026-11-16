@@ -1,0 +1,89 @@
+<!doctype HTML>
+
+<!--
+This test creates a div container with 10,000 non-trivial div elements below the viewport.
+It sets content-visibility: auto on the container and adjusts one item width continuously.
+-->
+
+<style>
+#container {
+  content-visibility: auto;
+
+  width: 500px;
+  height: 500px;
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid black;
+  background: lightblue;
+}
+.item {
+  background: blue;
+  margin: 1px;
+  width: 10%;
+  height: 10%;
+}
+#spacer {
+  height: 200vh;
+}
+</style>
+
+<template id="item_template">
+<div class="item">
+  <div id="target" style="position: relative; width: 80%;">
+    relpos
+    <div style="position: absolute; top: 1px; left: 1%">
+      abspos
+    </div>
+  </div>
+  <div style="position: absolute; top: 1px; left: 1%">
+    abspos
+  </div>
+  lorem ipsum dolor sit amet
+</div>
+</template>
+
+<div id=spacer></div>
+<div id=container></div>
+
+<script src="../resources/runner.js"></script>
+<script>
+function construct(n) {
+  const specimen = document.importNode(document.getElementById("item_template").content, true).firstElementChild;
+  const container = document.getElementById("container");
+  for (let i = 0; i < n; ++i) {
+    const clone = specimen.cloneNode(true);
+    container.appendChild(clone);
+  }
+}
+
+construct(10000);
+
+let widths = ["90%", "95%"];
+let width_index = 0;
+function changeStyle() {
+  document.getElementById("target").style.width = widths[width_index];
+  width_index = 1 - width_index;
+}
+
+let testDone = false;
+let startTime;
+function runTest() {
+  if (startTime)
+    PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+  if (testDone)
+    return;
+
+  startTime = PerfTestRunner.now();
+
+  changeStyle();
+  requestAnimationFrame(runTest);
+}
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+  unit: 'ms',
+  done: () => { testDone = true; container.innerHTML = ""; spacer.style.height = "0px"; },
+  iterationCount: 5
+});
+requestAnimationFrame(runTest);
+
+</script>

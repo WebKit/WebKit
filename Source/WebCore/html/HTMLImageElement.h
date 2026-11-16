@@ -1,0 +1,328 @@
+/*
+ * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2015 Google Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/AttachmentAssociatedElement.h>
+#include <WebCore/DecodingOptions.h>
+#include <WebCore/FormAssociatedElement.h>
+#include <WebCore/GraphicsTypes.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/MediaQuery.h>
+#include <wtf/Platform.h>
+#include <wtf/WeakPtr.h>
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+#include <WebCore/ImmersiveElement.h>
+#endif
+
+namespace WebCore {
+
+class CachedImage;
+class DeferredPromise;
+class HTMLAttachmentElement;
+class HTMLFormElement;
+class HTMLImageLoader;
+class HTMLMapElement;
+class Image;
+class ImageAnimationTimeline;
+class LayoutSize;
+class SecurityOrigin;
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+template<typename IDLType> class DOMPromiseDeferred;
+#endif
+
+struct ImageCandidate;
+struct ImageOrientation;
+
+enum class ImageAnimationOverride : uint8_t;
+enum class ImageRequestState : uint8_t;
+enum class ReferrerPolicy : uint8_t;
+enum class RelevantMutation : bool;
+enum class RequestPriority : uint8_t;
+
+class HTMLImageElement
+    : public HTMLElement
+#if ENABLE(ATTACHMENT_ELEMENT)
+    , public AttachmentAssociatedElement
+#endif
+    , public FormAssociatedElement
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    , public ImmersiveElement
+#endif
+    , public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(HTMLImageElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLImageElement);
+public:
+    static Ref<HTMLImageElement> create(Document&);
+    static Ref<HTMLImageElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLImageElement> createForLegacyFactoryFunction(Document&, std::optional<unsigned> width, std::optional<unsigned> height);
+
+    virtual ~HTMLImageElement();
+
+    // ActiveDOMObject.
+    void ref() const final { HTMLElement::ref(); }
+    void deref() const final { HTMLElement::deref(); }
+    USING_CAN_MAKE_WEAKPTR(HTMLElement);
+
+    void formOwnerRemovedFromTree(const Node& formRoot);
+
+    WEBCORE_EXPORT unsigned width();
+    WEBCORE_EXPORT unsigned height();
+
+    WEBCORE_EXPORT unsigned naturalWidth() const;
+    WEBCORE_EXPORT unsigned naturalHeight() const;
+
+    const URL& currentURL() const LIFETIME_BOUND { return m_currentURL; }
+    WEBCORE_EXPORT const AtomString& currentSrc();
+
+    NODELETE bool isServerMap() const;
+
+    NODELETE const AtomString& altText() const;
+
+    NODELETE WEBCORE_EXPORT CachedImage* cachedImage() const;
+
+    // https://html.spec.whatwg.org/multipage/images.html#img-req-state
+    ImageRequestState currentRequestState() const;
+
+    // https://html.spec.whatwg.org/multipage/images.html#current-pixel-density
+    float currentPixelDensity() const { return m_currentPixelDensity; }
+
+    ImageOrientation orientationForSourceImage();
+
+    RefPtr<Image> sourceImage() const;
+
+    NODELETE void setLoadManually(bool);
+
+    NODELETE bool matchesUsemap(const AtomString&) const;
+    RefPtr<HTMLMapElement> associatedMapElement() const;
+
+    WEBCORE_EXPORT String crossOrigin() const;
+    WEBCORE_EXPORT int x() const;
+    WEBCORE_EXPORT int y() const;
+    NODELETE WEBCORE_EXPORT bool complete() const;
+    String decoding() const;
+
+    DecodingMode decodingMode() const;
+    
+    WEBCORE_EXPORT void decode(Ref<DeferredPromise>&&);
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+    bool willRespondToMouseClickEventsWithEditability(Editability) const override;
+
+    enum class IgnoreTouchCallout : bool { No, Yes };
+    bool willRespondToMouseClickEventsWithEditability(Editability, IgnoreTouchCallout) const;
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void setAttachmentElement(Ref<HTMLAttachmentElement>&&) final;
+#endif
+
+    NODELETE WEBCORE_EXPORT size_t pendingDecodePromisesCountForTesting() const;
+
+    bool canContainRangeEndPoint() const override { return false; }
+
+    String imageSourceURL() const override;
+    
+#if ENABLE(SERVICE_CONTROLS)
+    bool isImageMenuEnabled() const { return m_isImageMenuEnabled; }
+    void setImageMenuEnabled(bool value) { m_isImageMenuEnabled = value; }
+#endif
+
+    NODELETE HTMLPictureElement* pictureElement() const;
+    NODELETE void setPictureElement(HTMLPictureElement*);
+
+#if USE(SYSTEM_PREVIEW)
+    WEBCORE_EXPORT bool isSystemPreviewImage() const;
+#endif
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    bool isMultiRepresentationHEIC() const;
+#endif
+
+    void loadDeferredImage();
+    void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
+
+    AtomString srcsetForBindings() const;
+
+    NODELETE bool usesSrcsetOrPicture() const;
+
+    enum LoadingValues { Lazy, Eager };
+
+    bool hasAutoSizes() const;
+    bool allowsAutoSizes() const;
+    static bool hasAutoSizesAttributeValue(StringView);
+    void scheduleAutoSizesResolution();
+
+    NODELETE bool isDeferred() const;
+
+    static bool isSupportedImageSourceType(const String& typeAttribute);
+
+    bool isDroppedImagePlaceholder() const { return m_isDroppedImagePlaceholder; }
+    void setIsDroppedImagePlaceholder() { m_isDroppedImagePlaceholder = true; }
+
+    NODELETE void setIsUserAgentShadowRootResource();
+
+    void evaluateDynamicMediaQueryDependencies();
+
+    String referrerPolicyForBindings() const;
+    ReferrerPolicy referrerPolicy() const;
+
+    NODELETE bool allowsOrientationOverride() const;
+
+    bool allowsAnimation() const;
+    WEBCORE_EXPORT void setAnimationOverride(ImageAnimationOverride);
+    Ref<ImageAnimationTimeline> imageAnimationTimeline() const;
+    void clearImageAnimationTimeline();
+
+    String fetchPriorityForBindings() const;
+    RequestPriority fetchPriority() const;
+
+    bool originClean(const SecurityOrigin&) const;
+
+    WEBCORE_EXPORT Image* image() const;
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    void requestImmersive(DOMPromiseDeferred<void>&&);
+#endif
+
+protected:
+    HTMLImageElement(const QualifiedName&, Document&);
+
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
+
+private:
+    void resetFormOwner() final;
+    void refFormAssociatedElement() const final { HTMLElement::ref(); }
+    void derefFormAssociatedElement() const final { HTMLElement::deref(); }
+    void setFormInternal(RefPtr<HTMLFormElement>&&) final;
+
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    void invalidateAttributeMapping();
+    void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
+
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const final;
+
+    // ActiveDOMObject.
+    bool virtualHasPendingActivity() const final;
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    void suspend(ReasonForSuspension) final;
+    void stop() final;
+
+    void refImmersiveElement() const final { HTMLElement::ref(); }
+    void derefImmersiveElement() const final { HTMLElement::deref(); }
+
+    bool isImmersiveEnabled() const final;
+    void prepareImmersivePresentation(CompletionHandler<void(ExceptionOr<void>)>&&) final;
+
+    std::optional<Exception> immersiveImageError() const;
+    void exitImmersiveIfNeeded();
+#endif
+
+    void didAttachRenderers() override;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
+    void setBestFitURLAndDPRFromImageCandidate(const ImageCandidate&);
+
+    bool canStartSelection() const override;
+
+    NODELETE bool isURLAttribute(const Attribute&) const override;
+    NODELETE bool attributeContainsURL(const Attribute&) const override;
+    String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::YesExcludingURLsForPrivacy) const override;
+    Attribute replaceURLsInAttributeValue(const Attribute&, const CSS::SerializationContext&) const override;
+
+    bool isDraggableIgnoringAttributes() const final { return true; }
+
+    void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const override;
+    void addCandidateSubresourceURLs(OrderedHashSet<URL>&) const override;
+
+    NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
+    void removingSteps(RemovalType, ContainerNode&) override;
+    void movingSteps(MovingType, ContainerNode&) override;
+
+    NODELETE bool isFormListedElement() const final { return false; }
+    NODELETE FormAssociatedElement* asFormAssociatedElement() final { return this; }
+    HTMLImageElement& asHTMLElement() final { return *this; }
+    const HTMLImageElement& asHTMLElement() const final { return *this; }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void refAttachmentAssociatedElement() const final { HTMLElement::ref(); }
+    void derefAttachmentAssociatedElement() const final { HTMLElement::deref(); }
+
+    AttachmentAssociatedElement* asAttachmentAssociatedElement() final { return this; }
+
+    AttachmentAssociatedElementType attachmentAssociatedElementType() const final { return AttachmentAssociatedElementType::Image; };
+#endif
+
+    bool isInteractiveContent() const final;
+
+    void selectImageSource(RelevantMutation);
+
+    ImageCandidate bestFitSourceFromPictureElement();
+
+    std::optional<float> autoSizesLayoutWidth() const;
+
+    // https://html.spec.whatwg.org/multipage/images.html#density-corrected-intrinsic-width-and-height
+    LayoutSize densityCorrectedNaturalSize() const;
+
+    void copyNonAttributePropertiesFromElement(const Element&) final;
+
+#if ENABLE(SERVICE_CONTROLS)
+    bool childShouldCreateRenderer(const Node&) const override;
+#endif
+
+    NODELETE HTMLSourceElement* sourceElement() const;
+    void setSourceElement(HTMLSourceElement*);
+
+    IntersectionObserverData& ensureIntersectionObserverData() final;
+    NODELETE IntersectionObserverData* intersectionObserverDataIfExists() const final;
+
+    const std::unique_ptr<HTMLImageLoader> m_imageLoader;
+    const std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
+
+    AtomString m_bestFitImageURL;
+    URL m_currentURL;
+    AtomString m_currentSrc;
+    AtomString m_parsedUsemap;
+    float m_currentPixelDensity;
+    RefPtr<ImageAnimationTimeline> m_imageAnimationTimeline;
+#if ENABLE(SERVICE_CONTROLS)
+    bool m_isImageMenuEnabled { false };
+#endif
+    bool m_hadNameBeforeAttributeChanged { false }; // FIXME: We only need this because parseAttribute() can't see the old value.
+    bool m_isDroppedImagePlaceholder { false };
+
+    WeakPtr<HTMLPictureElement, WeakPtrImplWithEventTargetData> m_pictureElement;
+    // The source element that was selected to provide the source URL.
+    WeakPtr<HTMLSourceElement, WeakPtrImplWithEventTargetData> m_sourceElement;
+
+    Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
+
+    friend class HTMLPictureElement;
+};
+
+} //namespace

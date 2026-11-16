@@ -1,0 +1,5 @@
+
+PASS Page loaded
+PASS Aborting a smooth scroll with a keyboard event that causes another scroll
+FAIL Aborting a smooth scroll with a keyboard event that does not cause another scroll assert_less_than: The vertical smooth scroll should be interrupted. expected a number less than 2480 but got 2480
+

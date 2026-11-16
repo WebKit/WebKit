@@ -1,0 +1,6 @@
+
+PASS InnerHTML behavior on custom element in default XHTML namespace
+PASS Setting up the custom elements
+PASS InnerHTML behavior on custom element in default 'foo' namespace
+PASS InnerHTML behavior with prefixes on custom element
+

@@ -1,0 +1,41 @@
+<style>
+    .box {
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+        background-color: green;
+    }
+</style>
+<body>
+    <div class="box" style="filter: url(#component-transfer-1);"></div>
+    <div class="box" style="filter: url(#component-transfer-2);"></div>
+    <div class="box" style="filter: url(#component-transfer-3);"></div>
+    <br>
+    <svg>
+        <filter id="component-transfer-1">
+            <feComponentTransfer>
+                <feFuncR type="linear" slope="2" intercept="-0.5"/>
+                <feFuncG type="linear" slope="2" intercept="-0.5"/>
+                <feFuncB type="linear" slope="2" intercept="-0.5"/>
+            </feComponentTransfer>
+        </filter>
+    </svg>
+    <svg style="position: absolute; top: -99999px">
+        <filter id="component-transfer-2">
+            <feComponentTransfer>
+                <feFuncR type="linear" slope="2" intercept="-0.5"/>
+                <feFuncG type="linear" slope="2" intercept="-0.5"/>
+                <feFuncB type="linear" slope="2" intercept="-0.5"/>
+            </feComponentTransfer>
+        </filter>
+    </svg>
+    <svg style="display: none;">
+        <filter id="component-transfer-3">
+            <feComponentTransfer>
+                <feFuncR type="linear" slope="2" intercept="-0.5"/>
+                <feFuncG type="linear" slope="2" intercept="-0.5"/>
+                <feFuncB type="linear" slope="2" intercept="-0.5"/>
+            </feComponentTransfer>
+        </filter>
+    </svg>
+</body>

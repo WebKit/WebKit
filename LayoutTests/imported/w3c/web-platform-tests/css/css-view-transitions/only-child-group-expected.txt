@@ -1,0 +1,6 @@
+
+PASS :only-child should match because ::view-transition-group is generated for root element only
+PASS :only-child should not match because ::view-transition-group is generated for multiple elements
+PASS :only-child should match because ::view-transition-group is generated for sub element only
+PASS :only-child should not match because ::view-transition-group is generated for multiple sub elements
+

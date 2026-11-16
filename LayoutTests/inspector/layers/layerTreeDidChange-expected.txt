@@ -1,0 +1,17 @@
+Tests for LayerTree.event.layerTreeDidChange.
+
+
+== Running test suite: LayerTree.layerTreeDidChange
+-- Running test case: LayerTree.layerTreeDidChange.WithRequest
+Creating layer...
+Layer tree changed
+Creating layer...
+Layer tree changed
+PASS: LayerTreeDidChange should fire after layersForNode is called
+
+-- Running test case: LayerTree.layerTreeDidChange.WithoutRequest
+Creating layer...
+Layer tree changed
+Creating layer...
+PASS: LayerTreeDidChange should not fire before layersForNode is called
+

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<script>
+    function once(target, name, cb) {
+        var p = new Promise(function(resolve, reject) {
+            target.addEventListener(name, function() {
+                target.removeEventListener(name, arguments.callee);
+                resolve();
+            });
+        });
+        if (cb) {
+            p.then(cb);
+        }
+        return p;
+    }
+
+    function fetchWithXHR(uri, onLoadFunction) {
+        var p = new Promise((resolve, reject) => {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", uri, true);
+            xhr.responseType = "arraybuffer";
+            xhr.addEventListener("load", () => resolve(xhr.response));
+            xhr.send();
+        });
+        if (onLoadFunction) {
+            p.then(onLoadFunction);
+        }
+        return p;
+    };
+
+    function loadVideo() {
+        var video = document.getElementsByTagName('video')[0];
+        var ms = new MediaSource();
+        video.src = URL.createObjectURL(ms);
+        video.preload = "auto";
+        once(ms, 'sourceopen', () => {
+            var sb = ms.addSourceBuffer('video/mp4; codecs="avc1.4d401f"');
+            ms.duration = Infinity;
+            fetchWithXHR("video-with-audio-fragmented.mp4", buffer => {
+                sb.appendBuffer(buffer);
+                once(sb, "updateend", () => {
+                    video.play();
+                });
+            });
+        });
+        video.ontimeupdate = () => {
+            if (video.currentTime > 0.5 && ms.readyState != "ended") {
+                ms.duration = video.buffered.end(0);
+                ms.endOfStream();
+                video.currentTime = 0;
+                video.play();
+            }
+        };
+    }
+</script>
+<body onload="loadVideo()">
+    Ensure that the touchbar will display the time scrubber by the time the video ends.<br/>
+    See <a href="https://bugs.webkit.org/show_bug.cgi?id=229286">https://bugs.webkit.org/show_bug.cgi?id=229286</a><br/>
+    <video controls width=640 height=480></video>
+</body>
+<html>

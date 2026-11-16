@@ -1,0 +1,69 @@
+
+PASS "::part(mypart):active" should be a valid selector
+PASS "::part(mypart):active-view-transition" should be a valid selector
+PASS "::part(mypart):active-view-transition-type(mytype)" should be a valid selector
+PASS "::part(mypart):any-link" should be a valid selector
+PASS "::part(mypart):autofill" should be a valid selector
+PASS "::part(mypart):checked" should be a valid selector
+PASS "::part(mypart):default" should be a valid selector
+PASS "::part(mypart):defined" should be a valid selector
+PASS "::part(mypart):dir(ltr)" should be a valid selector
+PASS "::part(mypart):disabled" should be a valid selector
+PASS "::part(mypart):enabled" should be a valid selector
+PASS "::part(mypart):focus" should be a valid selector
+PASS "::part(mypart):focus-visible" should be a valid selector
+PASS "::part(mypart):focus-within" should be a valid selector
+PASS "::part(mypart):fullscreen" should be a valid selector
+PASS "::part(mypart):future" should be a valid selector
+PASS "::part(mypart):hover" should be a valid selector
+PASS "::part(mypart):indeterminate" should be a valid selector
+PASS "::part(mypart):in-range" should be a valid selector
+PASS "::part(mypart):invalid" should be a valid selector
+PASS "::part(mypart):lang(en)" should be a valid selector
+PASS "::part(mypart):link" should be a valid selector
+PASS "::part(mypart):modal" should be a valid selector
+PASS "::part(mypart):open" should be a valid selector
+PASS "::part(mypart):optional" should be a valid selector
+PASS "::part(mypart):out-of-range" should be a valid selector
+PASS "::part(mypart):past" should be a valid selector
+PASS "::part(mypart):paused" should be a valid selector
+PASS "::part(mypart):picture-in-picture" should be a valid selector
+PASS "::part(mypart):placeholder-shown" should be a valid selector
+PASS "::part(mypart):playing" should be a valid selector
+PASS "::part(mypart):popover-open" should be a valid selector
+PASS "::part(mypart):read-only" should be a valid selector
+PASS "::part(mypart):read-write" should be a valid selector
+PASS "::part(mypart):required" should be a valid selector
+PASS "::part(mypart):state(mystate)" should be a valid selector
+PASS "::part(mypart):target" should be a valid selector
+PASS "::part(mypart):user-invalid" should be a valid selector
+PASS "::part(mypart):user-valid" should be a valid selector
+PASS "::part(mypart):valid" should be a valid selector
+PASS "::part(mypart):visited" should be a valid selector
+FAIL "::part(mypart):xr-overlay" should be a valid selector '::part(mypart):xr-overlay' is not a valid selector.
+PASS "::part(mypart):left" should be an invalid selector
+PASS "::part(mypart):right" should be an invalid selector
+PASS "::part(mypart):first" should be an invalid selector
+PASS "::part(mypart):empty" should be an invalid selector
+PASS "::part(mypart):first-child" should be an invalid selector
+PASS "::part(mypart):first-of-type" should be an invalid selector
+PASS "::part(mypart):last-child" should be an invalid selector
+PASS "::part(mypart):last-of-type" should be an invalid selector
+PASS "::part(mypart):nth-child(1)" should be an invalid selector
+PASS "::part(mypart):nth-last-child(1)" should be an invalid selector
+PASS "::part(mypart):nth-last-of-type(1)" should be an invalid selector
+PASS "::part(mypart):nth-of-type(1)" should be an invalid selector
+PASS "::part(mypart):only-child" should be an invalid selector
+PASS "::part(mypart):only-of-type" should be an invalid selector
+FAIL "::part(mypart):host" should be an invalid selector assert_throws_dom: "::part(mypart):host" should throw in querySelector function "() => document.querySelector(selector)" did not throw
+PASS "::part(mypart):host-context(:hover)" should be an invalid selector
+FAIL "::part(mypart):has(p)" should be an invalid selector assert_throws_dom: "::part(mypart):has(p)" should throw in querySelector function "() => document.querySelector(selector)" did not throw
+FAIL "::part(mypart):has(:hover)" should be an invalid selector assert_throws_dom: "::part(mypart):has(:hover)" should throw in querySelector function "() => document.querySelector(selector)" did not throw
+FAIL "::part(mypart):scope" should be an invalid selector assert_throws_dom: "::part(mypart):scope" should throw in querySelector function "() => document.querySelector(selector)" did not throw
+PASS "::part(mypart):not(:hover)" should be a valid selector
+PASS "::part(mypart):is(:hover)" should be a valid selector
+PASS "::part(mypart):where(:hover)" should be a valid selector
+PASS "::part(mypart):not(:first-child)" should be an invalid selector
+PASS "::part(mypart):is(:first-child)" should be a valid selector
+PASS "::part(mypart):where(:first-child)" should be a valid selector
+

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'nonce-test' 'unsafe-eval';">
+    <script src="wasm-builder.js"></script>
+    <script src="load_wasm.js"></script>
+</head>
+<body>
+    <script nonce="test">
+        function loadWasm() {
+            try {
+                var mod = createWasmModule();
+                i = new WebAssembly.Instance(mod)
+                var value = i.exports.calc(1);
+                alert(`PASS: wasm result is ${value}`);
+            } catch (error) {
+                alert("FAIL");
+            }
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        loadWasm();
+    </script>
+</body>
+</html>
+

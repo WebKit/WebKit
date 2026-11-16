@@ -1,0 +1,10 @@
+This test ensures the language attribute is correct even after dynamic page changes.
+PASS: accessibleContent.language === 'AXLanguage: en'
+PASS: accessibleContent.language === 'AXLanguage: es'
+PASS: accessibleContent.language === 'AXLanguage: fr'
+PASS: accessibleContent.language === 'AXLanguage: de'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello World!

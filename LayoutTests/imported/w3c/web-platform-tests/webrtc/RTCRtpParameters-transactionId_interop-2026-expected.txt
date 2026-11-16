@@ -1,0 +1,4 @@
+
+PASS sender.setParameters() with transaction ID unset should reject with TypeError
+PASS setParameters() twice with the same parameters should reject with InvalidStateError
+

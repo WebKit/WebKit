@@ -1,0 +1,10 @@
+Test that selecting a color from the color picker in a cross-origin iframe updates the input value when site isolation is enabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectedValue is "#ff0000"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

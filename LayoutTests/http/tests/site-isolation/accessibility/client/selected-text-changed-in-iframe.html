@@ -1,0 +1,95 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="before" type="text" aria-label="Before">
+<iframe id="iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-text-field-value.html"></iframe>
+
+<script>
+var output = "Tests that a selection change in a text field inside a cross-site iframe is posted on the main frame's\n";
+output += "web area, the only place VoiceOver handles it, with the same userInfo as without site isolation.\n\n";
+
+const changeTypes = ["Unknown", "Edit", "SelectionMove", "SelectionExtend", "SelectionBoundary"];
+const directions = ["Unknown", "Beginning", "End", "Previous", "Next", "Discontiguous"];
+const granularities = ["Unknown", "Character", "Word", "Line", "Sentence", "Paragraph", "Page", "Document", "All"];
+
+var mainWebArea;
+var mainWebAreaChanges = [];
+var focusedElements = [];
+function notificationCallback(element, notificationName, userInfo) {
+    if (notificationName === "AXFocusedUIElementChanged")
+        focusedElements.push(element);
+    else if (notificationName === "AXSelectedTextChanged" && element.isEqual(mainWebArea))
+        mainWebAreaChanges.push(userInfo || { });
+}
+
+function describe(userInfo) {
+    let result = "";
+    if ("AXTextStateChangeType" in userInfo)
+        result += ` type: ${changeTypes[userInfo.AXTextStateChangeType]}`;
+    if ("AXTextSelectionDirection" in userInfo)
+        result += ` direction: ${directions[userInfo.AXTextSelectionDirection]}`;
+    if ("AXTextSelectionGranularity" in userInfo)
+        result += ` granularity: ${granularities[userInfo.AXTextSelectionGranularity]}`;
+    if (userInfo.AXTextSelectionChangedFocus)
+        result += " focusChange";
+    if (userInfo.AXTextStateSync)
+        result += " sync";
+    if (userInfo.AXSelectedTextMarkerRange)
+        result += ` selection: "${userInfo.AXSelectedTextMarkerRange.AXTextMarkerRangeString}"`;
+    if (userInfo.AXTextChangeElement)
+        result += ` element: #${userInfo.AXTextChangeElement.domIdentifier}`;
+    return result;
+}
+
+// Reports the AXSelectedTextChanged posted on the main frame's web area for the iframe's text field.
+async function expectSelectionChange(label) {
+    const isFromInnerField = (userInfo) => userInfo.AXTextChangeElement?.domIdentifier === "inner-field";
+    await waitFor(() => mainWebAreaChanges.some(isFromInnerField));
+    const changes = mainWebAreaChanges.filter(isFromInnerField);
+    output += `${label}:${changes.length ? describe(changes[0]) : " no AXSelectedTextChanged on the main frame's web area"}\n`;
+    mainWebAreaChanges = [];
+}
+
+window.jsTestIsAsync = true;
+accessibilityController.setClientAccessibilityMode(true);
+
+setTimeout(async function() {
+    await waitForElements([(element) => element.domIdentifier === "inner-field"]);
+    mainWebArea = accessibilityController.rootElement.childAtIndex(0);
+    output += expect("accessibilityController.addNotificationListener(notificationCallback)", "true");
+
+    // Start in the main frame's text field. Only changes from the iframe's field are reported below,
+    // so this field's own selection changes don't need to be waited for.
+    document.getElementById("before").focus();
+    await waitFor(() => focusedElements.some((element) => element.domIdentifier === "before"));
+
+    eventSender.keyDown("\t");
+    await expectSelectionChange("Tab into the field");
+
+    eventSender.keyDown("leftArrow");
+    await expectSelectionChange("Left arrow");
+
+    eventSender.keyDown("rightArrow");
+    await expectSelectionChange("Right arrow");
+
+    eventSender.keyDown("rightArrow", ["altKey", "shiftKey"]);
+    await expectSelectionChange("Shift-option-right arrow");
+
+    eventSender.keyDown("e", ["ctrlKey"]);
+    await expectSelectionChange("Control-E");
+
+    eventSender.keyDown("a", ["ctrlKey"]);
+    await expectSelectionChange("Control-A");
+
+    accessibilityController.removeNotificationListener();
+    debug(output);
+    finishJSTest();
+}, 0);
+</script>
+</body>
+</html>

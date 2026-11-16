@@ -1,0 +1,7 @@
+PASS verticalScrollbarHit is document.body
+PASS horizontalScrollbarHit is document.body
+PASS resizerHit is document.body
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

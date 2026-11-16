@@ -1,0 +1,14 @@
+a b
+a b
+a b
+a b
+a b
+a b
+
+PASS xml:space="preserve" converts a parsed newline to a space
+PASS xml:space="preserve" converts a newline set via CharacterData.data to a space
+PASS xml:space="preserve" converts a tab set via CharacterData.data to a space
+PASS xml:space="preserve" converts a newline added via appendData() to a space
+PASS xml:space="default" collapses a newline set via CharacterData.data to a space
+PASS xml:space="preserve" converts a newline set via CharacterData.data inside a tspan to a space
+

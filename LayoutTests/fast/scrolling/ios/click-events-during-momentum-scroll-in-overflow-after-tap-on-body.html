@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+#scroller {
+    width: 100%;
+    height: 250px;
+    overflow: scroll;
+    border: 4px solid black;
+    box-sizing: border-box;
+}
+
+#content {
+    width: 100px;
+    height: 5000px;
+    box-sizing: border-box;
+    padding: 20px;
+    background: linear-gradient(to bottom, red 0%, green 50%, blue 100%);
+}
+
+#target {
+    width: 100px;
+    height: 100px;
+    margin-top: 50px;
+    background-color: tomato;
+    color: white;
+    line-height: 100px;
+    text-align: center;
+}
+</style>
+<body onload="runTest()">
+    <div id="scroller">
+        <div id="content"></div>
+    </div>
+    <div id="target">Tap here</div>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+<script>
+jsTestIsAsync = true;
+observedClick = false;
+
+const minimumExpectedScrollTop = 100;
+const scroller = document.getElementById("scroller");
+const target = document.getElementById("target");
+async function runTest()
+{
+    target.addEventListener("click", () => observedClick = true);
+
+    description("Verifies that tapping outside of a subscrollable region during momentum scrolling dispatches click events. To run the test manually, swipe up on the black box to scroll it; while scrolling, tap the red box and verify that a click event is dispatched.");
+
+    while (scroller.scrollTop < minimumExpectedScrollTop) {
+        if (window.testRunner)
+            await UIHelper.dragFromPointToPoint(250, 200, 250, 20, 0.1);
+        await UIHelper.delayFor(200);
+    }
+
+    testPassed("scrolled to minimum threshold");
+
+    if (window.testRunner)
+        await UIHelper.activateElement(target);
+
+    shouldBe("observedClick", "true");
+    finishJSTest();
+}
+</script>
+</html>

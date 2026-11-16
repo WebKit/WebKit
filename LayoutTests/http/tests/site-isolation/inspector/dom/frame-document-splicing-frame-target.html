@@ -1,0 +1,127 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDocumentSplicing");
+
+    // main(127.0.0.1) -> child(localhost) -> grandchild(127.0.0.1). The child's <iframe> element sits
+    // inside a <div> rather than directly under <body>, and the grandchild's <iframe> element lives in
+    // the child frame target's own tree rather than the page's, so each owner element reaches the
+    // frontend only once something expands the tree down to it.
+    let pageBody = null;
+    let childTarget = null;
+    let grandchildTarget = null;
+
+    // Frames are in static markup, so their targets attach before this test starts running and
+    // there is no event left to await. Mirrors `frameTargetForURLContainingWhenReady` in
+    // shadow-root-cross-frame-isolation-frame-target.html, including waiting for the document: a
+    // target answers with its URL before `DOM.getDocument` has come back.
+    async function frameTargetForURLContainingWhenReady(substring, maxAttempts = 50) {
+        for (let attempt = 0; attempt < maxAttempts; ++attempt) {
+            let target = await frameTargetForURLContaining(substring);
+            if (target && WI.domManager.frameTargetDocumentForTarget(target))
+                return target;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return null;
+    }
+
+    // Round trip twice on the page target's DOM agent. Any request the frontend issued to that agent
+    // earlier has had its `setChildNodes` event delivered by now, because an agent's events are
+    // dispatched ahead of the reply to a command sent after them.
+    async function flushPageDOMAgent() {
+        let pageTarget = WI.assumingMainTarget();
+        await pageTarget.DOMAgent.getSupportedEventNames();
+        await pageTarget.DOMAgent.getSupportedEventNames();
+    }
+
+    async function childElement(parent, predicate) {
+        await new Promise((resolve) => parent.getChildNodes(resolve));
+        return parent.children.find(predicate);
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Wait until both nested frame targets have produced a document.",
+        async test() {
+            childTarget = await frameTargetForURLContainingWhenReady("splice-child-frame.html");
+            grandchildTarget = await frameTargetForURLContainingWhenReady("dom-frame.html");
+
+            InspectorTest.expectNotNull(childTarget, "Should find the child frame target.");
+            InspectorTest.expectNotNull(grandchildTarget, "Should find the grandchild frame target.");
+            InspectorTest.expectThat(childTarget !== grandchildTarget, "Child and grandchild should be distinct targets.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.NoEagerPageLoad",
+        description: "Frame targets attaching should not pull page nodes into the frontend on their own.",
+        async test() {
+            let pageDocument = await WI.domManager.requestDocument();
+            pageBody = pageDocument.body;
+            InspectorTest.expectNotNull(pageBody, "`DOM.getDocument` should have provided <body>.");
+
+            await flushPageDOMAgent();
+
+            // `DOM.getDocument` builds to depth 2 (#document -> <html> -> <head>/<body>), so <body>'s
+            // children are here only if something requested them — and every frame target has already
+            // offered its document for splicing, including the main frame's, which has no owner element.
+            InspectorTest.expectThat(!pageBody.children, "<body>'s children should not be loaded yet.");
+
+            // Comment and text nodes carry no `nodeName` in the protocol payload, so list only the
+            // named nodes to keep this readable.
+            let nodeNames = Array.from(WI.domManager.attachedNodes(), (node) => node.nodeName()).filter((nodeName) => nodeName);
+            InspectorTest.log("Named page nodes known to the frontend: " + nodeNames.join(", "));
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.SpliceWhenOwnerElementArrives",
+        description: "A pending frame document is spliced in as soon as its owner element reaches the frontend.",
+        async test() {
+            let childDocument = WI.domManager.frameTargetDocumentForTarget(childTarget);
+            InspectorTest.expectNull(childDocument.parentNode, "The child frame's document should not be spliced in yet.");
+
+            let wrapper = await childElement(pageBody, (node) => node.getAttribute("id") === "frame-wrapper");
+            InspectorTest.expectNotNull(wrapper, "Should find #frame-wrapper.");
+
+            let iframeElement = await childElement(wrapper, (node) => node.nodeName() === "IFRAME");
+            InspectorTest.expectNotNull(iframeElement, "Should find the <iframe> inside #frame-wrapper.");
+
+            InspectorTest.expectEqual(childDocument.parentNode, iframeElement, "The child frame's document should be spliced into the <iframe>.");
+            InspectorTest.expectEqual(iframeElement.children.length, 1, "The <iframe> should have exactly one child.");
+            InspectorTest.expectEqual(iframeElement.children[0], childDocument, "The <iframe>'s only child should be the child frame's document.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.SpliceIntoFrameTargetTree",
+        description: "An owner element arriving in another frame target's tree also splices its pending document.",
+        async test() {
+            let grandchildDocument = WI.domManager.frameTargetDocumentForTarget(grandchildTarget);
+            InspectorTest.expectNull(grandchildDocument.parentNode, "The grandchild frame's document should not be spliced in yet.");
+
+            let childDocument = WI.domManager.frameTargetDocumentForTarget(childTarget);
+            let childHTML = childDocument.children.find((node) => node.nodeName() === "HTML");
+            let childBody = await childElement(childHTML, (node) => node.nodeName() === "BODY");
+            InspectorTest.expectNotNull(childBody, "Should find <body> in the child frame.");
+
+            let nestedIframeElement = await childElement(childBody, (node) => node.nodeName() === "IFRAME");
+            InspectorTest.expectNotNull(nestedIframeElement, "Should find the nested <iframe> in the child frame.");
+
+            InspectorTest.expectEqual(grandchildDocument.parentNode, nestedIframeElement, "The grandchild frame's document should be spliced into the child frame's <iframe>.");
+            InspectorTest.expectEqual(nestedIframeElement.children[0], grandchildDocument, "The nested <iframe>'s first child should be the grandchild frame's document.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a frame target's document is spliced into the page tree when its owner element reaches the frontend, and that attaching a frame target does not load page nodes by itself.</p>
+<div id="frame-wrapper">
+    <iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/splice-child-frame.html"></iframe>
+</div>
+</body>

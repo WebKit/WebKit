@@ -1,0 +1,14 @@
+<!doctype html>
+<head>
+<title>line-box-contain: inline replaced</title>
+<style>
+.test { -webkit-line-box-contain: inline replaced; line-box-contain: inline replaced; font: 64px/1em Ahem; background-color:red; width:6em; }
+.goodline { color: green }
+</style>
+</head>
+<body>
+You should see a green rectangle below.  If you see any red, the test has failed.
+
+<div class="test">
+<span style="background-color:green; font-size:128px; line-height:normal; padding-left:2.5em; padding-right:0.5em"></span><br>
+<div style="display:inline-block; width:6em;height:2em;vertical-align:bottom;background-color:green"></div></div>

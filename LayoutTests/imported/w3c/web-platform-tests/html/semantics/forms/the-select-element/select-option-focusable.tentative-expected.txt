@@ -1,0 +1,4 @@
+
+
+PASS Validate <option> is focusable when is a descendant of <select>
+

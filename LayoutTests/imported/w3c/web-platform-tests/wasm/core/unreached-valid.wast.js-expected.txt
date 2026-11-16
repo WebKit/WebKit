@@ -1,0 +1,23 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (unreached-valid.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (unreached-valid.wast:63)
+PASS #4 Test that WebAssembly compilation succeeds (unreached-valid.wast:82)
+PASS #5 Reinitialize the default imports
+PASS #6 Test that WebAssembly compilation succeeds (unreached-valid.wast:1)
+PASS #7 Test that WebAssembly instantiation succeeds (unreached-valid.wast:1)
+PASS #8 Test that a WebAssembly code traps (unreached-valid.wast:48)
+PASS #9 Test that a WebAssembly code traps (unreached-valid.wast:49)
+PASS #10 Test that a WebAssembly code traps (unreached-valid.wast:50)
+PASS #11 Test that a WebAssembly code traps (unreached-valid.wast:51)
+PASS #12 Test that a WebAssembly code traps (unreached-valid.wast:53)
+PASS #13 Test that a WebAssembly code traps (unreached-valid.wast:54)
+PASS #14 Test that a WebAssembly code traps (unreached-valid.wast:55)
+PASS #15 Test that a WebAssembly code traps (unreached-valid.wast:56)
+PASS #16 Test that a WebAssembly code traps (unreached-valid.wast:58)
+PASS #17 Test that WebAssembly compilation succeeds (unreached-valid.wast:63)
+PASS #18 Test that WebAssembly instantiation succeeds (unreached-valid.wast:63)
+PASS #19 Test that a WebAssembly code traps (unreached-valid.wast:77)
+PASS #20 Test that WebAssembly compilation succeeds (unreached-valid.wast:82)
+PASS #21 Test that WebAssembly instantiation succeeds (unreached-valid.wast:82)
+

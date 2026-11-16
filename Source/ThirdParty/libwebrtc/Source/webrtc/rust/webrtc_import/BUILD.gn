@@ -1,0 +1,88 @@
+# Copyright (c) 2026 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build/config/rust.gni")
+import("//build/rust/rust_macro.gni")
+import("//build/rust/rust_static_library.gni")
+import("//build/rust/rust_unit_test.gni")
+import("../../webrtc.gni")
+
+# These provide the base import macros for webrtc, and thus use the templates
+# from //build and not webrtc's macros.
+if (enable_rust) {
+  rust_macro("webrtc_import_macro") {
+    crate_name = "import"
+    crate_root = "import.rs"
+    sources = [
+      "import.rs",
+      "path_utils.rs",
+    ]
+    deps = [
+      "//third_party/rust/proc_macro2/v1:lib",
+      "//third_party/rust/quote/v1:lib",
+      "//third_party/rust/syn/v2:lib",
+    ]
+
+    # Don't depend on ourselves.
+    no_chromium_prelude = true
+  }
+
+  rust_static_library("webrtc_import") {
+    crate_name = "webrtc"
+    crate_root = "lib.rs"
+    sources = [ "lib.rs" ]
+
+    deps = [ ":webrtc_import_macro" ]
+
+    # Don't depend on ourselves.
+    no_chromium_prelude = true
+  }
+
+  if (rtc_include_tests) {
+    # Dummy library crate utilized by the standalone macro verification test.
+    rust_static_library("webrtc_import_test_lib") {
+      testonly = true
+      crate_root = "webrtc_import_test_lib.rs"
+      sources = [ "webrtc_import_test_lib.rs" ]
+    }
+
+    # Native target-platform unit tests for the core path transformation string logic.
+    #
+    # NOTE: Because `import.rs` is a proc-macro crate that relies on the host compiler's
+    # built-in `proc_macro` package, it cannot be native target-tested directly without causing
+    # cross-compilation errors or breaking the main `rust_unit_tests_group` script generator.
+    # By splitting the string arithmetic out into `path_utils.rs` (which has no proc_macro deps),
+    # we can target-compile and run these core rules natively in the automated runner suite.
+    rtc_rust_unittest("webrtc_import_utils_unittests") {
+      crate_root = "path_utils.rs"
+      sources = [ "path_utils.rs" ]
+    }
+
+    # Integration test validating the macro expansion behavior in Standalone mode.
+    # Confirms that absolute first-party paths are preserved correctly when `WEBRTC_GN_PREFIX = //`.
+    rtc_rust_unittest("webrtc_import_test") {
+      testonly = true
+      crate_root = "webrtc_import_test.rs"
+      sources = [ "webrtc_import_test.rs" ]
+      deps = [
+        ":webrtc_import",
+        ":webrtc_import_test_lib",
+      ]
+      rustenv = [ "WEBRTC_GN_PREFIX=//" ]
+    }
+
+    rtc_rust_test_suite("tests") {
+      testonly = true
+      deps = [
+        ":webrtc_import_test",
+        ":webrtc_import_utils_unittests",
+        "test_subdir:webrtc_import_prefix_test",
+      ]
+    }
+  }
+}

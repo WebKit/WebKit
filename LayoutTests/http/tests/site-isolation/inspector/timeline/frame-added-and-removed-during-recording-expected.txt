@@ -1,0 +1,15 @@
+Test that under Site Isolation, a cross-origin iframe added during a Timeline recording is recorded, and that removing it neither stops the recording nor keeps it from stopping.
+
+
+== Running test suite: SiteIsolation.Timeline.FrameAddedAndRemovedDuringRecording
+-- Running test case: SiteIsolation.Timeline.FrameAddedAndRemovedDuringRecording.Added
+PASS: Should find the frame target of the iframe added during the recording.
+PASS: The frame target of the added iframe started tracking.
+PASS: Recorded a timer from the frame target of the added iframe.
+
+-- Running test case: SiteIsolation.Timeline.FrameAddedAndRemovedDuringRecording.Removed
+PASS: The frame target of the removed iframe was removed.
+PASS: Capturing should still be active.
+PASS: Recorded a timer from the main frame target after the iframe was removed.
+PASS: Capturing stopped.
+

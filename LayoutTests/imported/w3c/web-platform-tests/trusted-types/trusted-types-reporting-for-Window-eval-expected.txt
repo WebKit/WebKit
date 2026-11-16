@@ -1,0 +1,4 @@
+
+PASS No violation reported for eval with TrustedScript.
+PASS Violation report for eval with plain string.
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSRubyDisplayTypesInAuthorStylesEnabled=true ] -->
+<html>
+<head>
+  <script src="../../resources/testharness.js"></script>
+  <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function test_ruby_display_type(specified, expected) {
+  test((t) => {
+    const target = document.createElement("div");
+    document.body.append(target);
+    t.add_cleanup(() => {
+      target.remove();
+    });
+    target.style['display'] = specified;
+    assert_equals(target.style['display'], expected);
+    assert_equals(window.getComputedStyle(target)['display'], expected);
+  }, `display: ${specified}`);
+}
+
+test_ruby_display_type('block ruby', 'block ruby');
+test_ruby_display_type('inline ruby', 'ruby');
+test_ruby_display_type('ruby', 'ruby');
+test_ruby_display_type('ruby-base', 'ruby-base');
+test_ruby_display_type('ruby-text', 'ruby-text');
+</script>
+</body>
+</html>

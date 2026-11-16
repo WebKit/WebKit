@@ -1,0 +1,20 @@
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+  const processor = new XSLTProcessor();
+  const style =
+    '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns="http://www.w3.org/1999/xhtml">' +
+    '</xsl:stylesheet>';
+  const styleDoc = new DOMParser().parseFromString (style, "text/xml");
+  const data =
+    '<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">' + 
+    '<wml><card><p>paragraph</p></card></wml>';
+  const originalDoc = new DOMParser().parseFromString(data, "text/xml");
+  processor.importStylesheet(styleDoc);
+  processor.transformToDocument(originalDoc);
+  if (window.testRunner)
+    testRunner.notifyDone();
+</script>
+<p>Test passes if it does not crash</p>

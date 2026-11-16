@@ -1,0 +1,4 @@
+
+
+FAIL drawElementImage does not draw cross-origin box-reflect images in an iframe moved under canvas assert_array_equals: Cross origin box-reflect mask should not mask out right side of reflection expected property 1 to be 128 but got 0 (expected array [0, 128, 0, 255] got object "0,0,255,255")
+

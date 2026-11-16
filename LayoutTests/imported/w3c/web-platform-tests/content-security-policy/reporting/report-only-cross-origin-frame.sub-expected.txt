@@ -1,0 +1,7 @@
+
+
+PASS The load event triggers
+PASS The iframe is allowed to load.
+PASS The securitypolicyviolation is triggered.
+PASS Violation report status OK.
+

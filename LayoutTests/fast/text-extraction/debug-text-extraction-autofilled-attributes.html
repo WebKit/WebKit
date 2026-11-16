@@ -1,0 +1,56 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+
+input {
+    font-size: 18px;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div><input id="normal" type="text" placeholder="Normal field"></div>
+<div><input id="autofilled" type="text" placeholder="Autofilled field"></div>
+<div><input id="viewable" type="password" placeholder="Viewable field"></div>
+<div><input id="obscured" type="password" placeholder="Obscured field"></div>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const normalField = document.getElementById("normal");
+    const autofilledField = document.getElementById("autofilled");
+    const viewableField = document.getElementById("viewable");
+    const obscuredField = document.getElementById("obscured");
+
+    normalField.value = "hello";
+    autofilledField.value = "test@webkit.org";
+    viewableField.value = "hunter2";
+    obscuredField.value = "secret123";
+
+    internals.setAutofilled(autofilledField, true);
+    internals.setAutofilledAndViewable(viewableField, true);
+    internals.setAutofilledAndObscured(obscuredField, true);
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        includeRects: false,
+        includeURLs: false,
+        nodeIdentifierInclusion: "none",
+        includeTextInAutoFilledControls: true,
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

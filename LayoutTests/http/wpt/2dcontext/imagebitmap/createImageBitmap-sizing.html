@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<title>createImageBitmap with sizing test</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/html/canvas/resources/canvas-tests.js"></script>
+<script src="common.js"></script>
+<link rel="stylesheet" href="/common/canvas-tests.css">
+<body>
+<script>
+(function() {
+
+    // The ImageBitmap part of the HTML specification says this should be an InvalidStateError, but
+    // the IDL requires an unsigned value, so the TypeError will hit first.
+    promise_test(function(t) {
+        return promise_rejects_js(t, TypeError, createImageBitmap(new Image(), 0, 0, 10, 10, { resizeWidth: -10, resizeHeight: 10 }));
+    }, "createImageBitmap rejects with TypeError if resizeWidth is negative");
+
+    promise_test(function(t) {
+        return promise_rejects_js(t, TypeError, createImageBitmap(new Image(), 0, 0, 10, 10, { resizeWidth: 10, resizeHeight: -10 }));
+    }, "createImageBitmap rejects with TypeError if resizeHeight is negative");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            // Crop the 9x9 image into 5x5.
+            return createImageBitmap(img, 0, 0, 5, 5);
+        }).then(function(imageBitmap) {
+            assert_equals(imageBitmap.width, 5, "ImageBitmap width should be 5");
+            assert_equals(imageBitmap.height, 5, "ImageBitmap height should be 5");
+
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,0,0,0, "5,4", "0,0,0,0"); // Outside source rectangle so transparent.
+            _assertPixel(canvas, 4,5, 0,0,0,0, "4,5", "0,0,0,0"); // Outside source rectangle so transparent.
+        });
+    }, "createImageBitmap from HTMLImageElement with cropped source");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let canvas = create9x9CanvasWithTargetImage();
+            // Crop the 9x9 image into 5x5.
+            resolve(createImageBitmap(canvas, 0, 0, 5, 5));
+        }).then(function(imageBitmap) {
+            assert_equals(imageBitmap.width, 5, "ImageBitmap width should be 5");
+            assert_equals(imageBitmap.height, 5, "ImageBitmap height should be 5");
+
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,0,0,0, "5,4", "0,0,0,0"); // Outside source rectangle so transparent.
+            _assertPixel(canvas, 4,5, 0,0,0,0, "4,5", "0,0,0,0"); // Outside source rectangle so transparent.
+        });
+    }, "createImageBitmap from HTMLCanvasElement with cropped source");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            // Source is only 9x9, so the 100x100 will be clamped.
+            return createImageBitmap(img, 0, 0, 100, 100);
+        }).then(function(imageBitmap) {
+            assert_equals(imageBitmap.width, 9, "ImageBitmap width should be 9");
+            assert_equals(imageBitmap.height, 9, "ImageBitmap height should be 9");
+
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,255,0,255, "5,4", "0,255,0,255");
+            _assertPixel(canvas, 4,5, 0,255,0,255, "4,5", "0,255,0,255");
+        });
+    }, "createImageBitmap with a cropping rectangle that is bigger than the source");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            // Resize the 9x9 into 18x18, but without interpolation so that
+            // we can still do accurate pixel tests.
+            return createImageBitmap(img, 0, 0, 9, 9, { resizeWidth: 18, resizeHeight: 18, resizeQuality: "pixelated" });
+        }).then(function(imageBitmap) {
+            assert_equals(imageBitmap.width, 18, "ImageBitmap width should be 18");
+            assert_equals(imageBitmap.height, 18, "ImageBitmap height should be 18");
+
+            let [canvas, ctx] = create18x18CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            // All the target points are now 2x what they would be normally.
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 8,6, 0,255,0,255, "8,6", "0,255,0,255");
+            _assertPixel(canvas, 6,8, 0,255,0,255, "6,8", "0,255,0,255");
+            _assertPixel(canvas, 8,8, 0,0,255,255, "8,8", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 9,9, 0,0,255,255, "9,9", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 10,8, 0,255,0,255, "10,8", "0,255,0,255");
+            _assertPixel(canvas, 8,10, 0,255,0,255, "8,10", "0,255,0,255");
+
+        });
+    }, "createImageBitmap with resizeWidth and resizeHeight");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            // Only provide resizeHeight.
+            return createImageBitmap(img, 0, 0, 9, 9, { resizeHeight: 18, resizeQuality: "pixelated" });
+        }).then(function(imageBitmap) {
+            assert_equals(imageBitmap.width, 18, "ImageBitmap width should be 18");
+            assert_equals(imageBitmap.height, 18, "ImageBitmap height should be 18");
+
+            let [canvas, ctx] = create18x18CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            // All the target points are now 2x what they would be normally.
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 8,6, 0,255,0,255, "8,6", "0,255,0,255");
+            _assertPixel(canvas, 6,8, 0,255,0,255, "6,8", "0,255,0,255");
+            _assertPixel(canvas, 8,8, 0,0,255,255, "8,8", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 9,9, 0,0,255,255, "9,9", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 10,8, 0,255,0,255, "10,8", "0,255,0,255");
+            _assertPixel(canvas, 8,10, 0,255,0,255, "8,10", "0,255,0,255");
+
+        });
+    }, "createImageBitmap with only resizeHeight should calculate resizeWidth");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            // Only provide resizeWidth.
+            return createImageBitmap(img, 0, 0, 9, 9, { resizeWidth: 18, resizeQuality: "pixelated" });
+        }).then(function(imageBitmap) {
+            assert_equals(imageBitmap.width, 18, "ImageBitmap width should be 18");
+            assert_equals(imageBitmap.height, 18, "ImageBitmap height should be 18");
+
+            let [canvas, ctx] = create18x18CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            // All the target points are now 2x what they would be normally.
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 8,6, 0,255,0,255, "8,6", "0,255,0,255");
+            _assertPixel(canvas, 6,8, 0,255,0,255, "6,8", "0,255,0,255");
+            _assertPixel(canvas, 8,8, 0,0,255,255, "8,8", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 9,9, 0,0,255,255, "9,9", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 10,8, 0,255,0,255, "10,8", "0,255,0,255");
+            _assertPixel(canvas, 8,10, 0,255,0,255, "8,10", "0,255,0,255");
+
+        });
+    }, "createImageBitmap with only resizeWidth should calculate resizeHeight");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.svg";
+        }).then(function(img) {
+            return createImageBitmap(img);
+        }).then(function(imageBitmap) {
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,255,0,255, "5,4", "0,255,0,255");
+            _assertPixel(canvas, 4,5, 0,255,0,255, "4,5", "0,255,0,255");
+        });
+    }, "createImageBitmap with an SVG uses intrinsic size");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot-no-intrinsic.svg";
+        }).then(function(img) {
+            return createImageBitmap(img, { resizeWidth: 9, resizeHeight: 9 });
+        }).then(function(imageBitmap) {
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,255,0,255, "5,4", "0,255,0,255");
+            _assertPixel(canvas, 4,5, 0,255,0,255, "4,5", "0,255,0,255");
+        });
+    }, "createImageBitmap with an SVG that has no intrinsic size uses resize parameters");
+
+})();
+</script>
+</body>
+</html>

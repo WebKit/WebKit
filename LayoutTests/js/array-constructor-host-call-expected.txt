@@ -1,0 +1,15 @@
+This tests that array construction via a host call works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS array instanceof Array is true
+PASS array.length is 100
+PASS array instanceof Array is true
+PASS array.length is 100
+PASS array instanceof Array is true
+PASS array.length is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

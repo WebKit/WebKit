@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="grid" role="grid">
+<div role="row">
+    <span id="cell0" role="gridcell" aria-selected="true">C0</span>
+    <span id="cell1" role="gridcell" aria-selected="true">C1</span>
+    <span id="cell2" role="gridcell">C2</span>
+</div>
+</div>
+
+<script>
+var output = "This test ensures AXSelectedCells drops a cell once its aria-selected becomes false, and that the selection an assistive technology reads is already correct when AXSelectedCellsChanged arrives.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var grid = accessibilityController.accessibleElementById("grid");
+    var cell0 = accessibilityController.accessibleElementById("cell0");
+    var cell1 = accessibilityController.accessibleElementById("cell1");
+
+    output += expect("grid.selectedCells().length", "2");
+    output += expect("grid.selectedCells()[0].isEqual(cell0)", "true");
+    output += expect("grid.selectedCells()[1].isEqual(cell1)", "true");
+
+    var receivedSelectionChange = false;
+    accessibilityController.addNotificationListener(function(element, notification, userInfo) {
+        if (notification != "AXSelectedCellsChanged" || receivedSelectionChange)
+            return;
+        receivedSelectionChange = true;
+
+        output += `Received ${notification}.\n`;
+        output += expect("grid.selectedCells().length", "1");
+        output += expect("grid.selectedCells()[0].isEqual(cell1)", "true");
+
+        accessibilityController.removeNotificationListener();
+        document.getElementById("grid").style.display = "none";
+
+        debug(output);
+        finishJSTest();
+    });
+
+    document.getElementById("cell0").setAttribute("aria-selected", "false");
+}
+</script>
+</body>
+</html>

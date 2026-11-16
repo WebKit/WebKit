@@ -1,0 +1,124 @@
+<canvas width="100" height="100"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener("load", function () {
+    const canvas = document.querySelector("canvas");
+    const gl = canvas.getContext("webgl");
+
+    const halfWidth = canvas.width / 2;
+    const halfHeight = canvas.height / 2;
+
+    function output(txt) {
+        const div = document.createElement("div");
+        div.textContent = txt;
+        document.body.appendChild(div);
+    }
+
+    function createShader(type, src) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, src);
+      gl.compileShader(shader);
+      return shader;
+    }
+
+    function createProgram(vsSrc, fsSrc) {
+      const program = gl.createProgram();
+      const vs = createShader(gl.VERTEX_SHADER, vsSrc);
+      const fs = createShader(gl.FRAGMENT_SHADER, fsSrc);
+      gl.attachShader(program, vs);
+      gl.attachShader(program, fs);
+      gl.bindAttribLocation(program, 0, 'pos');
+      gl.linkProgram(program);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      return program;
+    }
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-3, 1, 1, 1, 1, -3]), gl.STATIC_DRAW);
+
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+    const p1 = createProgram(`
+    attribute vec2 pos;
+    void main(void) {
+      gl_Position = vec4(pos, 0, 1);
+    }
+    `, `
+    precision mediump float;
+    void main(void) {
+      mat4 m;
+      gl_FragColor = m[0];
+    }
+    `);
+
+    gl.useProgram(p1);
+    gl.viewport(0, 0, halfWidth, halfHeight);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    const p2 = createProgram(`
+    attribute vec2 pos;
+    void main(void) {
+      gl_Position = vec4(pos, 0, 1);
+    }
+    `, `
+    precision mediump float;
+    void main(void) {
+      vec4 v;
+      gl_FragColor = v;
+    }
+    `);
+
+    gl.useProgram(p2);
+    gl.viewport(0, halfHeight, halfWidth, halfHeight);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    const p3 = createProgram(`
+    attribute vec2 pos;
+    void main(void) {
+      gl_Position = vec4(pos, 0, 1);
+    }
+    `, `
+    precision mediump float;
+    void main(void) {
+      float s;
+      gl_FragColor = vec4(s, s, s, s);
+    }
+    `);
+
+    gl.useProgram(p3);
+    gl.viewport(halfWidth, halfHeight, halfWidth, halfHeight);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    const p4 = createProgram(`
+    attribute vec2 pos;
+    void main(void) {
+      gl_Position = vec4(pos, 0, 1);
+    }
+    `, `
+    precision mediump float;
+    void main(void) {
+      vec2 v;
+      gl_FragColor = vec4(v.x, v.y, v.x + v.y, v.x + v.y);
+    }
+    `);
+
+    gl.useProgram(p4);
+    gl.viewport(halfWidth, 0, halfWidth, halfHeight);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    let pixels = new Uint8Array(canvas.width * canvas.height * 4);
+    gl.readPixels(0, 0, canvas.width, canvas.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    let seenNoise = false;
+    pixels.forEach(pixel => {
+        if (pixel) {
+            seenNoise = true;
+        }
+    });
+    output(seenNoise ? "FAIL: Unitialized values detected" : "PASS");
+}, false);
+</script>

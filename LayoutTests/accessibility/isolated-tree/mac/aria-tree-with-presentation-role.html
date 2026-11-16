@@ -1,0 +1,51 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=false IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul id="tree" role="tree" aria-label="Help Topics">
+    <li role="treeitem">Release Notes</li>
+    <li role="presentation">
+        <span role="treeitem" aria-expanded="true">Using Search</span>
+        <ul role="group" aria-label="Using Search" aria-expanded="true">
+            <li role="treeitem">Power Search</li>
+        </ul>
+    </li>
+    <li role="presentation">
+        <span role="treeitem" aria-expanded="false">Common Info Area</span>
+    </li>
+</ul>
+
+<script>
+var output = "This test ensures an aria tree exposes its rows, and their disclosure levels, correctly when role='presentation' intervenes.\n\n";
+
+if (window.accessibilityController) {
+    var tree = accessibilityController.accessibleElementById("tree");
+
+    function rowDescription(index)
+    {
+        var treeRow = tree.childAtIndex(index);
+        return `${stripAXPrefix(treeRow.role)} level ${treeRow.hierarchicalLevel}: ${stripAXPrefix(treeRow.childAtIndex(0).stringValue)}`;
+    }
+
+    output += expect("tree.role", "'AXRole: AXOutline'");
+    // The presentational list items contribute no rows of their own, and the grouped tree item is a
+    // row of the tree rather than a descendant of the group.
+    output += expect("tree.childrenCount", "4");
+
+    output += expect("rowDescription(0)", "'AXRow level 0: Release Notes'");
+    output += expect("rowDescription(1)", "'AXRow level 0: Using Search'");
+    // Only this row is inside a role="group", so only it is disclosed a level down.
+    output += expect("rowDescription(2)", "'AXRow level 1: Power Search'");
+    output += expect("rowDescription(3)", "'AXRow level 0: Common Info Area'");
+
+    document.getElementById("tree").style.visibility = "hidden";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

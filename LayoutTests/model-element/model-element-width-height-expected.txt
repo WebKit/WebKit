@@ -1,0 +1,9 @@
+
+PASS HTMLModelElement has width and height properties
+PASS HTMLModelElement width and height properties reflect width and height attribute values
+PASS <model> width and height attributes reflect HTMLModelElement width and height properties
+PASS <model> has default CSS size when no width or height attribute is used
+PASS <model> width and height attributes influence automatic size
+PASS <model> width and height attributes do not win over non-auto width and height property values
+PASS <model> size computation takes aspect-ratio property into account
+

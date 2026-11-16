@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<!-- This file tests various multi-element aria-labelledby cycles, causing infinite recursion
+     if our implementation is incorrectly coded.
+
+     The cycle: computing A's accessible name requires D's text content.
+     D contains E. E's accessible name requires F's text content.
+     F contains A. So computing A's name requires computing A's name -> infinite recursion.
+
+     This test passes if it runs without crashing or hanging.
+-->
+
+<!-- Test 1: Three-element aria-labelledby cycle via DOM containment. -->
+<span id="F1">
+    <span id="A1" aria-labelledby="D1">A content</span>
+</span>
+<span id="D1">
+    <span id="E1" aria-labelledby="F1">E content</span>
+</span>
+
+<!-- Test 2: Four-element cycle: A->D->E->G->F->A. -->
+<span id="F2">
+    <span id="A2" aria-labelledby="D2">A content</span>
+</span>
+<span id="D2">
+    <span id="G2">
+        <span id="E2" aria-labelledby="F2">E content</span>
+    </span>
+</span>
+
+<!-- Test 3: Cycle through aria-labelledby and aria-describedby. -->
+<span id="F3">
+    <span id="A3" aria-labelledby="D3">A content</span>
+</span>
+<span id="D3">
+    <span id="E3" aria-describedby="F3">E content</span>
+</span>
+
+<!-- Test 4: Dynamic cycle creation via JavaScript. -->
+<span id="F4">
+    <span id="A4" aria-labelledby="D4">A content</span>
+</span>
+<span id="D4">
+    <span id="E4">E content</span>
+</span>
+
+<script>
+var output = "This tests that multi-element aria-labelledby cycles do not cause infinite recursion or a crash.\n\n";
+
+if (window.accessibilityController) {
+    // Test 1: Static 3-element cycle. Accessing the name should not hang or crash.
+    var a1 = accessibilityController.accessibleElementById("A1");
+
+    // The main assertion is that we reach this point without crashing.
+    // Whatever name is computed (possibly empty due to the cycle), it should be finite.
+    output += expect("typeof platformValueForW3CName(a1)", "'string'");
+
+    // Test 2: Static 4-element cycle.
+    var a2 = accessibilityController.accessibleElementById("A2");
+    output += expect("typeof platformValueForW3CName(a2)", "'string'");
+
+    // Test 3: Cycle through describedby.
+    var a3 = accessibilityController.accessibleElementById("A3");
+    output += expect("typeof platformValueForW3CName(a3)", "'string'");
+
+    // Test 4: Create a cycle dynamically.
+    document.getElementById("E4").setAttribute("aria-labelledby", "F4");
+    var a4 = accessibilityController.accessibleElementById("A4");
+    output += expect("typeof platformValueForW3CName(a4)", "'string'");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

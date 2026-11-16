@@ -1,0 +1,11 @@
+Test WebSocket sends HttpOnly cookies.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+WebSocket open
+WebSocket closed
+PASS cookie is "WK-websocket-test-httponly=1; WK-websocket-test=1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

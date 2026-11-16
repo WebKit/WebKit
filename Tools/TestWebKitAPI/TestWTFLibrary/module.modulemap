@@ -1,0 +1,7 @@
+module TestWTFLibrary {
+    umbrella "."
+
+    explicit module * {
+        export *
+    }
+}

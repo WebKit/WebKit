@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Geolocation is blocked in a non-secure context</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/common/get-host-info.sub.js></script>
+<script>
+async_test(t => {
+    // localhost is potentially trustworthy, so open the popup on an origin that is not.
+    const popup = open(get_host_info().UNAUTHENTICATED_ORIGIN + new URL("resources/geolocation-over-insecure-content.html", location).pathname);
+    t.add_cleanup(() => popup.close());
+    onmessage = t.step_func_done(event => {
+        assert_equals(event.data, "[blocked] Access to geolocation was blocked in a non-secure context with origin " + get_host_info().UNAUTHENTICATED_ORIGIN + ".");
+    });
+}, "Geolocation logs a console message when it is blocked in a non-secure context");
+</script>

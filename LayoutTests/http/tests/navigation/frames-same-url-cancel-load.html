@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<iframe id="frame1" src="resources/success.html"></iframe>
+<iframe id="frame2" src="resources/success.html"></iframe>
+<script>
+description("Test that when several frames are loading the same URL, and you navigate one, it does not cancel the load for the other frames.");
+jsTestIsAsync = true;
+
+document.getElementById("frame1").src = "about:blank";
+
+onload = function() {
+    frame2 = document.getElementById("frame2");
+    shouldBeEqualToString("frame2.contentDocument.URL", "http://127.0.0.1:8000/navigation/resources/success.html");
+
+    finishJSTest();
+}
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

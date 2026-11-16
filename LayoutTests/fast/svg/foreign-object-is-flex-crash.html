@@ -1,0 +1,11 @@
+<style>
+foreignObject::before {
+  display: contents;
+  content: linear-gradient(rgb(89,224,179));
+}
+</style>
+PASS if no crash or assert.
+<svg><foreignObject display="flex"/>
+<script>
+window.testRunner?.dumpAsText();
+</script>

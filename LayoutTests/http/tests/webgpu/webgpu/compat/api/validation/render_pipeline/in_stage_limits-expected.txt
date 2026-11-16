@@ -1,0 +1,6 @@
+
+PASS :maxStorageBuffersTexturesInVertexFragmentStage:limit="maxStorageBuffersInFragmentStage"
+PASS :maxStorageBuffersTexturesInVertexFragmentStage:limit="maxStorageBuffersInVertexStage"
+PASS :maxStorageBuffersTexturesInVertexFragmentStage:limit="maxStorageTexturesInFragmentStage"
+PASS :maxStorageBuffersTexturesInVertexFragmentStage:limit="maxStorageTexturesInVertexStage"
+

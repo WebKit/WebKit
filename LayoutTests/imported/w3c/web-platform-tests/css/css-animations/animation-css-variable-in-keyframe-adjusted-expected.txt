@@ -1,0 +1,4 @@
+
+PASS Animations reflect changes to variables on element
+PASS Animations reflect changes to variables on parent element
+

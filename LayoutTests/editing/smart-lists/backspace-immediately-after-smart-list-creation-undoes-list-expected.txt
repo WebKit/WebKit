@@ -1,0 +1,6 @@
+Pressing Backspace immediately after Smart Lists converts two consecutive lines into a list should undo the conversion, restoring the original markers and the trigger space.
+| <div>
+|   "* A"
+| <div>
+|   "* "
+|   <#selection-caret>

@@ -1,0 +1,1 @@
+Composited offscreen boxes: 5

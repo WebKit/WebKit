@@ -1,0 +1,8 @@
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+Test that reloading a paused page doesn't crash.
+
+
+== Running test suite: ReloadPaused
+-- Running test case: ReloadPausedNoCrash
+

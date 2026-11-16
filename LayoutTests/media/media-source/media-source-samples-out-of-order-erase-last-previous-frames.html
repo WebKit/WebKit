@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-samples-out-of-order-erase-last-previous-frames</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var mediaSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        // Test 1.
+
+        consoleWrite("Test 1: First segment has normal, monotonically increasing samples with decode timestamp equal ");
+        consoleWrite("to presentation timestamp.");
+
+        mediaSegment = concatenateSamples([
+            makeAInit(4, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            // Syntax: makeASample(presentationTime, decodeTime, duration, timeScale, trackID, flags, generation)
+            makeASample( 0,  0, 10, 10, 0, SAMPLE_FLAG.SYNC, 0),
+            makeASample(10, 10, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample(20, 20, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample(30, 30, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 4);
+        bufferedSamples.forEach(consoleWrite);
+
+        consoleWrite("Test 1: Second, segment with overlap in decoding order but no overlap in presentation order shouldn't ");
+        consoleWrite("cause any deletion if decoding order is corrected to avoid conflicts.");
+
+        mediaSegment = concatenateSamples([
+            makeAInit(1, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(40, 9, 50, 10, 0, SAMPLE_FLAG.SYNC, 1),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 5);
+        bufferedSamples.forEach(consoleWrite);
+
+        run('sourceBuffer.remove(0, Infinity)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Test 2.
+
+        consoleWrite("Test 2: First segment has normal, monotonically increasing samples with decode timestamp equal ");
+        consoleWrite("to presentation timestamp, and a last sync sample.");
+
+        mediaSegment = concatenateSamples([
+            makeAInit(4, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(  0,   0, 10, 10, 0, SAMPLE_FLAG.SYNC, 0),
+            makeASample( 10,  10, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample( 20,  20, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample( 30,  30, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample(100, 100, 10, 10, 0, SAMPLE_FLAG.SYNC, 0)
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 5);
+        bufferedSamples.forEach(consoleWrite);
+
+        consoleWrite("Test 2: Second, segment with overlap in decoding order but no overlap in presentation order shouldn't ");
+        consoleWrite("cause any deletion if decoding order is corrected to avoid conflicts.");
+
+        mediaSegment = concatenateSamples([
+            makeAInit(1, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(40, 9, 50, 10, 0, SAMPLE_FLAG.SYNC, 1),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 6);
+        bufferedSamples.forEach(consoleWrite);
+
+        run('sourceBuffer.remove(0, Infinity)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Test 3.
+
+        consoleWrite("Test 3: First segment has normal, monotonically increasing samples with decode timestamp equal ");
+        consoleWrite("to presentation timestamp.");
+
+        mediaSegment = concatenateSamples([
+            makeAInit(4, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample( 0,  0, 10, 10, 0, SAMPLE_FLAG.SYNC, 0),
+            makeASample(10, 10, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample(20, 20, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample(30, 30, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 4);
+        bufferedSamples.forEach(consoleWrite);
+
+        consoleWrite("Test 3: Segment with overlap in decoding order but no overlap in presentation order shouldn't ");
+        consoleWrite("cause any deletion if decoding order is corrected to avoid conflicts. This correction can't extend ");
+        consoleWrite("beyond the duration of the sample, to avoid conflicts with the hypothetical decode timestamp of a ");
+        consoleWrite("sample appended in the future (DTS 39/10), so some samples will be deleted to prevent that. ");
+        consoleWrite("Same duration samples.");
+
+        mediaSegment = concatenateSamples([
+            makeAInit(1, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(40, 29, 10, 10, 0, SAMPLE_FLAG.SYNC, 1),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 5);
+        bufferedSamples.forEach(consoleWrite);
+
+        run('sourceBuffer.remove(0, Infinity)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Test 4.
+
+        consoleWrite("Test 4: First segment has normal, monotonically increasing samples with decode timestamp equal ");
+        consoleWrite("to presentation timestamp, and a last sync sample.");
+
+        mediaSegment = concatenateSamples([
+            makeAInit(4, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(  0,   0, 10, 10, 0, SAMPLE_FLAG.SYNC, 0),
+            makeASample( 10,  10, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample( 20,  20, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample( 30,  30, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample(100, 100, 10, 10, 0, SAMPLE_FLAG.SYNC, 0)
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 5);
+        bufferedSamples.forEach(consoleWrite);
+
+        consoleWrite("Test 4: Second, segment with overlap in decoding order but no overlap in presentation order shouldn't ");
+        consoleWrite("cause any deletion if decoding order is corrected to avoid conflicts. This correction can't extend ");
+        consoleWrite("beyond the duration of the sample, to avoid conflicts with the hypothetical decode timestamp of a ");
+        consoleWrite("sample appended in the future (DTS 39/10), so some samples will be deleted to prevent that. ");
+        consoleWrite("Same duration samples.");
+
+        mediaSegment = concatenateSamples([
+            makeAInit(1, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(40, 29, 10, 10, 0, SAMPLE_FLAG.SYNC, 1),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 6);
+        bufferedSamples.forEach(consoleWrite);
+
+        run('sourceBuffer.remove(0, Infinity)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Test 5.
+
+        consoleWrite("Test 5: First segment has normal, monotonically increasing samples with decode timestamp equal ");
+        consoleWrite("to presentation timestamp, and a last sync sample.");
+
+        mediaSegment = concatenateSamples([
+            makeAInit(4, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(  0,   0, 10, 10, 0, SAMPLE_FLAG.SYNC, 0),
+            makeASample( 10,  10, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample( 20,  20, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample( 30,  30, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample(100, 100, 10, 10, 0, SAMPLE_FLAG.SYNC, 0)
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 5);
+        bufferedSamples.forEach(consoleWrite);
+
+        consoleWrite("Test 5: Second, segment with overlap in decoding order but no overlap in presentation order shouldn't ");
+        consoleWrite("cause any deletion if decoding order is corrected to avoid conflicts. This correction can't extend ");
+        consoleWrite("beyond the duration of the sample, to avoid conflicts with the hypothetical decode timestamp of a ");
+        consoleWrite("sample appended in the future (DTS 29/10). This isn't met, so the whole correction algorithm bails out. ");
+        consoleWrite("and all the conflicting samples are deleted (old behaviour). Same duration samples.");
+
+        mediaSegment = concatenateSamples([
+            makeAInit(1, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(40, 19, 10, 10, 0, SAMPLE_FLAG.SYNC, 1),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 4);
+        bufferedSamples.forEach(consoleWrite);
+
+        run('sourceBuffer.remove(0, Infinity)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

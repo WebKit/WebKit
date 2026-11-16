@@ -1,0 +1,11 @@
+
+PASS cssText setter should set style attribute even when there are no style changes (body)
+PASS cssText setter should set style attribute even when there are no style changes, part 2 (body)
+PASS cssText setter should set style attribute even when there are no style changes, part 3 (body)
+PASS cssText setter should set style attribute even when there are no style changes, part 4 (body)
+PASS cssText setter should set style attribute even when there are no style changes (cool-beans)
+PASS cssText setter should set style attribute even when there are no style changes, part 2 (cool-beans)
+PASS cssText setter should set style attribute even when there are no style changes, part 3 (cool-beans)
+PASS cssText setter should set style attribute even when there are no style changes, part 4 (cool-beans)
+PASS cssText setter and selector invalidation
+

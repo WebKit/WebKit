@@ -1,0 +1,77 @@
+<html>
+<head>
+    <title>media-source-change-source</title>
+    <script src="../../../../media/media-source/media-source-loader.js"></script>
+    <script src="../../../../media/video-test.js"></script>
+    <script>
+    let loader;
+    let source;
+    let sourceBuffer;
+
+    async function loadAndPlay() {
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen'),
+
+        sourceBuffer = source.addSourceBuffer(loader.type());
+        sourceBuffer.appendBuffer(loader.initSegment());
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('<br>** append segments');
+        for (let i = 0; i < loader.mediaSegmentsLength(); i++) {
+            sourceBuffer.appendBuffer(loader.mediaSegment(i));
+            await waitFor(sourceBuffer, 'update');
+        }
+
+        if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA)
+            await waitFor(video, 'canplaythrough');
+
+        consoleWrite('<br>** play');
+        runWithKeyDown('video.play()');
+        await waitFor(video, 'playing');
+
+        consoleWrite('');
+        if (window.internals)
+            await testExpectedEventually("window.internals.audioSessionCategory()", "MediaPlayback");
+    }
+
+    async function runTest() {
+        if (window.internals)
+            internals.settings.setShouldManageAudioSessionCategory(true);
+
+        loader = new MediaSourceLoader('../../../../media/media-source/content/test-fragmented-manifest.json', '../../../../media/media-source/');
+
+        loader.onerror = async () => {
+            failTest('Media data loading failed'); 
+        };
+
+        loader.onload = async () => {
+            failTestIn(15000);
+
+            if (window.internals)
+                await testExpectedEventually("window.internals.audioSessionCategory()", "None");
+
+            consoleWrite('');
+            findMediaElement();
+            runWithKeyDown('video.volume = 0.05');
+            await waitFor(video, 'volumechange');
+
+            consoleWrite('<br>* Load first file.');
+            await loadAndPlay();
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            consoleWrite('<br>* Load second file.');
+            await loadAndPlay();
+
+            consoleWrite('');
+            endTest();
+        };
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+<video controls></video><br>
+</body>
+</html>

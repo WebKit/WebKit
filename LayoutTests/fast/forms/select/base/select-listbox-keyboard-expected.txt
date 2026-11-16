@@ -1,0 +1,55 @@
+Keyboard interaction with an appearance: base-select list box. Separate from select-listbox.html so that it can be skipped where key events cannot be synthesized.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Arrow keys move focus from a focused list box into its options.
+PASS document.activeElement is keyboard
+PASS document.activeElement is keyboardOne
+PASS document.activeElement is keyboardTwo
+PASS document.activeElement is keyboardOne
+
+Moving focus does not change the selection.
+PASS keyboard.selectedOptions.length is 0
+
+Tab reaches the list box itself rather than each of its options.
+PASS document.activeElement is tabbed
+PASS document.activeElement is afterTab
+
+Home, End and the page keys move focus within the list box.
+PASS document.activeElement is pagingLast
+PASS document.activeElement is pagingOne
+PASS document.activeElement.textContent is "charlie"
+PASS document.activeElement is pagingOne
+
+Type-ahead moves focus without selecting.
+PASS document.activeElement.textContent is "charlie"
+PASS paging.selectedOptions.length is 0
+
+An untrusted keypress does not fall back to selecting type-ahead.
+PASS paging.selectedOptions.length is 0
+
+Space picks the focused option.
+PASS pagingOne.selected is true
+
+Return submits the form implicitly.
+PASS didSubmit is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+one
+two
+
+one
+two
+
+alpha
+bravo
+charlie
+delta
+echo
+
+one
+two
+

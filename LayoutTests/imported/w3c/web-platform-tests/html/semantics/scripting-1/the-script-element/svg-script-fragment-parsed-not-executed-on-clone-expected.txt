@@ -1,0 +1,7 @@
+ Category
+
+PASS Sanity check: a normally-created SVG <script> runs when inserted
+FAIL A fragment-parsed SVG <script> does not execute when cloned into the document assert_equals: Cloned fragment-parsed SVG script must not execute when inserted expected (undefined) undefined but got (boolean) true
+FAIL Deep-cloning a subtree containing a fragment-parsed SVG <script> does not execute it assert_equals: Deep-cloned subtree containing a fragment-parsed SVG script must not execute expected (undefined) undefined but got (boolean) true
+PASS Control: a fragment-parsed HTML <script> does not execute when cloned into the document
+

@@ -1,0 +1,6 @@
+
+PASS about:blank gets the initiator's origin again after traversal
+PASS about:blank gets the initiator's origin again after reload
+FAIL about:blank gets an opaque origin when the initiator is sandboxed by its CSP assert_equals: The parent can't script the document expected (string) "SecurityError" but got (undefined) undefined
+PASS about:blank in a sandboxed iframe gets an opaque origin
+

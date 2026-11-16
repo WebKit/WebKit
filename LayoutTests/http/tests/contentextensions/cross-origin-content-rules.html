@@ -1,0 +1,23 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            const popup = window.open("about:blank");
+            const hostname = window.location.hostname;
+            if (!popup) {
+                alert(`PASS: window.open() in ${hostname} returned null as expected.`);
+            } else {
+                alert(`FAIL: window.open() in ${hostname} returned a valid Window object.`);
+                popup.close();
+            }
+            const iframe = document.createElement('iframe');
+            iframe.src = "http://localhost:8000/contentextensions/resources/iframe-that-opens-popup.html";
+            document.body.appendChild(iframe);
+        }
+    </script>
+</body>
+</html>

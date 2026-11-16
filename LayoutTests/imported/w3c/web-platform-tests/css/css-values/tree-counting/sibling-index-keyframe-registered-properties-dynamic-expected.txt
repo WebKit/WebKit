@@ -1,0 +1,22 @@
+
+PASS Initially, the sibling-index() is 3 for --time
+PASS Initially, the sibling-index() is 3 for --angle
+PASS Initially, the sibling-index() is 3 for --resolution
+PASS Initially, the sibling-index() is 3 for --percentage
+PASS Initially, the sibling-index() is 3 for --number
+PASS Initially, the sibling-index() is 3 for --integer
+PASS Initially, the sibling-index() is 3 for --length
+PASS Initially, the sibling-index() is 3 for --length-percentage
+FAIL Initially, the sibling-index() is 3 for --color assert_equals: expected "color(srgb 0 0.6 0)" but got "oklab(0.591738 -0.159734 0.122589)"
+PASS Initially, the sibling-index() is 3 for --list
+PASS Removing a preceding sibling of #target reduces the sibling-index() for --time
+PASS Removing a preceding sibling of #target reduces the sibling-index() for --angle
+PASS Removing a preceding sibling of #target reduces the sibling-index() for --resolution
+PASS Removing a preceding sibling of #target reduces the sibling-index() for --percentage
+PASS Removing a preceding sibling of #target reduces the sibling-index() for --number
+PASS Removing a preceding sibling of #target reduces the sibling-index() for --integer
+PASS Removing a preceding sibling of #target reduces the sibling-index() for --length
+PASS Removing a preceding sibling of #target reduces the sibling-index() for --length-percentage
+FAIL Removing a preceding sibling of #target reduces the sibling-index() for --color assert_equals: expected "color(srgb 0 0.4 0)" but got "oklab(0.442125 -0.119348 0.091594)"
+PASS Removing a preceding sibling of #target reduces the sibling-index() for --list
+

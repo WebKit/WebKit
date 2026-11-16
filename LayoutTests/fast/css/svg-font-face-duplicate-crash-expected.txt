@@ -1,0 +1,1 @@
+Test PASS if it does not ASSERT in Debug.

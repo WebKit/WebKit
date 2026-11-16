@@ -1,0 +1,15 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (stack.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (stack.wast:156)
+PASS #4 Reinitialize the default imports
+PASS #5 Test that WebAssembly compilation succeeds (stack.wast:1)
+PASS #6 Test that WebAssembly instantiation succeeds (stack.wast:1)
+PASS #7 Test that a WebAssembly code returns a specific result (stack.wast:146)
+PASS #8 Test that a WebAssembly code returns a specific result (stack.wast:147)
+PASS #9 Test that a WebAssembly code returns a specific result (stack.wast:148)
+PASS #10 Test that a WebAssembly code returns a specific result (stack.wast:150)
+PASS #11 Test that a WebAssembly code returns a specific result (stack.wast:151)
+PASS #12 Test that WebAssembly compilation succeeds (stack.wast:156)
+PASS #13 Test that WebAssembly instantiation succeeds (stack.wast:156)
+

@@ -1,0 +1,7 @@
+
+PASS e.style['flex-line-count'] = "1.5" should not set the property value
+PASS e.style['flex-line-count'] = "0" should not set the property value
+PASS e.style['flex-line-count'] = "-1" should not set the property value
+PASS e.style['flex-line-count'] = "auto" should not set the property value
+PASS e.style['flex-line-count'] = "wrap" should not set the property value
+

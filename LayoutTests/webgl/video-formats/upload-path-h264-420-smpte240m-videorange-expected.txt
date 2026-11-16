@@ -1,0 +1,19 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of h264-420-smpte240m-videorange.mp4, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. A compressed pixel format is shown as the format it compresses. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+h264-420-smpte240m-videorange.mp4: h264 yuv420p smpte240m/videorange/smpte240m/smpte240m
+PASS h264-420-smpte240m-videorange.mp4 <video> default path: hardware (direct), pixel format 420v
+PASS h264-420-smpte240m-videorange.mp4 <video> software path: software (forced)
+PASS h264-420-smpte240m-videorange.mp4 <video> hardware path: hardware (direct)
+PASS h264-420-smpte240m-videorange.mp4 <video> hardware vs software: match
+PASS h264-420-smpte240m-videorange.mp4 VideoFrame(video) (format NV12) default path: hardware (direct), pixel format 420v
+PASS h264-420-smpte240m-videorange.mp4 VideoFrame(video) (format NV12) software path: software (forced)
+PASS h264-420-smpte240m-videorange.mp4 VideoFrame(video) (format NV12) hardware path: hardware (direct)
+PASS h264-420-smpte240m-videorange.mp4 VideoFrame(video) (format NV12) hardware vs software: match
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

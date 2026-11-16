@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Console.log.SingleToStringInvocation");
+
+    async function countToStringInvocations(expression) {
+        let {result} = await InspectorProtocol.awaitCommand({
+            method: "Runtime.evaluate",
+            params: {
+                expression: `
+                    window.__toStringCount = 0;
+                    ${expression}
+                    window.__toStringCount;
+                `,
+            },
+        });
+        return result.value;
+    }
+
+    suite.addTestCase({
+        name: "Console.log.Date",
+        description: "console.log of a Date subclass should invoke its toString exactly once while the inspector is open.",
+        async test() {
+            let count = await countToStringInvocations(`
+                class CountingDate extends Date { toString() { window.__toStringCount++; return "counting-" + window.__toStringCount; } }
+                console.log(new CountingDate());
+            `);
+            ProtocolTest.log("toString invocations: " + count);
+            ProtocolTest.expectEqual(count, 1, "toString should be invoked exactly once.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.log.Function",
+        description: "console.log of a function should invoke its toString exactly once while the inspector is open.",
+        async test() {
+            let count = await countToStringInvocations(`
+                let fn = function() {};
+                fn.toString = function() { window.__toStringCount++; return "counting-" + window.__toStringCount; };
+                console.log(fn);
+            `);
+            ProtocolTest.log("toString invocations: " + count);
+            ProtocolTest.expectEqual(count, 1, "toString should be invoked exactly once.");
+        },
+    });
+
+    InspectorProtocol.awaitCommand({method: "Console.enable", params: {}}).then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that console.log invokes an object's toString exactly once when the inspector is open (bug 306712).</p>
+</body>
+</html>

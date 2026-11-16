@@ -1,0 +1,4 @@
+
+PASS Accessing detectedPlanes on inactive frame throws InvalidStateError - webgl
+PASS Accessing detectedPlanes on inactive frame throws InvalidStateError - webgl2
+

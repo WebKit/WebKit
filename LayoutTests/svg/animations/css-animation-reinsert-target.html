@@ -1,0 +1,34 @@
+<body>
+    <p>Passes if it does not crash.</p>
+    <svg id="svg">
+        <rect x="10" y="10" width="100" height="100" fill="green">
+            <set attributeName="fill-opacity" to="1"/>
+        </rect>
+        <circle cx="170" cy="60" r="50" fill="green">
+            <set attributeName="fill-opacity" to="1" onbegin="onSetAttribute()"/>
+        </circle>
+    </svg>
+    <div id="container"></div>
+    <select id="select" onfocus="onFocus()"/>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        window.onload = (event) => {
+            select.autofocus = true;
+        };
+
+        function onSetAttribute() {
+            select.setAttribute("multiple", "multiple");
+            svg.setCurrentTime(1);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        function onFocus() {
+            container.appendChild(svg);
+        }
+    </script>
+</body>

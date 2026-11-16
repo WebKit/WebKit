@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<select id="select">
+    <option>dog</option>
+    <option>cat</option>
+</select>
+
+<script>
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var axSelect = accessibilityController.accessibleElementById("select");
+        debug(`select default value: ${axSelect.stringValue}`);
+
+        setTimeout(async () => {
+            document.getElementById("select").selectedIndex = 1;
+            await expectAsyncExpression("axSelect.stringValue", "'AXValue: cat'");
+
+            document.getElementById("select").selectedIndex = 0;
+            await expectAsyncExpression("axSelect.stringValue", "'AXValue: dog'");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

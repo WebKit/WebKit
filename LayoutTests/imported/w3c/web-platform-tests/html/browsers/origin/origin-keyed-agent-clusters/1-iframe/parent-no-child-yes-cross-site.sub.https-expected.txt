@@ -1,0 +1,4 @@
+
+PASS parent: originAgentCluster must equal false
+PASS child: originAgentCluster must equal true
+

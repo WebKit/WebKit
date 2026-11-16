@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<style>
+body { margin: 20px; background: white; }
+ul { font: 20px/1 Ahem; color: transparent; width: 300px; }
+li::marker { color: transparent; }
+::selection { color: transparent; background: rgb(127, 127, 255); }
+</style>
+<ul id="list">
+<li>XXXX</li>
+<li>XXXXXX</li>
+<li>XX</li>
+</ul>
+<script>
+getSelection().selectAllChildren(document.getElementById("list"));
+</script>

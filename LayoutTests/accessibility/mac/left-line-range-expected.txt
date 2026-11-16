@@ -1,0 +1,12 @@
+This test ensures basic left-line text marker functionality works.
+
+PASS: webArea.stringForTextMarkerRange(webArea.leftLineTextMarkerRangeForTextMarker(marker)) === 'First text'
+PASS: webArea.stringForTextMarkerRange(webArea.leftLineTextMarkerRangeForTextMarker(marker)) === 'Foo and bar'
+PASS: webArea.stringForTextMarkerRange(webArea.leftLineTextMarkerRangeForTextMarker(webArea.endTextMarkerForTextMarkerRange(markerRange))) === 'Foo and bar'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First text
+
+Foo and bar

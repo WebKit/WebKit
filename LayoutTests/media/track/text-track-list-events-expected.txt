@@ -1,0 +1,7 @@
+
+PASS TextTrackList: onaddtrack and onremovetrack IDL attributes exist
+PASS TrackEvent: .track returns the initialized value (null by default)
+PASS addTextTrack: fires 'addtrack' with TrackEvent.track == new TextTrack
+PASS track element removal: fires 'removetrack' with TrackEvent.track == removed TextTrack
+PASS onaddtrack IDL handler and addEventListener both fire
+

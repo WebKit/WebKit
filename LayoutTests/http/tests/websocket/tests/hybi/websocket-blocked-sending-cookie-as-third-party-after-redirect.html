@@ -1,0 +1,70 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+    <script src="../../../../js-test-resources/js-test.js"></script>
+    <script src="../../../cookies/resources/cookie-utilities.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        async function testGetCookie()
+        {
+            debug("<br>Opening socket to check its cookies.");
+            let ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party");
+            debug("Created a socket to '" + ws.url + "'; readyState " + ws.readyState + ".");
+
+            ws.onopen = (e) => {
+                debug(`Connection opened`);
+            };
+            ws.onerror = (e) => {
+                testFailed(`Connection was unexpectedly rejected. ${e}`);
+                finishJSTest();
+            };
+            ws.onmessage = (message) => {
+                debug(`Received headers: ${message.data}`);
+                finishJSTest();
+            };
+        }
+
+        async function testThirdPartyCookie()
+        {
+            shouldBeEqualToString("document.location.host", "127.0.0.1:8000");
+            debug("<br>Sending third-party cookie through cross-origin WebSocket handshake is blocked.");
+            let ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party");
+            debug("Created a socket to '" + ws.url + "'; readyState " + ws.readyState + ".");
+            ws.onopen = () => {
+                ws.close();
+                testPassed("Connection was allowed (request did not contain cookies).");
+                finishJSTest();
+            };
+            ws.onerror = (e) => {
+                testFailed(`Connection was rejected (request did contained cookies).`);
+                testGetCookie();
+            };
+        }
+
+        async function runTest()
+        {
+            switch (document.location.hash) {
+                case "":
+                    // Navigate to localhost to set first-party cookie 'setAsFirstParty'.
+                    document.location.href = "http://localhost:8000/resources/redirect.py?cookie=" + encodeURIComponent("setAsFirstPartyHTTP=value") + "&url=" + encodeURIComponent("http://127.0.0.1:8000/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-redirect.html#didSetCookieAsFirstParty");
+                    break;
+                case "#didSetCookieAsFirstParty":
+                    shouldBeUndefined(document.cookie);
+                    await testThirdPartyCookie();
+                    break;
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="output"></div>
+<script>
+    description("Tests WebSocket cookie behavior for third-parties with existing cookies.");
+    if (window.testRunner && testRunner.setStatisticsShouldBlockThirdPartyCookies)
+        testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runTest);
+    else
+        runTest();
+</script>
+</body>
+</html>

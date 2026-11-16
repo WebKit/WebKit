@@ -1,0 +1,194 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.EventListeners");
+
+    let frameTarget = null;
+    let frameDoc = null;
+    let containerNode = null;
+    let headingNode = null;
+    let buttonNode = null;
+
+    async function evaluateInFrame(expression) {
+        let {result, wasThrown} = await frameTarget.RuntimeAgent.evaluate.invoke({
+            expression,
+            objectGroup: "test",
+            returnByValue: true,
+        });
+        InspectorTest.assert(!wasThrown, `Evaluation should not throw: ${expression}`);
+        return result.value;
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and expand the DOM tree.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            frameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+
+            InspectorTest.expectNotNull(frameTarget, "Should find a cross-origin frame target.");
+
+            if (frameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                frameTarget = committedEvent.data.target;
+            }
+
+            await frameTarget.ensureTargetExecutionContext();
+
+            frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDoc) {
+                let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = docEvent.data.document;
+            }
+            InspectorTest.expectNotNull(frameDoc, "Frame target should have a document.");
+
+            let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+            await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+
+            let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+            await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+
+            containerNode = bodyNode.children.find((child) => child.getAttribute("id") === "container");
+            InspectorTest.expectNotNull(containerNode, "Should find #container.");
+            await new Promise((resolve) => containerNode.getChildNodes(resolve));
+
+            headingNode = containerNode.children.find((child) => child.getAttribute("id") === "heading");
+            InspectorTest.expectNotNull(headingNode, "Should find #heading.");
+
+            buttonNode = containerNode.children.find((child) => child.getAttribute("id") === "button");
+            InspectorTest.expectNotNull(buttonNode, "Should find #button.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.EventListeners.Basic",
+        description: "getEventListeners should return a listener registered inside the frame.",
+        async test() {
+            await evaluateInFrame("attachBasicClickListener()");
+
+            let {listeners} = await headingNode.getEventListeners({includeAncestors: false});
+            InspectorTest.expectEqual(listeners.length, 1, "Should return one listener.");
+
+            let listener = listeners[0];
+            InspectorTest.expectEqual(listener.type, "click", "Listener type should be 'click'.");
+            InspectorTest.expectEqual(listener.useCapture, false, "Listener should be a bubble-phase listener.");
+            InspectorTest.expectEqual(listener.isAttribute, false, "Listener should not be an attribute listener.");
+            InspectorTest.expectNotEqual(listener.eventListenerId, 0, "Listener should have an eventListenerId.");
+            InspectorTest.expectEqual(listener.handlerName, "basicClickHandler", "Listener handlerName should match the function name.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.EventListeners.CaptureAndBubble",
+        description: "getEventListeners should distinguish capture and bubble listeners.",
+        async test() {
+            await evaluateInFrame("attachCaptureAndBubbleListeners()");
+
+            let {listeners} = await buttonNode.getEventListeners({includeAncestors: false});
+            let captureListener = listeners.find((l) => l.handlerName === "captureHandler");
+            let bubbleListener = listeners.find((l) => l.handlerName === "bubbleHandler");
+
+            InspectorTest.expectNotNull(captureListener, "Should find the capture listener.");
+            InspectorTest.expectNotNull(bubbleListener, "Should find the bubble listener.");
+            InspectorTest.expectEqual(captureListener.useCapture, true, "Capture listener should have useCapture=true.");
+            InspectorTest.expectEqual(bubbleListener.useCapture, false, "Bubble listener should have useCapture=false.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.EventListeners.OnceAndPassive",
+        description: "getEventListeners should report once and passive flags.",
+        async test() {
+            await evaluateInFrame("attachOnceAndPassiveListeners()");
+
+            let {listeners} = await buttonNode.getEventListeners({includeAncestors: false});
+            let onceListener = listeners.find((l) => l.handlerName === "onceHandler");
+            let passiveListener = listeners.find((l) => l.handlerName === "passiveHandler");
+
+            InspectorTest.expectNotNull(onceListener, "Should find the once listener.");
+            InspectorTest.expectEqual(onceListener.once, true, "Once listener should have once=true.");
+
+            InspectorTest.expectNotNull(passiveListener, "Should find the passive listener.");
+            InspectorTest.expectEqual(passiveListener.passive, true, "Passive listener should have passive=true.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.EventListeners.IncludeAncestors",
+        description: "getEventListeners with includeAncestors should return listeners on ancestors.",
+        async test() {
+            await evaluateInFrame("attachAncestorListener()");
+
+            let {listeners} = await headingNode.getEventListeners({includeAncestors: true});
+            let ancestorListener = listeners.find((l) => l.handlerName === "ancestorHandler");
+            InspectorTest.expectNotNull(ancestorListener, "Should find the ancestor listener attached to document.body.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.EventListeners.SetDisabled",
+        description: "setEventListenerDisabled should prevent the handler from firing.",
+        async test() {
+            await evaluateInFrame("resetFireCount()");
+            await evaluateInFrame("dispatchClick('heading')");
+            let baselineCount = await evaluateInFrame("window.fireCount");
+            InspectorTest.expectEqual(baselineCount, 1, "Baseline: handler should fire once before being disabled.");
+
+            let {listeners} = await headingNode.getEventListeners({includeAncestors: false});
+            let basicListener = listeners.find((l) => l.handlerName === "basicClickHandler");
+            InspectorTest.expectNotNull(basicListener, "Should find the basicClickHandler to disable.");
+
+            await frameTarget.DOMAgent.setEventListenerDisabled(basicListener.eventListenerId, true);
+
+            await evaluateInFrame("resetFireCount()");
+            await evaluateInFrame("dispatchClick('heading')");
+            let disabledCount = await evaluateInFrame("window.fireCount");
+            InspectorTest.expectEqual(disabledCount, 0, "Handler should not fire while disabled.");
+
+            await frameTarget.DOMAgent.setEventListenerDisabled(basicListener.eventListenerId, false);
+
+            await evaluateInFrame("resetFireCount()");
+            await evaluateInFrame("dispatchClick('heading')");
+            let reenabledCount = await evaluateInFrame("window.fireCount");
+            InspectorTest.expectEqual(reenabledCount, 1, "Handler should fire again once re-enabled.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.EventListeners.SetDisabled.UnknownId",
+        description: "setEventListenerDisabled with an unknown id should be rejected.",
+        async test() {
+            let threw = false;
+            try {
+                await frameTarget.DOMAgent.setEventListenerDisabled(999999, true);
+            } catch (e) {
+                threw = true;
+            }
+            InspectorTest.expectThat(threw, "setEventListenerDisabled with an unknown id should fail.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.EventListeners.SetAllowEditingUserAgentShadowTrees",
+        description: "setAllowEditingUserAgentShadowTrees should succeed on the frame target.",
+        async test() {
+            await frameTarget.DOMAgent.setAllowEditingUserAgentShadowTrees(true);
+            InspectorTest.pass("setAllowEditingUserAgentShadowTrees(true) should succeed.");
+
+            await frameTarget.DOMAgent.setAllowEditingUserAgentShadowTrees(false);
+            InspectorTest.pass("setAllowEditingUserAgentShadowTrees(false) should succeed.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests FrameDOMAgent event listener queries and the shadow-tree editing flag: getEventListenersForNode, setEventListenerDisabled, setAllowEditingUserAgentShadowTrees.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/event-listeners-frame.html"></iframe>
+</body>

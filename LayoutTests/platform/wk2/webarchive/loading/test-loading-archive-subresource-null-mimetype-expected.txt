@@ -1,0 +1,15 @@
+main frame - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+ This tests that doing a normal load of a webarchive with a null mimetype for a subresource does not crash.
+test-loading-archive-subresource-null-mimetype.html - willSendRequest <NSURLRequest URL test-loading-archive-subresource-null-mimetype.html, main document URL test-loading-archive-subresource-null-mimetype.html, http method GET> redirectResponse (null)
+test-loading-archive-subresource-null-mimetype.html - didReceiveResponse <NSURLResponse test-loading-archive-subresource-null-mimetype.html, http status code 0>
+test-loading-archive-subresource-null-mimetype.html - didFinishLoading
+resources/subresource-null-mimetype.webarchive - willSendRequest <NSURLRequest URL resources/subresource-null-mimetype.webarchive, main document URL test-loading-archive-subresource-null-mimetype.html, http method GET> redirectResponse (null)
+resources/subresource-null-mimetype.webarchive - didReceiveResponse <NSURLResponse resources/subresource-null-mimetype.webarchive, http status code 0>
+resources/subresource-null-mimetype.webarchive - didFinishLoading

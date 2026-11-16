@@ -1,0 +1,12 @@
+Processor	: ARMv7 Processor rev 5 (v7l)
+BogoMIPS	: 795.44
+Features	: swp half thumb fastmult vfp edsp iwmmxt thumbee vfpv3 vfpv3d16 
+CPU implementer	: 0x56
+CPU architecture: 7
+CPU variant	: 0x0
+CPU part	: 0x581
+CPU revision	: 5
+
+Hardware	: OLPC XO-1.75
+Revision	: 0000
+Serial		: 0000000000000000

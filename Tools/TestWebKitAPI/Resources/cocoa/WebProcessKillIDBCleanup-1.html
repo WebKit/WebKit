@@ -1,0 +1,67 @@
+<script>
+
+var request = window.indexedDB.deleteDatabase("WebProcessKillIDBCleanup");
+request.onsuccess = function(e)
+{
+    continueTest();
+}
+request.onerror = function(e)
+{
+    // Unexpected error
+    window.webkit.messageHandlers.testHandler.postMessage('Error deleting database');
+}
+
+var database;
+
+function continueTest()
+{
+    var request = window.indexedDB.open("WebProcessKillIDBCleanup");
+
+    request.onsuccess = function()
+    {
+        window.webkit.messageHandlers.testHandler.postMessage('Open success');
+        setTimeout(continueTest2, 0);
+    }
+
+    request.onerror = function()
+    {
+        // Unexpected error
+        window.webkit.messageHandlers.testHandler.postMessage('Unexpected error opening database');
+    }
+
+    request.onupgradeneeded = function(event)
+    {
+        window.webkit.messageHandlers.testHandler.postMessage('UpgradeNeeded');
+
+        database = event.target.result;
+        var store = database.createObjectStore("TestObjectStore");
+
+        event.target.transaction.oncomplete = function() {
+            window.webkit.messageHandlers.testHandler.postMessage('Transaction complete');
+        }
+
+        event.target.transaction.onerror = function() {
+            window.webkit.messageHandlers.testHandler.postMessage('Transaction errored!');
+        }
+
+        store.put("bar", "foo");
+    }
+}
+
+function continueTest2()
+{
+    var objectStore = database.transaction("TestObjectStore", "readonly").objectStore("TestObjectStore");
+
+    // Start a get-loop to keep this transaction active.
+    var shouldMessageClose = true;
+    function success() {
+        objectStore.get("foo").onsuccess = success;
+        if (shouldMessageClose) {
+            window.webkit.messageHandlers.testHandler.postMessage('Infinite Transaction Started');
+            shouldMessageClose = false;
+        }
+    }
+
+    objectStore.get("foo").onsuccess = success;
+}
+</script>

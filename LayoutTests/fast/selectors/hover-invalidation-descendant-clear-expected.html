@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.parent {
+    position: relative;
+    padding: 10px;
+    background-color: silver;
+}
+
+.child {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    top: 0px;
+    background-color: green;
+    display: none;
+}
+
+#target2 .child {
+    display: block;
+}
+
+</style>
+</head>
+<body>
+<div>
+Test that clearing dynamically activated :hover rule affecting descendants works.
+</div>
+<div id="target" class="parent enableHover">
+    Hover to see a green box below.
+    <div class="child"></div>
+</div>
+<div id="target2" class="parent enableHover">
+    Hover to see a green box below.
+    <div class="child"></div>
+</div>
+</body>
+</html>

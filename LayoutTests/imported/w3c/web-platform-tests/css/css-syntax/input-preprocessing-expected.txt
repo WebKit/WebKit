@@ -1,0 +1,12 @@
+
+PASS "foo\0" becomes "foo�"
+PASS "f\0oo" becomes "f�oo"
+PASS "\0foo" becomes "�foo"
+PASS "\0" becomes "�"
+PASS "\0\0\0" becomes "���"
+PASS "fooU+d800" becomes "foo�"
+PASS "fU+d800oo" becomes "f�oo"
+PASS "U+d800foo" becomes "�foo"
+PASS "U+d800" becomes "�"
+PASS "U+d800U+d800U+d800" becomes "���"
+

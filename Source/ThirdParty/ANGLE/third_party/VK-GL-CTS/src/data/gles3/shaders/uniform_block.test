@@ -1,0 +1,4735 @@
+# WARNING: This file is auto-generated. Do NOT modify it manually, but rather
+# modify the generating script file. Otherwise changes will be lost!
+
+group valid "Valid uniform interface block syntax tests."
+
+    case repeat_interface_qualifier_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                uniform vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case repeat_interface_qualifier_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                uniform vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case layout_shared_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            layout(shared) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case layout_shared_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            layout(shared) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case layout_packed_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            layout(packed) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case layout_packed_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            layout(packed) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case layout_std140_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            layout(std140) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case layout_std140_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            layout(std140) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case layout_row_major_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            layout(row_major) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case layout_row_major_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            layout(row_major) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case layout_column_major_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            layout(column_major) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case layout_column_major_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            layout(column_major) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case layout_all_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            layout(shared, packed, std140, row_major, column_major) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case layout_all_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            layout(shared, packed, std140, row_major, column_major) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case layout_all_8_times_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            layout(shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case layout_all_8_times_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            layout(shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major) uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case global_layout_shared_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            layout(shared) uniform;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case global_layout_shared_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(shared) uniform;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case global_layout_packed_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            layout(packed) uniform;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case global_layout_packed_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(packed) uniform;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case global_layout_std140_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            layout(std140) uniform;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case global_layout_std140_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(std140) uniform;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case global_layout_row_major_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            layout(row_major) uniform;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case global_layout_row_major_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(row_major) uniform;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case global_layout_column_major_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            layout(column_major) uniform;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case global_layout_column_major_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(column_major) uniform;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case global_layout_all_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            layout(shared, packed, std140, row_major, column_major) uniform;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case global_layout_all_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(shared, packed, std140, row_major, column_major) uniform;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case global_layout_all_8_times_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            layout(shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major) uniform;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case global_layout_all_8_times_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major, shared, packed, std140, row_major, column_major) uniform;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case member_layout_row_major_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                layout(row_major) mat4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember[0];
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_layout_row_major_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                layout(row_major) mat4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember[0];
+            }
+        ""
+    end
+    case member_layout_column_major_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                layout(column_major) mat4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember[0];
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_layout_column_major_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                layout(column_major) mat4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember[0];
+            }
+        ""
+    end
+    case member_layout_row_major_vec4_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                layout(row_major) vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_layout_row_major_vec4_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                layout(row_major) vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case member_layout_column_major_vec4_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                layout(column_major) vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_layout_column_major_vec4_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                layout(column_major) vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case member_layout_all_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                layout(row_major, column_major) mat4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember[0];
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_layout_all_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                layout(row_major, column_major) mat4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember[0];
+            }
+        ""
+    end
+    case member_layout_all_8_times_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                layout(row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major) mat4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember[0];
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_layout_all_8_times_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                layout(row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major) mat4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember[0];
+            }
+        ""
+    end
+    case no_instance_name_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            };
+
+            void main()
+            {
+                gl_Position = uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case no_instance_name_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            };
+
+            void main()
+            {
+                o_color = uniformMember;
+            }
+        ""
+    end
+    case same_variable_and_block_name_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                vec4 UniformBlock = vec4(0.0);
+                gl_Position = UniformBlock + uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case same_variable_and_block_name_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                vec4 UniformBlock = vec4(0.0);
+                o_color = UniformBlock + uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case same_variable_and_instance_name_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                vec4 uniformBlock = vec4(0.0);
+                gl_Position = uniformBlock;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case same_variable_and_instance_name_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                vec4 uniformBlock = vec4(0.0);
+                o_color = uniformBlock;
+            }
+        ""
+    end
+    case struct_member_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            struct Struct
+            {
+                vec4 uniformMember;
+            };
+
+            uniform UniformBlock
+            {
+                Struct st;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.st.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case struct_member_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            struct Struct
+            {
+                vec4 uniformMember;
+            };
+
+            uniform UniformBlock
+            {
+                Struct st;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.st.uniformMember;
+            }
+        ""
+    end
+    case struct_member_layout_row_major_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            struct Struct
+            {
+                vec4 uniformMember;
+            };
+
+            uniform UniformBlock
+            {
+                layout(row_major) Struct st;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.st.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case struct_member_layout_row_major_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            struct Struct
+            {
+                vec4 uniformMember;
+            };
+
+            uniform UniformBlock
+            {
+                layout(row_major) Struct st;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.st.uniformMember;
+            }
+        ""
+    end
+    case struct_member_layout_column_major_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            struct Struct
+            {
+                vec4 uniformMember;
+            };
+
+            uniform UniformBlock
+            {
+                layout(column_major) Struct st;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.st.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case struct_member_layout_column_major_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            struct Struct
+            {
+                vec4 uniformMember;
+            };
+
+            uniform UniformBlock
+            {
+                layout(column_major) Struct st;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.st.uniformMember;
+            }
+        ""
+    end
+    case struct_member_layout_all_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            struct Struct
+            {
+                vec4 uniformMember;
+            };
+
+            uniform UniformBlock
+            {
+                layout(row_major, column_major) Struct st;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.st.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case struct_member_layout_all_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            struct Struct
+            {
+                vec4 uniformMember;
+            };
+
+            uniform UniformBlock
+            {
+                layout(row_major, column_major) Struct st;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.st.uniformMember;
+            }
+        ""
+    end
+    case struct_member_layout_all_8_times_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            struct Struct
+            {
+                vec4 uniformMember;
+            };
+
+            uniform UniformBlock
+            {
+                layout(row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major) Struct st;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.st.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case struct_member_layout_all_8_times_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            struct Struct
+            {
+                vec4 uniformMember;
+            };
+
+            uniform UniformBlock
+            {
+                layout(row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major, row_major, column_major) Struct st;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.st.uniformMember;
+            }
+        ""
+    end
+    case long_block_name_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            // Total of 1024 characters
+            uniform aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case long_block_name_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            // Total of 1024 characters
+            uniform aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case long_instance_name_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
+            // Total of 1024 characters
+
+            void main()
+            {
+                gl_Position = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case long_instance_name_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
+            // Total of 1024 characters
+
+            void main()
+            {
+                o_color = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.uniformMember;
+            }
+        ""
+    end
+    case underscore_block_name_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform _
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case underscore_block_name_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform _
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case underscore_instance_name_vertex
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } _;
+
+            void main()
+            {
+                gl_Position = _.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case underscore_instance_name_fragment
+        version 300 es
+        expect build_successful
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } _;
+
+            void main()
+            {
+                o_color = _.uniformMember;
+            }
+        ""
+    end
+
+end # valid
+group invalid "Invalid uniform interface block syntax tests."
+
+    case member_in_interface_qualifier_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                in vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_in_interface_qualifier_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                in vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case member_out_interface_qualifier_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                out vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_out_interface_qualifier_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                out vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case member_buffer_interface_qualifier_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                buffer vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_buffer_interface_qualifier_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                buffer vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case member_attribute_interface_qualifier_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                attribute vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_attribute_interface_qualifier_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                attribute vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case member_varying_interface_qualifier_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                varying vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_varying_interface_qualifier_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                varying vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case conflicting_instance_names_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlockA
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            uniform UniformBlockB
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case conflicting_instance_names_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlockA
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            uniform UniformBlockB
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case conflicting_function_and_instance_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            float uniformBlock (float x)
+            {
+                return x;
+            }
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case conflicting_function_and_instance_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            float uniformBlock (float x)
+            {
+                return x;
+            }
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case conflicting_function_and_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            float UniformBlock (float x)
+            {
+                return x;
+            }
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case conflicting_function_and_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            float UniformBlock (float x)
+            {
+                return x;
+            }
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case conflicting_uniform_and_instance_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            uniform vec4 uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case conflicting_uniform_and_instance_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            uniform vec4 uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case conflicting_in_and_instance_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            in vec4 uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case conflicting_in_and_instance_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            in vec4 uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case conflicting_out_and_instance_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            out vec4 uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case conflicting_out_and_instance_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            out vec4 uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case conflicting_uniform_and_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            uniform vec4 UniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case conflicting_uniform_and_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            uniform vec4 UniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case conflicting_in_and_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            in vec4 UniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case conflicting_in_and_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            in vec4 UniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case conflicting_out_and_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            out vec4 UniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case conflicting_out_and_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            out vec4 UniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case matching_instance_and_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } UniformBlock;
+
+            void main()
+            {
+                gl_Position = UniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case matching_instance_and_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } UniformBlock;
+
+            void main()
+            {
+                o_color = UniformBlock.uniformMember;
+            }
+        ""
+    end
+    case reference_using_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = UniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case reference_using_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = UniformBlock.uniformMember;
+            }
+        ""
+    end
+    case empty_block_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = vec4(0.0);
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case empty_block_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = vec4(0.0);
+            }
+        ""
+    end
+    case empty_layout_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            layout() uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case empty_layout_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            layout() uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case empty_member_layout_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                layout() vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case empty_member_layout_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                layout() vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case empty_global_layout_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            layout() uniform;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case empty_global_layout_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout() uniform;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case structure_definition_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                struct A
+                {
+                    vec4 uniformMember;
+                } a;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.a.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case structure_definition_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                struct A
+                {
+                    vec4 uniformMember;
+                } a;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.a.uniformMember;
+            }
+        ""
+    end
+    case member_layout_shared_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                layout(shared) vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_layout_shared_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                layout(shared) vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case member_layout_packed_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                layout(packed) vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_layout_packed_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                layout(packed) vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case member_layout_std140_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                layout(std140) vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case member_layout_std140_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                layout(std140) vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case missing_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case missing_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case invalid_number_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform 0UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case invalid_number_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform 0UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case invalid_hash_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform #UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case invalid_hash_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform #UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case invalid_dollar_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform $UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case invalid_dollar_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform $UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case invalid_identifier_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform gl_UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case invalid_identifier_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform gl_UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case too_long_block_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            // Total of 1025 characters
+            uniform aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case too_long_block_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            // Total of 1025 characters
+            uniform aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case invalid_number_instance_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformInstance
+            {
+                vec4 uniformMember;
+            } 0uniformBlock;
+
+            void main()
+            {
+                gl_Position = 0uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case invalid_number_instance_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformInstance
+            {
+                vec4 uniformMember;
+            } 0uniformBlock;
+
+            void main()
+            {
+                o_color = 0uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case invalid_hash_instance_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformInstance
+            {
+                vec4 uniformMember;
+            } $uniformBlock;
+
+            void main()
+            {
+                gl_Position = $uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case invalid_hash_instance_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformInstance
+            {
+                vec4 uniformMember;
+            } $uniformBlock;
+
+            void main()
+            {
+                o_color = $uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case invalid_dollar_instance_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformInstance
+            {
+                vec4 uniformMember;
+            } $uniformBlock;
+
+            void main()
+            {
+                gl_Position = $uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case invalid_dollar_instance_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformInstance
+            {
+                vec4 uniformMember;
+            } $uniformBlock;
+
+            void main()
+            {
+                o_color = $uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case invalid_identifier_instance_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } gl_uniformBlock;
+
+            void main()
+            {
+                gl_Position = gl_uniformBlock.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case invalid_identifier_instance_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } gl_uniformBlock;
+
+            void main()
+            {
+                o_color = gl_uniformBlock.uniformMember;
+            }
+        ""
+    end
+    case repeated_block_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlockA;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlockB;
+
+            void main()
+            {
+                gl_Position = uniformBlockA.uniformMember + uniformBlockB.uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case repeated_block_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlockA;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlockB;
+
+            void main()
+            {
+                o_color = uniformBlockA.uniformMember + uniformBlockB.uniformMember;
+            }
+        ""
+    end
+    case repeated_block_no_instance_name_vertex
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            };
+
+            void main()
+            {
+                gl_Position = uniformBlock.uniformMember + uniformMember;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            void main()
+            {
+                o_color = vec4(1.0);
+            }
+        ""
+    end
+    case repeated_block_no_instance_name_fragment
+        version 300 es
+        expect compile_fail
+
+        vertex ""
+            #version 300 es
+            precision highp float;
+
+            in vec4 a_pos;
+
+            void main()
+            {
+                gl_Position = a_pos;
+            }
+        ""
+
+        fragment ""
+            #version 300 es
+            precision highp float;
+
+            layout(location=0) out vec4 o_color;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            } uniformBlock;
+
+            uniform UniformBlock
+            {
+                vec4 uniformMember;
+            };
+
+            void main()
+            {
+                o_color = uniformBlock.uniformMember + uniformMember;
+            }
+        ""
+    end
+
+end # invalid

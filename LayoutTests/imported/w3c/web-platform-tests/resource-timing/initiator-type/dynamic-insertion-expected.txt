@@ -1,0 +1,12 @@
+Description
+
+This test validates that the initiatorType field is correct even when an element is dynamically inserted.
+
+
+PASS A image should have the 'img' initiator type.
+FAIL A font should have the 'css' initiator type. promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before entry fired"
+PASS A stylesheet should have the 'link' initiator type.
+PASS A iframe should have the 'iframe' initiator type.
+PASS A script should have the 'script' initiator type.
+PASS A XMLHttpRequest should have the 'xmlhttprequest' initiator type.
+

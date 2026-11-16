@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// OffscreenCanvas installs no ScriptDisallowedScope, so promise resolution is not deferred.
+function measure(size)
+{
+    const context = new OffscreenCanvas(1, 1).getContext('2d');
+    context.font = size + 'px A';
+    context.measureText('a');
+}
+
+onload = function () {
+    setTimeout(function () {
+        // A local() source loads synchronously, so pump() reaches setStatus(Success) inline.
+        const face = new FontFace('A', 'local(Helvetica)');
+
+        // Reading .loaded while Pending appends a DeferredPromise for resolve() to call.
+        face.loaded;
+        document.fonts.add(face);
+
+        // An accessor named `then` makes promise resolution do an observable lookup,
+        // running this getter while setStatus() is still notifying its clients.
+        let reentered = false;
+        Object.defineProperty(FontFace.prototype, 'then', {
+            configurable: true,
+            get() {
+                if (!reentered) {
+                    reentered = true;
+                    // The size must differ from the outer measure below. Reusing it would hit
+                    // the FontCascadeCache, so fontRangesForFamily would never run and this
+                    // would not re-enter pump().
+                    measure(20);
+                }
+                return undefined;
+            }
+        });
+
+        measure(10);
+
+        document.body.textContent = 'PASS if no assertion';
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+};
+</script>

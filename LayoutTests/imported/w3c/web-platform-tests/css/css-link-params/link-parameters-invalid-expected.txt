@@ -1,0 +1,14 @@
+
+PASS e.style['link-parameters'] = "non" should not set the property value
+PASS e.style['link-parameters'] = "param(--a, red) param(--b, blue)" should not set the property value
+PASS e.style['link-parameters'] = "param(-a)" should not set the property value
+PASS e.style['link-parameters'] = "param(-a, )" should not set the property value
+PASS e.style['link-parameters'] = "param(-a, blue)" should not set the property value
+PASS e.style['link-parameters'] = "param--a)" should not set the property value
+PASS e.style['link-parameters'] = "para(--a)" should not set the property value
+PASS e.style['link-parameters'] = "param(--a red)" should not set the property value
+PASS e.style['link-parameters'] = "param(--a)" should not set the property value
+PASS e.style['link-parameters'] = "param(--a), param(--b)" should not set the property value
+PASS e.style['link-parameters'] = "param(--a" should not set the property value
+PASS e.style['link-parameters'] = "param(--)" should not set the property value
+

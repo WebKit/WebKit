@@ -1,0 +1,27 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+TESSELLATE_FILES = [
+    "GrPathTessellationShader.cpp",
+    "GrPathTessellationShader.h",
+    "GrStrokeTessellationShader.cpp",
+    "GrStrokeTessellationShader.h",
+    "GrTessellationShader.cpp",
+    "GrTessellationShader.h",
+    "PathTessellator.cpp",
+    "PathTessellator.h",
+    "StrokeTessellator.cpp",
+    "StrokeTessellator.h",
+    "VertexChunkPatchAllocator.h",
+]
+
+split_srcs_and_hdrs(
+    name = "tessellate",
+    files = TESSELLATE_FILES,
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)

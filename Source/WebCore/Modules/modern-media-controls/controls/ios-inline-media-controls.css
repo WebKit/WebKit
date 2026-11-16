@@ -1,0 +1,26 @@
+
+/* Volume slider */
+
+.media-controls.inline.ios:not(.audio) {
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+.media-controls.inline.ios:not(.audio):is(:empty, .shows-start-button, .faded) {
+    background-color: transparent;
+}
+
+.media-controls.inline.ios:not(.audio) * {
+    --primary-glyph-color: white;
+    --secondary-glyph-color: rgba(255, 255, 255, 0.75);
+}
+
+.media-controls.inline.ios:not(.audio) > .controls-bar:is(.top-left, .top-right) {
+    height: 19px;
+}
+
+.media-controls.inline.ios:not(.audio) > .controls-bar.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

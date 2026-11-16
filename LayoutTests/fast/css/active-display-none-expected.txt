@@ -1,0 +1,13 @@
+:active style should be cleared even if display property is set to none before mouse released.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS background is "rgb(255, 0, 0)"
+PASS background is "rgb(255, 0, 0)"
+PASS background is "rgb(0, 0, 0)"
+PASS background is "rgb(0, 0, 0)"
+
+
+
+
+

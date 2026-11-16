@@ -1,0 +1,92 @@
+
+FAIL `auto` computes to a length when interpolating with length values assert_false: expected false got true
+FAIL CSS Transitions: property <text-decoration-inset> from [auto] to [10px -20px] at (-1) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+FAIL CSS Transitions: property <text-decoration-inset> from [auto] to [10px -20px] at (0) should be [NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+FAIL CSS Transitions: property <text-decoration-inset> from [auto] to [10px -20px] at (0.125) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+FAIL CSS Transitions: property <text-decoration-inset> from [auto] to [10px -20px] at (0.875) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+PASS CSS Transitions: property <text-decoration-inset> from [auto] to [10px -20px] at (1) should be [10px -20px]
+FAIL CSS Transitions: property <text-decoration-inset> from [auto] to [10px -20px] at (1.5) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+FAIL CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [10px -20px] at (-1) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+FAIL CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [10px -20px] at (0) should be [NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+FAIL CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [10px -20px] at (0.125) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+FAIL CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [10px -20px] at (0.875) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [10px -20px] at (1) should be [10px -20px]
+FAIL CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [10px -20px] at (1.5) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+FAIL CSS Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (-1) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "auto "
+FAIL CSS Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (0) should be [NaNpx] assert_equals: expected "0px " but got "auto "
+FAIL CSS Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (0.125) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "auto "
+FAIL CSS Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (0.875) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+PASS CSS Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (1) should be [10px -20px]
+FAIL CSS Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (1.5) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+FAIL Web Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (-1) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "auto "
+FAIL Web Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (0) should be [NaNpx] assert_equals: expected "0px " but got "auto "
+FAIL Web Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (0.125) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "auto "
+FAIL Web Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (0.875) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+PASS Web Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (1) should be [10px -20px]
+FAIL Web Animations: property <text-decoration-inset> from [auto] to [10px -20px] at (1.5) should be [NaNpx NaNpx] assert_equals: expected "0px " but got "10px - 20px "
+FAIL CSS Transitions: property <text-decoration-inset> from [10%] to [auto] at (0) should be [10%] assert_equals: expected "10 % " but got "auto "
+FAIL CSS Transitions: property <text-decoration-inset> from [10%] to [auto] at (0.5) should be [calc(5% + NaNpx)] assert_equals: expected "0px " but got "auto "
+FAIL CSS Transitions: property <text-decoration-inset> from [10%] to [auto] at (1) should be [calc(0% + NaNpx)] assert_equals: expected "0px " but got "auto "
+FAIL CSS Transitions with transition: all: property <text-decoration-inset> from [10%] to [auto] at (0) should be [10%] assert_equals: expected "10 % " but got "auto "
+FAIL CSS Transitions with transition: all: property <text-decoration-inset> from [10%] to [auto] at (0.5) should be [calc(5% + NaNpx)] assert_equals: expected "0px " but got "auto "
+FAIL CSS Transitions with transition: all: property <text-decoration-inset> from [10%] to [auto] at (1) should be [calc(0% + NaNpx)] assert_equals: expected "0px " but got "auto "
+PASS CSS Animations: property <text-decoration-inset> from [10%] to [auto] at (0) should be [10%]
+FAIL CSS Animations: property <text-decoration-inset> from [10%] to [auto] at (0.5) should be [calc(5% + NaNpx)] assert_equals: expected "0px " but got "auto "
+FAIL CSS Animations: property <text-decoration-inset> from [10%] to [auto] at (1) should be [calc(0% + NaNpx)] assert_equals: expected "0px " but got "auto "
+PASS Web Animations: property <text-decoration-inset> from [10%] to [auto] at (0) should be [10%]
+FAIL Web Animations: property <text-decoration-inset> from [10%] to [auto] at (0.5) should be [calc(5% + NaNpx)] assert_equals: expected "0px " but got "auto "
+FAIL Web Animations: property <text-decoration-inset> from [10%] to [auto] at (1) should be [calc(0% + NaNpx)] assert_equals: expected "0px " but got "auto "
+PASS CSS Transitions: property <text-decoration-inset> from [0px] to [10px -20px] at (-1) should be [-10px 20px]
+PASS CSS Transitions: property <text-decoration-inset> from [0px] to [10px -20px] at (0) should be [0px]
+PASS CSS Transitions: property <text-decoration-inset> from [0px] to [10px -20px] at (0.125) should be [1.25px -2.5px]
+PASS CSS Transitions: property <text-decoration-inset> from [0px] to [10px -20px] at (0.875) should be [8.75px -17.5px]
+PASS CSS Transitions: property <text-decoration-inset> from [0px] to [10px -20px] at (1) should be [10px -20px]
+PASS CSS Transitions: property <text-decoration-inset> from [0px] to [10px -20px] at (1.5) should be [15px -30px]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [0px] to [10px -20px] at (-1) should be [-10px 20px]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [0px] to [10px -20px] at (0) should be [0px]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [0px] to [10px -20px] at (0.125) should be [1.25px -2.5px]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [0px] to [10px -20px] at (0.875) should be [8.75px -17.5px]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [0px] to [10px -20px] at (1) should be [10px -20px]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [0px] to [10px -20px] at (1.5) should be [15px -30px]
+PASS CSS Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (-1) should be [-10px 20px]
+PASS CSS Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (0) should be [0px]
+PASS CSS Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (0.125) should be [1.25px -2.5px]
+PASS CSS Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (0.875) should be [8.75px -17.5px]
+PASS CSS Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (1) should be [10px -20px]
+PASS CSS Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (1.5) should be [15px -30px]
+PASS Web Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (-1) should be [-10px 20px]
+PASS Web Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (0) should be [0px]
+PASS Web Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (0.125) should be [1.25px -2.5px]
+PASS Web Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (0.875) should be [8.75px -17.5px]
+PASS Web Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (1) should be [10px -20px]
+PASS Web Animations: property <text-decoration-inset> from [0px] to [10px -20px] at (1.5) should be [15px -30px]
+PASS CSS Transitions: property <text-decoration-inset> from [auto] to [auto] at (-1) should be [auto]
+PASS CSS Transitions: property <text-decoration-inset> from [auto] to [auto] at (0) should be [auto]
+PASS CSS Transitions: property <text-decoration-inset> from [auto] to [auto] at (0.125) should be [auto]
+PASS CSS Transitions: property <text-decoration-inset> from [auto] to [auto] at (0.875) should be [auto]
+PASS CSS Transitions: property <text-decoration-inset> from [auto] to [auto] at (1) should be [auto]
+PASS CSS Transitions: property <text-decoration-inset> from [auto] to [auto] at (1.5) should be [auto]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [auto] at (-1) should be [auto]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [auto] at (0) should be [auto]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [auto] at (0.125) should be [auto]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [auto] at (0.875) should be [auto]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [auto] at (1) should be [auto]
+PASS CSS Transitions with transition: all: property <text-decoration-inset> from [auto] to [auto] at (1.5) should be [auto]
+PASS CSS Animations: property <text-decoration-inset> from [auto] to [auto] at (-1) should be [auto]
+PASS CSS Animations: property <text-decoration-inset> from [auto] to [auto] at (0) should be [auto]
+PASS CSS Animations: property <text-decoration-inset> from [auto] to [auto] at (0.125) should be [auto]
+PASS CSS Animations: property <text-decoration-inset> from [auto] to [auto] at (0.875) should be [auto]
+PASS CSS Animations: property <text-decoration-inset> from [auto] to [auto] at (1) should be [auto]
+PASS CSS Animations: property <text-decoration-inset> from [auto] to [auto] at (1.5) should be [auto]
+PASS Web Animations: property <text-decoration-inset> from [auto] to [auto] at (-1) should be [auto]
+PASS Web Animations: property <text-decoration-inset> from [auto] to [auto] at (0) should be [auto]
+PASS Web Animations: property <text-decoration-inset> from [auto] to [auto] at (0.125) should be [auto]
+PASS Web Animations: property <text-decoration-inset> from [auto] to [auto] at (0.875) should be [auto]
+PASS Web Animations: property <text-decoration-inset> from [auto] to [auto] at (1) should be [auto]
+PASS Web Animations: property <text-decoration-inset> from [auto] to [auto] at (1.5) should be [auto]
+FAIL Additive composition of auto and a length produces a length assert_approx_equals: expected NaN +/- 0.01 but got 10
+PASS Additive composition of auto and auto remains auto
+FAIL A transition re-resolves the auto endpoint undefined is not an object (evaluating 'transition.pause')
+FAIL A retargeted transition drops the auto contribution undefined is not an object (evaluating 'transition.pause')
+FAIL A keyframed animation re-resolves the auto endpoint assert_approx_equals: expected 5.5 +/- 0.01 but got 10
+

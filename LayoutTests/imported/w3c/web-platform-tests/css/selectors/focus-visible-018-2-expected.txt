@@ -1,0 +1,73 @@
+This test checks that by default, using the mouse to focus a generic element does not show a focus ring (because it does not trigger :focus-visible matching).
+
+Click on the elements below"
+If the elements do not have a focus ring, then the test result is SUCCESS.
+abbr
+address
+a bdi
+blockquote
+code
+dd
+summary
+div
+dl
+dt
+em legend
+figcaption
+figure
+form
+ label
+li
+mark
+ol
+pre
+
+p
+
+small s strong sub sup
+caption
+table
+td
+time
+ul
+u
+
+PASS ":focus-visible" should be a valid selector
+PASS Mouse focus does not show a focus ring by default in element ABBR
+PASS Mouse focus does not show a focus ring by default in element ADDRESS
+PASS Mouse focus does not show a focus ring by default in element BDI
+PASS Mouse focus does not show a focus ring by default in element BLOCKQUOTE
+PASS Mouse focus does not show a focus ring by default in element CODE
+PASS Mouse focus does not show a focus ring by default in element DD
+PASS Mouse focus does not show a focus ring by default in element SUMMARY
+PASS Mouse focus does not show a focus ring by default in element DETAILS
+PASS Mouse focus does not show a focus ring by default in element DIV
+PASS Mouse focus does not show a focus ring by default in element DL
+PASS Mouse focus does not show a focus ring by default in element DT
+PASS Mouse focus does not show a focus ring by default in element EM
+PASS Mouse focus does not show a focus ring by default in element LEGEND
+PASS Mouse focus does not show a focus ring by default in element FIGCAPTION
+PASS Mouse focus does not show a focus ring by default in element FIGURE
+PASS Mouse focus does not show a focus ring by default in element FORM
+PASS Mouse focus does not show a focus ring by default in element HR
+PASS Mouse focus does not show a focus ring by default in element IMG
+PASS Mouse focus does not show a focus ring by default in element LABEL
+PASS Mouse focus does not show a focus ring by default in element LI
+PASS Mouse focus does not show a focus ring by default in element MARK
+PASS Mouse focus does not show a focus ring by default in element METER
+PASS Mouse focus does not show a focus ring by default in element OL
+PASS Mouse focus does not show a focus ring by default in element PRE
+PASS Mouse focus does not show a focus ring by default in element PROGRESS
+PASS Mouse focus does not show a focus ring by default in element P
+PASS Mouse focus does not show a focus ring by default in element SMALL
+PASS Mouse focus does not show a focus ring by default in element S
+PASS Mouse focus does not show a focus ring by default in element STRONG
+PASS Mouse focus does not show a focus ring by default in element SUB
+PASS Mouse focus does not show a focus ring by default in element SUP
+PASS Mouse focus does not show a focus ring by default in element CAPTION
+PASS Mouse focus does not show a focus ring by default in element TABLE
+PASS Mouse focus does not show a focus ring by default in element TD
+PASS Mouse focus does not show a focus ring by default in element TIME
+PASS Mouse focus does not show a focus ring by default in element UL
+PASS Mouse focus does not show a focus ring by default in element U
+

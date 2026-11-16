@@ -1,0 +1,10 @@
+
+PASS Unregistered property in a simple cycle using em should not make font-size invalid at compute time
+PASS Unregistered property in a multi-property cycle using em should not make font-size invalid at compute time
+PASS Unregistered property in a simple cycle using lh should not make line-height invalid at compute time
+PASS Unregistered property in a multi-property cycle using lh should not make line-height invalid at compute time
+PASS Registered universal property in a simple cycle using em should not make font-size invalid at compute time
+PASS Registered universal property in a multi-property cycle using em should not make font-size invalid at compute time
+PASS Registered universal property in a simple cycle using lh should not make line-height invalid at compute time
+PASS Registered universal property in a multi-property cycle using lh should not make line-height invalid at compute time
+

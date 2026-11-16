@@ -1,0 +1,279 @@
+/*
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#pragma once
+
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
+DECLARE_SYSTEM_HEADER
+
+#include <CoreText/CoreText.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
+
+#ifdef __cplusplus
+#include <wtf/cf/CFTypeTraits.h>
+WTF_DECLARE_CF_TYPE_TRAIT(CTFont);
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+
+#include <CoreText/CoreTextPriv.h>
+#include <OTSVG/OTSVG.h>
+
+// FIXME: (rdar://167351286) Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+#include <fparse/FPFontParser.h>
+#endif
+
+#else
+
+enum {
+    kCTFontUIFontSystemItalic = 27,
+    kCTFontUIFontSystemThin = 102,
+    kCTFontUIFontSystemLight = 103,
+    kCTFontUIFontSystemUltraLight = 104,
+};
+
+typedef CF_OPTIONS(uint32_t, CTFontTransformOptions) {
+    kCTFontTransformApplyShaping = (1 << 0),
+    kCTFontTransformApplyPositioning = (1 << 1)
+};
+
+typedef CF_OPTIONS(CFOptionFlags, CTFontShapeOptions) {
+    kCTFontShapeWithKerning = (1 << 0),
+    kCTFontShapeWithClusterComposition = (1 << 1),
+    kCTFontShapeRightToLeft = (1 << 2),
+};
+
+typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions) {
+    kCTFontDescriptorOptionSystemUIFont = 1 << 1,
+    kCTFontDescriptorOptionPreferAppleSystemFont = kCTFontOptionsPreferSystemFont,
+    kCTFontDescriptorOptionThisIsNotARealOption = 0xFFFFFFFF
+};
+
+enum {
+    kCTFontOptionsSystemUIFont = 1 << 1,
+};
+
+enum {
+    kCTRunStatusHasOrigins = (1 << 4),
+};
+
+typedef CF_OPTIONS(CFOptionFlags, CTFontFallbackOption) {
+    kCTFontFallbackOptionNone = 0,
+    kCTFontFallbackOptionSystem = 1 << 0,
+    kCTFontFallbackOptionUserInstalled = 1 << 1,
+    kCTFontFallbackOptionDefault = kCTFontFallbackOptionSystem | kCTFontFallbackOptionUserInstalled,
+};
+
+typedef CF_ENUM(uint8_t, CTCompositionLanguage)
+{
+    kCTCompositionLanguageUnset,
+    kCTCompositionLanguageNone,
+    kCTCompositionLanguageJapanese,
+    kCTCompositionLanguageSimplifiedChinese,
+    kCTCompositionLanguageTraditionalChinese,
+};
+
+enum {
+    kCTFontTraitTightLeading = (1 << 15),
+    kCTFontTraitEmphasized = kCTFontTraitBold,
+};
+
+typedef CF_ENUM(CFIndex, CTFontPalette)
+{
+    kCTFontPaletteLight = -1,
+    kCTFontPaletteDark = -2
+};
+
+typedef const struct __OTSVGTable * OTSVGTableRef;
+
+typedef CF_ENUM(uint32_t, CTFontTextStylePlatform)
+{
+    kCTFontTextStylePlatformDefault      = (CTFontTextStylePlatform)-1,
+    kCTFontTextStylePlatformPhone        = 0,
+    kCTFontTextStylePlatformWatch        = 1,
+    kCTFontTextStylePlatformTV           = 2,
+    kCTFontTextStylePlatformMac          = 3,
+    kCTFontTextStylePlatformMacTouchBar  = 4,
+    kCTFontTextStylePlatformVision       = 5,
+    kCTFontTextStylePlatformVisionLegacy = 6,
+};
+
+typedef CF_OPTIONS(CFOptionFlags, CTFontDescriptorMatchingOptions) {
+    kCTFontDescriptorMatchingOptionIncludeHiddenFonts = 1 << 16,
+};
+
+#endif
+
+WTF_EXTERN_C_BEGIN
+
+typedef const UniChar* (*CTUniCharProviderCallback)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void* refCon);
+typedef void (*CTUniCharDisposeCallback)(const UniChar* chars, void* refCon);
+
+extern const CFStringRef kCTFontReferenceURLAttribute;
+extern const CFStringRef kCTFontOpticalSizeAttribute;
+extern const CFStringRef kCTFontPostScriptNameAttribute;
+extern const CFStringRef kCTFontUserInstalledAttribute;
+extern const CFStringRef kCTFontFallbackOptionAttribute;
+
+extern const CFStringRef kCTFontCSSFamilySerif;
+extern const CFStringRef kCTFontCSSFamilySansSerif;
+extern const CFStringRef kCTFontCSSFamilyCursive;
+extern const CFStringRef kCTFontCSSFamilyFantasy;
+extern const CFStringRef kCTFontCSSFamilyMonospace;
+extern const CFStringRef kCTFontCSSFamilySystemUI;
+
+bool CTFontTransformGlyphs(CTFontRef, CGGlyph glyphs[], CGSize advances[], CFIndex count, CTFontTransformOptions);
+CGSize CTFontShapeGlyphs(CTFontRef, CGGlyph glyphs[], CGSize advances[], CGPoint origins[], CFIndex indexes[], const UniChar chars[], CFIndex count, CTFontShapeOptions, CFStringRef language, void (^handler)(CFRange, CGGlyph**, CGSize**, CGPoint**, CFIndex**));
+
+CGSize CTRunGetInitialAdvance(CTRunRef);
+CTLineRef CTLineCreateWithUniCharProvider(CTUniCharProviderCallback, CTUniCharDisposeCallback, void* refCon);
+void CTRunGetBaseAdvancesAndOrigins(CTRunRef, CFRange, CGSize baseAdvances[], CGPoint origins[]);
+CTTypesetterRef CTTypesetterCreateWithUniCharProviderAndOptions(CTUniCharProviderCallback, CTUniCharDisposeCallback, void* refCon, CFDictionaryRef options);
+bool CTFontGetVerticalGlyphsForCharacters(CTFontRef, const UniChar characters[], CGGlyph glyphs[], CFIndex count);
+void CTFontGetUnsummedAdvancesForGlyphsAndStyle(CTFontRef, CTFontOrientation, CGFontRenderingStyle, const CGGlyph[], CGSize advances[], CFIndex count);
+CTFontDescriptorRef CTFontDescriptorCreateForCSSFamily(CFStringRef cssFamily, CFStringRef language);
+bool CTFontGetGlyphsForCharacterRange(CTFontRef, CGGlyph glyphs[], CFRange);
+
+bool CTFontHasTable(CTFontRef, CTFontTableTag);
+
+CTFontDescriptorRef CTFontDescriptorCreateForUIType(CTFontUIFontType, CGFloat size, CFStringRef language);
+CTFontDescriptorRef CTFontDescriptorCreateWithTextStyle(CFStringRef style, CFStringRef size, CFStringRef language);
+CTFontDescriptorRef CTFontDescriptorCreateCopyWithSymbolicTraits(CTFontDescriptorRef original, CTFontSymbolicTraits symTraitValue, CTFontSymbolicTraits symTraitMask);
+CTFontDescriptorRef CTFontDescriptorCreateWithTextStyleAndAttributes(CFStringRef style, CFStringRef size, CFDictionaryRef attributes);
+CFBitVectorRef CTFontCopyGlyphCoverageForFeature(CTFontRef, CFDictionaryRef feature);
+CGFloat CTFontDescriptorGetTextStyleSize(CFStringRef style, CFTypeRef sizeCategory, CTFontTextStylePlatform, CGFloat* weight, CGFloat* lineSpacing);
+
+CTFontDescriptorRef CTFontDescriptorCreateWithAttributesAndOptions(CFDictionaryRef attributes, CTFontDescriptorOptions);
+CTFontDescriptorRef CTFontDescriptorCreateLastResort();
+
+CFArrayRef CTFontManagerCreateFontDescriptorsFromData(CFDataRef);
+bool CTFontManagerEnableAllUserFonts(bool postFontChangeNotification);
+
+void CTParagraphStyleSetCompositionLanguage(CTParagraphStyleRef, CTCompositionLanguage);
+CGFloat CTFontGetAccessibilityBoldWeightOfWeight(CGFloat);
+
+extern const CFStringRef kCTFontCSSWeightAttribute;
+extern const CFStringRef kCTFontCSSWidthAttribute;
+extern const CFStringRef kCTFontDescriptorLanguageAttribute;
+extern const CFStringRef kCTFontDescriptorTextStyleAttribute;
+extern const CFStringRef kCTFontGradeTrait;
+extern const CFStringRef kCTFontIgnoreLegibilityWeightAttribute;
+extern const CFStringRef kCTFontSizeCategoryAttribute;
+extern const CFStringRef kCTFontTrackAttribute;
+extern const CFStringRef kCTFontUnscaledTrackingAttribute;
+
+extern const CFStringRef kCTFontUIFontDesignDefault;
+extern const CFStringRef kCTFontUIFontDesignMonospaced;
+extern const CFStringRef kCTFontUIFontDesignRounded;
+extern const CFStringRef kCTFontUIFontDesignSerif;
+extern const CFStringRef kCTFontUIFontDesignTrait;
+
+extern const CFStringRef kCTFontPaletteAttribute;
+extern const CFStringRef kCTFontPaletteColorsAttribute;
+
+extern const CFStringRef kCTFrameMaximumNumberOfLinesAttributeName;
+
+bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
+bool CTFontIsSystemUIFont(CTFontRef);
+CTFontRef CTFontCreateWithFontDescriptorAndOptions(CTFontDescriptorRef, CGFloat size, const CGAffineTransform*, CTFontOptions);
+CTFontRef CTFontCreateForCSS(CFStringRef name, uint16_t weight, CTFontSymbolicTraits, CGFloat size);
+CTFontRef CTFontCreateForCharactersWithLanguage(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CFIndex *coveredLength);
+CTFontRef CTFontCreateForCharactersWithLanguageAndOption(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CTFontFallbackOption, CFIndex *coveredLength);
+CTFontRef CTFontCopyPhysicalFont(CTFontRef);
+CTFontSymbolicTraits CTFontGetPhysicalSymbolicTraits(CTFontRef);
+
+extern const CFStringRef kCTUIFontTextStyleShortHeadline;
+extern const CFStringRef kCTUIFontTextStyleShortBody;
+extern const CFStringRef kCTUIFontTextStyleShortSubhead;
+extern const CFStringRef kCTUIFontTextStyleShortFootnote;
+extern const CFStringRef kCTUIFontTextStyleShortCaption1;
+extern const CFStringRef kCTUIFontTextStyleTallBody;
+
+extern const CFStringRef kCTUIFontTextStyleHeadline;
+extern const CFStringRef kCTUIFontTextStyleBody;
+extern const CFStringRef kCTUIFontTextStyleSubhead;
+extern const CFStringRef kCTUIFontTextStyleFootnote;
+extern const CFStringRef kCTUIFontTextStyleCaption1;
+extern const CFStringRef kCTUIFontTextStyleCaption2;
+
+extern const CFStringRef kCTFontDescriptorTextStyleEmphasized;
+
+extern const CFStringRef kCTFontContentSizeCategoryL;
+extern const CFStringRef kCTFontContentSizeCategoryXXXL;
+
+extern const CGFloat kCTFontWeightUltraLight;
+extern const CGFloat kCTFontWeightThin;
+extern const CGFloat kCTFontWeightLight;
+extern const CGFloat kCTFontWeightRegular;
+extern const CGFloat kCTFontWeightMedium;
+extern const CGFloat kCTFontWeightSemibold;
+extern const CGFloat kCTFontWeightBold;
+extern const CGFloat kCTFontWeightHeavy;
+extern const CGFloat kCTFontWeightBlack;
+
+extern const CGFloat kCTFontWidthUltraCompressed;
+extern const CGFloat kCTFontWidthExtraCompressed;
+extern const CGFloat kCTFontWidthCompressed;
+extern const CGFloat kCTFontWidthExtraCondensed;
+extern const CGFloat kCTFontWidthCondensed;
+extern const CGFloat kCTFontWidthSemiCondensed;
+extern const CGFloat kCTFontWidthStandard;
+extern const CGFloat kCTFontWidthSemiExpanded;
+extern const CGFloat kCTFontWidthExpanded;
+extern const CGFloat kCTFontWidthExtraExpanded;
+
+extern const CFStringRef kCTUIFontTextStyleTitle0;
+extern const CFStringRef kCTUIFontTextStyleTitle1;
+extern const CFStringRef kCTUIFontTextStyleTitle2;
+extern const CFStringRef kCTUIFontTextStyleTitle3;
+extern const CFStringRef kCTUIFontTextStyleTitle4;
+CTFontDescriptorRef CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(CTFontRef currentFont, const UTF16Char* characters, CFIndex length, CFStringRef language, CFIndex* coveredLength);
+
+bool CTFontIsAppleColorEmoji(CTFontRef);
+CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFIndex *coveredLength);
+CGFloat CTFontGetSbixImageSizeForGlyphAndContentsScale(CTFontRef, const CGGlyph, CGFloat contentsScale);
+
+CTFontUIFontType CTFontGetUIFontType(CTFontRef);
+CTFontDescriptorOptions CTFontDescriptorGetOptions(CTFontDescriptorRef);
+
+CFBitVectorRef CTFontCopyColorGlyphCoverage(CTFontRef);
+#if HAVE(CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION)
+bool CTFontHasComplexColorFormatForGlyph(CTFontRef, CGGlyph);
+#endif
+
+#if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
+CTFontDescriptorRef CTFontManagerCreateMemorySafeFontDescriptorFromData(CFDataRef);
+CFArrayRef FPFontCreateMemorySafeFontsFromData(CFDataRef);
+#endif
+
+typedef const struct __FPFont* FPFontRef;
+CFArrayRef FPFontCreateFontsFromData(CFDataRef);
+CFStringRef FPFontCopyPostScriptName(FPFontRef);
+CFDataRef FPFontCopySFNTData(FPFontRef);
+
+WTF_EXTERN_C_END

@@ -1,0 +1,224 @@
+/*
+ * Copyright (C) 2017 Igalia S.L
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * aint with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+
+#if USE(LIBWEBRTC) && USE(GSTREAMER)
+#include "RealtimeOutgoingAudioSourceLibWebRTC.h"
+
+#include "GStreamerAudioData.h"
+#include "GStreamerAudioStreamDescription.h"
+#include "LibWebRTCAudioFormat.h"
+#include "LibWebRTCProvider.h"
+#include "NotImplemented.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RealtimeOutgoingAudioSourceLibWebRTC);
+
+GST_DEBUG_CATEGORY(webkit_libwebrtc_outgoing_audio_debug);
+#define GST_CAT_DEFAULT webkit_libwebrtc_outgoing_audio_debug
+
+RealtimeOutgoingAudioSourceLibWebRTC::RealtimeOutgoingAudioSourceLibWebRTC(Ref<MediaStreamTrackPrivate>&& audioSource)
+    : RealtimeOutgoingAudioSource(WTF::move(audioSource))
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_libwebrtc_outgoing_audio_debug, "webkitlibwebrtcaudiooutgoing", 0, "WebKit LibWebRTC outgoing audio source");
+    });
+    m_adapter = adoptGRef(gst_adapter_new()),
+    m_sampleConverter = nullptr;
+}
+
+RealtimeOutgoingAudioSourceLibWebRTC::~RealtimeOutgoingAudioSourceLibWebRTC()
+{
+    m_sampleConverter = nullptr;
+}
+
+Ref<RealtimeOutgoingAudioSource> RealtimeOutgoingAudioSource::create(Ref<MediaStreamTrackPrivate>&& audioSource)
+{
+    return RealtimeOutgoingAudioSourceLibWebRTC::create(WTF::move(audioSource));
+}
+
+static inline GstAudioInfo libwebrtcAudioFormat(int sampleRate, size_t channelCount)
+{
+    GstAudioFormat format = gst_audio_format_build_integer(
+        LibWebRTCAudioFormat::isSigned,
+        LibWebRTCAudioFormat::isBigEndian ? G_BIG_ENDIAN : G_LITTLE_ENDIAN,
+        LibWebRTCAudioFormat::sampleSize,
+        LibWebRTCAudioFormat::sampleSize);
+
+    GstAudioInfo info;
+
+    size_t libWebRTCChannelCount = channelCount >= 2 ? 2 : channelCount;
+    gst_audio_info_set_format(&info, format, sampleRate, libWebRTCChannelCount, nullptr);
+    return info;
+}
+
+void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t /* sampleCount */)
+{
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    auto data = static_cast<const GStreamerAudioData&>(audioData);
+    auto desc = static_cast<const GStreamerAudioStreamDescription&>(streamDescription);
+
+    {
+        Locker locker { m_sampleConverterLock };
+        if (m_sampleConverter && !gst_audio_info_is_equal(&m_inputStreamDescription, &desc.getInfo())) {
+            GST_DEBUG("Audio format changed, clearing audio buffers cache and sample converter");
+            {
+                Locker locker { m_adapterLock };
+                gst_adapter_clear(m_adapter.get());
+            }
+            m_sampleConverter = nullptr;
+        }
+
+        if (!m_sampleConverter) {
+            m_inputStreamDescription = desc.getInfo();
+            m_outputStreamDescription = libwebrtcAudioFormat(LibWebRTCAudioFormat::sampleRate, desc.numberOfChannels());
+#ifndef GST_DISABLE_GST_DEBUG
+            GRefPtr inputCaps = adoptGRef(gst_audio_info_to_caps(&m_inputStreamDescription));
+            GRefPtr outputCaps = adoptGRef(gst_audio_info_to_caps(&m_outputStreamDescription));
+            GST_TRACE("Converting from %" GST_PTR_FORMAT " to %" GST_PTR_FORMAT, inputCaps.get(), outputCaps.get());
+#endif
+            m_sampleConverter.reset(gst_audio_converter_new(GST_AUDIO_CONVERTER_FLAG_IN_WRITABLE, &m_inputStreamDescription,
+                &m_outputStreamDescription, nullptr));
+        }
+    }
+
+    {
+        Locker locker { m_adapterLock };
+        const auto& sample = data.getSample();
+        auto* buffer = gst_sample_get_buffer(sample.get());
+        gst_adapter_push(m_adapter.get(), gst_buffer_ref(buffer));
+    }
+
+    LibWebRTCProvider::signalingThread().BlockingCall([protectedThis = protect(*this)] {
+        protectedThis->pullAudioData();
+    });
+}
+
+std::optional<size_t> RealtimeOutgoingAudioSourceLibWebRTC::gstAudioConverterInputFramesForOutput(size_t outputFrames, size_t availableFrames)
+{
+    assertIsHeld(m_sampleConverterLock);
+
+    if (!m_sampleConverter) [[unlikely]] {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    // gst_audio_converter_get_in_frames() derives its answer from the resampler phase and leaves out the
+    // filter history the resampler has yet to accumulate, so on its own it asks for fewer frames than a
+    // whole chunk needs and the resampler then reads past the end of its input. Only get_out_frames()
+    // accounts for that history, so it decides both whether a chunk fits and how large it has to be.
+    if (gst_audio_converter_get_out_frames(m_sampleConverter.get(), availableFrames) < outputFrames)
+        return std::nullopt;
+
+    // With a fractional ratio the phase estimate can also sit one frame above what the accumulated
+    // history makes sufficient, so never start the search beyond the frames actually available.
+    auto inputFrames = std::min<size_t>(gst_audio_converter_get_in_frames(m_sampleConverter.get(), outputFrames), availableFrames);
+    while (gst_audio_converter_get_out_frames(m_sampleConverter.get(), inputFrames) < outputFrames)
+        inputFrames++;
+
+    return inputFrames;
+}
+
+void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
+{
+    Locker sampleConverterLocker { m_sampleConverterLock };
+
+    if (!m_sampleConverter) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (!GST_AUDIO_INFO_IS_VALID(&m_inputStreamDescription) || !GST_AUDIO_INFO_IS_VALID(&m_outputStreamDescription)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    size_t outChunkSampleCount = LibWebRTCAudioFormat::chunkSampleCount;
+    size_t outBufferSize = outChunkSampleCount * m_outputStreamDescription.bpf;
+    m_audioBuffer.resize(outBufferSize);
+
+    Locker locker { m_adapterLock };
+    while (gst_adapter_available(m_adapter.get())) {
+        bool silenced = isSilenced();
+        size_t availableFrames = gst_adapter_available(m_adapter.get()) / m_inputStreamDescription.bpf;
+        size_t inChunkSampleCount;
+        if (silenced) {
+            // Silence bypasses the converter, so consume input at the nominal rate to keep pacing.
+            inChunkSampleCount = gst_audio_converter_get_in_frames(m_sampleConverter.get(), outChunkSampleCount);
+            if (inChunkSampleCount > availableFrames)
+                break;
+        } else {
+            auto frames = gstAudioConverterInputFramesForOutput(outChunkSampleCount, availableFrames);
+            if (!frames)
+                break;
+            inChunkSampleCount = *frames;
+        }
+
+        GRefPtr inBuffer = adoptGRef(gst_buffer_make_writable(gst_adapter_take_buffer(m_adapter.get(), inChunkSampleCount * m_inputStreamDescription.bpf)));
+        if (!inBuffer) {
+            GST_ERROR("Could not take writable buffer from adapter.");
+            return;
+        }
+        if (silenced) {
+            GST_TRACE("Audio buffer will contain silence");
+            gst_audio_format_info_fill_silence(m_outputStreamDescription.finfo, m_audioBuffer.mutableSpan().data(), outBufferSize);
+        } else {
+            GstMappedBuffer inMap(inBuffer, GST_MAP_READWRITE);
+
+            gpointer in[1] = { inMap.data() };
+            gpointer out[1] = { m_audioBuffer.mutableSpan().data() };
+            if (!gst_audio_converter_samples(m_sampleConverter.get(), static_cast<GstAudioConverterFlags>(0), in, inChunkSampleCount, out, outChunkSampleCount)) {
+                GST_ERROR("Could not convert samples.");
+                return;
+            }
+        }
+
+        GST_TRACE("Sending audio frames");
+        sendAudioFrames(m_audioBuffer.span(), LibWebRTCAudioFormat::sampleSize, GST_AUDIO_INFO_RATE(&m_outputStreamDescription),
+            GST_AUDIO_INFO_CHANNELS(&m_outputStreamDescription), outChunkSampleCount);
+    }
+}
+
+bool RealtimeOutgoingAudioSourceLibWebRTC::isReachingBufferedAudioDataHighLimit()
+{
+    notImplemented();
+    return false;
+}
+
+bool RealtimeOutgoingAudioSourceLibWebRTC::isReachingBufferedAudioDataLowLimit()
+{
+    notImplemented();
+    return false;
+}
+
+bool RealtimeOutgoingAudioSourceLibWebRTC::hasBufferedEnoughData()
+{
+    notImplemented();
+    return false;
+}
+
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
+
+#endif // USE(LIBWEBRTC) && USE(GSTREAMER)

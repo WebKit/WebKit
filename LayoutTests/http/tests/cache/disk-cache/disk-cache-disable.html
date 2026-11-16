@@ -1,0 +1,25 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var tests =
+[
+  { responseHeaders: {'Cache-control': 'max-age=100' } },
+];
+
+description("Test that disabling disk cache by setting the cache model works.");
+
+debug("Default (cache enabled)");
+runTests(tests, function () {
+    debug("Disabling cache");
+    testRunner.setCacheModel(0); // DocumentViewer
+    runTests(tests, function () {
+         debug("Re-enabling cache");
+         testRunner.setCacheModel(1); // DocumentBrowser
+         runTests(tests);
+    });
+});
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

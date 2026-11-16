@@ -1,0 +1,2 @@
+PASS: installing worker has become redundant
+

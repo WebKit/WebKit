@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+.case { border: 2px solid blue;}
+.topMargin { height: 20px; margin-top: 20px; border: 2px solid green; }
+.bottomMargin { height: 20px; margin-bottom: 20px; border: 2px solid green; }
+.float { float:left; background: teal; }
+</style>
+<div class=case>
+    <span>span start
+        <div class=bottomMargin>div 1</div>
+        <div class=float>float</div>
+        <div class=topMargin>div 2</div>
+    span end</span>
+</div>
+<div class=case>
+    <span>span start
+        <div class=float>float 1</div>
+        <div class=float>float 2</div>
+    span end</span>
+</div>

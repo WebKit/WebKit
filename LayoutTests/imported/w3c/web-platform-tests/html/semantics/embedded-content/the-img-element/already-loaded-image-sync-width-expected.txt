@@ -1,0 +1,4 @@
+
+
+PASS Image dimensions are available synchronously after changing src to an already-loaded image
+

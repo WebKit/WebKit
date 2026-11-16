@@ -1,0 +1,39 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+IMAGE_FILES = [
+    "GrImageUtils.cpp",
+    "GrImageUtils.h",
+    "GrMippedBitmap.cpp",
+    "GrMippedBitmap.h",
+    "GrTextureGenerator.cpp",
+    "SkImage_Ganesh.cpp",
+    "SkImage_Ganesh.h",
+    "SkImage_GaneshBase.cpp",
+    "SkImage_GaneshBase.h",
+    "SkImage_GaneshFactories.cpp",
+    "SkImage_GaneshYUVA.cpp",
+    "SkImage_GaneshYUVA.h",
+    "SkImage_LazyTexture.cpp",
+    "SkImage_LazyTexture.h",
+    "SkImage_RasterPinnable.cpp",
+    "SkImage_RasterPinnable.h",
+    "SkSpecialImage_Ganesh.cpp",
+    "SkSpecialImage_Ganesh.h",
+]
+
+split_srcs_and_hdrs(
+    name = "image",
+    files = IMAGE_FILES,
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)
+
+skia_filegroup(
+    name = "android_srcs",
+    srcs = ["SkImage_GaneshFactories_Android.cpp"],
+)

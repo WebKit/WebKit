@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.dumpChildFramesAsText();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.waitUntilDownloadFinished();
+}
+</script>
+</head>
+<body>
+<p>Test that a subframe navigating to another document right after clicking a link with a download
+attribute neither cancels the download nor disturbs the new navigation.</p>
+<p>This test passes if you see a 'Download started' message above.</p>
+<iframe id="testFrame" src="resources/anchor-download-then-navigate-frame.html"></iframe>
+</body>
+</html>

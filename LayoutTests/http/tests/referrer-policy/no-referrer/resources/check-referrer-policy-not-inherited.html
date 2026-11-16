@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+const channelName = params.get("channel");
+function checkReferrer(referrer) {
+    const bc = new BroadcastChannel(channelName);
+    bc.postMessage({ referrer: referrer });
+    bc.close();
+}
+</script>
+<script src="http://localhost:8000/referrer-policy/resources/script.py"></script>
+</body>
+</html>

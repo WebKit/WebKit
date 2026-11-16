@@ -1,0 +1,17 @@
+I should be green
+I should be blue
+
+I should be blue
+
+
+PASS state selector has no influence when state is not applied
+PASS state selector has no influence on sibling selectors when not applied
+PASS state selector has influence when state is applied
+PASS state selector influences siblings when state is applied
+PASS state selector influences has() when state is applied
+PASS state selector only applies on given ident
+PASS state selector only applies to siblings on given ident
+PASS state selector only applies to has() on given ident
+PASS states added multiple times counts as one
+PASS style is invalided on clear()
+

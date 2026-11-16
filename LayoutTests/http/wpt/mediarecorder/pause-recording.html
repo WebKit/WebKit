@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script>
+function waitFor(duration)
+{
+    return new Promise((resolve) => setTimeout(resolve, duration));
+}
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => { stream.getTracks().forEach(t => t.stop()); });
+
+    const recorder = new MediaRecorder(stream);
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    setTimeout(() => recorder.pause(), 50);
+    setTimeout(() => recorder.resume(), 950);
+
+    await waitFor(2000);
+    recorder.stop();
+    const blob = await dataPromise;
+
+    const url = URL.createObjectURL(blob);
+    const video = document.createElement("video");
+    video.src = url;
+    await new Promise((resolve) => video.addEventListener("loadedmetadata", resolve, { once: true }));
+
+    assert_less_than(video.duration, 1.5);
+
+    URL.revokeObjectURL(url);
+}, "Pausing and resuming the recording should impact the video duration");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => { stream.getTracks().forEach(t => t.stop()); });
+
+    const recorder = new MediaRecorder(stream);
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    await waitFor(1000);
+
+    const pausePromise = new Promise(resolve => recorder.onpause = resolve);
+    recorder.pause();
+    await pausePromise;
+
+    recorder.requestData();
+
+    const blob = await dataPromise;
+    assert_greater_than(blob.size, 1400);
+}, "Calling requestData once after pausing should lead to more than header data");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => { stream.getTracks().forEach(t => t.stop()); });
+
+    const recorder = new MediaRecorder(stream);
+    let dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    await waitFor(1000);
+
+    const pausePromise = new Promise(resolve => recorder.onpause = resolve);
+    recorder.pause();
+
+    recorder.requestData();
+
+    await pausePromise;
+    const blobWithData = await dataPromise;
+    assert_greater_than(blobWithData.size, 0);
+
+    recorder.requestData();
+    const blobWithNoDataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+    await waitFor(100);
+
+    const blobWithNoData = await blobWithNoDataPromise;
+    assert_equals(blobWithNoData.size, 0);
+
+}, "Once paused, the second requestData call should lead to a zero size blob");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => { stream.getTracks().forEach(t => t.stop()); });
+
+    const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    await waitFor(1000);
+
+    const pausePromise = new Promise(resolve => recorder.onpause = resolve);
+    recorder.pause();
+    await pausePromise;
+
+    recorder.requestData();
+
+    const blob = await dataPromise;
+    assert_greater_than(blob.size, 1400);
+}, "Calling requestData with WebM once after pausing should lead to more than header data");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => { stream.getTracks().forEach(t => t.stop()); });
+
+    const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+    let dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    await waitFor(1000);
+
+    const pausePromise = new Promise(resolve => recorder.onpause = resolve);
+    recorder.pause();
+
+    recorder.requestData();
+
+    await pausePromise;
+    const blobWithData = await dataPromise;
+    assert_greater_than(blobWithData.size, 0);
+
+    recorder.requestData();
+    const blobWithNoDataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+    await waitFor(100);
+
+    const blobWithNoData = await blobWithNoDataPromise;
+    assert_equals(blobWithNoData.size, 0);
+
+}, "Once paused, the second requestData with WebM call should lead to a zero size blob");
+
+    </script>
+</body>
+</html>

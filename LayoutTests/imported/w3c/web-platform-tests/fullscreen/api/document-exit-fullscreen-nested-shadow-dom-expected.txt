@@ -1,0 +1,4 @@
+fullscreen
+
+PASS Exiting fullscreen from a nested shadow root works correctly.
+

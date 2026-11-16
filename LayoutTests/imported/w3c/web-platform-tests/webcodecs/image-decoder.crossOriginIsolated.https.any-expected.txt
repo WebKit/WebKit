@@ -1,0 +1,4 @@
+
+PASS Test ImageDecoder decoding with a SharedArrayBuffer source
+PASS Test ImageDecoder decoding with a Uint8Array(SharedArrayBuffer) source
+

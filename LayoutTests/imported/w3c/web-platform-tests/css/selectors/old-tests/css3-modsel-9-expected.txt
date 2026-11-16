@@ -1,0 +1,6 @@
+This paragraph should have a green background
+because its title attribute begins with "foo"
+
+
+PASS Substring matching attribute selector (beginning)
+

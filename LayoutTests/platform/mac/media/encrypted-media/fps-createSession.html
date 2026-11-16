@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-requestMediaKeySystemAccess</title>
+    <script src="../../../../media/video-test.js"></script>
+    <script>
+    var capabilities = [{
+        initDataTypes: ['sinf'],
+        videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+        distinctiveIdentifier: 'not-allowed',
+        persistentState: 'not-allowed',
+        sessionTypes: ['temporary'],
+    }];
+    var promise;
+    var access;
+    var keys;
+    var session;
+    var initData = null;
+
+    function startTest() {
+        run('promise = navigator.requestMediaKeySystemAccess("com.apple.fps", capabilities)');
+        shouldResolve(promise).then(gotAccess, endTest);
+    }
+
+    function gotAccess(access) {
+        window.access = access;
+        run('promise = access.createMediaKeys()');
+        shouldResolve(promise).then(createdKeys, endTest);
+    }
+
+    function createdKeys(keys) {
+        window.keys = keys;
+        run('session = keys.createSession()');
+        testExpected('session', 'null', '!=');
+        endTest();
+    }
+
+    window.addEventListener('load', startTest);
+    </script>
+</head>
+<body>
+</body>
+</html>

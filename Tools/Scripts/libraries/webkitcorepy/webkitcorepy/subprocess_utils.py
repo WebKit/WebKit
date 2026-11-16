@@ -1,0 +1,129 @@
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+from __future__ import annotations
+
+import math
+import subprocess
+import sys
+import time
+import threading
+from typing import Any, Callable, Sequence
+
+from webkitcorepy import Timeout
+
+TimeoutExpired = subprocess.TimeoutExpired
+CompletedProcess = subprocess.CompletedProcess
+
+
+# Allows native integration with the Timeout context
+def run(*popenargs: Any, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
+    timeout = kwargs.pop('timeout', None)
+    capture_output = kwargs.pop('capture_output', False)
+
+    with Timeout.DisableAlarm():
+        current_time = time.time()
+        Timeout.check(current_time=current_time)
+        difference = Timeout.difference(current_time=current_time)
+
+        if difference:
+            timeout = min(timeout or sys.maxsize, int(math.ceil(difference)))
+        if capture_output:
+            if ('stdout' in kwargs) or ('stderr' in kwargs):
+                raise ValueError('stdout and stderr arguments may not be used with capture_output.')
+            kwargs['stdout'] = subprocess.PIPE
+            kwargs['stderr'] = subprocess.PIPE
+        return subprocess.run(*popenargs, timeout=timeout, **kwargs)
+
+
+def wait_until_exit(process: subprocess.Popen[Any], timeout: float | None = None) -> tuple[int, Any, Any]:
+    """Returns (returncode, stdout, stderr), killing the process if it overruns its timeout.
+
+    Unlike Timeout, this does not rely on SIGALRM, so it is safe to call off the main thread."""
+    try:
+        stdout, stderr = process.communicate(timeout=timeout)
+    except TimeoutExpired:
+        process.kill()
+        stdout, stderr = process.communicate()
+    return process.returncode, stdout, stderr
+
+
+def run_all(
+    commands: Sequence[Sequence[str]], timeout: float | None = None,
+    popen: Callable[..., subprocess.Popen[Any]] | None = None, **kwargs: Any,
+) -> list[tuple[int, Any, Any]]:
+    """Starts every command before waiting on any, returning each one's (returncode, stdout, stderr).
+
+    Each process is drained by its own thread, since one with a full stdout pipe blocks until something reads it."""
+    popen = popen or subprocess.Popen
+    processes: list[subprocess.Popen[Any]] = []
+    results: dict[int, tuple[int, Any, Any]] = {}
+
+    try:
+        for command in commands:
+            processes.append(popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs))
+    except BaseException:
+        for process in processes:
+            process.kill()
+            process.communicate()
+        raise
+
+    def drain(index: int, process: subprocess.Popen[Any]) -> None:
+        results[index] = wait_until_exit(process, timeout=timeout)
+
+    threads = [Thread(target=drain, args=(index, process), name='run-all-{}'.format(index))
+               for index, process in enumerate(processes)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    return [results[index] for index in range(len(processes))]
+
+
+class Thread(threading.Thread):
+    @classmethod
+    def terminated(cls) -> bool:
+        terminated: bool = getattr(threading.current_thread(), '_terminated', False)
+        return terminated
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super(Thread, self).__init__(*args, **kwargs)
+        self._terminated = False
+
+    def poll(self) -> int | None:
+        return None if self.is_alive() else {True: 1, False: 0}.get(self._terminated, -1)
+
+    def terminate(self) -> None:
+        self._terminated = True
+
+    def kill(self) -> None:
+        self._terminated = True
+
+    def __enter__(self) -> Thread:
+        self.start()
+        return self
+
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
+        with Timeout.DisableAlarm():
+            current_time = time.time()
+            Timeout.check(current_time=current_time)
+            self.join(Timeout.difference(current_time=current_time))

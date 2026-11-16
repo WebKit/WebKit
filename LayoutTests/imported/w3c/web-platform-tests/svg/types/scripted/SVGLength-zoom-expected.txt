@@ -1,0 +1,3 @@
+
+PASS SVGLength in zoomed div should be unchanged
+

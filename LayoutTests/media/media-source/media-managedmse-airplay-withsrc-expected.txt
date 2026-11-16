@@ -1,0 +1,18 @@
+
+RUN(source = new ManagedMediaSource())
+RUN(url = URL.createObjectURL(source))
+RUN(video.src = url)
+RUN(sourceElement1 = document.createElement("source"))
+RUN(sourceElement1.src = url)
+RUN(video.appendChild(sourceElement1))
+RUN(sourceElement2 = document.createElement("source"))
+RUN(sourceElement2.src = "http://foo.com/playlist.m3u8")
+RUN(sourceElement2.type = "application/vnd.apple.mpegurl")
+RUN(video.appendChild(sourceElement2))
+RUN(video.load())
+RUN(video.removeAttribute("src"))
+RUN(video.load())
+RUN(sourceOpenAllowed = true)
+EVENT(sourceopen)
+END OF TEST
+

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .box {
+        margin: 20px;
+        width: 100px;
+        height: 100px;
+        border: 1px solid black;
+    }
+    
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    window.addEventListener('load', () => {
+        document.getElementById('passive').addEventListener('wheel', () => {
+            console.log('passive listener');
+        }, { passive: true });
+
+        document.getElementById('active').addEventListener('wheel', () => {
+            console.log('active listener');
+        }, { passive: false });
+
+        if (window.internals)
+            document.getElementById('console').textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+
+    }, false);
+</script>
+<body>
+    <div class="box" id="passive">Passive</div>
+    <div class="box" id="active">Active</div>
+<pre id="console"></pre>
+</body>
+</html>

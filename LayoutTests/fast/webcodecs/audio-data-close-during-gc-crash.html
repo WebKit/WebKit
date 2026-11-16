@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<body>
+<script>
+// WebCodecsAudioData::memoryCost() is called from JSWebCodecsAudioData::visitChildren on a
+// concurrent GC marker thread. It must not dereference m_data.audioData, since close() on the
+// main thread may concurrently null and free it.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const POOL = 200;
+const DURATION_MS = 2000;
+const startTime = Date.now();
+
+const buf = new Float32Array(4096);
+for (let i = 0; i < buf.length; i++)
+    buf[i] = Math.random();
+
+const init = {
+    format: "f32-planar",
+    sampleRate: 48000,
+    timestamp: 0,
+    data: buf,
+    numberOfFrames: 2048,
+    numberOfChannels: 2,
+};
+
+window.pool = new Array(POOL);
+for (let i = 0; i < POOL; i++)
+    pool[i] = new AudioData(init);
+
+let idx = 0;
+
+function closeOne() {
+    if (Date.now() - startTime > DURATION_MS) {
+        document.body.textContent = "Test passes if it does not crash.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    pool[idx].close();
+    pool[idx] = new AudioData(init);
+    idx = (idx + 1) % POOL;
+
+    Promise.resolve().then(closeOne);
+}
+
+function pressureGC() {
+    if (Date.now() - startTime > DURATION_MS)
+        return;
+    for (let i = 0; i < 20; i++) {
+        let tmp = new AudioData(init);
+        tmp.close();
+    }
+    setTimeout(pressureGC, 10);
+}
+
+closeOne();
+pressureGC();
+</script>
+</body>

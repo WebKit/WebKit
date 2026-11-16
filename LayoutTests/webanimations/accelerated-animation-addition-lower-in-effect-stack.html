@@ -1,0 +1,50 @@
+<style>
+
+div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+div.animated {
+    animation: translate 1000s linear forwards;
+}
+
+@keyframes translate {
+    from { translate: 0px }
+    to   { translate: 0px }
+}
+
+</style>
+<div></div>
+<script>
+
+window.testRunner?.waitUntilDone();
+
+(async function () {
+    const target = document.querySelector("div");
+
+    // Start an animation which will remain the highest in composite order.
+    const animation = target.animate({ "translate": ["100px", "100px"] }, { duration: 1000 * 1000, fill: "forwards" })
+
+    // Wait until the animation is committed.
+    await animation.ready;
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    // Start a CSS Animation which will be completely replaced by the script-originated animation.
+    target.classList.add("animated");
+
+    // Wait until the animation is committed.
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    window.testRunner?.notifyDone();
+})();
+
+</script>

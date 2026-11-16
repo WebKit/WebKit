@@ -1,0 +1,5 @@
+
+PASS Initially container rule does not match.
+PASS Container rule matches and inner changes colour
+PASS Container rule stops matching and inner changes colour back
+

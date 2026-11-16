@@ -1,0 +1,17 @@
+<style>
+  html::first-letter {
+    width: 0;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    document.execCommand('SelectAll');
+    document.body.append('aa');
+    document.documentElement.append('');
+    document.body.offsetTop;
+    document.body.style.overflow = 'clip';
+  };
+</script>
+

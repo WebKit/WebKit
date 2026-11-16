@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+select {
+    appearance: base-select;
+}
+
+.base-picker::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="native-to-base">
+    <option>Apple</option>
+    <option>Banana</option>
+</select>
+
+<select id="base-to-native" class="base-picker">
+    <option>Apple</option>
+    <option>Banana</option>
+</select>
+
+<script>
+var output = "This test ensures that a base appearance select gets new accessibility objects when only its picker switches appearance, so that it exposes its base appearance picker only while it has one.\n\n";
+
+function pickerMenu()
+{
+    return window.axSelect ? findBaseSelectMenu(axSelect) : null;
+}
+
+async function waitForNewSelectObject()
+{
+    await waitFor(() => {
+        const element = accessibilityController.accessibleElementById(select.id);
+        return element && !axSelect.isEqual(element);
+    });
+    window.axSelect = await waitForElementById(select.id);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        window.select = document.getElementById("native-to-base");
+        window.axSelect = await waitForElementById(select.id);
+        output += `${select.id}:\n`;
+        output += expect("axSelect?.role", "'AXRole: AXPopUpButton'");
+        output += expect("pickerMenu()", "null");
+        select.classList.add("base-picker");
+        await waitForNewSelectObject();
+        axSelect?.press();
+        output += await expectAsync("select.matches(':open')", "true");
+        output += await expectAsync("pickerMenu()?.role", "'AXRole: AXMenu'");
+        output += await expectAsync("pickerMenu()?.childrenCount", "2");
+        output += expect("pickerMenu()?.childAtIndex(0)?.role", "'AXRole: AXMenuItem'");
+        axSelect?.press();
+        output += await expectAsync("select.matches(':open')", "false");
+
+        window.select = document.getElementById("base-to-native");
+        window.axSelect = await waitForElementById(select.id);
+        output += `${select.id}:\n`;
+        output += expect("axSelect?.role", "'AXRole: AXPopUpButton'");
+        axSelect?.press();
+        output += await expectAsync("select.matches(':open')", "true");
+        output += await expectAsync("pickerMenu()?.role", "'AXRole: AXMenu'");
+        axSelect?.press();
+        output += await expectAsync("select.matches(':open')", "false");
+        select.classList.remove("base-picker");
+        await waitForNewSelectObject();
+        output += expect("axSelect?.role", "'AXRole: AXPopUpButton'");
+        output += expect("axSelect?.stringValue", "'AXValue: Apple'");
+        output += await expectAsync("pickerMenu()", "null");
+
+        for (const select of document.querySelectorAll("select"))
+            select.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

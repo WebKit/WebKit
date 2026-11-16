@@ -1,0 +1,4 @@
+
+PASS Triggers securitypolicyviolation.
+PASS Inline style element is blocked by CSP.
+

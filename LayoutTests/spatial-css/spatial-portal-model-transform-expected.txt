@@ -1,0 +1,10 @@
+
+PASS CSS translate on a child becomes its entity transform
+PASS CSS rotate on a child becomes its entity transform
+PASS CSS scale on a child becomes its entity transform
+PASS the CSS transform property on a child becomes its entity transform
+PASS translate and rotate on a child compose in the order css-transforms-2 defines
+PASS a CSS transform on one child leaves its sibling alone
+PASS a transform set before the asset loads is applied once it does
+PASS clearing a CSS transform on a child returns it to identity
+

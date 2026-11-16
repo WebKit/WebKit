@@ -1,0 +1,4 @@
+
+PASS deleteContents() should not remove nodes outside the common ancestor when an iframe unload handler moves the range end
+PASS extractContents() should not remove nodes outside the common ancestor when an iframe unload handler moves the range end
+

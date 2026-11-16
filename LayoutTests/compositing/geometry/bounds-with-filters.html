@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .box {
+            margin: 50px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+            filter: drop-shadow(0 0 10px);
+        }
+
+        .composited {
+            transform: translateZ(0);
+        }
+        
+        .overflowing {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="composited box"></div>
+    <div class="composited box">
+        <div>Not<br>overflowing</div>
+    </div>
+    <div class="composited box">
+        <div class="overflowing">Have some layout overflow</div>
+    </div>
+<pre id="layers"></pre>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        }
+    </script>
+</body>
+</html>

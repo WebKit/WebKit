@@ -1,0 +1,43 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<!-- Test that compiling an XSL stylesheet with a still-loading import subresource does not
+     cause a use-after-free when the delayed subresource later arrives. -->
+<p>This test passes if it does not crash.</p>
+<iframe id="f" src="resources/xslt-import-delayed-subresource-target.xml"></iframe>
+<script>
+// Wait for root.xsl and child.xsl to load (but not the delayed grandchild).
+// Then inject and immediately remove an embedded XSL processing instruction
+// to trigger scheduleToApplyXSLTransforms(), which will attempt to compile
+// the partially-loaded import chain.
+setTimeout(() => {
+    try {
+        const doc = document.getElementById('f').contentDocument;
+        // Create an embedded XSL PI (href="#x") which unconditionally calls
+        // scheduleToApplyXSLTransforms() via the embedded branch of
+        // ProcessingInstruction::checkStyleSheet().
+        const pi = doc.createProcessingInstruction("xml-stylesheet", 'type="text/xsl" href="#x"');
+        doc.insertBefore(pi, doc.firstChild);
+        pi.remove();
+    } catch (e) {
+        // Cross-origin or other access error is OK - test still verifies no crash.
+    }
+
+    // Wait long enough for the delayed grandchild to arrive and trigger
+    // parseString() on the grandchild stylesheet. Without the fix, this
+    // dereferences a freed m_stylesheetDoc in the parent (child.xsl).
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 3000);
+}, 500);
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+This test ensures line start and end stay logical positions after direction is flipped to right-to-left at runtime, rather than becoming the leftmost and rightmost positions on the line. The text is replaced at the same time so the assertion cannot pass against a value cached from before the flip.
+
+Left to right, the three wrapped lines are read in logical order.
+PASS: lineTextFrom(2) === 'aaa'
+PASS: lineTextFrom(6) === 'bbb'
+PASS: lineTextFrom(10) === 'ccc'
+
+Right to left, the first line is still the one the text starts with.
+PASS: lineTextFrom(2) === 'xxx'
+PASS: lineTextFrom(6) === 'yyy'
+PASS: lineTextFrom(10) === 'zzz'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

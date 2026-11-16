@@ -1,0 +1,46 @@
+Button:
+Checkbox:
+Color:
+Date:
+Datetime:
+Datetime-local:
+Email:
+File:
+Image:
+Month:
+Number:
+Password:
+Radio:
+Range:
+Reset:
+Search:
+Submit:
+Tel:
+Text:
+Time:
+Url:
+Week:
+
+PASS Style of input type 'button' doesn't change when ADM is enabled
+PASS Style of input type 'checkbox' doesn't change when ADM is enabled
+PASS Style of input type 'color' doesn't change when ADM is enabled
+PASS Style of input type 'date' doesn't change when ADM is enabled
+PASS Style of input type 'datetime' doesn't change when ADM is enabled
+PASS Style of input type 'datetime-local' doesn't change when ADM is enabled
+PASS Style of input type 'email' doesn't change when ADM is enabled
+PASS Style of input type 'file' doesn't change when ADM is enabled
+PASS Style of input type 'image' doesn't change when ADM is enabled
+PASS Style of input type 'month' doesn't change when ADM is enabled
+PASS Style of input type 'number' doesn't change when ADM is enabled
+PASS Style of input type 'password' doesn't change when ADM is enabled
+PASS Style of input type 'radio' doesn't change when ADM is enabled
+PASS Style of input type 'range' doesn't change when ADM is enabled
+PASS Style of input type 'reset' doesn't change when ADM is enabled
+PASS Style of input type 'search' doesn't change when ADM is enabled
+PASS Style of input type 'submit' doesn't change when ADM is enabled
+PASS Style of input type 'tel' doesn't change when ADM is enabled
+PASS Style of input type 'text' doesn't change when ADM is enabled
+PASS Style of input type 'time' doesn't change when ADM is enabled
+PASS Style of input type 'url' doesn't change when ADM is enabled
+PASS Style of input type 'week' doesn't change when ADM is enabled
+

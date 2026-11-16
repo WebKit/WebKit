@@ -1,0 +1,9 @@
+
+PASS Reducing a select's size to 1 updates selectedcontent.
+PASS Removing a select's multiple attribute updates selectedcontent.
+PASS Removing an option's disabled attribute updates selectedcontent.
+PASS Removing an optgroup's disabled attribute updates selectedcontent.
+PASS Adding an option's selected attribute updates selectedcontent.
+PASS An attribute change that does not change selectedness does not update selectedcontent.
+PASS Removing a select's multiple attribute updates selectedcontent when selectedness does not change.
+

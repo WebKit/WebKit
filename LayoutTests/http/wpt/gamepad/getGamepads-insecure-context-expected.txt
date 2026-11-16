@@ -1,0 +1,3 @@
+
+PASS navigator.getGamepads() does not log a console message
+

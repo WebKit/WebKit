@@ -1,0 +1,1163 @@
+//
+// Copyright 2023 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+
+#include "test_utils/ANGLETest.h"
+
+#include "test_utils/gl_raii.h"
+#include "util/EGLWindow.h"
+#include "util/random_utils.h"
+#include "util/shader_utils.h"
+#include "util/test_utils.h"
+
+// Check AHB test support availability
+#if defined(ANGLE_PLATFORM_ANDROID) && __ANDROID_API__ >= 26
+#    define CAPTURE_TESTS_AHB_SUPPORT
+#    include <android/hardware_buffer.h>
+#    include "common/android_util.h"
+#endif
+
+using namespace angle;
+
+namespace
+{
+#if defined(CAPTURE_TESTS_AHB_SUPPORT)
+// Helper to allocate RGBA8 AHB and upload image data
+AHardwareBuffer *AllocateRGBA8AHB(size_t width, size_t height, const GLubyte *rgbaData)
+{
+    AHardwareBuffer_Desc desc = {};
+    desc.width                = width;
+    desc.height               = height;
+    desc.layers               = 1;
+    desc.format               = AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM;
+    desc.usage = AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE | AHARDWAREBUFFER_USAGE_CPU_WRITE_RARELY;
+
+    AHardwareBuffer *ahb = nullptr;
+    EXPECT_EQ(0, AHardwareBuffer_allocate(&desc, &ahb));
+
+    void *mapped = nullptr;
+    EXPECT_EQ(
+        0, AHardwareBuffer_lock(ahb, AHARDWAREBUFFER_USAGE_CPU_WRITE_RARELY, -1, nullptr, &mapped));
+
+    AHardwareBuffer_describe(ahb, &desc);
+    const size_t rowBytes = width * 4;
+    for (size_t row = 0; row < height; row++)
+    {
+        memcpy(static_cast<uint8_t *>(mapped) + row * desc.stride * 4, rgbaData + row * rowBytes,
+               rowBytes);
+    }
+
+    EXPECT_EQ(0, AHardwareBuffer_unlock(ahb, nullptr));
+    return ahb;
+}
+#endif
+
+class CapturedTest : public ANGLETest<>
+{
+  protected:
+    CapturedTest()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        setConfigDepthBits(24);
+        setConfigStencilBits(8);
+    }
+
+    void testSetUp() override
+    {
+        // Calls not captured because we setup Start frame to MEC.
+
+        // TODO: why are these framebuffers not showing up in the capture?
+
+        mFBOs.resize(2, 0);
+        glGenFramebuffers(2, mFBOs.data());
+    }
+
+    void testTearDown() override
+    {
+        // Not reached during capture as we hit the End frame earlier.
+
+        if (!mFBOs.empty())
+        {
+            glDeleteFramebuffers(static_cast<GLsizei>(mFBOs.size()), mFBOs.data());
+        }
+    }
+
+    std::vector<GLuint> mFBOs;
+};
+
+class MultiFrame
+{
+  public:
+    void testSetUp()
+    {
+        constexpr char kInactiveVS[] = R"(precision highp float;
+void main(void) {
+   gl_Position = vec4(0.5, 0.5, 0.5, 1.0);
+})";
+
+        static constexpr char kInactiveDeferredVS[] = R"(attribute vec4 a_position;
+attribute vec2 a_texCoord;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_texCoord;
+})";
+
+        static constexpr char kInactiveDeferredFS[] = R"(precision mediump float;
+varying vec2 v_texCoord;
+uniform sampler2D s_texture;
+void main()
+{
+    gl_FragColor = vec4(0.4, 0.4, 0.4, 1.0);
+    gl_FragColor = texture2D(s_texture, v_texCoord);
+})";
+
+        static constexpr char kActiveDeferredVS[] = R"(attribute vec4 a_position;
+attribute vec2 a_texCoord;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_texCoord;
+})";
+
+        // Create shaders, program but defer compiling & linking, use before capture starts
+        // (Inactive)
+        lateLinkTestVertShaderInactive                   = glCreateShader(GL_VERTEX_SHADER);
+        const char *lateLinkTestVsSourceArrayInactive[1] = {kInactiveDeferredVS};
+        glShaderSource(lateLinkTestVertShaderInactive, 1, lateLinkTestVsSourceArrayInactive, 0);
+        lateLinkTestFragShaderInactive                   = glCreateShader(GL_FRAGMENT_SHADER);
+        const char *lateLinkTestFsSourceArrayInactive[1] = {kInactiveDeferredFS};
+        glShaderSource(lateLinkTestFragShaderInactive, 1, lateLinkTestFsSourceArrayInactive, 0);
+        lateLinkTestProgramInactive = glCreateProgram();
+        glAttachShader(lateLinkTestProgramInactive, lateLinkTestVertShaderInactive);
+        glAttachShader(lateLinkTestProgramInactive, lateLinkTestFragShaderInactive);
+
+        // Create inactive program having shader shared with deferred linked program
+        glCompileShader(lateLinkTestVertShaderInactive);
+        glCompileShader(lateLinkTestFragShaderInactive);
+        glLinkProgram(lateLinkTestProgramInactive);
+        ASSERT_GL_NO_ERROR();
+
+        // Create vertex shader and program but defer compiling & linking until capture time
+        // (Active) Use fragment shader attached to inactive program
+        lateLinkTestVertShaderActive                   = glCreateShader(GL_VERTEX_SHADER);
+        const char *lateLinkTestVsSourceArrayActive[1] = {kActiveDeferredVS};
+        glShaderSource(lateLinkTestVertShaderActive, 1, lateLinkTestVsSourceArrayActive, 0);
+        lateLinkTestProgramActive = glCreateProgram();
+        glAttachShader(lateLinkTestProgramActive, lateLinkTestVertShaderActive);
+        glAttachShader(lateLinkTestProgramActive, lateLinkTestFragShaderInactive);
+        ASSERT_GL_NO_ERROR();
+
+        // Create shader that is unused during capture
+        inactiveProgram                    = glCreateProgram();
+        inactiveShader                     = glCreateShader(GL_VERTEX_SHADER);
+        const char *inactiveSourceArray[1] = {kInactiveVS};
+        glShaderSource(inactiveShader, 1, inactiveSourceArray, 0);
+        glCompileShader(inactiveShader);
+        glAttachShader(inactiveProgram, inactiveShader);
+
+        // Create Shader Program before capture begins to use during capture
+        activeBeforeProgram                = glCreateProgram();
+        activeBeforeVertShader             = glCreateShader(GL_VERTEX_SHADER);
+        activeBeforeFragShader             = glCreateShader(GL_FRAGMENT_SHADER);
+        const char *activeVsSourceArray[1] = {kActiveVS};
+        glShaderSource(activeBeforeVertShader, 1, activeVsSourceArray, 0);
+        glCompileShader(activeBeforeVertShader);
+        glAttachShader(activeBeforeProgram, activeBeforeVertShader);
+        const char *activeFsSourceArray[1] = {kActiveFS};
+        glShaderSource(activeBeforeFragShader, 1, activeFsSourceArray, 0);
+        glCompileShader(activeBeforeFragShader);
+        glAttachShader(activeBeforeProgram, activeBeforeFragShader);
+        glLinkProgram(activeBeforeProgram);
+
+        // Get the attr/sampler locations
+        mPositionLoc = glGetAttribLocation(activeBeforeProgram, "a_position");
+        mTexCoordLoc = glGetAttribLocation(activeBeforeProgram, "a_texCoord");
+        mSamplerLoc  = glGetUniformLocation(activeBeforeProgram, "s_texture");
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+        // Bind the texture object before capture begins
+        glGenTextures(1, &textureNeverBound);
+        glGenTextures(1, &textureBoundBeforeCapture);
+        glBindTexture(GL_TEXTURE_2D, textureBoundBeforeCapture);
+        ASSERT_GL_NO_ERROR();
+
+        const size_t width                 = 2;
+        const size_t height                = 2;
+        GLubyte pixels[width * height * 3] = {
+            255, 0,   0,    // Red
+            0,   255, 0,    // Green
+            0,   0,   255,  // Blue
+            255, 255, 0,    // Yellow
+        };
+        // Populate the pre-capture bound texture
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    }
+
+    void testTearDown()
+    {
+        glDeleteTextures(1, &textureNeverBound);
+        glDeleteTextures(1, &textureBoundBeforeCapture);
+        glDeleteProgram(inactiveProgram);
+        glDeleteProgram(activeBeforeProgram);
+        glDeleteShader(inactiveShader);
+        glDeleteShader(activeBeforeVertShader);
+        glDeleteShader(activeBeforeFragShader);
+        glDeleteProgram(lateLinkTestProgramInactive);
+        glDeleteProgram(lateLinkTestProgramActive);
+        glDeleteShader(lateLinkTestVertShaderInactive);
+        glDeleteShader(lateLinkTestFragShaderInactive);
+        glDeleteShader(lateLinkTestVertShaderActive);
+    }
+
+    static constexpr char kActiveVS[] = R"(attribute vec4 a_position;
+attribute vec2 a_texCoord;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_texCoord;
+})";
+
+    static constexpr char kActiveFS[] = R"(precision mediump float;
+varying vec2 v_texCoord;
+uniform sampler2D s_texture;
+void main()
+{
+    gl_FragColor = texture2D(s_texture, v_texCoord);
+})";
+
+    void frame1();
+    void frame2();
+    void frame3();
+    void frame4();
+    void frame5();
+
+    // For testing deferred compile/link
+    GLuint lateLinkTestVertShaderInactive;
+    GLuint lateLinkTestFragShaderInactive;
+    GLuint lateLinkTestProgramInactive;
+    GLuint lateLinkTestVertShaderActive;
+    GLuint lateLinkTestProgramActive;
+
+    GLuint inactiveProgram;
+    GLuint inactiveShader;
+
+    GLuint activeBeforeProgram;
+    GLuint activeBeforeVertShader;
+    GLuint activeBeforeFragShader;
+
+    GLuint textureNeverBound;
+    GLuint textureBoundBeforeCapture;
+    GLuint mPositionLoc;
+    GLuint mTexCoordLoc;
+    GLint mSamplerLoc;
+};
+
+void MultiFrame::frame1()
+{
+    glClearColor(0.25f, 0.5f, 0.5f, 0.5f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_NEAR(0, 0, 64, 128, 128, 128, 1.0);
+
+    static GLfloat vertices[] = {
+        -0.75f, 0.25f,  0.0f,  // Position 0
+        0.0f,   0.0f,          // TexCoord 0
+        -0.75f, -0.75f, 0.0f,  // Position 1
+        0.0f,   1.0f,          // TexCoord 1
+        0.25f,  -0.75f, 0.0f,  // Position 2
+        1.0f,   1.0f,          // TexCoord 2
+        0.25f,  0.25f,  0.0f,  // Position 3
+        1.0f,   0.0f           // TexCoord 3
+    };
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(activeBeforeProgram);
+
+    // Separate glVertexAttribPointer calls from their dependent draw call by a frame boundary
+    glVertexAttribPointer(mPositionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices);
+    glVertexAttribPointer(mTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 3);
+    glEnableVertexAttribArray(mPositionLoc);
+    glEnableVertexAttribArray(mTexCoordLoc);
+}
+
+void MultiFrame::frame2()
+{
+    GLushort indices[] = {0, 1, 2, 0, 2, 3};
+
+    glUniform1i(mSamplerLoc, 0);
+
+    // Draw without binding texture during capture, and using vertex attrib pointers from last frame
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_EQ(20, 20, 0, 0, 255, 255);
+
+    glDeleteVertexArrays(1, &mPositionLoc);
+    glDeleteVertexArrays(1, &mTexCoordLoc);
+}
+
+void MultiFrame::frame3()
+{
+    // Draw using texture created and bound during capture
+
+    GLuint activeDuringProgram;
+    GLuint activeDuringVertShader;
+    GLuint activeDuringFragShader;
+    GLuint positionLoc;
+    GLuint texCoordLoc;
+    GLuint textureBoundDuringCapture;
+    GLint samplerLoc;
+
+    activeDuringProgram                = glCreateProgram();
+    activeDuringVertShader             = glCreateShader(GL_VERTEX_SHADER);
+    activeDuringFragShader             = glCreateShader(GL_FRAGMENT_SHADER);
+    const char *activeVsSourceArray[1] = {kActiveVS};
+    glShaderSource(activeDuringVertShader, 1, activeVsSourceArray, 0);
+    glCompileShader(activeDuringVertShader);
+    glAttachShader(activeDuringProgram, activeDuringVertShader);
+    const char *activeFsSourceArray[1] = {kActiveFS};
+    glShaderSource(activeDuringFragShader, 1, activeFsSourceArray, 0);
+    glCompileShader(activeDuringFragShader);
+    glAttachShader(activeDuringProgram, activeDuringFragShader);
+    glLinkProgram(activeDuringProgram);
+
+    // Get the attr/sampler locations
+    positionLoc = glGetAttribLocation(activeDuringProgram, "a_position");
+    texCoordLoc = glGetAttribLocation(activeDuringProgram, "a_texCoord");
+    samplerLoc  = glGetUniformLocation(activeDuringProgram, "s_texture");
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    // Bind the texture object during capture
+    glGenTextures(1, &textureBoundDuringCapture);
+    glBindTexture(GL_TEXTURE_2D, textureBoundDuringCapture);
+    ASSERT_GL_NO_ERROR();
+
+    const size_t width                 = 2;
+    const size_t height                = 2;
+    GLubyte pixels[width * height * 3] = {
+        255, 255, 0,    // Yellow
+        0,   0,   255,  // Blue
+        0,   255, 0,    // Green
+        255, 0,   0,    // Red
+    };
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    static GLfloat vertices[] = {
+        -0.25f, 0.75f,  0.0f,  // Position 0
+        0.0f,   0.0f,          // TexCoord 0
+        -0.25f, -0.25f, 0.0f,  // Position 1
+        0.0f,   1.0f,          // TexCoord 1
+        0.75f,  -0.25f, 0.0f,  // Position 2
+        1.0f,   1.0f,          // TexCoord 2
+        0.75f,  0.75f,  0.0f,  // Position 3
+        1.0f,   0.0f           // TexCoord 3
+    };
+    GLushort indices[] = {0, 1, 2, 0, 2, 3};
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(activeDuringProgram);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 3);
+    glEnableVertexAttribArray(positionLoc);
+    glEnableVertexAttribArray(texCoordLoc);
+    glUniform1i(samplerLoc, 0);
+
+    // Draw using texture bound during capture
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
+
+    glDeleteTextures(1, &textureBoundDuringCapture);
+    glDeleteVertexArrays(1, &positionLoc);
+    glDeleteVertexArrays(1, &texCoordLoc);
+    glDeleteProgram(activeDuringProgram);
+    glDeleteShader(activeDuringVertShader);
+    glDeleteShader(activeDuringFragShader);
+}
+
+void MultiFrame::frame4()
+{
+    // TODO: using local objects (with RAII helpers) here that create and destroy objects within the
+    // frame. Maybe move some of this to test Setup.
+
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec3 attr1;
+void main(void) {
+   gl_Position = vec4(attr1, 1.0);
+})";
+
+    constexpr char kFS[] = R"(precision highp float;
+void main(void) {
+   gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+})";
+
+    GLBuffer emptyBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, emptyBuffer);
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "attr1");
+    glLinkProgram(program);
+    ASSERT_TRUE(CheckLinkStatusAndReturnProgram(program, true));
+    glUseProgram(program);
+
+    // Use non-existing attribute 1.
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, false, 1, 0);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    // Note: RAII destructors called here causing additional GL calls.
+}
+
+void MultiFrame::frame5()
+{
+    GLuint positionLoc;
+    GLuint texCoordLoc;
+    GLuint lateLinkTestTexture;
+    GLint samplerLoc;
+
+    // Deferred compile/link
+    glCompileShader(lateLinkTestVertShaderActive);
+    glLinkProgram(lateLinkTestProgramActive);
+    ASSERT_GL_NO_ERROR();
+
+    // Get the attr/sampler locations
+    positionLoc = glGetAttribLocation(lateLinkTestProgramActive, "a_position");
+    texCoordLoc = glGetAttribLocation(lateLinkTestProgramActive, "a_texCoord");
+    samplerLoc  = glGetUniformLocation(lateLinkTestProgramActive, "s_texture");
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    // Bind the texture object during capture
+    glGenTextures(1, &lateLinkTestTexture);
+    glBindTexture(GL_TEXTURE_2D, lateLinkTestTexture);
+    ASSERT_GL_NO_ERROR();
+
+    const size_t width                 = 2;
+    const size_t height                = 2;
+    GLubyte pixels[width * height * 3] = {
+        255, 255, 0,    // Yellow
+        0,   0,   255,  // Blue
+        0,   255, 0,    // Green
+        255, 0,   0,    // Red
+    };
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    static GLfloat vertices[] = {
+        -0.25f, 0.75f,  0.0f,  // Position 0
+        0.0f,   0.0f,          // TexCoord 0
+        -0.25f, -0.25f, 0.0f,  // Position 1
+        0.0f,   1.0f,          // TexCoord 1
+        0.75f,  -0.25f, 0.0f,  // Position 2
+        1.0f,   1.0f,          // TexCoord 2
+        0.75f,  0.75f,  0.0f,  // Position 3
+        1.0f,   0.0f           // TexCoord 3
+    };
+    GLushort indices[] = {0, 1, 2, 0, 2, 3};
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(lateLinkTestProgramActive);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 3);
+    glEnableVertexAttribArray(positionLoc);
+    glEnableVertexAttribArray(texCoordLoc);
+    glUniform1i(samplerLoc, 0);
+
+    // Draw shaders & program created before capture
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
+
+    // The pointer assignments for the position and texture attributes are swapped.
+    glClear(GL_COLOR_BUFFER_BIT);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 3);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
+
+    // Redundant pointer assignments are added for the vertex attributes, which will be overridden
+    // with their final values before the next draw.
+    GLfloat unusedData[] = {
+        10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+    };
+    glDisableVertexAttribArray(positionLoc);
+    glDisableVertexAttribArray(texCoordLoc);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), unusedData + 6);
+    glEnableVertexAttribArray(positionLoc);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 2);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices);
+
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 5);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), unusedData + 7);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 3);
+    glEnableVertexAttribArray(texCoordLoc);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
+
+    // The stride for the position attribute is increased so that the data for the texture attribute
+    // falls entirely within its range.
+    GLfloat reorderedData[] = {
+        -0.25f, 0.75f,  0.0f,                                      // Position 0
+        0.0f,   0.0f,                                              // TexCoord 0
+        0.0f,   1.0f,                                              // TexCoord 1
+        1.0f,   1.0f,                                              // TexCoord 2
+        1.0f,   0.0f,                                              // TexCoord 3
+        0.0f,                                                      // Padding
+        -0.25f, -0.25f, 0.0f,                                      // Position 1
+        0.0f,   0.0f,   0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  // Padding
+        0.75f,  -0.25f, 0.0f,                                      // Position 2
+        0.0f,   0.0f,   0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  // Padding
+        0.75f,  0.75f,  0.0f,                                      // Position 3
+    };
+    glClear(GL_COLOR_BUFFER_BIT);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), reorderedData);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
+                          reorderedData + 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
+
+    // Add an invalid call so it shows up in capture as a comment.
+    // This is unrelated to the rest of the frame, but needs a home.
+    GLuint nonExistentBinding = 666;
+    GLuint nonExistentTexture = 777;
+    glBindTexture(nonExistentBinding, nonExistentTexture);
+    glGetError();
+
+    // Another unrelated change
+    // Bind a PIXEL_UNPACK_BUFFER buffer so it gets cleared in Reset
+    GLBuffer unpackBuffer;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, unpackBuffer);
+}
+
+// Test captured by capture_tests.py
+TEST_P(CapturedTest, MultiFrame)
+{
+    MultiFrame multiFrame;
+    multiFrame.testSetUp();
+
+    // Swap before the first frame so that setup gets its own frame
+    swapBuffers();
+    multiFrame.frame1();
+
+    swapBuffers();
+    multiFrame.frame2();
+
+    swapBuffers();
+    multiFrame.frame3();
+
+    swapBuffers();
+    multiFrame.frame4();
+
+    swapBuffers();
+    multiFrame.frame5();
+
+    // Empty frames to reach capture end.
+    for (int i = 0; i < 10; i++)
+    {
+        swapBuffers();
+    }
+    // Note: test teardown adds an additonal swap in
+    // ANGLETestBase::ANGLETestPreTearDown() when --angle-per-test-capture-label
+
+    multiFrame.testTearDown();
+}
+
+// Draw using two textures using multiple glActiveTexture calls, ensure they are correctly Reset
+TEST_P(CapturedTest, ActiveTextures)
+{
+    static constexpr char kVS[] = R"(attribute vec4 a_position;
+attribute vec2 a_texCoord;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_texCoord;
+})";
+
+    static constexpr char kFS[] = R"(precision mediump float;
+varying vec2 v_texCoord;
+uniform sampler2D s_texture1;
+uniform sampler2D s_texture2;
+void main()
+{
+    gl_FragColor = texture2D(s_texture1, v_texCoord) + texture2D(s_texture2, v_texCoord);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(program);
+
+    // Set the sampler uniforms
+    GLint samplerLoc1 = glGetUniformLocation(program, "s_texture1");
+    GLint samplerLoc2 = glGetUniformLocation(program, "s_texture2");
+    glUniform1i(samplerLoc1, 0);
+    glUniform1i(samplerLoc2, 1);
+
+    // Bind the texture objects before capture begins
+    constexpr const GLsizei kSize = 4;
+
+    GLTexture redTexture;
+    GLTexture greenTexture;
+    GLTexture blueTexture;
+
+    const std::vector<GLColor> kRedData(kSize * kSize, GLColor::red);
+    const std::vector<GLColor> kGreenData(kSize * kSize, GLColor::green);
+    const std::vector<GLColor> kBlueData(kSize * kSize, GLColor::blue);
+
+    // Red texture
+    glBindTexture(GL_TEXTURE_2D, redTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kRedData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Green texture
+    glBindTexture(GL_TEXTURE_2D, greenTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kGreenData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Blue texture
+    glBindTexture(GL_TEXTURE_2D, blueTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kBlueData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Create a yellow texture and an FBO color texture on GL_TEXTURE2 before capture begins,
+    // leaving yellowTexture bound to GL_TEXTURE2 and fboPreCapture unbound (attached to an FBO).
+    // Updating both via FBO during capture without touching GL_TEXTURE2 causes
+    // ResetReplayContextShared() to clobber GL_TEXTURE2 with fboPreCapture, testing that
+    // ResetReplay() tracks and restores GL_TEXTURE2 and the active texture unit.
+    GLTexture yellowTexture;
+    GLTexture fboPreCapture;
+    const std::vector<GLColor> kYellowData(kSize * kSize, GLColor::yellow);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, yellowTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kYellowData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindTexture(GL_TEXTURE_2D, fboPreCapture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLFramebuffer fboYellow;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboYellow);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, yellowTexture, 0);
+
+    GLFramebuffer fboPre;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboPre);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboPreCapture, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glBindTexture(GL_TEXTURE_2D, yellowTexture);
+
+    // First run the program with red and green active
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, redTexture);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, greenTexture);
+
+    // Trigger MEC
+    swapBuffers();
+    ASSERT_GL_NO_ERROR();
+
+    // Draw and verify results
+    drawQuad(program, "a_position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_EQ(0, 0, 255, 255, 0, 255);
+
+    // Change the active textures to green and blue
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, greenTexture);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, blueTexture);
+
+    // Draw and verify results
+    drawQuad(program, "a_position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_EQ(0, 0, 0, 255, 255, 255);
+
+    // Modify the green texture to ensure we bind the right index in Reset
+    // Also, modify one of its parameters to ensure it is restored in the end.
+    const std::vector<GLColor> kWhiteData(kSize * kSize, GLColor::white);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, greenTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kWhiteData.data());
+
+    // Modify parameters of the blue texture to test restoration if we have a parameter update
+    // without changing the texture content.
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, blueTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Clear pre-capture FBOs to dirty yellowTexture and fboPreCapture without binding GL_TEXTURE2
+    glBindFramebuffer(GL_FRAMEBUFFER, fboYellow);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, fboPre);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Bind non-default framebuffer during capture restore default to test framebuffer binding
+    // tracking in the tracer
+    GLTexture fboColor;
+    glBindTexture(GL_TEXTURE_2D, fboColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboColor, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Empty frames to reach capture end.
+    for (int i = 0; i < 10; i++)
+    {
+        swapBuffers();
+    }
+}
+
+// Test external sync detection and drop. AR camera titles import GL/EGL sync objects from
+// the camera side that never pass through the captured context's GL/EGL entry points.
+// When the trace later waits/destroys one of these sync objects, replay would generate
+// "Sync object does not exist" errors. This verifies the detection works and that the
+// trace warning comment is properly emitted in its place. We can test this because EGL sync objects
+// are validated at the display level but capture's "emitted sync" checking is done per share group.
+// So we create a second, non-shared context to create the sync after the main context's MEC runs.
+// The main context then consumes it, the call is valid, but its sync ID was never tracked by this
+// capture so it gets dropped.
+TEST_P(CapturedTest, ExternalEGLSync)
+{
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+    EGLConfig config  = window->getConfig();
+
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_fence_sync"));
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_wait_sync"));
+
+    static constexpr char kVS[] = R"(attribute vec4 a_position;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_position.xy * 0.5 + 0.5;
+})";
+    static constexpr char kFS[] = R"(precision mediump float;
+varying vec2 v_texCoord;
+uniform sampler2D s_texture;
+void main()
+{
+    gl_FragColor = texture2D(s_texture, v_texCoord);
+})";
+
+    // Create program and texture before capture start to be captured by MEC as starting
+    // resources
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, "s_texture"), 0);
+
+    constexpr GLsizei kSize = 2;
+    const std::vector<GLColor> kBlueData(kSize * kSize, GLColor::blue);
+    GLTexture texture;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kBlueData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Create a second non-shared context (different share group) with its own pbuffer surface
+    // before capture start so it setup is not in the main context's captured frames
+    EGLint pbufferAttribs[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLSurface auxSurface   = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
+    ASSERT_EGL_SUCCESS();
+    EGLContext auxContext = window->createContext(EGL_NO_CONTEXT, nullptr);
+    ASSERT_EGL_SUCCESS();
+
+    // Frame 1, before capture starts
+    drawQuad(program, "a_position", 0.5f);
+    swapBuffers();
+
+    // Frame 2, capture starts. Create EGL fence sync on the other (non-shared) context.
+    // The sync is created after main context's MEC and on a different share group, so
+    // the main capture never sees its creation
+    EGLSurface mainSurface = window->getSurface();
+    EGLContext mainContext = window->getContext();
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, auxSurface, auxSurface, auxContext));
+    EGLSyncKHR externalSync = eglCreateSyncKHR(dpy, EGL_SYNC_FENCE_KHR, nullptr);
+    glFlush();
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, mainSurface, mainSurface, mainContext));
+    ASSERT_NE(externalSync, EGL_NO_SYNC_KHR);
+
+    // Main context tries to wait on the external sync. These calls are valid but specify a sync
+    // ID this trace never created so both should be dropped with comments
+    EXPECT_EGL_TRUE(eglWaitSyncKHR(dpy, externalSync, 0));
+    drawQuad(program, "a_position", 0.5f);
+    swapBuffers();
+
+    EXPECT_EGL_TRUE(eglDestroySyncKHR(dpy, externalSync));
+    drawQuad(program, "a_position", 0.5f);
+    swapBuffers();
+
+    // Empty frames to reach capture end
+    for (int i = 0; i < 10; i++)
+    {
+        swapBuffers();
+    }
+
+    eglDestroySurface(dpy, auxSurface);
+    eglDestroyContext(dpy, auxContext);
+}
+
+// Regression test for capturing traces with zero-sized binary data (empty angledata file)
+TEST_P(CapturedTest, NoBinaryData)
+{
+    // Swap before the first captured frame so setup gets its own frame.
+    swapBuffers();
+
+    glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(0, 0, 16, 16);
+    swapBuffers();
+
+    glClearColor(0.4f, 0.5f, 0.6f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, 8, 8);
+    glDisable(GL_SCISSOR_TEST);
+
+    // Empty frames to reach capture end.
+    for (int i = 0; i < 10; i++)
+    {
+        swapBuffers();
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// Regression test for MEC surface-reference leak causing AR camera-feed trace failures.
+// Camera AR apps keep a side context in the render context's share group. When capture starts,
+// MEC loops through all side contexts making each current on the window surface to serialize
+// it. If we don't then release these afterwards there remains a dangling reference and the app
+// can no longer make it current on any thread, causing EGL_BAD_ACCESS/"Surface can only be
+// current on one thread" errors and invalid 'glBindFramebuffer(0xFFFFFFFF)' calls in the trace.
+// Test capture and replay of glClientWaitSync.
+TEST_P(CapturedTest, ClientWaitSync)
+{
+    // We need GLES 3.0 for fence sync
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    // Swap before the first captured frame so setup gets its own frame.
+    swapBuffers();
+
+    GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    ASSERT_NE(sync, nullptr);
+
+    // Force a flush and finish to guarantee the sync is signaled
+    glFlush();
+    glFinish();
+
+    GLenum status = glClientWaitSync(sync, 0, 0);
+    EXPECT_EQ(status, static_cast<GLenum>(GL_ALREADY_SIGNALED));
+
+    glDeleteSync(sync);
+
+    // Empty frames to reach capture end
+    for (int i = 0; i < 10; i++)
+    {
+        swapBuffers();
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// Regression test for non-frame boundary swaps. Some side-contexts call SwapBuffers on
+// Pbuffer surfaces in addition to the swaps done on the main EGL_WINDOW, and these side-swaps
+// must not be treated as capture frame boundaries. This test interleaves 1x1-pbuffer swaps
+// with window swaps
+TEST_P(CapturedTest, NonFrameBoundarySwaps)
+{
+    EGLWindow *window      = getEGLWindow();
+    EGLDisplay dpy         = window->getDisplay();
+    EGLConfig config       = window->getConfig();
+    EGLSurface mainSurface = window->getSurface();
+    EGLContext mainContext = window->getContext();
+
+    // Small aux pbuffer acting like a side-context's surface
+    EGLint pbufferAttribs[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLSurface sideSurface  = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Frame 1, before capture starts
+    swapBuffers();
+
+    // Captured starts. Before each real window swap, swap the 1x1 pbuffer on the same context
+    for (int i = 0; i < 10; i++)
+    {
+        ASSERT_EGL_TRUE(eglMakeCurrent(dpy, sideSurface, sideSurface, mainContext));
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_EGL_TRUE(eglSwapBuffers(dpy, sideSurface));
+
+        ASSERT_EGL_TRUE(eglMakeCurrent(dpy, mainSurface, mainSurface, mainContext));
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        swapBuffers();
+    }
+
+    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, mainSurface, mainSurface, mainContext));
+    eglDestroySurface(dpy, sideSurface);
+    ASSERT_GL_NO_ERROR();
+}
+
+// This test's trace output is intentionally excluded from the output comparison
+TEST_P(CapturedTest, MECSurfaceRelease)
+{
+    EGLWindow *window      = getEGLWindow();
+    EGLDisplay dpy         = window->getDisplay();
+    EGLConfig config       = window->getConfig();
+    EGLSurface surface     = window->getSurface();
+    EGLContext mainContext = window->getContext();
+
+    // Create a side context in the main context's share group representing the AR app's camera
+    // context
+    EGLContext sideContext = window->createContext(mainContext, nullptr);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(sideContext, EGL_NO_CONTEXT);
+
+    EGLint pbufferAttribs[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLSurface sidePbuffer  = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, sidePbuffer, sidePbuffer, sideContext));
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, mainContext));
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // Swap and start capture while the side context is live in our share group. MEC will make
+    // it current for capturing its state
+    swapBuffers();
+
+    // Detach and reacquire the window surface. If MEC left a side context reference to the window
+    // surface it will fail with EGL_BAD_ACCESS
+    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    EGLBoolean reacquired = eglMakeCurrent(dpy, surface, surface, mainContext);
+    EXPECT_EGL_TRUE(reacquired);
+
+    if (reacquired)
+    {
+        // Reach capture end
+        for (int i = 0; i < 10; i++)
+        {
+            swapBuffers();
+        }
+    }
+
+    eglDestroySurface(dpy, sidePbuffer);
+    eglDestroyContext(dpy, sideContext);
+}
+
+// Run with multisampled-render-to-texture force-enabled so that
+// GL_EXT_multisampled_render_to_texture is set for all platforms
+class CapturedTestMSRTT : public CapturedTest
+{};
+
+// Test that MEC preserves the sample count of a texture attached with
+// glFramebufferTexture2DMultisampleEXT
+TEST_P(CapturedTestMSRTT, MultisampledRenderToTextureAttachment)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    constexpr GLsizei kSize    = 16;
+    constexpr GLsizei kSamples = 4;
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, kSamples, GL_DEPTH24_STENCIL8, kSize,
+                                        kSize);
+
+    // Both attachments must be MSRTT and have the same sample count
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color,
+                                         0, kSamples);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    swapBuffers();
+
+    // Use FB during capture so it ends up in trace's setup
+    for (int frame = 0; frame < 10; frame++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        swapBuffers();
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CapturedTest);
+// Capture is only supported on the Vulkan backend
+ANGLE_INSTANTIATE_TEST(CapturedTest, ES3_VULKAN());
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CapturedTestMSRTT);
+ANGLE_INSTANTIATE_TEST(CapturedTestMSRTT,
+                       ES3_VULKAN().enable(Feature::EnableMultisampledRenderToTexture));
+
+#if defined(CAPTURE_TESTS_AHB_SUPPORT)
+// Android-only tests run in their own suite after all other suites, so that the context IDs
+// they consume do not shift the expected output of tests that run on every platform
+class CapturedTestAHB : public CapturedTest
+{};
+
+// Test capture and replay of external AHBs on Android platforms. On other platforms
+// not supporting AHBs, the test will be skipped and the outtput will not be
+// compared to the expected results
+TEST_P(CapturedTestAHB, ExternalAHB)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_EGL_image_external"));
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(getEGLWindow()->getDisplay(), "EGL_KHR_image_base"));
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(getEGLWindow()->getDisplay(),
+                                                     "EGL_ANDROID_image_native_buffer"));
+
+    static constexpr char kVS[] = R"(attribute vec4 a_position;
+attribute vec2 a_texCoord;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_texCoord;
+})";
+
+    static constexpr char kFS[] = R"(#extension GL_OES_EGL_image_external : require
+precision mediump float;
+varying vec2 v_texCoord;
+uniform samplerExternalOES s_texture;
+void main()
+{
+    gl_FragColor = texture2D(s_texture, v_texCoord);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    GLint samplerLoc = glGetUniformLocation(program, "s_texture");
+    glUniform1i(samplerLoc, 0);
+
+    constexpr size_t kSize                 = 2;
+    GLubyte redPixels[kSize * kSize * 4]   = {255, 0, 0, 255, 255, 0, 0, 255,
+                                              255, 0, 0, 255, 255, 0, 0, 255};
+    GLubyte greenPixels[kSize * kSize * 4] = {0, 255, 0, 255, 0, 255, 0, 255,
+                                              0, 255, 0, 255, 0, 255, 0, 255};
+    GLubyte bluePixels[kSize * kSize * 4]  = {0, 0, 255, 255, 0, 0, 255, 255,
+                                              0, 0, 255, 255, 0, 0, 255, 255};
+
+    // First frame before capture starts, we create an AHB filled with red and bind it
+    AHardwareBuffer *redAHB = AllocateRGBA8AHB(kSize, kSize, redPixels);
+    EGLImageKHR redImage =
+        eglCreateImageKHR(getEGLWindow()->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                          angle::android::AHardwareBufferToClientBuffer(redAHB), nullptr);
+    ASSERT_EGL_SUCCESS();
+
+    GLTexture externalTexture;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, externalTexture);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    // External image binding
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, redImage);
+    ASSERT_GL_NO_ERROR();
+    swapBuffers();
+
+    // Capture begins on this frame. Draw using binding from before caapture start.
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
+    swapBuffers();
+
+    // Second captured frame -- create green AHB and rebind
+    AHardwareBuffer *greenAHB = AllocateRGBA8AHB(kSize, kSize, greenPixels);
+    EGLImageKHR greenImage =
+        eglCreateImageKHR(getEGLWindow()->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                          angle::android::AHardwareBufferToClientBuffer(greenAHB), nullptr);
+    ASSERT_EGL_SUCCESS();
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, externalTexture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, greenImage);
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_EQ(0, 0, 0, 255, 0, 255);
+    swapBuffers();
+
+    // Third captured frame -- create blue AHB and rebind
+    AHardwareBuffer *blueAHB = AllocateRGBA8AHB(kSize, kSize, bluePixels);
+    EGLImageKHR blueImage =
+        eglCreateImageKHR(getEGLWindow()->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                          angle::android::AHardwareBufferToClientBuffer(blueAHB), nullptr);
+    ASSERT_EGL_SUCCESS();
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, externalTexture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, blueImage);
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_EQ(0, 0, 0, 0, 255, 255);
+    swapBuffers();
+
+    // Fourth captured frame -- draw again without rebinding reusing the blue
+    // binding from the previous frame
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_EQ(0, 0, 0, 0, 255, 255);
+    swapBuffers();
+
+    // Fifth captured frame -- destroy the green EGLImage during capture
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), greenImage);
+    AHardwareBuffer_release(greenAHB);
+
+    // Empty frames to reach capture end.
+    for (int i = 0; i < 10; i++)
+    {
+        swapBuffers();
+    }
+
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), redImage);
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), blueImage);
+    AHardwareBuffer_release(redAHB);
+    AHardwareBuffer_release(blueAHB);
+}
+
+ANGLE_INSTANTIATE_TEST(CapturedTestAHB, ES3_VULKAN());
+#endif  // defined(CAPTURE_TESTS_AHB_SUPPORT)
+}  // anonymous namespace

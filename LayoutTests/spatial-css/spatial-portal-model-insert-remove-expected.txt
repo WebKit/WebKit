@@ -1,0 +1,4 @@
+
+PASS Dynamically inserting a <model> into a spatial portal loads it
+PASS Removing spatial: portal renders the child model in standalone mode
+

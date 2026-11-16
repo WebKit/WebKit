@@ -1,0 +1,15 @@
+Test that framebuffer rendering works correctly when WEBGL_draw_buffers extension is enabled after framebuffer setup.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 6 PASS, 0 FAIL
+
+PASS WebGL1 context created
+PASS Framebuffer created and texture attached BEFORE extension enabled
+PASS WEBGL_draw_buffers extension enabled AFTER framebuffer setup
+PASS getError was expected value: NO_ERROR : draw should succeed
+PASS framebuffer should contain red pixels after draw
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

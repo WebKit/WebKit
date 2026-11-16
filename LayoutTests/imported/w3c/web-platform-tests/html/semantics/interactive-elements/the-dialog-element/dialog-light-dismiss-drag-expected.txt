@@ -1,0 +1,4 @@
+outside dialog dialog
+
+PASS Dialog should not light dismiss when clicking inside the dialog and dragging outside of it.
+

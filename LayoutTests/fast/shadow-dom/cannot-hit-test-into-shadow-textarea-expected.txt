@@ -1,0 +1,5 @@
+PASS range.commonAncestorContainer is textareaElement
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

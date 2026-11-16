@@ -1,0 +1,6 @@
+PASS colorBeforeHiding is "rgb(255, 0, 0)"
+PASS colorAfterHiding is "rgb(255, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

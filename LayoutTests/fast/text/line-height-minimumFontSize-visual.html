@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+    internals.settings.setMinimumFontSize(32);
+</script>
+<style>
+.test {
+    display: inline-block;
+    width: 100px;
+    border: 2px solid black;
+}
+</style>
+</head>
+<body style="font-size: 32px;">
+<div class="test" style="font-size: 16px; line-height: normal;">Hello World</div>
+<div class="test" style="font-size: x-small; line-height: normal;">Hello World</div>
+<div class="test" style="font-size: 16px; line-height: 24px;">Hello World</div>
+<div class="test" style="font-size: x-small; line-height: 15px;">Hello World</div>
+<div class="test" style="font-size: 16px; line-height: 150%;">Hello World</div>
+<div class="test" style="font-size: x-small; line-height: 150%;">Hello World</div>
+<div class="test" style="font-size: 16px; line-height: 1.5;">Hello World</div>
+<div class="test" style="font-size: x-small; line-height: 1.5;">Hello World</div>
+</body>
+</html>

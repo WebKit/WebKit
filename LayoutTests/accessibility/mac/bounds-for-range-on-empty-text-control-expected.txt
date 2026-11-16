@@ -1,0 +1,11 @@
+This test ensures that boundsForRange returns a valid caret rect for the (0, 0) range on empty text controls, so that ATs (e.g. VoiceOver's VO-Shift-M context menu) can position UI next to the caret rather than at a fallback location like the middle of the page.
+
+PASS: caretSizeIsNonEmpty(emptyPassword.boundsForRange(0, 0)) === true
+PASS: caretSizeIsNonEmpty(filledPassword.boundsForRange(0, 0)) === true
+PASS: caretSizeIsNonEmpty(emptyText.boundsForRange(0, 0)) === true
+PASS: caretSizeIsNonEmpty(emptyTextarea.boundsForRange(0, 0)) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

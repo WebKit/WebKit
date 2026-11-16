@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+
+<script>
+function callQueueMicrotask(key, FunctionConstructor = Function) {
+    parent.queueMicrotask(FunctionConstructor(`
+        top["${key}"]++;
+    `));
+}
+</script>

@@ -1,0 +1,9 @@
+
+PASS A bubbling click dispatched at the document fires DOMActivate once
+PASS A non-bubbling click dispatched at the document fires DOMActivate once
+PASS A bubbling click dispatched at the body fires DOMActivate once
+PASS composedPath() of a click dispatched at the document contains the document once, followed by the window
+PASS DOMActivate from a click dispatched at the document bubbles to the window once
+PASS A click dispatched at the document and canceled by a window listener does not fire DOMActivate
+PASS A bubbling click dispatched at an iframe's document fires DOMActivate once
+

@@ -1,0 +1,68 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <wtf/StdLibExtras.h>
+
+// We do not delete "delete" operators to allow classes to have a virtual destructor. The following code raises a compile error like "error: attempt to use a deleted function".
+//
+//     class A {
+//     public:
+//         virtual ~A();
+//         void operator delete(void*) = delete;
+//         void operator delete[](void*) = delete;
+//     };
+//
+#define WTF_FORBID_HEAP_ALLOCATION \
+private: \
+    void* operator new(size_t, void*) = delete; \
+    void* operator new[](size_t, void*) = delete; \
+    void* operator new(size_t) = delete; \
+    void* operator new[](size_t size) = delete; \
+    void* operator new(size_t, NotNullTag, void*) = delete; \
+    typedef int __thisIsHereToForceASemicolonAfterThisForbidHeapAllocationMacro
+
+#define WTF_FORBID_HEAP_ALLOCATION_ALLOWING_PLACEMENT_NEW \
+public: \
+    void* operator new(size_t, NotNullTag, void* location) \
+    { \
+        ASSERT(location); \
+        return location; \
+    } \
+    void* operator new(size_t, void* location) { return location; } \
+    void* operator new[](size_t, void* location)  { return location; } \
+private: \
+    void* operator new(size_t) = delete; \
+    void* operator new[](size_t size) = delete; \
+    typedef int __thisIsHereToForceASemicolonAfterThisForbidHeapAllocationAllowingPlacementNewMacro
+
+// WTF::usesTZoneHeap is defined in FastMalloc.h
+#define WTF_FORBID_HEAP_ALLOCATION_WITH_VALIDATION(name) \
+    static_assert(!WTF::usesTZoneHeap<name>()); \
+    WTF_FORBID_HEAP_ALLOCATION
+
+#define WTF_FORBID_HEAP_ALLOCATION_FOR_ABSTRACT_CLASS(name) \
+    WTF_FORBID_HEAP_ALLOCATION_WITH_VALIDATION(name)

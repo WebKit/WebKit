@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    div {
+      width: 100px;
+      height: 100px;
+      display: inline-block;
+    }
+    .fully-opaque {
+      background-color: green;
+    }
+    .fully-transparent {
+      background-color: transparent;
+    }
+    .half-transparent {
+        background-color: rgba(0, 128, 0, 0.4);
+    }
+  </style>
+  <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+  <div class="fully-opaque"></div>
+  <div class="fully-transparent"></div>
+  <div class="half-transparent"></div>  
+  <br>  
+  <svg width="400">
+    <rect id="fully-opaque" width="100" height="100" fill="green"/>
+    <rect id="fully-transparent" x="104" width="100" height="100" fill="none"/>
+    <rect id="half-transparent" x="208" width="100" height="100" fill="rgba(0, 128, 0, 0.4)"/>
+  </svg>
+  <script>
+     shouldBeEqualToString("getComputedStyle(document.querySelector('div.fully-opaque')).backgroundColor", "rgb(0, 128, 0)");
+     shouldBeEqualToString("getComputedStyle(document.querySelector('div.fully-transparent')).backgroundColor", "rgba(0, 0, 0, 0)");     
+     shouldBeEqualToString("getComputedStyle(document.querySelector('div.half-transparent')).backgroundColor", "rgba(0, 128, 0, 0.4)"); 
+     shouldBeEqualToString("getComputedStyle(document.querySelector('svg>rect#fully-opaque')).fill", "rgb(0, 128, 0)");
+     shouldBeEqualToString("getComputedStyle(document.querySelector('svg>rect#fully-transparent')).fill", "none");
+     shouldBeEqualToString("getComputedStyle(document.querySelector('svg>rect#half-transparent')).fill", "rgba(0, 128, 0, 0.4)");     
+  </script>
+  <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+foo
+bar
+two
+three
+four
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 2
+        (GraphicsLayer
+          (anchor 0.00 0.00)
+          (bounds 800.00 600.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (backgroundColor #1E1E1E)
+        )
+        (GraphicsLayer
+          (bounds 800.00 600.00)
+          (children 1
+            (GraphicsLayer
+              (position 8.00 26.00)
+              (bounds 200.00 200.00)
+              (drawsContent 1)
+              (appleVisualEffectData
+              (effect blur-material)
+              (contextEffect blur-material)
+              (colorScheme dark))
+              (structural layer
+                (position 108.00 126.00)
+                (bounds 200.00 200.00)
+              )
+              (backdrop layer (material)
+                (position 0.00 0.00)
+                (bounds 200.00 200.00)
+              )
+              (children 3
+                (GraphicsLayer
+                  (position 0.00 18.00)
+                  (bounds 200.00 18.00)
+                  (drawsContent 1)
+                  (appleVisualEffectData
+                  (effect vibrancy-secondary-label)
+                  (contextEffect blur-material)
+                  (colorScheme dark))
+                )
+                (GraphicsLayer
+                  (position 0.00 36.00)
+                  (bounds 200.00 18.00)
+                  (drawsContent 1)
+                  (appleVisualEffectData
+                  (effect vibrancy-tertiary-label)
+                  (contextEffect blur-material)
+                  (colorScheme dark))
+                )
+                (GraphicsLayer
+                  (position 0.00 54.00)
+                  (bounds 200.00 18.00)
+                  (drawsContent 1)
+                  (appleVisualEffectData
+                  (effect vibrancy-quaternary-label)
+                  (contextEffect blur-material)
+                  (colorScheme dark))
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

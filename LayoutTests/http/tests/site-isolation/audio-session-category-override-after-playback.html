@@ -1,0 +1,82 @@
+<!-- webkit-test-runner [ allowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+</head>
+<body>
+<script>
+description("A navigator.audioSession.type override set while another frame of the same page is already playing audible media replaces the audio session's category, both when it is lower than what that frame computes and when it is higher. The sibling test covers a frame that joins a page whose type is already set, which travels a different path: this one changes the type afterwards, so the other frame's process learns about it from the per-field DocumentSyncData broadcast rather than from the state it was created with. This test deliberately does not enable site isolation, so the site-isolated run is compared against the same expectations.");
+jsTestIsAsync = true;
+
+function nextFrameMessage()
+{
+    return new Promise((resolve, reject) => {
+        window.onmessage = event => {
+            if (event.origin !== "http://localhost:8000") {
+                reject(new Error(`unexpected origin ${event.origin}`));
+                return;
+            }
+            resolve(event.data);
+        };
+    });
+}
+
+onload = async () => {
+    try {
+        // localhost and 127.0.0.1 are different sites, so with site isolation the iframe plays in its
+        // own process. No override is set yet, so it computes MediaPlayback for itself.
+        const playing = nextFrameMessage();
+        const iframe = document.createElement("iframe");
+        iframe.src = "http://localhost:8000/site-isolation/resources/audio-session-playback-frame.html";
+        document.body.appendChild(iframe);
+
+        playingFrameCategory = await playing;
+        shouldBeEqualToString("playingFrameCategory", "MediaPlayback");
+        await waitForSystemAudioSessionCategory("MediaPlayback");
+        testPassed("the real audio session's category is MediaPlayback before the override is set");
+
+        // Setting the type now has to reach the already-playing frame's process.
+        const lowered = nextFrameMessage();
+        navigator.audioSession.type = "ambient";
+        shouldBeEqualToString("navigator.audioSession.type", "ambient");
+        frames[0].postMessage("AmbientSound", "http://localhost:8000");
+
+        playingFrameCategoryAfterOverride = await lowered;
+        shouldBeEqualToString("playingFrameCategoryAfterOverride", "AmbientSound");
+
+        overridingFrameCategory = internals.audioSessionCategory();
+        shouldBeEqualToString("overridingFrameCategory", "AmbientSound");
+
+        await waitForSystemAudioSessionCategory("AmbientSound");
+        testPassed("the real audio session's category is AmbientSound once the override is set");
+
+        // A lowered category on the real session only means the override reached the playing frame if
+        // that frame still has something to play. Had its media ended, its own category would have
+        // dropped without any override.
+        const stillPlaying = nextFrameMessage();
+        frames[0].postMessage("playing?", "http://localhost:8000");
+        playingFrameState = await stillPlaying;
+        shouldBeEqualToString("playingFrameState", "playing");
+
+        // An override replaces the computed category in either direction, so it raises it just as well:
+        // PlayAndRecord over the MediaPlayback the playing frame computes, with nothing capturing.
+        const raised = nextFrameMessage();
+        navigator.audioSession.type = "play-and-record";
+        frames[0].postMessage("PlayAndRecord", "http://localhost:8000");
+
+        playingFrameCategoryAfterRaise = await raised;
+        shouldBeEqualToString("playingFrameCategoryAfterRaise", "PlayAndRecord");
+
+        await waitForSystemAudioSessionCategory("PlayAndRecord");
+        testPassed("the real audio session's category is PlayAndRecord once the override is raised");
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>

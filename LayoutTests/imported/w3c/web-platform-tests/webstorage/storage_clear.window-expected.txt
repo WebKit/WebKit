@@ -1,0 +1,4 @@
+
+PASS Clear in localStorage
+PASS Clear in sessionStorage
+

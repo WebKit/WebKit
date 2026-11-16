@@ -1,0 +1,8 @@
+Description
+
+This test verifies that, for a resource fetched via message handler, the initiator_url points to script that sends the message.
+
+
+
+FAIL The initiator Url for /images/blue.png?initiator_url_iframe_postmessage initiatorUrl from iframe postMessage() must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/iframe-post-message.html' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/iframe-post-message.html" but got (undefined) undefined
+

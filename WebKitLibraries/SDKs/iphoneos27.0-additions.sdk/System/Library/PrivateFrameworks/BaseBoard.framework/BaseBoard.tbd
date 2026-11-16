@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64e-ios, arm64e.x1-ios]
+install-name: /System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard
+current-version: 0
+exports:
+-       targets: [arm64e-ios, arm64e.x1-ios]
+        objc-classes: [BSAction, BSActionResponder, BSActionResponse, BSMutableSettings]
+...

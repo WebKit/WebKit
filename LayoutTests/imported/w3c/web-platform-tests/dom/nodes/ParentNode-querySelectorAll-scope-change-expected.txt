@@ -1,0 +1,3 @@
+
+PASS Change the scope of querySelectorAll
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+}
+canvas {
+    width: 5px;
+    height: 5px;
+    vertical-align: top;
+}
+#container {
+    width: 700px;
+    line-height: 5px;
+}
+</style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+function runTest() {
+    const count = 20020;
+    for (let i = 0; i < count; ++i) {
+        let canvas = document.createElement("canvas");
+        canvas.width = 25;
+        canvas.height = 25;
+        let ctx = canvas.getContext("2d");
+        ctx.fillStyle = "lime";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        container.appendChild(canvas);
+    }
+}
+runTest();
+</script>
+</body>
+</html>

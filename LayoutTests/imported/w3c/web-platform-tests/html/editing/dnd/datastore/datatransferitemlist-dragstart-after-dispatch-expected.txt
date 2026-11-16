@@ -1,0 +1,5 @@
+Drag me
+Drop here
+
+PASS add() and remove() on a dragstart DataTransfer after the event has been dispatched
+

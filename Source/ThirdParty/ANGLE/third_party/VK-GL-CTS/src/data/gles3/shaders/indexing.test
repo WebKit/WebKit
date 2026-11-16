@@ -1,0 +1,304 @@
+# https://github.com/KhronosGroup/WebGL/blob/main/sdk/tests/conformance2/glsl3/vector-dynamic-indexing.html
+group moredynamic "More dynamic indexing tests"
+
+    case matrix_twice
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            void main() {
+                mat2 m = mat2(0.0, 0.0, 0.0, 1.0);
+                f = m[u_zero + 1][u_zero + 1];
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case with_value_from_indexing_expression
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            void main() {
+                ivec2 i = ivec2(0, 2);
+                vec4 v = vec4(0.0, 0.2, 1.0, 0.4);
+                f = v[i[u_zero + 1]];
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case lvalue
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            void main() {
+                vec4 v = vec4(1.0, 2.0, 3.0, 4.0);
+                v[u_zero + 1] = 5.0;
+                vec4 expected = vec4(1.0, 5.0, 3.0, 4.0);
+                f = 1.0 - distance(v, expected);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case lvalue_with_value_from_indexing_expression
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            void main() {
+                ivec2 i = ivec2(0, 2);
+                vec4 v = vec4(1.0, 2.0, 3.0, 4.0);
+                v[i[u_zero + 1]] = 5.0;
+                vec4 expected = vec4(1.0, 2.0, 5.0, 4.0);
+                f = 1.0 - distance(v, expected);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case builtin_fncall_out_parameter
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            void main() {
+                vec4 v = vec4(1.0, 2.0, 3.0, 4.0);
+                modf(5.5, v[u_zero + 3]);
+                vec4 expected = vec4(1.0, 2.0, 3.0, 5.0);
+                f = 1.0 - distance(v, expected);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case user_defined_fncall_out_parameter
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            void foo(out float f) {
+                modf(5.5, f);
+            }
+            void main() {
+                vec4 v = vec4(1.0, 2.0, 3.0, 4.0);
+                foo(v[u_zero + 3]);
+                vec4 expected = vec4(1.0, 2.0, 3.0, 5.0);
+                f = 1.0 - distance(v, expected);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case user_defined_fncall_inout_parameter
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            void foo(inout float f) {
+                float g = f + 2.5;
+                modf(g, f);
+            }
+            void main() {
+                vec4 v = vec4(1.0, 2.0, 3.0, 4.0);
+                foo(v[u_zero + 2]);
+                vec4 expected = vec4(1.0, 2.0, 5.0, 4.0);
+                f = 1.0 - distance(v, expected);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case with_side_effects
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            int sideEffectCounter = 0;
+            int funcWithSideEffects() {
+                sideEffectCounter++;
+                return 2;
+            }
+            void main() {
+                vec4 v = vec4(1.0, 2.0, 3.0, 4.0);
+                v[funcWithSideEffects()] = 5.0;
+                vec4 expected = vec4(1.0, 2.0, 5.0, 4.0);
+                f = 1.0 - distance(v, expected);
+                if (sideEffectCounter != 1) {
+                    f = 0.0;
+                }
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case inout_with_side_effects
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            int sideEffectCounter = 0;
+            int funcWithSideEffects() {
+                sideEffectCounter++;
+                return 2;
+            }
+            void main() {
+                vec4 v = vec4(1.0, 2.0, 3.0, 4.0);
+                v[funcWithSideEffects()]++;
+                vec4 expected = vec4(1.0, 2.0, 4.0, 4.0);
+                f = 1.0 - distance(v, expected);
+                if (sideEffectCounter != 1) {
+                    f = 0.0;
+                }
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case user_defined_fncall_inout_parameter_with_index_with_side_effects
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            int sideEffectCounter = 0;
+            void foo(inout float f) {
+                float g = f + 2.5;
+                modf(g, f);
+            }
+            int funcWithSideEffects() {
+                sideEffectCounter++;
+                return 2;
+            }
+            void main() {
+                vec4 v = vec4(1.0, 2.0, 3.0, 4.0);
+                foo(v[funcWithSideEffects()]);
+                vec4 expected = vec4(1.0, 2.0, 5.0, 4.0);
+                f = 1.0 - distance(v, expected);
+                if (sideEffectCounter != 1) {
+                    f = 0.0;
+                }
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case lvalue_with_uint
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            void main() {
+                vec4 v = vec4(1.0, 2.0, 3.0, 4.0);
+                v[u_zero] = 5.0;
+                vec4 expected = vec4(5.0, 2.0, 3.0, 4.0);
+                f = 1.0 - distance(v, expected);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case uniform
+        version 300 es
+        values { output float f = 0.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform vec4 u_zeroVec;
+            uniform int u_zero;
+            void main() {
+                f = u_zeroVec[u_zero];
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case sequence_vector_lvalue
+        version 300 es
+        values { output bool success = true; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            int sideEffectCounter = 0;
+            float func() {
+                ++sideEffectCounter;
+                return -1.0;
+            }
+            void main() {
+                vec4 v = vec4(0.0, 2.0, 4.0, 6.0);
+                float f = (func(), (++v[u_zero + sideEffectCounter]));
+                success = (abs(f - 3.0) < 0.01 && abs(v[1] - 3.0) < 0.01 && sideEffectCounter == 1);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case matrix_twice_in_lvalue
+        version 300 es
+        values { output float f = 1.0; }
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            uniform int u_zero;
+            void main() {
+                mat2 m = mat2(0.0, 0.0, 0.0, 0.0);
+                m[u_zero + 1][u_zero + 1] = float(u_zero + 1);
+                f = m[1][1];
+                ${OUTPUT}
+            }
+        ""
+    end
+
+end # moredynamic

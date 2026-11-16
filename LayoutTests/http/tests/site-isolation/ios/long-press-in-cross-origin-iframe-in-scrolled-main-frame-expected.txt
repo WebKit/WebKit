@@ -1,0 +1,11 @@
+Long-pressing text inside a cross-origin iframe should select the word under the finger while the main frame is scrolled, i.e. no layer between the UI process and the subframe process may apply the main frame's scroll offset a second time.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.scrollY is 200
+PASS anchorWord is "token5"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

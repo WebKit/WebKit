@@ -1,0 +1,18 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "core_hdrs",
+    srcs = [
+        "FactoryHelpers.h",
+    ],
+    visibility = [
+        "//modules/skshaper:__pkg__",
+        "//modules/skshaper/include:__pkg__",
+    ],
+)

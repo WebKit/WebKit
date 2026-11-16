@@ -1,0 +1,6 @@
+The following bar should be green.
+
+This line should be green.
+
+PASS NEGATED Dynamic handling of :empty
+

@@ -1,0 +1,8 @@
+
+
+PASS Setup tests
+PASS togglecamera and togglemicrophone on various iframes
+PASS togglecamera and mute/unmute events order
+PASS togglemicrophone and mute/unmute events order
+PASS togglescreenshare and mute/unmute events order
+

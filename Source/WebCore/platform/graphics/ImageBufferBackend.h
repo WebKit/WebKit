@@ -1,0 +1,200 @@
+/*
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/ColorSpace.h>
+#include <WebCore/CopyImageOptions.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
+#include <WebCore/GraphicsTypesGL.h>
+#include <WebCore/ImageBufferAllocator.h>
+#include <WebCore/ImageBufferParameters.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/PixelBufferFormat.h>
+#include <WebCore/PlatformLayer.h>
+#include <WebCore/RenderingMode.h>
+#include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
+
+#if USE(CAIRO)
+#include "RefPtrCairo.h"
+#include <cairo.h>
+#endif
+
+#if HAVE(IOSURFACE)
+#include <WebCore/IOSurface.h>
+#endif
+
+#if USE(SKIA)
+class SkSurface;
+#endif
+
+namespace WTF {
+class TextStream;
+}
+
+namespace WebCore {
+
+struct ImageBufferCreationContext;
+class GraphicsContext;
+class GraphicsContextGL;
+#if HAVE(IOSURFACE)
+class IOSurfacePool;
+#endif
+class NativeImage;
+class PixelBuffer;
+class PixelBufferSourceView;
+class ProcessIdentity;
+class SharedBuffer;
+
+enum class PreserveResolution : bool {
+    No,
+    Yes,
+};
+
+enum class SetNonVolatileResult : uint8_t {
+    Valid,
+    Empty
+};
+
+enum class VolatilityState : uint8_t {
+    NonVolatile,
+    Volatile
+};
+
+class ThreadSafeImageBufferFlusher {
+    WTF_MAKE_TZONE_ALLOCATED(ThreadSafeImageBufferFlusher);
+    WTF_MAKE_NONCOPYABLE(ThreadSafeImageBufferFlusher);
+public:
+    ThreadSafeImageBufferFlusher() = default;
+    virtual ~ThreadSafeImageBufferFlusher() = default;
+    virtual void flush() = 0;
+};
+
+class ImageBufferBackendSharing {
+public:
+    virtual ~ImageBufferBackendSharing() = default;
+    virtual bool isImageBufferBackendHandleSharing() const { return false; }
+};
+
+class ImageBufferBackend {
+public:
+    WEBCORE_EXPORT virtual ~ImageBufferBackend();
+
+    WEBCORE_EXPORT static IntSize calculateSafeBackendSize(const ImageBufferParameters&);
+    NODELETE WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
+    WEBCORE_EXPORT static AffineTransform calculateBaseTransform(const ImageBufferParameters&);
+
+    virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
+    virtual size_t memoryCost() const { return calculateMemoryCost(m_backendSize, bytesPerRow()); }
+    NODELETE WEBCORE_EXPORT AffineTransform baseTransform() const;
+
+    virtual GraphicsContext& context() = 0;
+    virtual void flushContext() { }
+    virtual void submitDrawingCommands() { }
+
+    virtual RefPtr<NativeImage> copyNativeImage() = 0;
+    virtual RefPtr<NativeImage> createNativeImageReference() = 0;
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
+
+    WEBCORE_EXPORT void convertToLuminanceMask();
+    virtual void transformToColorSpace(const ColorSpace&) { }
+
+    virtual void getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination) = 0;
+    virtual void putPixelBuffer(const PixelBufferSourceView&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
+
+#if HAVE(IOSURFACE)
+    virtual IOSurface* surface() { return nullptr; }
+#endif
+
+#if USE(CAIRO)
+    virtual RefPtr<cairo_surface_t> createCairoSurface() { return nullptr; }
+#endif
+
+#if USE(SKIA)
+    virtual SkSurface* surface() const { return nullptr; }
+#endif
+
+    virtual bool isInUse() const { return false; }
+    virtual void releaseGraphicsContext() { }
+
+    virtual void transferToNewContext(const ImageBufferCreationContext&) { }
+
+    // Returns true on success.
+    virtual bool setVolatile() { return true; }
+    virtual SetNonVolatileResult setNonVolatile() { return SetNonVolatileResult::Valid; }
+    virtual VolatilityState volatilityState() const { return VolatilityState::NonVolatile; }
+    virtual void setVolatilityState(VolatilityState) { }
+
+    virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
+
+    virtual bool canMapBackingStore() const = 0;
+    virtual void ensureNativeImagesHaveCopiedBackingStore() { }
+
+    virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }
+
+    virtual bool isNullImageBufferBackend() const { return false; }
+
+    virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() { return nullptr; }
+    virtual void releaseLayerContentsDisplayDelegate() { }
+
+    virtual void prepareForDisplay() { }
+
+    WEBCORE_EXPORT virtual String debugDescription() const = 0;
+
+protected:
+    WEBCORE_EXPORT ImageBufferBackend(const ImageBufferParameters&);
+
+    virtual unsigned bytesPerRow() const = 0;
+
+    IntSize size() const { return m_backendSize; }
+    float resolutionScale() const { return m_resolutionScale; }
+    const ColorSpace& colorSpace() const LIFETIME_BOUND { return m_colorSpace; }
+    ImageBufferFormat bufferFormat() const { return m_bufferFormat; }
+    PixelFormat pixelFormat() const { return m_bufferFormat.pixelFormat; }
+    RenderingPurpose purpose() const { return m_purpose; }
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    NODELETE void convertToLuminanceMaskFloat16();
+#endif
+    void convertToLuminanceMaskUint8();
+
+    WEBCORE_EXPORT void getPixelBuffer(const IntRect& srcRect, std::span<const uint8_t> data, PixelBuffer& destination);
+    WEBCORE_EXPORT void putPixelBuffer(const PixelBufferSourceView&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, std::span<uint8_t> destination);
+
+    const IntSize m_backendSize;
+    const float m_resolutionScale;
+    ColorSpace m_colorSpace;
+    const ImageBufferFormat m_bufferFormat;
+    const RenderingPurpose m_purpose;
+};
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, SetNonVolatileResult);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, VolatilityState);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ImageBufferBackend&);
+
+} // namespace WebCore

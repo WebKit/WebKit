@@ -1,0 +1,6 @@
+
+PASS [ABA] document.requestStorageAccess() should exist on the document interface
+PASS [ABA] document.requestStorageAccess() should resolve in top-level frame or same-site iframe, otherwise reject with a NotAllowedError with no user gesture.
+PASS [ABA] document.requestStorageAccess() should be resolved with no user gesture when a permission grant exists, and should allow cookie access
+PASS [ABA] document.requestStorageAccess() should resolve without permission grant or user gesture
+

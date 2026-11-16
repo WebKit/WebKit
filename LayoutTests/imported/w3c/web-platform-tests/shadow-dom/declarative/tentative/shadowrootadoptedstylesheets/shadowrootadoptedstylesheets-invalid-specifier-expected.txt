@@ -1,0 +1,4 @@
+
+PASS Unresolvable bare specifier produces no entry and applies no styles.
+FAIL Mixed valid/invalid specifiers: only valid ones produce entries and apply styles. assert_equals: Only the resolvable specifier should create an entry. expected 1 but got 0
+

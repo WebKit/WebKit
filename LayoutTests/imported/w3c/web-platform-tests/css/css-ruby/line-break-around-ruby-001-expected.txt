@@ -1,0 +1,13 @@
+
+PASS OP+ID
+PASS ID+CL
+PASS span+CL
+PASS OP+ruby
+PASS ruby+CL
+PASS OP+ruby+CL
+あ（かき
+あい）か
+あす）か
+あ（べるか
+あべる）か
+あ（べる）か

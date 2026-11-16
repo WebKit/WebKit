@@ -1,0 +1,8 @@
+
+PASS Initial iframe about:blank gets base url from creator
+PASS Transient iframe about:blank gets base url from creator
+PASS Initial top-level about:blank gets base url from creator = opener
+FAIL Transient top-level about:blank gets base url from creator = opener assert_equals: about:blank has creator's base URI expected "http://web-platform.test:8800/html/infrastructure/urls/base-url/initial-about-blank-baseURI.window.html" but got "about:blank"
+FAIL Initial top-level about:blank gets base url from creator != opener assert_equals: about:blank has creator's base URI expected "http://www1.web-platform.test:8800/" but got "http://web-platform.test:8800/html/infrastructure/urls/base-url/initial-about-blank-baseURI.window.html"
+FAIL Transient top-level about:blank gets base url from creator != opener assert_equals: about:blank has creator's base URI expected "http://www1.web-platform.test:8800/" but got "about:blank"
+

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<p>There are two text fields. The first one should have a validation message bubble, and another should have no validation message.</p>
+<form action="validation-message-clone.html">
+<div style="height:100px;"><input required></div>
+<div style="height:100px;" id=dest></div>
+<div><input type=submit id=submit></div>
+<div id=console></div>
+</form>
+
+<script>
+window.jsTestIsAsync = true;
+var original = document.getElementsByTagName('input')[0];
+var lastInOriginalShadow;
+var lastInClonedShadow;
+$('submit').click();
+setTimeout(cloneElementWithValidationMessage, 0);
+
+function cloneElementWithValidationMessage() {
+    $('dest').appendChild(original.cloneNode());
+    setTimeout(confirmNoBubble, 0);
+}
+
+function confirmNoBubble() {
+    if (!window.testRunner)
+        return;
+
+    lastInOriginalShadow = internals.shadowRoot(original).lastChild;
+    shouldBeTrue('internals.userAgentPart(lastInOriginalShadow) == "-webkit-validation-bubble"');
+    lastInClonedShadow = internals.shadowRoot($('dest').firstChild).lastChild;
+    shouldBeFalse('internals.userAgentPart(lastInClonedShadow) == "-webkit-validation-bubble"');
+    finishJSTest();
+}
+</script>
+
+</body>

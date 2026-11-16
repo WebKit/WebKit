@@ -1,0 +1,16 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer1 = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer1.appendBuffer(mediaSegment))
+EVENT(updateend)
+RUN(sourceBuffer2 = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer2.appendBuffer(mediaSegment))
+EVENT(updateend)
+RUN(source.endOfStream())
+RUN(video.currentTime = 5)
+EVENT(seeked)
+RUN(video.play())
+EVENT(playing)
+END OF TEST
+

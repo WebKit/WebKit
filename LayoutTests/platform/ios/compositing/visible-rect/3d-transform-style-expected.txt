@@ -1,0 +1,101 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (visible rect 0.00, 0.00 800.00 x 600.00)
+  (coverage rect 0.00, 0.00 800.00 x 600.00)
+  (intersects coverage rect 1)
+  (contentsScale 2.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (visible rect 0.00, 0.00 800.00 x 600.00)
+      (coverage rect 0.00, 0.00 800.00 x 600.00)
+      (intersects coverage rect 1)
+      (contentsScale 2.00)
+      (children 2
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 204.00 204.00)
+          (visible rect 0.00, 0.00 204.00 x 204.00)
+          (coverage rect -18.00, -10.00 800.00 x 600.00)
+          (intersects coverage rect 1)
+          (contentsScale 2.00)
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=2 height=2)
+              (position 2.00 2.00)
+              (bounds 200.00 200.00)
+              (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.07 0.07 1.00 -0.00] [0.00 0.00 0.00 1.00])
+              (visible rect 0.00, 0.00 200.00 x 200.00)
+              (coverage rect 0.00, 0.00 200.00 x 200.00)
+              (intersects coverage rect 1)
+              (contentsScale 2.00)
+              (children 1
+                (GraphicsLayer
+                  (preserves3D 1)
+                  (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (coverage rect 0.00, 0.00 200.00 x 200.00)
+                  (intersects coverage rect 0)
+                  (contentsScale 2.00)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 300.00 300.00)
+                      (contentsOpaque 1)
+                      (transform [1.00 0.00 0.00 0.00] [0.00 0.91 0.42 0.00] [0.00 -0.42 0.91 0.00] [0.00 0.00 0.00 1.00])
+                      (visible rect 0.00, 0.00 213.67 x 200.68)
+                      (coverage rect -4.32, -20.27 217.99 x 220.95)
+                      (intersects coverage rect 1)
+                      (contentsScale 2.00)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 18.00 224.00)
+          (bounds 204.00 204.00)
+          (visible rect 0.00, 0.00 204.00 x 204.00)
+          (coverage rect -18.00, -224.00 800.00 x 600.00)
+          (intersects coverage rect 1)
+          (contentsScale 2.00)
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=2 height=2)
+              (position 2.00 2.00)
+              (bounds 200.00 200.00)
+              (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.07 0.07 1.00 -0.00] [0.00 0.00 0.00 1.00])
+              (visible rect 0.00, 0.00 200.00 x 200.00)
+              (coverage rect 0.00, 0.00 200.00 x 200.00)
+              (intersects coverage rect 1)
+              (contentsScale 2.00)
+              (children 1
+                (GraphicsLayer
+                  (preserves3D 1)
+                  (visible rect 0.00, 0.00 0.00 x 0.00)
+                  (coverage rect 0.00, 0.00 200.00 x 200.00)
+                  (intersects coverage rect 0)
+                  (contentsScale 2.00)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 300.00 300.00)
+                      (contentsOpaque 1)
+                      (transform [0.91 0.00 0.42 0.00] [0.00 1.00 0.00 0.00] [-0.42 0.00 0.91 0.00] [0.00 0.00 0.00 1.00])
+                      (visible rect 0.00, 0.00 200.68 x 213.67)
+                      (coverage rect -20.27, -4.32 220.95 x 217.99)
+                      (intersects coverage rect 1)
+                      (contentsScale 2.00)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

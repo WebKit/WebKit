@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Overflow scrollers containing fixed backgrounds should repaint on scroll.</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        .scroller {
+            background-color: silver;
+            width: 400px;
+            height: 400px;
+            overflow: scroll;
+        }
+        
+        .scrolling-content {
+            height: 800px;
+            background-image: linear-gradient(green, green 800px);
+            background-attachment: fixed;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            let scroller = document.querySelector('.scroller');
+            setTimeout(() => {
+                scroller.scrollTop = 200;
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="scrolling-content">
+        </div>
+    </div>
+</body>
+</html>

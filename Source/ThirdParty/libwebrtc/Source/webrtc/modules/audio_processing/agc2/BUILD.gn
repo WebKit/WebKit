@@ -1,0 +1,583 @@
+# Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("speech_level_estimator") {
+  sources = [
+    "speech_level_estimator.cc",
+    "speech_level_estimator.h",
+    "speech_level_estimator_experimental_impl.cc",
+    "speech_level_estimator_experimental_impl.h",
+    "speech_level_estimator_impl.cc",
+    "speech_level_estimator_impl.h",
+  ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
+  ]
+
+  configs += [ "..:apm_debug_dump" ]
+
+  deps = [
+    ":common",
+    "..:apm_logging",
+    "../../../api:field_trials_view",
+    "../../../api/audio:audio_processing",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:safe_minmax",
+    "../../../rtc_base/experiments:field_trial_parser",
+  ]
+}
+
+rtc_library("adaptive_digital_gain_controller") {
+  sources = [
+    "adaptive_digital_gain_controller.cc",
+    "adaptive_digital_gain_controller.h",
+  ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
+  ]
+
+  configs += [ "..:apm_debug_dump" ]
+
+  deps = [
+    ":common",
+    ":gain_applier",
+    "..:apm_logging",
+    "../../../api/audio:audio_frame_api",
+    "../../../api/audio:audio_processing",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:safe_minmax",
+    "../../../system_wrappers:metrics",
+  ]
+}
+
+rtc_library("saturation_protector") {
+  sources = [
+    "saturation_protector.cc",
+    "saturation_protector.h",
+    "saturation_protector_buffer.cc",
+    "saturation_protector_buffer.h",
+  ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
+  ]
+
+  configs += [ "..:apm_debug_dump" ]
+
+  deps = [
+    ":common",
+    "..:apm_logging",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:safe_compare",
+    "../../../rtc_base:safe_minmax",
+  ]
+}
+
+rtc_library("biquad_filter") {
+  visibility = [ "./*" ]
+  sources = [
+    "biquad_filter.cc",
+    "biquad_filter.h",
+  ]
+  deps = [ "../../../rtc_base:checks" ]
+}
+
+rtc_library("clipping_predictor") {
+  visibility = [
+    "../agc",
+    "./*",
+  ]
+
+  sources = [
+    "clipping_predictor.cc",
+    "clipping_predictor.h",
+    "clipping_predictor_level_buffer.cc",
+    "clipping_predictor_level_buffer.h",
+  ]
+
+  deps = [
+    ":gain_map",
+    "..:audio_frame_view",
+    "../../../api/audio:audio_processing",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:safe_minmax",
+  ]
+}
+
+rtc_source_set("common") {
+  sources = [ "agc2_common.h" ]
+}
+
+rtc_library("fixed_digital") {
+  sources = [
+    "fixed_digital_level_estimator.cc",
+    "fixed_digital_level_estimator.h",
+    "interpolated_gain_curve.cc",
+    "interpolated_gain_curve.h",
+    "limiter.cc",
+    "limiter.h",
+  ]
+
+  visibility = [
+    "..:gain_controller2",
+    "../../audio_mixer:audio_mixer_impl",
+    "./*",
+  ]
+
+  configs += [ "..:apm_debug_dump" ]
+
+  deps = [
+    ":common",
+    "..:apm_logging",
+    "../../../api/audio:audio_frame_api",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gtest_prod",
+    "../../../rtc_base:safe_conversions",
+    "../../../rtc_base:safe_minmax",
+    "../../../rtc_base:stringutils",
+    "../../../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("gain_applier") {
+  sources = [
+    "gain_applier.cc",
+    "gain_applier.h",
+  ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
+  ]
+
+  deps = [
+    ":common",
+    "..:audio_frame_view",
+    "../../../api/audio:audio_frame_api",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:safe_minmax",
+  ]
+}
+
+rtc_source_set("gain_map") {
+  visibility = [
+    "..:analog_mic_simulation",
+    "../agc",
+    "./*",
+  ]
+
+  sources = [ "gain_map_internal.h" ]
+}
+
+rtc_library("input_volume_controller") {
+  sources = [
+    "input_volume_controller.cc",
+    "input_volume_controller.h",
+    "speech_probability_buffer.cc",
+    "speech_probability_buffer.h",
+  ]
+
+  visibility = [
+    "..:*",
+    "./*",
+  ]
+
+  configs += [ "..:apm_debug_dump" ]
+
+  deps = [
+    ":clipping_predictor",
+    ":gain_map",
+    ":input_volume_stats_reporter",
+    "..:audio_buffer",
+    "..:audio_frame_view",
+    "../../../api:field_trials_view",
+    "../../../api/audio:audio_processing",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gtest_prod",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:safe_minmax",
+    "../../../system_wrappers:metrics",
+  ]
+}
+
+rtc_library("noise_level_estimator") {
+  sources = [
+    "noise_level_estimator.cc",
+    "noise_level_estimator.h",
+  ]
+  deps = [
+    "..:apm_logging",
+    "../../../api/audio:audio_frame_api",
+    "../../../rtc_base:checks",
+  ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
+  ]
+
+  configs += [ "..:apm_debug_dump" ]
+}
+
+rtc_library("vad_wrapper") {
+  sources = [
+    "vad_wrapper.cc",
+    "vad_wrapper.h",
+  ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
+  ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
+  deps = [
+    ":common",
+    ":cpu_features",
+    "../../../api/audio:audio_frame_api",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "rnn_vad",
+    "rnn_vad:rnn_vad_common",
+  ]
+}
+
+rtc_library("cpu_features") {
+  sources = [
+    "cpu_features.cc",
+    "cpu_features.h",
+  ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
+  ]
+
+  deps = [
+    "../../../rtc_base:cpu_info",
+    "../../../rtc_base:stringutils",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_library("input_volume_stats_reporter") {
+  sources = [
+    "input_volume_stats_reporter.cc",
+    "input_volume_stats_reporter.h",
+  ]
+  deps = [
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gtest_prod",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
+    "../../../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_cc_test("speech_level_estimator_experimental_unittest") {
+    sources = [ "speech_level_estimator_experimental_unittest.cc" ]
+    deps = [
+      ":common",
+      ":speech_level_estimator",
+      "..:apm_logging",
+      "../../../api:field_trials",
+      "../../../api/audio:audio_processing",
+      "../../../rtc_base:checks",
+      "../../../test:create_test_field_trials",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("speech_level_estimator_unittest") {
+    sources = [ "speech_level_estimator_unittest.cc" ]
+    deps = [
+      ":common",
+      ":speech_level_estimator",
+      "..:apm_logging",
+      "../../../api/audio:audio_processing",
+      "../../../rtc_base:checks",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("adaptive_digital_gain_controller_unittest") {
+    configs += [ "..:apm_debug_dump" ]
+
+    sources = [ "adaptive_digital_gain_controller_unittest.cc" ]
+
+    deps = [
+      ":adaptive_digital_gain_controller",
+      ":common",
+      ":test_utils",
+      "..:apm_logging",
+      "../../../api/audio:audio_processing",
+      "../../../common_audio",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("gain_applier_unittest") {
+    configs += [ "..:apm_debug_dump" ]
+
+    sources = [ "gain_applier_unittest.cc" ]
+    deps = [
+      ":gain_applier",
+      ":test_utils",
+      "../../../api/audio:audio_frame_api",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("saturation_protector_buffer_unittest") {
+    sources = [ "saturation_protector_buffer_unittest.cc" ]
+    deps = [
+      ":saturation_protector",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("saturation_protector_unittest") {
+    sources = [ "saturation_protector_unittest.cc" ]
+    deps = [
+      ":common",
+      ":saturation_protector",
+      "..:apm_logging",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("biquad_filter_unittest") {
+    sources = [ "biquad_filter_unittest.cc" ]
+    deps = [
+      ":biquad_filter",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("limiter_db_gain_curve") {
+    testonly = true
+    sources = [
+      "limiter_db_gain_curve.cc",
+      "limiter_db_gain_curve.h",
+    ]
+    deps = [
+      ":common",
+      ":test_utils",
+      "../../../common_audio",
+      "../../../rtc_base:checks",
+    ]
+  }
+
+  rtc_library("compute_interpolated_gain_curve") {
+    testonly = true
+    sources = [
+      "compute_interpolated_gain_curve.cc",
+      "compute_interpolated_gain_curve.h",
+    ]
+    deps = [
+      ":common",
+      ":limiter_db_gain_curve",
+      ":test_utils",
+      "../../../rtc_base:checks",
+    ]
+  }
+
+  rtc_cc_test("agc2_testing_common_unittest") {
+    sources = [ "agc2_testing_common_unittest.cc" ]
+    deps = [
+      ":test_utils",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("fixed_digital_level_estimator_unittest") {
+    sources = [ "fixed_digital_level_estimator_unittest.cc" ]
+    deps = [
+      ":common",
+      ":fixed_digital",
+      ":test_utils",
+      "..:apm_logging",
+      "../../../api/audio:audio_frame_api",
+      "../../../common_audio",
+      "../../../rtc_base:checks",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("interpolated_gain_curve_unittest") {
+    sources = [ "interpolated_gain_curve_unittest.cc" ]
+    deps = [
+      ":common",
+      ":compute_interpolated_gain_curve",
+      ":fixed_digital",
+      ":limiter_db_gain_curve",
+      ":test_utils",
+      "..:apm_logging",
+      "../../../common_audio",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("limiter_db_gain_curve_unittest") {
+    sources = [ "limiter_db_gain_curve_unittest.cc" ]
+    deps = [
+      ":limiter_db_gain_curve",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("limiter_unittest") {
+    sources = [ "limiter_unittest.cc" ]
+    deps = [
+      ":common",
+      ":fixed_digital",
+      ":test_utils",
+      "..:apm_logging",
+      "../../../api/audio:audio_frame_api",
+      "../../../common_audio",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("clipping_predictor_level_buffer_unittest") {
+    sources = [ "clipping_predictor_level_buffer_unittest.cc" ]
+    deps = [
+      ":clipping_predictor",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("clipping_predictor_unittest") {
+    sources = [ "clipping_predictor_unittest.cc" ]
+    deps = [
+      ":clipping_predictor",
+      "..:audio_frame_view",
+      "../../../api/audio:audio_processing",
+      "../../../rtc_base:checks",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("input_volume_controller_unittest") {
+    sources = [ "input_volume_controller_unittest.cc" ]
+    deps = [
+      ":input_volume_controller",
+      "..:audio_buffer",
+      "../../../api/audio:audio_processing",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:safe_minmax",
+      "../../../system_wrappers:metrics",
+      "../../../test:create_test_environment",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+    ]
+    data_deps = [ "../../../resources:audio_processing_unittests_data" ]
+    if (is_ios) {
+      deps += [ "../../../resources:audio_processing_unittests_bundle_data" ]
+    }
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("speech_probability_buffer_unittest") {
+    sources = [ "speech_probability_buffer_unittest.cc" ]
+    deps = [
+      ":input_volume_controller",
+      "../../../test:test_support",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_cc_test("noise_level_estimator_unittest") {
+    configs += [ "..:apm_debug_dump" ]
+
+    sources = [ "noise_level_estimator_unittest.cc" ]
+    deps = [
+      ":noise_level_estimator",
+      ":test_utils",
+      "..:apm_logging",
+      "../../../api:function_view",
+      "../../../api/audio:audio_frame_api",
+      "../../../rtc_base:checks",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("vad_wrapper_unittest") {
+    sources = [ "vad_wrapper_unittest.cc" ]
+    deps = [
+      ":common",
+      ":vad_wrapper",
+      "../../../api/audio:audio_frame_api",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:safe_compare",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("test_utils") {
+    testonly = true
+    visibility = [
+      ":*",
+      "..:*",
+    ]
+    sources = [
+      "agc2_testing_common.cc",
+      "agc2_testing_common.h",
+      "vector_float_frame.cc",
+      "vector_float_frame.h",
+    ]
+    deps = [
+      "..:audio_frame_view",
+      "../../../api/audio:audio_frame_api",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:random",
+    ]
+  }
+
+  rtc_cc_test("input_volume_stats_reporter_unittest") {
+    sources = [ "input_volume_stats_reporter_unittest.cc" ]
+    deps = [
+      ":input_volume_stats_reporter",
+      "../../../rtc_base:stringutils",
+      "../../../system_wrappers:metrics",
+      "../../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+}

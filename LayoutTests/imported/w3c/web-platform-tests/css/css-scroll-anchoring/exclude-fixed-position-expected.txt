@@ -1,0 +1,5 @@
+fixed
+content
+
+PASS Fixed-position header.
+

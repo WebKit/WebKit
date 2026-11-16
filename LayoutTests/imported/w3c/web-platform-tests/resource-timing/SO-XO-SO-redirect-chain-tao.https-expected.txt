@@ -1,0 +1,6 @@
+
+PASS Verify that cross origin resources' timings are not exposed when same-origin=>cross-origin=>same-origin redirects have no `Timing-Allow-Origin:` headers.
+PASS Verify that cross origin resources' timings are not exposed when same-origin=>cross-origin=>same-origin redirects have `Timing-Allow-Origin:` headers only on some of the responses.
+PASS Verify that cross origin resources' timings are exposed when cross-origin redirects have `Timing-Allow-Origin: *` headers
+PASS Verify that cross origin resources' timings are not exposed when same-origin=>cross-origin=>same-origin redirects have `Timing-Allow-Origin:` headers with a specific origin.
+

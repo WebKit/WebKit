@@ -1,0 +1,56 @@
+Testing that event listener add/remove events are only fired for the inspected node and its ancestors.
+
+Changing inspected node to #child...
+
+== Running test suite: DOM.eventListeners
+-- Running test case: DOM.eventListeners.InspectedNode
+PASS: There should not be an event listener for #child.
+PASS: There should not be an event listener for #parent.
+Adding listener to #child...
+PASS: Adding an event listener to the inspected node should notify the frontend.
+PASS: There should be an event listener for #child.
+PASS: There should not be an event listener for #parent.
+Removing listener from #child...
+PASS: Removing an event listener from the inspected node should notify the frontend.
+PASS: There should not be an event listener for #child.
+PASS: There should not be an event listener for #parent.
+
+-- Running test case: DOM.eventListeners.InspectedNode.ancestor
+PASS: There should not be an event listener for #child.
+PASS: There should not be an event listener for #parent.
+Adding listener to #parent...
+PASS: Adding an event listener to an ancestor of the inspected node should notify the frontend.
+PASS: There should be an event listener for #child.
+PASS: There should be an event listener for #parent.
+Removing listener from #parent...
+PASS: Removing an event listener from an ancestor of the inspected node should notify the frontend.
+PASS: There should not be an event listener for #child.
+PASS: There should not be an event listener for #parent.
+
+-- Running test case: DOM.eventListeners.NotInspectedNode
+PASS: There should not be an event listener for #child.
+PASS: There should not be an event listener for #parent.
+Adding listener to #sibling...
+PASS: Adding an event listener to a node other than the inspected node should not notify the frontend.
+PASS: There should not be an event listener for #child.
+PASS: There should not be an event listener for #parent.
+Removing listener from #sibling...
+PASS: Removing an event listener from a node other than the inspected node should not notify the frontend.
+PASS: There should not be an event listener for #child.
+PASS: There should not be an event listener for #parent.
+
+-- Running test case: DOM.eventListeners.SubsequentBeforeGet
+PASS: There should not be an event listener for #child.
+PASS: There should not be an event listener for #parent.
+Adding listener to #child...
+PASS: Adding an event listener to the inspected node should notify the frontend.
+Adding listener to #parent...
+PASS: Adding an event listener to an ancestor of the inspected node should not notify the frontend if the frontend hasn't requested the new list since the last update.
+Requesting event listeners...
+PASS: There should be an event listener for #child.
+PASS: There should be an event listener for #parent.
+Removing listener from #child...
+PASS: Removing an event listener from the inspected node should notify the frontend.
+Removing listener from #parent...
+PASS: Removing an event listener from an ancestor of the inspected node should not notify the frontend if the frontend hasn't requested the new list since the last update.
+

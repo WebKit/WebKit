@@ -1,0 +1,15 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <title>Reference for the 'marker' element with viewBox and preserveAspectRatio</title>
+  <!--
+    From https://bugzilla.mozilla.org/show_bug.cgi?id=487649
+
+    This test checks that when the 'marker' support for viewBox
+    and preserveAspectRatio. You should see what appears to be
+    a blue circle right in the top left of the window.
+  -->
+  <ellipse cx="20" cy="20" rx="20" ry="20" fill="blue"/>
+</svg>

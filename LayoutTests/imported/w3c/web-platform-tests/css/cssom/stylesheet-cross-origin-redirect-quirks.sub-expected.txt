@@ -1,0 +1,6 @@
+
+PASS Cross-origin stylesheet with wrong MIME type
+PASS Cross-origin redirect to same-origin with wrong MIME type
+PASS Same-origin redirect to cross-origin with wrong MIME type
+PASS Same-origin redirect to cross-origin redirect back to same-origin with wrong MIME type
+

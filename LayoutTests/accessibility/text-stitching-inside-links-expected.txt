@@ -1,0 +1,40 @@
+This test ensures we stitch text inside links.
+
+
+{AXRole: AXLink}
+
+{AXRole: AXStaticText AXValue: 10% OFF}
+
+{AXRole: AXStaticText AXValue: Foobar 9000}
+
+{AXRole: AXStaticText AXValue: Category Name}
+
+{AXRole: AXStaticText AXValue: $430.10}
+
+{AXRole: AXStaticText AXValue: $550.00}
+
+{AXRole: AXButton}
+
+{AXRole: AXLink}
+
+{AXRole: AXStaticText AXValue: 10% OFF}
+
+{AXRole: AXStaticText AXValue: Foobar 9000}
+
+{AXRole: AXStaticText AXValue: Category Name}
+
+{AXRole: AXStaticText AXValue: $430.10 (BIGGEST PRICE DROP YET)}
+
+{AXRole: AXStaticText AXValue: $550.00}
+
+{AXRole: AXButton}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+10% OFF
+Foobar 9000
+Category Name
+$430.10 (BIGGEST PRICE DROP YET)
+$550.00
+Upvote product

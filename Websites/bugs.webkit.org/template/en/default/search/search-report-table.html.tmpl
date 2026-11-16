@@ -1,0 +1,73 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # This template has no interface. However, to use it, you need to fulfill
+  # the interfaces of the templates it contains.
+  #%]
+
+[% js_data = BLOCK %]
+var queryform = "reportform"
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = "Generate Tabular Report"
+  onload = "doOnSelectProduct(0)"
+  yui = [ 'autocomplete', 'calendar' ]
+  javascript = js_data
+  javascript_urls = [ "js/util.js", "js/TUI.js", "js/field.js" ]
+  style_urls = ['skins/standard/buglist.css']
+  doc_section = "using/reports-and-charts.html#reports"
+%]
+
+[% PROCESS "search/search-report-select.html.tmpl" %]
+
+<p>
+  Choose one or more fields as your axes, and then refine your set of 
+  [% terms.bugs %] using the rest of the form.
+</p>
+
+[% button_name = "Generate Report" %]
+
+<form method="get" action="report.cgi" name="reportform" id="reportform">
+  <table id="tabular_reports_menu">
+    <tr>
+      <th></th>
+      <th id="reports_menu_horizontal_axis">
+        Horizontal Axis:<br>
+        [% PROCESS select name = 'x_axis_field' %]
+      </th>
+    </tr>
+
+    <tr>
+      <th id="reports_menu_vertical_axis">
+        Vertical Axis:<br>
+        [% PROCESS select name = 'y_axis_field' %]
+      </th>
+      <th id="reports_menu_multiple_tables">
+        Multiple Tables:<br>
+        [% PROCESS select name = 'z_axis_field' %]
+      </th>
+    </tr>
+  </table>
+
+  <hr>
+
+  [% PROCESS search/form.html.tmpl %]
+
+  [% PROCESS "search/boolean-charts.html.tmpl" %]
+
+  <div id="knob">
+    <input type="submit" id="[% button_name FILTER css_class_quote %]"
+         value="[% button_name FILTER html %]">
+    <input type="hidden" name="format" value="table">
+    <input type="hidden" name="action" value="wrap">
+  </div>
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

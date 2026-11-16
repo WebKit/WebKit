@@ -1,0 +1,82 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% DEFAULT title = "$terms.Bugzilla $terms.Bugs" %]
+
+<?xml version="1.0"[% IF Param('utf8') %] encoding="UTF-8"[% END %]?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>[% title FILTER xml %]</title>
+  <link rel="alternate" type="text/html"
+        href="[% urlbase FILTER html %]buglist.cgi?
+        [%- urlquerypart.replace('ctype=atom[&]?','') FILTER xml %]"/>
+  <link rel="self" type="application/atom+xml"
+        href="[% urlbase FILTER html %]buglist.cgi?
+        [%- urlquerypart FILTER xml %]"/>
+  <updated>[% bugs.sort('changedtime').last.changedtime FILTER time("%Y-%m-%dT%H:%M:%SZ", "UTC")
+    FILTER xml %]</updated>
+  <id>[% urlbase FILTER html %]buglist.cgi?[% urlquerypart FILTER xml %]</id>
+
+  [% FOREACH bug = bugs %]
+  <entry>
+    <title>[% "@" IF bug.secure_mode %][[% terms.Bug %] [%+ bug.bug_id FILTER xml %]] [% bug.short_desc FILTER xml %]</title>
+    <link rel="alternate" type="text/html"
+          href="[% urlbase FILTER html %]show_bug.cgi?id=
+          [%- bug.bug_id FILTER xml %]"/>
+    <id>[% urlbase FILTER xml %]show_bug.cgi?id=[% bug.bug_id FILTER xml %]</id>
+    <author>
+      <name>[% bug.reporter_realname ? bug.reporter_realname : bug.reporter FILTER xml %]</name>
+    </author>
+    <updated>[% bug.changedtime FILTER time("%Y-%m-%dT%H:%M:%SZ", "UTC") FILTER xml %]</updated>
+    <summary type="html">
+      [%# Filter out the entire block, so that we don't need to escape the html code out %]
+      [% FILTER xml %]
+      <table>
+      <tr>
+        <th>Field</th><th>Value</th>
+      </tr><tr class="bz_feed_product">
+        <td>[% columns.product.title FILTER html %]</td>
+        <td>[% bug.product FILTER html %]</td>
+      </tr><tr class="bz_feed_component">
+        <td>[% columns.component.title FILTER html %]</td>
+        <td>[% bug.component FILTER html %]</td>
+      </tr><tr class="bz_feed_assignee">
+        <td>[% columns.assigned_to_realname.title FILTER html %]</td>
+        <td>[% bug.assigned_to_realname ? bug.assigned_to_realname : bug.assigned_to FILTER html %]</td>
+      </tr><tr class="bz_feed_reporter">
+        <td>[% columns.reporter_realname.title FILTER html %]</td>
+        <td>[% bug.reporter_realname ? bug.reporter_realname : bug.reporter FILTER html %]</td>
+      </tr><tr class="bz_feed_bug_status">
+        <td>[% columns.bug_status.title FILTER html %]</td>
+        <td>[% display_value("bug_status", bug.bug_status) FILTER html %]</td>
+      </tr><tr class="bz_feed_resolution">
+        <td>[% columns.resolution.title FILTER html %] </td>
+        <td>[% display_value("resolution", bug.resolution) FILTER html %]</td>
+      </tr><tr class="bz_feed_priority">
+        <td>[% columns.priority.title FILTER html %]</td>
+        <td>[% display_value("priority", bug.priority) FILTER html %]</td>
+      </tr><tr class="bz_feed_severity">
+        <td>[% columns.bug_severity.title FILTER html %] </td>
+        <td>[% display_value("bug_severity", bug.bug_severity) FILTER html %]</td>
+      [% IF Param("usetargetmilestone") %]
+      </tr><tr class="bz_feed_target_milestone">
+        <td>[% columns.target_milestone.title FILTER html %]</td>
+        <td>[% bug.target_milestone FILTER html %]</td>
+      [% END %]
+      </tr><tr class="bz_feed_creation_date">
+        <td>[% columns.opendate.title FILTER html %]</td>
+        <td>[% bug.opendate FILTER html %]</td>
+      </tr><tr class="bz_feed_changed_date">
+        <td>[% columns.changeddate.title FILTER html %]</td>
+        <td>[% bug.changeddate FILTER html -%]</td>
+      </tr>
+      </table>
+      [% END %]
+    </summary>
+  </entry>
+  [% END %]
+</feed>

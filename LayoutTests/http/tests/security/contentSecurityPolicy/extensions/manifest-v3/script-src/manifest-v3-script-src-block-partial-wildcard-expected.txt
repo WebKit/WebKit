@@ -1,0 +1,4 @@
+
+Test that CSP for manifest V3 extensions does not allow wildcards for the script-src directive. Test passes if we don't alert FAIL.
+
+PASS

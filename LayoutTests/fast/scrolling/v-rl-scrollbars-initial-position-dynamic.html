@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<div id=one style="width: 100px; height: 100px; writing-mode: horizontal-tb; overflow: scroll;">
+  <div style="width: 192px; height: 192px; border: 4px solid black;"></div>
+</div>
+<div id=two style="width: 100px; height: 100px; writing-mode: vertical-rl; overflow: scroll; margin-top: 1em;">
+  <div style="width: 192px; height: 192px; border: 4px solid black;"></div>
+</div>
+<script>
+document.body.offsetTop;
+one.style.writingMode = "vertical-rl";
+two.style.writingMode = "horizontal-tb";
+</script>

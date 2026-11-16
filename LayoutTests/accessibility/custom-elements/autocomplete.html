@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-list id="custom-list"></custom-checkbox>
+<custom-list id="custom-textbox" role="textbox" aria-autocomplete="inline"></custom-checkbox>
+<script>
+
+customElements.define('custom-list', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'combobox';
+        internals.ariaAutoComplete = 'list';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-list").role', 'AXRole: AXComboBox');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-list").stringAttributeValue("AXAutocompleteValue")', 'list');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-textbox").role', 'AXRole: AXTextField');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-textbox").stringAttributeValue("AXAutocompleteValue")', 'inline');
+}
+
+</script>
+</body>
+</html>

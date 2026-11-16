@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+    <iframe id="first-level-iframe" src="about:blank" width="300" height="300" frameBorder="0"></iframe>
+    <p id="description"></p>
+    <div id="console">
+    </div>
+    <script>
+        description("Check touch event listeners on sub-documents are correctly cleaned when the document is removed from the document.");
+        window.jsTestIsAsync = true;
+
+        function getTapScript(x, y)
+        {
+            return `
+            (function() {
+                uiController.singleTapAtPoint(${x}, ${y}, function() {
+                    uiController.uiScriptComplete("Tapped (" + ${x} + ", " + ${y} + ")");
+                });
+            })();`
+        }
+
+        function runTest()
+        {
+            var firstLevelIframe = document.getElementById("first-level-iframe");
+            firstLevelIframe.contentDocument.write('<iframe id="second-level-iframe" src="about:blank" width="300" height="300" frameBorder="0"></iframe>');
+            var secondLevelIframe = firstLevelIframe.contentDocument.getElementById("second-level-iframe");
+
+            window.eventList = [];
+            firstLevelIframe.contentDocument.addEventListener('touchstart', (event) => { eventList.push("FirstLevel" + event.type); });
+            secondLevelIframe.contentDocument.addEventListener('touchstart', (event) => { eventList.push("SecondLevel" + event.type); });
+
+            testRunner.runUIScript(getTapScript(50, 50), function(result) {
+                debug(result);
+                shouldBe("eventList", "['SecondLeveltouchstart']");
+
+                var nestedDocument = secondLevelIframe.contentDocument;
+                // Navigate the iframe.
+                secondLevelIframe.addEventListener("load", () => {
+                    nestedDocument = undefined;
+                    gc();
+                    setTimeout(finishJSTest, 0);
+                });
+                secondLevelIframe.src="";
+                secondLevelIframe = undefined;
+                gc();
+            });
+        }
+        window.addEventListener('load', runTest, false);
+    </script>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+PASS :dir() allows any ident value but strings other than ltr/rtl don't match
+PASS :dir() requires exactly an ident argument
+PASS :dir() works in compound selectors
+PASS :dir() works in complex selectors
+

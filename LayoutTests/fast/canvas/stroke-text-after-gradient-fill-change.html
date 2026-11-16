@@ -1,0 +1,27 @@
+<body>
+    <p>Passes if it does not crash.</p>
+    <canvas id="c" width="600" height="100"></canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        var canvas = document.getElementById("c");
+        var ctx = canvas.getContext("2d");
+        canvas.width  = 100;
+        canvas.height = 100;
+
+        var greenGradient = ctx.createLinearGradient(0, 0, 1, 1);
+        greenGradient.addColorStop(0, "green");
+        greenGradient.addColorStop(1, "green");
+
+        var redGradient = ctx.createLinearGradient(0, 0, 1, 1);
+        redGradient.addColorStop(0, "red");
+        redGradient.addColorStop(1, "red");
+
+        ctx.fillStyle = greenGradient;
+        ctx.fillRect(0, 0, 100, 100);
+        ctx.fillStyle = redGradient;
+        ctx.font = "500px Times";
+        ctx.strokeText("I", -5, 100);
+    </script>
+<body>

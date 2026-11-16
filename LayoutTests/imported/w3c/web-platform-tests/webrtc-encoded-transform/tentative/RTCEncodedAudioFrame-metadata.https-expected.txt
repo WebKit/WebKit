@@ -1,0 +1,6 @@
+
+FAIL Constructing audio frame before sending works promise_test: Unhandled rejection with value: object "TypeError: sender2.createEncodedStreams is not a function. (In 'sender2.createEncodedStreams()', 'sender2.createEncodedStreams' is undefined)"
+FAIL Constructing audio frame with metadata argument before sending works promise_test: Unhandled rejection with value: object "TypeError: sender2.createEncodedStreams is not a function. (In 'sender2.createEncodedStreams()', 'sender2.createEncodedStreams' is undefined)"
+FAIL Constructing audio frame with bad metadata argument before sending does not work promise_test: Unhandled rejection with value: object "TypeError: sender2.createEncodedStreams is not a function. (In 'sender2.createEncodedStreams()', 'sender2.createEncodedStreams' is undefined)"
+FAIL Basic simulcast setup with three spatial layers promise_test: Unhandled rejection with value: object "TypeError: sender.createEncodedStreams is not a function. (In 'sender.createEncodedStreams()', 'sender.createEncodedStreams' is undefined)"
+

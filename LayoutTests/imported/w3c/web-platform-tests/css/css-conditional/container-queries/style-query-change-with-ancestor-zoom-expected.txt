@@ -1,0 +1,5 @@
+
+PASS Initially no queries match.
+PASS Style query updates when ancestor zoom and custom property change together (child).
+PASS Style query updates when ancestor zoom and custom property change together (grandchild).
+

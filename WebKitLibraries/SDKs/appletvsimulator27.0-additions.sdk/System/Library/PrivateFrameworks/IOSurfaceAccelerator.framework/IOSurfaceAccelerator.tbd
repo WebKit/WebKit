@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+install-name: /System/Library/PrivateFrameworks/IOSurfaceAccelerator.framework/IOSurfaceAccelerator
+exports:
+-       targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+        symbols: [_IOSurfaceAcceleratorCreate, _IOSurfaceAcceleratorGetRunLoopSource, _IOSurfaceAcceleratorTransformSurface,
+                _kIOSurfaceAcceleratorUnwireSurfaceKey]
+...

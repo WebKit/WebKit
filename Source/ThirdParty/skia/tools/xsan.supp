@@ -1,0 +1,9 @@
+# If you change this file, then you will need to do a clean build (gn clean) in order
+# for it to go into effect. This is not a problem with Bazel builds, only GN ones.
+#
+# https://clang.llvm.org/docs/SanitizerSpecialCaseList.html#format
+# libpng and zlib both dereference under-aligned pointers.
+# TODO: it'd be nice to tag these as [alignment] only but our Mac toolchain can't yet.
+# [alignment]
+src:.*third_party/externals/libpng/intel/filter_sse2_intrinsics.c
+src:.*third_party/externals/zlib/deflate.c

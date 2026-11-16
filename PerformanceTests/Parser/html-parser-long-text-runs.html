@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+var sentence = "The quick brown fox jumps over the lazy dog while the tokenizer accumulates characters. ";
+var markup = "<!DOCTYPE html><body>" + ("<p>" + sentence.repeat(30) + "</p><!--" + sentence.repeat(20) + "-->").repeat(1000);
+var parser = new DOMParser();
+
+PerfTestRunner.measureRunsPerSecond({
+    description: "This benchmark tests the HTML tokenizer on documents made of long text runs and comments",
+    run: function() {
+        parser.parseFromString(markup, "text/html");
+    }});
+</script>
+</body>
+</html>

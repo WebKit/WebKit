@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div>
+  <button id="button"></button>
+  <input id="text" type="text">
+  <input id="checkbox" type="checkbox">
+  <input id="radio" type="radio">
+  <input id="submit" type="submit">
+  <input id="slider" type="range">
+  <select id="combobox"><option>1<option>2</select>
+  <select id="listbox" multiple><option>1<option>2</select>
+  <textarea id="textarea"></textarea>
+</div>
+
+<script>
+    description("This test makes sure that disabled form controls are not exposed as focusable.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var axElement;
+        async function checkControl(id) {
+            debug(`Testing #${id}`);
+            axElement = accessibilityController.accessibleElementById(id);
+            shouldBeTrue("axElement.isFocusable");
+            debug(`Setting the disabled attribute of element #${id}`);
+            document.getElementById(id).disabled = true;
+            await expectAsyncExpression("axElement.isFocusable", "false");
+            debug("");
+        }
+
+        setTimeout(async function() {
+            await checkControl("button");
+            await checkControl("text");
+            await checkControl("checkbox");
+            await checkControl("radio");
+            await checkControl("submit");
+            await checkControl("slider");
+            await checkControl("combobox");
+            await checkControl("listbox");
+            await checkControl("textarea");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

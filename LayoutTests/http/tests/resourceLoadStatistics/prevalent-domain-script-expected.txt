@@ -1,0 +1,20 @@
+Tests that code from a script from a domain that ITP classifies as prevalent, and code that such a script creates, counts as prevalent domain script code, even when first-party script runs it later.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Prevalent domain script: true
+PASS First-party function called by prevalent domain script: true
+PASS First-party script: false
+PASS Function defined by prevalent domain script: true
+PASS Function created with eval() by prevalent domain script: true
+PASS Function created with the Function constructor by prevalent domain script: true
+PASS Script element created by prevalent domain script: true
+PASS Event handler attribute set by prevalent domain script: true
+PASS String passed to setTimeout() by prevalent domain script: true
+PASS First-party script after running code created by prevalent domain script: false
+PASS Native function called by the Promise machinery: true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

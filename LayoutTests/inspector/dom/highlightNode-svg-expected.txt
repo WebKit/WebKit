@@ -1,0 +1,59 @@
+Tests for the DOM.highlightNode command on SVG elements, including in an SVG scaled by its viewBox.
+
+x
+Text
+End
+Group
+Rotated
+Before Span
+
+== Running test suite: DOM.highlightNode.SVG
+-- Running test case: DOM.highlightNode.SVG.Rect
+PASS: Should be one highlight rect.
+PASS: Highlight x should match the bounding client rect.
+PASS: Highlight y should match the bounding client rect.
+PASS: Highlight width should match the bounding client rect.
+PASS: Highlight height should match the bounding client rect.
+
+-- Running test case: DOM.highlightNode.SVG.ForeignObject
+PASS: Should be one highlight rect.
+PASS: Highlight x should match the bounding client rect.
+PASS: Highlight y should match the bounding client rect.
+PASS: Highlight width should match the bounding client rect.
+PASS: Highlight height should match the bounding client rect.
+
+-- Running test case: DOM.highlightNode.SVG.Text
+PASS: Should be one highlight rect.
+PASS: Highlight x should match the bounding client rect.
+PASS: Highlight y should match the bounding client rect.
+PASS: Highlight width should match the bounding client rect.
+PASS: Highlight height should match the bounding client rect.
+
+-- Running test case: DOM.highlightNode.SVG.TextAnchorEnd
+PASS: Should be one highlight rect.
+PASS: Highlight x should match the bounding client rect.
+PASS: Highlight y should match the bounding client rect.
+PASS: Highlight width should match the bounding client rect.
+PASS: Highlight height should match the bounding client rect.
+
+-- Running test case: DOM.highlightNode.SVG.TextInTranslatedGroup
+PASS: Should be one highlight rect.
+PASS: Highlight x should match the bounding client rect.
+PASS: Highlight y should match the bounding client rect.
+PASS: Highlight width should match the bounding client rect.
+PASS: Highlight height should match the bounding client rect.
+
+-- Running test case: DOM.highlightNode.SVG.TextRotated
+PASS: Should be one highlight rect.
+PASS: Highlight x should match the bounding client rect.
+PASS: Highlight y should match the bounding client rect.
+PASS: Highlight width should match the bounding client rect.
+PASS: Highlight height should match the bounding client rect.
+
+-- Running test case: DOM.highlightNode.SVG.TSpan
+PASS: Should be one highlight rect.
+PASS: Highlight x should match the bounding client rect.
+PASS: Highlight y should match the bounding client rect.
+PASS: Highlight width should match the bounding client rect.
+PASS: Highlight height should match the bounding client rect.
+

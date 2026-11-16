@@ -1,0 +1,34 @@
+Tests for WI.SearchUtilities.
+
+
+== Running test suite: SearchUtilities
+-- Running test case: SearchUtilities.forEachMatch.Literal
+PASS: Searching for "ab" in "abcAB" should find ["0:ab","3:AB"].
+PASS: Searching for "ab" (case sensitive) in "abcAB" should find ["0:ab"].
+PASS: Searching for "ab" in "xyz" should find [].
+PASS: Searching for "ab" in "" should find [].
+
+-- Running test case: SearchUtilities.forEachMatch.GlobWithText
+PASS: Searching for "a*c" in "abc xyz" should find ["0:abc"].
+PASS: Searching for "a\\*c" in "abc a*c" should find ["4:a*c"].
+
+-- Running test case: SearchUtilities.forEachMatch.ReusedRegex
+PASS: Reusing the regular expression for "bar" in "foo bar" should find ["4:bar"].
+PASS: Reusing the regular expression for "bar" in "bar foo bar" should find ["0:bar","8:bar"].
+
+-- Running test case: SearchUtilities.forEachMatch.GlobAsterisk
+PASS: Searching for "*" in "<script>/** license */</script>" should find ["0:<script>/** license */</script>"].
+PASS: Searching for "*" in "line1\nline2" should find ["0:line1","6:line2"].
+PASS: Searching for "*" in "\n" should find [].
+PASS: Searching for "*" in "" should find [].
+
+-- Running test case: SearchUtilities.forEachMatch.GlobDoubleAsterisk
+PASS: Searching for "**" in "<script>/** license */</script>" should find ["0:<script>/** license */</script>"].
+PASS: Searching for "**" in "line1\rline2" should find ["0:line1","6:line2"].
+
+-- Running test case: SearchUtilities.forEachMatch.RegularExpressionMatchingEmptyString
+PASS: Searching for "a*" (regular expression) in "baab" should find ["1:aa"].
+PASS: Searching for "^" (regular expression) in "abc" should find [].
+PASS: Searching for "\\b" (regular expression) in "ab cd" should find [].
+PASS: Searching for "x?" (regular expression) in "" should find [].
+

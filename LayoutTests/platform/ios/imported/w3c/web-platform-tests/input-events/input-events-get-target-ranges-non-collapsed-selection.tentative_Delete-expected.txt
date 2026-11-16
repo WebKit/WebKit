@@ -1,0 +1,74 @@
+abc	def
+ghi	jkl
+
+FAIL Delete at "<p>{abc}</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>{abc}<br></p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>{<img>}</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>{<img>}<br></p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>{ abc }</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>abc   [</p><p>]   def</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>ab[c</p><p>d]ef</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>ab[c </p><p> d]ef</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>ab[c </p><p>] def</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>abc [</p><p>] def</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>abc [</p><p> ]def</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>abc[<img>]def</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc[<hr>]def</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc [<hr>]def</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc [<hr>] def</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc {<hr>} def</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>abc{<br>}def</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc[<p>]def<br>ghi</p></div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc   [<p>]   def<br>ghi</p></div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div><p>abc[</p>]def</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div><p>abc   [</p>]   def</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc[<ul><li>]def</li></ul>ghi</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc  [<ul><li>] def </li></ul>  ghi</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc<ul><li>def[</li></ul>]ghi</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc <ul><li>  def  [</li></ul>] ghi</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc[<ul><li>]def</li><li>ghi</li></ul>jkl</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc[<ul><li>def</li><li>]ghi</li></ul>jkl</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc<ul><li>def[</li><li>]ghi</li></ul>jkl</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc<ul><li>def</li><li>ghi[</li></ul>]jkl</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>abc<ul><li>def[</li><li>ghi</li></ul>]jkl</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>abc[</p><p>}<br></p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>abc[<span contenteditable="false">def</span>]ghi</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<table><tr><td>ab[c</td><td>d]ef</td></tr></table>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<table><tr><td>ab[c</td><td>def</td></tr><tr><td>ghi</td><td>j]kl</td></tr></table>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<table><tr><td>ab[c</td><td>def</td></tr></table><table><tr><td>ghi</td><td>j]kl</td></tr></table>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>{abc}</p>" - comparing innerHTML assert_equals: expected "<p><br></p>" but got "<p>abc</p>"
+FAIL Delete at "<p>{abc}<br></p>" - comparing innerHTML assert_in_array: value "<p>abc<br></p>" not in array ["<p><br></p>", "<p><br></p>"]
+FAIL Delete at "<p>{<img>}</p>" - comparing innerHTML assert_equals: expected "<p><br></p>" but got "<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEElEQVR42mNgaGD4D8YwBgAw9AX9Y9zBwwAAAABJRU5ErkJggg==\"></p>"
+FAIL Delete at "<p>{<img>}<br></p>" - comparing innerHTML assert_in_array: value "<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEElEQVR42mNgaGD4D8YwBgAw9AX9Y9zBwwAAAABJRU5ErkJggg==\"><br></p>" not in array ["<p><br></p>", "<p><br></p>"]
+FAIL Delete at "<p>{ abc }</p>" - comparing innerHTML assert_equals: expected "<p><br></p>" but got "<p> abc </p>"
+FAIL Delete at "<p>abc   [</p><p>]   def</p>" - comparing innerHTML assert_equals: expected "<p>abcdef</p>" but got "<p>abc   </p><p>   def</p>"
+FAIL Delete at "<p>ab[c</p><p>d]ef</p>" - comparing innerHTML assert_equals: expected "<p>abef</p>" but got "<p>abc</p><p>def</p>"
+FAIL Delete at "<p>ab[c </p><p> d]ef</p>" - comparing innerHTML assert_equals: expected "<p>abef</p>" but got "<p>abc </p><p> def</p>"
+FAIL Delete at "<p>ab[c </p><p>] def</p>" - comparing innerHTML assert_equals: expected "<p>abdef</p>" but got "<p>abc </p><p> def</p>"
+FAIL Delete at "<p>abc [</p><p>] def</p>" - comparing innerHTML assert_equals: expected "<p>abcdef</p>" but got "<p>abc </p><p> def</p>"
+FAIL Delete at "<p>abc [</p><p> ]def</p>" - comparing innerHTML assert_equals: expected "<p>abcdef</p>" but got "<p>abc </p><p> def</p>"
+FAIL Delete at "<p>abc[<img>]def</p>" - comparing innerHTML assert_equals: expected "<p>abcdef</p>" but got "<p>abc<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEElEQVR42mNgaGD4D8YwBgAw9AX9Y9zBwwAAAABJRU5ErkJggg==\">def</p>"
+FAIL Delete at "<div>abc[<hr>]def</div>" - comparing innerHTML assert_equals: expected "<div>abcdef</div>" but got "<div>abc<hr>def</div>"
+FAIL Delete at "<div>abc [<hr>]def</div>" - comparing innerHTML assert_equals: expected "<div>abcdef</div>" but got "<div>abc <hr>def</div>"
+FAIL Delete at "<div>abc [<hr>] def</div>" - comparing innerHTML assert_equals: expected "<div>abcdef</div>" but got "<div>abc <hr> def</div>"
+FAIL Delete at "<div>abc {<hr>} def</div>" - comparing innerHTML assert_equals: expected "<div>abcdef</div>" but got "<div>abc <hr> def</div>"
+FAIL Delete at "<p>abc{<br>}def</p>" - comparing innerHTML assert_equals: expected "<p>abcdef</p>" but got "<p>abc<br>def</p>"
+FAIL Delete at "<div>abc[<p>]def<br>ghi</p></div>" - comparing innerHTML assert_in_array: value "<div>abc<p>def<br>ghi</p></div>" not in array ["<div>abcdef<p>ghi</p></div>", "<div>abcdef<br><p>ghi</p></div>"]
+FAIL Delete at "<div>abc   [<p>]   def<br>ghi</p></div>" - comparing innerHTML assert_in_array: value "<div>abc   <p>   def<br>ghi</p></div>" not in array ["<div>abcdef<p>ghi</p></div>", "<div>abcdef<br><p>ghi</p></div>"]
+FAIL Delete at "<div><p>abc[</p>]def</div>" - comparing innerHTML assert_in_array: value "<div><p>abc</p>def</div>" not in array ["<div><p>abcdef</p></div>", "<div><p>abcdef<br></p></div>"]
+FAIL Delete at "<div><p>abc   [</p>]   def</div>" - comparing innerHTML assert_in_array: value "<div><p>abc   </p>   def</div>" not in array ["<div><p>abcdef</p></div>", "<div><p>abcdef<br></p></div>"]
+FAIL Delete at "<div>abc[<ul><li>]def</li></ul>ghi</div>" - comparing innerHTML assert_equals: expected "<div>abcdefghi</div>" but got "<div>abc<ul><li>def</li></ul>ghi</div>"
+FAIL Delete at "<div>abc  [<ul><li>] def </li></ul>  ghi</div>" - comparing innerHTML assert_equals: expected "<div>abcdefghi</div>" but got "<div>abc  <ul><li> def </li></ul>  ghi</div>"
+FAIL Delete at "<div>abc<ul><li>def[</li></ul>]ghi</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>defghi</li></ul></div>" but got "<div>abc<ul><li>def</li></ul>ghi</div>"
+FAIL Delete at "<div>abc <ul><li>  def  [</li></ul>] ghi</div>" - comparing innerHTML assert_in_array: value "<div>abc <ul><li>  def  </li></ul> ghi</div>" not in array ["<div>abc <ul><li>  defghi</li></ul></div>", "<div>abc <ul><li>defghi</li></ul></div>", "<div>abc<ul><li>defghi</li></ul></div>"]
+FAIL Delete at "<div>abc[<ul><li>]def</li><li>ghi</li></ul>jkl</div>" - comparing innerHTML assert_equals: expected "<div>abcdef<ul><li>ghi</li></ul>jkl</div>" but got "<div>abc<ul><li>def</li><li>ghi</li></ul>jkl</div>"
+FAIL Delete at "<div>abc[<ul><li>def</li><li>]ghi</li></ul>jkl</div>" - comparing innerHTML assert_in_array: value "<div>abc<ul><li>def</li><li>ghi</li></ul>jkl</div>" not in array ["<div>abcghijkl</div>", "<div>abcghijkl<br></div>"]
+FAIL Delete at "<div>abc<ul><li>def[</li><li>]ghi</li></ul>jkl</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>defghi</li></ul>jkl</div>" but got "<div>abc<ul><li>def</li><li>ghi</li></ul>jkl</div>"
+FAIL Delete at "<div>abc<ul><li>def</li><li>ghi[</li></ul>]jkl</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>def</li><li>ghijkl</li></ul></div>" but got "<div>abc<ul><li>def</li><li>ghi</li></ul>jkl</div>"
+FAIL Delete at "<div>abc<ul><li>def[</li><li>ghi</li></ul>]jkl</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>defjkl</li></ul></div>" but got "<div>abc<ul><li>def</li><li>ghi</li></ul>jkl</div>"
+FAIL Delete at "<p>abc[</p><p>}<br></p>" - comparing innerHTML assert_in_array: value "<p>abc</p><p><br></p>" not in array ["<p>abc</p>", "<p>abc<br></p>"]
+PASS Delete at "<p>abc[<span contenteditable="false">def</span>]ghi</p>" - comparing innerHTML
+FAIL Delete at "<table><tr><td>ab[c</td><td>d]ef</td></tr></table>" - comparing innerHTML assert_equals: expected "<table><tbody><tr><td>ab</td><td>ef</td></tr></tbody></table>" but got "<table><tbody><tr><td>abc</td><td>def</td></tr></tbody></table>"
+FAIL Delete at "<table><tr><td>ab[c</td><td>def</td></tr><tr><td>ghi</td><td>j]kl</td></tr></table>" - comparing innerHTML assert_in_array: value "<table><tbody><tr><td>abc</td><td>def</td></tr><tr><td>ghi</td><td>jkl</td></tr></tbody></table>" not in array ["<table><tbody><tr><td>ab</td><td></td></tr><tr><td></td><td>kl</td></tr></tbody></table>", "<table><tbody><tr><td>ab</td><td><br></td></tr><tr><td><br></td><td>kl</td></tr></tbody></table>"]
+FAIL Delete at "<table><tr><td>ab[c</td><td>def</td></tr></table><table><tr><td>ghi</td><td>j]kl</td></tr></table>" - comparing innerHTML assert_in_array: value "<table><tbody><tr><td>abc</td><td>def</td></tr></tbody></table><table><tbody><tr><td>ghi</td><td>jkl</td></tr></tbody></table>" not in array ["<table><tbody><tr><td>ab</td><td></td></tr></tbody></table><table><tbody><tr><td></td><td>kl</td></tr></tbody></table>", "<table><tbody><tr><td>ab</td><td><br></td></tr></tbody></table><table><tbody><tr><td><br></td><td>kl</td></tr></tbody></table>"]
+

@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
+<html>
+<head>
+    <script src="../../resources/accessibility-helper.js"></script>
+    <script src="../../resources/js-test.js"></script>
+</head>
+
+<body>
+
+<input id="editable" type="text" tabindex="0"></input>
+
+<script>
+var result = "This test ensures that the attributed string for inline predictions is accurate.\n\n";
+
+if (window.textInputController && window.accessibilityController) {
+    document.getElementById("editable").focus();
+    var input = accessibilityController.focusedElement;
+    input.insertText("Good mo");
+    result += `${input.attributedStringForRange(0, 7)}\n\n`;
+
+    result += "Simulating presented completion:\n";
+    textInputController.setMarkedText("rning", 0, 5, false, [ { from: "0", length: "5", color: "#FF000033", foregroundColor: "#FF0000FF" } ], undefined);
+    result += `${input.attributedStringForRange(0, 12)}\n\n`;
+
+    result += "Simulating accepted completion:\n";
+    textInputController.setMarkedText("", 0, 0, false, undefined, undefined);
+    textInputController.insertText("rning");
+    result += `${input.attributedStringForRange(0, 12)}\n\n`;
+
+    debug(result);
+}
+</script>
+</body>
+</html>

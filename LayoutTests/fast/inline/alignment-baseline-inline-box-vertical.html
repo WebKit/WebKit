@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<style>
+div {
+    font: 100px/1 Ahem;
+    color: green;
+    writing-mode: vertical-rl;
+    float: left;
+}
+span {
+    font-size: 50px;
+    color: blue;
+}
+</style>
+<!-- Vertical lines are aligned on the central baseline, so alignment-baseline: central is a no-op and the others move relative to it. -->
+<div>X<span style="alignment-baseline: central">X</span></div>
+<div>X<span style="alignment-baseline: alphabetic">X</span></div>
+<div>X<span style="alignment-baseline: text-top">X</span></div>

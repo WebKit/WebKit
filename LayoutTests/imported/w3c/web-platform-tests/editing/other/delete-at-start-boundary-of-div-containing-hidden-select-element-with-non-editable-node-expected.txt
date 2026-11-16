@@ -1,0 +1,5 @@
+First block
+econd block
+
+FAIL waiting for command to execute assert_equals: The test should not crash and Second block should be merged with First block expected "<div id=\"first\">First blockSecond block</div><div id=\"second\"><select style=\"visibility:hidden\"></select></div>" but got "<div id=\"first\">First block</div>\n<div id=\"second\">econd block<select style=\"visibility:hidden\"></select></div>"
+

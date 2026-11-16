@@ -1,0 +1,4 @@
+
+
+PASS forward() inside onbeforeunload
+

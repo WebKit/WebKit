@@ -1,0 +1,10 @@
+
+PASS WebTransport exportKeyingMaterial returns keying material of the requested length
+PASS WebTransport exportKeyingMaterial honors the requested output length
+PASS WebTransport exportKeyingMaterial is deterministic for identical inputs
+PASS WebTransport exportKeyingMaterial returns different material for different labels
+PASS WebTransport exportKeyingMaterial returns different material for different contexts
+PASS WebTransport exportKeyingMaterial rejects out-of-range arguments with RangeError
+PASS WebTransport exportKeyingMaterial rejects with InvalidStateError after the session is closed
+PASS WebTransport exportKeyingMaterial rejects with InvalidStateError for a failed session
+

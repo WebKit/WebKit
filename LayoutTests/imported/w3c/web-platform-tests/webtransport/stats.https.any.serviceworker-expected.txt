@@ -1,0 +1,10 @@
+
+PASS WebTransport client should be able to provide stats after connection has been established
+PASS WebTransport client should be able to provide stats after connection has been closed
+PASS WebTransport client should be able to provide stats requested right before connection has been closed
+PASS WebTransport client should be able to provide valid stats when requested before connection established
+PASS WebTransport client should throw an error when stats are requested for a failed connection
+PASS WebTransport client should be able to handle multiple concurrent stats requests
+PASS WebTransport client should be able to handle multiple sequential stats requests
+PASS WebTransport client should be able to provide droppedIncoming values for datagrams
+

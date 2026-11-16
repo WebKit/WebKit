@@ -1,0 +1,7 @@
+{
+    "TestLegacyOverrideBuiltIns": {
+        "prototype": {
+            "namedItem": "name"
+        }
+    }
+}

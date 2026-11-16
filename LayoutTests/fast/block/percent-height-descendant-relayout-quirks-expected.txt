@@ -1,0 +1,5 @@
+PASS: initial: viewport minus body margins
+PASS: after the root gets a border
+PASS: after the root gets padding
+PASS: after a skipped containing block gets a definite height
+PASS: after it becomes auto again

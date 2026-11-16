@@ -1,0 +1,12 @@
+This test ensures that the label of an optgroup is exposed as a disabled item before its options, regardless of appearance.
+
+PASS: items(axNative) === 'AXStaticText Fruit (disabled), AXStaticText Apple, AXStaticText Nuts (disabled), AXStaticText Almond, AXStaticText Gone (disabled), AXStaticText Durian (disabled)'
+PASS: items(axBase) === 'AXStaticText Fruit (disabled), AXStaticText Apple, AXStaticText Nuts (disabled), AXStaticText Almond, AXStaticText Gone (disabled), AXStaticText Durian (disabled)'
+PASS: items(axNative) === 'AXStaticText Berries (disabled), AXStaticText Apple, AXStaticText Seeds (disabled), AXStaticText Almond, AXStaticText Gone (disabled), AXStaticText Durian (disabled)'
+PASS: axPicker.isExpanded === true
+PASS: items(findBaseSelectMenu(axPicker)) === 'AXMenuItem Fruit (disabled), AXMenuItem Apple, AXMenuItem Nuts (disabled), AXMenuItem Almond, AXMenuItem Gone (disabled), AXMenuItem Durian (disabled)'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

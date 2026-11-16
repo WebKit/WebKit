@@ -1,0 +1,11 @@
+Verifies that dispatching a TextEvent created from bindings inside an editable element does not trigger scrolling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pageYOffsetBefore is pageYOffsetAfter
+PASS textField.value is "a"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

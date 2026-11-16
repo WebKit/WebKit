@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+#container > span {
+    display: block;
+    width: 100px;
+    height: 50px;
+    background: green;
+    color: green;
+}
+</style>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="container"></div>
+<script>
+
+const fragment1 = document.createDocumentFragment();
+const span1 = document.createElement('span');
+span1.textContent = 'PASS';
+fragment1.appendChild(span1);
+
+const fragment2 = document.createDocumentFragment();
+const span2 = document.createElement('span');
+span2.textContent = 'PASS';
+fragment2.appendChild(span2);
+
+container.append(fragment1, fragment2);
+
+</script>
+</body>
+</html>

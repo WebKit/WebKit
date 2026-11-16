@@ -1,0 +1,90 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta name="viewport" content="width=device-width">
+<script src="../resources/media-controls-utils.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/audio-tracks.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" controls autoplay muted playsinline></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Clicking on a track in the tracks contextmenu.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+window.internals.setMediaControlsMaximumRightContainerButtonCountOverride(media, 100); // A finite value larger than anything likely.
+
+let selectedTrack = null;
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    dumpAudioTracksEnabledState();
+
+    media.audioTracks.addEventListener("change", handleAudioTracksChange);
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", () => {
+            clickOnTracksButton(clickOnFrenchAudioTrack);
+        });
+    });
+});
+
+function clickOnTracksButton(continuation)
+{
+    debug("Tapping tracks button...");
+    pressOnElement(shadowRoot.querySelector("button.tracks"), () => {
+        window.requestAnimationFrame(continuation);
+    });
+}
+
+async function clickOnFrenchAudioTrack()
+{
+    debug("Selecting 'French' track...");
+    await UIHelper.waitForContextMenuToShow();
+    await UIHelper.chooseMenuAction("French Sound");
+}
+
+async function clickOnSpanishAudioTrack()
+{
+    debug("Selecting 'Spanish' track...");
+    await UIHelper.waitForContextMenuToShow();
+    await UIHelper.chooseMenuAction("Spanish Sound");
+}
+
+async function handleAudioTracksChange()
+{
+    let newSelectedTrack = Array.from(media.audioTracks).find((audioTrack) => audioTrack.enabled);
+    if (selectedTrack === newSelectedTrack)
+        return;
+    selectedTrack = newSelectedTrack;
+
+    debug("Audio tracks changed.");
+
+    dumpAudioTracksEnabledState();
+
+    await UIHelper.waitForContextMenuToHide();
+
+    switch (selectedTrack.label) {
+    case "French Sound":
+        clickOnTracksButton(clickOnSpanishAudioTrack);
+        break;
+
+    case "Spanish Sound":
+        media.remove();
+        finishJSTest();
+        break;
+    }
+}
+
+function dumpAudioTracksEnabledState()
+{
+    for (let audioTrack of media.audioTracks)
+        debug(`Audio track '${audioTrack.label}' is ${audioTrack.enabled ? "enabled" : "disabled"}.`);
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

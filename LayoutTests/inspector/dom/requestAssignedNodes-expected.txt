@@ -1,0 +1,38 @@
+
+== Running test suite: DOM.requestAssignedNodes
+-- Running test case: DOM.requestAssignedNodes.Named.Empty
+PASS: Should have assigned nodes: [].
+Changing slot of child...
+PASS: Should have assigned nodes: ["named-empty-1"].
+Adding child with slot...
+PASS: Should have assigned nodes: ["named-empty-1","named-empty-2"].
+
+-- Running test case: DOM.requestAssignedNodes.Named.Filled
+PASS: Should have assigned nodes: ["named-filled-1","named-filled-2"].
+Removing first assigned node...
+PASS: Should have assigned nodes: ["named-filled-2"].
+Removing last assigned node...
+PASS: Should have assigned nodes: [].
+
+-- Running test case: DOM.requestAssignedNodes.Manual.Empty
+PASS: Should have assigned nodes: [].
+Adding second child as assigned node...
+PASS: Should have assigned nodes: ["manual-empty-2"].
+Adding first child as assigned nodes...
+PASS: Should have assigned nodes: ["manual-empty-1","manual-empty-2"].
+
+-- Running test case: DOM.requestAssignedNodes.Manual.Filled
+PASS: Should have assigned nodes: ["manual-filled-1","manual-filled-2"].
+Removing first assigned node...
+PASS: Should have assigned nodes: ["manual-filled-2"].
+Removing last assigned node...
+PASS: Should have assigned nodes: [].
+
+-- Running test case: DOM.requestAssignedNodes.MissingNode
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
+
+-- Running test case: DOM.requestAssignedNodes.WrongNode
+PASS: Should produce an exception.
+Error: Node for given nodeId is not a slot element
+

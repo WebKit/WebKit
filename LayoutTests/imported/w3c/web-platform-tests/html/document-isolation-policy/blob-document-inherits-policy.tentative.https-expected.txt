@@ -1,0 +1,4 @@
+
+PASS A blob: document created by a document with a policy inherits it
+PASS A blob: document created by a sandboxed document with a policy inherits it
+

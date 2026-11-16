@@ -1,0 +1,4 @@
+
+PASS MediaRecorder handles pause() and resume() state and events, mimeType "video/webm;codecs=vp9,opus"
+PASS MediaRecorder handles stop() in paused state appropriately, mimeType "video/webm;codecs=vp9,opus"
+

@@ -1,0 +1,7 @@
+
+PASS structuredClone() of a non-shared WebAssembly.Memory throws
+PASS Cloning a non-shared WebAssembly.Memory through a MessagePort throws
+PASS Cloning a shared WebAssembly.Memory through a MessagePort without COOP+COEP throws
+PASS Cloning a shared WebAssembly.Memory through a BroadcastChannel without COOP+COEP throws
+PASS Bonus: self.crossOriginIsolated is false (precondition for the shared-memory cases above)
+

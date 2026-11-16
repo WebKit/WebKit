@@ -1,0 +1,6 @@
+
+PASS :focus via :scope in subject
+PASS :focus via :scope in non-subject
+PASS :focus in limit, :scope in subject
+PASS :focus in intermediate limit, :scope in subject
+

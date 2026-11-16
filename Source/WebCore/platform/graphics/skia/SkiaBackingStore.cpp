@@ -1,0 +1,423 @@
+/*
+ * Copyright (C) 2026 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "SkiaBackingStore.h"
+
+#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#include "BitmapTexturePool.h"
+#include "CoordinatedTileBuffer.h"
+#include "FontRenderOptions.h"
+#include "PlatformDisplay.h"
+#include "SkiaDamageRegion.h"
+#include "SkiaPaintingEngine.h"
+#include "SkiaUtilities.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkColorSpace.h>
+#include <skia/gpu/ganesh/GrBackendSurface.h>
+#include <skia/gpu/ganesh/SkImageGanesh.h>
+#include <skia/gpu/ganesh/SkSurfaceGanesh.h>
+#include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
+
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SkiaBackingStore);
+
+void SkiaBackingStore::update(const FloatSize& size, float scale, CoordinatedBackingStoreProxy::Update&& update)
+{
+    m_size = size;
+    m_scale = scale;
+
+    for (auto tileID : update.tilesToCreate())
+        m_tiles.add(tileID, Tile(m_scale));
+
+    for (auto tileID : update.tilesToRemove()) {
+        ASSERT(m_tiles.contains(tileID));
+        m_tiles.remove(tileID);
+    }
+
+    for (const auto& item : update.tilesToUpdateVisibility()) {
+        auto it = m_tiles.find(item.key);
+        ASSERT(it != m_tiles.end());
+        it->value.setIsVisible(item.value);
+    }
+
+    for (const auto& tileUpdate : update.tilesToUpdate()) {
+        auto it = m_tiles.find(tileUpdate.tileID);
+        ASSERT(it != m_tiles.end());
+        if (tileUpdate.buffer->paintingState() != CoordinatedTileBuffer::PaintingState::Cancelled) {
+            it->value.scheduleUpdate(tileUpdate.dirtyRect, tileUpdate.tileRect, tileUpdate.buffer);
+            m_hasPendingTileUpdates = true;
+        }
+    }
+}
+
+bool SkiaBackingStore::processPendingTileUpdates(ProcessHiddenTiles processHiddenTiles, const Function<bool()>& shouldStopProcessingTiles)
+{
+    if (!m_hasPendingTileUpdates)
+        return false;
+
+    m_hasPendingTileUpdates = false;
+    m_hasPaddedTiles = false;
+    bool wasStopped = false;
+    for (auto& tile : m_tiles.values()) {
+        if (!wasStopped)
+            wasStopped = tile.processPendingUpdateIfNeeded(processHiddenTiles, shouldStopProcessingTiles);
+        m_hasPendingTileUpdates |= tile.hasPendingUpdates();
+        m_hasPaddedTiles |= tile.isPadded();
+    }
+
+    return wasStopped;
+}
+
+static inline bool allTileEdgesExposed(const FloatRect& totalRect, const FloatRect& tileRect)
+{
+    return !tileRect.x() && !tileRect.y() && tileRect.width() + tileRect.x() >= totalRect.width() && tileRect.height() + tileRect.y() >= totalRect.height();
+}
+
+static bool clipTileToBounds(const SkRect& clipBounds, SkRect& tileRect, SkRect& sourceRect)
+{
+    // One pixel wider than the clip, so the new edge falls outside the visible part.
+    auto clip = clipBounds.makeOutset(1, 1);
+    auto cropped = tileRect;
+    if (!cropped.intersect(clip))
+        return false;
+
+    if (cropped == tileRect)
+        return true;
+
+    const float widthScale = sourceRect.width() / tileRect.width();
+    const float heightScale = sourceRect.height() / tileRect.height();
+    sourceRect = SkRect::MakeLTRB(sourceRect.fLeft + (cropped.fLeft - tileRect.fLeft) * widthScale,
+        sourceRect.fTop + (cropped.fTop - tileRect.fTop) * heightScale,
+        sourceRect.fLeft + (cropped.fRight - tileRect.fLeft) * widthScale,
+        sourceRect.fTop + (cropped.fBottom - tileRect.fTop) * heightScale);
+    tileRect = cropped;
+    return true;
+}
+
+SkSamplingOptions SkiaBackingStore::samplingOptionsForMatrix(const SkMatrix& deviceMatrix) const
+{
+    if (!deviceMatrix.isScaleTranslate())
+        return SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone);
+
+    // Tiles are painted at m_scale device pixels per layer pixel, remove that scale before determining the sampling options.
+    auto matrix = deviceMatrix;
+    matrix.preScale(1 / m_scale, 1 / m_scale);
+    return SkiaUtilities::samplingOptionsForMatrix(matrix);
+}
+
+void SkiaBackingStore::paintToCanvas(SkCanvas& canvas, const SkPaint& paint, const SkiaDamageRegion* damageRegion)
+{
+    if (m_tiles.isEmpty())
+        return;
+
+    // Tiles are culled against the damage region on top of the canvas clip, because quickReject() only
+    // tests the bounding box of the clip, which grows to the whole surface as soon as two damage rects
+    // are far apart.
+
+    FloatRect layerRect = { { }, m_size };
+
+    const auto ctm = canvas.getLocalToDeviceAs3x3();
+    const auto sampling = samplingOptionsForMatrix(ctm);
+    const auto constraint = requiresStrictSourceConstraint(sampling) ? SkCanvas::kStrict_SrcRectConstraint : SkCanvas::kFast_SrcRectConstraint;
+    const auto localClipBounds = canvas.getLocalClipBounds();
+    auto tilePaint = paint;
+    for (auto& tile : m_tiles.values()) {
+        if (canvas.quickReject(tile.rect()))
+            continue;
+
+        if (damageRegion) {
+            const auto deviceRect = ctm.mapRect(tile.rect());
+            if (!damageRegion->intersects(deviceRect))
+                continue;
+        }
+
+        const auto& image = tile.image();
+        if (!image)
+            continue;
+
+        SkRect tileRect = tile.rect();
+        SkRect sourceRect = tile.imageSourceRect();
+        if (!clipTileToBounds(localClipBounds, tileRect, sourceRect))
+            continue;
+
+        tilePaint.setAntiAlias(paint.isAntiAlias() && allTileEdgesExposed(layerRect, tile.rect()));
+        canvas.drawImageRect(image, sourceRect, tileRect, sampling, &tilePaint, constraint);
+    }
+}
+
+void SkiaBackingStore::appendImageSetEntries(SkCanvas& canvas, const SkMatrix& ctm, size_t matrixIndex, float opacity, bool enableAntialias, Vector<SkCanvas::ImageSetEntry>& images, const SkiaDamageRegion* damageRegion) const
+{
+    if (m_tiles.isEmpty())
+        return;
+
+    // Splitting a tile creates edges inside the tile, and antialiasing them would blend along those edges.
+    // This never happens: a split needs a CTM that keeps rects as rects, and the caller only antialiases
+    // when the CTM does not.
+    ASSERT(!damageRegion || !enableAntialias);
+
+    // Maps device rects back to layer coordinates. The caller only passes a damage region after establishing
+    // that the CTM keeps rects as rects, which implies it is invertible.
+    SkMatrix inverse;
+    if (damageRegion && !ctm.invert(&inverse)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    FloatRect layerRect = { { }, m_size };
+
+    SkAutoCanvasRestore autoRestore(&canvas, true);
+    canvas.concat(ctm);
+
+    const auto localClipBounds = canvas.getLocalClipBounds();
+    for (auto& tile : m_tiles.values()) {
+        if (canvas.quickReject(tile.rect()))
+            continue;
+
+        const auto& image = tile.image();
+        if (!image)
+            continue;
+
+        // FIXME: implement per edge antialiasing.
+        const unsigned aaFlags = enableAntialias && allTileEdgesExposed(layerRect, tile.rect()) ? SkCanvas::kAll_QuadAAFlags : SkCanvas::kNone_QuadAAFlags;
+        SkRect srcRectFull = tile.imageSourceRect();
+        SkRect dstRectFull = tile.rect();
+        if (!clipTileToBounds(localClipBounds, dstRectFull, srcRectFull))
+            continue;
+
+        if (!damageRegion) {
+            images.append(SkCanvas::ImageSetEntry(image, srcRectFull, dstRectFull, matrixIndex, opacity, aaFlags, false));
+            continue;
+        }
+
+        const auto deviceRect = ctm.mapRect(dstRectFull);
+        if (!damageRegion->intersects(deviceRect))
+            continue;
+
+        damageRegion->forEachDamagedSubRect(deviceRect, dstRectFull, srcRectFull, inverse, [&](const SkRect& srcSubRect, const SkRect& dstSubRect) {
+            images.append(SkCanvas::ImageSetEntry(image, srcSubRect, dstSubRect, matrixIndex, opacity, aaFlags, false));
+        });
+    }
+}
+
+void SkiaBackingStore::drawDebugBorders(SkCanvas& canvas, const SkPaint& paint)
+{
+    for (const auto& tile : m_tiles.values())
+        canvas.drawRect(SkRect(tile.rect()), paint);
+}
+
+void SkiaBackingStore::Tile::scheduleUpdate(const IntRect& dirtyRect, const IntRect& tileRect, CoordinatedTileBuffer& buffer)
+{
+    if (!m_isVisible) {
+        m_pendingUpdates.removeAllMatching([&](auto& update) {
+            return update.tileRect == tileRect && dirtyRect.contains(update.dirtyRect);
+        });
+    }
+
+    m_pendingUpdates.append({ tileRect, dirtyRect, Ref { buffer } });
+}
+
+bool SkiaBackingStore::Tile::processPendingUpdateIfNeeded(ProcessHiddenTiles processHiddenTiles, const Function<bool()>& shouldStopProcessingTiles)
+{
+    if (!m_isVisible && processHiddenTiles == ProcessHiddenTiles::No)
+        return false;
+
+    bool wasStopped = false;
+    size_t processedCount = 0;
+    for (auto& pendingUpdate : m_pendingUpdates) {
+        auto paintingState = pendingUpdate.buffer->paintingState();
+        if (paintingState == CoordinatedTileBuffer::PaintingState::Pending || paintingState == CoordinatedTileBuffer::PaintingState::Painting)
+            break;
+
+        if (paintingState == CoordinatedTileBuffer::PaintingState::Cancelled) {
+            processedCount++;
+            continue;
+        }
+
+        if (shouldStopProcessingTiles && shouldStopProcessingTiles()) {
+            wasStopped = true;
+            break;
+        }
+
+        update(pendingUpdate.dirtyRect, pendingUpdate.tileRect, pendingUpdate.buffer.get());
+        processedCount++;
+
+        // When processing hidden tiles, flush the surface here to make sure the deadline
+        // used in shouldStopProcessingTiles() takes into account the work done while flushing.
+        if (m_surface && processHiddenTiles == ProcessHiddenTiles::Yes)
+            PlatformDisplay::sharedDisplay().skiaGrContext()->flush(m_surface.get());
+    }
+
+    if (processedCount)
+        m_pendingUpdates.removeAt(0, processedCount);
+
+    return wasStopped;
+}
+
+void SkiaBackingStore::Tile::ensureTexture(const IntSize& size, CoordinatedTileBuffer& buffer)
+{
+    OptionSet<BitmapTexture::Flags> flags;
+    if (buffer.supportsAlpha())
+        flags.add(BitmapTexture::Flags::SupportsAlpha);
+    if (buffer.pixelFormat() == PixelFormat::BGRA8)
+        flags.add(BitmapTexture::Flags::UseBGRALayout);
+
+#if USE(GBM)
+    if (SkiaPaintingEngine::shouldUseLinearTileTextures()) {
+        flags.add(BitmapTexture::Flags::BackedByDMABuf);
+        flags.add(BitmapTexture::Flags::ForceLinearBuffer);
+    } else if (SkiaPaintingEngine::shouldUseVivanteSuperTiledTileTextures()) {
+        flags.add(BitmapTexture::Flags::BackedByDMABuf);
+        flags.add(BitmapTexture::Flags::ForceVivanteSuperTiledBuffer);
+    }
+#endif
+
+    if (m_texture) {
+        if (buffer.supportsAlpha() == m_texture->isOpaque())
+            m_texture->reset(size, flags);
+    } else
+        m_texture = BitmapTexturePool::singleton().acquireTexture(size, flags);
+
+    m_cachedImage = nullptr;
+}
+
+void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& tileRect, CoordinatedTileBuffer& buffer)
+{
+    WTFBeginSignpost(this, SkiaBackingStoreTileUpdate, "rect %ix%i+%i+%i %s %s distance %u", tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height(), m_isVisible ? "visible" : "pre-rendered", buffer.isBackedByOpenGL() ? "GPUToGPU" : "CPUToGPU", buffer.distance());
+
+    FloatRect unscaledTileRect(tileRect);
+    unscaledTileRect.scale(1. / m_scale);
+
+    if (buffer.isBackedByOpenGL()) {
+        auto& acceleratedBuffer = static_cast<CoordinatedAcceleratedTileBuffer&>(buffer);
+        if (auto displayList = acceleratedBuffer.takeDisplayList()) {
+            ASSERT(!m_texture);
+            ASSERT(!m_cachedImage);
+
+            if (unscaledTileRect != m_rect) {
+                m_rect = unscaledTileRect;
+                m_surface = nullptr;
+            }
+
+            auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+            ASSERT(grContext);
+
+            // isCompatible() does not compare alpha type, so check it separately -- a layer's
+            // opaqueness can flip without any other characterization change, and reusing the old
+            // surface would then carry the wrong alpha type into its image snapshot.
+            const auto& characterization = displayList->characterization();
+            if (!m_surface || !m_surface->isCompatible(characterization) || m_surface->imageInfo().alphaType() != characterization.imageInfo().alphaType())
+                m_surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kYes, characterization.imageInfo(), characterization.sampleCount(), characterization.origin(), &characterization.surfaceProps());
+
+            skgpu::ganesh::DrawDDL(m_surface.get(), displayList);
+        }
+    } else {
+        auto& unacceleratedBuffer = static_cast<CoordinatedUnacceleratedTileBuffer&>(buffer);
+        auto data = unacceleratedBuffer.takeData();
+        if (!data.isEmpty()) {
+            if (unscaledTileRect != m_rect) {
+                m_rect = unscaledTileRect;
+                m_texture = nullptr;
+            }
+            ensureTexture(tileRect.size(), buffer);
+            m_texture->updateContents(data.span().data(), dirtyRect, { }, unacceleratedBuffer.stride(), buffer.pixelFormat());
+        }
+    }
+
+    WTFEndSignpost(this, SkiaBackingStoreTileUpdate);
+}
+
+sk_sp<SkImage> SkiaBackingStore::Tile::image() const
+{
+    if (m_surface)
+        return m_surface->makeImageSnapshot();
+
+    if (!m_cachedImage && m_texture) {
+        auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+        ASSERT(grContext);
+
+        auto colorType = m_texture->flags().contains(BitmapTexture::Flags::UseBGRALayout) ? kBGRA_8888_SkColorType : kRGBA_8888_SkColorType;
+        GrGLTextureInfo externalTexture;
+        externalTexture.fTarget = GL_TEXTURE_2D;
+        externalTexture.fID = m_texture->id();
+        externalTexture.fFormat = colorType == kBGRA_8888_SkColorType ? GL_BGRA8_EXT : GL_RGBA8;
+        // Use the physical allocatedSize(): super-tiled textures are padded past the logical
+        // size(), and sizing the image to size() would map u=1.0 to the padded edge, stretching
+        // content and bleeding in padding. imageSourceRect() then restricts sampling to the
+        // logical region, mirroring the uvMax clamp on the TextureMapper path.
+        auto allocatedSize = m_texture->allocatedSize();
+        auto backendTexture = GrBackendTextures::MakeGL(allocatedSize.width(), allocatedSize.height(), skgpu::Mipmapped::kNo, externalTexture);
+        auto alphaType = m_texture->isOpaque() ? kOpaque_SkAlphaType : kPremul_SkAlphaType;
+        m_texture->ref();
+        m_cachedImage = SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, colorType, alphaType, SkColorSpace::MakeSRGB(), +[](void* userData) {
+            static_cast<BitmapTexture*>(userData)->deref();
+        }, m_texture.get());
+    }
+    return m_cachedImage;
+}
+
+SkRect SkiaBackingStore::Tile::imageSourceRect() const
+{
+    // The surface snapshot is sized to the logical tile, so all of it is valid.
+    if (m_surface)
+        return SkRect::MakeWH(m_surface->width(), m_surface->height());
+
+    // The texture image spans allocatedSize() - only the top-left size() region is real content.
+    if (m_texture) {
+        auto size = m_texture->size();
+        return SkRect::MakeWH(size.width(), size.height());
+    }
+
+    // Callers only reach imageSourceRect() after image() returned a valid image, which requires
+    // one of m_surface or m_texture to be set, so this fallback is never taken in practice.
+    ASSERT_NOT_REACHED();
+    return SkRect::MakeEmpty();
+}
+
+bool SkiaBackingStore::Tile::isPadded() const
+{
+    // A surface snapshot is sized to the tile, so only a texture can be padded.
+    return m_texture && m_texture->size() != m_texture->allocatedSize();
+}
+
+bool SkiaBackingStore::Tile::hasPendingUpdates() const
+{
+    return !m_pendingUpdates.isEmpty();
+}
+
+} // namespace WebCore
+
+#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)

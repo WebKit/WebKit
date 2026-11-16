@@ -1,0 +1,139 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>windowClipRect is the same whether or not the frame is in another process</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/frame-geometry-test.js"></script>
+<style>
+body { margin: 0 }
+.bordered { position: absolute; top: 100px; width: 200px; height: 150px; border: 5px solid black; padding: 10px }
+#borderSameSite { left: 0 }
+#borderCrossSite { left: 300px }
+.zoomWrapper { position: absolute; top: 1100px }
+#zoomSameSiteWrapper { left: 0 }
+#zoomCrossSiteWrapper { left: 400px }
+.zoomed { display: block; zoom: 2; width: 150px; height: 100px; border: 5px solid black }
+.clipper { position: absolute; top: 1700px; overflow: hidden; width: 300px; height: 200px }
+#clippedSameSiteClipper { left: 0 }
+#clippedCrossSiteClipper { left: 400px }
+.clipped { position: absolute; left: 0; top: -40px; display: block; width: 200px; height: 150px; border: 0 }
+#spacer { height: 3000px }
+</style>
+<body>
+<iframe class="bordered" id="borderSameSite"
+    src="http://127.0.0.1:8000/site-isolation/resources/frame-geometry-frame.html?label=borderSameSite"></iframe>
+<iframe class="bordered" id="borderCrossSite"
+    src="http://localhost:8000/site-isolation/resources/frame-geometry-frame.html?label=borderCrossSite"></iframe>
+
+<div class="zoomWrapper" id="zoomSameSiteWrapper">
+    <iframe class="zoomed" scrolling="no"
+        src="http://127.0.0.1:8000/site-isolation/resources/frame-geometry-frame.html?label=zoomSameSite"></iframe>
+</div>
+<div class="zoomWrapper" id="zoomCrossSiteWrapper">
+    <iframe class="zoomed" scrolling="no"
+        src="http://localhost:8000/site-isolation/resources/frame-geometry-frame.html?label=zoomCrossSite"></iframe>
+</div>
+
+<div class="clipper" id="clippedSameSiteClipper">
+    <iframe class="clipped"
+        src="http://127.0.0.1:8000/site-isolation/resources/frame-geometry-frame.html?label=clippedSameSite"></iframe>
+</div>
+<div class="clipper" id="clippedCrossSiteClipper">
+    <iframe class="clipped"
+        src="http://localhost:8000/site-isolation/resources/frame-geometry-frame.html?label=clippedCrossSite"></iframe>
+</div>
+
+<div id="spacer"></div>
+<script>
+
+// The expected windowClipRect values differ for same-site and cross-site iframes here, because
+// windowClipRect is in window coordinates, and the origin for window coordinates is based on the
+// local root's view coordinates.
+//
+// - For a same-site iframe the local root frame is the main frame. So for an unclipped iframe,
+//   the windowClipRect's origin is the iframe's position in the main frame's view.
+// - For a cross-site iframe the iframe is its own local root frame. So for an unclipped root iframe
+//   in that process, the windowClipRect's origin is (0, 0).
+
+const CONFIGURATIONS = [
+    {
+        name: "an owner element with a border and padding",
+        sameSite: "borderSameSite",
+        crossSite: "borderCrossSite",
+        // These are nodes at y=100 with a border box of size 230x180 and a content box of size
+        // 200x150. The content box runs from y=115 to y=265.
+        steps: [
+            { scrollY: 0, sameSite: "15,115 200x150", crossSite: "0,0 200x150",
+              what: "the entire content box is on screen" },
+            { scrollY: 190, sameSite: "15,190 200x75", crossSite: "0,75 200x75",
+              what: "half the content box is on screen" },
+            { scrollY: 400, sameSite: "0,0 0x0", crossSite: "0,0 0x0",
+              what: "none of the content box is on screen" },
+        ],
+    },
+    {
+        name: "an owner element with a used zoom",
+        sameSite: "zoomSameSite",
+        crossSite: "zoomCrossSite",
+        // These are nodes at y=1100 with a border box of size 320x220 and a content box of size
+        // 300x200. The content box runs from y=1110 to y=1310.
+        steps: [
+            { scrollY: 1100, sameSite: "10,1110 300x200", crossSite: "0,0 300x200",
+              what: "the entire content box is on screen" },
+            { scrollY: 1210, sameSite: "10,1210 300x100", crossSite: "0,100 300x100",
+              what: "half the content box is on screen" },
+            { scrollY: 1500, sameSite: "0,0 0x0", crossSite: "0,0 0x0",
+              what: "none of the content box is on screen" },
+        ],
+    },
+    {
+        name: "an owner element clipped by an ancestor",
+        sameSite: "clippedSameSite",
+        crossSite: "clippedCrossSite",
+        // These nodes are at y=1660 with a border and content box of size 200x150. The top 40 px
+        // of the box are clipped by an ancestor node.
+        steps: [
+            { scrollY: 1400, sameSite: "0,1700 200x110", crossSite: "0,40 200x110",
+              what: "the ancestor clips the top of the content box" },
+            { scrollY: 1755, sameSite: "0,1755 200x55", crossSite: "0,95 200x55",
+              what: "the ancestor and the viewport both clip it" },
+            { scrollY: 1900, sameSite: "0,0 0x0", crossSite: "0,0 0x0",
+              what: "none of the content box is on screen" },
+        ],
+    },
+];
+
+const ALL_LABELS = CONFIGURATIONS.flatMap(configuration => [configuration.sameSite, configuration.crossSite]);
+
+function inDocumentCoordinates(rect, scrollY)
+{
+    if (rect.isEmpty)
+        return "0,0 0x0";
+
+    const scrollTakenOut = internals.delegatesScrollingToNativeView() ? 0 : scrollY;
+    return `${rect.x},${rect.y + scrollTakenOut} ${rect.width}x${rect.height}`;
+}
+
+promise_test(async t => {
+    assert_true(await waitForFirstReports(ALL_LABELS), "every frame reported at least once");
+
+    for (const configuration of CONFIGURATIONS) {
+        for (const step of configuration.steps) {
+            window.scrollTo(0, step.scrollY);
+            await UIHelper.ensureVisibleContentRectAndStablePresentationUpdate();
+
+            await assertClipRect(configuration.crossSite, step.crossSite,
+                `${configuration.name}, cross site: ${step.what}`);
+
+            const sameSiteRect = await waitForClipRect(configuration.sameSite,
+                rect => inDocumentCoordinates(rect, step.scrollY) === step.sameSite);
+            assert_equals(inDocumentCoordinates(sameSiteRect, step.scrollY), step.sameSite,
+                `${configuration.name}, same site: ${step.what}`);
+        }
+    }
+}, "A frame's windowClipRect does not depend on whether it is in another process");
+
+</script>
+</body>

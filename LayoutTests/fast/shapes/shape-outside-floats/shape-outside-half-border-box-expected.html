@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container { width: 200px; font: 20px/20px Ahem; color: green; }
+    .float {
+        float: left;
+        width: 40px; height: 40px;
+        border: solid 20px silver;
+        padding: 10px;
+        margin: 10px;
+        shape-outside: inset(10px) border-box;
+    }
+</style>
+</head>
+<body>
+<p>The text should wrap around the float's half-border-box: 10px (half the border) inside the border box, plus the 10px margin.</p>
+<div class="container"><div class="float"></div>XXXX XXXX XXXX XXXX XXXX XXXX XXXX XXXX</div>
+</body>
+</html>

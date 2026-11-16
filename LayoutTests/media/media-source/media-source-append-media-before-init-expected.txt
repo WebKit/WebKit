@@ -1,0 +1,45 @@
+
+
+Test 1: Append media segment before any init segment - should error
+EVENT(sourceopen)
+EXPECTED (gotError == 'true') OK
+InvalidStateError: The object is in an invalid state.
+PASS
+
+Test 2: Non-segment boxes before init should be silently dropped
+EVENT(sourceopen)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+PASS
+
+Test 3: Init segment after dropped boxes should succeed
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+PASS
+
+Test 4: Init segment preceded by free box in same append
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+PASS
+
+Test 5: After changeType, media segment without init should error
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (gotError == 'true') OK
+PASS
+
+Test 6: After changeType, appending init then media should succeed
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+PASS
+END OF TEST
+

@@ -1,0 +1,4 @@
+ALERT: PASS
+Tests that a external JavaScript script, in a user agent shadow tree, is allowed to load when the page has CSP policy: script-src 'unsafe-inline'.
+
+

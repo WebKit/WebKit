@@ -1,0 +1,5 @@
+
+
+FAIL Check the baseURL of an about:blank document cross-origin with its parent promise_test: Unhandled rejection with value: object "SecurityError: Blocked a frame with origin "https://web-platform.test:9443" from accessing a cross-origin frame. Protocols, domains, and ports must match."
+PASS Check that about:srcdoc navigation does not follow about:blank rules.
+

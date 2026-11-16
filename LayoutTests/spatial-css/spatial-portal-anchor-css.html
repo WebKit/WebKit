@@ -1,0 +1,78 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+const computed = element => getComputedStyle(element).positionAnchor;
+
+test(t => {
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    assert_equals(computed(element), "normal");
+}, "position-anchor initial value is normal");
+
+test(t => {
+    const values = [
+        "normal",
+        "none",
+        "auto",
+        "--macbook",
+        "--macbook#lid-attachment",
+        "--macbook#lid\\ attachment",
+    ];
+
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    for (const value of values) {
+        element.style.positionAnchor = value;
+
+        assert_true(CSS.supports("position-anchor", value), `CSS.supports("${value}")`);
+        assert_equals(element.style.positionAnchor, value, `specified value of "${value}"`);
+        assert_equals(computed(element), value, `computed value of "${value}"`);
+
+        const cssValue = getComputedStyle(element).getPropertyCSSValue("position-anchor");
+        assert_equals(cssValue.cssText, value, `computed CSSValue of "${value}"`);
+    }
+}, "position-anchor accepts an anchor name with an attachment point");
+
+test(t => {
+    const style = document.head.appendChild(document.createElement("style"));
+    style.textContent = "#anchored { position-anchor: --macbook#lid-attachment; }";
+
+    const element = document.body.appendChild(document.createElement("div"));
+    element.id = "anchored";
+
+    t.add_cleanup(() => {
+        style.remove();
+        element.remove();
+    });
+
+    assert_equals(style.sheet.cssRules[0].style.positionAnchor, "--macbook#lid-attachment", "specified value in the rule");
+    assert_equals(computed(element), "--macbook#lid-attachment", "computed value on the element");
+}, "an attachment point parses from a stylesheet");
+
+test(t => {
+    const style = document.head.appendChild(document.createElement("style"));
+    style.textContent = "@position-try --fallback { position-anchor: --macbook#lid-attachment; }";
+    t.add_cleanup(() => style.remove());
+
+    assert_equals(style.sheet.cssRules.length, 1, "the rule parsed");
+    assert_equals(style.sheet.cssRules[0].style.positionAnchor, "--macbook#lid-attachment");
+}, "an attachment point is accepted in @position-try");
+
+test(t => {
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    element.style.positionAnchor = "--macbook/* hi! */#lid-attachment";
+    assert_equals(computed(element), "--macbook#lid-attachment");
+}, "a comment between the anchor name and the attachment point does not break adjacency");
+
+</script>
+</body>
+</html>

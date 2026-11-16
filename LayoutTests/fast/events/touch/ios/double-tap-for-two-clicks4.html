@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width initial-scale=1 user-scalable=no">
+<title>This tests that we fire two click events on double tap when dblclick handler is in an iframe.</title>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+#doubleTapthis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+</style>
+</head>
+<body onload="test()">
+<div id=doubleTapthis>PASS if '[click][click][double click]' text is shown below.</div>
+<iframe id=removeMe src="../resources/doubleClickContent.html"></iframe>
+<pre id=result></pre>
+<script>
+
+doubleTapthis.addEventListener("click", function( event ) {   
+    result.innerHTML = result.innerHTML + "[click]";
+}, false);
+
+function dblclickHandler(event) {
+    result.innerHTML = result.innerHTML + "[double click]";
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 0);
+}
+
+doubleTapthis.addEventListener("dblclick", dblclickHandler, false);
+
+async function test() {
+    removeMe.remove();
+
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    await UIHelper.humanSpeedDoubleTapAt(doubleTapthis.offsetLeft, doubleTapthis.offsetTop);
+}
+</script>
+</body>
+</html>

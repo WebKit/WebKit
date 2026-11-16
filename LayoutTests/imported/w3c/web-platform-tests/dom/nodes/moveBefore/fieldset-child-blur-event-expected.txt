@@ -1,0 +1,4 @@
+
+
+PASS The 'blur' event is not fired on children of HTMLFieldSetElement during moveBefore()
+

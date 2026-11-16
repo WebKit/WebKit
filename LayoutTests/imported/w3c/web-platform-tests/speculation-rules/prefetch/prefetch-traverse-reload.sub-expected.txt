@@ -1,0 +1,5 @@
+
+FAIL prefetches can be used for traversal navigations assert_in_array: traversal should use prefetch value undefined not in array ["prefetch", "prefetch;anonymous-client-ip"]
+PASS History's Document is used for traversal navigations
+FAIL prefetches can be used for reload navigations assert_in_array: reload should use prefetch value undefined not in array ["prefetch", "prefetch;anonymous-client-ip"]
+

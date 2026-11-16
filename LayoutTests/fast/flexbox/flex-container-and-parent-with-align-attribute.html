@@ -1,0 +1,23 @@
+<style>
+.container {
+  position: absolute;
+}
+
+.flex {
+  display: flex;
+  width: 400px;
+}
+
+.flex > div {
+  background-color: green;
+  width: 50px;
+  height: 50px;
+}
+</style>
+PASS if green and blue boxes are next to each other.
+<div class=container align="center">
+  <div class=flex>
+    <div></div>
+    <div style="background-color: blue"></div>
+  </div>
+</div>

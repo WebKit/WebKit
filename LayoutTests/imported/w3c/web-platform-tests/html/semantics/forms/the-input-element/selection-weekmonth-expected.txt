@@ -1,0 +1,8 @@
+
+PASS Input element programmatic selection support
+PASS input type month should support the select() method
+PASS input type week should support the select() method
+PASS Input element programmatic selection support 1
+PASS input type month should not support variable-length selections
+PASS input type week should not support variable-length selections
+

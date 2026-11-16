@@ -1,0 +1,3 @@
+
+PASS navigate() with history: 'push' in a document that has not yet had its load event
+

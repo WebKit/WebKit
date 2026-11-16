@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<div id="container"></div>
+<div id="subtreeToMove">
+    <object form="A"></object>
+    <div id="A"></div>
+</div>
+<div id="A"></div>
+<p>PASS, this test did not cause an assertion failure.</p>
+<script>
+var container = document.getElementById("container");
+var subtreeToMove = document.getElementById("subtreeToMove");
+container.appendChild(subtreeToMove);
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .fixed {
+            position: fixed;
+            width: 100px;
+            height: 100px;
+            background-color: silver;
+            transform: translateX(0); /* Defeat clip to viewport */
+        }
+        
+        .offscreen {
+            transform: translateX(-110%);
+        }
+        
+        .absolute {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            transform: translateZ(0);
+        }
+        
+        .absolute.onscreen {
+            transform: translate3d(120%, 0, 0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+
+        window.addEventListener("load", () => {
+                document.getElementById("layertree").innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+            }, false);
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="fixed container">
+        <div class="absolute">
+        </div>
+    </div>
+
+    <div class="fixed offscreen container" style="top: 120px">
+        <div class="absolute">
+        </div>
+    </div>
+
+    <div class="fixed offscreen container" style="top: 240px">
+        <div class="absolute onscreen">
+        </div>
+    </div>
+
+    <pre id="layertree"></pre>
+</body>
+</html>
+

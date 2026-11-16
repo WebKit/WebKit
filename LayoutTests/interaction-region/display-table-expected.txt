@@ -1,0 +1,23 @@
+This
+is a link with display: table.
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (guard (0,-9.86) width=28.45 height=37.72),
+        (interaction (0,0.14) width=28.45 height=17.72)
+        (cornerRadius 8.00)])
+      )
+    )
+  )
+)
+

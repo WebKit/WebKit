@@ -1,0 +1,4 @@
+
+
+PASS Removing a currentEntry from the joint session history shouldn't dispose it
+

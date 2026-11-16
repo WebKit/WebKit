@@ -1,0 +1,25 @@
+<html>
+<head>
+<style>
+body {
+    background-color: Canvas;
+}
+</style>
+<script>
+function testColorScheme() {
+    if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage("light-detected");
+        } catch(e) { }
+    }
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage("dark-detected");
+        } catch(e) { }
+    }
+}
+</script>
+</head>
+<body onload="testColorScheme()">
+</body>
+</html>

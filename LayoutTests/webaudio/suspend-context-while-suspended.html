@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that calling AudioContext.suspend() while already suspended resolves the promise.");
+jsTestIsAsync = true;
+
+function didStartRendering()
+{
+    context.onstatechange = null;
+    testPassed("Did start rendering");
+    shouldBeEqualToString("context.state", "running");
+    context.suspend().then(() => {
+        shouldBeEqualToString("context.state", "suspended");
+        context.suspend().then(() => {
+            testPassed("Calling suspend() while suspended resolved the promise");
+            shouldBeEqualToString("context.state", "suspended");
+            finishJSTest();
+        }, (e) => {
+            testFailed("Second call to context.suspend() unexpectedly threw an exception: " + e);
+            finishJSTest();
+        });
+    }, (e) => {
+        testFailed("First call to context.suspend() unexpectedly threw an exception: " + e);
+        finishJSTest();
+    });
+}
+
+let context = new AudioContext;
+var source = context.createConstantSource();
+source.connect(context.destination);
+
+context.onstatechange = didStartRendering;
+source.start();
+</script>
+</html>

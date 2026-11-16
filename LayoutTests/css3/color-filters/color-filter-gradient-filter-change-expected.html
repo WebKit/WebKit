@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSS Test: -apple-color-filter reference</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+
+        <style type="text/css">
+            .row
+            {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            .test
+            {
+                width: 100px;
+                height: 100px;
+                background-image: linear-gradient(yellow, cyan);
+            }
+
+            .bordered
+            {
+                border-top: 20px solid transparent;
+            }
+
+            .inverted
+            {
+                background-image: linear-gradient(blue, red);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="row">
+            <div class="test"></div>
+            <div class="test inverted"></div>
+        </div>
+        <div class="row">
+            <div class="test bordered"></div>
+            <div class="test bordered inverted"></div>
+        </div>
+    </body>
+</html>

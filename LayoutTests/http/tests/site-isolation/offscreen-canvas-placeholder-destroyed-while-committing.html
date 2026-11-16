@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<div id="host"><canvas id="canvas" width="100" height="100"></canvas></div>
+<iframe src="http://localhost:8000/site-isolation/resources/offscreen-canvas-draw-and-ack.html" id="frame"></iframe>
+<script>
+description("Destroying the placeholder canvas while a cross-site iframe is still committing frames should discard those frames, not terminate the iframe's process.");
+jsTestIsAsync = true;
+
+addEventListener("message", (event) => {
+    if (!event.data)
+        return;
+
+    if (event.data.type == "child-ack") {
+        // Drop the canvas element, retiring the iframe's permission to commit to it, then ask the
+        // iframe to keep drawing into the OffscreenCanvas it still holds.
+        host.innerHTML = "";
+        gc();
+        frame.contentWindow.postMessage({ type: "keep-drawing" }, "*");
+        return;
+    }
+
+    if (event.data.type == "still-alive") {
+        if (event.data.error)
+            testFailed("iframe threw while drawing after the placeholder was destroyed: " + event.data.error);
+        else
+            testPassed("iframe survived committing frames to a destroyed placeholder");
+        finishJSTest();
+    }
+});
+
+frame.addEventListener("load", () => {
+    const offscreen = canvas.transferControlToOffscreen();
+    frame.contentWindow.postMessage({ type: "offscreen-canvas", canvas: offscreen }, "*", [offscreen]);
+});
+</script>
+</body>

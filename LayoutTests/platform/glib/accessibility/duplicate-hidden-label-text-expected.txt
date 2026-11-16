@@ -1,0 +1,14 @@
+This test ensures we compute the right string value for unrendered text (with this test exercising one such possible way: hidden labels).
+
+	AXTitle: Foo!
+ Bar Baz,
+	AXDescription:
+
+	AXTitle: Foo!
+ Baz,
+	AXDescription:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

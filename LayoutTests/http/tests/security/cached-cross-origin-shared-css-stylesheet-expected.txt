@@ -1,0 +1,2 @@
+Test is passing if not crashing
+PASS

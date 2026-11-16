@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+<script>
+
+var controllerPrototype;
+const rs = new ReadableStream({
+    start: function(c) {
+        controllerPrototype = Object.getPrototypeOf(c);
+    }
+});
+
+async function pumpStream(streamReader)
+{
+    const chunk = await streamReader.read();
+    if (!chunk.done)
+        return pumpStream(streamReader);
+}
+
+promise_test(async t => {
+    const enqueue = controllerPrototype.enqueue;
+    controllerPrototype.enqueue = null;
+    t.add_cleanup(async () => controllerPrototype.enqueue = enqueue);
+
+    const response = await fetch(".");
+    await response.body.getReader().read();
+}, "Overwrite ReadableStreamDefaultController enqueue");
+
+promise_test(async t => {
+    const error = controllerPrototype.error;
+    controllerPrototype.error = null;
+    t.add_cleanup(async () => controllerPrototype.error = error);
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const response = await fetch('./resources/lengthy-pass.py?delay=1', { signal });
+    const reader = response.body.getReader();
+
+    controller.abort();
+
+    await promise_rejects_dom(t, "AbortError", reader.closed);
+}, "Overwrite ReadableStreamDefaultController error");
+
+promise_test(async t => {
+    const close = controllerPrototype.close;
+    controllerPrototype.close = null;
+    t.add_cleanup(async () => controllerPrototype.close = close);
+
+    const response = await fetch(".");
+    const reader = response.body.getReader();
+    await pumpStream(reader);
+    await reader.closed;
+}, "Overwrite ReadableStreamDefaultController close");
+</script>

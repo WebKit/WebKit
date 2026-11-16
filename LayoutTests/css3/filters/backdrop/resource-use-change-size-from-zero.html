@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<style>
+div {
+  -webkit-backdrop-filter: blur(1px);
+  width: 200px;
+  height: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+</style>
+<!-- start with a zero height div so that the backdrop layer is omitted -->
+<div id="div"></div>
+<!-- then change the height and confirm that the resource use checks then allow the layer -->
+<script>
+window.doNotAutomaticallyCallLayerTree = true;
+
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        document.getElementById("div").style.height = "200px";
+
+        setTimeout(() => {
+            addLayerTreeAndFinish();
+        }, 0);
+    }, 0);
+}, false);
+</script>
+<script src="layer-tree-as-text.js"></script>

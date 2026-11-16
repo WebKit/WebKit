@@ -1,0 +1,27 @@
+This test verifies that base-appearance select menu items are discoverable via the accessibility search predicate API (used by Voice Control to generate numbered overlays).
+
+PASS: select.isExpanded === true
+
+--- Search for controls should find the select and its menu items ---
+PASS: foundMenuItems.length === 3
+PASS: (foundMenuItems[0]).role.toLowerCase().includes('menuitem') === true
+	AXTitle: Alpha
+	AXDescription:
+	AXHelp:
+PASS: _menuItemText.includes('Alpha') === true
+PASS: (foundMenuItems[1]).role.toLowerCase().includes('menuitem') === true
+	AXTitle: Bravo
+	AXDescription:
+	AXHelp:
+PASS: _menuItemText.includes('Bravo') === true
+PASS: (foundMenuItems[2]).role.toLowerCase().includes('menuitem') === true
+	AXTitle: Charlie
+	AXDescription:
+	AXHelp:
+PASS: _menuItemText.includes('Charlie') === true
+PASS: select.isExpanded === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

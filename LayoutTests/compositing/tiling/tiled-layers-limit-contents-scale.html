@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        #pageContainer {
+            position: relative;
+            z-index: 0;
+            margin: 10px;
+            height: 10000px;
+            width: 10000px;
+            border: 10px solid black;
+            padding: 100px;
+            transform-origin: left top;
+            transform: scale3d(0.05, 0.05, 1);
+            font-size: 200pt;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+        
+        function dumpLayers()
+        {
+            if (window.internals)
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS);
+        }
+        window.addEventListener('load', dumpLayers, false);
+    </script>
+</head>
+<body>
+    <div id="pageContainer">Layer with backing store</div>
+<pre id="layers"></pre>
+</body>
+</html>

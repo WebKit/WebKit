@@ -1,0 +1,11 @@
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Things are easiest for everyone if these source paths are absolute.
+_src = get_path_info("../src", "abspath")
+
+ml3 = [ "$_src/opts/SkOpts_ml3.cpp" ]
+ml4 = [ "$_src/opts/SkOpts_ml4.cpp" ]
+lasx = [ "$_src/opts/SkOpts_lasx.cpp" ]

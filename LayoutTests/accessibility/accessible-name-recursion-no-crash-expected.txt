@@ -1,0 +1,14 @@
+This tests that cyclic accessible name computations terminate without crashing, and that bounding them does not truncate legitimate names.
+
+PASS: typeof platformValueForW3CName(boundedName) === 'string'
+PASS: typeof platformValueForW3CName(boundedName) === 'string'
+PASS: typeof platformValueForW3CName(boundedName) === 'string'
+PASS: platformValueForW3CName(image) === 'Caption text'
+PASS: platformValueForW3CName(fieldset) === 'fieldset text'
+PASS: platformValueForW3CName(chainStart) === 'chain end'
+PASS: deepButton.title.includes('deeply nested text') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

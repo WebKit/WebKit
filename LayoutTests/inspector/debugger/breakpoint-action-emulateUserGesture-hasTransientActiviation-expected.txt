@@ -1,0 +1,18 @@
+Tests for Debugger.BreakpointAction emulateUserGesture parameter.
+
+
+== Running test suite: Debugger.BreakpointAction
+-- Running test case: Debugger.BreakpointAction.emulateUserGesture.hasTransientActivation.false
+Pausing...
+before debugger
+No transient activation
+Resuming...
+after debugger
+
+-- Running test case: Debugger.BreakpointAction.emulateUserGesture.hasTransientActivation.true
+Pausing...
+before debugger
+Has transient activation
+Resuming...
+after debugger
+

@@ -1,0 +1,6 @@
+
+PASS picture-in-picture allowed in iframe with no allow attribute (default allowlist *)
+PASS picture-in-picture blocked in iframe with allow="picture-in-picture 'none'"
+PASS picture-in-picture denial propagates to nested iframes with no allow attribute
+PASS cross-origin iframe with allow="picture-in-picture 'none'"
+PASS cross origin picture-in-picture denial propagates to nested iframes with no allow attribute

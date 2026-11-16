@@ -1,0 +1,25 @@
+::before gets a box when 'content' comes from an animation or transition and no matching rule sets 'content'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+CSS animation
+PASS cssAnimation.offsetHeight is 25
+
+CSS transition with allow-discrete
+PASS cssTransition.offsetHeight is 25
+cssTransition.classList.remove('content')
+PASS cssTransition.offsetHeight is 25
+cssTransition.getAnimations({ subtree: true })[0].finish()
+PASS cssTransition.offsetHeight is 0
+
+Web Animation
+PASS webAnimation.offsetHeight is 0
+animation = webAnimation.animate({ content: ['""', '""'] }, { pseudoElement: '::before', duration: 1000000 })
+PASS webAnimation.offsetHeight is 25
+animation.cancel()
+PASS webAnimation.offsetHeight is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

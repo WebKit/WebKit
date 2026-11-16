@@ -1,0 +1,11 @@
+ 	 
+ 	 
+ 	 
+ 
+ 	 
+
+PASS Single row with height attribute and rowspan=5: cells have equal height
+PASS Single row with CSS height and rowspan=5: cells have equal height
+PASS Two rows with rowspan=10: real rows share full table height
+PASS Single row with height attribute and rowspan=3: cells have equal height
+

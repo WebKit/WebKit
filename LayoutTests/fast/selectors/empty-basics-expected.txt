@@ -1,0 +1,20 @@
+Check the basic features of the ":empty" pseudo class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("testcase:empty").length is 4
+PASS document.querySelectorAll("testcase:empty")[0] is document.getElementById("no-content")
+PASS document.querySelectorAll("testcase:empty")[1] is document.getElementById("comment")
+PASS document.querySelectorAll("testcase:empty")[2] is document.getElementById("empty-textnodes")
+PASS document.querySelectorAll("testcase:empty")[3] is document.getElementById("comments-and-empty-textnodes")
+PASS getComputedStyle(document.getElementById("no-content")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("comment")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("empty-textnodes")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("comments-and-empty-textnodes")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("space-character")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("element")).backgroundColor is "rgb(255, 255, 255)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

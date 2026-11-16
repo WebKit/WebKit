@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("This tests Notification.permission's returned Promise");
+jsTestIsAsync = true;
+
+if (!window.internals)
+    finishJSTest();
+
+function step1() {
+    debug("Requesting permission with default permission without user gesture");
+    shouldBeEqualToString("Notification.permission", "default");
+    internals.withoutUserGesture(() => {
+        Notification.requestPermission().then((permission) => {
+            if (permission == 'denied')
+                testPassed("permission is denied");
+            else
+                testFailed("permission should be denied, but is " + permission);
+            shouldBeEqualToString("Notification.permission", "default");
+            setTimeout(step2, 0);
+        });
+    });
+}
+
+function step2() {
+    debug("Requesting permission with default permission with user gesture");
+    shouldBeEqualToString("Notification.permission", "default");
+    internals.withUserGesture(() => {
+        Notification.requestPermission().then((permission) => {
+            if (permission == 'granted')
+                testPassed("permission is granted");
+            else
+                testFailed("permission should be granted, but is " + permission);
+            shouldBeEqualToString("Notification.permission", "granted");
+            setTimeout(step3, 0);
+        });
+    });
+}
+
+function step3() {
+    debug("Requesting permission with non-default permission");
+    testRunner.denyWebNotificationPermission(self.origin);
+    internals.withUserGesture(() => {
+        Notification.requestPermission().then((permission) => {
+            if (permission == 'denied')
+                testPassed("permission is denied");
+            else
+                testFailed("permission should be denied, but is " + permission);
+            shouldBeEqualToString("Notification.permission", "denied");
+            finishJSTest();
+        });
+    });
+}
+
+step1();
+</script>

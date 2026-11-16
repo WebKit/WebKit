@@ -1,0 +1,7 @@
+void func() {
+    float x();
+}
+
+/*%%*
+expected ';', but found '('
+*%%*/

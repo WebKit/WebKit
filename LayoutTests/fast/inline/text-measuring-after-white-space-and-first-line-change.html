@@ -1,0 +1,16 @@
+<style>
+div { font: 20px/30px Times; margin: 10px; width: 600px; }
+#firstLine::first-line, #addedFirstLine.withFirstLine::first-line { font-size: 40px; }
+#firstLine.changed::first-line { font-family: Ahem; }
+</style>
+<!-- Text measuring depends on white-space collapsing and on the first-line font. They change here after the text was laid out. -->
+<div id="whiteSpace">tab	tab	tab
+newline</div>
+<div id="firstLine">first line text that wraps to more lines than one, first line text that wraps to more lines than one</div>
+<div id="addedFirstLine">first line text that wraps to more lines than one, first line text that wraps to more lines than one</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("whiteSpace").style.whiteSpace = "pre";
+document.getElementById("firstLine").classList.add("changed");
+document.getElementById("addedFirstLine").classList.add("withFirstLine");
+</script>

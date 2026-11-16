@@ -1,0 +1,15 @@
+This test ensures we compute the correct editable ancestor.
+
+PASS: accessibilityController.accessibleElementById('button').editableAncestor().domIdentifier === 'inner-ancestor'
+PASS: accessibilityController.accessibleElementById('button').highestEditableAncestor().domIdentifier === 'inner-ancestor'
+document.getElementById('outer-ancestor').setAttribute('contenteditable', 'true')
+PASS: accessibilityController.accessibleElementById('button').highestEditableAncestor().domIdentifier === 'outer-ancestor'
+PASS: accessibilityController.accessibleElementById('button').editableAncestor().domIdentifier === 'inner-ancestor'
+document.getElementById('inner-ancestor').removeAttribute('contenteditable')
+PASS: accessibilityController.accessibleElementById('button').editableAncestor().domIdentifier === 'outer-ancestor'
+PASS: accessibilityController.accessibleElementById('button').highestEditableAncestor().domIdentifier === 'outer-ancestor'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me

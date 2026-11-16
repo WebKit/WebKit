@@ -1,0 +1,19 @@
+x x x x
+x x x
+xx
+xx
+x x x x x x x x x
+xx
+x x x
+xx xx
+x x x x
+
+PASS grid-extrinsically-sized-mutations
+PASS grid-extrinsically-sized-mutations 1
+PASS grid-extrinsically-sized-mutations 2
+PASS grid-extrinsically-sized-mutations 3
+PASS grid-extrinsically-sized-mutations 4
+PASS grid-extrinsically-sized-mutations 5
+PASS grid-extrinsically-sized-mutations 6
+PASS grid-extrinsically-sized-mutations 7
+

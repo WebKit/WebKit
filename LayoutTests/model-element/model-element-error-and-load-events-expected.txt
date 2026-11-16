@@ -1,0 +1,5 @@
+
+PASS <model> dispatches an "error" event when its resource load is aborted before completion.
+PASS <model> dispatches an "error" event when its specified resource does not exist.
+PASS <model> dispatches a "load" event when its resource is successfully loaded.
+

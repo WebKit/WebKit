@@ -1,0 +1,62 @@
+
+PASS Creating an AudioWorkletNode with a set for
+                    parameter descriptor worked
+PASS Map match in size for set
+PASS set: a control-rate parameter exists in both maps
+PASS Values for a control-rate parameter.defaultValue match for set
+PASS Values for a control-rate parameter.minValue match for set
+PASS Values for a control-rate parameter.maxValue match for set
+PASS Values for a control-rate parameter.automationRate match for set
+PASS set: 你好 exists in both maps
+PASS Values for 你好.defaultValue match for set
+PASS Values for 你好.minValue match for set
+PASS Values for 你好.maxValue match for set
+PASS Values for 你好.automationRate match for set
+PASS set: 🎶 exists in both maps
+PASS Values for 🎶.defaultValue match for set
+PASS Values for 🎶.minValue match for set
+PASS Values for 🎶.maxValue match for set
+PASS Values for 🎶.automationRate match for set
+PASS Creating an AudioWorkletNode with a array for
+                    parameter descriptor worked
+PASS Map match in size for array
+PASS array: a control-rate parameter exists in both maps
+PASS Values for a control-rate parameter.defaultValue match for array
+PASS Values for a control-rate parameter.minValue match for array
+PASS Values for a control-rate parameter.maxValue match for array
+PASS Values for a control-rate parameter.automationRate match for array
+PASS array: 你好 exists in both maps
+PASS Values for 你好.defaultValue match for array
+PASS Values for 你好.minValue match for array
+PASS Values for 你好.maxValue match for array
+PASS Values for 你好.automationRate match for array
+PASS array: 🎶 exists in both maps
+PASS Values for 🎶.defaultValue match for array
+PASS Values for 🎶.minValue match for array
+PASS Values for 🎶.maxValue match for array
+PASS Values for 🎶.automationRate match for array
+PASS Creating an AudioWorkletNode with a generator for
+                    parameter descriptor worked
+PASS Map match in size for generator
+PASS generator: a control-rate parameter exists in both maps
+PASS Values for a control-rate parameter.defaultValue match for generator
+PASS Values for a control-rate parameter.minValue match for generator
+PASS Values for a control-rate parameter.maxValue match for generator
+PASS Values for a control-rate parameter.automationRate match for generator
+PASS generator: 你好 exists in both maps
+PASS Values for 你好.defaultValue match for generator
+PASS Values for 你好.minValue match for generator
+PASS Values for 你好.maxValue match for generator
+PASS Values for 你好.automationRate match for generator
+PASS generator: 🎶 exists in both maps
+PASS Values for 🎶.defaultValue match for generator
+PASS Values for 🎶.minValue match for generator
+PASS Values for 🎶.maxValue match for generator
+PASS Values for 🎶.automationRate match for generator
+PASS Attempting to create an AudioWorkletNode with an non
+              iterable for parameter descriptor should not work
+PASS Attempting to create an AudioWorkletNode from a processor
+            that does not have a parameterDescriptors getter should work
+PASS Attempting to create an AudioWorkletNode with two parameter
+            descriptor with the same name should not work
+

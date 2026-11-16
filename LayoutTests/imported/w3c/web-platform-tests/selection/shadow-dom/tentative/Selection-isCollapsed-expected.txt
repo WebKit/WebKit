@@ -1,0 +1,16 @@
+Outside shadow tree.
+
+
+PASS Selection in light tree is not collapsed
+FAIL Selection in shadow tree is not collapsed assert_false: expected false got true
+FAIL Selection between light and shadow tree is not valid and is collapsed. Composed range is not collapsed assert_equals: expected Text node "Outside shadow tree." but got Element node <div id="container">
+  <div id="host">
+
+  </div>
+  <p...
+FAIL Selection between two shadow trees is not valid and is collapsed. Composed range is not collapsed assert_equals: expected Text node "Inside shadow tree 2." but got Element node <div id="container">
+  <div id="host">
+
+  </div>
+  <p...
+

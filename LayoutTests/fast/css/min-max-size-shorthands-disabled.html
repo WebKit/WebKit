@@ -1,0 +1,96 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSSizeShorthandEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="target" style="display: none"></div>
+<script>
+description("Tests that the min-size and max-size shorthands are not exposed across the parser, CSSOM, Typed OM and animation surfaces when CSSSizeShorthandEnabled is disabled, while the min-width/min-height/max-width/max-height longhands keep working.");
+
+var target = document.getElementById('target');
+
+debug("1. The min-size and max-size shorthands must not be exposed:");
+shouldBeFalse("'minSize' in document.documentElement.style");
+shouldBeFalse("'maxSize' in document.documentElement.style");
+shouldBeFalse("'min-size' in document.documentElement.style");
+shouldBeFalse("'max-size' in document.documentElement.style");
+shouldBeFalse("'min-size' in getComputedStyle(target)");
+shouldBeFalse("'max-size' in getComputedStyle(target)");
+shouldBeFalse("CSS.supports('min-size', '10px')");
+shouldBeFalse("CSS.supports('max-size', '10px')");
+shouldBeFalse("CSS.supports('min-size: 10px 20px')");
+shouldBeFalse("CSS.supports('max-size: 30px 40px')");
+
+debug("");
+debug("2. The CSSOM write API is a no-op for both shorthands and never touches the longhands:");
+target.style.cssText = "min-size: 10px 20px; max-size: 30px 40px";
+shouldBeEqualToString("target.style.getPropertyValue('min-size')", "");
+shouldBeEqualToString("target.style.getPropertyValue('max-size')", "");
+shouldBeEqualToString("target.style.getPropertyValue('min-width')", "");
+shouldBeEqualToString("target.style.getPropertyValue('min-height')", "");
+shouldBeEqualToString("target.style.getPropertyValue('max-width')", "");
+shouldBeEqualToString("target.style.getPropertyValue('max-height')", "");
+shouldBeEqualToString("target.style.cssText", "");
+target.style.setProperty('min-size', '10px 20px');
+target.style.setProperty('max-size', '30px 40px');
+shouldBeEqualToString("target.style.getPropertyValue('min-size')", "");
+shouldBeEqualToString("target.style.getPropertyValue('max-size')", "");
+shouldBeEqualToString("target.style.getPropertyPriority('min-size')", "");
+shouldBeEqualToString("target.style.getPropertyPriority('max-size')", "");
+shouldBeEqualToString("target.style.removeProperty('min-size')", "");
+shouldBeEqualToString("target.style.removeProperty('max-size')", "");
+
+debug("");
+debug("3. The longhands remain fully functional:");
+shouldBeTrue("CSS.supports('min-width', '10px')");
+shouldBeTrue("CSS.supports('min-height', '20px')");
+shouldBeTrue("CSS.supports('max-width', '30px')");
+shouldBeTrue("CSS.supports('max-height', '40px')");
+target.style.cssText = "min-width: 10px; min-height: 20px; max-width: 30px; max-height: 40px";
+shouldBeEqualToString("target.style.getPropertyValue('min-width')", "10px");
+shouldBeEqualToString("target.style.getPropertyValue('min-height')", "20px");
+shouldBeEqualToString("target.style.getPropertyValue('max-width')", "30px");
+shouldBeEqualToString("target.style.getPropertyValue('max-height')", "40px");
+
+debug("");
+debug("4. The longhands must not collapse into the shorthands when serializing:");
+shouldBeEqualToString("target.style.cssText", "min-width: 10px; min-height: 20px; max-width: 30px; max-height: 40px;");
+shouldBeEqualToString("target.style.getPropertyValue('min-size')", "");
+shouldBeEqualToString("target.style.getPropertyValue('max-size')", "");
+
+debug("");
+debug("5. The disabled shorthands never appear in style enumeration:");
+shouldBe("target.style.length", "4");
+shouldBeEqualToString("target.style.item(0)", "min-width");
+shouldBeEqualToString("target.style.item(1)", "min-height");
+shouldBeEqualToString("target.style.item(2)", "max-width");
+shouldBeEqualToString("target.style.item(3)", "max-height");
+
+debug("");
+debug("6. Both shorthands are dropped from @keyframes when disabled, while the longhands are preserved:");
+var keyframesStyle = document.createElement('style');
+keyframesStyle.textContent = '@keyframes grow { from { min-size: 10px 20px; max-size: 30px 40px; min-width: 50px; max-width: 60px; } }';
+document.head.appendChild(keyframesStyle);
+var keyframe = keyframesStyle.sheet.cssRules[0].cssRules[0];
+shouldBeEqualToString("keyframe.style.getPropertyValue('min-size')", "");
+shouldBeEqualToString("keyframe.style.getPropertyValue('max-size')", "");
+shouldBeEqualToString("keyframe.style.getPropertyValue('min-width')", "50px");
+shouldBeEqualToString("keyframe.style.getPropertyValue('max-width')", "60px");
+
+debug("");
+debug("7. Typed OM rejects both shorthands when disabled, but not the longhands:");
+shouldThrow("target.attributeStyleMap.set('min-size', '10px 20px')");
+shouldThrow("target.attributeStyleMap.get('min-size')");
+shouldThrow("target.computedStyleMap().get('min-size')");
+shouldThrow("target.attributeStyleMap.set('max-size', '30px 40px')");
+shouldThrow("target.attributeStyleMap.get('max-size')");
+shouldThrow("target.computedStyleMap().get('max-size')");
+shouldNotThrow("target.attributeStyleMap.set('min-width', '10px')");
+shouldNotThrow("target.attributeStyleMap.get('min-width')");
+shouldNotThrow("target.attributeStyleMap.set('max-width', '30px')");
+shouldNotThrow("target.attributeStyleMap.get('max-width')");
+</script>
+</body>
+</html>

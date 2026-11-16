@@ -1,0 +1,4 @@
+
+
+PASS navigate event for history.back() - cross-document
+

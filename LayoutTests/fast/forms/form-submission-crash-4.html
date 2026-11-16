@@ -1,0 +1,24 @@
+<script>
+if (document.URL.indexOf('?') == -1) {
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+}
+function runTest() {
+  form.submit();
+  p.appendChild(form);
+  object.codeType = "image/gif";
+  if (document.URL.indexOf('?') == -1) {
+    document.write("PASS if no crash");
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+}
+</script>
+<body onload=runTest()>
+<p id="p"></p>
+  <form action="?" id="form">
+    <object id="object" data="?">
+  </form>
+</body>

@@ -1,0 +1,5 @@
+
+PASS Can animate standard property in shadow
+PASS Can animate typed custom property in shadow
+PASS Can animate untyped custom property in shadow
+

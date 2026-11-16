@@ -1,0 +1,18 @@
+Test that a same-site iframe that navigates cross-site while another frame is paused, into a process that is created for it, holds its new document until the pause ends.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsLateJoiner.SubframeNavigation
+-- Running test case: SiteIsolation.Debugger.PauseHoldsLateJoiner.SubframeNavigation.Setup
+PASS: Should find the frame target for frame A.
+PASS: Should find the frame target for frame B.
+PASS: Frame B should be in the main frame's process.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsLateJoiner.SubframeNavigation.NavigateIntoNewProcess
+PASS: Should find the frame target for frame B's new document.
+PASS: Frame B's new document should be in a new process, not frame A's.
+PASS: Frame B's new document should be in a new process, not the main frame's.
+PASS: Frame B's new interval should not advance while frame A is paused.
+PASS: Frame B's new interval after resuming should advance.
+PASS: The main frame's interval after resuming should advance.
+

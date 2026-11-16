@@ -1,0 +1,5 @@
+This test makes sure that forms POSTed with a content-type of text/plain actually send data in text/plain
+
+SUCCESS: Content-type is text/plain.
+
+SUCCESS

@@ -1,0 +1,3 @@
+
+PASS reparenting a dialog should not cause it to move in the open dialogs list
+

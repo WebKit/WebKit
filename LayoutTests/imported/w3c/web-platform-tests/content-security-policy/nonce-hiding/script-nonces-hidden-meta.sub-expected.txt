@@ -1,0 +1,13 @@
+
+PASS Reading 'nonce' content attribute and IDL attribute.
+PASS Cloned node retains nonce.
+PASS Cloned node retains nonce when inserted.
+PASS Writing 'nonce' content attribute.
+PASS Writing 'nonce' IDL attribute.
+PASS Document-written script executes.
+PASS Document-written script's nonce value.
+PASS createElement.nonce.
+PASS setAttribute('nonce') overwrites '.nonce' upon insertion.
+PASS createElement.setAttribute.
+PASS Nonces leak via CSS side-channels.
+

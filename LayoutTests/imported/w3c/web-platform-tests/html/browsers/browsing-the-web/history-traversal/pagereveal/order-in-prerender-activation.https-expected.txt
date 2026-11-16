@@ -1,0 +1,3 @@
+
+FAIL pagereveal event fires and in correct order on prerender activation promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: PrerenderChannel"
+

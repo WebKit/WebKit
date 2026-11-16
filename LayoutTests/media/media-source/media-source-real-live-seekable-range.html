@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-live-seekable-range</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests setLiveSeekableRange() and clearLiveSeekableRange() error conditions
+    // and their effect on HTMLMediaElement.seekable.
+    // MSE spec section 2.4.
+
+    var source;
+    var sourceBuffer;
+    var thrownError;
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(MP4.VIDEO_TYPE);
+
+        var initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        var media = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // --- Error conditions ---
+
+        consoleWrite('Test: setLiveSeekableRange with start < 0 throws TypeError');
+        thrownError = null;
+        try { source.setLiveSeekableRange(-1, 5); } catch (e) { thrownError = e; }
+        testExpected('thrownError.name', 'TypeError');
+
+        consoleWrite('Test: setLiveSeekableRange with start > end throws TypeError');
+        thrownError = null;
+        try { source.setLiveSeekableRange(5, 2); } catch (e) { thrownError = e; }
+        testExpected('thrownError.name', 'TypeError');
+
+        // --- Functional behavior ---
+        // setLiveSeekableRange affects seekable when duration is +Infinity (live).
+        // With finite duration, seekable is [0, duration) per the HTMLMediaElement spec.
+        // Set duration to Infinity to enter live mode.
+        run('source.duration = Infinity');
+
+        consoleWrite('Test: setLiveSeekableRange sets seekable range in live mode');
+        run('source.setLiveSeekableRange(1, 3)');
+        testExpected('video.seekable.length', 1);
+        testExpected('video.seekable.start(0)', 1);
+        testExpected('video.seekable.end(0)', 3);
+
+        consoleWrite('Test: update live seekable range');
+        run('source.setLiveSeekableRange(0, 4)');
+        testExpected('video.seekable.start(0)', 0);
+        testExpected('video.seekable.end(0)', 4);
+
+        consoleWrite('Test: clearLiveSeekableRange clears the range');
+        run('source.clearLiveSeekableRange()');
+
+        // --- Error: calling on non-open source ---
+        source.endOfStream();
+        consoleWrite('Test: setLiveSeekableRange when ended throws InvalidStateError');
+        thrownError = null;
+        try { source.setLiveSeekableRange(0, 5); } catch (e) { thrownError = e; }
+        testExpected('thrownError.name', 'InvalidStateError');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

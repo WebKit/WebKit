@@ -1,0 +1,6 @@
+
+PASS e.style['clip-path'] = "half-border-box" should set the property value
+PASS e.style['clip-path'] = "circle(7% at 8% 9%) half-border-box" should set the property value
+PASS e.style['clip-path'] = "half-border-box circle(7% at 8% 9%)" should set the property value
+PASS e.style['clip-path'] = "inset(0px) half-border-box" should set the property value
+

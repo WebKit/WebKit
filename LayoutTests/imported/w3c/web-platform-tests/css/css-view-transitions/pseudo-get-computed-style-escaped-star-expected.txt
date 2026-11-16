@@ -1,0 +1,3 @@
+
+PASS getComputedStyle() for ::view-transition-group(*) is not confused with the escaped name \*
+

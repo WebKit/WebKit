@@ -1,0 +1,108 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+onload = async () => {
+    const output = document.getElementById('output');
+    function log(msg) { output.textContent += msg + '\n'; }
+
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        if (!adapter) { log('No adapter'); if (window.testRunner) testRunner.notifyDone(); return; }
+        const device = await adapter.requestDevice();
+
+        // Two triangle-strip quads, one for each half of the render target, separated by the
+        // uint16 strip restart index 0xFFFF.
+        const vertices = new Float32Array([
+            -1, -1,   0, -1,  -1, 1,   0, 1,
+             0, -1,   1, -1,   0, 1,   1, 1,
+        ]);
+        const vertexBuffer = device.createBuffer({ size: vertices.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+        device.queue.writeBuffer(vertexBuffer, 0, vertices);
+
+        const indices = new Uint16Array([0, 1, 2, 3, 0xFFFF, 4, 5, 6, 7, 0]);
+        const indexCount = 9;
+
+        // Fill the index buffer on the GPU, so that its contents are not known on the CPU and the
+        // draw is validated by the index clamp shaders.
+        const stagingBuffer = device.createBuffer({ size: indices.byteLength, usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST });
+        device.queue.writeBuffer(stagingBuffer, 0, indices);
+        const indexBuffer = device.createBuffer({ size: indices.byteLength, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST });
+        {
+            const encoder = device.createCommandEncoder();
+            encoder.copyBufferToBuffer(stagingBuffer, 0, indexBuffer, 0, indices.byteLength);
+            device.queue.submit([encoder.finish()]);
+        }
+
+        const shaderModule = device.createShaderModule({ code: `
+            @vertex fn vs(@location(0) pos: vec2f) -> @builtin(position) vec4f { return vec4f(pos, 0.0, 1.0); }
+            @fragment fn fs() -> @location(0) vec4f { return vec4f(0.0, 1.0, 0.0, 1.0); }
+        `});
+        const pipeline = device.createRenderPipeline({
+            layout: 'auto',
+            vertex: {
+                module: shaderModule,
+                buffers: [{
+                    arrayStride: 8,
+                    attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x2' }],
+                }],
+            },
+            fragment: { module: shaderModule, targets: [{ format: 'rgba8unorm' }] },
+            primitive: { topology: 'triangle-strip', stripIndexFormat: 'uint16' },
+        });
+
+        const size = 4;
+        const bytesPerRow = 256;
+
+        async function drawAndCheck(name, useRenderBundle) {
+            const renderTarget = device.createTexture({
+                size: [size, size], format: 'rgba8unorm',
+                usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+            });
+            const readbackBuffer = device.createBuffer({ size: bytesPerRow * size, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+            const encoder = device.createCommandEncoder();
+            const pass = encoder.beginRenderPass({
+                colorAttachments: [{
+                    view: renderTarget.createView(),
+                    clearValue: [0, 0, 0, 0], loadOp: 'clear', storeOp: 'store',
+                }],
+            });
+            if (useRenderBundle) {
+                const bundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['rgba8unorm'] });
+                bundleEncoder.setPipeline(pipeline);
+                bundleEncoder.setVertexBuffer(0, vertexBuffer);
+                bundleEncoder.setIndexBuffer(indexBuffer, 'uint16');
+                bundleEncoder.drawIndexed(indexCount);
+                pass.executeBundles([bundleEncoder.finish()]);
+            } else {
+                pass.setPipeline(pipeline);
+                pass.setVertexBuffer(0, vertexBuffer);
+                pass.setIndexBuffer(indexBuffer, 'uint16');
+                pass.drawIndexed(indexCount);
+            }
+            pass.end();
+            encoder.copyTextureToBuffer({ texture: renderTarget }, { buffer: readbackBuffer, bytesPerRow }, [size, size]);
+            device.queue.submit([encoder.finish()]);
+
+            await readbackBuffer.mapAsync(GPUMapMode.READ);
+            const pixels = new Uint8Array(readbackBuffer.getMappedRange());
+            let drawn = 0;
+            for (let y = 0; y < size; ++y) {
+                for (let x = 0; x < size; ++x) {
+                    const offset = y * bytesPerRow + x * 4;
+                    if (pixels[offset] == 0 && pixels[offset + 1] == 255 && pixels[offset + 2] == 0 && pixels[offset + 3] == 255)
+                        ++drawn;
+                }
+            }
+            readbackBuffer.unmap();
+            log((drawn == size * size ? 'PASS' : 'FAIL') + ' - ' + name + ': ' + drawn + ' of ' + (size * size) + ' pixels drawn');
+        }
+
+        await drawAndCheck('drawIndexed', false);
+        await drawAndCheck('drawIndexed in a render bundle', true);
+    } catch (e) {
+        log('FAIL - ' + e);
+    }
+    if (window.testRunner) testRunner.notifyDone();
+};
+</script>
+<pre id="output"></pre>

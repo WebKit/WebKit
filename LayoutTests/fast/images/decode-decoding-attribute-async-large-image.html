@@ -1,0 +1,21 @@
+<body>
+    <p>This test ensures if the src of an image with decoding="async" is set to the src of a decoded image, no further decoding will be requested.</p>
+    <img decoding="async">
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            testRunner.waitUntilDone();
+        }
+
+        (async () => {
+            let image = new Image;
+            image.src = "resources/green-400x400.png";
+
+            await image.decode();
+            document.querySelector("img").src = image.src;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        })();
+    </script>
+</body>

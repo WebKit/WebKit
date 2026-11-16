@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: busy timer done true
+Tests that a ScriptProfiler tracking session started with includeSamples reports both execution events and sampled stack traces covering them.
+
+
+== Running test suite: ScriptProfiler.Samples
+-- Running test case: StartTrackingWithIncludeSamples
+ScriptProfiler.trackingStart
+ScriptProfiler.trackingComplete
+PASS: Should have received at least one ScriptProfiler.Event.
+PASS: Should have received samples.
+PASS: Should have collected at least one stack trace.
+PASS: At least one stack trace should fall within a ScriptProfiler.Event.
+

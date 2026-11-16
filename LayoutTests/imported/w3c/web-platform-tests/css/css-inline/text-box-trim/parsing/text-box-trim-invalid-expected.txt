@@ -1,0 +1,8 @@
+
+PASS e.style['text-box-trim'] = "trim-start trim-end" should not set the property value
+PASS e.style['text-box-trim'] = "auto" should not set the property value
+PASS e.style['text-box-trim'] = "normal" should not set the property value
+PASS e.style['text-box-trim'] = "start" should not set the property value
+PASS e.style['text-box-trim'] = "end" should not set the property value
+PASS e.style['text-box-trim'] = "both" should not set the property value
+

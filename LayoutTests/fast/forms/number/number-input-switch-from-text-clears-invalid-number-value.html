@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<input id="input" type="text">
+<script>
+description('Verify that switching input from type=text to number drops invalid values but preserves valid numeric values.');
+
+const testCases = [
+    { value: 'abc', expected: '' },
+    { value: '--123', expected: '' },
+    { value: '１２３', expected: '' },
+    { value: '1e--2', expected: '' },
+    { value: '123', expected: '123' },
+    { value: '+123', expected: '' },
+    { value: '-123.45', expected: '-123.45' },
+    { value: '1e5', expected: '1e5' },
+];
+
+for (const { value, expected } of testCases) {
+    const input = document.getElementById('input');
+    input.type = 'text';
+    input.value = value;
+    input.type = 'number';
+    debug(`Switching type=text to type=number for value="${value}"`);
+    shouldBe(`input.value`, `"${expected}"`);
+}
+</script>
+</body>
+</html>

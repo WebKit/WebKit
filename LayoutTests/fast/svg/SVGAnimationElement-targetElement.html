@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVGAnimationElement.targetElement Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+        }
+        .test-result {
+            padding: 5px;
+            margin: 2px 0;
+        }
+        .pass {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .fail {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        #svg-container {
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>SVGAnimationElement.targetElement Test Suite</h1>
+    <div id="results"></div>
+    
+    <div id="svg-container">
+        <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+            <!-- Defs for use element -->
+            <defs>
+                <circle id="test-circle-def" cx="50" cy="50" r="20" fill="purple"/>
+            </defs>
+
+            <!-- Circle -->
+            <circle id="test-circle" cx="50" cy="50" r="40" fill="blue">
+                <animate id="anim-circle" attributeName="r" from="40" to="60" dur="2s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- Ellipse -->
+            <ellipse id="test-ellipse" cx="150" cy="50" rx="40" ry="30" fill="green">
+                <animate id="anim-ellipse" attributeName="rx" from="40" to="60" dur="2s" repeatCount="indefinite"/>
+            </ellipse>
+
+            <!-- Rectangle -->
+            <rect id="test-rect" x="10" y="120" width="100" height="50" fill="red">
+                <animate id="anim-rect" attributeName="width" from="100" to="200" dur="2s" repeatCount="indefinite"/>
+            </rect>
+
+            <!-- Line -->
+            <line id="test-line" x1="10" y1="200" x2="100" y2="200" stroke="black" stroke-width="2">
+                <animate id="anim-line" attributeName="x2" from="100" to="200" dur="2s" repeatCount="indefinite"/>
+            </line>
+
+            <!-- Polyline -->
+            <polyline id="test-polyline" points="10,250 50,280 100,250" stroke="orange" fill="none" stroke-width="2">
+                <animate id="anim-polyline" attributeName="stroke-width" from="2" to="8" dur="2s" repeatCount="indefinite"/>
+            </polyline>
+
+            <!-- Polygon -->
+            <polygon id="test-polygon" points="150,250 200,300 100,300" fill="purple">
+                <animate id="anim-polygon" attributeName="fill" from="purple" to="yellow" dur="2s" repeatCount="indefinite"/>
+            </polygon>
+
+            <!-- Path -->
+            <path id="test-path" d="M250 50 L350 100" stroke="brown" fill="none" stroke-width="2">
+                <animate id="anim-path" attributeName="stroke-width" from="2" to="10" dur="2s" repeatCount="indefinite"/>
+            </path>
+
+            <!-- Text -->
+            <text id="test-text" x="250" y="150" font-size="20" fill="black">Test
+                <animate id="anim-text" attributeName="font-size" from="20" to="40" dur="2s" repeatCount="indefinite"/>
+            </text>
+
+            <!-- Image -->
+            <image id="test-image" x="250" y="200" width="100" height="100" 
+                   href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100' height='100' fill='cyan'/%3E%3C/svg%3E">
+                <animate id="anim-image" attributeName="opacity" from="1" to="0.3" dur="2s" repeatCount="indefinite"/>
+            </image>
+
+            <!-- Group -->
+            <g id="test-g" opacity="1">
+                <circle cx="400" cy="50" r="20" fill="pink"/>
+                <rect x="390" y="80" width="20" height="20" fill="pink"/>
+                <animate id="anim-g" attributeName="opacity" from="1" to="0.3" dur="2s" repeatCount="indefinite"/>
+            </g>
+
+            <!-- Nested SVG -->
+            <svg id="test-svg" x="400" y="150" width="100" height="100">
+                <rect width="100" height="100" fill="lightblue"/>
+                <animate id="anim-svg" attributeName="opacity" from="1" to="0.5" dur="2s" repeatCount="indefinite"/>
+            </svg>
+
+            <!-- Use -->
+            <use id="test-use" href="#test-circle-def" x="450" y="300">
+                <animate id="anim-use" attributeName="x" from="450" to="500" dur="2s" repeatCount="indefinite"/>
+            </use>
+
+            <!-- Switch -->
+            <switch id="test-switch">
+                <text systemLanguage="en" x="550" y="350" font-size="16" fill="navy">English</text>
+                <text systemLanguage="fr" x="550" y="350" font-size="16" fill="navy">Français</text>
+                <text x="550" y="350" font-size="16" fill="navy">Default</text>
+                <animate id="anim-switch" attributeName="opacity" from="1" to="0.5" dur="2s" repeatCount="indefinite"/>
+            </switch>
+
+            <!-- Anchor (SVGAElement) -->
+            <a id="test-a" href="#" target="_blank">
+                <rect x="10" y="400" width="120" height="40" fill="teal" rx="5"/>
+                <text x="70" y="425" text-anchor="middle" fill="white" font-size="14">Click Me</text>
+                <animate id="anim-a" attributeName="opacity" from="1" to="0.6" dur="2s" repeatCount="indefinite"/>
+            </a>
+
+            <!-- Defs element with animation -->
+            <defs id="test-defs">
+                <circle id="test-circle-def" cx="50" cy="50" r="20" fill="purple"/>
+                <symbol id="test-symbol-def" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="orange"/>
+                </symbol>
+                <animate id="anim-defs" attributeName="opacity" from="1" to="0.5" dur="2s" repeatCount="indefinite"/>
+            </defs>
+
+            <!-- Symbol element with animation (standalone for testing) -->
+            <symbol id="test-symbol" viewBox="0 0 100 100">
+                <rect width="100" height="100" fill="magenta"/>
+                <animate id="anim-symbol" attributeName="opacity" from="1" to="0.5" dur="2s" repeatCount="indefinite"/>
+            </symbol>
+        </svg>
+    </div>
+
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        // Test configuration mapping element IDs to their expected types
+        const testConfigs = [
+            {
+                name: 'SVGCircleElement',
+                elementId: 'test-circle',
+                animateId: 'anim-circle',
+                expectedType: SVGCircleElement
+            },
+            {
+                name: 'SVGEllipseElement',
+                elementId: 'test-ellipse',
+                animateId: 'anim-ellipse',
+                expectedType: SVGEllipseElement
+            },
+            {
+                name: 'SVGRectElement',
+                elementId: 'test-rect',
+                animateId: 'anim-rect',
+                expectedType: SVGRectElement
+            },
+            {
+                name: 'SVGLineElement',
+                elementId: 'test-line',
+                animateId: 'anim-line',
+                expectedType: SVGLineElement
+            },
+            {
+                name: 'SVGPolylineElement',
+                elementId: 'test-polyline',
+                animateId: 'anim-polyline',
+                expectedType: SVGPolylineElement
+            },
+            {
+                name: 'SVGPolygonElement',
+                elementId: 'test-polygon',
+                animateId: 'anim-polygon',
+                expectedType: SVGPolygonElement
+            },
+            {
+                name: 'SVGPathElement',
+                elementId: 'test-path',
+                animateId: 'anim-path',
+                expectedType: SVGPathElement
+            },
+            {
+                name: 'SVGTextElement',
+                elementId: 'test-text',
+                animateId: 'anim-text',
+                expectedType: SVGTextElement
+            },
+            {
+                name: 'SVGImageElement',
+                elementId: 'test-image',
+                animateId: 'anim-image',
+                expectedType: SVGImageElement
+            },
+            {
+                name: 'SVGGElement',
+                elementId: 'test-g',
+                animateId: 'anim-g',
+                expectedType: SVGGElement
+            },
+            {
+                name: 'SVGSVGElement (nested)',
+                elementId: 'test-svg',
+                animateId: 'anim-svg',
+                expectedType: SVGSVGElement
+            },
+            {
+                name: 'SVGUseElement',
+                elementId: 'test-use',
+                animateId: 'anim-use',
+                expectedType: SVGUseElement
+            },
+            {
+                name: 'SVGSwitchElement',
+                elementId: 'test-switch',
+                animateId: 'anim-switch',
+                expectedType: SVGSwitchElement
+            },
+            {
+                name: 'SVGAElement',
+                elementId: 'test-a',
+                animateId: 'anim-a',
+                expectedType: SVGAElement
+            },
+            {
+                name: 'SVGDefsElement',
+                elementId: 'test-defs',
+                animateId: 'anim-defs',
+                expectedType: SVGDefsElement
+            },
+            {
+                name: 'SVGSymbolElement',
+                elementId: 'test-symbol',
+                animateId: 'anim-symbol',
+                expectedType: SVGSymbolElement
+            },
+        ];
+
+        function runTest(config) {
+            const animate = document.getElementById(config.animateId);
+            const targetElement = animate.targetElement;
+            const element = document.getElementById(config.elementId);
+
+            if (!element || !animate) {
+                return {
+                    name: config.name,
+                    tests: {
+                        'element found in DOM': !!element,
+                        'animate found in DOM': !!animate
+                    },
+                    passed: false
+                };
+            }
+
+            // Run tests
+            const tests = {
+                'element found in DOM': true,
+                'animate found in DOM': true,
+                'targetElement exists': targetElement !== null && targetElement !== undefined,
+                'targetElement is the parent element': targetElement === element,
+                'targetElement is SVGGraphicsElement': targetElement instanceof SVGGraphicsElement,
+                'targetElement is correct type': targetElement instanceof config.expectedType
+            };
+
+            const allPassed = Object.values(tests).every(result => result === true);
+
+            return {
+                name: config.name,
+                elementId: config.elementId,
+                tests: tests,
+                passed: allPassed
+            };
+        }
+
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            
+            const summary = results.filter(r => r.passed).length;
+            const total = results.length;
+            
+            let html = `<h2>Summary: ${summary}/${total} elements passed</h2>`;
+            
+            results.forEach(result => {
+                html += `<div class="test-result ${result.passed ? 'pass' : 'fail'}">`;
+                html += `<strong>${result.name}</strong> (#${result.elementId}): ${result.passed ? 'PASS' : 'FAIL'}<br>`;
+                
+                Object.entries(result.tests).forEach(([testName, testResult]) => {
+                    html += `&nbsp;&nbsp;${testResult ? 'PASS' : 'FAIL'} ${testName}<br>`;
+                });
+                
+                html += `</div>`;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function runAllTests() {
+            const testResults = testConfigs.map(config => runTest(config));
+            displayResults(testResults);
+            
+            return {
+                total: testResults.length,
+                passed: testResults.filter(r => r.passed).length,
+                failed: testResults.filter(r => !r.passed).length,
+                results: testResults
+            };
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const summary = runAllTests();
+            console.log(`Tests completed: ${summary.passed}/${summary.total} passed`);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    body { margin: 0; padding: 280px 20px 0; }
+    .tagline { margin: 0; font: bold 28px/32px verdana, sans-serif; }
+    #author { color: blue; background-color: white; text-decoration: none; }
+    #author.changed { color: red; background-color: yellow; }
+    /* Each no-break space carries seven stacked U+0304 COMBINING MACRON marks, whose ink
+       overflows above this 20px line box into the #author box. The failure was only seen
+       at small font sizes. */
+    #marks { margin: 0; font: 14px/20px 'Times New Roman', serif; white-space: nowrap; color: black; }
+</style>
+</head>
+<body>
+<p class="tagline"><a id="author" class="changed" href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></p>
+<p id="marks">&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;</p>
+</body>
+</html>

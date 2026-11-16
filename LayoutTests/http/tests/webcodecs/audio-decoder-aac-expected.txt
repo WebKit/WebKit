@@ -1,0 +1,3 @@
+
+PASS Decode first AAC sample from MP4 file with extended AudioSpecificConfig
+

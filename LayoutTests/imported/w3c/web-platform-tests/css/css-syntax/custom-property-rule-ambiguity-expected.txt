@@ -1,0 +1,6 @@
+
+PASS Rule that looks like a custom property declaration is ignored
+PASS Rule that looks like an invalid custom property declaration is ignored
+PASS Nested rule that looks like a custom property declaration
+PASS Nested rule that looks like an invalid custom property declaration
+

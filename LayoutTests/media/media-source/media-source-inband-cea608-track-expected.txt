@@ -1,0 +1,33 @@
+media-source-inband-cea608-track
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+
+Append media segments.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EVENT(update)
+
+Verify track properties.
+EXPECTED (video.videoTracks.length == '1') OK
+EXPECTED (video.audioTracks.length == '0') OK
+EXPECTED (video.textTracks.length == '1') OK
+RUN(track = video.textTracks[0])
+EXPECTED (track.id == '2') OK
+
+Start playback and verify cues
+RUN(track.mode = "showing")
+EVENT(change)
+RUN(cues = track.cues)
+EXPECTED (cues.length == '30'), OBSERVED '29' FAIL
+RUN(video.play())
+RUN(video.pause())
+EXPECTED (cues[0].text == '1.') OK
+EXPECTED (cues[1].text == '2.') OK
+EXPECTED (cues[15].text == '16.') OK
+END OF TEST
+

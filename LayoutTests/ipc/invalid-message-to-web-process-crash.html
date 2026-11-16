@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    setTimeout(() => {
+        testRunner.notifyDone();
+    }, 10);
+  }
+</script>
+
+<script type="module">
+  if (window.IPC) {
+    import('./coreipc.js').then(({ CoreIPC }) => {
+      CoreIPC.Networking.NetworkTransportSession.Terminate(0, { code: 78, reason: { span: [183, 167, 191, 7] } });
+    })
+  }
+</script>

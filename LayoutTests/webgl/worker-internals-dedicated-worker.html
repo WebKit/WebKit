@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test.js"></script>
+<script src="resources/worker-internals-worker.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that a dedicated worker has the internals object with the WebGL functions when its script starts.");
+runDedicatedWorkerTest();
+</script>
+</body>
+</html>

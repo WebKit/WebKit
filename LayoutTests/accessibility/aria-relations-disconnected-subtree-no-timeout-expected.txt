@@ -1,0 +1,10 @@
+This test ensures a large disconnected subtree whose elements carry ARIA relation attributes does not trigger a quadratic getElementByIdIncludingDisconnected() scan when accessibility relations are rebuilt.
+
+PASS: controlLabel.isEqual(control.titleUIElement()) === true
+PASS: Did not timeout.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+fallback name
+the resolved label

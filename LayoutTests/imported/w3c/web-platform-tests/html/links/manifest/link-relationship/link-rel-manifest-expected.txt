@@ -1,0 +1,3 @@
+
+PASS link element supports a rel value of "manifest".
+

@@ -1,0 +1,16 @@
+This text should be green.
+This text should be green.
+This text should be green.
+This text should be green.
+This text should be blue (not green).
+This text should be green.
+This text should be green.
+
+FAIL @media and @supports wrapping @result assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL @container wrapping @result assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL @media and @supports wrapping locals assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL @container wrapping locals assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL @container wrapping locals with different container is not cached assert_equals: expected "rgb(0, 0, 255)" but got "rgb(0, 0, 0)"
+FAIL Bare locals overriding earlier conditional-wrapped locals assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Nested @media and @container locals assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+

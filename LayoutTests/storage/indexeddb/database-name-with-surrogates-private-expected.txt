@@ -1,0 +1,53 @@
+Test that IndexedDB correctly handles database names containing unpaired UTF-16 surrogates
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test 1: Normal
+indexedDB.open(databaseName)
+actualName = database.name
+PASS actualName is "db1"
+database.close()
+indexedDB.open(databaseName)
+actualName = database.name
+PASS actualName is "db1"
+
+Test 2: Unpaired high surrogate
+indexedDB.open(databaseName)
+actualName = database.name
+PASS actualName is "db2_\ud9b2test"
+database.close()
+indexedDB.open(databaseName)
+actualName = database.name
+PASS actualName is "db2_\ud9b2test"
+
+Test 3: Unpaired low surrogate
+indexedDB.open(databaseName)
+actualName = database.name
+PASS actualName is "db3_\udc00test"
+database.close()
+indexedDB.open(databaseName)
+actualName = database.name
+PASS actualName is "db3_\udc00test"
+
+Test 4: Valid surrogate pair (ðŸ˜€)
+indexedDB.open(databaseName)
+actualName = database.name
+PASS actualName is "db4_NaNtest"
+database.close()
+indexedDB.open(databaseName)
+actualName = database.name
+PASS actualName is "db4_NaNtest"
+
+Test all database names
+indexedDB.databases()
+PASS actualDatabases.length is 4
+PASS actualDatabases[0].name is "db1"
+PASS actualDatabases[1].name is "db2_\ud9b2test"
+PASS actualDatabases[2].name is "db3_\udc00test"
+PASS actualDatabases[3].name is "db4_NaNtest"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

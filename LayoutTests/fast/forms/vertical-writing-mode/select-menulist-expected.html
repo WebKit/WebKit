@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<style>
+
+.wrapper {
+    position: absolute;
+    display: inline-block;
+    transform: rotate(90deg) translate(0, -100%);
+    transform-origin: left top;
+}
+
+#first { left: 50px; top: 50px; }
+#second { left: 50px; top: 250px; }
+
+.cover {
+    position: absolute;
+    left: 0;
+    width: 200px;
+    height: 100px;
+    background: white;
+}
+
+#cover1 { top: 90px; }
+#cover2 { top: 290px; }
+
+</style>
+<div id="first" class="wrapper">
+    <select><option>Option 1</option></select>
+</div>
+<div id="second" class="wrapper">
+    <select><option>Option 1</option></select>
+</div>
+<div id="cover1" class="cover"></div>
+<div id="cover2" class="cover"></div>

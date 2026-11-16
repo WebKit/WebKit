@@ -1,0 +1,12 @@
+
+
+
+
+
+
+
+PASS option :disabled and :has(option:disabled) invalidate when ancestor select disabled toggles
+PASS optgroup :disabled and :has(optgroup:disabled) invalidate when ancestor select disabled toggles
+PASS option :disabled and :has(option:disabled) invalidate when ancestor fieldset disabled toggles
+PASS optgroup :disabled and :has(optgroup:disabled) invalidate when ancestor fieldset disabled toggles
+

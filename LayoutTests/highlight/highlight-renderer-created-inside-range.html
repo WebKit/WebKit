@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Custom Highlight API: content inside a highlight range that becomes rendered after the range has been painted is highlighted</title>
+<style id="toggle">
+#inner {
+    display: none;
+}
+</style>
+<style>
+#target {
+    font: 16px/20px monospace;
+    white-space: pre;
+    width: max-content;
+    color: black;
+}
+#target::highlight(test),
+#inner::highlight(test) {
+    background-color: lime;
+}
+</style>
+<script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+<p>PASS if the bar below is one solid lime rectangle with no gap in the middle.</p>
+<div id="target">AAAA<span id="inner">AAAA</span>AAAA</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+(async () => {
+    const target = document.getElementById("target");
+    const range = new Range();
+    range.setStart(target, 0);
+    range.setEnd(target, target.childNodes.length);
+    CSS.highlights.set("test", new Highlight(range));
+
+    await UIHelper.renderingUpdate();
+
+    // Editing the style sheet gives #inner a renderer without changing the DOM or the range.
+    document.getElementById("toggle").sheet.cssRules[0].style.display = "inline";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+</body>
+</html>

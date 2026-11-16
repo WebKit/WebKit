@@ -1,0 +1,27 @@
+Test that the Layers tab includes a cross-origin frame's layers under site isolation.
+
+
+
+== Running test suite: SiteIsolation.LayerTree.LayersIncludingFrames
+-- Running test case: SiteIsolation.LayerTree.LayersIncludingFrames.Setup
+PASS: Should find a child frame target.
+PASS: Page target should report the layer hosting the iframe.
+PASS: Layer hosting the iframe should report the frame's content box.
+PASS: The iframe element should resolve to the child frame target.
+
+-- Running test case: SiteIsolation.LayerTree.LayersIncludingFrames.MergedLayers
+PASS: Should include the child frame's layers.
+PASS: Child frame's layers should directly follow the layer hosting the frame.
+PASS: Layer ids should be unique across targets.
+
+-- Running test case: SiteIsolation.LayerTree.LayersIncludingFrames.ChildLayerPlacement
+PASS: Should include the child frame's composited element.
+PASS: Child layer's node should belong to the child frame target.
+PASS: Child layer should be offset horizontally by the frame's content box.
+PASS: Child layer should be offset vertically by the frame's content box.
+PASS: Child layer should keep its width.
+
+-- Running test case: SiteIsolation.LayerTree.LayersIncludingFrames.RoutesToChildTarget
+PASS: Child layer should be composited because of will-change.
+PASS: Child layer snapshot should be a PNG data URL.
+

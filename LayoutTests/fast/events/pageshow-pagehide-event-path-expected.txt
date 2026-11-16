@@ -1,0 +1,9 @@
+PASS event.type is "pagehide"
+PASS event.target is document
+PASS event.composedPath().length is 1
+PASS event.composedPath()[0] is window
+PASS event.type is "pageshow"
+PASS event.target is document
+PASS event.composedPath().length is 1
+PASS event.composedPath()[0] is window
+

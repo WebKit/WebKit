@@ -1,0 +1,22 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendWindowEnd = 0.3)
+Appended first segment with window [0, 0.3)
+RUN(video.currentTime = 0)
+EVENT(seeked)
+First seek to 0 completed
+RUN(video.currentTime = 0)
+EVENT(seeked)
+Second seek to 0 completed
+RUN(sourceBuffer.appendWindowEnd = 0.6)
+Re-appended first segment with window [0, 0.6)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video frame rendered past 0.3s) OK
+RUN(video.pause())
+END OF TEST
+

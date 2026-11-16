@@ -1,0 +1,70 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="shipping">
+  <div><label for="name">Name</label><input id="name" type="text" value="Kim"></div>
+  <div><label for="street">Street</label><input id="street" type="text" value="1 Main Street"></div>
+  <div>
+    <label for="state">State</label>
+    <select id="state">
+      <option value="">Choose a state</option>
+      <option value="CA">California</option>
+    </select>
+  </div>
+  <div id="state-error"></div>
+  <div>
+    <label for="country">Country</label>
+    <select id="country">
+      <option value="">Choose a country</option>
+      <option value="US" selected>United States</option>
+    </select>
+  </div>
+  <div id="country-status"></div>
+  <div id="continue" role="button" tabindex="0">Continue</div>
+</div>
+
+<script>
+var output = "This tests that after activating a control that only may have been meant to submit the fields around it, a message in no error color counts when it appears right under a dropdown still on an option with no value, like a placeholder. A message under a dropdown with a choice made does not.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXPossibleFormValidationError")
+            payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    document.getElementById("continue").addEventListener("click", () => {
+        document.getElementById("state-error").textContent = "Choose a state.";
+        document.getElementById("country-status").textContent = "Shipping to the United States.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("axElement('state').stringAttributeValue('AXInvalid')", "'false'");
+
+        axElement("continue").press();
+
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Choose a state.\\nAXFormValidationErrorFieldCount: 1\\n'");
+        output += expect("axElement('state').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('state'))", "'Choose a state.'");
+        output += expect("errorMessageText(axElement('country'))", "'no error messages'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

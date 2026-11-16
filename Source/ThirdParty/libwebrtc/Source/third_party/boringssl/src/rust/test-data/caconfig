@@ -1,0 +1,29 @@
+[ca]
+default_ca = CA_LOC
+
+[CA_LOC]
+prompt = no
+default_days = 730500
+
+[req]
+default_bits = 4096
+string_mask = utf8only
+default_md = sha256
+distinguished_name = req_distinguished_name
+x509_extensions = v3_ca
+prompt = no
+
+[req_distinguished_name]
+C = DE
+ST = Freistaat Bayern
+L = Muenchen
+O = Google Germany GmbH
+OU = ISE Crypto
+CN = BoringSSL Authors
+emailAddress = boringssl@google.com
+
+[v3_ca]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical,CA:true
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign

@@ -1,0 +1,12 @@
+
+PASS Initial iceGatheringState should be new
+PASS iceGatheringState should eventually become complete after setLocalDescription
+PASS setLocalDescription(reoffer) with no new transports should not cause iceGatheringState to change
+PASS setLocalDescription() with no transports should not cause iceGatheringState to change
+FAIL local description should have a=end-of-candidates when gathering completes assert_true: expected true got false
+FAIL gathering state and candidate callbacks should fire in the correct order assert_not_equals: Global null candidate event should not fire yet got disallowed value null
+PASS setLocalDescription(reoffer) with a restarted transport should cause iceGatheringState to go to "gathering" and then "complete"
+PASS setLocalDescription(reoffer) with two restarted transports should cause iceGatheringState to go to "gathering" and then "complete"
+PASS sRD does not cause ICE gathering state changes
+PASS renegotiation that closes all transports should result in ICE gathering state "new"
+

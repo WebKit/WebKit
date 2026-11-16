@@ -1,0 +1,12 @@
+Tests the lifetime of a Blob URL with a fragment.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS iframe.contentDocument.body.innerText is "FOO"
+PASS iframe.contentWindow.location.href == blobURLWithFragment is true
+PASS iframe.contentDocument.URL == blobURLWithFragment is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

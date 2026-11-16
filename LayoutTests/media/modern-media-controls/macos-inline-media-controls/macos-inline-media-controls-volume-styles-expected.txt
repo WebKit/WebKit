@@ -1,0 +1,19 @@
+Testing the MacOSInlineMediaControls computed styles.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.volumeSlider.parent ? mediaControls.volumeSlider.parent.element.parentNode : null became mediaControls.element
+volumeSliderContainerStyle.position absolute
+volumeSliderContainerStyle.left 8px
+volumeSliderContainerStyle.top 532px
+volumeSliderContainerStyle.width 94px
+volumeSliderContainerStyle.height 31px
+volumeSliderStyle.marginLeft 6px
+volumeSliderStyle.width 60px
+volumeSliderStyle.height 16px
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

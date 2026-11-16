@@ -1,0 +1,193 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.UndoCoordinator.CrossFrame");
+
+    let mainTarget = null;
+    let frameTarget = null;
+    let parentNode = null;
+    let frameContainerNode = null;
+
+    function bid(node) { return node.backendNodeId; }
+
+    async function getOuterHTMLViaTarget(target, node) {
+        let {outerHTML} = await target.DOMAgent.getOuterHTML(bid(node));
+        return outerHTML;
+    }
+
+    async function findChildElement(parent, predicate) {
+        await new Promise((resolve) => parent.getChildNodes(resolve));
+        return parent.children.find(predicate);
+    }
+
+    function clearCoordinatorStacks() {
+        WI.domUndoCoordinator._undoTargetStack = [];
+        WI.domUndoCoordinator._redoTargetStack = [];
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Locate edit targets in both the main page and the cross-origin iframe.",
+        async test() {
+            mainTarget = WI.assumingMainTarget();
+
+            // Resolve a node in the main page (#parent-target).
+            let mainDoc = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+            parentNode = await new Promise((resolve) => {
+                mainDoc.querySelector("#parent-target", (nodeId) => resolve(WI.domManager.nodeForId(nodeId)));
+            });
+            InspectorTest.expectNotNull(parentNode, "Should find #parent-target in the main page.");
+
+            // Resolve the cross-origin frame target and walk to its #container.
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            frameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+            InspectorTest.expectNotNull(frameTarget, "Should find a cross-origin frame target.");
+
+            if (frameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                frameTarget = committedEvent.data.target;
+            }
+            await frameTarget.ensureTargetExecutionContext();
+
+            let frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDoc) {
+                let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = docEvent.data.document;
+            }
+            let htmlNode = await findChildElement(frameDoc, (n) => n.nodeName() === "HTML");
+            let bodyNode = await findChildElement(htmlNode, (n) => n.nodeName() === "BODY");
+            frameContainerNode = await findChildElement(bodyNode, (n) => n.getAttribute && n.getAttribute("id") === "container");
+            InspectorTest.expectNotNull(frameContainerNode, "Should find #container in the iframe.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "EditFrameThenMain.UndoUndoesMainFirst",
+        description: "Edit iframe, then main, then Cmd+Z twice. Main edit reverses first (LIFO).",
+        async test() {
+            clearCoordinatorStacks();
+
+            // Edit 1: attribute on iframe node.
+            await frameTarget.DOMAgent.setAttributeValue(bid(frameContainerNode), "data-edit-frame", "1");
+            WI.domUndoCoordinator.didEdit(frameTarget);
+            let frameAfter = await getOuterHTMLViaTarget(frameTarget, frameContainerNode);
+            InspectorTest.expectThat(frameAfter.includes(`data-edit-frame="1"`), "Frame edit applied.");
+
+            // Edit 2: attribute on main-page node.
+            await mainTarget.DOMAgent.setAttributeValue(bid(parentNode), "data-edit-main", "1");
+            WI.domUndoCoordinator.didEdit(mainTarget);
+            let mainAfter = await getOuterHTMLViaTarget(mainTarget, parentNode);
+            InspectorTest.expectThat(mainAfter.includes(`data-edit-main="1"`), "Main edit applied.");
+
+            // Cmd+Z #1 — should undo the most recent edit (main).
+            await WI.domUndoCoordinator.undo();
+            let mainAfterUndo1 = await getOuterHTMLViaTarget(mainTarget, parentNode);
+            let frameAfterUndo1 = await getOuterHTMLViaTarget(frameTarget, frameContainerNode);
+            InspectorTest.expectThat(!mainAfterUndo1.includes(`data-edit-main`), "First undo reversed the main edit.");
+            InspectorTest.expectThat(frameAfterUndo1.includes(`data-edit-frame="1"`), "First undo did NOT touch the iframe edit.");
+
+            // Cmd+Z #2 — should undo the next-most-recent edit (frame).
+            await WI.domUndoCoordinator.undo();
+            let frameAfterUndo2 = await getOuterHTMLViaTarget(frameTarget, frameContainerNode);
+            InspectorTest.expectThat(!frameAfterUndo2.includes(`data-edit-frame`), "Second undo reversed the iframe edit.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RedoFollowsLIFOInReverse",
+        description: "After two undos, two redos restore frame edit then main edit.",
+        async test() {
+            clearCoordinatorStacks();
+
+            // Re-apply the same two edits.
+            await frameTarget.DOMAgent.setAttributeValue(bid(frameContainerNode), "data-edit-frame", "1");
+            WI.domUndoCoordinator.didEdit(frameTarget);
+            await mainTarget.DOMAgent.setAttributeValue(bid(parentNode), "data-edit-main", "1");
+            WI.domUndoCoordinator.didEdit(mainTarget);
+
+            await WI.domUndoCoordinator.undo();
+            await WI.domUndoCoordinator.undo();
+
+            // First redo — bring back the frame edit (oldest undone, deepest in redo stack pops first).
+            await WI.domUndoCoordinator.redo();
+            let frameAfterRedo1 = await getOuterHTMLViaTarget(frameTarget, frameContainerNode);
+            let mainAfterRedo1 = await getOuterHTMLViaTarget(mainTarget, parentNode);
+            InspectorTest.expectThat(frameAfterRedo1.includes(`data-edit-frame="1"`), "First redo restored the iframe edit.");
+            InspectorTest.expectThat(!mainAfterRedo1.includes(`data-edit-main`), "First redo did NOT restore the main edit.");
+
+            // Second redo — bring back the main edit.
+            await WI.domUndoCoordinator.redo();
+            let mainAfterRedo2 = await getOuterHTMLViaTarget(mainTarget, parentNode);
+            InspectorTest.expectThat(mainAfterRedo2.includes(`data-edit-main="1"`), "Second redo restored the main edit.");
+
+            // Drain through the coordinator so frontend and backend stacks both end empty.
+            await WI.domUndoCoordinator.undo();
+            await WI.domUndoCoordinator.undo();
+        }
+    });
+
+    suite.addTestCase({
+        name: "MultipleEditsPerTargetReversedInOrder",
+        description: "Two edits to the same target then one to another reverse in strict reverse order.",
+        async test() {
+            clearCoordinatorStacks();
+
+            // Edit iframe twice in a row, then main once.
+            await frameTarget.DOMAgent.setAttributeValue(bid(frameContainerNode), "data-edit-a", "1");
+            WI.domUndoCoordinator.didEdit(frameTarget);
+            await frameTarget.DOMAgent.setAttributeValue(bid(frameContainerNode), "data-edit-b", "1");
+            WI.domUndoCoordinator.didEdit(frameTarget);
+            await mainTarget.DOMAgent.setAttributeValue(bid(parentNode), "data-edit-main", "1");
+            WI.domUndoCoordinator.didEdit(mainTarget);
+
+            // Three undos should reverse all three edits, in reverse order: main, then iframe-b, then iframe-a.
+            await WI.domUndoCoordinator.undo();
+            await WI.domUndoCoordinator.undo();
+            await WI.domUndoCoordinator.undo();
+
+            let frameAfter = await getOuterHTMLViaTarget(frameTarget, frameContainerNode);
+            let mainAfter = await getOuterHTMLViaTarget(mainTarget, parentNode);
+            InspectorTest.expectThat(!frameAfter.includes(`data-edit-a`) && !frameAfter.includes(`data-edit-b`), "Both iframe edits reversed.");
+            InspectorTest.expectThat(!mainAfter.includes(`data-edit-main`), "Main edit reversed.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExtraUndoIsHarmless",
+        description: "Calling undo on empty stacks falls back to main without polluting either coordinator stack.",
+        async test() {
+            clearCoordinatorStacks();
+
+            // Spy on main's redo before calling. We're verifying both that the fallback
+            // dispatches to main AND that the coordinator stays in a known-empty state.
+            let mainRedoCalls = 0;
+            let originalRedo = mainTarget.DOMAgent.redo.bind(mainTarget.DOMAgent);
+            mainTarget.DOMAgent.redo = (...args) => { mainRedoCalls++; return originalRedo(...args); };
+
+            await WI.domUndoCoordinator.undo();
+            await WI.domUndoCoordinator.undo();
+
+            InspectorTest.expectEqual(WI.domUndoCoordinator._undoTargetStack.length, 0, "Empty-stack undo() did not push to undoStack.");
+            InspectorTest.expectEqual(WI.domUndoCoordinator._redoTargetStack.length, 0, "Empty-stack undo() did not push to redoStack.");
+
+            await WI.domUndoCoordinator.redo();
+            mainTarget.DOMAgent.redo = originalRedo;
+
+            InspectorTest.expectEqual(mainRedoCalls, 1, "Empty-stack redo() falls back to main exactly once.");
+            InspectorTest.expectEqual(WI.domUndoCoordinator._undoTargetStack.length, 0, "Empty-stack redo() did not push to undoStack.");
+            InspectorTest.expectEqual(WI.domUndoCoordinator._redoTargetStack.length, 0, "Empty-stack redo() did not push to redoStack.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p id="parent-target" data-role="parent-root">Tests cross-frame Cmd+Z ordering through WI.DOMUndoCoordinator's LIFO of edited targets.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-frame.html"></iframe>
+</body>

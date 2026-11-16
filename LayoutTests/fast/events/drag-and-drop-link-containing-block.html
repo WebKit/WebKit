@@ -1,0 +1,46 @@
+<style>
+a {
+    font-size: 100px;
+    width: 100%;
+    white-space: nowrap;
+    font-family: -apple-system;
+}
+
+#drop {
+    position: absolute;
+    top: 300px;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    border: 1px blue dashed;
+}
+</style>
+<a id="drag" href="https://www.apple.com"><h1>Try to drag me</h1></a>
+<div id="drop"><br></div>
+<script>
+(() => {
+    drag.addEventListener("dragstart", event => {
+        drop.insertAdjacentHTML("beforeend", `<code style="color: green">PASS (drag started)</code><br>`);
+    });
+    drop.addEventListener("dragenter", event => event.preventDefault());
+    drop.addEventListener("dragover", event => event.preventDefault());
+    drop.addEventListener("drop", event => {
+        drop.insertAdjacentHTML("beforeend", `<code style="color: green">PASS (dropped)</code><br>`);
+        event.preventDefault();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+
+    if (!window.testRunner || !window.eventSender)
+        return;
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    eventSender.mouseMoveTo(100, 80);
+    eventSender.mouseDown();
+    eventSender.leapForward(100);
+    eventSender.mouseMoveTo(100, 400);
+    eventSender.mouseUp();
+})();
+</script>
+

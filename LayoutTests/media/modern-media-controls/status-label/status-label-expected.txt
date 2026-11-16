@@ -1,0 +1,26 @@
+Testing the StatusText class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Constructor
+PASS statusLabel.element.localName is "div"
+PASS statusLabel.element.className is "status-label"
+PASS statusLabel.text is ""
+
+Setting the `text` property
+layoutDelegate.needsLayout set to true
+PASS statusLabel.text is "Hello World!"
+PASS statusLabel.element.textContent is "Hello World!"
+
+Computed style
+PASS style.position is "absolute"
+PASS style.textOverflow is "ellipsis"
+PASS style.whiteSpace is "nowrap"
+PASS style.overflow is "hidden"
+PASS style.fontSize is "12px"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+This tests tapping on after a CSS table doesn't cause a hang.
+To manually test, click on the right of the text below inside the red box.
+WebKit should not hang, and you should see PASS below immediately:
+
+PASS
+Click here >

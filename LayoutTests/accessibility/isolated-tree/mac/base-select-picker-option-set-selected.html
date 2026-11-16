@@ -1,0 +1,64 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleDropdownBoxEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="multiple" multiple size="1">
+    <option id="cheese" selected>Cheese</option>
+    <option id="ham">Ham</option>
+    <option id="olives" selected>Olives</option>
+</select>
+
+<select id="single">
+    <option id="apple">Apple</option>
+    <option id="banana">Banana</option>
+</select>
+
+<script>
+var output = "This test ensures that setting AXSelected on an option of a base appearance picker works like activating the option.\n\n";
+
+function selectedOptions(id)
+{
+    return Array.from(document.getElementById(id).selectedOptions, option => option.id).join();
+}
+
+async function setSelected(id, selected)
+{
+    (await waitForElementById(id))?.setBoolAttributeValue("AXSelected", selected);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        (await waitForElementById("multiple"))?.press();
+
+        await setSelected("ham", true);
+        output += await expectAsync("selectedOptions('multiple')", "'cheese,ham,olives'");
+        await setSelected("cheese", false);
+        output += await expectAsync("selectedOptions('multiple')", "'ham,olives'");
+        output += expect("document.getElementById('multiple').matches(':open')", "true");
+
+        (await waitForElementById("single"))?.press();
+
+        await setSelected("banana", true);
+        output += await expectAsync("selectedOptions('single')", "'banana'");
+        output += await expectAsync("document.getElementById('single').matches(':open')", "false");
+
+        for (const select of document.querySelectorAll("select"))
+            select.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

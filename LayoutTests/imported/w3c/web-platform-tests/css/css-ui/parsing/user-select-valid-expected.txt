@@ -1,0 +1,6 @@
+
+PASS e.style['user-select'] = "auto" should set the property value
+PASS e.style['user-select'] = "text" should set the property value
+PASS e.style['user-select'] = "none" should set the property value
+PASS e.style['user-select'] = "all" should set the property value
+

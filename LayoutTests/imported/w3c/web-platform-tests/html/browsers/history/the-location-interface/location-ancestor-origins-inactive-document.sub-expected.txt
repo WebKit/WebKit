@@ -1,0 +1,4 @@
+
+PASS location.ancestorOrigins returns empty list after iframe is removed and referenced Location's relevant document is null
+PASS location.ancestorOrigins returns empty list when iframe navigated away and referenced Location's relevant document is null
+

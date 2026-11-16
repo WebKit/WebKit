@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Going back after a delegated zoom keeps the scale and scroll position history restored</title>
+    <style>
+        body {
+            margin: 0;
+            width: 1200px;
+            height: 3000px;
+            background: linear-gradient(silver, gray);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function scales()
+        {
+            return { page: window.visualViewport.scale, view: await UIHelper.zoomScale() };
+        }
+
+        function scaleResult(description, scale, expected)
+        {
+            if (Math.abs(scale.page - expected) < 0.01 && Math.abs(scale.view - expected) < 0.01)
+                return `  ${description}: PASS`;
+
+            return `  ${description}: FAIL (page scale ${scale.page.toFixed(2)} in the page, ${scale.view.toFixed(2)} in the view, expected ${expected.toFixed(2)})`;
+        }
+
+        async function settle()
+        {
+            await UIHelper.waitForZoomScaleToSettle();
+            for (let i = 0; i < 4; ++i)
+                await UIHelper.ensurePresentationUpdate();
+        }
+
+        async function doTest()
+        {
+            const output = [];
+
+            history.pushState({ viewer: true }, '', '#viewer');
+            await UIHelper.magnifyGestureAt(300, 300, 0.5);
+
+            const zoomed = await scales();
+            output.push('Zoomed in with the viewer open:');
+            output.push(zoomed.page > 1.1 && zoomed.view > 1.1 ? '  PASS' : `  FAIL (page scale ${zoomed.page.toFixed(2)} in the page, ${zoomed.view.toFixed(2)} in the view)`);
+
+            const popped = new Promise(resolve => window.addEventListener('popstate', resolve, { once: true }));
+            history.back();
+            await popped;
+            await settle();
+
+            output.push('After going back:');
+            output.push(scaleResult('page scale is back to 1', await scales(), 1));
+            output.push('  ' + (window.scrollX == 0 && window.scrollY == 0 ? 'scroll position is back to the top left: PASS' : `scroll position is back to the top left: FAIL (${window.scrollX}, ${window.scrollY})`));
+
+            await UIHelper.mouseWheelScrollAt(300, 300, 0, -1, 0, -40);
+            await settle();
+
+            output.push('After scrolling down:');
+            output.push(scaleResult('page scale stays at 1', await scales(), 1));
+            output.push('  ' + (window.scrollX == 0 && window.scrollY > 0 ? 'the page scrolled straight down: PASS' : `the page scrolled straight down: FAIL (scroll position (${window.scrollX}, ${window.scrollY}))`));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+</body>
+</html>

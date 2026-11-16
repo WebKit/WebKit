@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<div id="target"></div>
+
+<script>
+var target = document.getElementById("target");
+var observer = new MutationObserver(function() { });
+observer.observe(target, { attributes: true, childList: true, characterData: true, subtree: true });
+</script>

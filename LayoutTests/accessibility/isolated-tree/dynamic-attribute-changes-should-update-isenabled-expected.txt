@@ -1,0 +1,34 @@
+This test ensures that dynamically changing elements disabled and aria-disabled attributes properly updates their isEnabled property.
+
+Verifying initial element enabled state.
+PASS: axButton.isEnabled === true
+PASS: axOption.isEnabled === true
+PASS: axRadio1.isEnabled === true
+PASS: axRadio2.isEnabled === true
+document.getElementById('button').ariaDisabled = true
+PASS: axButton.isEnabled === false
+document.getElementById('button').ariaDisabled = false
+PASS: axButton.isEnabled === true
+document.getElementById('button').disabled = true
+PASS: axButton.isEnabled === false
+document.getElementById('button').disabled = false
+PASS: axButton.isEnabled === true
+document.getElementById('option1').ariaDisabled = true
+PASS: axOption.isEnabled === false
+document.getElementById('option1').ariaDisabled = false
+PASS: axOption.isEnabled === true
+document.getElementById('option1').disabled = true
+PASS: axOption.isEnabled === false
+document.getElementById('option1').disabled = false
+PASS: axOption.isEnabled === true
+document.getElementById('fieldset').ariaDisabled = true
+PASS: axRadio1.isEnabled === false
+PASS: axRadio2.isEnabled === false
+document.getElementById('fieldset').ariaDisabled = false
+PASS: axRadio1.isEnabled === true
+PASS: axRadio2.isEnabled === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me    Foo label   Bar label

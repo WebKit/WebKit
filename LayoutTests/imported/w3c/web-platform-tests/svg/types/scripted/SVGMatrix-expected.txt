@@ -1,0 +1,11 @@
+
+PASS setting value
+PASS multiply
+PASS multiply accepts the m11..m42 spelling
+PASS multiply accepts m41/m42 as the translation components
+PASS multiply accepts an alias and its element when they hold the same value
+PASS multiply throws TypeError when an alias and its element disagree
+PASS multiply compares an alias and its element with SameValueZero
+PASS multiply with no argument multiplies by the identity matrix
+PASS multiply with an object holding no recognized members multiplies by the identity matrix
+

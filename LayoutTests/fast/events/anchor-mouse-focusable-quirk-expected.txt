@@ -1,0 +1,12 @@
+Tests that the anchor mouse-focusability quirk works on thesaurus.com and dictionary.com, but not on unrelated sites.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement is link
+PASS document.activeElement is link
+PASS document.activeElement is not link
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me

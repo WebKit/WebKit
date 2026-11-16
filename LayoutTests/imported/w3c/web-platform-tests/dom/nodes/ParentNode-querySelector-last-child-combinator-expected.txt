@@ -1,0 +1,4 @@
+text
+
+PASS div:last-child > span[title] should match
+

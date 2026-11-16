@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="datetime-local" value="2024-10-21T15:45:59" aria-label="Meeting time:" id="datetime1" />
+
+<label for="datetime2">Meeting time:</label>
+<input type="datetime-local" value="2024-10-21T15:45:59" id="datetime2" />
+
+<label>
+    Meeting time:
+    <input type="datetime-local" value="2024-10-21T15:45:59" id="datetime3" />
+</label>
+
+<input type="datetime-local" value="2024-10-21T15:45:59" id="datetime4" />
+
+<script>
+let output = "This tests input type=datetime-local label and value properties.\n\n";
+
+if (window.accessibilityController) {
+    var datetime = null;
+    function outputDateTimeElement(id) {
+        datetime = accessibilityController.accessibleElementById(id);
+        output += `${datetime.domIdentifier}:\n`;
+        output += expect("datetime.title", "'AXTitle: Meeting time:'");
+        output += `${datetime.stringValue}\n`;
+        output += `${datetime.dateValue}\n\n`;
+    }
+
+    for (let i = 1; i <= 3; ++i)
+        outputDateTimeElement(`datetime${i}`);
+
+    // Case 4: no label.
+    datetime = accessibilityController.accessibleElementById("datetime4");
+    output += "datetime4:\n";
+    output += expect("datetime.title", "'AXTitle: '");
+    output += `${datetime.stringValue}\n`;
+    output += `${datetime.dateValue}\n\n`;
+
+    debug(output);
+}
+</script>
+</body>
+</html>

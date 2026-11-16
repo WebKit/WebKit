@@ -1,0 +1,12 @@
+Ensures that we get exceptions when we do not include required arguments for webkitStorageInfo methods.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS webkitStorageInfo.requestQuota() threw exception TypeError: Not enough arguments.
+PASS webkitStorageInfo.requestQuota(webkitStorageInfo.TEMPORARY) threw exception TypeError: Not enough arguments.
+PASS webkitStorageInfo.queryUsageAndQuota() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,10 @@
+Tests for a caching bug on DOMStringMap causing us to return an outdated value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The bug did not reproduce.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

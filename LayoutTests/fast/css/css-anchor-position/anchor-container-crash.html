@@ -1,0 +1,39 @@
+<style>
+
+.anchor {
+  position: absolute;
+  anchor-name: --anchor;
+}
+
+.target {
+  position: fixed;
+  container-type: size;
+}
+
+.target-1 {
+  anchor-name: --target-1;
+  inset: anchor(--anchor outside);
+}
+
+.target-2 {
+  inset: anchor(--anchor inside);
+}
+
+.target-3 {
+  inset: anchor(--target-1 inside);
+}
+
+</style>
+
+<div class="anchor">This test passes if it does not crash.</div>
+
+<div class="target target-1"></div>
+<div class="target target-2"></div>
+<div class="target target-3"></div>
+
+<script>
+
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+</script>

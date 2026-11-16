@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div id="test1" role="grid" aria-level="1">X</div>
+  <div id="test2" role="heading" aria-level="2">X</div>
+  <div role="list">
+    <div id="test3" role="listitem" aria-level="3">X</div>
+  </div>
+  <div id="test4" role="treegrid" aria-level="4">
+    <div id="test5" role="row" aria-level="5">
+    </div>
+  </div>
+  <div role="tree">
+    <div id="test6" role="treeitem" aria-level="6">X</div>
+  </div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the exposure of aria-level.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 6; i++) {
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug(axElement.role + " level: " + axElement.hierarchicalLevel);
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

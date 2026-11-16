@@ -1,0 +1,4 @@
+
+PASS keyDown performs character insertion before completing
+PASS Canceling keydown suppresses its editing default action
+

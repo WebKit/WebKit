@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<title>Two pages don't match one page of the same total height</title>
+<link rel="help" href="https://web-platform-tests.org/writing-tests/print-reftests.html">
+<style>
+body { margin: 0; }
+div { height: 10px; }
+div + div { break-before: page; }
+</style>
+<div></div>
+<div></div>

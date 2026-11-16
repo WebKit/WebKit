@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+.ib {
+    font: 48px 'Apple Color Emoji', 'LastResort';
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+<div class="ib">&#x1F471;&zwj;&#x2642;&#xFE0F;</div>
+<div class="ib">&#x1F471;&#x1F3FB;&zwj;&#x2642;&#xFE0F;</div>
+<div class="ib">&#x1F471;&#x1F3FC;&zwj;&#x2642;&#xFE0F;</div>
+<div class="ib">&#x1F471;&#x1F3FD;&zwj;&#x2642;&#xFE0F;</div>
+<div class="ib">&#x1F471;&#x1F3FE;&zwj;&#x2642;&#xFE0F;</div>
+<div class="ib">&#x1F471;&#x1F3FF;&zwj;&#x2642;&#xFE0F;</div>
+<script>
+var elements = document.querySelectorAll(".ib");
+for (var element of elements) {
+    shouldBe("element.offsetWidth", "48");
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

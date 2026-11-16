@@ -1,0 +1,4 @@
+
+
+FAIL A shared stylesheet's @apply resolves to each document's own mixin assert_equals: First document should apply its own green mixin expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

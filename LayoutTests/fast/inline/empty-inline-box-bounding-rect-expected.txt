@@ -1,0 +1,2 @@
+somtextsome more
+PASS: No empty rects found

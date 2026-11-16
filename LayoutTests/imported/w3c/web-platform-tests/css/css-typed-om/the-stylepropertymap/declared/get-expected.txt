@@ -1,0 +1,9 @@
+
+PASS Getting a custom property not in the CSS rule returns undefined
+PASS Getting a valid property not in the CSS rule returns undefined
+PASS Getting a valid property from CSS rule returns the correct entry
+PASS Getting a valid custom property from CSS rule returns the correct entry
+PASS Getting a list-valued property from CSS rule returns only the first value
+PASS Declared StylePropertyMap.get is not case-sensitive
+PASS Declared StylePropertyMap.get reflects changes in the CSS rule
+

@@ -1,0 +1,44 @@
+<body>
+<div id="result"></div>
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+async function runTest() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let requiredFeatures;
+    let format;
+    if (adapter.features.has('texture-compression-astc')) {
+        requiredFeatures = ['texture-compression-astc', 'bgra8unorm-storage'];
+        format = 'astc-10x8-unorm-srgb';
+    } else {
+        requiredFeatures = ['texture-compression-bc', 'bgra8unorm-storage'];
+        format = 'bc7-rgba-unorm-srgb';
+    }
+    let device = await adapter.requestDevice({requiredFeatures});
+    let texture = device.createTexture({
+            size: {width: 2970, height: 200, depthOrArrayLayers: 1},
+            mipLevelCount: 9,
+            format,
+            usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING});
+    let encoder = device.createCommandEncoder({});
+    encoder.copyTextureToTexture({
+            texture: texture,
+            mipLevel: 3,
+            origin: { x: 20, y: 16, z: 0 },
+            aspect: 'all',
+        },
+        {
+            texture: texture,
+            mipLevel: 1,
+            origin: { x: 950, y: 88, z: 0 },
+            aspect: 'all',
+        },
+        {width: 260, height: 8, depthOrArrayLayers: 1});
+    device.queue.submit([encoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    device.destroy();
+    result.innerHTML += "PASSED";
+    if (window.testRunner) { testRunner.notifyDone() }
+}
+runTest();
+</script>
+</body>

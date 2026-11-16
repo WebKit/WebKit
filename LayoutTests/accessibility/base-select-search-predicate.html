@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select">
+    <option id="option1">Alpha</option>
+    <option id="option2" selected>Bravo</option>
+    <option id="option3">Charlie</option>
+</select>
+
+<script>
+var output = "This test verifies that base-appearance select menu items are discoverable via the accessibility search predicate API (used by Voice Control to generate numbered overlays).\n\n";
+
+function expectMenuItem(axElement, expectedText) {
+    var result = "";
+    result += expect("(" + axElement + ").role.toLowerCase().includes('menuitem')", "true");
+    window._menuItemText = platformTextAlternatives(eval(axElement));
+    result += _menuItemText + "\n";
+    result += expect("_menuItemText.includes('" + expectedText + "')", "true");
+    return result;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+
+    setTimeout(async function() {
+        // Open the picker so menu items are on screen.
+        select.press();
+        output += await expectAsync("select.isExpanded", "true");
+
+        var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+        // Search for controls with visibleOnly=true, mimicking what Voice Control does.
+        output += "\n--- Search for controls should find the select and its menu items ---\n";
+        var controls = [];
+        var result = null;
+        for (var i = 0; i < 20; i++) {
+            result = webArea.uiElementForSearchPredicate(
+                result,
+                /* isDirectionNext */ true,
+                "AXControlSearchKey",
+                /* searchText */ "",
+                /* visibleOnly */ true,
+                /* immediateDescendantsOnly */ false
+            );
+            if (!result)
+                break;
+            controls.push(result);
+        }
+
+        window.foundMenuItems = controls.filter(function(element) {
+            return element.role.toLowerCase().includes("menuitem");
+        });
+        output += expect("foundMenuItems.length", "3");
+        output += expectMenuItem("foundMenuItems[0]", "Alpha");
+        output += expectMenuItem("foundMenuItems[1]", "Bravo");
+        output += expectMenuItem("foundMenuItems[2]", "Charlie");
+
+        // Close the picker.
+        select.press();
+        output += await expectAsync("select.isExpanded", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

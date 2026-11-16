@@ -1,0 +1,21 @@
+Tests that getClientRects(), getBoundingClientRect() return the same result regardless of whether text is selected or not.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Before selection:
+PASS range.getClientRects().length is 2
+PASS JSON.stringify(range.getClientRects()[0]) is "{\"x\":163,\"y\":8,\"width\":0,\"height\":18,\"top\":8,\"right\":163,\"bottom\":26,\"left\":163}"
+PASS JSON.stringify(range.getClientRects()[1]) is "{\"x\":8,\"y\":26,\"width\":29,\"height\":18,\"top\":26,\"right\":37,\"bottom\":44,\"left\":8}"
+PASS JSON.stringify(range.getBoundingClientRect()) is "{\"x\":8,\"y\":8,\"width\":155,\"height\":36,\"top\":8,\"right\":163,\"bottom\":44,\"left\":8}"
+
+After selection:
+PASS range.getClientRects().length is 2
+PASS JSON.stringify(range.getClientRects()[0]) is "{\"x\":163,\"y\":8,\"width\":0,\"height\":18,\"top\":8,\"right\":163,\"bottom\":26,\"left\":163}"
+PASS JSON.stringify(range.getClientRects()[1]) is "{\"x\":8,\"y\":26,\"width\":29,\"height\":18,\"top\":26,\"right\":37,\"bottom\":44,\"left\":8}"
+PASS JSON.stringify(range.getBoundingClientRect()) is "{\"x\":8,\"y\":8,\"width\":155,\"height\":36,\"top\":8,\"right\":163,\"bottom\":44,\"left\":8}"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

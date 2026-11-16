@@ -1,0 +1,4 @@
+
+PASS A picker whose select stops having base appearance closes when the rendering is updated, not when style is computed.
+PASS A picker that stops having base appearance closes when the rendering is updated, not when style is computed.
+

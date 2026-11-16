@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8" />
+<title>Scroll to text fragment generation - ensure that we generate working directives when there is a newline inside of the directive. </title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', () => {
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById("test"));
+    document.body.innerText = internals.textFragmentDirectiveForRange(range).split('#')[1];
+});
+</script>
+</head>
+<body>
+Select some code that doesn't have a space before it.
+<span id="test">This is the text without a space
+<code>fakecode.h</code>
+and the end of the selecton.</span>
+Additional text after the selection.
+</html>
+

@@ -1,0 +1,18 @@
+{
+    "timeout": 120,
+    "count": 5,
+    "local_git_archive": "PerformanceTests/Animation@908fbd47ddf27b975b278b1d6d22cc3c0e4ec8b7",
+    "github_source": "https://github.com/WebKit/WebKit/tree/908fbd47ddf27b975b278b1d6d22cc3c0e4ec8b7/PerformanceTests/Animation",
+    "webserver_benchmark_patch": "data/patches/webserver/ContentAnimation.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/ContentAnimation.patch",
+    "test_files": [
+        "css-animation.html",
+        "css-accelerated-animation.html",
+        "svg-animation.html",
+        "raf-animation.html"
+    ],
+    "output_file": "css-animation.result",
+    "options": {
+        "animation_command": "ContentAnimation"
+    }
+}

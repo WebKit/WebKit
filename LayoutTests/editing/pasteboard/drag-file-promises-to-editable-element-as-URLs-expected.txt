@@ -1,0 +1,13 @@
+If we drag file promises onto an editable area, then attachments should not be inserted into the editable area since attachment elements are disabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.HTMLAttachmentElement is undefined.
+PASS document.createElement("attachment") instanceof HTMLUnknownElement is true
+PASS editable.querySelector("attachment") is null
+PASS editable.textContent is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

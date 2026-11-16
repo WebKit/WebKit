@@ -1,0 +1,17 @@
+<input id="color" type=color>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    const sheet = new CSSStyleSheet();
+    sheet.insertRule('input[type="color"]::-webkit-color-swatch-wrapper { appearance: none; }');
+
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>

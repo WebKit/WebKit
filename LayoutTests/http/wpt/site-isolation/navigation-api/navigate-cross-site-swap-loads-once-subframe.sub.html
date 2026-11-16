@@ -1,0 +1,53 @@
+<!doctype html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<meta charset="utf-8">
+<title>Navigation API: a cross-site subframe navigation.navigate() loads the destination once, outside the embedder's process (Site Isolation)</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<body>
+<script>
+const COUNTER = "resources/count-requests.py?token=" + token();
+const REMOTE = "http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/navigation-api/" + COUNTER;
+const NAVIGATOR = "resources/navigate-and-report.html?remote=" + encodeURIComponent(REMOTE);
+
+function waitFor(predicate, timeoutMs, description) {
+    return new Promise((resolve, reject) => {
+        const start = Date.now();
+        const tick = () => {
+            if (predicate()) {
+                resolve();
+                return;
+            }
+            if (Date.now() - start >= timeoutMs) {
+                reject(new Error(`timed out waiting for ${description}`));
+                return;
+            }
+            setTimeout(tick, 25);
+        };
+        tick();
+    });
+}
+
+promise_test(async t => {
+    const messages = [];
+    const onMessage = e => messages.push(e.data);
+    window.addEventListener("message", onMessage);
+    t.add_cleanup(() => window.removeEventListener("message", onMessage));
+
+    const iframe = document.createElement("iframe");
+    iframe.src = NAVIGATOR;
+    document.body.appendChild(iframe);
+
+    await waitFor(() => messages.includes("destination-loaded"), 4000, "the destination to load");
+    // Leave time for a second load of the destination to report as well.
+    await new Promise(resolve => t.step_timeout(resolve, 500));
+
+    const count = await (await fetch(COUNTER + "&query=1")).text();
+    assert_equals(count, "1", "the destination was requested once");
+    assert_equals(messages.filter(message => message === "destination-loaded").length, 1, "the destination was committed once");
+    assert_equals(messages.filter(message => message === "beforeunload").length, 1, "beforeunload fired once in the navigating document");
+    assert_false(messages.includes("navigateerror"), "the navigating document did not get navigateerror");
+    assert_throws_dom("SecurityError", () => iframe.contentWindow.location.href, "the subframe is on the cross-site destination");
+}, "A cross-site subframe navigation.navigate() loads the destination once, outside the embedder's process (Site Isolation)");
+</script>
+</body>

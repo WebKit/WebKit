@@ -1,0 +1,23 @@
+This test ensures we can create valid text marker ranges from positions adjacent to br elements.
+
+PASS: webarea.stringForTextMarkerRange(range) === 'x'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === 'x'
+PASS: webarea.stringForTextMarkerRange(range) === '\n'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === '\n'
+PASS: webarea.stringForTextMarkerRange(range) === '\n'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === '\n'
+PASS: webarea.stringForTextMarkerRange(range) === 'y'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === 'y'
+PASS: webarea.stringForTextMarkerRange(range) === '\n'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === '\n'
+PASS: webarea.stringForTextMarkerRange(range) === '\n'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === '\n'
+PASS: webarea.stringForTextMarkerRange(range) === 'x'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === 'x'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+x
+
+y

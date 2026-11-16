@@ -1,0 +1,17 @@
+Name: libsrtp
+URL: https://github.com/cisco/libsrtp
+Version: 24b3bf8f19b6f5ab4cd2bcceb4f4064efca (v⒉.8.0)
+Update Mechanism: Manual
+License: BSD-3-Clause
+License File: LICENSE
+Security Critical: Yes
+Shipped: yes
+
+Description:
+  libsrtp provides secure media transmission in real
+  time communications. It's used with WebRTC which
+  provides the p2p session setup.
+
+Local Modifications:
+  Removed many unused files, e.g. all non-OpenSSL cipher implementations.
+  Renamed VERSION to LIBSRTP_VERSION.

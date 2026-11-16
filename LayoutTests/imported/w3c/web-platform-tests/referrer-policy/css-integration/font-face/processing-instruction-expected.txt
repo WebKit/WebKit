@@ -1,0 +1,5 @@
+Check that resources from external stylesheets (referenced from a ProcessingInstruction) are loaded with the referrer and referrer policy from the external stylesheet.
+
+
+FAIL Font from external stylesheet (from ProcessingInstruction). assert_equals: expected (string) "http://127.0.0.1:8800/common/security-features/subresource/stylesheet.py?id=c7cc998c-186d-4cf3-bfb4-052f1d1d6a2c&type=font" but got (undefined) undefined
+

@@ -1,0 +1,8 @@
+input_valueAsDate_TypeError
+
+
+FAIL valueAsDate setter with non-Date object (input type date) assert_throws_js: function "() => input.valueAsDate = {}" did not throw
+FAIL valueAsDate setter with non-Date object (input type time) assert_throws_js: function "() => input.valueAsDate = {}" did not throw
+FAIL valueAsDate setter with non-Date object (input type week) assert_throws_js: function "() => input.valueAsDate = {}" did not throw
+FAIL valueAsDate setter with non-Date object (input type month) assert_throws_js: function "() => input.valueAsDate = {}" did not throw
+

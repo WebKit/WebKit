@@ -1,0 +1,5 @@
+
+PASS time marches on (other cues): disabled-track cues never participate
+PASS time marches on (missed cues): seeking past a cue does not fire enter+exit
+PASS time marches on (early-exit): no duplicate enter when state is unchanged
+

@@ -1,0 +1,5 @@
+
+PASS ::before pseudo element querying style() of originating element
+PASS ::before pseudo element not matching style()
+PASS ::before pseudo element matching style() query after class change
+

@@ -1,0 +1,12 @@
+
+
+
+
+
+
+PASS Shrink-to-fit width of a definite-height box whose ratio-only image fills it is the transferred height
+PASS width:max-content of a definite-height box whose ratio-only image fills it is the transferred height
+PASS min-width:max-content of a definite-height box whose ratio-only image fills it is the transferred height
+PASS The transferred height is the zoomed height (zoom: 2)
+PASS The transferred height is the zoomed height (zoom: 1.75)
+

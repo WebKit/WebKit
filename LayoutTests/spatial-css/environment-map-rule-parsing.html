@@ -1,0 +1,98 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+const addSheet = (test, text) => {
+    const style = document.createElement("style");
+    style.textContent = text;
+    document.head.appendChild(style);
+    test.add_cleanup(() => style.remove());
+    return style.sheet;
+};
+
+const ruleWithDeclaration = (test, declaration) => {
+    const sheet = addSheet(test, `@environment-map { ${declaration}; }`);
+    assert_equals(sheet.cssRules.length, 1, `@environment-map { ${declaration} } is still a rule`);
+    return sheet.cssRules[0];
+};
+
+test(t => {
+    const validDeclarations = [
+        ['name: "studio"', "name", "studio"],
+        ['name: "warm studio"', "name", "warm studio"],
+        ["format: equirectangular", "format", "equirectangular"],
+        ['src: url("studio.hdr")', "src", "studio.hdr"],
+        ["src: url(studio.hdr)", "src", "studio.hdr"],
+    ];
+
+    for (const [declaration, descriptor, expected] of validDeclarations)
+        assert_equals(ruleWithDeclaration(t, declaration)[descriptor], expected, `${declaration} parses`);
+}, "@environment-map accepts valid descriptors");
+
+test(t => {
+    const invalidDeclarations = [
+        ["name: studio", "name", "an unquoted name is an identifier, not a string"],
+        ['name: "studio" "sunset"', "name", "two names"],
+        ["name: url(studio.hdr)", "name", "a url is not a name"],
+        ['format: "equirectangular"', "format", "the format is a keyword, not a string"],
+        ["format: cubemap", "format", "a format we do not implement yet"],
+        ["format: equirect", "format", "an unknown format keyword"],
+        ['src: "studio.hdr"', "src", "the src is a url, not a string"],
+        ["src: studio.hdr", "src", "a bare path is not a url"],
+    ];
+
+    for (const [declaration, descriptor, description] of invalidDeclarations)
+        assert_equals(ruleWithDeclaration(t, declaration)[descriptor], "", `${declaration} does not parse — ${description}`);
+}, "@environment-map rejects invalid descriptors");
+
+test(t => {
+    const sheet = addSheet(t, '@environment-map { name: "studio"; format: equirectangular; src: url("studio.hdr"); }');
+
+    assert_equals(sheet.cssRules.length, 1, "the rule parses");
+    assert_true(sheet.cssRules[0] instanceof CSSEnvironmentMapRule, "it is a CSSEnvironmentMapRule");
+}, "@environment-map is exposed as a CSSEnvironmentMapRule");
+
+test(t => {
+    const sheet = addSheet(t, '@environment-map { name: "studio"; format: equirectangular; src: url("studio.hdr"); }');
+
+    const cssText = sheet.cssRules[0].cssText;
+    assert_true(cssText.startsWith("@environment-map {"), `${cssText} starts the at-rule`);
+    assert_true(cssText.includes('name: "studio"'), `${cssText} keeps the name`);
+    assert_true(cssText.includes("format: equirectangular"), `${cssText} keeps the format`);
+    assert_true(cssText.includes('src: url("studio.hdr")'), `${cssText} keeps the src`);
+}, "@environment-map round-trips through cssText");
+
+test(t => {
+    const sheet = addSheet(t, `
+        @environment-map { name: "studio"; format: equirectangular; src: url("first.hdr"); }
+        @environment-map { name: "studio"; format: equirectangular; src: url("second.hdr"); }
+    `);
+
+    assert_equals(sheet.cssRules.length, 2, "both rules are exposed");
+    assert_equals(sheet.cssRules[0].src, "first.hdr");
+    assert_equals(sheet.cssRules[1].src, "second.hdr");
+}, "duplicate names both stay in cssRules");
+
+test(t => {
+    const rule = ruleWithDeclaration(t, 'name: "studio"; format: equirectangular; src: url("studio.hdr"); intensity: 2');
+
+    assert_equals(rule.name, "studio", "the known descriptors survive");
+    assert_false(rule.cssText.includes("intensity"), "the unknown descriptor is dropped");
+}, "@environment-map drops unknown descriptors");
+
+test(t => {
+    const sheet = addSheet(t, '@environment-map "studio" { format: equirectangular; src: url("studio.hdr"); }');
+    assert_equals(sheet.cssRules.length, 0, "a prelude makes it a parse error");
+}, "@environment-map takes no prelude");
+
+test(() => {
+    assert_true(CSS.supports("at-rule(@environment-map)"), "the at-rule is advertised as supported");
+}, "@supports at-rule(@environment-map)");
+
+</script>
+</body>
+</html>

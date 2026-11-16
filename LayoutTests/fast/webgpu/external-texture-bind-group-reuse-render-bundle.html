@@ -1,0 +1,94 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<body>
+<script>
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+// GPUDevice.createBindGroup reuses the last external texture bind group by rewriting its Metal
+// argument buffer in place instead of building a new one. A GPURenderBundle bakes that argument
+// buffer into an indirect command buffer and declares residency for its contents from a snapshot
+// taken while recording, so once the bind group has been recorded into a render bundle the rewrite
+// has to be refused - otherwise the bundle executes against textures it never declared resident,
+// which Metal Shader Validation reports as a texture usage fault and which on hardware is an out of
+// bounds read.
+//
+// Prints two lines: reuse must still happen while nothing consumes the argument buffer, and must
+// not happen once a render bundle has recorded the bind group. The bundle is then executed and
+// submitted so that a regression faults under Metal Shader Validation rather than only changing the
+// printed text.
+
+const log = [];
+function out(text) { log.push(text); }
+
+async function test() {
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+
+    const module = device.createShaderModule({ code: `
+@group(0) @binding(0) var t : texture_external;
+
+@vertex fn vs(@builtin(vertex_index) i : u32) -> @builtin(position) vec4f {
+    var pos = array<vec2f, 3>(vec2f(-1, -3), vec2f(3, 1), vec2f(-1, 1));
+    return vec4f(pos[i], 0, 1);
+}
+
+@fragment fn fs() -> @location(0) vec4f {
+    return textureLoad(t, vec2u(0, 0));
+}
+` });
+
+    const bindGroupLayout = device.createBindGroupLayout({
+        entries: [{ binding: 0, visibility: GPUShaderStage.FRAGMENT, externalTexture: { } }],
+    });
+    const pipeline = device.createRenderPipeline({
+        layout: device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] }),
+        vertex: { module, entryPoint: 'vs' },
+        fragment: { module, entryPoint: 'fs', targets: [{ format: 'rgba8unorm' }] },
+    });
+
+    const videoFrame = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'BGRA', timestamp: 0 });
+    const externalTexture = device.importExternalTexture({ source: videoFrame, colorSpace: 'srgb' });
+    const descriptor = { layout: bindGroupLayout, entries: [{ binding: 0, resource: externalTexture }] };
+
+    const first = device.createBindGroup(descriptor);
+    // Nothing references the argument buffer yet, so the in place update is still allowed. This arm
+    // fails if the render bundle guard is too strict.
+    const reused = device.createBindGroup(descriptor);
+    out('reused with no render bundle recorded: ' + (reused === first));
+
+    const bundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['rgba8unorm'] });
+    bundleEncoder.setPipeline(pipeline);
+    bundleEncoder.setBindGroup(0, reused);
+    bundleEncoder.draw(3);
+    const bundle = bundleEncoder.finish();
+
+    // The bundle's indirect command buffer now references the argument buffer of `reused`, so the
+    // in place update has to be refused and a fresh bind group returned instead.
+    const afterBundle = device.createBindGroup(descriptor);
+    out('reused after the bind group was recorded into a render bundle: ' + (afterBundle === reused));
+
+    const target = device.createTexture({
+        size: [2, 2],
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+    const commandEncoder = device.createCommandEncoder();
+    const renderPass = commandEncoder.beginRenderPass({
+        colorAttachments: [{ view: target.createView(), loadOp: 'clear', storeOp: 'store', clearValue: [0, 0, 0, 1] }],
+    });
+    renderPass.executeBundles([bundle]);
+    renderPass.end();
+    device.queue.submit([commandEncoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+
+    videoFrame.close();
+}
+
+test().catch(error => out('threw: ' + error)).finally(() => {
+    const pre = document.createElement('pre');
+    pre.textContent = log.join('\n');
+    document.body.appendChild(pre);
+    globalThis.testRunner?.notifyDone();
+});
+</script>
+</body>

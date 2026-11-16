@@ -1,0 +1,21 @@
+Test that <video autoplay muted> and explicit video.play() are blocked when the Auto-Play Video Previews accessibility setting is disabled, but a user-initiated play() starts playback and clears the user-gesture-required restriction for subsequent plays.
+
+
+** Setting video.src
+** Waiting briefly to confirm the video stayed paused
+EXPECTED (video.paused == 'true') OK
+EXPECTED (didFirePlay == 'false') OK
+** Calling video.play() without a user gesture, the promise should reject
+Promise rejected correctly OK
+EXPECTED (video.paused == 'true') OK
+EXPECTED (didFirePlay == 'false') OK
+** Calling video.play() within a simulated user gesture, playback should start
+EVENT(play)
+EXPECTED (video.paused == 'false') OK
+** Pausing, then calling video.play() without a user gesture. The user-gesture-once restriction should now be cleared
+EVENT(pause)
+EXPECTED (video.paused == 'true') OK
+Promise resolved OK
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

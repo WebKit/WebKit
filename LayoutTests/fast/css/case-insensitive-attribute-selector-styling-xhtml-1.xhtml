@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <style>
+            p { /* Ref-test must fix into 800*600, keep the margins small. */
+                margin: 2px;
+            }
+
+            [data-webkit] {
+                background-color: red;
+                color: blue;
+                border: none;
+            }
+
+            [data-webkit="ROCKS!" i] {
+                color: white;
+            }
+            [data-webkit="rocks!"] {
+                color: red;
+                font-weight: bold;
+            }
+
+            [data-webkit^="RO" i] {
+                border: 5px dashed orange;
+                background-color: lime;
+            }
+            [data-webkit^="ro"] {
+                border: 2px solid purple;
+            }
+
+            /* This rule is invalid. */
+            [data-webkit i] {
+                background-color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <p>This test verify basic styling of element using case-insensitive attribute value matching (e.g. [foo=bar i]). If the test succeed, each paragraph should be styled according to its description.</p>
+        <p data-webkit="">Red background, blue text, no border.</p>
+        <p data-webkit="ROCKS!">Green background, white text, dashed orange border.</p>
+        <p data-webkit="rocks!">Green background, red text, solid purple border.</p>
+        <p data-webkit="Rocks!">Green background, white text, dashed orange border.</p>
+
+        <p data-webkit="ROCKS">Green background, blue text, dashed orange border.</p>
+        <p data-webkit="rocks">Green background, blue text, solid purple border.</p>
+        <p data-webkit="Rocks">Green background, blue text, dashed orange border.</p>
+
+        <p data-webkit="roar">Green background, blue text, solid purple border.</p>
+        <p data-webkit="Roar">Green background, blue text, dashed orange border.</p>
+        <p data-webkit="ROAR">Green background, blue text, dashed orange border.</p>
+    </body>
+</html>

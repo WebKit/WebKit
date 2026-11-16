@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test ensure that global CSS keywords generate expected syntax errors.");
+shouldThrowErrorName("document.fonts.check('initial', 'A')", "SyntaxError");
+shouldThrowErrorName("document.fonts.check('inherited', 'A')", "SyntaxError");
+shouldThrowErrorName("document.fonts.check('unset', 'A')", "SyntaxError");
+shouldThrowErrorName("document.fonts.check('revert', 'A')", "SyntaxError");
+shouldReject("document.fonts.load('initial', 'A')");
+shouldReject("document.fonts.load('inherited', 'A')");
+shouldReject("document.fonts.load('unset', 'A')");
+shouldReject("document.fonts.load('revert', 'A')");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'style': 'initial'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'style': 'inherited'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'style': 'unset'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'style': 'revert'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'weight': 'initial'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'weight': 'inherited'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'weight': 'unset'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'weight': 'revert'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'stretch': 'initial'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'stretch': 'inherited'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'stretch': 'unset'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'stretch': 'revert'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'unicodeRange': 'initial'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'unicodeRange': 'inherited'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'unicodeRange': 'unset'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'unicodeRange': 'revert'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'featureSettings': 'initial'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'featureSettings': 'inherited'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'featureSettings': 'unset'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'featureSettings': 'revert'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'display': 'initial'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'display': 'inherited'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'display': 'unset'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'url(asdf)', {'display': 'initial'}).status","error");
+shouldBeEqualToString("new FontFace('abc', 'inherited').status","error");
+shouldBeEqualToString("new FontFace('abc', 'unset').status","error");
+shouldBeEqualToString("new FontFace('abc', 'revert').status","error");
+shouldBeEqualToString("new FontFace('abc', 'revert').status","error");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

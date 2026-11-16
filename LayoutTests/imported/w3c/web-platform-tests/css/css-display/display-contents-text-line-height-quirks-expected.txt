@@ -1,0 +1,9 @@
+X
+X
+X
+X
+
+PASS The document is in quirks mode
+PASS A short line-height on a display: contents element does not remove the line height of the parent box
+PASS A small font on a display: contents element does not remove the line height of the parent box
+

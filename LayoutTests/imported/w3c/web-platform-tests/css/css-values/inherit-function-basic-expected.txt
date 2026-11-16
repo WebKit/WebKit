@@ -1,0 +1,8 @@
+
+PASS inherit() on value set on parent
+PASS inherit() on value set on ancestor
+PASS inherit(), no value set on parent
+PASS inherit(), accumulating values
+PASS inherit(), accumulating font-size
+PASS inherit() can be used within if()
+

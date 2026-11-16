@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<style>
+ul { list-style-position: inside; }
+li { list-style: none; }
+@scope (ul) { li.scoped::marker { content: "X "; } }
+@layer a { li.layered::marker { content: "X "; } }
+@media screen { li.media::marker { content: "X "; } }
+@supports (display: grid) { li.supports::marker { content: "X "; } }
+li.nested { &::marker { content: "X "; } }
+</style>
+<ul>
+  <li class="scoped">scope</li>
+  <li class="layered">layer</li>
+  <li class="media">media</li>
+  <li class="supports">supports</li>
+  <li class="nested">nested</li>
+</ul>
+<script>
+// Restyle after the first style resolution so the skip decision is made when the list item's own style changes.
+document.body.offsetHeight;
+for (let item of document.querySelectorAll("li"))
+    item.style.color = "green";
+</script>

@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test-ordered-first" contenteditable></div>
+<div id="test-unordered-first" contenteditable></div>
+<script>
+Markup.description('An ordered marker followed by an unordered marker (or vice versa) on consecutive lines should not trigger smart-list conversion, because ordered and unordered markers are incompatible.');
+
+var unorderedFirstTarget = document.getElementById('test-unordered-first');
+unorderedFirstTarget.focus();
+[...'* Hello\n1. World'].forEach(typeCharacterCommand);
+Markup.dump('test-unordered-first', 'Unordered then ordered');
+
+var orderedFirstTarget = document.getElementById('test-ordered-first');
+orderedFirstTarget.focus();
+[...'1. Hello\n* World'].forEach(typeCharacterCommand);
+Markup.dump('test-ordered-first', 'Ordered then unordered');
+</script>
+</body>
+</html>

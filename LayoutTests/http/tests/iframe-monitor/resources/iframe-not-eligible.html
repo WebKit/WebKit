@@ -1,0 +1,8 @@
+Not using significant resources and not eligible for resource monitoring.
+
+<script>
+    window.unload = () => {
+        console.log('Should not be run');
+        window.parent.postMessage({ message: 'Bye from iframe 1!' }, '*');
+    };
+</script>

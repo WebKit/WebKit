@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<title>shape-outside on floats with a different writing direction in the float and the container</title>
+<style>
+    .container {
+        font: 20px/1 Ahem;
+        color: orange;
+        width: 100px;
+        height: 20px;
+        background-color: blue;
+    }
+</style>
+<body>
+    <p><a href="https://bugs.webkit.org/show_bug.cgi?id=122243">Bug 128631</a> - [CSS Shapes] shape-outside does not properly handle different writing modes</p>
+    <p>You should see an orange square in the center of a blue rectangle.</p>
+    <div class="container" style="text-align: center;">
+        X
+    </div>
+    <p>You should see an orange square in the center of a blue rectangle.</p>
+    <div class="container" style="text-align: center;">
+        X
+    </div>
+</body>

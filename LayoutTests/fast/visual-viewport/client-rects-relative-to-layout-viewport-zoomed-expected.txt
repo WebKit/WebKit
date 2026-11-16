@@ -1,0 +1,23 @@
+This test zooms and scrolls the page and checks that client rects are correct.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+layoutViewport: 0.00, 0.00 - 785.00 x 585.00
+visualViewportRect: 0.00, 0.00 - 785.00 x 585.00
+fixed client bounds: 11.99, 10.00 - 30.00 x 20.00
+fixed client rect: 11.99, 10.00 - 30.00 x 20.00
+absolute client bounds: 120.00, 100.00 - 50.00 x 25.00
+absolute client rect: 120.00, 100.00 - 50.00 x 25.00
+
+Scrolled to 119, 99
+layoutViewport: 144.00, 120.00 - 785.00 x 585.00
+visualViewportRect: 144.00, 120.00 - 785.00 x 585.00
+fixed client bounds: 11.99, 10.00 - 30.00 x 20.00
+fixed client rect: 11.99, 10.00 - 30.00 x 20.00
+absolute client bounds: 0.00, 0.00 - 50.00 x 25.00
+absolute client rect: 0.00, 0.00 - 50.00 x 25.00
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

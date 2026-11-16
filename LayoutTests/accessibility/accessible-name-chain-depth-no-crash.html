@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content"></div>
+
+<script>
+var output = "This tests that an accessible name computation chained more deeply than the stack can hold terminates without crashing.\n\n";
+
+// A long but acyclic aria-labelledby chain. Each link's name comes from the next link's contents,
+// which are labeled by the link after that. Every link is one more nested name computation, so this
+// exhausted the stack even though nothing in the chain refers back to itself, which means cycle
+// detection alone cannot bound it.
+//
+// The chain has to be long enough to overflow the largest stack we run on, hence the element count
+// (and the [ Slow ] expectation for debug builds). Cycles are covered separately, and much more
+// cheaply, by accessible-name-recursion-no-crash.html.
+var longChainLength = 10000;
+var markup = "";
+for (var i = 0; i < longChainLength; i++)
+    markup += "<div id='longChainTarget" + i + "'><span aria-labelledby='longChainTarget" + (i + 1) + "'>x</span></div>";
+markup += "<div id='longChainTarget" + longChainLength + "'>long chain end</div>";
+markup += "<div><span id='longChainStart' aria-labelledby='longChainTarget0'>y</span></div>";
+document.getElementById("content").insertAdjacentHTML("beforeend", markup);
+
+if (window.accessibilityController) {
+    // The name stops resolving partway along the chain, so its value is whatever the bound leaves
+    // behind. The assertion is that we reach this point at all.
+    var chainStart = accessibilityController.accessibleElementById("longChainStart");
+    output += expect("typeof platformValueForW3CName(chainStart)", "'string'");
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

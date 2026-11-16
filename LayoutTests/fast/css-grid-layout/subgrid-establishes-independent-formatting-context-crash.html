@@ -1,0 +1,31 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+.grid {
+  display: grid;
+}
+.subgrid-rows {
+  grid-template-rows: subgrid [b] [a] [c];
+}
+</style>
+</head>
+<body>
+<div class="grid">
+  <div id="outer-subgrid" class="grid subgrid-rows">
+    <div></div>
+    <div id="inner-subgrid" class="grid subgrid-rows">PASSES if no crash</div>
+  </div>
+</div>
+</body>
+
+<script>
+  document.body.offsetHeight;
+  document.getElementById("outer-subgrid").style.contain = "layout";
+  document.getElementById("inner-subgrid").style.border = "1px solid black";
+  document.body.offsetHeight;
+</script>
+

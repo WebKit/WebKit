@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Tapping on the border of a cross-origin iframe must dispatch a click to the iframe element in the parent document, not to the iframe's content.");
+jsTestIsAsync = true;
+
+let target;
+addEventListener("message", (event) => testFailed(`The iframe's content received "${event.data}".`));
+
+function onLoad() {
+    document.querySelector("iframe").addEventListener("click", (event) => {
+        target = event.target.localName;
+        shouldBeEqualToString("target", "iframe");
+        finishJSTest();
+    });
+    UIHelper.tapAt(120, 200);
+}
+</script>
+</head>
+<body style="margin: 0;">
+<iframe onload="onLoad()" style="position: absolute; left: 100px; top: 100px; width: 200px; height: 200px; border: 40px solid green;" src="http://localhost:8000/site-isolation/touch-events/resources/post-message-on-click.html"></iframe>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests that `PaymentRequestUpdateEvent.prototype.updateWith` log an error if not called synchronously when handling the event.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+user_activation_test((test) => new Promise((resolve, reject) => {
+    let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        setTimeout(() => {
+            request.abort().then(resolve, reject);
+        });
+    });
+    request.show().catch(() => { /* ignore abort */ });
+}), "Not calling `updateWith` inside `shippingaddresschange` should log an error.");
+
+done();
+</script>
+

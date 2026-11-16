@@ -1,0 +1,5 @@
+
+PASS
+  View transitions: Test pagereveal.finished and skipTransition
+
+

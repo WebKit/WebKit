@@ -1,0 +1,5 @@
+
+PASS perspective responsive to style changes
+PASS perspective clamped to 0px on keyframes
+PASS perspective responsive to inherited changes
+

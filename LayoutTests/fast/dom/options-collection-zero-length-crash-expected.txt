@@ -1,0 +1,11 @@
+This tests accessing the length after accessing a particular index in HTMLOptionsCollections via HTMLSelectElement's item. WebKit should not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.item(500) is null
+PASS select.options.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,42 @@
+Tests for range requests on a Blob URL, using sync XHR.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Valid range: [0-3]
+PASS response.status is 206
+PASS text is "Suff"
+* Valid range: [2-13]
+PASS response.status is 206
+PASS text is "ffix range t"
+* Valid range: [-3]
+PASS response.status is 206
+PASS text is "est"
+* Valid range: [-7]
+PASS response.status is 206
+PASS text is "ge test"
+* Valid range: [3-]
+PASS response.status is 206
+PASS text is "fix range test"
+* Invalid range (last x bytes, too large): [-1000000]
+PASS response.status is 206
+PASS text is "Suffix range test"
+* Invalid range (end too large): [2-1000000]
+PASS response.status is 206
+PASS text is "ffix range test"
+* Invalid range (start too large): [1000-]
+PASS XHR threw NetworkError:  A network error occurred.
+* Empty Blob: [0-]
+PASS XHR threw NetworkError:  A network error occurred.
+* Empty Blob: [-1]
+PASS response.status is 206
+PASS text is ""
+* Empty Blob: [-100]
+PASS response.status is 206
+PASS text is ""
+* Empty Blob: [100-]
+PASS XHR threw NetworkError:  A network error occurred.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

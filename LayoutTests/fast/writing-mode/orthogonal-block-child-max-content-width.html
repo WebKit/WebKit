@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../resources/Ahem.ttf");
+}
+.maxContent {
+    width: max-content;
+    background: yellow;
+}
+.minContent {
+    width: min-content;
+    background: orange;
+}
+.vertical {
+    writing-mode: vertical-lr;
+    font: 50px/1 Ahem;
+    background: lightblue;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+</head>
+<body onload="checkLayout('.container')">
+<p>An orthogonal (vertical-lr) block child contributes its block-axis size (its
+logical height) to the containing block's intrinsic inline width. Each test box
+should shrink-wrap to the orthogonal child's horizontal extent. With line-height
+1 and a 50px Ahem font, a single line of text is 50px tall, so its horizontal
+extent (the parent's width) is 50px per line of vertical text.</p>
+
+<!-- Single line of text: block-axis extent is one line == 50px. -->
+<div class="container maxContent" data-expected-width="50">
+    <div class="vertical">foobar</div>
+</div>
+
+<!-- Same for min-content: the orthogonal child's height is the contribution. -->
+<div class="container minContent" data-expected-width="50">
+    <div class="vertical">foobar</div>
+</div>
+
+<!-- Two lines forced by <br>: block-axis extent is two lines == 100px. -->
+<div class="container maxContent" data-expected-width="100">
+    <div class="vertical">foo<br>bar</div>
+</div>
+
+<!-- Nested blocks between the max-content container and the orthogonal child. -->
+<div class="container maxContent" data-expected-width="50">
+    <div>
+        <div>
+            <div class="vertical">foobar</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

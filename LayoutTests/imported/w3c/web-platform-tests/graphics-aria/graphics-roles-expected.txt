@@ -1,0 +1,10 @@
+Tests the concrete roles defined in the ARIA Graphics Module role definitions.
+
+x
+x
+x
+
+PASS graphics-document
+PASS graphics-object
+PASS graphics-symbol
+

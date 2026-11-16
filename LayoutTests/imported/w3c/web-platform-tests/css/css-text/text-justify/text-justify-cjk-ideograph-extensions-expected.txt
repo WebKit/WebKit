@@ -1,0 +1,10 @@
+
+PASS CJK Unified Ideographs Extension B (U+20000) justifies like U+4E00
+PASS CJK Unified Ideographs Extension C (U+2A700) justifies like U+4E00
+PASS CJK Unified Ideographs Extension D (U+2B740) justifies like U+4E00
+PASS CJK Unified Ideographs Extension E (U+2B820) justifies like U+4E00
+PASS CJK Unified Ideographs Extension F (U+2CEB0) justifies like U+4E00
+PASS CJK Unified Ideographs Extension I (U+2EBF0) justifies like U+4E00
+PASS CJK Unified Ideographs Extension G (U+30000) justifies like U+4E00
+PASS CJK Unified Ideographs Extension H (U+31350) justifies like U+4E00
+

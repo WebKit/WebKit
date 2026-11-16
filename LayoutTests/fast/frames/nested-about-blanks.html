@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+let doc = document;
+for (let i = 0; i < 4; i++) {
+    const iframe = doc.createElement("iframe");
+    iframe.style.border = 'none';
+    doc.body.appendChild(iframe);
+    doc = iframe.contentDocument;
+    doc.head.innerHTML = '<style>html, body { margin: 0px; padding: 0px; overflow: hidden; } </style>'
+
+    const div = doc.createElement("div");
+    div.textContent = `frame ${i}`;
+    doc.body.appendChild(div);
+}
+</script>
+</body>
+</html>

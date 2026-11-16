@@ -1,0 +1,201 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#if HAVE(IOSURFACE)
+
+#include "Helpers/Utilities.h"
+#include "Test.h"
+#include <WebCore/ColorSpace.h>
+#include <WebCore/IOSurface.h>
+#include <WebCore/IOSurfacePool.h>
+#include <wtf/MachSendRight.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Threading.h>
+
+namespace TestWebKitAPI {
+using namespace WebCore;
+
+// Once an IOSurface has called setVolatile(), isVolatile() answers from that record. A fresh wrapper
+// around the same surface has no record, so it asks the kernel.
+static bool isVolatile(IOSurfaceRef surface)
+{
+    return IOSurface::createFromSurface(surface, std::nullopt)->isVolatile();
+}
+
+TEST(IOSurfacePoolTest, TakeSurfaceFindsSurfaceThatIsNoLongerInUse)
+{
+    auto pool = IOSurfacePool::create();
+    IntSize size { 5, 5 };
+    auto colorSpace = ColorSpace::SRGB();
+
+    auto surface = IOSurface::create(nullptr, size, colorSpace);
+    ASSERT_NE(surface, nullptr);
+    IOSurfaceRef expected = surface->surface();
+
+    auto sendRight = surface->createSendRight();
+    EXPECT_TRUE(surface->isInUse());
+
+    pool->addSurface(WTF::move(surface));
+    EXPECT_EQ(pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No), nullptr);
+    sendRight = { };
+    auto taken = pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No);
+    ASSERT_NE(taken, nullptr);
+    EXPECT_EQ(taken->surface(), expected);
+}
+
+TEST(IOSurfacePoolTest, AddedSurfaceIsVolatileUntilTaken)
+{
+    auto pool = IOSurfacePool::create();
+    IntSize size { 5, 5 };
+    auto colorSpace = ColorSpace::SRGB();
+
+    auto surface = IOSurface::create(nullptr, size, colorSpace);
+    ASSERT_NE(surface, nullptr);
+    RetainPtr<IOSurfaceRef> surfaceRef = surface->surface();
+    EXPECT_FALSE(surface->isInUse());
+    EXPECT_FALSE(isVolatile(surfaceRef.get()));
+
+    // A pooled surface is not charged to its owner while it waits to be reused.
+    pool->addSurface(WTF::move(surface));
+    EXPECT_TRUE(isVolatile(surfaceRef.get()));
+
+    auto taken = pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No);
+    ASSERT_NE(taken, nullptr);
+    EXPECT_EQ(taken->surface(), surfaceRef.get());
+    EXPECT_FALSE(isVolatile(surfaceRef.get()));
+}
+
+TEST(IOSurfacePoolTest, InUseSurfaceBecomesVolatileWhenNoLongerInUse)
+{
+    auto pool = IOSurfacePool::create();
+    IntSize size { 5, 5 };
+    auto colorSpace = ColorSpace::SRGB();
+
+    auto surface = IOSurface::create(nullptr, size, colorSpace);
+    ASSERT_NE(surface, nullptr);
+    RetainPtr<IOSurfaceRef> surfaceRef = surface->surface();
+
+    auto sendRight = surface->createSendRight();
+    EXPECT_TRUE(surface->isInUse());
+
+    // The compositor may still be displaying a surface that is in use, so it must not be purgeable.
+    pool->addSurface(WTF::move(surface));
+    EXPECT_FALSE(isVolatile(surfaceRef.get()));
+
+    // Once it is no longer in use, the pool's collection timer should move it to the reusable surfaces
+    // and mark it volatile within a second.
+    sendRight = { };
+    EXPECT_TRUE(Util::waitFor([&] {
+        return isVolatile(surfaceRef.get());
+    }, 10));
+
+    auto taken = pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No);
+    ASSERT_NE(taken, nullptr);
+    EXPECT_EQ(taken->surface(), surfaceRef.get());
+    EXPECT_FALSE(isVolatile(surfaceRef.get()));
+}
+
+// The last reference to a pool can be dropped on any thread. That must not wait for the main thread,
+// since the main thread may itself be waiting for the thread that drops the reference.
+TEST(IOSurfacePoolTest, DestroyingPoolOnWorkerThreadDoesNotWaitForMainThread)
+{
+    RefPtr<IOSurfacePool> pool = IOSurfacePool::create();
+    IntSize size { 5, 5 };
+
+    auto surface = IOSurface::create(pool.get(), size, ColorSpace::SRGB());
+    ASSERT_NE(surface, nullptr);
+    // An in-use surface makes the pool schedule its collection on the maintenance queue.
+    auto sendRight = surface->createSendRight();
+    EXPECT_TRUE(surface->isInUse());
+    IOSurface::moveToPool(WTF::move(surface), pool.get());
+
+    // Blocks the main thread until the worker has destroyed the pool.
+    Thread::create("IOSurfacePoolTest worker"_s, [pool = WTF::move(pool)] mutable {
+        pool = nullptr;
+    })->waitForCompletion();
+
+    // The collection scheduled by the destroyed pool must find the pool gone and do nothing.
+    Util::runFor(0.3_s);
+}
+
+// The pool can be created, used, and destroyed entirely on a thread other than the main thread.
+TEST(IOSurfacePoolTest, PoolCanBeUsedOnWorkerThread)
+{
+    Thread::create("IOSurfacePoolTest worker"_s, [] {
+        auto pool = IOSurfacePool::create();
+        IntSize size { 5, 5 };
+        auto colorSpace = ColorSpace::SRGB();
+
+        auto surface = IOSurface::create(pool.ptr(), size, colorSpace);
+        ASSERT_NE(surface, nullptr);
+        IOSurfaceRef expected = surface->surface();
+        pool->addSurface(WTF::move(surface));
+
+        auto taken = pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No);
+        ASSERT_NE(taken, nullptr);
+        EXPECT_EQ(taken->surface(), expected);
+
+        pool->addSurface(WTF::move(taken));
+        pool->discardAllSurfaces();
+        EXPECT_EQ(pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No), nullptr);
+    })->waitForCompletion();
+}
+
+// The collection of in-use surfaces does not need the main thread.
+TEST(IOSurfacePoolTest, InUseSurfaceBecomesVolatileOnWorkerThread)
+{
+    Thread::create("IOSurfacePoolTest worker"_s, [] {
+        auto pool = IOSurfacePool::create();
+        IntSize size { 5, 5 };
+        auto colorSpace = ColorSpace::SRGB();
+
+        auto surface = IOSurface::create(pool.ptr(), size, colorSpace);
+        ASSERT_NE(surface, nullptr);
+        RetainPtr<IOSurfaceRef> surfaceRef = surface->surface();
+        auto sendRight = surface->createSendRight();
+        EXPECT_TRUE(surface->isInUse());
+        pool->addSurface(WTF::move(surface));
+        EXPECT_FALSE(isVolatile(surfaceRef.get()));
+
+        sendRight = { };
+        // This thread has no run loop to spin, so poll for up to a second.
+        bool becameVolatile = false;
+        for (int i = 0; i < 100 && !becameVolatile; ++i) {
+            sleep(10_ms);
+            becameVolatile = isVolatile(surfaceRef.get());
+        }
+        EXPECT_TRUE(becameVolatile);
+
+        auto taken = pool->takeSurface(size, colorSpace, IOSurface::Format::BGRA, UseLosslessCompression::No);
+        ASSERT_NE(taken, nullptr);
+        EXPECT_EQ(taken->surface(), surfaceRef.get());
+    })->waitForCompletion();
+}
+
+} // namespace TestWebKitAPI
+
+#endif // HAVE(IOSURFACE)

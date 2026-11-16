@@ -1,0 +1,103 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="64" height="64" content="drawable">
+    <div id="box" style="width: 20px; height: 20px; background-color: green" drawable></div>
+</canvas>
+<div id="outside" style="width: 20px; height: 20px"></div>
+<script>
+description("Tests the input validation of GPUQueue.drawElementImageToTexture().");
+jsTestIsAsync = true;
+
+const canvas = document.getElementById("canvas");
+const box = document.getElementById("box");
+const outside = document.getElementById("outside");
+let device;
+let texture;
+
+function expectResult(expected, name, test)
+{
+    let actual = "no exception";
+    try {
+        test();
+    } catch (e) {
+        actual = e.name;
+    }
+    if (actual === expected)
+        testPassed(name + ": " + actual);
+    else
+        testFailed(name + ": got " + actual + ", expected " + expected);
+}
+
+function draw(source, destination = { })
+{
+    device.queue.drawElementImageToTexture(source, { texture, premultipliedAlpha: true, ...destination });
+}
+
+async function runTest()
+{
+    const adapter = await navigator.gpu.requestAdapter();
+    device = await adapter.requestDevice();
+    texture = device.createTexture({
+        size: [64, 64],
+        format: "rgba8unorm",
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING
+    });
+
+    const image = canvas.captureElementImage(box);
+
+    // Valid calls.
+    expectResult("no exception", "element source", () => draw({ source: box }));
+    expectResult("no exception", "element image source", () => draw({ source: image }));
+    expectResult("no exception", "full source rect", () => draw({ source: box, sourceX: 0, sourceY: 0, sourceWidth: 10, sourceHeight: 10 }));
+    expectResult("no exception", "destination size", () => draw({ source: box }, { size: [8, 8] }));
+    expectResult("no exception", "destination origin and size", () => draw({ source: box }, { origin: [4, 4], size: [8, 8] }));
+
+    // Invalid source.
+    expectResult("TypeError", "missing source", () => draw({ }));
+    expectResult("TypeError", "null source", () => draw({ source: null }));
+    expectResult("TypeError", "non-element source", () => draw({ source: { } }));
+    expectResult("InvalidStateError", "element which is not a drawable child of a canvas", () => draw({ source: outside }));
+
+    // Partial source rectangle.
+    expectResult("InvalidStateError", "only sourceX", () => draw({ source: box, sourceX: 0 }));
+    expectResult("InvalidStateError", "only sourceY", () => draw({ source: box, sourceY: 0 }));
+    expectResult("InvalidStateError", "only sourceWidth", () => draw({ source: box, sourceWidth: 10 }));
+    expectResult("InvalidStateError", "only sourceHeight", () => draw({ source: box, sourceHeight: 10 }));
+    expectResult("InvalidStateError", "three of four source rect members", () => draw({ source: box, sourceX: 0, sourceY: 0, sourceWidth: 10 }));
+
+    // Negative and empty source rectangle.
+    expectResult("InvalidStateError", "negative sourceX", () => draw({ source: box, sourceX: -1, sourceY: 0, sourceWidth: 10, sourceHeight: 10 }));
+    expectResult("InvalidStateError", "negative sourceY", () => draw({ source: box, sourceX: 0, sourceY: -1, sourceWidth: 10, sourceHeight: 10 }));
+    expectResult("InvalidStateError", "negative sourceWidth", () => draw({ source: box, sourceX: 0, sourceY: 0, sourceWidth: -10, sourceHeight: 10 }));
+    expectResult("InvalidStateError", "negative sourceHeight", () => draw({ source: box, sourceX: 0, sourceY: 0, sourceWidth: 10, sourceHeight: -10 }));
+    expectResult("InvalidStateError", "zero sourceWidth", () => draw({ source: box, sourceX: 0, sourceY: 0, sourceWidth: 0, sourceHeight: 10 }));
+    expectResult("InvalidStateError", "zero sourceHeight", () => draw({ source: box, sourceX: 0, sourceY: 0, sourceWidth: 10, sourceHeight: 0 }));
+    expectResult("InvalidStateError", "source rect outside the snapshot", () => draw({ source: box, sourceX: 1000, sourceY: 1000, sourceWidth: 10, sourceHeight: 10 }));
+
+    // Non-finite members are rejected by the IDL conversion.
+    expectResult("TypeError", "NaN sourceX", () => draw({ source: box, sourceX: NaN, sourceY: 0, sourceWidth: 10, sourceHeight: 10 }));
+    expectResult("TypeError", "Infinity sourceWidth", () => draw({ source: box, sourceX: 0, sourceY: 0, sourceWidth: Infinity, sourceHeight: 10 }));
+
+    // Invalid destination size.
+    expectResult("InvalidStateError", "zero destination width", () => draw({ source: box }, { size: [0, 8] }));
+    expectResult("InvalidStateError", "zero destination height", () => draw({ source: box }, { size: [8, 0] }));
+    expectResult("TypeError", "negative destination width", () => draw({ source: box }, { size: [-8, 8] }));
+    expectResult("TypeError", "negative destination height", () => draw({ source: box }, { size: [8, -8] }));
+
+    // Invalid destination.
+    expectResult("TypeError", "missing destination texture", () => device.queue.drawElementImageToTexture({ source: box }, { }));
+    expectResult("TypeError", "invalid destination texture", () => device.queue.drawElementImageToTexture({ source: box }, { texture: { } }));
+    expectResult("TypeError", "missing arguments", () => device.queue.drawElementImageToTexture());
+
+    finishJSTest();
+}
+
+// Let the drawable child be painted so that a snapshot exists.
+requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(runTest, 0))));
+</script>
+</body>
+</html>

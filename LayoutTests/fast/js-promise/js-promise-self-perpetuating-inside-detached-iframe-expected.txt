@@ -1,0 +1,10 @@
+Tests that a self-perpetuating promise chain whose chain function is defined inside a detached iframe is terminated.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Main thread remained responsive after removing iframe whose script defined a self-perpetuating promise chain
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

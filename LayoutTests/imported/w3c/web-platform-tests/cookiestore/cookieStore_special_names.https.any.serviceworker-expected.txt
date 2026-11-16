@@ -1,0 +1,39 @@
+
+PASS cookieStore.set with __Secure- name on secure origin
+PASS cookieStore.set of expired __Secure- cookie name on secure origin
+PASS cookieStore.delete with __Secure- name on secure origin
+PASS cookieStore.set with __secure- name on secure origin
+PASS cookieStore.set of expired __secure- cookie name on secure origin
+PASS cookieStore.delete with __secure- name on secure origin
+PASS cookieStore.set with __Host- name on secure origin
+PASS cookieStore.set of expired __Host- cookie name on secure origin
+PASS cookieStore.delete with __Host- name on secure origin
+PASS cookieStore.set with __host- name on secure origin
+PASS cookieStore.set of expired __host- cookie name on secure origin
+PASS cookieStore.delete with __host- name on secure origin
+PASS cookieStore.set with __Host- prefix and a domain option
+PASS cookieStore.set with __Host- prefix a path option
+PASS cookieStore.set with __host- prefix and a domain option
+PASS cookieStore.set with __host- prefix a path option
+PASS cookieStore.set with __Host-Http- prefix rejects
+PASS cookieStore.set with __host-http- prefix rejects
+PASS cookieStore.set with __Http- prefix rejects
+PASS cookieStore.set with __http- prefix rejects
+PASS cookieStore.set with   __Http- prefix rejects
+PASS cookieStore.set with 	__Http- prefix rejects
+PASS cookieStore.set with   __Host-Http- prefix rejects
+PASS cookieStore.set with 	__Host-Http- prefix rejects
+PASS cookieStore.set with malformed name.
+FAIL cookieStore.set a nameless cookie cannot have __Host- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have __Secure- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have __Http- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have __Host-Http- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have  __Host- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have 	__Host- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have  __Secure- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have 	__Secure- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have  __Http- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have 	__Http- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have  __Host-Http- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+FAIL cookieStore.set a nameless cookie cannot have 	__Host-Http- prefix promise_test: Unhandled rejection with value: object "TypeError: The cookie name and value must not both be empty."
+

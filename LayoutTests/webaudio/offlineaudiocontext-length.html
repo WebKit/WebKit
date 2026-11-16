@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Basic testing for OfflineAudioContext.length");
+
+shouldNotThrow("context = new OfflineAudioContext({ length: 100, sampleRate: 44100 })");
+shouldBe("context.length", "100");
+
+shouldNotThrow("context = new OfflineAudioContext({ length: 1000, sampleRate: 44100 })");
+shouldBe("context.length", "1000");
+
+</script>
+</body>
+</html>

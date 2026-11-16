@@ -1,0 +1,13 @@
+Tests that requestAnimationFrame and DOM timers are not throttled in an out-of-process subframe that becomes display:none
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The frame is inside the viewport, so requestAnimationFrame and DOM timers should not be throttled.
+PASS throttlingState became "requestAnimationFrame=false,timers=false"
+Hiding the frame with display:none.
+PASS The frame stayed unthrottled
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

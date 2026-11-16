@@ -1,0 +1,12 @@
+
+one
+select0-button              select7-button
+
+PASS Button controller code should not run if the mousedown event is preventDefaulted.
+PASS Listbox controller code should not run if the mousedown event is preventDefaulted.
+PASS <select> should fire input and change events when new option is selected.
+PASS <select> should not fire input and change events when new selected option has the same value as the old.
+PASS <select> should fire input and change events when option in listbox is clicked
+PASS Check that <Space> opens <select>.
+PASS Check that <Space> opens <select> when <select> specifies tabindex
+

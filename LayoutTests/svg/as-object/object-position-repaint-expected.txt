@@ -1,0 +1,4 @@
+
+
+PASS Repaints from inside the SVG document are offset by 'object-position'
+

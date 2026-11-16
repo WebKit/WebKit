@@ -1,0 +1,252 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "GraphicsContextState.h"
+
+#include <wtf/MathExtras.h>
+#include <wtf/text/TextStream.h>
+
+namespace WebCore {
+
+GraphicsContextState::GraphicsContextState(const ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality)
+    : m_changeFlags(changeFlags)
+    , m_imageInterpolationQuality(imageInterpolationQuality)
+{
+}
+
+GraphicsContextState::GraphicsContextState(ChangeFlags changeFlags, SourceBrush&& fillBrush, WindRule fillRule, SourceBrush&& strokeBrush, float strokeThickness, StrokeStyle strokeStyle, const CompositeMode& compositeMode, std::optional<GraphicsDropShadow>&& dropShadow, std::optional<GraphicsStyle>&& style, float alpha, InterpolationQuality imageInterpolationQuality, TextDrawingModeFlags textDrawingMode, bool shouldAntialias, bool shouldSmoothFonts, bool shouldSubpixelQuantizeFonts, bool shadowsIgnoreTransforms)
+    : m_fillBrush(WTF::move(fillBrush))
+    , m_strokeBrush(WTF::move(strokeBrush))
+    , m_changeFlags(changeFlags)
+    , m_strokeThickness(strokeThickness)
+    , m_fillRule(fillRule)
+    , m_strokeStyle(strokeStyle)
+    , m_compositeMode(compositeMode)
+    , m_dropShadow(WTF::move(dropShadow))
+    , m_style(WTF::move(style))
+    , m_alpha(alpha)
+    , m_imageInterpolationQuality(imageInterpolationQuality)
+    , m_textDrawingMode(textDrawingMode)
+    , m_shouldAntialias(shouldAntialias)
+    , m_shouldSmoothFonts(shouldSmoothFonts)
+    , m_shouldSubpixelQuantizeFonts(shouldSubpixelQuantizeFonts)
+    , m_shadowsIgnoreTransforms(shadowsIgnoreTransforms)
+{
+}
+
+void GraphicsContextState::repurpose(Purpose purpose)
+{
+    if (purpose == Purpose::Initial)
+        m_changeFlags = { };
+
+#if USE(CG)
+    // CGContextBeginTransparencyLayer() sets the CG global alpha to 1. Keep the clone's alpha in sync.
+    if (purpose == Purpose::TransparencyLayer) {
+        m_alpha = 1;
+        m_style = std::nullopt;
+        m_dropShadow = std::nullopt;
+        m_compositeMode = { CompositeOperator::SourceOver, BlendMode::Normal };
+        // A context this state is being recorded for performs the same reset when it begins the
+        // transparency layer, so these properties are no longer unknown inside the layer.
+        m_indeterminateProperties.remove({ Change::Alpha, Change::Style, Change::DropShadow, Change::CompositeMode });
+    }
+#endif
+
+    m_purpose = purpose;
+}
+
+GraphicsContextState GraphicsContextState::clone(Purpose purpose) const
+{
+    auto clone = *this;
+    clone.repurpose(purpose);
+    return clone;
+}
+
+template<typename Functor>
+constexpr void GraphicsContextState::forEachProperty(NOESCAPE const Functor& functor)
+{
+    functor(Change::FillBrush, &GraphicsContextState::m_fillBrush);
+    functor(Change::FillRule, &GraphicsContextState::m_fillRule);
+    functor(Change::StrokeBrush, &GraphicsContextState::m_strokeBrush);
+    functor(Change::StrokeThickness, &GraphicsContextState::m_strokeThickness);
+    functor(Change::StrokeStyle, &GraphicsContextState::m_strokeStyle);
+    functor(Change::CompositeMode, &GraphicsContextState::m_compositeMode);
+    functor(Change::DropShadow, &GraphicsContextState::m_dropShadow);
+    functor(Change::Style, &GraphicsContextState::m_style);
+    functor(Change::Alpha, &GraphicsContextState::m_alpha);
+    functor(Change::ImageInterpolationQuality, &GraphicsContextState::m_imageInterpolationQuality);
+    functor(Change::TextDrawingMode, &GraphicsContextState::m_textDrawingMode);
+    functor(Change::ShouldAntialias, &GraphicsContextState::m_shouldAntialias);
+    functor(Change::ShouldSmoothFonts, &GraphicsContextState::m_shouldSmoothFonts);
+    functor(Change::ShouldSubpixelQuantizeFonts, &GraphicsContextState::m_shouldSubpixelQuantizeFonts);
+    functor(Change::ShadowsIgnoreTransforms, &GraphicsContextState::m_shadowsIgnoreTransforms);
+}
+
+void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state)
+{
+    auto changes = state.changes();
+    if (!changes)
+        return;
+    forEachProperty([&](Change change, auto property) {
+        if (!changes.contains(change))
+            return;
+        if (this->*property == state.*property && !m_indeterminateProperties.contains(change))
+            return;
+        this->*property = state.*property;
+        m_changeFlags.add(change);
+    });
+}
+
+void GraphicsContextState::mergeAllChanges(const GraphicsContextState& state)
+{
+    forEachProperty([&](Change change, auto property) {
+        if (this->*property == state.*property && !m_indeterminateProperties.contains(change))
+            return;
+        this->*property = state.*property;
+        m_changeFlags.add(change);
+    });
+}
+
+void GraphicsContextState::filterLastChangesForMatching(const GraphicsContextState& state)
+{
+    // A property whose value in the other state is unknown cannot be filtered out by comparing
+    // against that state.
+    auto candidates = m_changeFlags - m_indeterminateProperties;
+    if (!candidates)
+        return;
+    forEachProperty([&](Change change, auto property) {
+        if (candidates.contains(change) && this->*property == state.*property)
+            m_changeFlags.remove(change);
+    });
+}
+
+void GraphicsContextState::copyPropertiesFrom(const GraphicsContextState& state, ChangeFlags changes)
+{
+    if (!changes)
+        return;
+    forEachProperty([&](Change change, auto property) {
+        if (changes.contains(change))
+            this->*property = state.*property;
+    });
+}
+
+bool GraphicsContextState::propertiesEqualIgnoring(const GraphicsContextState& other, ChangeFlags ignoredProperties) const
+{
+    bool equal = true;
+    forEachProperty([&](Change change, auto property) {
+        if (ignoredProperties.contains(change))
+            return;
+        if (!(this->*property == other.*property))
+            equal = false;
+    });
+    return equal;
+}
+
+static ASCIILiteral stateChangeName(GraphicsContextState::Change change)
+{
+    switch (change) {
+    case GraphicsContextState::Change::FillBrush:
+        return "fill-brush"_s;
+
+    case GraphicsContextState::Change::FillRule:
+        return "fill-rule"_s;
+
+    case GraphicsContextState::Change::StrokeBrush:
+        return "stroke-brush"_s;
+
+    case GraphicsContextState::Change::StrokeThickness:
+        return "stroke-thickness"_s;
+
+    case GraphicsContextState::Change::StrokeStyle:
+        return "stroke-style"_s;
+
+    case GraphicsContextState::Change::CompositeMode:
+        return "composite-mode"_s;
+
+    case GraphicsContextState::Change::DropShadow:
+        return "drop-shadow"_s;
+
+    case GraphicsContextState::Change::Style:
+        return "style"_s;
+
+    case GraphicsContextState::Change::Alpha:
+        return "alpha"_s;
+
+    case GraphicsContextState::Change::ImageInterpolationQuality:
+        return "image-interpolation-quality"_s;
+
+    case GraphicsContextState::Change::TextDrawingMode:
+        return "text-drawing-mode"_s;
+
+    case GraphicsContextState::Change::ShouldAntialias:
+        return "should-antialias"_s;
+
+    case GraphicsContextState::Change::ShouldSmoothFonts:
+        return "should-smooth-fonts"_s;
+
+    case GraphicsContextState::Change::ShouldSubpixelQuantizeFonts:
+        return "should-subpixel-quantize-fonts"_s;
+
+    case GraphicsContextState::Change::ShadowsIgnoreTransforms:
+        return "shadows-ignore-transforms"_s;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+TextStream& GraphicsContextState::dump(TextStream& ts) const
+{
+    constexpr auto numberOfProperties = [] {
+        size_t count = 0;
+        forEachProperty([&](Change, auto) { ++count; });
+        return count;
+    };
+    // ShadowsIgnoreTransforms is the highest Change bit, so its index plus one is the number of changes.
+    static_assert(numberOfProperties() == WTF::ctz(std::to_underlying(Change::ShadowsIgnoreTransforms)) + 1,
+        "forEachProperty() must list every Change enumerator");
+
+    ts.dumpProperty("change-flags"_s, m_changeFlags);
+    if (m_changeFlags) {
+        forEachProperty([&](Change change, auto property) {
+            if (m_changeFlags.contains(change))
+                ts.dumpProperty(stateChangeName(change), this->*property);
+        });
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, GraphicsContextState::Change change)
+{
+    ts << stateChangeName(change);
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const GraphicsContextState& state)
+{
+    return state.dump(ts);
+}
+
+} // namespace WebCore

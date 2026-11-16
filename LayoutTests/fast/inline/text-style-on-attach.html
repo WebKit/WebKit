@@ -1,0 +1,19 @@
+<style>
+div { font: 20px Times; margin: 10px; width: 600px; }
+.big { font-size: 40px; }
+#firstLine::first-line { font-family: Ahem; }
+</style>
+<!-- Text takes its style from its parent when it is attached, also when the parent changes in the same update and when the text moves into an anonymous block. -->
+<div id="sameUpdate">old</div>
+<div id="moved">text that moves into an anonymous block</div>
+<div id="firstLine"><span id="inlineBox">first</span></div>
+<script>
+document.body.offsetHeight;
+let sameUpdate = document.getElementById("sameUpdate");
+sameUpdate.classList.add("big");
+sameUpdate.appendChild(document.createTextNode(" new"));
+let moved = document.getElementById("moved");
+moved.classList.add("big");
+moved.appendChild(document.createElement("div")).textContent = "block";
+document.getElementById("inlineBox").appendChild(document.createTextNode(" line text"));
+</script>

@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+    function addCrossOriginIFrame() {
+        let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+        let iframe = document.createElement("iframe");
+        iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/dom/resources/dom-frame.html`;
+        document.body.appendChild(iframe);
+    }
+
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent");
+
+        suite.addTestCase({
+            name: "SiteIsolation.DOM.FrameDOMAgent.GetDocument",
+            description: "A cross-origin iframe frame target should have a DOMAgent that returns a document.",
+            async test() {
+                let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+                InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+                let event = await targetAddedPromise;
+                let target = event.data.target;
+
+                InspectorTest.assert(target instanceof WI.FrameTarget);
+
+                if (target.isProvisional) {
+                    let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                    target = committedEvent.data.target;
+                }
+
+                InspectorTest.expectNotNull(target.DOMAgent, "Frame target should have a DOMAgent.");
+
+                let frameDoc = WI.domManager.frameTargetDocumentForTarget(target);
+                if (!frameDoc) {
+                    let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                    frameDoc = docEvent.data.document;
+                }
+
+                InspectorTest.expectNotNull(frameDoc, "Frame target should have a document.");
+                InspectorTest.expectEqual(frameDoc.nodeType(), Node.DOCUMENT_NODE, "Root should be a Document node.");
+                InspectorTest.expectThat(frameDoc.children && frameDoc.children.length > 0, "Document should have children.");
+
+                let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+                InspectorTest.expectNotNull(htmlNode, "Document should have an HTML element child.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+<p>Test that a cross-origin iframe's FrameDOMAgent returns a valid document tree.</p>
+</body>

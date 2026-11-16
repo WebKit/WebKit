@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/testharness.js"></script>
+<script src="/js-test-resources/testharnessreport.js"></script>
+<script src="../resources/testharness-helpers.js"></script>
+<body>
+<script>
+promise_test(async t => {
+    const frame = await with_iframe("resources/popup-iframe.html");
+    const data = await frame.contentWindow.openPopupAndTriggerPost("about:blank");
+    frame.remove();
+    assert_equals(data.http[LAX_DOM], "1", "lax");
+    assert_equals(data.http[NORMAL_DOM], "1", "normal");
+    assert_equals(data.http[STRICT_DOM], "1", "strict");
+}, "popup opened as 'about:blank' from an iframe, then post navigation to 127.0.0.1, so samesite cookies are sent.");
+
+promise_test(async t => {
+    const frame = await with_iframe("resources/popup-iframe.html");
+    const data = await frame.contentWindow.openPopupAndTriggerPost("http://127.0.0.1:8000");
+    frame.remove();
+    assert_equals(data.http[LAX_DOM], "1", "lax");
+    assert_equals(data.http[NORMAL_DOM], "1", "normal");
+    assert_equals(data.http[STRICT_DOM], "1", "strict");
+}, "popup opened as '127.0.0.1' from an iframe, then post navigation to 127.0.0.1, so samesite cookies are sent.");
+
+promise_test(async t => {
+    const frame = await with_iframe("resources/popup-iframe.html");
+    const data = await frame.contentWindow.loadPopupThenTriggerPost();
+    frame.remove();
+    assert_equals(data.http[LAX_DOM], "1", "lax");
+    assert_equals(data.http[NORMAL_DOM], "1", "normal");
+    assert_equals(data.http[STRICT_DOM], "1", "strict");
+}, "popup loaded as '127.0.0.1' from an iframe, then post navigation to 127.0.0.1, so samesite cookies are sent.");
+</script>
+</body>

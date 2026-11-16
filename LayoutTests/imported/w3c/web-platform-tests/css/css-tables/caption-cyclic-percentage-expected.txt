@@ -1,0 +1,14 @@
+These 2 rectangles should be equally wide:
+
+
+These 2 rectangles should be equally wide:
+
+
+These 2 rectangles should be equally wide:
+
+
+
+PASS min-width
+PASS width
+PASS max-width
+

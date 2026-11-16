@@ -1,0 +1,4 @@
+
+PASS Property scroll-behavior value 'auto'
+PASS Property scroll-behavior value 'smooth'
+

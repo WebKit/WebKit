@@ -1,0 +1,15 @@
+Reference target does not support aria-owns, i.e.,the ownership is not forwarded to the referenced element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: group.isAttributeSupported('AXOwns') === true
+PASS: group.childrenCount === 2
+PASS: group.ariaOwnsElementAtIndex(0).domIdentifier === 'shadow-host'
+PASS: group.childAtIndex(1).domIdentifier === 'shadow-host'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Item 1
+

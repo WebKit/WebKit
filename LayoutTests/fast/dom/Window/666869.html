@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function boom()
+    {
+        var f = document.getElementById("f");
+        var frameWin = f.contentWindow;
+        document.body.removeChild(f);
+        frameWin.performance;
+
+        document.write("PASS. WebKit didn't crash.");
+    }
+</script>
+</head>
+<body onload="boom();"><iframe id="f" src="data:text/html,1"></iframe></body>
+</html>

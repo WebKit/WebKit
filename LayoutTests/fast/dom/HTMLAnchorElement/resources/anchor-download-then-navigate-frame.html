@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<a id="next" href="anchor-download-then-navigate-frame-2.html">next</a>
+<script>
+var link = document.createElement("a");
+link.href = "data:text/html,HelloWorld!";
+link.download = "test.html";
+link.click();
+// Activating a link navigates synchronously, unlike assigning location.href, so this newer
+// navigation owns the frame's policy document loader before the download's decision arrives.
+document.getElementById("next").click();
+</script>
+</body>
+</html>

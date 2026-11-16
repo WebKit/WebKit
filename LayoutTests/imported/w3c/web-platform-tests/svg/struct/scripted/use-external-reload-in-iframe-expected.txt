@@ -1,0 +1,4 @@
+
+
+PASS <use> with external resource in reloaded iframe
+

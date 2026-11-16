@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+TestPage.allowUncaughtExceptions = true;
+TestPage.needToSanitizeUncaughtExceptionURLs = true;
+
+function triggerOutOfMemoryException() {
+    let s = "a";
+    while (true)
+        s += s;
+}
+
+window.addEventListener("error", (event) => {
+    TestPage.dispatchEventToFrontend("AfterError");
+});
+
+function test()
+{
+    WI.debuggerManager.allExceptionsBreakpoint.disabled = false;
+
+    let suite = InspectorTest.createAsyncSuite("Debugger.OutOfMemoryException");
+
+    suite.addTestCase({
+        name: "Debugger.OutOfMemoryException.NoPause",
+        description: "Should not pause on a OutOfMemory Exception.",
+        test(resolve, reject) {
+            let paused = false;
+
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+                InspectorTest.fail("Should not pause.");
+                reject();
+            });
+
+            InspectorTest.singleFireEventListener("AfterError", (event) => {
+                if (!paused)
+                    InspectorTest.pass("Should not pause on OutOfMemory Exception.");
+                resolve();
+            });
+
+            InspectorTest.evaluateInPage(`setTimeout(triggerOutOfMemoryException)`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test we do not pause on a OutOfMemory Exception.</p>
+</body>
+</html>

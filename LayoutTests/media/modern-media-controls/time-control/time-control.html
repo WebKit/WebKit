@@ -1,0 +1,78 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>TimeControl</code> class.");
+
+const timeControl = new TimeControl({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
+document.body.appendChild(timeControl.element);
+
+shouldBeEqualToString("timeControl.element.localName", "div");
+shouldBeTrue("timeControl.element.classList.contains('time-control')");
+
+debug("");
+shouldBeType("timeControl.elapsedTimeLabel", "TimeLabel");
+shouldBeType("timeControl.scrubber", "Slider");
+shouldBeType("timeControl.durationTimeLabel", "TimeLabel");
+shouldBeType("timeControl.remainingTimeLabel", "TimeLabel");
+
+debug("");
+scheduler.flushScheduledLayoutCallbacks();
+shouldBe("timeControl.children.length", "4");
+shouldBe("timeControl.children[0]", "timeControl.elapsedTimeLabel");
+shouldBe("timeControl.children[1]", "timeControl.scrubber");
+shouldBe("timeControl.children[2]", "timeControl.remainingTimeLabel");
+shouldBe("timeControl.children[3]", "timeControl.durationTimeLabel");
+
+debug("");
+debug("timeControl.width = 500;");
+timeControl.width = 500;
+scheduler.flushScheduledLayoutCallbacks();
+shouldBe("timeControl.durationTimeLabel.x", "0");
+shouldNotBe("getComputedStyle(timeControl.elapsedTimeLabel.element).display", "'none'");
+shouldBe("getComputedStyle(timeControl.remainingTimeLabel.element).display", "'none'");
+shouldNotBe("getComputedStyle(timeControl.durationTimeLabel.element).display", "'none'");
+
+debug("");
+debug("timeControl.width = 100;");
+timeControl.width = 100;
+scheduler.flushScheduledLayoutCallbacks();
+shouldBe("getComputedStyle(timeControl.elapsedTimeLabel.element).display", "'none'");
+shouldNotBe("getComputedStyle(timeControl.remainingTimeLabel.element).display", "'none'");
+shouldBe("getComputedStyle(timeControl.durationTimeLabel.element).display", "'none'");
+
+debug("");
+debug("timeControl.width = 200;");
+timeControl.width = 200;
+scheduler.flushScheduledLayoutCallbacks();
+shouldBe("timeControl.elapsedTimeLabel.x", "0");
+shouldNotBe("getComputedStyle(timeControl.elapsedTimeLabel.element).display", "'none'");
+shouldBe("getComputedStyle(timeControl.remainingTimeLabel.element).display", "'none'");
+shouldNotBe("getComputedStyle(timeControl.durationTimeLabel.element).display", "'none'");
+
+debug("");
+debug("timeControl.durationTimeLabel.element.click();");
+timeControl.durationTimeLabel.element.click()
+scheduler.flushScheduledLayoutCallbacks();
+shouldBe("timeControl.elapsedTimeLabel.x", "0");
+shouldNotBe("getComputedStyle(timeControl.elapsedTimeLabel.element).display", "'none'");
+shouldNotBe("getComputedStyle(timeControl.remainingTimeLabel.element).display", "'none'");
+shouldBe("getComputedStyle(timeControl.durationTimeLabel.element).display", "'none'");
+
+debug("");
+debug("timeControl.remainingTimeLabel.element.click();");
+timeControl.remainingTimeLabel.element.click();
+scheduler.flushScheduledLayoutCallbacks();
+shouldBe("timeControl.elapsedTimeLabel.x", "0");
+shouldNotBe("getComputedStyle(timeControl.elapsedTimeLabel.element).display", "'none'");
+shouldBe("getComputedStyle(timeControl.remainingTimeLabel.element).display", "'none'");
+shouldNotBe("getComputedStyle(timeControl.durationTimeLabel.element).display", "'none'");
+
+debug("");
+
+timeControl.element.remove();
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- ?top=RRGGBB above ?boundary=PX and ?bottom=RRGGBB below it, in a document ?height=PX tall that scrolls
+     to ?scrollTo=PX on load and posts the offset to its parent. -->
+<style>html, body { margin: 0; width: 100%; } div { width: 100%; }</style>
+</head>
+<body>
+<div id="top"></div>
+<div id="bottom"></div>
+<script>
+const parameters = new URLSearchParams(location.search);
+const boundary = parseInt(parameters.get("boundary") || "500", 10);
+const height = parseInt(parameters.get("height") || "3000", 10);
+
+document.body.style.height = height + "px";
+document.getElementById("top").style.height = boundary + "px";
+document.getElementById("top").style.backgroundColor = "#" + (parameters.get("top") || "ff7800");
+document.getElementById("bottom").style.height = (height - boundary) + "px";
+document.getElementById("bottom").style.backgroundColor = "#" + (parameters.get("bottom") || "007aff");
+
+addEventListener("load", () => {
+    window.scrollTo(0, parseInt(parameters.get("scrollTo") || "600", 10));
+    parent.postMessage({ scrolledTo: window.scrollY }, "*");
+});
+</script>
+</body>
+</html>

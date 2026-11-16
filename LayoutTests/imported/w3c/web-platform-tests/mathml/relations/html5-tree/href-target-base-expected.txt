@@ -1,0 +1,5 @@
+
+Link Empty Target
+
+PASS MathML <a> with target='' falls back to <base target>
+

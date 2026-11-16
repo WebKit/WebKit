@@ -1,0 +1,4 @@
+InnerTarget
+
+PASS moveBefore() correctly updates the computed dir for moved nodes
+

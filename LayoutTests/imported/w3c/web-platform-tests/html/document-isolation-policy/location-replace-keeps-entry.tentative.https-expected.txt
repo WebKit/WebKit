@@ -1,0 +1,4 @@
+
+PASS A frame's document replaced by a same-origin one with a policy keeps the session history entry
+PASS A popup's document replaced by a same-origin one with a policy keeps the session history entry
+

@@ -1,0 +1,14 @@
+This tests that buttons with inner text are properly handled by live regions.
+
+Received announcement request:
+AnnouncementKey: Press Me{
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Press Me

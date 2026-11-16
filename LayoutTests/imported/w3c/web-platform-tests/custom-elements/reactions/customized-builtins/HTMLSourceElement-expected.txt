@@ -1,0 +1,13 @@
+
+
+FAIL src on HTMLSourceElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL src on HTMLSourceElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL type on HTMLSourceElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL type on HTMLSourceElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
+FAIL srcset on HTMLSourceElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL srcset on HTMLSourceElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL sizes on HTMLSourceElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL sizes on HTMLSourceElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
+FAIL media on HTMLSourceElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL media on HTMLSourceElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
+

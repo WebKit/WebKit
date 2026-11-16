@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ NeedsSiteSpecificQuirks=true ] -->
+<html>
+<head>
+    <title>now-playing-info-position-without-seeking-support</title>
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script>
+
+        let nowPlayingState;
+        let controlsHost;
+
+        async function waitForAttributeToChange(attribute, expected) {
+            let start = new Date().getTime();
+            do {
+
+                if (internals.nowPlayingState[attribute] != expected)
+                    return;
+
+                await new Promise(resolve => setTimeout(resolve, 100));
+            } while (new Date().getTime() - start < 500);
+
+            failTest(`** Timed out waiting for "${attribute}" to change from "${expected}"`);
+        }
+
+        async function runTest()
+        {
+            findMediaElement();
+
+            // Adopt a domain whose site-specific quirks disable seeking support. Position
+            // must still be reported: a Now Playing client that cannot scrub can still
+            // display elapsed and remaining time. rdar://181140244
+            consoleWrite('<br>* Adopt a domain whose site-specific quirks disable seeking support.');
+            run('internals.setTopDocumentURLForQuirks("https://www.netflix.com/")');
+            run('video.src = findMediaFile("video", "content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            // Guard against a vacuous pass: if the quirk failed to apply, seeking would be
+            // supported and position would be reported for the uninteresting reason.
+            consoleWrite('<br>* Seeking support should be disabled by the quirk.');
+            run('controlsHost = internals.controlsHostForMediaElement(video)');
+            testExpected('controlsHost.supportsSeeking', false);
+
+            consoleWrite('<br>* Start to play, NowPlaying should become active.');
+            runWithKeyDown(() => {
+                run('video.play()');
+            });
+
+            await waitFor(video, 'playing');
+            run('video.pause()');
+            await waitForAttributeToChange('registeredAsNowPlayingApplication', false);
+
+            consoleWrite('<br>* Duration and elapsed time should be reported anyway.');
+            run('nowPlayingState = internals.nowPlayingState');
+            testExpected('nowPlayingState.registeredAsNowPlayingApplication', true);
+            testExpected('isNaN(nowPlayingState.duration)', false);
+            testExpected('nowPlayingState.duration', '0', '>');
+            testExpected('isNaN(nowPlayingState.elapsedTime)', false);
+
+            consoleWrite('');
+        }
+
+        window.addEventListener('load', event => {
+            runTest().then(endTest).catch(failTest);
+        });
+    </script>
+</head>
+<body>
+    <video controls></video>
+    <br>
+    Tests that NowPlaying reports duration and elapsed time when a site-specific quirk disables seeking support.
+</body>
+</html>

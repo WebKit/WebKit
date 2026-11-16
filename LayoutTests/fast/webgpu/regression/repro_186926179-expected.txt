@@ -1,0 +1,7 @@
+PASS the duplicate resource binding was reported
+PASS dispatching the invalid module did not crash the GPU process
+PASS an entry point using only one of the two bindings still runs
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

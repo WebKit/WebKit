@@ -1,0 +1,3 @@
+
+FAIL drawElementImage does not use cross-origin feImages in SVG patterns assert_array_equals: Cross origin pattern should not draw expected property 0 to be 0 but got 255 (expected array [0, 0, 0, 255] got object "255,0,0,255")
+

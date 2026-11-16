@@ -1,0 +1,25 @@
+<!doctype>
+<style>
+  p:only-of-type {
+      -webkit-animation: reverse,alternate;
+      -webkit-animation-name: keyframes1;
+      -webkit-animation-duration: 0.5s;
+  }
+  @keyframes keyframes1 {}
+</style>
+<script>
+  function main() {
+      if (window.testRunner)
+          testRunner.dumpAsText();
+      console.log('This test passes if it does not crash.');
+      var animations = A.getAnimations();
+      document.body.appendChild(A);
+      animations[0].startTime = 0;
+  }
+</script>
+<body onload="main()">
+  <p></p>
+  <div>
+    <p id="A"></p>
+  </div>
+</body>

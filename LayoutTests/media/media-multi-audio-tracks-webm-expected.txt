@@ -1,0 +1,7 @@
+
+RUN(video.src = "content/vp9-opus-good-3tracks.webm")
+EVENT(loadedmetadata)
+EXPECTED (video.videoTracks.length == '1') OK
+EXPECTED (video.audioTracks.length == '2') OK
+END OF TEST
+

@@ -1,0 +1,5 @@
+
+
+PASS contextmenu using mouse is a PointerEvent with correct properties
+PASS contextmenu using mouse is a PointerEvent with correct properties when no other PointerEvent listeners are present
+

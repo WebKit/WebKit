@@ -1,0 +1,13 @@
+This test ensures the end-text-marker and UI-element-for-text-marker APIs correctly account for stitched text.
+
+PASS: initialFullText === 'Hello World'
+PASS: endElement.isEqual(startElement) === true
+PASS: endElement.stringValue.includes('Hello World') === true
+PASS: webArea.stringForTextMarkerRange(webArea.textMarkerRangeForMarkers(startMarker, webArea.endTextMarker)) === 'Hello World Goodbye'
+PASS: endElement.stringValue.includes('Goodbye') === true
+PASS: endElement.isEqual(startElement) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello World Goodbye

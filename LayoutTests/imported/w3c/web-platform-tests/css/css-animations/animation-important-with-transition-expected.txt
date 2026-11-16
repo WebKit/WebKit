@@ -1,0 +1,11 @@
+Test
+Test
+Test
+Test
+
+PASS !important overrides animation when no transition is running
+PASS !important overrides animation even when a CSS transition is concurrently running
+PASS !important does not override a running CSS transition
+PASS !important overrides animation but not transition on the same element
+PASS !important overrides multiple animated properties even with a concurrent transition
+

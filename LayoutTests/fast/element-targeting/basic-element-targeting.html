@@ -1,0 +1,96 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+.overlay {
+    width: 100%;
+    height: 300px;
+    display: block;
+    visibility: visible;
+    opacity: 0.5;
+}
+
+.fixed {
+    top: 0;
+    left: 2px;
+    background: tomato;
+    position: fixed;
+    pointer-events: none;
+}
+
+#absolute {
+    top: 1%;
+    right: 1em;
+    background: lightblue;
+    position: absolute;
+    z-index: 1000;
+}
+
+.content {
+    width: 320px;
+    height: 200px;
+}
+</style>
+</head>
+<body>
+<div id="absolute" class="overlay"></div>
+<div class="fixed overlay"></div>
+<p class="content">This test requires WebKitTestRunner.</p>
+<script>
+testRunner.waitUntilDone();
+
+function debugDescription(element) {
+    return `<${element.tagName} id='${element.id || ""}' class='${element.className || ""}'>`;
+}
+
+addEventListener("load", async () => {
+    const content = document.querySelector(".content");
+    const point = UIHelper.midPointOfRect(content.getBoundingClientRect());
+    const firstSelector = await UIHelper.adjustVisibilityForFrontmostTarget(point.x, point.y);
+    const secondSelector = await UIHelper.adjustVisibilityForFrontmostTarget(point.x, point.y);
+
+    const absoluteContainer = document.querySelector("#absolute");
+    if (document.querySelector(firstSelector) !== absoluteContainer)
+        content.textContent += `\nFAIL: (1) Unexpected selector ${firstSelector}`;
+
+    const fixedContainer = document.querySelector(".fixed");
+    if (document.querySelector(secondSelector) !== fixedContainer)
+        content.textContent += `\nFAIL: (2) Unexpected selector ${secondSelector}`;
+
+    if (!document.elementsFromPoint(point.x, point.y).includes(absoluteContainer))
+        content.textContent += `\nFAIL: (4) elementsFromPoint() did not contain ${debugDescription(absoluteContainer)}`;
+
+    let elementFromPoint = document.elementFromPoint(point.x, point.y);
+    if (elementFromPoint !== absoluteContainer)
+        content.textContent += `\nFAIL: (5) elementFromPoint() found ${debugDescription(elementFromPoint)}`;
+
+    let containerFromCaretRange = document.caretRangeFromPoint(point.x, point.y).commonAncestorContainer;
+    if (containerFromCaretRange !== absoluteContainer)
+        content.textContent += `\nFAIL: (6) caretRangeFromPoint() was in ${debugDescription(containerFromCaretRange)}`;
+
+    if (!absoluteContainer.checkVisibility())
+        content.textContent += `\nFAIL: (7) checkVisibility() was false for ${debugDescription(absoluteContainer)}`;
+
+    let computedVisibility = getComputedStyle(absoluteContainer).visibility;
+    if (computedVisibility !== "visible")
+        content.textContent += `\nFAIL: (8) computed visibility was ${computedVisibility} for ${debugDescription(absoluteContainer)}`;
+
+    if (!fixedContainer.checkVisibility())
+        content.textContent += `\nFAIL: (9) checkVisibility() was false for ${debugDescription(fixedContainer)}`;
+
+    computedVisibility = getComputedStyle(fixedContainer).visibility;
+    if (computedVisibility !== "visible")
+        content.textContent += `\nFAIL: (10) computed visibility was ${computedVisibility} for ${debugDescription(fixedContainer)}`;
+
+    await UIHelper.callFunctionAndWaitForEvent(() => UIHelper.activateAt(point.x, point.y), content, "click");
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+EXPECTED (video.audioTracks.length == '1') OK
+EXPECTED (video.audioTracks[0].enabled == 'true') OK
+EXPECTED (video.audioTracks[0].id == '18446744073709551615') OK
+END OF TEST
+

@@ -1,0 +1,4 @@
+
+PASS Test that navigation.back() silently aborts during onnavigate
+PASS Test that navigation.traverseTo() works during onnavigate
+

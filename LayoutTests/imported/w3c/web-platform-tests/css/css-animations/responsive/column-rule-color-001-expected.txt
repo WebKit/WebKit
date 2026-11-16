@@ -1,0 +1,4 @@
+
+PASS column-rule-color responds to currentColor changes
+PASS column-rule-color responds to inherited changes
+

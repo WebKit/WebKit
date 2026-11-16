@@ -1,0 +1,4 @@
+
+PASS Property scroll-axis-lock has initial value auto
+PASS Property scroll-axis-lock does not inherit
+

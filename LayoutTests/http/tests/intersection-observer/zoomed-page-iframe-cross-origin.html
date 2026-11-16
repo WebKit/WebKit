@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<title>Tests that intersection observer works in a cross-origin iframe when the page is zoomed</title>
+
+<style>
+  #subframe {
+    width: 300px;
+    height: 300px;
+  }
+
+  #spacer {
+    height: 2000px;
+  }
+</style>
+
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<iframe id="subframe"></iframe>
+<div id="spacer"></div>
+
+<script>
+  lastObservation = null;
+  window.addEventListener("message", event => {
+    lastObservation = event.data;
+  });
+
+  function assertRect(actual, expectedX, expectedY, expectedWidth, expectedHeight) {
+    assert_equals(actual.x, expectedX);
+    assert_equals(actual.y, expectedY);
+    assert_equals(actual.width, expectedWidth);
+    assert_equals(actual.height, expectedHeight);
+  }
+
+  function loadFrame() {
+    return new Promise(resolve => {
+      subframe.addEventListener("load", resolve, { once: true });
+      subframe.src = "http://localhost:8000/intersection-observer/resources/zoomed-page-subframe.html";
+    });
+  }
+
+  promise_test(async (t) => {
+    await loadFrame();
+
+    await UIHelper.zoomToScale(2);
+
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    assert_true(lastObservation.isIntersecting, "Target is initially visible");
+    assertRect(lastObservation.intersectionRect, 0, 0, 100, 100);
+
+    window.scroll(0, 2000);
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    assert_false(lastObservation.isIntersecting, "Scrolled past target, target is no longer visible");
+    assertRect(lastObservation.intersectionRect, 0, 0, 0, 0);
+
+    window.scroll(0, 0);
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    assert_true(lastObservation.isIntersecting, "Scrolled to top of page, target is visible again");
+    assertRect(lastObservation.intersectionRect, 0, 0, 100, 100);
+  }, "Intersection Observer in a cross-origin iframe works when the page is zoomed");
+</script>

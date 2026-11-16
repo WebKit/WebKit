@@ -1,0 +1,134 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # showbugcounts: if defined, then bug counts should be included in the table
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the component belongs.
+  #%]
+
+[% title = BLOCK %]Select component of product
+                   '[% product.name FILTER html %]'[% END %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% edit_contentlink = BLOCK %]editcomponents.cgi?action=edit&amp;product=
+  [%- product.name FILTER uri %]&amp;component=%%name%%[% END %]
+[% delete_contentlink = BLOCK %]editcomponents.cgi?action=del&amp;product=
+  [%- product.name FILTER uri %]&amp;component=%%name%%[% END %]
+[% bug_count_contentlink = BLOCK %]buglist.cgi?component=%%name%%&amp;product=
+  [%- product.name FILTER uri %][% END %]
+
+
+[% columns = [
+     { 
+       name => "name"
+       heading => "Edit component..."
+       contentlink => edit_contentlink
+     },
+     { 
+       name => "description"
+       heading => "Description" 
+       allow_html_content => 1
+     },
+     { 
+       name => "initialowner"
+       heading => "Default Assignee"
+     },
+   ]
+%]
+
+[% IF Param('useqacontact') %]
+
+  [% columns.push({
+       name => 'initialqacontact'
+       heading => 'Default QA Contact'
+     }) %]
+
+[% END %]
+
+[% columns.push({
+     name => "initial_cc_names"
+     heading => "Default CC list"
+   },
+   {
+     name => "isactive"
+     heading => "Active"
+     yesno_field => 1
+   }) %]
+
+[% IF showbugcounts %]
+
+  [% columns.push({
+       name => 'bug_count'
+       heading => "$terms.Bugs"
+       class => "right"
+       contentlink => bug_count_contentlink
+     }) %]
+
+[% END %]
+
+[% columns.push({
+     heading => "Action"
+     content => "Delete"
+     contentlink => delete_contentlink
+   }) %]
+
+[%# Overrides the initialowner, the initialqacontact, and the initial_cc_names with right values %]
+[% overrides.initialowner = {} %]
+[% overrides.initialqacontact = {} %]
+[% overrides.initial_cc_names = {} %]
+
+[%# "component" is a reserved word in Template Toolkit. %]
+[% FOREACH my_component = product.components %]
+  [% overrides.initialowner.name.${my_component.name} = {
+       override_content => 1
+       content => my_component.default_assignee.login
+     }
+  %]
+  [% overrides.initialqacontact.name.${my_component.name} = {
+       override_content => 1
+       content => my_component.default_qa_contact.login
+     }
+  %]
+  [% SET initial_cc_list = [] %]
+  [% FOREACH cc_user = my_component.initial_cc %]
+    [% initial_cc_list.push(cc_user.login) %]
+  [% END %]
+  [% overrides.initial_cc_names.name.${my_component.name} = {
+       override_content => 1
+       content => initial_cc_list.join(', ')
+     }
+  %]
+[% END %]
+
+[% Hook.process('before_table') %]
+
+[% PROCESS admin/table.html.tmpl
+     columns = columns
+     data = product.components
+     overrides = overrides
+%]
+
+<p><a href="editcomponents.cgi?action=add&amp;product=[% product.name FILTER uri %]">Add</a>
+    a new component to product '[% product.name FILTER html %]'</p>
+
+[% IF ! showbugcounts %]
+
+  <p><a href="editcomponents.cgi?product=[% product.name FILTER uri %]&amp;showbugcounts=1">
+      Redisplay table with [% terms.bug %] counts (slower)</a></p>
+
+[% END %]
+
+[% PROCESS admin/components/footer.html.tmpl
+  no_edit_other_components_link = 1
+ %]
+
+[% PROCESS global/footer.html.tmpl %]

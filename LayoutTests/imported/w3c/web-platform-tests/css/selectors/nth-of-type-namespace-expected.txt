@@ -1,0 +1,5 @@
+
+PASS :nth-of-type selectors matching takes element namespace into account (http://www.w3.org/1999/xhtml)
+PASS :nth-of-type selectors matching takes element namespace into account (http://dummy1/)
+PASS :nth-of-type selectors matching takes element namespace into account (http://dummy2/)
+

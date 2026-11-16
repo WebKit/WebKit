@@ -1,0 +1,5 @@
+
+PASS loopback to loopback: no permission required.
+PASS loopback to local: no permission required.
+PASS loopback to public: no preflight required.
+

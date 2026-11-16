@@ -1,0 +1,8 @@
+This tests scheduling requestIdleCallback when the browser is idle. WebKit should fire idle callbacks.
+You should see idle1, idle2, and idle3 below:
+
+idle1
+idle2
+idle3
+PASS
+

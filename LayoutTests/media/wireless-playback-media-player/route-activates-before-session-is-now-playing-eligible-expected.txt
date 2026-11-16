@@ -1,0 +1,12 @@
+Test that a MediaDeviceRoute which activates while no session is eligible to be the Now Playing session is applied to a session that becomes eligible later.
+
+
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.muted = false)
+EVENT(webkitcurrentplaybacktargetiswirelesschanged)
+EXPECTED (video.webkitCurrentPlaybackTargetIsWireless == 'true') OK
+END OF TEST
+

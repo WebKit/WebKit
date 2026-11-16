@@ -1,0 +1,31 @@
+This test verifies that a focused or active ARIA menu item isn't reported as selected, since ARIA menu items have no selected state.
+
+PASS: accessibilityController.focusedElement.domIdentifier === 'menuitem'
+PASS: item.isSelected === false
+PASS: menu.selectedChildrenCount === 0
+PASS: accessibilityController.focusedElement.domIdentifier === 'menuitemcheckbox'
+PASS: item.isSelected === false
+PASS: menu.selectedChildrenCount === 0
+PASS: accessibilityController.focusedElement.domIdentifier === 'menuitemradio'
+PASS: item.isSelected === false
+PASS: menu.selectedChildrenCount === 0
+
+The active descendant of a focused menu isn't selected either.
+PASS: accessibilityController.focusedElement.domIdentifier === 'active-item'
+PASS: activeItem.isSelected === false
+PASS: activeDescendantMenu.selectedChildrenCount === 0
+
+Nor is a focused menubar item.
+PASS: accessibilityController.focusedElement.domIdentifier === 'menubar-item'
+PASS: menubarItem.isSelected === false
+PASS: menubar.selectedChildrenCount === 0
+
+An explicit aria-selected is still honored.
+PASS: ariaSelectedItem.isSelected === true
+PASS: ariaSelectedMenu.selectedChildrenCount === 1
+PASS: ariaSelectedMenu.selectedChildAtIndex(0).domIdentifier === 'aria-selected-item'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

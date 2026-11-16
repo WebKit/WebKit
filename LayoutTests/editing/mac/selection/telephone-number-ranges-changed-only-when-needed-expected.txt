@@ -1,0 +1,6 @@
+Call (408) 996-1010 tomorrow.
+
+
+PASS Telephone number ranges are only reported as changed when a document's selected telephone numbers could have changed
+PASS Destroying a document with selected telephone numbers reports the ranges as changed
+

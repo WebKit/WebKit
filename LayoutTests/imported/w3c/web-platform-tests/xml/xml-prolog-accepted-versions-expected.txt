@@ -1,0 +1,12 @@
+
+PASS XML 1.0 is accepted
+PASS XML 1.1 is accepted
+PASS XML 1.2 is accepted
+PASS XML 1.7 is accepted
+PASS XML 1.1075 is accepted
+PASS XML 1.000 is accepted
+PASS XML 10.0 is NOT accepted
+PASS XML 100 is NOT accepted
+PASS XML 2.0 is NOT accepted
+PASS XML 17.0 is NOT accepted
+

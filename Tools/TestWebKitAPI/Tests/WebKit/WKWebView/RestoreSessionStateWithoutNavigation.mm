@@ -1,0 +1,154 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#if PLATFORM(MAC)
+
+#import "Helpers/JavaScriptTest.h"
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/PlatformWebView.h"
+#import "Helpers/Test.h"
+#import <WebKit/WKBackForwardListItemPrivate.h>
+#import <WebKit/WKBackForwardListItemRef.h>
+#import <WebKit/WKBackForwardListRef.h>
+#import <WebKit/WKData.h>
+#import <WebKit/WKNavigationDelegatePrivate.h>
+#import <WebKit/WKPagePrivate.h>
+#import <WebKit/WKSessionStateRef.h>
+#import <WebKit/WKURL.h>
+#import <WebKit/WKURLCF.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKSessionState.h>
+#import <wtf/RetainPtr.h>
+
+@interface WKWebView ()
+- (WKPageRef)_pageForTesting;
+@end
+
+static bool didFinishNavigationForSessionState;
+static bool didChangeBackForwardList;
+static bool didNavigate;
+
+@interface SessionStateDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation SessionStateDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    didFinishNavigationForSessionState = true;
+    didNavigate = true;
+}
+
+- (void)_webView:(WKWebView *)webView navigation:(WKNavigation *)navigation didSameDocumentNavigation:(_WKSameDocumentNavigationType)navigationType
+{
+    if (navigationType == _WKSameDocumentNavigationTypeSessionStatePush || navigationType == _WKSameDocumentNavigationTypeSessionStatePop)
+        didNavigate = true;
+}
+
+- (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved
+{
+    didChangeBackForwardList = true;
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+static WKRetainPtr<WKDataRef> createSessionStateData()
+{
+    RetainPtr delegate = adoptNS([SessionStateDelegate new]);
+    RetainPtr view = adoptNS([WKWebView new]);
+    [view setNavigationDelegate:delegate.get()];
+    [view loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
+    Util::run(&didFinishNavigationForSessionState);
+    didFinishNavigationForSessionState = false;
+
+    NSData *data = [view _sessionStateData];
+    return adoptWK(WKDataCreate(static_cast<const unsigned char*>(data.bytes), data.length));
+}
+
+TEST(WebKit, RestoreSessionStateWithoutNavigation)
+{
+    auto data = createSessionStateData();
+    EXPECT_NOT_NULL(data);
+
+    RetainPtr webView = adoptNS([WKWebView new]);
+    auto sessionState = adoptWK(WKSessionStateCreateFromData(data.get()));
+    WKPageRestoreFromSessionStateWithoutNavigation([webView _pageForTesting], sessionState.get());
+
+    Util::run(&didChangeBackForwardList);
+
+    WKRetainPtr<WKURLRef> committedURL = adoptWK(WKPageCopyCommittedURL([webView _pageForTesting]));
+    EXPECT_NULL(committedURL.get());
+
+    auto backForwardList = WKPageGetBackForwardList([webView _pageForTesting]);
+    auto currentItem = WKBackForwardListGetCurrentItem(backForwardList);
+    auto currentItemURL = adoptWK(WKBackForwardListItemCopyURL(currentItem));
+    
+    auto expectedURL = adoptWK(WKURLCreateWithCFURL((__bridge CFURLRef)[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]));
+    EXPECT_NOT_NULL(expectedURL);
+    EXPECT_TRUE(WKURLIsEqual(currentItemURL.get(), expectedURL.get()));
+}
+
+TEST(WebKit, RestoreSessionStateWithoutNavigationPreservesWasCreatedByJSWithoutUserInteraction)
+{
+    RetainPtr delegate = adoptNS([SessionStateDelegate new]);
+    RetainPtr view = adoptNS([WKWebView new]);
+    [view setNavigationDelegate:delegate.get()];
+
+    [view loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
+    didNavigate = false;
+    Util::run(&didNavigate);
+
+    // Create some history entries via JS without a user gesture.
+    didNavigate = false;
+    [view _evaluateJavaScriptWithoutUserGesture:@"history.pushState(null, document.title, location.pathname + '#a');" completionHandler:nil];
+    Util::run(&didNavigate);
+    didNavigate = false;
+    [view _evaluateJavaScriptWithoutUserGesture:@"history.pushState(null, document.title, location.pathname + '#b');" completionHandler:nil];
+    Util::run(&didNavigate);
+
+    // The back-list filter collapses the JS-without-user-gesture chain past the user-gesture
+    // lifeline at idx 0, so backList only exposes the lifeline. currentItem retains its flag
+    // and is the observable witness that the flag is preserved.
+    EXPECT_EQ([view backForwardList].backList.count, 1U);
+    EXPECT_FALSE([view backForwardList].backList[0]._wasCreatedByJSWithoutUserInteraction);
+    EXPECT_TRUE([view backForwardList].currentItem._wasCreatedByJSWithoutUserInteraction);
+
+    // Restore session state into a new web view.
+    RetainPtr restoredView = adoptNS([WKWebView new]);
+    RetainPtr sessionState = adoptNS([[_WKSessionState alloc] initWithData:[view _sessionStateData]]);
+    [restoredView _restoreSessionState:sessionState.get() andNavigate:NO];
+
+    EXPECT_EQ([restoredView backForwardList].backList.count, 1U);
+    EXPECT_FALSE([restoredView backForwardList].backList[0]._wasCreatedByJSWithoutUserInteraction);
+    EXPECT_TRUE([restoredView backForwardList].currentItem._wasCreatedByJSWithoutUserInteraction);
+}
+
+} // namespace TestWebKitAPI
+
+#endif

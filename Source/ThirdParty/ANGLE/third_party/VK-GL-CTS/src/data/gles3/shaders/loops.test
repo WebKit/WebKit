@@ -1,0 +1,177 @@
+group custom "Custom loop tests"
+
+    case continue_in_fragment_for_loop
+        version 300 es
+        vertex ""
+            #version 300 es
+            ${VERTEX_DECLARATIONS}
+            void main()
+            {
+                ${VERTEX_OUTPUT}
+            }
+        ""
+        fragment ""
+            #version 300 es
+            ${FRAGMENT_DECLARATIONS}
+            void main()
+            {
+                int count1 = 0;
+                for(int i=0;i<4;i++)
+                {
+                    if (count1 == 2)
+                        continue;
+                }
+                ${FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+end # custom
+
+# https://github.com/KhronosGroup/WebGL/blob/main/sdk/tests/conformance2/glsl3/short-circuiting-in-loop-condition.html
+group short_circuit "Short-circuiting operator in a loop using a function call with side effects"
+
+    case while
+        version 300 es
+        values
+        {
+            input bool in0 = [ false | true ];
+            output int sideEffectCounter = [ 0 | 10 ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            bool foo() {
+                ++sideEffectCounter;
+                return true;
+            }
+
+            void main()
+            {
+                ${SETUP}
+                sideEffectCounter = 0;
+                int iterations = 0;
+                while (in0 && foo()) {
+                    ++iterations;
+                    if (iterations >= 10) {
+                        break;
+                    }
+                }
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case for
+        version 300 es
+        values
+        {
+            input bool in0 = [ false | true ];
+            output int sideEffectCounter = [ 0 | 10 ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            bool foo() {
+                ++sideEffectCounter;
+                return true;
+            }
+
+            void main()
+            {
+                ${SETUP}
+                sideEffectCounter = 0;
+                for (int iterations = 0; true; in0 && foo()) {
+                    ++iterations;
+                    if (iterations > 10) {
+                        break;
+                    }
+                }
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case do_while
+        version 300 es
+        values
+        {
+            input bool in0 = [ false | true ];
+            output int sideEffectCounter = [ 0 | 10 ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            bool foo() {
+                ++sideEffectCounter;
+                return true;
+            }
+
+            void main()
+            {
+                ${SETUP}
+                sideEffectCounter = 0;
+                int iterations = 0;
+                do {
+                    ++iterations;
+                    if (iterations > 10) {
+                        break;
+                    }
+                } while (in0 && foo());
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case while_sequence
+        version 300 es
+        values
+        {
+            input bool in0 = [ false | true ];
+            output int sideEffectCounter = [ 0 | 10 ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            bool foo() {
+                ++sideEffectCounter;
+                return true;
+            }
+
+            void main()
+            {
+                ${SETUP}
+                sideEffectCounter = 0;
+                int iterations = 0;
+                while ((in0, in0 && foo())) {
+                    ++iterations;
+                    if (iterations >= 10) {
+                        break;
+                    }
+                }
+                ${OUTPUT}
+            }
+        ""
+    end
+
+end # short_circuit

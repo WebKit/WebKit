@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="value-change/value-change-helpers.js"></script>
+</head>
+<body>
+
+<div id="editable" contenteditable style="width: 300px"></div>
+<textarea id="textarea" style="width: 300px; height: 100px"></textarea>
+
+<script>
+var output = "Asserts that the AXTextChangeValueStartMarker of a deletion's AXValueChanged notification is valid.\n\n";
+
+// Each case fills the contenteditable, puts the caret at `caretIndex` (extending it to
+// `selectionEndIndex` when given), then deletes once. `expectedLine` is the line the deletion leaves
+// the caret on.
+var cases = [
+    { label: "delete a character in the middle of a line",
+      html: "bar baz", caretIndex: 4, expectedLine: 0 },
+    { label: "delete the line break joining two non-empty lines",
+      html: "foo<br>bar", caretIndex: 4, expectedLine: 0 },
+    { label: "delete a line break, leaving the caret on a blank last line",
+      html: "foo<br><br><br>", caretIndex: 5, expectedLine: 1 },
+    { label: "delete a line break, leaving the caret on a blank line between two others",
+      html: "foo<br><br><br>bar", caretIndex: 5, expectedLine: 1 },
+    { label: "delete the only character of a line, leaving that line blank",
+      html: "foo<br>x<br>bar", caretIndex: 5, expectedLine: 1 },
+   { label: "forward delete a line break, leaving the caret on a blank line",
+      html: "foo<br><br><br>bar", caretIndex: 4, forward: true, expectedLine: 1 },
+    { label: "delete a selected range, leaving the caret on a blank line",
+      html: "foo<br>bar<br><br>", caretIndex: 4, selectionEndIndex: 7, expectedLine: 1 },
+    { label: "delete every character, emptying the field",
+      html: "foo<br>bar", caretIndex: 0, selectionEndIndex: 7, expectedLine: 0 },
+];
+
+// These cases type their content into a textarea rather than using markup, then delete.
+var textareaCases = [
+    { label: "textarea, delete a typed character",
+      typed: "bar", expectedLine: 0 },
+    { label: "textarea, delete a typed line break, leaving the caret on a blank line",
+      typed: "foo\n\n", expectedLine: 1 },
+    { label: "textarea, delete a typed line break, joining two non-empty lines",
+      typed: "foo\nbar", caretIndex: 4, expectedLine: 0 },
+    { label: "textarea, delete every typed character, emptying the field",
+      typed: "foo\nbar", caretIndex: 0, selectionEndIndex: 7, expectedLine: 0 },
+];
+
+var webarea, changeMarker, selectionMarker, lineStartMarker;
+
+// The notification is posted on both the web area and the edited element, so each change arrives
+// twice; only the first copy of an edit's deletion is needed.
+var deleteChanges = [];
+function notificationCallback(element, notification, userInfo) {
+    if (notification !== "AXValueChanged" || !userInfo)
+        return;
+    for (var change of userInfo["AXTextChangeValues"] || []) {
+        if (change["AXTextEditType"] === AXTextEditTypeDelete)
+            deleteChanges.push(change);
+    }
+}
+
+function setCaret(field, index, endIndex) {
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    var range = document.createRange();
+    range.setStart(field, 0);
+    range.setEnd(field, field.childNodes.length);
+    selection.addRange(range);
+    selection.collapseToStart();
+    for (var i = 0; i < index; i++)
+        selection.modify("move", "forward", "character");
+    for (var i = index; i < (endIndex === undefined ? index : endIndex); i++)
+        selection.modify("extend", "forward", "character");
+}
+
+async function checkDeletion(testCase, textAfterDeletion) {
+    deleteChanges = [];
+    document.execCommand(testCase.forward ? "ForwardDelete" : "Delete");
+    await waitFor(() => deleteChanges.length > 0);
+
+    changeMarker = deleteChanges[0]["AXTextChangeValueStartMarker"];
+    selectionMarker = webarea.startTextMarkerForTextMarkerRange(webarea.selectedTextMarkerRange());
+    // A marker that doesn't resolve has no line, so this comes back null and has no line either.
+    var lineRange = webarea.lineTextMarkerRangeForTextMarker(changeMarker);
+    lineStartMarker = lineRange ? webarea.startTextMarkerForTextMarkerRange(lineRange) : null;
+
+    output += `${testCase.label}: field now holds ${JSON.stringify(textAfterDeletion())}\n`;
+    output += expect("webarea.lineIndexForTextMarker(changeMarker)", `${testCase.expectedLine}`);
+    output += expect("webarea.lineIndexForTextMarker(lineStartMarker)", `${testCase.expectedLine}`);
+    output += expect("changeMarker.isEqual(selectionMarker)", "true");
+    output += "\n";
+}
+
+async function checkContenteditableCase(testCase) {
+    var field = document.getElementById("editable");
+    field.innerHTML = testCase.html;
+    field.focus();
+    setCaret(field, testCase.caretIndex, testCase.selectionEndIndex);
+    await sleep(20);
+    await checkDeletion(testCase, () => field.innerHTML);
+}
+
+async function checkTextareaCase(testCase) {
+    var field = document.getElementById("textarea");
+    field.value = "";
+    field.focus();
+    for (var character of testCase.typed) {
+        eventSender.keyDown(character);
+        await sleep(20);
+    }
+    if (testCase.caretIndex !== undefined) {
+        var end = testCase.selectionEndIndex === undefined ? testCase.caretIndex : testCase.selectionEndIndex;
+        field.setSelectionRange(testCase.caretIndex, end);
+        await sleep(20);
+    }
+    await checkDeletion(testCase, () => field.value);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        webarea = accessibilityController.rootElement.childAtIndex(0);
+        accessibilityController.addNotificationListener(notificationCallback);
+
+        for (var testCase of cases)
+            await checkContenteditableCase(testCase);
+        for (var testCase of textareaCases)
+            await checkTextareaCase(testCase);
+
+        accessibilityController.removeNotificationListener();
+        document.getElementById("editable").innerHTML = "";
+        document.getElementById("textarea").value = "";
+        debugEscaped(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

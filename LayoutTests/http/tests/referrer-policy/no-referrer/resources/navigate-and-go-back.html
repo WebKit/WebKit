@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+const channel = params.get("channel");
+
+if (!sessionStorage.getItem("navigated_once")) {
+    sessionStorage.setItem("navigated_once", "1");
+    // Navigate cross-origin (PSON #1). The intermediate page navigates
+    // back here for a second visit.
+    location.href = "http://localhost:8000/referrer-policy/no-referrer/resources/navigate-back-cross-origin-for-back-navigation.html?channel=" + encodeURIComponent(channel);
+} else {
+    // Second visit after back navigation. Two PSONs have occurred, so the
+    // fix is in effect. Navigate to check page at same origin (127.0.0.1)
+    // so BroadcastChannel can reach the main test page.
+    location.href = "/referrer-policy/no-referrer/resources/check-referrer-policy-not-inherited.html?channel=" + encodeURIComponent(channel);
+}
+</script>
+</body>
+</html>

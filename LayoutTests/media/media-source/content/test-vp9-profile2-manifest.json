@@ -1,0 +1,11 @@
+{
+	"url": "content/test-vp9-profile2.webm",
+	"type": "video/webm; codecs=\"vp09.02.10.10\"",
+	"init": { "offset": 0, "size": 648 },
+	"duration": 10,
+	"media": [ 
+		{ "offset": 648,    "size": 126799, "timestamp": 0,     "duration": 4.267},
+		{ "offset": 126799, "size": 111105, "timestamp": 4.267, "duration": 4.266},
+		{ "offset": 237904, "size": 43850,  "timestamp": 8.533, "duration": 1.467}
+	]
+}

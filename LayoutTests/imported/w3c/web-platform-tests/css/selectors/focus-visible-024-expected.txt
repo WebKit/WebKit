@@ -1,0 +1,7 @@
+Target A
+Target B
+
+PASS ":focus-visible" should be a valid selector
+PASS :focus-visible matches after accesskey on DIV
+PASS :focus-visible matches after accesskey on BUTTON
+

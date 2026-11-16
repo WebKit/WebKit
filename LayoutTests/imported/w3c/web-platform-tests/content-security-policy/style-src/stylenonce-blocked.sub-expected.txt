@@ -1,0 +1,8 @@
+This text should be green.
+
+Style that does not match a 'nonce-*' expression in 'style-src' should not be applied to the page.
+
+
+PASS Should fire securitypolicyviolation
+PASS stylenonce-blocked
+

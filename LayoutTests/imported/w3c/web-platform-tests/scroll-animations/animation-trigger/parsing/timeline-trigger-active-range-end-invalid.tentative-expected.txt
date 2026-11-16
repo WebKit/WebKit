@@ -1,0 +1,15 @@
+
+PASS e.style['timeline-trigger-active-range-end'] = "infinite" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "1s 2s" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "1s / 2s" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "peek 50%" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "50% contain" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "50% cover" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "50% entry" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "50% enter" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "50% exit" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "contain contain" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "none" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "cover 50% enter 50%" should not set the property value
+PASS e.style['timeline-trigger-active-range-end'] = "auto contain" should not set the property value
+

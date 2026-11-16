@@ -1,0 +1,28 @@
+<style>
+#remove_this {
+  display: contents;
+}
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+function gc() {
+ for(var i=0;i<100;i++) {
+   a = new Uint8Array(1024*1024);
+ }
+}
+function main() {
+  slot.setAttribute("hidden","");
+  dialog.show();
+  remove_this.style.left = "10px";
+  document.body.offsetHeight;
+  remove_this.remove();
+  gc();
+}
+</script>
+<body onload="main()">
+<slot id=slot>
+  <span id=remove_this><dialog id=dialog></dialog><span></span></span>
+</slot>
+This test passes if it doesn't crash.

@@ -1,0 +1,5 @@
+ALERT: PASS
+This tests navigating via an anchor element with a non-existent target name, which should create a new window.
+WebKit should not hit any assertions and alert "PASS".
+
+

@@ -1,0 +1,25 @@
+
+PASS Constructor0
+PASS DefaultRootMargin
+PASS DefaultScrollMargin
+PASS DefaultRoot
+PASS DefaultThresholds
+PASS ExplicitOneArgumentRootMargin
+PASS ExplicitTwoArgumentRootMargin
+PASS ExplicitThreeArgumentRootMargin
+PASS ExplicitFourArgumentRootMargin
+PASS ExplicitOneArgumentScrollMargin
+PASS ExplicitTwoArgumentScrollMargin
+PASS ExplicitThreeArgumentScrollMargin
+PASS ExplicitFourArgumentScrollMargin
+PASS ExplicitRoot
+PASS ExplicitThreshold
+PASS ExplicitThresholds
+PASS SmallPositiveThreshold
+PASS SmallNegativeThreshold
+PASS LargePositiveThreshold
+PASS LargeNegativeThreshold
+PASS PositiveInfinityThreshold
+PASS NegativeInfinityThreshold
+PASS NaNThreshold
+

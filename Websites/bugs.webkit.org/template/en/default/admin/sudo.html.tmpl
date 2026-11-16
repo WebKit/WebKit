@@ -1,0 +1,93 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+   title = "Begin sudo session"
+   generate_api_token = 1
+   style_urls = ['skins/standard/admin.css']
+   doc_section = "administering/users.html#impersonating-users"
+ %]
+ 
+[% DEFAULT target_login = "" %]
+
+<p>
+  The <b>sudo</b> feature of Bugzilla allows you to impersonate a
+  user for a short time  While an sudo session is in progress, every action you 
+  perform will be taking place as if you had logged in as the user whom will be 
+  impersonating.
+</p>
+
+<p class="areyoureallyreallysure">
+  This is a very powerful feature; you should be very careful while using it.  
+  Your actions may be logged more carefully than normal.
+</p>
+
+<form action="relogin.cgi" method="POST">
+  <p>
+    To begin, 
+    [% IF Param('usemenuforusers') %]
+      select 
+    [% ELSE %]
+      enter the login of 
+    [% END %]
+    <label for="target_login">the <u>u</u>ser to impersonate</label>:
+    [% INCLUDE global/userselect.html.tmpl
+       id => "target_login"
+       name => "target_login"
+       value => target_login_default
+       accesskey => "u"
+       size => 30
+       mandatory => 1
+    %]
+  </p>
+  
+  [% IF !Param('usemenuforusers') %]
+    <p>
+      The username must be entered exactly.  No matching will be performed.
+    </p>
+  [% END %]
+  
+  <p>
+    Next, please take a moment to explain <label for="reason">why you are doing
+    this:<br>
+    <input type="text" id="reason" name="reason" size="80" maxlength="200"
+           value="[% reason_default FILTER html %]">
+  </p>
+  
+  <p>
+    The message you enter here will be sent to the impersonated user by email.
+    You may leave this empty if you wish, but they will still know that you 
+    are impersonating them.
+  </p>
+  
+  [% IF user.authorizer.can_login %]
+    <p>
+      Finally, enter <label for="Bugzilla_password">your [% terms.Bugzilla %]
+      password</label>:
+      <input type="hidden" name="Bugzilla_login" value="[% user.login FILTER html %]">
+      <input type="password" id="Bugzilla_password" name="Bugzilla_password" size="20" required>
+      <input type="hidden" name="Bugzilla_login_token"
+             value="[% login_request_token FILTER html %]">
+      <br>
+      This is done for two reasons.  First of all, it is done to reduce 
+      the chances of someone doing large amounts of damage using your 
+      already-logged-in account.  Second, it is there to force you to take the 
+      time to consider if you really need to use this feature.
+    </p>
+  [% END %]
+  
+  <p>
+    Click the button to begin the session:
+    <input type="submit" id="begin_sudo" value="Begin Session">
+    <input type="hidden" name="action" value="begin-sudo">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
+  </p>
+
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

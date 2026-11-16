@@ -1,0 +1,25 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+From: [% Param('mailfrom') %]
+To: [% Param('maintainer') %]
+Subject: [[% terms.Bugzilla %]] Account Lock-Out: [% locked_user.login %] ([% address %])
+X-Bugzilla-Type: admin
+
+The address [% address %] failed too many login attempts (
+[%- constants.MAX_LOGIN_ATTEMPTS +%]) for
+the account [% locked_user.login %]. 
+
+The login attempts occurred at these times:
+
+[% FOREACH login = attempts %]
+  [%+ login.login_time FILTER time %]
+[% END %]
+
+This IP will be able to log in again using this account at
+[%+ unlock_at FILTER time %].

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div#node1 {
+    BACKGROUND-COLOR:blue;
+    COLOR:white;
+    border-STYLE:solid;
+    BORDER-width:0;
+    position:absolute;
+    ToP:0;
+    lEfT:0;
+    /* font-size: 12px; */
+    /*float: left;*/
+}
+</style>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    var nodeStyles;
+
+    function validatePropertyName(name)
+    {
+        if (typeof name != "string") {
+            InspectorTest.log("Unexpected property name type: " + typeof name);
+            return false;
+        }
+
+        if (name.toLowerCase() != name) {
+            InspectorTest.log("Property name contains uppercase characters: " + name);
+            return false;
+        }
+        return true;
+    }
+
+    function validateStyles()
+    {
+        for (var i = 0; i < nodeStyles.matchedRules.length; ++i) {
+            var rule = nodeStyles.matchedRules[i];
+            if (rule.type !== WI.CSSStyleSheet.Type.Author)
+                continue;
+
+            for (var j = 0; j < rule.style.enabledProperties.length; ++j) {
+                var property = rule.style.enabledProperties[j];
+
+                if (property.anonymous)
+                    continue;
+
+                if (validatePropertyName(property.name))
+                    InspectorTest.log("Property valid: " + property.name);
+            }
+        }
+
+        InspectorTest.completeTest();
+    }
+
+    function onStylesRefreshed()
+    {
+        nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+        validateStyles();
+    }
+
+    WI.domManager.requestDocument(function(documentNode) {
+        documentNode.querySelector("#node1", function(contentNodeId) {
+            if (contentNodeId) {
+                var domNode = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                if (nodeStyles.needsRefresh)
+                    nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+                else
+                    validateStyles();
+            } else {
+                InspectorTest.log("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the author rules returned by CSSStyleManager.stylesForNode have lowercase property names regardless of CSS source formatting.</p>
+
+    <div id="node1"></div>
+</body>
+</html>

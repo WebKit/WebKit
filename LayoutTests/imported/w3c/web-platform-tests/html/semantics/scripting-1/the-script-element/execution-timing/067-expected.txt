@@ -1,0 +1,4 @@
+FAILED (This TC requires JavaScript enabled)
+
+PASS  scheduler: is a script with syntax error marked as "has run"?
+

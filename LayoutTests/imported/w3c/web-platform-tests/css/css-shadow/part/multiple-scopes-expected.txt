@@ -1,0 +1,12 @@
+
+PASS successful test setup
+PASS exported part selector matches from outer scope
+PASS non-exported part selector does not match from outer scope
+PASS pseudo-element selector alone does not match from outer scope
+PASS exported part selector (for outer scope) does not match from middle scope
+PASS correct part selector matches from middle scope
+PASS pseudo-element selector alone does not match from middle scope
+PASS selector with ::part(exported name) does not match from inner scope that exports the part
+PASS selector with ::part(original name) does not match from inner scope that exports the part
+PASS pseudo-element selector alone matches from inner scope
+

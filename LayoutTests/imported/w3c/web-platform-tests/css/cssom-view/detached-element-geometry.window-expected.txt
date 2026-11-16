@@ -1,0 +1,15 @@
+
+PASS clientHeight should return 0 for an element with no associated CSS layout box
+PASS clientLeft should return 0 for an element with no associated CSS layout box
+PASS clientTop should return 0 for an element with no associated CSS layout box
+PASS clientWidth should return 0 for an element with no associated CSS layout box
+PASS getBoundingClientRect should return 0 value dimensions for an element with no associated CSS layout box
+PASS scrollHeight should return 0 for an element disconnected from a document
+PASS scrollLeft should return 0 for an element disconnected from a document
+PASS scrollTop should return 0 for an element disconnected from a document
+PASS scrollWidth should return 0 for an element disconnected from a document
+PASS offsetHeight should return 0 for an element disconnected from a document
+PASS offsetLeft should return 0 for an element disconnected from a document
+PASS offsetParent should return null for an element disconnected from a document
+PASS offsetTop should return 0 for an element disconnected from a document
+

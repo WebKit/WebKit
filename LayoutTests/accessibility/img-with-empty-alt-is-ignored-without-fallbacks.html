@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<span id="label">An image</span>
+<img alt="" title="Image1" src="resources/cake.png" id="image1">
+<img alt="    " title="Image2" src="resources/cake.png" id="image2">
+<img alt="" aria-label="Image2" src="resources/cake.png" id="image3">
+<img alt="" aria-labelledby="label" src="resources/cake.png" id="image4">
+
+<script>
+var output = "This test ensures that decorative images do not use title or other labeling techniques to supply an accname and remain ignored.\n\n";
+
+if (window.accessibilityController) {
+    // All images with empty alt attribute should be ignored regardless of the presence of title/aria-label/aria-labelledby.
+    var image1 = accessibilityController.accessibleElementById("Image1");
+    output += expect("!image1 || image1.isIgnored", "true");
+    var image2 = accessibilityController.accessibleElementById("Image2");
+    output += expect("!image2 || image2.isIgnored", "true");
+    var image3 = accessibilityController.accessibleElementById("Image3");
+    output += expect("!image3 || image3.isIgnored", "true");
+    var image4 = accessibilityController.accessibleElementById("Image4");
+    output += expect("!image4 || image4.isIgnored", "true");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+PASS decompressing deflate input should work
+PASS decompressing gzip input should work
+PASS decompressing deflate-raw input should work
+PASS decompressing brotli input should work
+

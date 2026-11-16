@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: PASS successfully loaded only app initiated requests
+Ping sent successfully
+CONTENT_TYPE: text/ping
+HTTP_HOST: 127.0.0.1:8000
+HTTP_PING_FROM: http://127.0.0.1:8000/app-privacy-report/app-attribution-ping-load.html
+HTTP_PING_TO: http://127.0.0.1:8000/navigation/resources/check-ping-app-initiated-data.py
+REQUEST_METHOD: POST
+REQUEST_URI: /navigation/resources/save-ping.py

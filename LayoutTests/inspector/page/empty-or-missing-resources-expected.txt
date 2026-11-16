@@ -1,0 +1,10 @@
+Test that Page.getResourceTree does not crash with empty or missing resources.
+
+
+== Running test suite: Page.getResourceTree.EmptyResources
+-- Running test case: Page.getResourceTree.EmptyResources
+inspector/page/empty.js
+inspector/page/missing.js
+inspector/page/resources/empty.css
+inspector/page/resources/missing.css
+

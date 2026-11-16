@@ -1,0 +1,1770 @@
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+from __future__ import annotations
+
+import json
+import logging
+import os
+import re
+import subprocess
+import sys
+import tempfile
+import time
+from typing import Any, Iterator, TYPE_CHECKING, overload
+
+from collections import defaultdict
+
+from webkitcorepy import run, decorators, NestedFuzzyDict, string_utils, Terminal
+from webkitscmpy.local import Scm
+from webkitscmpy import remote, Commit, Contributor, log
+
+if TYPE_CHECKING:
+    from webkitscmpy import CommitClassifier
+    from webkitscmpy.remote.scm import Scm as RemoteScm
+
+
+class Git(Scm):
+    class Cache(object):
+        REMOTE_REF_PREFIX = 'refs/remotes/'
+
+        # Older versions of webkitscmpy keyed top-level 'hashes' and 'revisions' by branch name. Worktrees share this file, so
+        # we ignore those keys and omit them when saving, leaving older versions with an empty cache to repopulate. Older versions
+        # only save their own keys, which leaves us with an empty cache to repopulate in turn.
+        CONTENT_KEY = 'remotes'
+
+        def __init__(self, repo: Git, guranteed_for: int = 10) -> None:
+            self.repo = repo
+            self._ordered_commits: dict[str, list[str]] = {}
+            self._hash_to_identifiers: NestedFuzzyDict[str] = NestedFuzzyDict(primary_size=6)
+            self._ordered_revisions: dict[str, list[int | None]] = {}
+            self._revisions_to_identifiers: dict[int, str] = {}
+            self._last_populated: dict[str, float] = {}
+            self._guranteed_for = guranteed_for
+
+            self.load()
+
+        def load(self) -> None:
+            if not os.path.exists(self.path):
+                return
+
+            try:
+                with open(self.path) as file:
+                    content = json.load(file)[self.CONTENT_KEY]
+                hashes: dict[str, list[str]] = content['hashes']
+                revisions: dict[str, list[int | None]] = content['revisions']
+
+                # Only branches from canonical remotes are cached, discard anything else
+                for key in list(hashes.keys()):
+                    remote, branch = self._parse_key(key)
+                    if not hashes[key] or not self.is_cacheable(branch) or remote not in self._remotes_for(branch) or key not in revisions:
+                        del hashes[key]
+            except BaseException:
+                return
+
+            self._ordered_commits = hashes
+            self._ordered_revisions = {key: revisions[key] for key in hashes.keys()}
+
+        @property
+        def path(self) -> str:
+            return os.path.join(self.repo.common_directory, 'identifiers.json')
+
+        def is_cacheable(self, branch: str) -> bool:
+            # Production branches on canonical remotes never move backwards, so their identifiers can't go stale
+            return branch == self.repo.default_branch or bool(self.repo.prod_branches.match(branch))
+
+        def _remotes_for(self, branch: str) -> list[str]:
+            if branch == self.repo.default_branch:
+                return [self.repo.default_remote]
+            return self.repo.source_remotes()
+
+        @classmethod
+        def _key(cls, remote: str, branch: str) -> str:
+            return '{}{}/{}'.format(cls.REMOTE_REF_PREFIX, remote, branch)
+
+        @classmethod
+        def _parse_key(cls, key: str) -> tuple[str, str]:
+            if not key.startswith(cls.REMOTE_REF_PREFIX):
+                return '', ''
+            remote, _, branch = key[len(cls.REMOTE_REF_PREFIX):].partition('/')
+            return remote, branch
+
+        def _keys_for(self, branch: str) -> list[str]:
+            keys = [self._key(remote, branch) for remote in self._remotes_for(branch)]
+            return [key for key in keys if key in self._ordered_commits]
+
+        def _save(self) -> None:
+            # Write to a temporary file and atomically replace the cache so concurrent readers never see a partial file
+            head, tail = os.path.split(self.path)
+            temporary = None
+            try:
+                with tempfile.NamedTemporaryFile('w', dir=head, prefix=os.path.splitext(tail)[0], suffix='.json.lock', delete=False) as file:
+                    temporary = file.name
+                    json.dump({
+                        self.CONTENT_KEY: {
+                            'hashes': self._ordered_commits,
+                            'revisions': self._ordered_revisions,
+                        },
+                    }, file)
+                os.replace(temporary, self.path)
+            except (IOError, OSError):
+                self.repo.log("Failed to write identifier cache to '{}'".format(self.path))
+                if temporary and os.path.exists(temporary):
+                    try:
+                        os.remove(temporary)
+                    except OSError:
+                        pass
+
+        def _reset(self) -> None:
+            self._hash_to_identifiers = NestedFuzzyDict(primary_size=6)
+            self._revisions_to_identifiers = {}
+
+        def _fill_branch(self, branch: str) -> None:
+            # Identifiers are computed when a branch is needed, filling stops at the first commit we already know about
+            for key in self._keys_for(branch):
+                self._fill(key)
+
+        def _branch_point(self, hash: str) -> int | None:
+            default_branch = self.repo.default_branch
+            parsed = Commit._parse_identifier(self._hash_to_identifiers.get(hash), do_assert=False)
+            if parsed and parsed[2] == default_branch:
+                return parsed[1]
+
+            # The default branch is huge, the position of a commit is its identifier, so looking up a branch point doesn't need every identifier
+            for key in self._keys_for(default_branch):
+                try:
+                    return self._ordered_commits[key].index(hash, 1)
+                except ValueError:
+                    continue
+            return None
+
+        def _identifier_for(self, hash: str | None, revision: int | None) -> str | None:
+            if revision:
+                return self._revisions_to_identifiers.get(revision)
+            if not hash:
+                return None
+            try:
+                return self._hash_to_identifiers.get(hash)
+            except KeyError:  # Means the hash wasn't specific enough
+                return None
+
+        def _search(self, branch: str | None, *, hash: str | None = None, revision: int | None = None) -> str | None:
+            # Compute identifiers one branch at a time until we find what we're looking for. The default branch is huge,
+            # so we check the caller's branch first. Without a branch, we check every cached branch in priority order.
+            default_branch = self.repo.default_branch
+            if branch:
+                candidates = [branch] if branch == default_branch else [branch, default_branch]
+            else:
+                candidates = sorted({self._parse_key(key)[1] for key in self._ordered_commits.keys()}, key=self.repo.branch_priority)
+
+            for candidate in candidates:
+                self._fill_branch(candidate)
+                result = self._identifier_for(hash, revision)
+                # Without a branch, an identifier computed earlier may be from a lower priority branch than one we haven't filled yet
+                if result and (branch or self.repo.branch_priority(result.split('@')[-1]) <= self.repo.branch_priority(candidate)):
+                    return result
+            return self._identifier_for(hash, revision)
+
+        def _fill(self, key: str) -> None:
+            default_branch = self.repo.default_branch
+            branch = self._parse_key(key)[1]
+            branch_point = None
+            if branch != default_branch:
+                branch_point = self._branch_point(self._ordered_commits[key][0]) if self._ordered_commits[key] else None
+                if branch_point is None:
+                    return
+
+            index = len(self._ordered_commits[key]) - 1
+            while index:
+                identifier = self._hash_to_identifiers.get(self._ordered_commits[key][index])
+
+                if identifier:
+                    id_branch = identifier.split('@')[-1]
+                    if branch in (default_branch, id_branch):
+                        break
+                    if branch != self.repo.prioritize_branches((branch, id_branch)):
+                        break
+
+                identifier = '{}@{}'.format('{}.{}'.format(branch_point, index) if branch_point else index, branch)
+                self._hash_to_identifiers[self._ordered_commits[key][index]] = identifier
+                revision = self._ordered_revisions[key][index]
+                if revision:
+                    self._revisions_to_identifiers[revision] = identifier
+                index -= 1
+
+        def populate(self, branch: str | None = None) -> None:
+            branch = branch or self.repo.branch
+            # Branches we don't cache can still contain commits from the default branch
+            if not branch or not self.is_cacheable(branch):
+                branch = self.repo.default_branch
+            if self._last_populated.get(branch, 0) + self._guranteed_for > time.time():
+                return
+
+            # If we aren't on the default branch, we will need the default branch to determine when
+            # our  branch  intersects with the default branch.
+            default_branch = self.repo.default_branch
+            if branch != default_branch:
+                self.populate(branch=default_branch)
+                # Walking a production branch stops at the first commit with an identifier on the default branch, so the default branch's
+                # identifiers need to be computed. populate() usually already did this, but not if it returned early after a _reset().
+                self._fill_branch(default_branch)
+            self._last_populated[branch] = time.time()
+            self._fill_branch(branch)
+
+            changed = False
+            stale = False
+            for remote in self._remotes_for(branch):
+                key = self._key(remote, branch)
+                # _populate assigns a new list rather than modifying this one, which is what lets us compare against it below
+                existing = self._ordered_commits.get(key, [])
+                if not self._populate(key):
+                    continue
+                changed = True
+                stale |= existing != self._ordered_commits[key][:len(existing)]
+
+                # Other copies of this branch may share the history we just found
+                self._fill(key)
+
+            if not changed:
+                return
+
+            # Cached branches should never move backwards, but if one does, commits which are no longer on it (and anything
+            # branched from them) have stale identifiers. This is a safety net, not something we expect to happen.
+            if stale:
+                self._reset()
+                self._fill_branch(branch)
+            self._save()
+
+        def _history_through(self, key: str, hash: str) -> tuple[list[str], list[int | None]] | None:
+            # Any copy of a branch which contains a commit shares that branch's history up to that commit, regardless of which remote it came from
+            branch = self._parse_key(key)[1]
+            parsed = Commit._parse_identifier(self._hash_to_identifiers.get(hash))
+            if not parsed or parsed[2] != branch:
+                return None
+            index = parsed[1]
+            for candidate in [key] + self._keys_for(branch):
+                commits = self._ordered_commits.get(candidate, [])
+                if len(commits) > index and commits[index] == hash:
+                    return commits[:index + 1], self._ordered_revisions[candidate][:index + 1]
+            return None
+
+        def _populate(self, key: str) -> bool:
+            branch = self._parse_key(key)[1]
+            default_branch = self.repo.default_branch
+            is_default_branch = branch == default_branch
+
+            tip = run(
+                [self.repo.executable(), 'rev-parse', key],
+                cwd=self.repo.root_path, capture_output=True, encoding='utf-8',
+            )
+            if tip.returncode:
+                return False
+            if self._ordered_commits.get(key, [None])[-1] == tip.stdout.strip():
+                return False
+
+            # If we already know about the tip, this copy of the branch is behind another copy and we don't need to walk it
+            shared = self._history_through(key, tip.stdout.strip())
+            if shared:
+                self._ordered_commits[key], self._ordered_revisions[key] = shared
+                return True
+
+            hashes: list[str] = []
+            revisions: list[int | None] = []
+
+            def _append(hash: str, revision: int | None = None) -> bool:
+                hashes.append(hash)
+                revisions.append(revision)
+                identifier = self._hash_to_identifiers.get(hash)
+                return identifier is not None and identifier.split('@')[-1] in (default_branch, branch)
+
+            intersected = False
+            with subprocess.Popen(
+                [self.repo.executable(), '--no-replace-objects', 'log', key, '--no-decorate', '--no-abbrev-commit', '--date=unix', '--'],
+                cwd=self.repo.root_path,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                encoding='utf-8',
+            ) as log:
+                try:
+                    if log.poll():
+                        raise self.repo.Exception("Failed to construct branch history for '{}'".format(key))
+
+                    hash = None
+                    revision = None
+
+                    assert log.stdout is not None
+                    line = log.stdout.readline()
+                    while line:
+                        if line.startswith('    git-svn-id: '):
+                            match = self.repo.GIT_SVN_REVISION.match(line.lstrip())
+                            if match:
+                                revision = int(match.group('revision'))
+                        if not line.startswith('commit '):
+                            line = log.stdout.readline()
+                            continue
+
+                        if hash and _append(hash, revision=revision):
+                            hash = None
+                            intersected = True
+                            break
+
+                        hash = line.split(' ')[1].rstrip()
+                        revision = None
+                        line = log.stdout.readline()
+
+                    if hash:
+                        intersected = _append(hash, revision=revision)
+
+                    if log.poll():
+                        return False
+                finally:
+                    log.kill()
+
+            if not hashes:
+                return False
+            hashes.reverse()
+            revisions.reverse()
+
+            # We stopped at a commit we already know about, either the branch point of a production branch or a commit on another copy of this branch
+            prefix: list[str] = []
+            prefix_revisions: list[int | None] = []
+            if intersected:
+                shared = self._history_through(key, hashes[0])
+                if shared:
+                    prefix, prefix_revisions = shared[0][:-1], shared[1][:-1]
+                # Only a commit on the default branch can be a branch point, other intersections need shared history
+                elif (self._hash_to_identifiers.get(hashes[0]) or '').split('@')[-1] == branch:
+                    self.repo.log("Failed to find history shared with '{}'".format(key))
+                    return False
+            elif is_default_branch:
+                prefix = ['']
+                prefix_revisions = [0]
+
+            self._ordered_commits[key] = prefix + hashes
+            self._ordered_revisions[key] = prefix_revisions + revisions
+            return True
+
+        def _lookup(self, table: dict[str, list[Any]], branch: str, b_count: int) -> Any:
+            for key in self._keys_for(branch):
+                if len(table.get(key, [])) > b_count:
+                    return table[key][b_count]
+            return None
+
+        def to_hash(self, revision: int | str | None = None, identifier: str | None = None, populate: bool = True, branch: str | None = None) -> str | None:
+            if revision:
+                identifier = self.to_identifier(revision=revision, populate=populate, branch=branch)
+            parts = Commit._parse_identifier(identifier, do_assert=False)
+            if not parts:
+                return None
+
+            _, b_count, branch = parts
+            if b_count < 0 or not branch:
+                return None
+            result: str | None = self._lookup(self._ordered_commits, branch, b_count)
+            if result:
+                return result
+
+            self.load()
+            result = self._lookup(self._ordered_commits, branch, b_count)
+            if result:
+                return result
+            if populate:
+                self.populate(branch=branch)
+                return self.to_hash(identifier=identifier, populate=False)
+            return None
+
+        def to_revision(self, hash: str | None = None, identifier: str | None = None, populate: bool = True, branch: str | None = None) -> int | None:
+            if hash:
+                identifier = self.to_identifier(hash=hash, populate=populate, branch=branch)
+            parts = Commit._parse_identifier(identifier, do_assert=False)
+            if not parts:
+                return None
+
+            _, b_count, branch = parts
+            if b_count < 0 or not branch:
+                return None
+            result: int | None = self._lookup(self._ordered_revisions, branch, b_count)
+            if result:
+                return result
+
+            self.load()
+            result = self._lookup(self._ordered_revisions, branch, b_count)
+            if result:
+                return result
+            if populate:
+                self.populate(branch=branch)
+                return self.to_revision(identifier=identifier, populate=False)
+            return None
+
+        def to_identifier(self, hash: str | None = None, revision: int | str | None = None, populate: bool = True, branch: str | None = None) -> str | None:
+            parsed_revision = Commit._parse_revision(revision, do_assert=False)
+            parsed_hash = None if parsed_revision else Commit._parse_hash(hash, do_assert=False)
+            if not parsed_revision and not parsed_hash:
+                return None
+
+            candidate = self._search(branch, hash=parsed_hash, revision=parsed_revision)
+            if candidate:
+                return candidate
+
+            self.load()
+            candidate = self._search(branch, hash=parsed_hash, revision=parsed_revision)
+            if candidate:
+                return candidate
+            if populate:
+                self.populate(branch=branch)
+                return self.to_identifier(hash=hash, revision=revision, populate=False, branch=branch)
+            return None
+
+
+    GIT_COMMIT = re.compile(r'commit (?P<hash>[0-9a-f]+)')
+    SSH_REMOTE = re.compile('(ssh://)?git@(?P<host>[^:/]+)[:/](?P<path>.+).git')
+    HTTP_REMOTE = re.compile(r'(?P<protocol>https?)://(?P<host>[^\/]+)/(?P<path>.+).git')
+    REMOTE_BRANCH = re.compile(r'remotes\/(?P<remote>[^\/]+)\/(?P<branch>.+)')
+    USER_REMOTE = re.compile(r'(?P<name>[^:]+):(?P<branch>.+)')
+    GIT_CONFIG_EXTENSION = 'git_config_extension'
+    PROJECT_CONFIG_OPTIONS = {
+        'pull.rebase': ['true', 'false'],
+        'webkitscmpy.pull-request': ['overwrite', 'append'],
+        'webkitscmpy.history': ['when-user-owned', 'disabled', 'always', 'never'],
+        'webkitscmpy.update-fork': ['true', 'false'],
+        'webkitscmpy.auto-check': ['true', 'false'],
+        'webkitscmpy.auto-create-commit': ['true', 'false'],
+        'webkitscmpy.auto-prune': ['only-source', 'true', 'false'],
+        'webkitscmpy.cc-radar': ['true', 'false'],
+        'webkitscmpy.set-upstream-on-push': ['false', 'true'],
+        'webkitscmpy.update-title': ['true', 'false'],
+        'webkitscmpy.title-style': ['top-commit', 'common-prefix'],
+    }
+    CONFIG_LOCATIONS = ['global', 'repository', 'project']
+    MERGE_BASE_SHARD_SIZE = 512  # Windows has a maximum of ~32K characters in a single command
+
+    @classmethod
+    @decorators.Memoize()
+    def executable(cls) -> str:
+        return Scm.executable('git')
+
+    @classmethod
+    def is_checkout(cls, path: str) -> bool:
+        return run([cls.executable(), 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
+
+    @decorators.hybridmethod
+    @decorators.Memoize()
+    def config(context: Any, location: str | None = None) -> dict[str, str]:
+        args = [context.executable(), 'config', '-l']
+        kwargs: dict[str, Any] = dict(capture_output=True, encoding='utf-8')
+        if location and location not in context.CONFIG_LOCATIONS:
+            raise TypeError("'{}' is not a valid git config location".format(location))
+
+        if isinstance(context, type) and location in ['repository', 'project']:
+            raise TypeError("Cannot find '{}' git config without local checkout".format(location))
+
+        if isinstance(context, type) or location == 'global':
+            args += ['--global']
+        else:
+            kwargs['cwd'] = context.root_path
+            if location == 'project':
+                # Without a project config, use the library defaults
+                if not context.metadata or not os.path.isfile(os.path.join(context.metadata, context.GIT_CONFIG_EXTENSION)):
+                    return {key: values[0] for key, values in context.PROJECT_CONFIG_OPTIONS.items()}
+                args += ['--file', os.path.join(context.metadata, context.GIT_CONFIG_EXTENSION)]
+
+        command = run(args, **kwargs)
+        if command.returncode:
+            sys.stderr.write("Failed to run '{}'{}\n".format(
+                ' '.join(args),
+                '' if isinstance(context, type) else ' in {}'.format(context.root_path),
+            ))
+            return {}
+
+        result: dict[str, str] = {}
+        for line in command.stdout.splitlines():
+            parts = line.split('=')
+            result[parts[0]] = '='.join(parts[1:])
+
+        # When no location argument is provided, combine the project config and the repository config
+        default_config_values: dict[str, str]
+        if not isinstance(context, type) and not location:
+            default_config_values = context.config(location='project')
+        else:
+            default_config_values = {key: values[0] for key, values in Git.PROJECT_CONFIG_OPTIONS.items()}
+
+        for key, value in default_config_values.items():
+            if not result.get(key):
+                result[key] = value
+            elif not Git.PROJECT_CONFIG_OPTIONS.get(key):
+                continue
+            elif result.get(key) not in Git.PROJECT_CONFIG_OPTIONS[key]:
+                sys.stderr.write("'{}' is not a valid value for '{}', using '{}' instead\n".format(result[key], key, value))
+                result[key] = value
+
+        return result
+
+    def __init__(
+            self, path: str,
+            dev_branches: re.Pattern[str] | None = None,
+            prod_branches: re.Pattern[str] | None = None,
+            contributors: Contributor.Mapping | None = None,
+            id: str | None = None,
+            cached: bool = True,
+            classifier: CommitClassifier | None = None,
+    ) -> None:
+        super(Git, self).__init__(
+            path,
+            dev_branches=dev_branches,
+            prod_branches=prod_branches,
+            contributors=contributors,
+            id=id,
+            classifier=classifier,
+        )
+        self._branch: str | None = None
+        self.default_remote = 'origin'
+        self.cache = self.Cache(self) if self.root_path and cached else None
+        if not self.root_path:
+            raise OSError('Provided path {} is not a git repository'.format(path))
+
+    @decorators.Memoize(cached=False)
+    def info(self) -> dict[str, str]:
+        if not self.is_svn:
+            raise self.Exception('Cannot run SVN info on a git checkout which is not git-svn')
+
+        info_result = run([self.executable(), 'svn', 'info'], cwd=self.path, capture_output=True, encoding='utf-8')
+        if info_result.returncode:
+            return {}
+
+        result = {}
+        for line in info_result.stdout.splitlines():
+            split = line.split(': ')
+            result[split[0]] = ': '.join(split[1:])
+        return result
+
+    @property
+    @decorators.Memoize()
+    def is_svn(self) -> bool:
+        config = os.path.join(self.common_directory, 'config')
+        if not os.path.isfile(config):
+            return False
+
+        with open(config, 'r') as file:
+            for line in file.readlines():
+                if line.startswith('[svn-remote "svn"]'):
+                    return True
+            return False
+
+    @property
+    def is_git(self) -> bool:
+        return True
+
+    @property
+    @decorators.Memoize()
+    def root_path(self) -> str | None:
+        result = run([self.executable(), 'rev-parse', '--show-toplevel'], cwd=self.path, capture_output=True, encoding='utf-8')
+        if result.returncode:
+            return None
+        root_path: str = result.stdout.rstrip()
+        return root_path
+
+    @property
+    @decorators.Memoize()
+    def common_directory(self) -> str:
+        assert self.root_path is not None  # Git() raises if there's no root path
+        result = run([self.executable(), 'rev-parse', '--git-common-dir'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        if result.returncode:
+            return os.path.join(self.root_path, '.git')
+        return os.path.abspath(os.path.join(self.root_path, result.stdout.rstrip()))
+
+    @property
+    @decorators.Memoize()
+    def git_directory(self) -> str:
+        assert self.root_path is not None  # Git() raises if there's no root path
+        result = run([self.executable(), 'rev-parse', '--git-dir'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        if result.returncode:
+            return os.path.join(self.root_path, '.git')
+        return os.path.abspath(os.path.join(self.root_path, result.stdout.rstrip()))
+
+    @property
+    @decorators.Memoize()
+    def is_worktree(self) -> bool:
+        """Return True if this repository is a git worktree.
+
+        A worktree's git_directory differs from its common_directory.
+        """
+        return self.git_directory != self.common_directory
+
+    @property
+    @decorators.Memoize()
+    def default_branch(self) -> str:
+        for name in ['HEAD', 'main', 'master']:
+            result = run([self.executable(), 'rev-parse', '--symbolic-full-name', 'refs/remotes/{}/{}'.format(self.default_remote, name)],
+                         cwd=self.path, capture_output=True, encoding='utf-8')
+            s: str = result.stdout.strip()
+            if result.returncode == 0 and s:
+                assert s.startswith('refs/remotes/{}/'.format(self.default_remote))
+                return s[len('refs/remotes/{}/'.format(self.default_remote)):]
+
+        candidates = self.branches
+        if 'master' in candidates and 'main' not in candidates:
+            return 'master'
+        return 'main'
+
+    @property
+    def branch(self) -> str | None:
+        if self._branch:
+            return self._branch
+
+        head_ref = run([self.executable(), 'symbolic-ref', '-q', 'HEAD'], cwd=self.root_path, stdout=subprocess.DEVNULL)
+        if head_ref.returncode:
+            return None
+
+        result = run([self.executable(), 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        if result.returncode:
+            raise self.Exception('Failed to retrieve branch for {}'.format(self.root_path))
+        self._branch = result.stdout.rstrip()
+        return self._branch
+
+    @property
+    def branches(self) -> list[str]:
+        return self.branches_for()
+
+    def commit_signing_enabled(self, cached: bool | None = None) -> bool:
+        return self.config(cached=cached).get('commit.gpgsign', 'false') == 'true'
+
+    def tags(self, remote: str | None = None) -> list[str]:
+        if not remote:
+            tags = run([self.executable(), 'tag'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            if tags.returncode:
+                raise self.Exception('Failed to retrieve tag list for {}'.format(self.root_path))
+            local_tags: list[str] = tags.stdout.splitlines()
+            return local_tags
+
+        tags = run([self.executable(), 'ls-remote', '--tags', remote], cwd=self.root_path, capture_output=True, encoding='utf-8')
+        if tags.returncode:
+            raise self.Exception('Failed to retrieve tag list for {} in {}'.format(remote, self.root_path))
+        result: list[str] = []
+        for line in tags.stdout.splitlines():
+            if line.endswith('^{}'):
+                continue
+            result.append('/'.join(line.split('/')[2:]))
+        return result
+
+    def url(self, name: str | None = None, cached: bool | None = None) -> str | None:
+        return self.config(cached=cached).get('remote.{}.url'.format(name or self.default_remote))
+
+    @decorators.Memoize()
+    def remote(self, name: str | None = None) -> RemoteScm | None:
+        url = self.url(name=name)
+        if not url:
+            return None
+        ssh_match = self.SSH_REMOTE.match(url)
+        http_match = self.HTTP_REMOTE.match(url)
+        if ssh_match:
+            url = 'https://{}/{}'.format(ssh_match.group('host'), ssh_match.group('path'))
+        elif http_match:
+            url = '{}://{}/{}'.format(http_match.group('protocol'), http_match.group('host'), http_match.group('path'))
+
+        try:
+            return remote.Scm.from_url(url, contributors=self.contributors)
+        except OSError:
+            pass
+
+        return None
+
+    @decorators.Memoize()
+    def source_remotes(self, cached: bool = True, personal: bool = False) -> list[str]:
+        config = self.config(cached=cached)
+
+        all_remotes = {
+            c[7:-4]
+            for c in config
+            if c.count('.') == 2
+            and c.startswith('remote.')
+            and c.endswith('.url')
+            and c != 'remote..url'
+        }
+
+        security_levels = {
+            remote: int(config.get(f'webkitscmpy.remotes.{remote}.security-level') or 0)
+            for remote in all_remotes
+            if f'webkitscmpy.remotes.{remote}.url' in config
+        }
+        security_levels.setdefault(self.default_remote, 0)
+
+        # Sorted by security level asc, default-remote-first, and remote name asc.
+        remotes = [
+            remote
+            for remote, _ in sorted(
+                security_levels.items(),
+                key=lambda i: (i[1], i[0] != self.default_remote, i[0]),
+            )
+        ]
+
+        if not personal:
+            # These are fairly self-evident from how we construct remotes above.
+            assert set(remotes) <= (all_remotes | {self.default_remote})
+            assert len(remotes) == len(set(remotes))
+            return remotes
+
+        # Save a copy of the already-found (impersonal) remotes sequence. Note we need
+        # to preserve the order to iterate over it below.
+        impersonal_remotes = remotes[:]
+
+        personal_remotes = all_remotes - security_levels.keys()
+
+        # Ordering matters here, so we can't just use sets.
+        candidates = ['fork', *(f'{remote}-fork' for remote in impersonal_remotes)]
+        remotes.extend(c for c in candidates if c in personal_remotes)
+
+        rmt = self.remote()
+        usernames = {
+            r
+            for r in personal_remotes
+            if r != 'fork'
+            and '-' not in r
+            and (not isinstance(rmt, remote.GitHub) or r != rmt.credentials(required=False)[0])
+        }
+
+        # Ensure we haven't found anything already in remotes.
+        assert usernames.isdisjoint(remotes)
+
+        for username in sorted(usernames):
+            # This follows from the definition of usernames.
+            assert username in personal_remotes
+            remotes.append(username)
+
+            # Ordering matters here, so we can't just use sets.
+            candidates = [f'{username}-{remote}' for remote in impersonal_remotes]
+            remotes.extend(c for c in candidates if c in personal_remotes)
+
+        # Ensure we don't have duplicates, and only return extant remotes.
+        assert set(remotes) <= (all_remotes | {self.default_remote})
+        assert len(remotes) == len(set(remotes))
+        return remotes
+
+    def _commit_count(self, native_parameter: str) -> int:
+        revision_count = run(
+            [self.executable(), '--no-replace-objects', 'rev-list', '--count', '--no-merges', native_parameter],
+            cwd=self.root_path, capture_output=True, encoding='utf-8',
+        )
+        if revision_count.returncode:
+            raise self.Exception('Failed to retrieve revision count for {}'.format(native_parameter))
+        return int(revision_count.stdout)
+
+    # With remote=None, returns branches grouped by remote (None for local branches). Like all
+    # memoized functions, branches_for() also accepts Memoize's `cached` argument.
+    @overload
+    def branches_for(self, hash: str | None = ..., remote: bool | str = ..., *, cached: bool = ...) -> list[str]:
+        ...
+
+    @overload
+    def branches_for(self, hash: str | None = ..., *, remote: None, cached: bool = ...) -> defaultdict[str | None, set[str]]:
+        ...
+
+    @decorators.Memoize(cached=False)
+    def branches_for(self, hash: str | None = None, remote: bool | str | None = True) -> list[str] | defaultdict[str | None, set[str]]:
+        if hash:
+            contains = ['--contains', hash]
+        else:
+            contains = []
+
+        group_remotes = False
+        if isinstance(remote, str):
+            patterns = [f'refs/remotes/{remote}/**']
+        else:
+            patterns = ['refs/heads/**']
+            if remote is not False:
+                patterns.append('refs/remotes/**')
+                group_remotes = remote is not True
+
+        refs = run(
+            [self.executable(), 'for-each-ref', '--format', '%(refname)'] + contains + patterns,
+            cwd=self.root_path,
+            capture_output=True,
+            encoding='utf-8',
+            check=True,
+        )
+
+        results: set[str] = set()
+        by_remote: defaultdict[str | None, set[str]] = defaultdict(set)
+
+        for line in refs.stdout.split('\n'):
+            if not line:
+                continue
+
+            if line.startswith('refs/heads/'):
+                results.add(line[len('refs/heads/'):])
+            elif line.startswith('refs/remotes/'):
+                ref_path = line.split('/', 3)
+                if len(ref_path) == 4:
+                    if group_remotes:
+                        by_remote[ref_path[2]].add(ref_path[3])
+                    else:
+                        results.add(ref_path[3])
+            elif line:
+                raise self.Exception('unexpected output from for-each-ref')
+
+        if group_remotes:
+            by_remote[None] = results
+            return by_remote
+
+        return sorted(results)
+
+    def is_suitable_branch_for_pull_request(self, branch: str | None, source_remote: str) -> bool:
+        if branch is None or branch in self.DEFAULT_BRANCHES or self.PROD_BRANCHES.match(branch):
+            return False
+        elif branch in self.branches_for(remote=source_remote) and not self.dev_branches.match(branch):
+            return False
+        return True
+
+    @decorators.Memoize()
+    def _maybe_update_default_branch_ref_from_fetch_head(self) -> None:
+        # The way the buildbot workers update the git repository does not always update the remote/origin/main reference.
+        # Workaround that by checking if remote/origin/main is an ancestor of FETCH_HEAD and then updating it here of needed.
+        # See https://webkit.org/b/299395 for more details.
+        fh_path = os.path.join(self.git_directory, 'FETCH_HEAD')
+        if not os.path.isfile(fh_path):
+            return
+        url = self.url()
+        if not url:
+            return
+        repo_url = url.removesuffix('.git')
+        # FETCH_HEAD can contain more than one line, ensure that only the ones matching this repo and default_branch are considered.
+        default_branch_pattern = re.compile(rf'(?P<hash>[0-9a-f]{{40}})\s+(branch [\'"]?{self.default_branch}[\'"]? of\s+)?[\'"]?{repo_url}(\.git)?[\'"]?$')
+        merge_candidates: set[str] = set()
+        with open(fh_path, 'r') as fh_fd:
+            for line in fh_fd:
+                line = line.strip()
+                fh_match = default_branch_pattern.match(line)
+                if fh_match:
+                    merge_candidates.add(fh_match.group('hash'))
+        if len(merge_candidates) == 0:
+            return
+        if len(merge_candidates) > 1:
+            log.warning(f'Not updating the ref on remotes/origin/{self.default_branch} because more than one candidate was found (that is unexpected): {merge_candidates}')
+            return
+        fh_hash = merge_candidates.pop()
+        # Check if the ref on remotes/origin/defrbranch is strictly an ancestor of FETCH_HEAD and in that case update the ref of it
+        is_defrbranch_ancestor_of_fh = run([self.executable(), 'merge-base', '--is-ancestor', f'remotes/origin/{self.default_branch}', f'{fh_hash}'],
+                                           cwd=self.root_path).returncode == 0
+        if not is_defrbranch_ancestor_of_fh:
+            log.warning(f'Hash {fh_hash} at FETCH_HEAD is not a fast-foward update for remotes/origin/{self.default_branch}')
+            return
+        is_fh_not_ancestor_of_defrbranch = run([self.executable(), 'merge-base', '--is-ancestor', f'{fh_hash}', f'remotes/origin/{self.default_branch}'],
+                                               cwd=self.root_path).returncode == 1
+        is_fh_strictly_fast_forward_of_defrbranch = is_defrbranch_ancestor_of_fh and is_fh_not_ancestor_of_defrbranch
+        if is_fh_strictly_fast_forward_of_defrbranch:
+            result = run([self.executable(), 'update-ref', f'refs/remotes/origin/{self.default_branch}', f'{fh_hash}'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            if result.returncode:
+                log.warning(f'Error updating remotes/origin/{self.default_branch} to FETCH_HEAD: {result.stderr}')
+
+    def _is_on_default_branch(self, hash: str) -> bool:
+        self._maybe_update_default_branch_ref_from_fetch_head()
+        remote_keys = [None] + self.source_remotes()
+        default_branch = self.default_branch
+        for key in remote_keys:
+            if run([self.executable(), 'merge-base', '--is-ancestor', hash,
+                    f'refs/remotes/{key}/{default_branch}' if key is not None else f'refs/heads/{default_branch}'],
+                   cwd=self.root_path, capture_output=True, encoding='utf-8').returncode == 0:
+                return True
+        return False
+
+    def branch_point(self, ref: str = 'HEAD') -> Commit | None:
+        branches = self.branches_for(remote=None)
+        production_branches = [
+            'remotes/{}/{}'.format(remote, branch)
+            for remote in self.source_remotes()
+            for branch in branches[remote] if not self.dev_branches.match(branch)
+        ]
+
+        head = run(
+            [self.executable(), 'rev-parse', ref],
+            cwd=self.root_path,
+            capture_output=True,
+            encoding='utf-8',
+        ).stdout.strip()
+
+        partial_bases: set[str] = set()
+        for shard in [
+            production_branches[self.MERGE_BASE_SHARD_SIZE * i:self.MERGE_BASE_SHARD_SIZE * (i + 1)]
+            for i in range(1 + len(production_branches) // self.MERGE_BASE_SHARD_SIZE)
+        ]:
+            if not shard:
+                continue
+            result = run(
+                [self.executable(), 'merge-base', head] + shard,
+                cwd=self.root_path,
+                capture_output=True,
+                encoding='utf-8',
+            )
+            if result.returncode:
+                partial_bases = set()
+                break
+            partial_base = result.stdout.strip()
+            if partial_base == head:
+                # If the current commit is ever the merge-base, then the current commit will
+                # be the merge-base when we combine all shards.
+                return self.commit(
+                    hash=head,
+                    include_log=False, include_identifier=False,
+                )
+            partial_bases.add(partial_base)
+
+        merge_base = None
+        if len(partial_bases) == 1:
+            merge_base = list(partial_bases)[0]
+        elif len(partial_bases) > 1:
+            result = run(
+                [self.executable(), 'merge-base', head] + list(partial_bases),
+                cwd=self.root_path,
+                capture_output=True,
+                encoding='utf-8',
+            )
+            if not result.returncode:
+                merge_base = result.stdout.strip()
+        if not merge_base:
+            sys.stderr.write('Failed to find intersection with production branch\n')
+            return None
+        return self.commit(
+            hash=merge_base,
+            include_log=False, include_identifier=False,
+        )
+
+    def commit(self, hash: str | None = None, revision: int | str | None = None, identifier: int | str | None = None, branch: str | None = None, tag: str | None = None, include_log: bool = True, include_identifier: bool = True) -> Commit:
+        # Only git-svn checkouts can convert revisions to fully qualified commits, unless we happen to have a SVN cache built
+        if revision:
+            if hash:
+                raise ValueError('Cannot define both hash and revision')
+            hash = self.cache.to_hash(revision=revision, branch=branch) if self.cache else None
+
+        # If we don't have an SVN cache built, and we're not git-svn, we can't reason about revisions
+        if revision and not hash and not self.is_svn:
+            raise self.Exception('This git checkout does not support SVN revisions')
+
+        # Determine the hash for a provided Subversion revision
+        elif revision and not hash:
+            if hash:
+                raise ValueError('Cannot define both hash and revision')
+
+            revision = Commit._parse_revision(revision, do_assert=True)
+            revision_log = run(
+                [self.executable(), 'svn', 'find-rev', 'r{}'.format(revision)],
+                cwd=self.root_path, capture_output=True, encoding='utf-8',
+                timeout=3,
+            )
+            if revision_log.returncode:
+                raise self.Exception("Failed to retrieve commit information for 'r{}'".format(revision))
+            hash = revision_log.stdout.rstrip()
+            if not hash:
+                raise self.Exception("Failed to find 'r{}'".format(revision))
+
+        default_branch = self.default_branch
+        parsed_branch_point = None
+        log_format = ['-1', '--no-decorate', '--no-abbrev-commit', '--date=unix', '--format=fuller'] if include_log else ['-1', '--no-decorate', '--no-abbrev-commit', '--date=unix', '--format=short']
+
+        # Determine the `git log` output and branch for a given identifier
+        if identifier is not None:
+            if revision:
+                raise ValueError('Cannot define both revision and identifier')
+            if hash:
+                raise ValueError('Cannot define both hash and identifier')
+            if tag:
+                raise ValueError('Cannot define both tag and identifier')
+
+            parsed_branch_point, identifier, parsed_branch = Commit._parse_identifier(identifier, do_assert=True)
+            if parsed_branch:
+                if branch and branch != parsed_branch:
+                    raise ValueError(
+                        "Caller passed both 'branch' and 'identifier', but specified different branches ({} and {})".format(
+                            branch, parsed_branch,
+                        ),
+                    )
+                branch = parsed_branch
+            if branch:
+                hash = self.cache.to_hash(identifier='{}@{}'.format(identifier, branch), branch=branch) if self.cache else None
+
+            # If the cache managed to convert the identifier to a hash, we can skip some computation
+            if hash:
+                log = run(
+                    [self.executable(), 'log', hash] + log_format + ['--'],
+                    cwd=self.root_path,
+                    capture_output=True,
+                    encoding='utf-8',
+                )
+                if log.returncode:
+                    raise self.Exception("Failed to retrieve commit information for '{}'".format(hash))
+
+            # The cache has failed to convert the identifier, we need to do it the expensive way
+            else:
+                baseline = branch or 'HEAD'
+                is_default = baseline == default_branch
+                if baseline == 'HEAD':
+                    is_default = self._is_on_default_branch(baseline)
+
+                if is_default and parsed_branch_point:
+                    raise self.Exception('Cannot provide a branch point for a commit on the default branch')
+
+                if is_default:
+                    base_count = self._commit_count(baseline)
+                else:
+                    base_count = min(
+                        self._commit_count('{}..{}'.format(default_branch, baseline)),
+                        self._commit_count('{}/{}..{}'.format(self.default_remote, default_branch, baseline)),
+                    )
+
+                if identifier > base_count:
+                    raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout. Latest identifier on this branch is {}'.format(identifier, base_count))
+                log = run(
+                    [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier)] + log_format + ['--'],
+                    cwd=self.root_path,
+                    capture_output=True,
+                    encoding='utf-8',
+                )
+                if log.returncode:
+                    raise self.Exception("Failed to retrieve commit information for 'i{}@{}'".format(identifier, branch or 'HEAD'))
+
+                # Negative identifiers are actually commits on the default branch, we will need to re-compute the identifier
+                if identifier < 0 and is_default:
+                    raise self.Exception('Illegal negative identifier on the default branch')
+                if identifier < 0:
+                    identifier = None
+
+        # Determine the `git log` output for a given branch or tag
+        elif branch or tag:
+            if hash:
+                raise ValueError('Cannot define both tag/branch and hash')
+            if branch and tag:
+                raise ValueError('Cannot define both tag and branch')
+
+            log = run([self.executable(), 'log', branch or tag] + log_format + ['--'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            if log.returncode:
+                raise self.Exception("Failed to retrieve commit information for '{}'".format(branch or tag))
+
+        # Determine the `git log` output for a given hash
+        else:
+            hash = Commit._parse_hash(hash, do_assert=True)
+            log = run([self.executable(), 'log', hash or 'HEAD'] + log_format + ['--'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            if log.returncode:
+                raise self.Exception("Failed to retrieve commit information for '{}'".format(hash or 'HEAD'))
+
+        # Fully define the hash from the `git log` output
+        match = self.GIT_COMMIT.match(log.stdout.splitlines()[0])
+        if not match:
+            raise self.Exception('Invalid commit hash in git log')
+        hash = match.group('hash')
+
+        branch_point = None
+        # Avoid merge-base and branch listing for commits on the default or production branches which are already in our cache
+        cached_commit = Commit._parse_identifier(self.cache.to_identifier(hash=hash, populate=False)) if self.cache else None
+        if self.cache and cached_commit and cached_commit[2] and self.cache.is_cacheable(cached_commit[2]):
+            branch_point, identifier, branch = cached_commit
+        else:
+            # A commit is often on multiple branches, the canonical branch is the one with the highest priority
+            if self._is_on_default_branch(hash):
+                branch = default_branch
+            if branch != default_branch:
+                branch = self.prioritize_branches(self.branches_for(hash), self.branch)
+
+        if not identifier and include_identifier and branch:
+            cached_identifier = self.cache.to_identifier(hash=hash, branch=branch) if self.cache else None
+            if cached_identifier:
+                parsed_identifier = Commit._parse_identifier(cached_identifier)
+                assert parsed_identifier is not None  # The cache only stores valid identifiers
+                branch_point, identifier, branch = parsed_identifier
+
+        # Compute the identifier if the function did not receive one and we were asked to
+        if not identifier and include_identifier and branch:
+            if branch == default_branch:
+                identifier = self._commit_count(hash)
+            else:
+                identifier = min(
+                    self._commit_count('{}..{}'.format(default_branch, hash)),
+                    self._commit_count('{}/{}..{}'.format(self.default_remote, default_branch, hash)),
+                )
+
+        # Only compute the branch point we're on something other than the default branch
+        if not branch_point and include_identifier and branch != default_branch and branch:
+            assert identifier is not None  # Computed above
+            branch_point = self._commit_count(hash) - identifier
+        if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
+            raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
+
+        # Parse git log output, handling both normal and merge commits (which have an extra 'Merge:' line)
+        log_lines = log.stdout.splitlines()
+        author_line = None
+        message_start_index = None
+        for i, line in enumerate(log_lines):
+            if line.startswith('Author:'):
+                author_line = line
+            # The message starts after the first blank line following the header
+            if message_start_index is None and not line.strip() and i > 0:
+                message_start_index = i + 1
+                break
+
+        if not author_line:
+            raise self.Exception("Failed to find Author line in git log output for '{}'".format(hash))
+        if message_start_index is None:
+            message_start_index = len(log_lines)
+
+        # Check the commit log for a git-svn revision
+        logcontent = '\n'.join(line[4:] for line in log_lines[message_start_index:])
+        matches = self.GIT_SVN_REVISION.findall(logcontent)
+        revision = int(matches[-1].split('@')[0]) if matches else None
+
+        # We only care about when a commit was commited
+        commit_time = run(
+            [self.executable(), 'show', '-s', '--format=%ct', hash],
+            cwd=self.root_path, capture_output=True, encoding='utf-8',
+        )
+        if commit_time.returncode:
+            raise self.Exception('Failed to retrieve commit time for {}'.format(hash))
+        timestamp = int(commit_time.stdout.lstrip())
+
+        # Comparing commits in different repositories involves comparing timestamps. This is problematic because it git,
+        # it's possible for a series of commits to share a commit time. To handle this case, we assign each commit a
+        # zero-indexed "order" within it's timestamp.
+        order = 0
+        while not identifier or order + 1 < identifier + (branch_point or 0):
+            commit_time = run(
+                [self.executable(), 'show', '-s', '--format=%ct', '{}~{}'.format(hash, order + 1)],
+                cwd=self.root_path, capture_output=True, encoding='utf-8',
+            )
+            if commit_time.returncode:
+                break
+            if int(commit_time.stdout.lstrip()) != timestamp:
+                break
+            order += 1
+
+        return Commit(
+            repository_id=self.id,
+            hash=hash,
+            revision=revision,
+            identifier=identifier if include_identifier else None,
+            branch_point=branch_point,
+            branch=branch,
+            timestamp=timestamp,
+            order=order,
+            author=Contributor.from_scm_log(author_line, self.contributors),
+            message=logcontent if include_log else None,
+        )
+
+    def _args_from_content(self, content: str, include_log: bool = True) -> dict[str, Any]:
+        author = None
+        timestamp = None
+
+        # Parse header lines dynamically to handle merge commits (which have an extra 'Merge:' line)
+        lines = content.splitlines()
+        message_start_index = None
+        for i, line in enumerate(lines):
+            split = line.split(': ')
+            if split[0] == 'Author':
+                author = Contributor.from_scm_log(line.lstrip(), self.contributors)
+            elif split[0] == 'CommitDate':
+                timestamp = int(line.split(' ')[-1])
+            # The message starts after the first blank line following the header
+            if message_start_index is None and not line.strip() and i > 0:
+                message_start_index = i + 1
+                break
+
+        if message_start_index is None:
+            message_start_index = len(lines)
+
+        message = ''
+        for line in lines[message_start_index:]:
+            message += line[4:] + '\n'
+        matches = self.GIT_SVN_REVISION.findall(message)
+
+        return dict(
+            revision=int(matches[-1].split('@')[0]) if matches else None,
+            author=author,
+            timestamp=timestamp,
+            message=message.rstrip() if include_log else None,
+        )
+
+    def commits(self, begin: dict[str, Any] | None = None, end: dict[str, Any] | None = None, include_log: bool = True, include_identifier: bool = True, scopes: list[str] | None = None) -> Iterator[Commit]:
+        begin_commit, end_commit = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
+
+        in_scope: set[str] = set()
+        for scope in scopes or []:
+            ran = run(
+                [self.executable(), 'log', '--pretty=%H', '{}..{}'.format(begin_commit.hash, end_commit.hash), '--', scope],
+                cwd=self.root_path,
+                capture_output=True,
+                encoding='utf-8'
+            )
+            if not ran.returncode:
+                for line in ran.stdout.splitlines():
+                    in_scope.add(line)
+
+        with subprocess.Popen(
+            [self.executable(), 'log', '--format=fuller', '--no-decorate', '--no-abbrev-commit', '--date=unix',
+             '{}..{}'.format(begin_commit.hash, end_commit.hash), '--'],
+            cwd=self.root_path,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            encoding='utf-8',
+        ) as log:
+            try:
+                if log.poll():
+                    raise self.Exception("Failed to construct history for '{}'".format(end_commit.branch))
+
+                assert log.stdout is not None
+                line = log.stdout.readline()
+                previous = [end_commit]
+                saw_output = False
+                while line:
+                    saw_output = True
+                    if not line.startswith('commit '):
+                        raise OSError('Failed to parse `git log` format')
+                    branch_point = previous[-1].branch_point
+                    identifier = previous[-1].identifier
+                    hash = line.split(' ')[-1].rstrip()
+                    if identifier and hash != previous[-1].hash:
+                        identifier -= 1
+
+                    if not identifier:
+                        identifier = branch_point
+                        branch_point = None
+
+                    content = ''
+                    line = log.stdout.readline()
+                    while line and not line.startswith('commit '):
+                        content += line
+                        line = log.stdout.readline()
+
+                    commit = Commit(
+                        repository_id=self.id,
+                        hash=hash,
+                        branch=end_commit.branch if not include_identifier or (identifier and branch_point) else self.default_branch,
+                        identifier=identifier if include_identifier else None,
+                        branch_point=branch_point if include_identifier else None,
+                        order=0,
+                        **self._args_from_content(content, include_log=include_log)
+                    )
+
+                    # Ensure that we don't duplicate the first and last commits
+                    if commit.hash == previous[-1].hash:
+                        previous[-1] = commit
+
+                    # If we share a timestamp with the previous commit, that means that this commit has an order
+                    # less than the set of commits cached in previous
+                    elif commit.timestamp == previous[-1].timestamp:
+                        for cached in previous:
+                            cached.order += 1
+                        previous.append(commit)
+
+                    # If we don't share a timestamp with the previous set of commits, we should return all commits
+                    # cached in previous.
+                    else:
+                        for cached in previous:
+                            if scopes is None or cached.hash in in_scope:
+                                yield cached
+                        previous = [commit]
+
+                if saw_output:
+                    for cached in previous:
+                        cached.order += begin_commit.order
+                        if scopes is None or cached.hash in in_scope:
+                            yield cached
+            finally:
+                log.kill()
+
+    def last_commits_on(self, path: str, count: int = 5) -> list[Commit]:
+        """
+        Return the last `count` Commit objects that modified the specified file.
+        """
+        try:
+            output = run(
+                [self.executable(), 'log', f'--max-count={count}', '--follow', '--format=%H', '--', path],
+                cwd=self.root_path, capture_output=True, encoding='utf-8', check=True,
+            )
+            return [
+                self.find(commit_hash.strip())
+                for commit_hash in output.stdout.strip().splitlines()
+                if commit_hash.strip()
+            ]
+        except Exception:
+            return []
+
+    def find(self, argument: str, include_log: bool = True, include_identifier: bool = True) -> Commit:
+        if not isinstance(argument, string_utils.basestring):
+            raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
+
+        # Map any candidate default branch to the one used by this repository
+        if argument in self.DEFAULT_BRANCHES:
+            argument = self.default_branch
+
+        # See if the argument the user specified is a recognized commit format
+        parsed_commit = Commit.parse(argument, do_assert=False)
+        if parsed_commit:
+            if parsed_commit.branch in self.DEFAULT_BRANCHES:
+                parsed_commit.branch = self.default_branch
+
+            return self.commit(
+                hash=parsed_commit.hash,
+                revision=parsed_commit.revision,
+                identifier=parsed_commit.identifier,
+                branch=parsed_commit.branch,
+                include_log=include_log,
+                include_identifier=include_identifier,
+            )
+
+        # The argument isn't a recognized commit format, hopefully it is a valid git ref of some form
+        output = run(
+            [self.executable(), 'rev-parse', argument],
+            cwd=self.root_path, capture_output=True, encoding='utf-8',
+        )
+        if output.returncode:
+            raise ValueError("'{}' is not an argument recognized by git".format(argument))
+        return self.commit(hash=output.stdout.rstrip(), include_log=include_log, include_identifier=include_identifier)
+
+    def _to_git_ref(self, argument: str | None) -> str | None:
+        if not argument:
+            return None
+        if not isinstance(argument, string_utils.basestring):
+            raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
+        parsed_commit = Commit.parse(argument, do_assert=False)
+        try:
+            if parsed_commit and not parsed_commit.hash:
+                # It's possible that a branch can look like a hash (or revision), if this call fails,
+                # we should return the unsanitized argument to our caller assumeing this is the case.
+                return self.commit(
+                    hash=parsed_commit.hash,
+                    revision=parsed_commit.revision,
+                    identifier=parsed_commit.identifier,
+                    branch=parsed_commit.branch,
+                    include_log=False,
+                    include_identifier=False,
+                ).hash
+        except self.Exception:
+            pass
+        return argument
+
+    def checkout(self, argument: str, prune: bool | None = None, prompt: bool = False) -> Commit | None:
+        self._branch = None
+
+        if log.level > logging.WARNING:
+            log_arg = ['-q']
+        elif log.level < logging.WARNING:
+            log_arg = ['--progress']
+        else:
+            log_arg = []
+
+        match = self.USER_REMOTE.match(argument)
+        rmt = self.remote()
+        if match and isinstance(rmt, remote.GitHub):
+            name = match.group('name')
+            username = name.split('/')[0]
+            repo_name = rmt.name if '/' not in name else name.split('/', 1)[-1]
+            if username == rmt.credentials(required=False)[0]:
+                name = 'fork' + repo_name[len(rmt.name):]
+            else:
+                name = username + repo_name[len(rmt.name):]
+
+            if not self.url(name):
+                url = self.url()
+                assert url is not None  # self.remote() found a GitHub remote at this URL
+                if '://' in url:
+                    remote_url = '{}://{}/{}/{}.git'.format(url.split(':')[0], url.split('/')[2], username, repo_name)
+                elif ':' in url:
+                    remote_url = '{}:{}/{}.git'.format(url.split(':')[0], username, repo_name)
+                else:
+                    sys.stderr.write("Failed to convert '{}' to '{}' remote\n".format(url, username))
+                    return None
+                if run(
+                    [self.executable(), 'remote', 'add', name, remote_url],
+                    capture_output=True, cwd=self.root_path,
+                ).returncode:
+                    sys.stderr.write("Failed to add remote '{}' as '{}'\n".format(remote_url, name))
+                    return None
+                self.config.clear()
+            branch = match.group('branch')
+
+            # The names GitHub provides are often too short. If we are tracking other remotes which start
+            # with this name, we should try those too
+            candidate_remotes = [name]
+            for key in self.config().keys():
+                if key.startswith(f'remote.{name}'):
+                    candidate = key.split('.', 2)[1]
+                    if candidate not in candidate_remotes:
+                        candidate_remotes.append(candidate)
+
+            for remote_name in candidate_remotes:
+                command = [self.executable(), 'fetch', remote_name]
+                if prune is None:
+                    if self.config()['webkitscmpy.auto-prune'] == 'true':
+                        command.append('--prune')
+                    elif name in self.source_remotes() and self.config()['webkitscmpy.auto-prune'] == 'only-source':
+                        command.append('--prune')
+                log.info(f'Fetching {remote_name}...')
+                if run(command, cwd=self.root_path, capture_output=True).returncode:
+                    log.warning(f'Failed to fetch {remote_name}, local {remote_name}/{branch} may be stale')
+                if not run(
+                    [self.executable(), 'checkout'] + ['-B', branch, 'remotes/{}/{}'.format(remote_name, branch)] + log_arg,
+                    cwd=self.root_path,
+                ).returncode:
+                    return self.commit()
+            return None
+
+        match = self.dev_branches.match(argument)
+        branch_remote = self.remote_for(argument)
+
+        # Branch is not dev and exists on a remote.
+        if not match and branch_remote:
+            try:
+                remote_path = '{}/{}'.format(branch_remote, argument)
+                local_head = self.commit(branch=argument, include_log=False, include_identifier=False)
+            except self.Exception:
+                log.info(" Branch does not exist in local repository. Continuing checkout...")
+            else:
+                remote_head = self.commit(branch=remote_path, include_log=False, include_identifier=False)
+                assert local_head.hash is not None  # Git.commit() always finds a hash
+                local_bp = self.branch_point(ref=local_head.hash)
+                assert local_bp is not None  # local_bp.hash would raise an AttributeError
+                merge_base_with_target_remote = run(
+                    [self.executable(), 'merge-base', local_bp.hash, remote_head.hash],
+                    cwd=self.root_path,
+                    capture_output=True,
+                    encoding='utf-8',
+                ).stdout.strip()
+
+                # Resets branch if local is not tracking force pushed remote.
+                if merge_base_with_target_remote != local_bp.hash:
+                    if local_bp.hash != local_head.hash:
+                        log.info(" You have unsaved changes on the local branch.")
+                        if prompt and Terminal.choose(
+                            "Local changes on {} will not be saved. Would you like to override the local version of this branch with the version from '{}'?".format(argument, remote_path),
+                            default='No'
+                        ) == 'No':
+                            sys.stderr.write("Checkout aborted.\n")
+                            return None
+                    log.info(" Resetting branch {} to remote {}. Checkout will erase all local changes on {}.\n".format(argument, remote_path, argument))
+                    return None if run(
+                        [self.executable(), 'checkout'] + ['-B', argument, remote_path] + log_arg,
+                        cwd=self.root_path,
+                    ).returncode else self.commit()
+                else:
+                    log.info(" Local branch is tracking the remote branch.")
+
+        # Branch exists on a remote.
+        if branch_remote:
+            result = run([
+                self.executable(), 'branch',
+                '--set-upstream-to' if argument in self.branches_for(remote=False) else '--track',
+                argument, '{}/{}'.format(branch_remote, argument),
+            ], capture_output=True, encoding='utf-8', cwd=self.root_path)
+            if result.returncode:
+                sys.stderr.write(result.stderr)
+
+        # Branch is dev or local.
+        return None if run(
+            [self.executable(), 'checkout', self._to_git_ref(argument)] + log_arg + ['--'],
+            cwd=self.root_path,
+        ).returncode else self.commit()
+
+    def rebase(self, target: str, base: str | None = None, head: str = 'HEAD', recommit: bool = True) -> int:
+        if head == self.default_branch or self.prod_branches.match(head):
+            raise RuntimeError("Rebasing production branch '{}' banned in tooling!".format(head))
+
+        target_ref = self._to_git_ref(target)
+        base_ref = self._to_git_ref(base)
+        head_ref = self._to_git_ref(head)
+
+        need_commit_signature = self.commit_signing_enabled()
+
+        command = [self.executable()]
+        if need_commit_signature:
+            command += ['-c', 'commit.gpgsign=false']
+        code = run(
+            command + ['rebase', '--onto', target_ref, base_ref or target_ref, head_ref],
+            cwd=self.root_path,
+        ).returncode
+        if code or not recommit:
+            return code
+
+        command = [
+            self.executable(), 'filter-branch', '-f',
+            '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(
+                date='{} -{}'.format(int(time.time()), self.gmtoffset())
+            ),
+        ]
+        if need_commit_signature:
+            command += ['--commit-filter', 'git commit-tree -S "$@"']
+        return run(
+            command + ['refs/heads/{}...{}'.format(target_ref, head_ref)],
+            cwd=self.root_path,
+            env={'FILTER_BRANCH_SQUELCH_WARNING': '1'},
+            capture_output=True,
+        ).returncode
+
+    def fetch(self, branch: str, remote: str | None = None, prune: bool | None = None) -> int:
+        remote = remote or self.default_remote
+        if prune is None and self.config()['webkitscmpy.auto-prune'] == 'true':
+            prune = True
+        elif prune is None and self.config()['webkitscmpy.auto-prune'] == 'only-source':
+            prune = remote in self.source_remotes()
+        command = [self.executable(), 'fetch', remote, '{}:{}'.format(branch, branch), '+refs/heads/{}:refs/remotes/{}/{}'.format(branch, remote, branch)]
+        if prune:
+            command.append('--prune')
+        return run(command, cwd=self.root_path).returncode
+
+    def pull(self, rebase: bool | None = None, branch: str | None = None, remote: str | None = None, prune: bool | None = None) -> int:
+        remote = remote or self.default_remote
+        commit = self.commit() if self.is_svn or branch else None
+
+        need_commit_signature = self.commit_signing_enabled()
+
+        # Note: We skip the fetch when in a worktree because 'git fetch origin
+        # main:main' fails when main is checked out in another worktree. The
+        # 'git pull' below will still update the remote tracking ref.
+        code = 0
+        if branch and self.branch != branch and not self.is_worktree:
+            code = self.fetch(branch=branch, remote=remote, prune=prune)
+        if not code:
+            command = [self.executable()]
+            if rebase is not False and need_commit_signature:
+                command += ['-c', 'commit.gpgsign=false']
+            command += ['pull'] + ([remote, branch] if branch else [])
+            if rebase is True:
+                command += ['--rebase=True', '--autostash']
+            elif rebase is False:
+                command += ['--rebase=False']
+            code = run(command, cwd=self.root_path).returncode
+
+        if not code and branch and rebase:
+            assert commit is not None  # Computed above, because branch is set
+            result = run([self.executable(), 'rev-parse', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            if not result.returncode and result.stdout.rstrip() != commit.hash:
+                command = [
+                    self.executable(),
+                    'filter-branch', '-f',
+                    '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(
+                        date='{} -{}'.format(int(time.time()), self.gmtoffset())
+                    ),
+                ]
+                if need_commit_signature:
+                    command += ['--commit-filter', 'git commit-tree -S "$@"']
+                code = run(
+                    command + ['HEAD...{}'.format('{}/{}'.format(remote, branch))],
+                    cwd=self.root_path,
+                    env={'FILTER_BRANCH_SQUELCH_WARNING': '1'},
+                    capture_output=True,
+                ).returncode
+
+        if not code and self.is_svn:
+            assert commit is not None  # Computed above, because self.is_svn
+            if commit.revision:
+                return run([
+                    self.executable(), 'svn', 'fetch', '--log-window-size=5000', '-r', '{}:HEAD'.format(commit.revision),
+                ], cwd=self.root_path).returncode
+        return code
+
+    def clean(self) -> int:
+        return run([
+            self.executable(), 'reset', 'HEAD', '--hard',
+        ], cwd=self.root_path).returncode
+
+    def modified(self, staged: bool | None = None) -> list[str]:
+        '''Raises subprocess.CalledProcessError when git fails, lists a moved file by both of its names, and never quotes a name.'''
+        diff_command = [self.executable(), '-c', 'diff.renames=false', 'diff']
+
+        if staged in [True, False]:
+            command = run(
+                diff_command + ['--name-only'] + (['--staged'] if staged else []) + ['-z'],
+                capture_output=True, encoding='utf-8', cwd=self.root_path, check=True,
+            )
+            return [path for path in command.stdout.split('\0') if path]
+
+        # When the user hasn't specified what they're looking for, we need to make some assumptions.
+        # If all staged files are added, the user probably wants to include non-staged files too
+        command = run(
+            diff_command + ['--name-status', '--staged', '-z'],
+            capture_output=True, encoding='utf-8', cwd=self.root_path, check=True,
+        )
+        fields = command.stdout.split('\0')
+        added = {file for state, file in zip(fields[0::2], fields[1::2]) if state == 'A'}
+
+        staged_files = self.modified(staged=True)
+        if set(staged_files) - added:
+            return staged_files
+        return staged_files + self.modified(staged=False)
+
+    def diff(self, head: str = 'HEAD', base: str | None = None, include_log: bool = False) -> Iterator[str]:
+        head_ref = head if head == 'HEAD' else self._to_git_ref(head)
+        if not base:
+            base = head_ref if head_ref == 'HEAD' else self._to_git_ref('{}~1'.format(head_ref))
+        else:
+            base = self._to_git_ref(base)
+
+        if head_ref == base and head_ref != 'HEAD':
+            sys.stderr.write("'{}' provided as both head and base\n".format(head_ref))
+            return
+
+        if include_log and head_ref == 'HEAD':
+            for line in self.diff(head=head_ref, base='HEAD', include_log=False):
+                yield line
+
+        if head_ref == base:
+            command = [self.executable(), 'diff', '{}'.format(head_ref)]
+        elif include_log:
+            command = [self.executable(), 'format-patch', '{}..{}'.format(base, head_ref), '--stdout']
+        else:
+            command = [self.executable(), 'diff', '{}..{}'.format(base, head_ref)]
+
+        target = '{}..{}'.format(base, head) if head else base
+        with subprocess.Popen(
+            command,
+            cwd=self.root_path,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            encoding='utf-8',
+        ) as proc:
+            try:
+                if proc.poll():
+                    sys.stderr.write("Failed to generate diff for '{}'\n".format(target))
+                    return
+
+                assert proc.stdout is not None
+                line = proc.stdout.readline()
+                while line:
+                    yield line.rstrip()
+                    line = proc.stdout.readline()
+            finally:
+                proc.kill()
+
+    def files_changed(self, argument: str | None = None) -> list[str]:
+        if not argument:
+            return self.modified()
+        if not Commit.HASH_RE.match(argument):
+            commit = self.find(argument, include_log=False, include_identifier=False)
+            if not commit:
+                raise ValueError("'{}' is not an argument recognized by git".format(argument))
+            argument = commit.hash
+
+        output = run(
+            [self.executable(), 'show', argument, '--pretty=', '--name-only'],
+            cwd=self.root_path, capture_output=True, encoding='utf-8',
+        )
+        if output.returncode:
+            raise ValueError("'{}' is not an argument recognized by git".format(argument))
+        files: list[str] = output.stdout.rstrip().splitlines()
+        return files
+
+    def remote_for(self, argument: str) -> str | None:
+        impersonal_remotes = self.source_remotes()
+        all_remotes = self.source_remotes(personal=True)
+        if argument == self.default_branch:
+            # Other remotes' copies of the default branch are never actually ahead of the default remote, they
+            # only appear to be when they've been fetched more recently. This matches Git.Cache._remotes_for.
+            all_remotes = [self.default_remote] + all_remotes[len(impersonal_remotes):]
+            impersonal_remotes = [self.default_remote]
+
+        impersonal_candidates = [f'refs/remotes/{remote}/{argument}' for remote in impersonal_remotes]
+        all_candidates = [f'refs/remotes/{remote}/{argument}' for remote in all_remotes]
+        assert all_candidates[: len(impersonal_candidates)] == impersonal_candidates
+        personal_candidates = all_candidates[len(impersonal_candidates):]
+
+        proc = run(
+            [self.executable(), 'for-each-ref', '--format', '%(objectname) %(refname)', *all_candidates],
+            cwd=self.root_path,
+            capture_output=True,
+            encoding='utf-8',
+            check=True,
+        )
+
+        if not proc.stdout:
+            return None
+
+        # dict() accepts any iterable of pairs, but typeshed only allows tuples.
+        refs: dict[str, str] = dict(reversed(line.split(' ', 1)) for line in proc.stdout.rstrip('\n').split('\n'))  # type: ignore[misc]
+
+        # Find the first and last items in impersonal_candidates which exist.
+        first_ref = None
+        last_ref = None
+        for candidate in impersonal_candidates:
+            if candidate not in refs:
+                continue
+
+            if first_ref is None:
+                first_ref = candidate
+
+            last_ref = candidate
+
+        assert (first_ref is None) == (last_ref is None)
+
+        if last_ref is not None:
+            # For last_ref to be non-None, we have something in impersonal_candidates.
+            # We want to find the first extant candidate in the sequence which is
+            # up-to-date with the last extant candidate in the sequence.
+            assert first_ref is not None
+
+            if refs[first_ref] == refs[last_ref]:
+                # If we have the same object for the first and last refs, then we don't
+                # need to run anything with --contains.
+                selected_ref = first_ref
+            else:
+                proc = run(
+                    [
+                        self.executable(),
+                        'for-each-ref',
+                        '--format', '%(refname)',
+                        '--contains', last_ref,
+                        *impersonal_candidates,
+                    ],
+                    cwd=self.root_path,
+                    capture_output=True,
+                    encoding='utf-8',
+                    check=True,
+                )
+
+                if not proc.stdout:
+                    # Because last_ref is in impersonal_candidates, we should have got
+                    # at least last_ref back.
+                    assert last_ref in impersonal_candidates
+                    raise ValueError('Unexpected git behavior.')
+
+                up_to_date_refs = set(proc.stdout.rstrip('\n').split('\n'))
+
+                if len(up_to_date_refs) == 1:
+                    selected_ref = next(iter(up_to_date_refs))
+                else:
+                    selected_ref = next(iter(ref for ref in impersonal_candidates if ref in up_to_date_refs))
+        else:
+            # None of the impersonal_candidates exist, so return the first
+            # personal_candidate, if any, which does.
+            try:
+                selected_ref = next(iter(ref for ref in personal_candidates if ref in refs))
+            except StopIteration:
+                return None
+
+        _, _, remote, _ = selected_ref.split('/', maxsplit=3)
+        return remote
+
+    def merge_base(self, ref_a: str, ref_b: str, include_log: bool = True, include_identifier: bool = True) -> Commit | None:
+        a = self.find(ref_a, include_log=False, include_identifier=False)
+        b = self.find(ref_b, include_log=False, include_identifier=False)
+        if not a or not b:
+            return None
+        result = run(
+            [self.executable(), 'merge-base', a.hash, b.hash],
+            capture_output=True, encoding='utf-8', cwd=self.path,
+        )
+        if result.returncode:
+            return None
+        return self.commit(hash=result.stdout.rstrip(), include_log=include_log, include_identifier=include_identifier)

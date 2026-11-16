@@ -1,0 +1,2 @@
+
+PASS if this does not crash

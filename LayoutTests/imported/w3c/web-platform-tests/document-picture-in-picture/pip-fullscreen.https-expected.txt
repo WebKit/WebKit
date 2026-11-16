@@ -1,0 +1,4 @@
+
+PASS A pip window cannot be fullscreened
+PASS A pip window can fullscreen it's opener
+

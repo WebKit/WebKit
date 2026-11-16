@@ -1,0 +1,125 @@
+/*
+ *  Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "media/engine/webrtc_media_engine.h"
+
+#include <algorithm>
+#include <span>
+#include <string>
+#include <vector>
+
+#include "absl/algorithm/container.h"
+#include "absl/strings/string_view.h"
+#include "api/field_trials_view.h"
+#include "api/rtp_parameters.h"
+#include "api/transport/bitrate_settings.h"
+#include "media/base/codec.h"
+#include "media/base/media_constants.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+
+namespace webrtc {
+namespace {
+// Remove mutually exclusive extensions with lower priority.
+void DiscardRedundantExtensions(
+    std::vector<RtpExtension>* extensions,
+    std::span<const char* const> extensions_decreasing_prio) {
+  RTC_DCHECK(extensions);
+  bool found = false;
+  for (const char* uri : extensions_decreasing_prio) {
+    auto it = absl::c_find_if(
+        *extensions, [uri](const RtpExtension& rhs) { return rhs.uri == uri; });
+    if (it != extensions->end()) {
+      if (found) {
+        extensions->erase(it);
+      }
+      found = true;
+    }
+  }
+}
+}  // namespace
+
+
+std::vector<RtpExtension> FilterRtpExtensions(
+    const std::vector<RtpExtension>& extensions,
+    bool (*supported)(absl::string_view),
+    bool filter_redundant_extensions,
+    const FieldTrialsView& trials) {
+  // Don't check against old parameters; this should have been done earlier.
+  RTC_DCHECK(supported);
+  std::vector<RtpExtension> result;
+
+  // Ignore any extensions that we don't recognize.
+  for (const auto& extension : extensions) {
+    if (supported(extension.uri)) {
+      result.push_back(extension);
+    } else {
+      RTC_LOG(LS_WARNING) << "Unsupported RTP extension: "
+                          << extension.ToString();
+    }
+  }
+
+  // Sort by name, ascending (prioritise encryption), so that we don't reset
+  // extensions if they were specified in a different order (also allows us
+  // to use std::unique below).
+  absl::c_sort(result, [](const RtpExtension& rhs, const RtpExtension& lhs) {
+    return rhs.encrypt == lhs.encrypt ? rhs.uri < lhs.uri
+                                      : rhs.encrypt > lhs.encrypt;
+  });
+
+  // Remove unnecessary extensions (used on send side).
+  if (filter_redundant_extensions) {
+    auto it =
+        std::unique(result.begin(), result.end(),
+                    [](const RtpExtension& rhs, const RtpExtension& lhs) {
+                      return rhs.uri == lhs.uri && rhs.encrypt == lhs.encrypt;
+                    });
+    result.erase(it, result.end());
+
+    // Keep just the highest priority extension of any in the following lists.
+    if (trials.IsEnabled("WebRTC-FilterAbsSendTimeExtension")) {
+      static const char* const kBweExtensionPriorities[] = {
+          RtpExtension::kTransportSequenceNumberUri,
+          RtpExtension::kAbsSendTimeUri, RtpExtension::kTimestampOffsetUri};
+      DiscardRedundantExtensions(&result, kBweExtensionPriorities);
+    } else {
+      static const char* const kBweExtensionPriorities[] = {
+          RtpExtension::kAbsSendTimeUri, RtpExtension::kTimestampOffsetUri};
+      DiscardRedundantExtensions(&result, kBweExtensionPriorities);
+    }
+  }
+  return result;
+}
+
+BitrateConstraints GetBitrateConfigForCodec(const Codec& codec) {
+  BitrateConstraints config;
+  int bitrate_kbps = 0;
+  if (codec.GetParam(kCodecParamMinBitrate, &bitrate_kbps) &&
+      bitrate_kbps > 0) {
+    config.min_bitrate_bps = bitrate_kbps * 1000;
+  } else {
+    config.min_bitrate_bps = 0;
+  }
+  if (codec.GetParam(kCodecParamStartBitrate, &bitrate_kbps) &&
+      bitrate_kbps > 0) {
+    config.start_bitrate_bps = bitrate_kbps * 1000;
+  } else {
+    // Do not reconfigure start bitrate unless it's specified and positive.
+    config.start_bitrate_bps = -1;
+  }
+  if (codec.GetParam(kCodecParamMaxBitrate, &bitrate_kbps) &&
+      bitrate_kbps > 0) {
+    config.max_bitrate_bps = bitrate_kbps * 1000;
+  } else {
+    config.max_bitrate_bps = -1;
+  }
+  return config;
+}
+}  // namespace webrtc

@@ -1,0 +1,67 @@
+Asserts that the AXTextChangeValueStartMarker of a deletion's AXValueChanged notification is valid.
+
+delete a character in the middle of a line: field now holds "barbaz"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 0
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 0
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+delete the line break joining two non-empty lines: field now holds "foobar"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 0
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 0
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+delete a line break, leaving the caret on a blank last line: field now holds "foo<br><br>"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 1
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 1
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+delete a line break, leaving the caret on a blank line between two others: field now holds "foo<br><br>bar"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 1
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 1
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+delete the only character of a line, leaving that line blank: field now holds "foo<br><br>bar"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 1
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 1
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+forward delete a line break, leaving the caret on a blank line: field now holds "foo<br><br>bar"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 1
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 1
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+delete a selected range, leaving the caret on a blank line: field now holds "foo<br><br><br>"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 1
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 1
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+delete every character, emptying the field: field now holds "<br>"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 0
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 0
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+textarea, delete a typed character: field now holds "ba"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 0
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 0
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+textarea, delete a typed line break, leaving the caret on a blank line: field now holds "foo\n"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 1
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 1
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+textarea, delete a typed line break, joining two non-empty lines: field now holds "foobar"
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 0
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 0
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+textarea, delete every typed character, emptying the field: field now holds ""
+PASS: webarea.lineIndexForTextMarker(changeMarker) === 0
+PASS: webarea.lineIndexForTextMarker(lineStartMarker) === 0
+PASS: changeMarker.isEqual(selectionMarker) === true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

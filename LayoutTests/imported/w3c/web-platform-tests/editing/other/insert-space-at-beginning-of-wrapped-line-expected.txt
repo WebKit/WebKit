@@ -1,0 +1,17 @@
+
+123456789- XY
+123456789- XY
+
+PASS Typing space at "123456789 |XY" should insert a space in textarea
+PASS Typing space at "123456789 |XY" should insert a space in plaintext
+PASS Typing space at "123456789 |XY" should insert a space in richedit
+PASS Typing space at "12345     |XY" should insert a space in textarea
+PASS Typing space at "12345     |XY" should insert a space in plaintext
+PASS Typing space at "12345     |XY" should insert a space in richedit
+PASS Typing space at "12345        |XY" should insert a space in textarea
+PASS Typing space at "12345        |XY" should insert a space in plaintext
+PASS Typing space at "12345        |XY" should insert a space in richedit
+PASS Typing space at "123456789-|XY" should insert a space in textarea
+PASS Typing space at "123456789-|XY" should insert a space in plaintext
+PASS Typing space at "123456789-|XY" should insert a space in richedit
+

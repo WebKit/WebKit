@@ -1,0 +1,6 @@
+Non parser-inserted external module scripts should run with `strict-dynamic` in the script-src directive.
+
+
+PASS Module script injected via `appendChild` is allowed with `strict-dynamic`.
+PASS Module script injected via `appendChild` is allowed with `strict-dynamic`, even if it carries an incorrect nonce.
+

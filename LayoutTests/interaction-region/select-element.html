@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 20; }
+    .styled {
+        padding: 20px;
+        height: 70px;
+        background-color: aqua;
+        border-radius: 20px;
+    }
+</style>
+<body>
+<select>
+    <option>This is an option</option>
+</select>
+<select style="width: 100px;">
+    <option>This is an option that should overflow and clip</option>
+</select>
+<select class="styled">
+    <option>This is a styled option</option>
+</select>
+<select class="styled" style="width: 100px;">
+    <option>This is a styled option that should overflow and clip</option>
+</select>
+
+
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

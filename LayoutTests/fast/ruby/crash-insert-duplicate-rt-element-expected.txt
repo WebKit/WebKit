@@ -1,0 +1,2 @@
+This tests inserting a duplicate rt element into ruby. WebKit should not crash.
+PASS.

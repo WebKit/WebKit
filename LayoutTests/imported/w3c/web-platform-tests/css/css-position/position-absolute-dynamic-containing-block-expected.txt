@@ -1,0 +1,11 @@
+TTT
+
+PASS abs containing block moves from outer to intermediate
+PASS abs containing block moves from intermediate to outer
+PASS target is no longer absolute
+PASS target becomes absolute
+PASS fixed containing block moves from outer to intermediate
+PASS fixed containing block moves from intermediate to outer
+PASS target is no longer fixed
+PASS target becomes fixed
+

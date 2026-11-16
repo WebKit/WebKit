@@ -1,0 +1,8 @@
+Tests that a navigation of the main frame resumes the main frame when it is stopped in the debugger.
+
+
+== Running test suite: SiteIsolation.Debugger.MainFrameNavigationWhileStopped
+-- Running test case: SiteIsolation.Debugger.MainFrameNavigationWhileStopped.MainFrameStopped
+PASS: The stopped main frame resumed and the new document loaded.
+PASS: The new document's load listener should run.
+

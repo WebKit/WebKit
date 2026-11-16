@@ -1,0 +1,3 @@
+
+PASS Multiple scale()s combine
+

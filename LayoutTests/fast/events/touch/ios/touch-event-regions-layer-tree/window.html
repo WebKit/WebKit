@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <script>
+        prepareForTest();
+        window.addEventListener('load', dumpRegions, false);
+    </script>
+</head>
+<body>
+    <script>
+        window.addEventListener('touchstart', function() { }, { passive: false });
+    </script>
+</body>
+</html>

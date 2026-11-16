@@ -1,0 +1,16 @@
+When selecting content outside and inside multi-column, the highlight box should not extend to the unselected column.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionRects.length is 4
+PASS selectionRects[0].width is 310
+PASS selectionRects[1].width is 310
+PASS selectionRects[2].width is 150
+PASS 150 is > selectionRects[3].width
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Here is the selected content outside of the multi-column element.
+
+Here is the selected content at the beginning of multi-column. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi mauris ex, finibus quis aliquam ac, interdum facilisis ligula.

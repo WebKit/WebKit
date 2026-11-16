@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests selecting content starting in a shadow tree out to the document.<br>
+To manually test, select "hello world" below by a mouse drag. WebKit should select the phrase.</p>
+<div id="container">hello <div>world</div></div>
+<script>
+getSelection().selectAllChildren(container);
+</script>
+</body>
+</html>

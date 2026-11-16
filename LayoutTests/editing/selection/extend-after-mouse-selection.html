@@ -1,0 +1,68 @@
+<html>
+<head>
+
+<style>
+.editing {
+    border: 2px solid red;
+    font-size: 24px;
+}
+</style>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+
+<script>
+
+function editingTest(editingBehavior) {
+
+    if (window.internals)
+        internals.settings.setEditingBehavior(editingBehavior);
+
+    var startTarget = document.getElementById('start');
+    var endTarget = document.getElementById('end');
+
+    eventSender.mouseMoveTo(startTarget.offsetLeft, startTarget.offsetTop + 10);
+    // Double-click to select at word-granularity to workaround eventSender bug with selecting text at
+    // character granularity (i.e. that it just doesn't work).
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(endTarget.offsetLeft, endTarget.offsetTop + 10);
+    eventSender.mouseUp();
+
+    Markup.dump(root, `Selecting from start to end with ${editingBehavior} editing behavior`);
+
+    extendSelectionBackwardByCharacterCommand();
+
+    // On Win/Linux the anchor is be fixed after the mouse-selection and never changes.
+    // On Mac, the first character-granularity selection after a mouse-selection resets the anchor/focus.
+    Markup.dump(root, `Extending selection backward by one character with ${editingBehavior} editing behavior`);
+
+    extendSelectionForwardByCharacterCommand();
+    Markup.dump(root, `Extending selection forward by one character with ${editingBehavior} editing behavior`);
+
+    extendSelectionForwardByLineBoundaryCommand();
+    Markup.dump(root, `Extending selection forward by line boundary with ${editingBehavior} editing behavior`);
+
+    extendSelectionBackwardByLineBoundaryCommand();
+    Markup.dump(root, `Extending selection backward by line boundary with ${editingBehavior} editing behavior`);
+}
+
+</script>
+
+<title>Editing Test</title>
+</head>
+<body>
+<div contenteditable id="root" class="editing">
+    <span id="test">a <span id="start">bc</span> <br>d <span id="end">ef</span> <br>ghi</span>
+</div>
+
+<div id="console"></div>
+
+<script>
+editingTest("mac");
+editingTest("windows");
+editingTest("unix");
+</script>
+
+</body>
+</html>

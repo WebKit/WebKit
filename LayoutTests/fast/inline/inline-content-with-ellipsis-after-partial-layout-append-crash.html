@@ -1,0 +1,23 @@
+<style>
+div {
+  word-wrap: break-word;
+  text-overflow: ellipsis;
+  font-size: 13.3px;
+  width: 13.3px;
+  overflow: hidden;
+}
+span {
+  margin-left: 10px;
+}
+</style>
+<div id=mutate_this>12345 X<script>
+  window.testRunner?.waitUntilDone();
+  window.testRunner?.dumpAsText();
+  document.body.offsetHeight;
+  mutate_this.appendChild(document.createElement("span"));
+  requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+          window.testRunner?.notifyDone();
+      });
+  });
+</script>

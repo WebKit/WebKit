@@ -1,0 +1,12 @@
+Test that a recording of a canvas includes the actions made after the canvas moves from a same-origin iframe into the main frame under site isolation.
+
+
+== Running test suite: SiteIsolation.Canvas.ConsoleRecordCanvasMovedFromIFrame
+-- Running test case: SiteIsolation.Canvas.ConsoleRecordCanvasMovedFromIFrame.DrawAfterMove
+PASS: Canvas should be reported by the same target as the iframe's other canvas.
+PASS: Canvas should be owned by the main frame's document.
+Recorded actions: fillRect(1, 1, 1, 1)
+FAIL: Recording should include the actions made before and after the move.
+    Expected: 2
+    Actual: 1
+

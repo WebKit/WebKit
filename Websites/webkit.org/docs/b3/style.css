@@ -1,0 +1,126 @@
+body {
+    background: #fff;
+    color: #000;
+    margin: 10px;
+    padding: 0;
+}
+body, th, tr {
+    font: normal 13px Verdana,Arial,'Bitstream Vera Sans',Helvetica,sans-serif;
+}
+h1, h2, h3, h4 {
+    font-family: Arial,Verdana,'Bitstream Vera Sans',Helvetica,sans-serif;
+    font-weight: bold;
+    letter-spacing: -0.018em;
+    page-break-after: avoid;
+}
+h1 { font-size: 20px; text-indent: -10px }
+h2 { font-size: 17px; text-indent: -10px }
+h3 { font-size: 15px; text-indent: -10px }
+hr { border: none;  border-top: 1px solid #ccb; margin: 2em 0 }
+address { font-style: normal }
+img { border: none }
+
+.underline { text-decoration: underline }
+ol.loweralpha { list-style-type: lower-alpha }
+ol.upperalpha { list-style-type: upper-alpha }
+ol.lowerroman { list-style-type: lower-roman }
+ol.upperroman { list-style-type: upper-roman }
+ol.arabic { list-style-type: decimal }
+
+.banner-link:link, .banner-link:visited {
+    text-decoration: none;
+    color: #b00;
+    border-bottom: 0px;
+}
+
+/* Link styles */
+:link, :visited {
+    text-decoration: none;
+    color: #b00;
+    border-bottom: 1px dotted #bbb;
+}
+h1 :link, h1 :visited ,h2 :link, h2 :visited, h3 :link, h3 :visited,
+h4 :link, h4 :visited, h5 :link, h5 :visited, h6 :link, h6 :visited {
+    color: inherit;
+}
+
+/* Heading anchors */
+.anchor:link, .anchor:visited {
+    border: none;
+    color: #d7d7d7;
+    font-size: .8em;
+    vertical-align: text-top;
+}
+* > .anchor:link, * > .anchor:visited {
+    visibility: hidden;
+}
+h1:hover .anchor, h2:hover .anchor, h3:hover .anchor,
+h4:hover .anchor, h5:hover .anchor, h6:hover .anchor,
+span:hover .anchor {
+    visibility: visible;
+}
+
+a.missing:link, a.missing:visited, a.missing, span.missing,
+a.forbidden, span.forbidden { color: #998 }
+a.missing:hover { color: #000 }
+a.closed:link, a.closed:visited, span.closed { text-decoration: line-through }
+
+pre {
+    background: #f7f7f7;
+    border: 1px solid #d7d7d7;
+    margin: 1em 1.75em;
+    padding: .25em;
+    overflow: auto;
+}
+
+div.code {
+    background: #f7f7f7;
+    border: 1px solid #d7d7d7;
+    margin: 1em 1.75em;
+    padding: .25em;
+    overflow: auto
+}
+
+div.code pre { margin: 0; }
+
+dt {
+    font-weight: bold;
+}
+dd {
+    padding: 0 0 0.8em 0;
+}
+dd:last-child {
+    padding: 0 0 0 0;
+}
+
+/** Logo **/
+.site-logo {
+    font-size: 3rem;
+    line-height: 3rem;
+    font-weight: 200;
+    display: inline-block;
+    background: url('../../wp-content/themes/webkit/images/webkit.svg') no-repeat;
+    padding-left: 7rem;
+    color: #333;
+}
+
+.site-logo .tagline {
+    display: block;
+    font-size: 1.2rem;
+    line-height: 2rem;
+    letter-spacing: -0.05rem;
+    color: #666;
+}
+
+#contents {
+    font-size: 90%;
+    padding: 1em 2em 2em 2em
+}
+
+p {
+    margin: 0 0 0.8em 0;
+}
+
+p:last-child {
+    margin: 0 0 0 0;
+}

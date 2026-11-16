@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description('Test that a module imported with the "text" type attribute is exposed as a string instead of being evaluated, even when it is served with a JavaScript MIME type.');
+
+jsTestIsAsync = true;
+
+(async function() {
+    window.namespace = await import(`./resources/module-src-text.js`, { with: { type: 'text' } });
+    shouldBeEqualToString("typeof namespace.default", "string");
+    shouldBeTrue("namespace.default.includes('export default 42;')");
+    shouldBeUndefined("window.textModuleWasEvaluated");
+    finishJSTest();
+}());
+</script>
+</body>
+</html>

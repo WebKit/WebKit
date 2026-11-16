@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>fullscreen-restore-scroll-position with overflow: auto on body</title>
+        <script src="../media/video-test.js"></script>
+        <script src="../media/media-file.js"></script>
+        <style>
+            .spacer {
+                height: 100vh;
+            }
+            html, body {
+                height: 100%;
+            }
+            body {
+                overflow: auto;
+            }
+            video {
+                width: 50%;
+            }
+        </style>
+    </head>
+    <body>
+    <p>This tests that page scroll is restored after fullscreen. Press any key to start the test.</p>
+    <div class="spacer"></div>
+    <div id="parent">
+        <video id="video" controls></video>
+    </div>
+    <div class="spacer"></div>
+    <script>
+
+        let originalScroll = 0;
+        video = document.getElementsByTagName('video')[0];
+        video.src = findMediaFile('video', '../media/content/test');
+
+        waitFor(window, 'load').then(async event => {
+
+            if (Element.prototype.webkitRequestFullScreen == undefined) {
+                logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+                endTest();
+                return;
+            }
+
+            waitFor(video, 'canplaythrough', true);
+
+            originalScroll = document.body.clientHeight;
+            document.scrollingElement.scrollTop = originalScroll;
+            originalScroll = document.scrollingElement.scrollTop;
+
+            document.onwebkitfullscreenchange = async (event) => {
+                if (document.webkitIsFullScreen) {
+                    await sleepFor(1000);
+                    document.webkitExitFullscreen();
+                    return;
+                }
+
+                // scrollTop triggers a layout, so the bug doesn't reproduce if we call it too early.
+                await sleepFor(100);
+
+                await testExpectedEventually("(document.scrollingElement.scrollTop === originalScroll)", true);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            };
+            runWithKeyDown(() => document.getElementById('video').webkitRequestFullScreen());
+        });
+
+        </script>
+    </body>
+</html>

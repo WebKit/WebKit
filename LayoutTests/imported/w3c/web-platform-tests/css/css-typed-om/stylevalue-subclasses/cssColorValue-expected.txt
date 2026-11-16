@@ -1,0 +1,62 @@
+
+FAIL Converting HSL using degrees to RGB works for magenta. hsl_color_degrees.toRGB is not a function. (In 'hsl_color_degrees.toRGB()', 'hsl_color_degrees.toRGB' is undefined)
+FAIL Converting HSL using radians to RGB works for magenta. hsl_color_radians.toRGB is not a function. (In 'hsl_color_radians.toRGB()', 'hsl_color_radians.toRGB' is undefined)
+FAIL Converting HSL using gradians to RGB works for magenta. hsl_color_gradians.toRGB is not a function. (In 'hsl_color_gradians.toRGB()', 'hsl_color_gradians.toRGB' is undefined)
+FAIL Converting HSL to HWB works for magenta. hsl_color_degrees.toHWB is not a function. (In 'hsl_color_degrees.toHWB()', 'hsl_color_degrees.toHWB' is undefined)
+FAIL Converting HWB using degrees to RGB works for magenta. hwb_color_degrees.toRGB is not a function. (In 'hwb_color_degrees.toRGB()', 'hwb_color_degrees.toRGB' is undefined)
+FAIL Converting HWB using radians to RGB works for magenta. hwb_color_radians.toRGB is not a function. (In 'hwb_color_radians.toRGB()', 'hwb_color_radians.toRGB' is undefined)
+FAIL Converting HWB using gradians to RGB works for magenta. hwb_color_gradians.toRGB is not a function. (In 'hwb_color_gradians.toRGB()', 'hwb_color_gradians.toRGB' is undefined)
+FAIL Converting HWB to HSL works for magenta. hwb_color_degrees.toHSL is not a function. (In 'hwb_color_degrees.toHSL()', 'hwb_color_degrees.toHSL' is undefined)
+FAIL Converting RGB to HSL works for magenta. rgb_color.toHSL is not a function. (In 'rgb_color.toHSL()', 'rgb_color.toHSL' is undefined)
+FAIL Converting RGB to HWB works for magenta. rgb_color.toHWB is not a function. (In 'rgb_color.toHWB()', 'rgb_color.toHWB' is undefined)
+FAIL Converting HSL using degrees to RGB works for dark cyan. hsl_color_degrees.toRGB is not a function. (In 'hsl_color_degrees.toRGB()', 'hsl_color_degrees.toRGB' is undefined)
+FAIL Converting HSL using radians to RGB works for dark cyan. hsl_color_radians.toRGB is not a function. (In 'hsl_color_radians.toRGB()', 'hsl_color_radians.toRGB' is undefined)
+FAIL Converting HSL using gradians to RGB works for dark cyan. hsl_color_gradians.toRGB is not a function. (In 'hsl_color_gradians.toRGB()', 'hsl_color_gradians.toRGB' is undefined)
+FAIL Converting HSL to HWB works for dark cyan. hsl_color_degrees.toHWB is not a function. (In 'hsl_color_degrees.toHWB()', 'hsl_color_degrees.toHWB' is undefined)
+FAIL Converting HWB using degrees to RGB works for dark cyan. hwb_color_degrees.toRGB is not a function. (In 'hwb_color_degrees.toRGB()', 'hwb_color_degrees.toRGB' is undefined)
+FAIL Converting HWB using radians to RGB works for dark cyan. hwb_color_radians.toRGB is not a function. (In 'hwb_color_radians.toRGB()', 'hwb_color_radians.toRGB' is undefined)
+FAIL Converting HWB using gradians to RGB works for dark cyan. hwb_color_gradians.toRGB is not a function. (In 'hwb_color_gradians.toRGB()', 'hwb_color_gradians.toRGB' is undefined)
+FAIL Converting HWB to HSL works for dark cyan. hwb_color_degrees.toHSL is not a function. (In 'hwb_color_degrees.toHSL()', 'hwb_color_degrees.toHSL' is undefined)
+FAIL Converting RGB to HSL works for dark cyan. rgb_color.toHSL is not a function. (In 'rgb_color.toHSL()', 'rgb_color.toHSL' is undefined)
+FAIL Converting RGB to HWB works for dark cyan. rgb_color.toHWB is not a function. (In 'rgb_color.toHWB()', 'rgb_color.toHWB' is undefined)
+FAIL Converting HSL using degrees to RGB works for light goldenrod yellow. hsl_color_degrees.toRGB is not a function. (In 'hsl_color_degrees.toRGB()', 'hsl_color_degrees.toRGB' is undefined)
+FAIL Converting HSL using radians to RGB works for light goldenrod yellow. hsl_color_radians.toRGB is not a function. (In 'hsl_color_radians.toRGB()', 'hsl_color_radians.toRGB' is undefined)
+FAIL Converting HSL using gradians to RGB works for light goldenrod yellow. hsl_color_gradians.toRGB is not a function. (In 'hsl_color_gradians.toRGB()', 'hsl_color_gradians.toRGB' is undefined)
+FAIL Converting HSL to HWB works for light goldenrod yellow. hsl_color_degrees.toHWB is not a function. (In 'hsl_color_degrees.toHWB()', 'hsl_color_degrees.toHWB' is undefined)
+FAIL Converting HWB using degrees to RGB works for light goldenrod yellow. hwb_color_degrees.toRGB is not a function. (In 'hwb_color_degrees.toRGB()', 'hwb_color_degrees.toRGB' is undefined)
+FAIL Converting HWB using radians to RGB works for light goldenrod yellow. hwb_color_radians.toRGB is not a function. (In 'hwb_color_radians.toRGB()', 'hwb_color_radians.toRGB' is undefined)
+FAIL Converting HWB using gradians to RGB works for light goldenrod yellow. hwb_color_gradians.toRGB is not a function. (In 'hwb_color_gradians.toRGB()', 'hwb_color_gradians.toRGB' is undefined)
+FAIL Converting HWB to HSL works for light goldenrod yellow. hwb_color_degrees.toHSL is not a function. (In 'hwb_color_degrees.toHSL()', 'hwb_color_degrees.toHSL' is undefined)
+FAIL Converting RGB to HSL works for light goldenrod yellow. rgb_color.toHSL is not a function. (In 'rgb_color.toHSL()', 'rgb_color.toHSL' is undefined)
+FAIL Converting RGB to HWB works for light goldenrod yellow. rgb_color.toHWB is not a function. (In 'rgb_color.toHWB()', 'rgb_color.toHWB' is undefined)
+FAIL Converting HSL using degrees to RGB works for medium purple. hsl_color_degrees.toRGB is not a function. (In 'hsl_color_degrees.toRGB()', 'hsl_color_degrees.toRGB' is undefined)
+FAIL Converting HSL using radians to RGB works for medium purple. hsl_color_radians.toRGB is not a function. (In 'hsl_color_radians.toRGB()', 'hsl_color_radians.toRGB' is undefined)
+FAIL Converting HSL using gradians to RGB works for medium purple. hsl_color_gradians.toRGB is not a function. (In 'hsl_color_gradians.toRGB()', 'hsl_color_gradians.toRGB' is undefined)
+FAIL Converting HSL to HWB works for medium purple. hsl_color_degrees.toHWB is not a function. (In 'hsl_color_degrees.toHWB()', 'hsl_color_degrees.toHWB' is undefined)
+FAIL Converting HWB using degrees to RGB works for medium purple. hwb_color_degrees.toRGB is not a function. (In 'hwb_color_degrees.toRGB()', 'hwb_color_degrees.toRGB' is undefined)
+FAIL Converting HWB using radians to RGB works for medium purple. hwb_color_radians.toRGB is not a function. (In 'hwb_color_radians.toRGB()', 'hwb_color_radians.toRGB' is undefined)
+FAIL Converting HWB using gradians to RGB works for medium purple. hwb_color_gradians.toRGB is not a function. (In 'hwb_color_gradians.toRGB()', 'hwb_color_gradians.toRGB' is undefined)
+FAIL Converting HWB to HSL works for medium purple. hwb_color_degrees.toHSL is not a function. (In 'hwb_color_degrees.toHSL()', 'hwb_color_degrees.toHSL' is undefined)
+FAIL Converting RGB to HSL works for medium purple. rgb_color.toHSL is not a function. (In 'rgb_color.toHSL()', 'rgb_color.toHSL' is undefined)
+FAIL Converting RGB to HWB works for medium purple. rgb_color.toHWB is not a function. (In 'rgb_color.toHWB()', 'rgb_color.toHWB' is undefined)
+FAIL Parsing the color string "rgb(255,255,255)" null is not an object (evaluating 'parsedColor[attr]')
+FAIL Parsing the color string "rgba(100,255,255, 1)" null is not an object (evaluating 'parsedColor[attr]')
+FAIL Parsing the color string "#00bfff" null is not an object (evaluating 'parsedColor[attr]')
+FAIL Parsing the color string "hsl(195, 100%, 50%)" null is not an object (evaluating 'parsedColor[attr]')
+FAIL Parsing the color string "hsla(123, 100%, 20%, .5)" null is not an object (evaluating 'parsedColor[attr]')
+FAIL Parsing the color string "hwb(200 31% 38%)" null is not an object (evaluating 'parsedColor[attr]')
+FAIL Parsing the color string "hwb(200 31% 38% / 0.5)" null is not an object (evaluating 'parsedColor[attr]')
+FAIL Parsing the color string "blue" null is not an object (evaluating 'parsedColor[attr]')
+FAIL Parsing the color string "transparent" null is not an object (evaluating 'parsedColor[attr]')
+FAIL throwing invalid color string "abcdef assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
+FAIL throwing invalid color string "--foo assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
+FAIL throwing invalid color string "--bar assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
+FAIL throwing invalid color string "abc() assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
+FAIL throwing invalid color string "initial assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
+FAIL throwing invalid color string "inherit assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
+FAIL throwing invalid color string "unset assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
+FAIL throwing invalid color string "revert assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
+FAIL throwing invalid color string "revert-layer assert_throws_dom: function "() => CSSColorValue.parse(testCase)" did not throw
+FAIL CSSColorValue Tests null is not an object (evaluating 'parsedColor.constructor')
+FAIL CSSColorValue Tests 1 null is not an object (evaluating 'parsedColor.constructor')
+

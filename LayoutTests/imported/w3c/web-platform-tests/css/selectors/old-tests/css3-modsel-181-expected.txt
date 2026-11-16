@@ -1,0 +1,11 @@
+This line should be green.
+
+This line should be green.
+
+This line should be green.
+
+This line should be green.
+
+
+PASS Case sensitivity of selectors in XML
+

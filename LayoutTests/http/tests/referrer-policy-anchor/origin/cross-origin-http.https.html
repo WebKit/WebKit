@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body onload="clickLink()">
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function clickLink() {
+    // Should be the origin
+    let expected = "https://127.0.0.1:8443/";
+    let a = document.createElement("a");
+    let policy = "origin";
+    a.referrerPolicy = policy;
+    a.href = "http://localhost:8000/referrer-policy/resources/check-referrer.py?expected=" + expected + "&policy=" + policy;
+    a.click();
+}
+</script>
+</body>
+</html>

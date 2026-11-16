@@ -1,0 +1,23 @@
+<style>
+html, div { column-width: 1px; }
+video { display: block; }
+</style>
+<body><video id=video></video><div id=columnBox><li></body>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  let sheets = document.styleSheets[0];
+  sheets.insertRule(".abc { }");
+
+  document.body.offsetHeight;
+
+  video.popover = "auto";
+  document.body.offsetHeight;
+
+  sheets.cssRules[0].selectorText = "abc";
+  document.execCommand('fontSize');
+
+  video.remove();
+  columnBox.style.columnWidth = "auto";
+</script>
+This test passes if it does not crash.

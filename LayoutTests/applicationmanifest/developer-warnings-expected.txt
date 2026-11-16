@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Parsing application manifest developer-warnings.manifest: The value of "start_url" is not a valid URL.
+CONSOLE MESSAGE: Parsing application manifest developer-warnings.manifest: The value of "name" is not a string.
+ALERT: Pass
+

@@ -1,0 +1,21 @@
+<script src="../../resources/ui-helper.js"></script>
+<table><td id=td rowspan="2"><object id=object>PASS if no crash or assert
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  td.style.writingMode = "tb";
+  object.style.padding= "10px";
+  document.body.offsetHeight;
+  td.style.padding= "10px";
+  
+  window.testRunner?.notifyDone();
+}
+
+window.addEventListener('load', runTest, false);
+</script>

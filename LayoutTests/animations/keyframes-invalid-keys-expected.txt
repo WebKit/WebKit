@@ -1,0 +1,4 @@
+This test performs an animation of the left property. It should always remain 3px, unless there are errors during parsing, resulting in other values in keyframes with bad keys. Four of the keyframes contain invalid keys, and should be discarded altogether ("If a keyframe selector specifies negative percentage values or values higher than 100%, then the keyframe will be ignored", see http://www.w3.org/TR/css3-animations/#keyframes).
+PASS - "left" property for "box" element at 0.2s saw something close to: 3
+PASS - "left" property for "box" element at 0.8s saw something close to: 3
+

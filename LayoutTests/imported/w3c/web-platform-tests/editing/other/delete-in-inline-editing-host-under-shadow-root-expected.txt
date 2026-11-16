@@ -1,0 +1,6 @@
+
+FAIL Backspace at <span contenteditable>ab[]c</span> promise_test: Unhandled rejection with value: "Failed to set selection to the given ranges whose length is 1, but only 0 ranges are added"
+FAIL Delete at <span contenteditable>a[]bc</span> promise_test: Unhandled rejection with value: "Failed to set selection to the given ranges whose length is 1, but only 0 ranges are added"
+FAIL Backspace at <span contenteditable>a[b]c</span> promise_test: Unhandled rejection with value: "Failed to set selection to the given ranges whose length is 1, but only 0 ranges are added"
+FAIL Delete at <span contenteditable>a[b]c</span> promise_test: Unhandled rejection with value: "Failed to set selection to the given ranges whose length is 1, but only 0 ranges are added"
+

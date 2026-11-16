@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+    <title>TextTrackCueList identity and getCueById</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard §4.8.13.10 "Text track API":
+//   https://html.spec.whatwg.org/multipage/media.html#text-track-api
+//
+// - TextTrack.cues / TextTrack.activeCues must return the same
+//   TextTrackCueList object on each access (while non-null).
+// - TextTrackCueList.getCueById(id) returns the first cue whose identifier
+//   matches id, or null if there is no match or the argument is the empty
+//   string.
+
+function makeTrackWithCues() {
+    const video = document.createElement("video");
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+    return { video, tt };
+}
+
+test(() => {
+    const { tt } = makeTrackWithCues();
+    const a = tt.cues;
+    const b = tt.cues;
+    assert_equals(a, b, "tt.cues returns the same TextTrackCueList instance");
+
+    const c1 = new VTTCue(0, 1, "a");
+    tt.addCue(c1);
+    assert_equals(tt.cues, a, "tt.cues identity stable across addCue");
+
+    tt.removeCue(c1);
+    assert_equals(tt.cues, a, "tt.cues identity stable across removeCue");
+}, "cues: same TextTrackCueList instance returned across calls");
+
+test(() => {
+    const { tt } = makeTrackWithCues();
+    // activeCues should also be stable while non-null.
+    const first = tt.activeCues;
+    const second = tt.activeCues;
+    assert_equals(first, second,
+        "activeCues returns the same TextTrackCueList instance across calls (while non-null)");
+}, "activeCues: same TextTrackCueList instance returned across calls");
+
+test(() => {
+    const { tt } = makeTrackWithCues();
+    const cueA = new VTTCue(0, 1, "alpha");
+    cueA.id = "a";
+    const cueB = new VTTCue(1, 2, "beta");
+    cueB.id = "b";
+    const cueAnon = new VTTCue(2, 3, "gamma");
+    // cueAnon.id stays empty
+    const cueDup = new VTTCue(3, 4, "alpha-dup");
+    cueDup.id = "a";
+
+    tt.addCue(cueA);
+    tt.addCue(cueB);
+    tt.addCue(cueAnon);
+    tt.addCue(cueDup);
+
+    assert_equals(tt.cues.getCueById("a"), cueA,
+        "getCueById returns the first matching cue");
+    assert_equals(tt.cues.getCueById("b"), cueB,
+        "getCueById returns a non-first match by id");
+    assert_equals(tt.cues.getCueById("nonexistent"), null,
+        "getCueById returns null when no cue matches");
+    assert_equals(tt.cues.getCueById(""), null,
+        "getCueById returns null for the empty string");
+}, "getCueById: returns first match, null on miss, null on empty-string arg");
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS XRPlane.lastChangedTime does not update if plane does not change - webgl
+PASS XRPlane.lastChangedTime does not update if plane does not change - webgl2
+

@@ -1,0 +1,31 @@
+<style>
+.container {
+  width: 100px;
+  height: 50px;
+  background-color: red;
+  overflow: hidden;
+}
+
+.out_of_flow {
+  display: inline;
+  width: 100px;
+  height: 50px;
+  background-color: green;
+  position: absolute;
+}
+
+#remove_this {
+  display: inline-block;
+  width: 100px;
+  height: 10px;
+  background-color: blue;
+}
+</style>
+<div class=container>
+  <div id=remove_this></div>
+  <div class=out_of_flow></div>
+</div>
+<script>
+document.body.offsetHeight;
+remove_this.style.display = "none";
+</script>

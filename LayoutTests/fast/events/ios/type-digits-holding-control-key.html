@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script type="text/plain" id="ui-script">
+const charactersToType = "1234567890".split("");
+for (const c of charactersToType)
+    uiController.keyDown(c, ["ctrlKey"]);
+</script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const expectedCharacters = "1234567890";
+
+function checkDone()
+{
+    let input = document.getElementById("input");
+    if (input.value === expectedCharacters) {
+        document.getElementById("result").textContent = "PASS";
+        document.body.removeChild(input);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+
+    function handleFocus() {
+        testRunner.runUIScript(document.getElementById("ui-script").text, () => { /* Do nothing */ });
+    }
+    let input = document.getElementById("input");
+    input.addEventListener("focus", handleFocus, { once: true });
+    UIHelper.activateFormControl(input);
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that decimal numbers typed while holding down the <key>Control</key> key are inserted.</p>
+<!--
+Note that when running this test by hande this test assumes that iOS maps Control + k to k for some non-numpad numeral. This
+is a non-issue when running the test in WebKitTestRunner because uiController.keyDown() generates "after key mapping" events.
+-->
+<input type="text" id="input" size="100" oninput="checkDone()">
+<div id="result">FAIL</div>
+</body>
+</html>

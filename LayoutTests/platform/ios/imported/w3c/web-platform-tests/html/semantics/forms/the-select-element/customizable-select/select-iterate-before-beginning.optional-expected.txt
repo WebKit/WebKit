@@ -1,0 +1,7 @@
+button
+one
+two
+
+PASS Attempting to focus the previous option while focused on the first option should not crash.
+FAIL Keyboard navigating backwards over an <hr> and <optgroup> should not crash. assert_equals: second option should be focused after arrow down. expected Element node <option class="two">two</option> but got Element node <option class="one">one</option>
+

@@ -1,0 +1,9 @@
+
+PASS ":host" should be a valid selector
+PASS ":host(.a)" should be a valid selector
+PASS ":host(div.a)" should be a valid selector
+PASS ":host()" should be an invalid selector
+PASS ":host(.a, .b)" should be an invalid selector
+PASS ":host(.a + .b)" should be an invalid selector
+PASS ":host(.a + .b, #c > #d)" should be an invalid selector
+

@@ -1,0 +1,41 @@
+Tests for the CSS.getMatchedStyleForNode command and style rule groupings.
+
+
+== Running test suite: CSS.getMatchedStyleForNode.ScopeGrouping
+-- Running test case: CSS.getMatchedStyleForNode.ScopeGrouping.Outer
+PASS: Should have 0 authored rules.
+
+-- Running test case: CSS.getMatchedStyleForNode.ScopeGrouping.Middle
+PASS: Should have 2 authored rules.
+- Testing rule #0
+PASS: Selector text should be "#middle".
+PASS: "color" property value should be "darkgreen".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeScopeGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "scope-rule".
+PASS: Grouping 0 should not have any text.
+- Testing rule #1
+PASS: Selector text should be "#middle".
+PASS: "color" property value should be "green".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeScopeGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "scope-rule".
+PASS: Grouping 0 should have a text of "(#outer) to (#inner)".
+
+-- Running test case: CSS.getMatchedStyleForNode.ScopeGrouping.Inner
+PASS: Should have 2 authored rules.
+- Testing rule #0
+PASS: Selector text should be "#inner".
+PASS: "color" property value should be "lightblue".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeScopeGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "scope-rule".
+PASS: Grouping 0 should not have any text.
+- Testing rule #1
+PASS: Selector text should be "#inner".
+PASS: "color" property value should be "darkblue".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeScopeGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "scope-rule".
+PASS: Grouping 0 should not have any text.
+

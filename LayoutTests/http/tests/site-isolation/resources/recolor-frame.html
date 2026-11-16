@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Orange. Turns green on "recolor", and replies after the next animation frame. -->
+<style>html, body { margin: 0; width: 100%; height: 100%; } html { background-color: rgb(255, 120, 0); }</style>
+</head>
+<body>
+<script>
+addEventListener("message", event => {
+    if (event.data === "recolor")
+        document.documentElement.style.backgroundColor = "rgb(0, 255, 0)";
+    requestAnimationFrame(() => event.source.postMessage({ reply: event.data }, "*"));
+});
+</script>
+</body>
+</html>

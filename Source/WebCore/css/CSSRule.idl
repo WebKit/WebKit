@@ -1,0 +1,50 @@
+/*
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+// https://drafts.csswg.org/cssom/#the-cssrule-interface
+
+[
+    ExportToWrappedFunction,
+    Exposed=Window,
+    GenerateIsReachable,
+    JSCustomHeader,
+    JSCustomMarkFunction,
+    ConstantsEnum=StyleRuleType
+] interface CSSRule {
+    attribute DOMString cssText;
+    readonly attribute CSSRule? parentRule;
+    readonly attribute CSSStyleSheet? parentStyleSheet;
+
+    // the following attribute and constants are historical
+    [ImplementedAs=typeForCSSOM] readonly attribute unsigned short type;
+    [ImplementedAs=Style] const unsigned short STYLE_RULE = 1;
+    [ImplementedAs=Charset] const unsigned short CHARSET_RULE = 2;
+    [ImplementedAs=Import] const unsigned short IMPORT_RULE = 3;
+    [ImplementedAs=Media] const unsigned short MEDIA_RULE = 4;
+    [ImplementedAs=FontFace] const unsigned short FONT_FACE_RULE = 5;
+    [ImplementedAs=Page] const unsigned short PAGE_RULE = 6;
+    [ImplementedAs=Keyframes] const unsigned short KEYFRAMES_RULE = 7;
+    [ImplementedAs=Keyframe] const unsigned short KEYFRAME_RULE = 8;
+    [ImplementedAs=Margin] const unsigned short MARGIN_RULE = 9;
+    [ImplementedAs=Namespace] const unsigned short NAMESPACE_RULE = 10;
+    [ImplementedAs=CounterStyle] const unsigned short COUNTER_STYLE_RULE = 11;
+    [ImplementedAs=Supports] const unsigned short SUPPORTS_RULE = 12;
+    [ImplementedAs=FontFeatureValues] const unsigned short FONT_FEATURE_VALUES_RULE = 14;
+};

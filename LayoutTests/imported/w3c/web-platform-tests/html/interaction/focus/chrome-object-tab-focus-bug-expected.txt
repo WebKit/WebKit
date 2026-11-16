@@ -1,0 +1,6 @@
+Pressing TAB twice should focus end text box
+
+start  end
+
+PASS focus advances with tab key thorough object element
+

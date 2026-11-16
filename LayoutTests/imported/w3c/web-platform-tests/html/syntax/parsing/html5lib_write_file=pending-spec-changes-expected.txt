@@ -1,0 +1,7 @@
+html5lib parser tests
+
+
+PASS <input type="hidden"><frameset>
+PASS <!DOCTYPE html><table><caption><svg>foo</table>bar
+PASS <table><tr><td><svg><desc><td></desc><circle>
+

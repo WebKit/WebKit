@@ -1,0 +1,12 @@
+When prompted, accept to share your video stream.
+
+
+PASS applyConstraints rejects invalid groupID
+FAIL applyConstraints rejects long string ideal groupID assert_unreached: Accepted ideal long string groupID Reached unreachable code
+PASS applyConstraints rejects long string groupID
+PASS applyConstraints rejects using both mandatory and specific constraints
+PASS applyConstraints accepts invalid ideal groupID, does not change setting
+PASS applyConstraints rejects attempt to switch device using groupId
+FAIL applyConstraints rejects invalid resizeMode assert_unreached: applyConstraints() must fail with invalid resizeMode Reached unreachable code
+PASS applyConstraints accepts invalid ideal resizeMode, does not change setting
+

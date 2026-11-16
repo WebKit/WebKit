@@ -1,0 +1,3 @@
+
+FAIL receiver.getStats() should work on a stopped transceiver but not have inbound-rtp objects assert_false: expected false got true
+

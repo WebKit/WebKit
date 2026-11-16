@@ -1,0 +1,16 @@
+
+
+PASS Canvas width and height attributes are used as the surface size with contain:size
+PASS Canvas width and height attributes are used as the surface size
+PASS Computed style test: canvas with {"width":"10","height":"20"}
+PASS Computed style test: canvas with {"width":"0","height":"1"}
+PASS Computed style test: canvas with {"width":"1","height":"0"}
+PASS Computed style test: canvas with {"width":"0","height":"0"}
+PASS Computed style test: canvas with {"width":"0.5","height":"1.5"}
+PASS Computed style test: canvas with {"width":"10%","height":"20"}
+PASS Computed style test: canvas with {"width":null,"height":null}
+PASS Computed style test: canvas with {"width":"10","height":null}
+PASS Computed style test: canvas with {"width":null,"height":"20"}
+PASS Computed style test: canvas with {"width":"xx","height":"20"}
+PASS Computed style test: canvas with {"width":"20","height":"xx"}
+

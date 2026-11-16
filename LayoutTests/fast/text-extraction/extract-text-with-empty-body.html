@@ -1,0 +1,38 @@
+<!-- webkit-test-runner [ textExtractionEnabled=true useFlexibleViewport=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<style>
+body, html {
+    width: 100%;
+    height: 0;
+    margin: 0;
+    font-size: 18px;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p>Hello world — this is a test</p>
+<div>
+    <a href="https://www.apple.com">Test link</a>
+</div>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
+    document.body.textContent = await UIHelper.requestTextExtraction({
+        mergeParagraphs: true,
+        skipNearlyTransparentContent: true,
+        clipToBounds: true,
+        includeRects: true
+    });
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

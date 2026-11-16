@@ -1,0 +1,18 @@
+This test passes if it doesn't crash
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = () => {
+    document.body.appendChild(document.createElement('br'));
+    let n0 = document.createElement('span');
+    document.body.appendChild(n0);
+    n0.appendChild(document.createElement('tr'));
+    document.body.appendChild(document.createElement('wbr'));
+    document.body.appendChild(document.createElement('wbr'));
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    getSelection().modify('move', 'right', 'line');
+};
+</script>
+

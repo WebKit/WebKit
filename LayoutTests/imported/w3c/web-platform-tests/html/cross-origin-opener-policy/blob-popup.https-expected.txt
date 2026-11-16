@@ -1,0 +1,3 @@
+
+PASS Cross-Origin-Opener-Policy and a blob URL popup
+

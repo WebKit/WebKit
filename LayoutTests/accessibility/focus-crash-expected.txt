@@ -1,0 +1,10 @@
+This tests that focusing and removing element won't cause crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("toBeRemoved") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

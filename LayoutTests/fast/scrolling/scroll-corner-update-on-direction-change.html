@@ -1,0 +1,30 @@
+<style>
+textarea {
+  color: transparent;
+  font-family: Ahem;
+}
+</style>
+<textarea id=change_this>X
+X
+</textarea>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dontForceRepaint();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  change_this.style.direction = "rtl";
+
+  await UIHelper.renderingUpdate();
+  await UIHelper.renderingUpdate();
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

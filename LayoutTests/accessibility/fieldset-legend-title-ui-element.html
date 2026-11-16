@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<span id="externalLabel">External label</span>
+
+<!-- 1: plain fieldset + legend. -->
+<fieldset id="plain">
+<legend id="plainLegend">Plain</legend>
+Name: <input type="text">
+</fieldset>
+
+<!-- 2: fieldset with no legend at all. -->
+<fieldset id="noLegend">
+Name: <input type="text">
+</fieldset>
+
+<!-- 3: fieldset with no legend, but aria-labelledby. The aria-labelledby target labels it. -->
+<fieldset id="noLegendLabelledby" aria-labelledby="externalLabel">
+Name: <input type="text">
+</fieldset>
+
+<!-- 4: fieldset with both a legend and aria-labelledby. aria-labelledby wins. -->
+<fieldset id="legendAndLabelledby" aria-labelledby="externalLabel">
+<legend id="legendAndLabelledbyLegend">Legend wins</legend>
+Name: <input type="text">
+</fieldset>
+
+<!-- 5: legend whose ARIA role overrides its AX role. It is still the title UI element. -->
+<fieldset id="roleOverride">
+<legend id="roleOverrideLegend" role="heading" aria-level="2">Role overridden</legend>
+Name: <input type="text">
+</fieldset>
+
+<!-- 6: two legends. The first one wins. -->
+<fieldset id="twoLegends">
+<legend id="firstLegend">First</legend>
+<legend id="secondLegend">Second</legend>
+Name: <input type="text">
+</fieldset>
+
+<!-- 7: legend that is not a direct child of the fieldset. Not a title UI element. -->
+<fieldset id="nestedLegend">
+<div><legend id="nestedLegendLegend">Nested</legend></div>
+Name: <input type="text">
+</fieldset>
+
+<!-- 8: display: none legend, so it has no renderer. -->
+<fieldset id="displayNoneLegend">
+<legend id="displayNoneLegendLegend" style="display: none;">Display none</legend>
+Name: <input type="text">
+</fieldset>
+
+<!-- 9: display: contents fieldset, so the fieldset itself has no renderer. -->
+<fieldset id="displayContentsFieldset" style="display: contents;" aria-labelledby="externalLabel">
+<legend id="displayContentsFieldsetLegend">Display contents</legend>
+Name: <input type="text">
+</fieldset>
+
+<!-- 10: aria-hidden legend. It has a renderer, so it is still the title UI element. -->
+<fieldset id="ariaHiddenLegend">
+<legend id="ariaHiddenLegendLegend" aria-hidden="true">Aria hidden</legend>
+Name: <input type="text">
+</fieldset>
+
+<!-- 11: display: contents fieldset, so it has no renderer to find a legend in. -->
+<fieldset id="displayContentsWithLegend" style="display: contents;">
+<legend id="displayContentsWithLegendLegend">Display contents with legend</legend>
+Name: <input type="text">
+</fieldset>
+
+<!-- 12: legend buried several layers deep. Also not a title UI element. -->
+<fieldset id="deeplyNestedLegend">
+<div><div><span><legend id="deeplyNestedLegendLegend">Deeply nested</legend></span></div></div>
+Name: <input type="text">
+</fieldset>
+
+<!-- 13: only a direct child legend counts, so the nested one is passed over. -->
+<fieldset id="shallowBeatsDeep">
+<div><legend id="deepLegend">Deep</legend></div>
+<legend id="shallowLegend">Shallow</legend>
+Name: <input type="text">
+</fieldset>
+
+<!-- 14: an inner fieldset's legend belongs to the inner fieldset, not the outer one. -->
+<fieldset id="outerWithoutLegend">
+<div>
+<fieldset id="innerWithLegend">
+<legend id="innerLegend">Inner</legend>
+Name: <input type="text">
+</fieldset>
+</div>
+</fieldset>
+
+<script>
+var output = "This tests that a fieldset's title UI element is its legend.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    function titleUIElementIdentifier(id) {
+        var element = accessibilityController.accessibleElementById(id);
+        if (!element)
+            return "(no AX object for #" + id + ")";
+        var titleUIElement = element.titleUIElement();
+        if (!titleUIElement)
+            return "null";
+        var identifier = titleUIElement.domIdentifier;
+        return identifier ? "#" + identifier : "(unidentified " + titleUIElement.role + ")";
+    }
+
+    var fieldsetIds = [
+        "plain",
+        "noLegend",
+        "noLegendLabelledby",
+        "legendAndLabelledby",
+        "roleOverride",
+        "twoLegends",
+        "nestedLegend",
+        "displayNoneLegend",
+        "displayContentsFieldset",
+        "ariaHiddenLegend",
+        "displayContentsWithLegend",
+        "deeplyNestedLegend",
+        "shallowBeatsDeep",
+        "outerWithoutLegend",
+        "innerWithLegend",
+    ];
+
+    setTimeout(function() {
+        for (var fieldsetId of fieldsetIds)
+            output += `#${fieldsetId} titleUIElement: ${titleUIElementIdentifier(fieldsetId)}\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

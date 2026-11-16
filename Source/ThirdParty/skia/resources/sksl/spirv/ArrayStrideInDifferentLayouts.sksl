@@ -1,0 +1,19 @@
+layout(vulkan, push_constant) uniform testPushConstants {
+    float[2] pushConstantArray;
+};
+
+layout(set=0, binding=0) uniform testUniforms {
+    float[2] uniformArray;
+};
+
+layout(set=0, binding=1) buffer testStorageBuffer {
+    float ssboArray[2];
+};
+
+void main() {
+    float localArray[2] = float[2](1, 2);
+    sk_FragColor =
+            (localArray == uniformArray) &&
+            (uniformArray == pushConstantArray) &&
+            (uniformArray == ssboArray) ? half4(1) : half4(0);
+}

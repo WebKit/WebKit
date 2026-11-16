@@ -1,0 +1,5 @@
+
+
+PASS setPointerCapture: pointer active in outer frame, set capture to inner frame
+PASS setPointerCapture: pointer active in inner frame, set capture to outer frame
+

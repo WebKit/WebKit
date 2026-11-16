@@ -1,0 +1,1 @@
+PASS, removed element, with HTML attribute id, which was inserted on event DOMNodeRemoved.

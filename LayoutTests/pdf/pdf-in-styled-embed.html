@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<html>
+<head>
+<style>
+embed {
+    margin: 200px;
+    width: 300px;
+    height: 300px;
+    border: 20px solid silver;
+    padding: 20px;
+    box-shadow: 0 0 20px black;
+}
+</style>
+<script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+<embed id="plugin" src="../fast/images/resources/green_rectangle.pdf"></embed>
+<pre id="layers"></pre>
+<script>
+testRunner?.waitUntilDone();
+testRunner?.dumpAsText();
+internals?.registerPDFTest(async () => {
+    await UIHelper.waitForPDFFadeIn();
+    layers.textContent = internals.layerTreeAsText(document);
+    testRunner?.notifyDone();
+}, plugin);
+</script>
+</body>
+</html>

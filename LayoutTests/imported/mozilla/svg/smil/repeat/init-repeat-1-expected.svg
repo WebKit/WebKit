@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(50 50)">
+    <circle r="40" style="fill: yellow; stroke: black; stroke-width: 1"/>
+    <path d="M0 -10v20" stroke="blue"/>
+    <path d="M100 -10v20" stroke="blue"/>
+    <path d="M200 -10v20" stroke="blue"/>
+  </g>
+</svg>

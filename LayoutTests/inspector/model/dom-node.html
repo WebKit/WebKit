@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WI.DOMNode");
+
+    suite.addTestCase({
+        name: "WI.DOMNode.attributes",
+        description: "Test getting the attributes of a node.",
+        test(resolve, reject) {
+            WI.domManager.requestDocument((documentNode) => {
+                documentNode.querySelector("#test-id", (nodeId) => {
+                    let domNode = WI.domManager.nodeForId(nodeId);
+                    InspectorTest.assert(domNode, "DOMNode exists");
+
+                    for (let attribute of domNode.attributes())
+                        InspectorTest.log(attribute.name + "=\"" + attribute.value + "\"");
+
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.DOMNode.querySelector",
+        description: "Test getting a child node via querySelector.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+
+            function querySelector(selector) {
+                InspectorTest.log(`Calling querySelector("${selector}") on document node.`);
+                return documentNode.querySelector(selector).then((nodeId) => {
+                    if (!nodeId)
+                        return null;
+                    return WI.domManager.nodeForId(nodeId);
+                });
+            }
+
+            let nodeFromQueryingExistingId = await querySelector("#test-id");
+            InspectorTest.expectThat(nodeFromQueryingExistingId instanceof WI.DOMNode, "`querySelector(\"#test-id\")` should return a WI.DOMNode");
+
+            let nodeFromQueryingNonExistantId = await querySelector("#non-existent-id");
+            InspectorTest.expectNull(nodeFromQueryingNonExistantId, "`querySelector(\"#non-existent-id\")` should return null.");
+
+            await querySelector("^\\_(invalid selector)_/^").catch((error) => {
+                InspectorTest.expectEqual(error.message, "SyntaxError", "`querySelector` with an invalid selector should throw a SyntaxError.");
+            });
+
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the WI.DOMNode model object.</p>
+    <div id="test-id" class="test-class" data-item="test-data"></div>
+</body>
+</html>

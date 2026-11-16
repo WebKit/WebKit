@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+promise_test(async () => {
+    const transformed = new Promise(resolve => window.addEventListener("message", event => resolve(event.data), { once: true }));
+    const frame = document.createElement("iframe");
+    frame.src = "resources/xslt-frame.py";
+    document.body.append(frame);
+    assert_equals(await transformed, "transformed");
+    assert_equals(frame.contentDocument, null);
+    assert_throws_dom("SecurityError", () => frame.contentWindow.document);
+}, "The result of an XSLT transform in a same-origin frame with a Document-Isolation-Policy stays in that frame's agent cluster");
+</script>

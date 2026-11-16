@@ -1,0 +1,11 @@
+<script>
+// Tests that we log a warning to the console once we attempt to create a context and we passed the limit.
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var maxNumberOfActiveContexts = 16;
+var contexts = [];
+for (var i = 0; i <= maxNumberOfActiveContexts; i++)
+    contexts[i] = document.createElement("canvas").getContext("webgl");
+
+</script>

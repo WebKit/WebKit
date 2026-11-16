@@ -1,0 +1,9 @@
+
+PASS A later Path attribute overrides an earlier one
+PASS A non-ASCII byte in the value is not a parse failure
+PASS A non-ASCII Path attribute followed by a valid one is not a parse failure
+PASS A non-ASCII byte in the winning Path attribute is a parse failure
+PASS A Path attribute with non-ASCII bytes appended does not match that path
+PASS A non-ASCII Path attribute does not fall back to the default path
+PASS A lone non-ASCII byte in the winning Path attribute is a parse failure
+

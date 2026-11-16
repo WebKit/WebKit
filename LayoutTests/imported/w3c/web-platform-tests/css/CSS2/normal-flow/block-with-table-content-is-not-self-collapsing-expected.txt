@@ -1,0 +1,5 @@
+
+PASS Margins collapse through an empty self-collapsing container
+PASS Margins do not collapse through a block whose table is nested in an inline box
+PASS Margins do not collapse through a block whose table is a direct child
+

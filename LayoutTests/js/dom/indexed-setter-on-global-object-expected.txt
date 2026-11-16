@@ -1,0 +1,11 @@
+Tests that creating an indexed setter on the global object doesn't break things.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS this.__defineSetter__(42, function() {}) threw exception TypeError: Failed to set an indexed property on Window: Indexed property setter is not supported..
+PASS this[42] is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

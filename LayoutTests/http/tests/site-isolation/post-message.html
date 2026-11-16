@@ -1,0 +1,36 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let messageCount = 0;
+addEventListener("message", (event) => {
+    testPassed("received '" + event.data + "' from " + event.origin);
+    messageCount = messageCount + 1;
+    if (messageCount == 2) { event.source.postMessage("sending to event source", "*") }
+    if (messageCount == 3) { testRunner.notifyDone() }
+});
+
+onload = ()=>{
+    frame.contentWindow.postMessage("hello", "*")
+    frame.contentWindow.postMessage("should not be received", "http://webkit.org")
+    frame.contentWindow.postMessage("world", "http://localhost:8000")
+
+    try {
+        frame.contentWindow.postMessage("should throw", "about:blank")
+    } catch (e) {
+        testPassed("posting a message to about:blank threw an exception: " + e)
+    }
+
+    try {
+        frame.contentWindow.postMessage(window.performance, "/")
+    } catch (e) {
+        testPassed("posting a non-serializable message threw an exception: " + e)
+    }
+}
+
+</script>
+<iframe src="http://localhost:8000/site-isolation/resources/post-message-to-parent.html" id="frame"></iframe>

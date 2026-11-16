@@ -1,0 +1,29 @@
+<body onload="start()">
+<script>
+
+var speechRecognition = null;
+function start()
+{
+    stop();
+
+    speechRecognition = new webkitSpeechRecognition();
+    speechRecognition.onerror = (event) => {
+        window.webkit.messageHandlers.testHandler.postMessage("Error: " + event.error + " - " +  event.message);
+    }
+    speechRecognition.onend = (event) => {
+        window.webkit.messageHandlers.testHandler.postMessage("End");
+    }
+    speechRecognition.start();
+}
+
+function stop()
+{
+    if (!speechRecognition)
+        return;
+
+    speechRecognition.stop();
+    speechRecognition = null;
+}
+
+</script>
+</body>

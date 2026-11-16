@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<style>
+  html {
+    text-indent: 50000vmin hanging;
+    padding-left: 1vh;
+  }
+  #span1, #span2, #span3, #span4 {
+    margin: 100%;
+    padding-left: 100%;
+  }
+  .floatLeft {
+    float: left;
+  }
+</style>
+<script>
+  window.addEventListener("load", () => {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    marquee.appendChild(span2);
+    document.body.scrollTop;
+
+    span4.appendChild(span2);
+    let range = document.createRange();
+    range.selectNodeContents(span1);
+    range.insertNode(span4);
+    document.body.scrollTop;
+
+    details.open = false;
+    span4.remove();
+    document.body.scrollTop;
+    container.remove();
+
+    document.body.innerHTML = "PASS if no crash.";
+    window.testRunner?.notifyDone();
+  });
+</script>
+<div id="container">
+  <table>
+    <li></li>
+    <marquee id="marquee">
+      <div></div>
+      <span id="span1"></span>
+      <span id="span2"><span id="span3" class="floatLeft"></span>A</span>
+    </marquee>
+    <span><span class="floatLeft">B</span></span>
+    <details id="details" open>
+      <embed><span><div><span id="span4"></span></div></span></embed>
+    </details>
+  </table>
+</div>

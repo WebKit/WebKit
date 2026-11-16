@@ -1,0 +1,20 @@
+Testing that the probe manager removes a middle probe when its breakpoint action is removed.
+
+Probe set was added. New count: 1
+Probe with identifier 1 was added to probe set.
+Probe set's probe count: 1
+Breakpoint actions changed. New count: 1
+Probe with identifier 2 was added to probe set.
+Probe set's probe count: 2
+Breakpoint actions changed. New count: 2
+Probe with identifier 3 was added to probe set.
+Probe set's probe count: 3
+Breakpoint actions changed. New count: 3
+Breakpoint was added.
+PASS: Probe set should have three probes after adding three actions.
+Removing middle probe action.
+Probe with identifier 2 was removed from probe set.
+Probe set's probe count: 2
+Breakpoint actions changed. New count: 2
+PASS: Probe set should have two probes after removing the middle action.
+

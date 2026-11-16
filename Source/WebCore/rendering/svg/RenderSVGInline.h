@@ -1,0 +1,93 @@
+/*
+ * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include "RenderBoxModelObject.h"
+#include "SVGPaintServerCache.h"
+
+#include <wtf/UniqueRef.h>
+
+namespace WebCore {
+
+class SVGGraphicsElement;
+
+class RenderSVGInline : public RenderBoxModelObject {
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGInline);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInline);
+public:
+    RenderSVGInline(Type, SVGGraphicsElement&, Style::ComputedStyle&&);
+    RenderSVGInline(Type, Document&, Style::ComputedStyle&&);
+    virtual ~RenderSVGInline();
+
+    inline SVGGraphicsElement& graphicsElement() const;
+
+    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
+
+private:
+    void element() const = delete;
+
+    ASCIILiteral renderName() const override { return "RenderSVGInline"_s; }
+    bool requiresLayer() const final { return false; }
+
+    void updateFromStyle() final;
+
+    // The containing RenderSVGText paints the content. This is only reached when a resource references the SVG inline box directly, which renders nothing.
+    void paint(PaintInfo&, const LayoutPoint&) final { }
+
+    // Chapter 10.4 of the SVG Specification say that we should use the
+    // object bounding box of the parent text element.
+    // We search for the root text element and take its bounding box.
+    // It is also necessary to take the stroke and repaint rect of
+    // this element, since we need it for filters.
+    FloatRect objectBoundingBox() const final;
+    FloatRect strokeBoundingBox() const final;
+    FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
+    FloatRect decoratedBoundingBox() const final;
+
+    LayoutPoint currentSVGLayoutLocation() const final { return { }; }
+    void setCurrentSVGLayoutLocation(const LayoutPoint&) final { ASSERT_NOT_REACHED(); }
+
+    bool needsHasSVGTransformFlags() const final;
+
+    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext&) const final;
+    RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const final;
+
+    std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const final;
+
+    void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const final;
+    const RenderElement* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const final;
+    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
+#if PLATFORM(IOS_FAMILY)
+    void absoluteQuadsForSelection(Vector<FloatQuad>&) const final;
+#endif
+
+    void willBeDestroyed() final;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+
+    SVGPaintServerCache* svgPaintServerCache() const final { return m_svgPaintServerCache.ptr(); }
+
+    const UniqueRef<SVGPaintServerCache> m_svgPaintServerCache { makeUniqueRef<SVGPaintServerCache>() };
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGInline, isRenderSVGInline())

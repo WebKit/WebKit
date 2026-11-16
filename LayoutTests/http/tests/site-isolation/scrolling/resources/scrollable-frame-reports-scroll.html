@@ -1,0 +1,8 @@
+<body style="margin: 0; height: 2000px;">
+<script>
+addEventListener('scroll', () => {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        parent.postMessage({ type: 'scrolled', scrollY: document.scrollingElement.scrollTop }, '*');
+    }));
+});
+</script>

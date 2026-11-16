@@ -1,0 +1,132 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+body { margin: 0; height: 3000px; }
+#list { position: absolute; left: 10px; top: 10px; width: 150px; }
+iframe { position: absolute; width: 300px; height: 200px; border: 0; }
+#parent { left: 200px; top: 10px; }
+#first { left: 10px; top: 250px; }
+#second { left: 330px; top: 250px; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+<select id="list" multiple size="5"></select>
+<script>
+description("Tests that wheel events over listboxes scroll them when the page has several root frames in one process, including a same-site frame inside a cross-site iframe.");
+jsTestIsAsync = true;
+
+const list = document.getElementById('list');
+for (let i = 0; i < 40; ++i)
+    list.appendChild(new Option(`option ${i}`));
+
+function loadIframes()
+{
+    const remainingIDs = new Set(['inner', 'first', 'second']);
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (!event.data.loaded)
+                return;
+            remainingIDs.delete(event.data.id);
+            if (remainingIDs.size)
+                return;
+            removeEventListener('message', listener);
+            resolve();
+        });
+        for (const [id, src] of [
+            ['parent', 'http://localhost:8000/site-isolation/scrolling/resources/listbox-parent-iframe.html?childOrigin=http://127.0.0.1:8000'],
+            ['first', 'http://localhost:8000/site-isolation/scrolling/resources/listbox-iframe.html?id=first'],
+            ['second', 'http://localhost:8000/site-isolation/scrolling/resources/listbox-iframe.html?id=second']]) {
+            const iframe = document.createElement('iframe');
+            iframe.id = id;
+            iframe.src = src;
+            document.body.appendChild(iframe);
+        }
+    });
+}
+
+function sendToFrame(target, message)
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (event.data.listScrollTop === undefined)
+                return;
+            removeEventListener('message', listener);
+            resolve(event.data);
+        });
+        target.postMessage(message, '*');
+    });
+}
+
+const frames = {
+    inner: {
+        name: 'same-site frame inside a cross-site iframe',
+        window: () => document.getElementById('parent').contentWindow.frames[0],
+        offset: () => document.getElementById('parent').getBoundingClientRect(),
+    },
+    first: {
+        name: 'first cross-site iframe',
+        window: () => document.getElementById('first').contentWindow,
+        offset: () => document.getElementById('first').getBoundingClientRect(),
+    },
+    second: {
+        name: 'second cross-site iframe',
+        window: () => document.getElementById('second').contentWindow,
+        offset: () => document.getElementById('second').getBoundingClientRect(),
+    },
+};
+
+function mainFrameState()
+{
+    const listRect = list.getBoundingClientRect();
+    return { listScrollTop: list.scrollTop, scrollY: 0, listRect: { x: listRect.x, y: listRect.y, width: listRect.width, height: listRect.height } };
+}
+
+async function resetAll()
+{
+    scrollTo(0, 0);
+    list.scrollTop = 0;
+    for (const frame of Object.values(frames))
+        await sendToFrame(frame.window(), 'reset');
+    await UIHelper.renderingUpdate();
+    await UIHelper.ensurePresentationUpdate();
+}
+
+async function runCase(frame)
+{
+    await resetAll();
+
+    const queryState = frame ? () => sendToFrame(frame.window(), 'query') : async () => mainFrameState();
+    const offset = frame ? frame.offset() : { left: 0, top: 0 };
+    let state = await queryState();
+    eventSender.mouseMoveTo(offset.left + state.listRect.x + state.listRect.width / 2, offset.top + state.listRect.y + state.listRect.height / 2);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -200, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+    for (let i = 0; i < 20 && !state.listScrollTop && !state.scrollY && !scrollY; ++i) {
+        await UIHelper.renderingUpdate();
+        state = await queryState();
+    }
+
+    const name = frame ? frame.name : 'main frame';
+    if (state.listScrollTop > 0 && !state.scrollY && !scrollY)
+        testPassed(`${name}: scrolled the listbox`);
+    else
+        testFailed(`${name}: listScrollTop=${state.listScrollTop} frameScrollY=${state.scrollY} mainScrollY=${scrollY}`);
+}
+
+onload = async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+    await loadIframes();
+    await runCase(null);
+    await runCase(frames.inner);
+    await runCase(frames.first);
+    await runCase(frames.second);
+    finishJSTest();
+};
+</script>
+</body>

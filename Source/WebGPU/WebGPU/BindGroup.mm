@@ -1,0 +1,1954 @@
+/*
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "BindGroup.h"
+
+#import "APIConversions.h"
+#import "BindGroupLayout.h"
+#import "Buffer.h"
+#import "Device.h"
+#import "ExternalTexture.h"
+#import "MetalSPI.h"
+#import "RenderBundle.h"
+#import "Sampler.h"
+#import "TextureView.h"
+#import <ranges>
+#import <wtf/Borrow.h>
+#import <wtf/EnumeratedArray.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <wtf/spi/cocoa/IOSurfaceSPI.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <CoreVideo/CVPixelBufferPrivate.h>
+#else
+
+// FIXME: Move to CoreVideoSPI.h.
+enum {
+    kCVPixelFormatType_420YpCbCr10PackedBiPlanarVideoRange = 'p420',
+    kCVPixelFormatType_422YpCbCr10PackedBiPlanarVideoRange = 'p422',
+    kCVPixelFormatType_444YpCbCr10PackedBiPlanarVideoRange = 'p444',
+#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
+    kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange = '&8v0',
+    kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange = '&8f0',
+#endif
+};
+#endif
+
+namespace WebGPU::Metal {
+
+namespace {
+constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
+constexpr ShaderStage stagesPlusUndefined[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute, ShaderStage::Undefined };
+constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
+constexpr size_t stageCount = std::size(stages);
+constexpr size_t stagesPlusUndefinedCount = std::size(stagesPlusUndefined);
+}
+
+NODELETE static MTLRenderStages metalRenderStage(ShaderStage shaderStage)
+{
+    switch (shaderStage) {
+    case ShaderStage::Vertex:
+        return MTLRenderStageVertex;
+    case ShaderStage::Fragment:
+        return MTLRenderStageFragment;
+    case ShaderStage::Compute:
+        return BindGroup::MTLRenderStageCompute;
+    case ShaderStage::Undefined:
+        return BindGroup::MTLRenderStageUndefined;
+    }
+}
+
+#if HAVE(COREVIDEO_METAL_SUPPORT)
+
+enum class TransferFunctionCV {
+    kITU_R_709_2,
+    kITU_R_601_4,
+    kSMPTE_240M_1995,
+    kITU_R_2020,
+};
+
+enum class PixelRange {
+    Video,
+    Full
+};
+
+NODELETE static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
+{
+    switch (pixelFormat) {
+    case kCVPixelFormatType_4444AYpCbCr8:
+    case kCVPixelFormatType_4444AYpCbCr16:
+    case kCVPixelFormatType_422YpCbCr_4A_8BiPlanar:
+    case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange:
+    case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange:
+    case kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange:
+    case kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange:
+#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
+    case kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange:
+#endif
+        return PixelRange::Video;
+    case kCVPixelFormatType_420YpCbCr8PlanarFullRange:
+    case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange:
+    case kCVPixelFormatType_422YpCbCr8FullRange:
+    case kCVPixelFormatType_ARGB2101010LEPacked:
+    case kCVPixelFormatType_420YpCbCr10BiPlanarFullRange:
+    case kCVPixelFormatType_422YpCbCr10BiPlanarFullRange:
+    case kCVPixelFormatType_444YpCbCr10BiPlanarFullRange:
+    case kCVPixelFormatType_Lossless_420YpCbCr10PackedBiPlanarFullRange:
+#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
+    case kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange:
+#endif
+        return PixelRange::Full;
+    default:
+        return PixelRange::Video;
+    }
+}
+
+static TransferFunctionCV transferFunctionFromString(RetainPtr<CFStringRef> string)
+{
+    if (!string || CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
+        return TransferFunctionCV::kITU_R_709_2;
+    if (CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_601_4))
+        return TransferFunctionCV::kITU_R_601_4;
+    if (CFEqual(string, kCVImageBufferYCbCrMatrix_SMPTE_240M_1995))
+        return TransferFunctionCV::kSMPTE_240M_1995;
+    if (CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_2020))
+        return TransferFunctionCV::kITU_R_2020;
+
+    ASSERT_NOT_REACHED("Unexpected transfer function format");
+    return TransferFunctionCV::kITU_R_709_2;
+}
+
+// How a Metal texture normalizes the samples of the format it reads, which is what the YCbCr columns
+// of the matrix below are scaled by. The constants are derived for an 8-bit sample c normalized to
+// c/255, so a 10-bit code c, which is c/4 as 8 bits, needs the ratio of what its texture gives to that.
+enum class SampleNormalization {
+    // c/255.
+    EightBit,
+    // The non-packed 10-bit formats keep a code c in the top 10 bits of 16, which a 16-bit texture
+    // normalizes to 64c/65535.
+    TenBitInSixteen,
+    // The packed 10-bit formats are read through 10-bit textures, which normalize c to c/1023.
+    TenBitPacked,
+};
+
+static constexpr float yCbCrScale(SampleNormalization normalization)
+{
+    switch (normalization) {
+    case SampleNormalization::EightBit:
+        return 1.f;
+    case SampleNormalization::TenBitInSixteen:
+        return 65535.f / (64.f * 4.f * 255.f);
+    case SampleNormalization::TenBitPacked:
+        return 1023.f / (4.f * 255.f);
+    }
+}
+
+// Columns are the Y, Cb, Cr and constant terms of the YCbCr-to-RGB conversion, over inputs normalized
+// by 255 rather than 256, which is what sampling an 8-bit Metal texture gives. Each is derived from the
+// standard's luma coefficients: R = Y' + 2(1-Kr)Cr', B = Y' + 2(1-Kb)Cb', and G from the remainder,
+// where a video-range Y' is (255Y - 16)/219 and a video-range chroma is (255C - 128)/224. The Y, Cb
+// and Cr columns are scaled for the way the format's texture normalizes its samples; the constant
+// column, which is added to the result, is not.
+template<SampleNormalization normalization>
+static simd::float4x3 colorSpaceConversionMatrixForPixelBuffer(CVPixelBufferRef pixelBuffer)
+{
+    constexpr float scale = yCbCrScale(normalization);
+    auto scaledColumn = [](float y, float cb, float cr) {
+        return simd::make_float3(y * scale, cb * scale, cr * scale);
+    };
+
+    auto format = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    auto range = pixelRangeFromPixelFormat(format);
+    auto transferFunction = transferFunctionFromString(adoptCF((CFStringRef)CVBufferCopyAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, nil)));
+
+    switch (transferFunction) {
+    case TransferFunctionCV::kITU_R_709_2: {
+        switch (range) {
+        case PixelRange::Full:
+            return simd::float4x3(scaledColumn(+1.00000000f, +1.00000000f, +1.00000000f),
+                scaledColumn(+0.00000000f, -0.18732430f, +1.85560000f),
+                scaledColumn(+1.57480000f, -0.46813550f, +0.00000000f),
+                simd::make_float3(-0.79048784f, +0.32901511f, -0.93143764f));
+        case PixelRange::Video:
+            return simd::float4x3(scaledColumn(+1.16438356f, +1.16438356f, +1.16438356f),
+                scaledColumn(+0.00000000f, -0.21324866f, +2.11240177f),
+                scaledColumn(+1.79274106f, -0.53292211f, +0.00000000f),
+                simd::make_float3(-0.97294507f, +0.30148910f, -1.13340221f));
+        }
+    }
+
+    case TransferFunctionCV::kITU_R_601_4: {
+        switch (range) {
+        case PixelRange::Full:
+            return simd::float4x3(scaledColumn(+1.00000000f, +1.00000000f, +1.00000000f),
+                scaledColumn(+0.00000000f, -0.34413628f, +1.77200000f),
+                scaledColumn(+1.40200000f, -0.71413629f, +0.00000000f),
+                simd::make_float3(-0.70374902f, +0.53121133f, -0.88947451f));
+
+        case PixelRange::Video:
+            return simd::float4x3(scaledColumn(+1.16438356f, +1.16438356f, +1.16438356f),
+                scaledColumn(+0.00000000f, -0.39176200f, +2.01723214f),
+                scaledColumn(+1.59602678f, -0.81296769f, +0.00000000f),
+                simd::make_float3(-0.87420221f, +0.53166750f, -1.08563078f));
+        }
+    }
+
+    case TransferFunctionCV::kSMPTE_240M_1995: {
+        switch (range) {
+        case PixelRange::Full:
+            return simd::float4x3(scaledColumn(+1.00000000f, +1.00000000f, +1.00000000f),
+                scaledColumn(+0.00000000f, -0.22662197f, +1.82600000f),
+                scaledColumn(+1.57600000f, -0.47662197f, +0.00000000f),
+                simd::make_float3(-0.79109020f, +0.35300088f, -0.91658039f));
+        case PixelRange::Video:
+            return simd::float4x3(scaledColumn(+1.16438356f, +1.16438356f, +1.16438356f),
+                scaledColumn(+0.00000000f, -0.25798483f, +2.07870536f),
+                scaledColumn(+1.79410714f, -0.54258304f, +0.00000000f),
+                simd::make_float3(-0.97363079f, +0.32879432f, -1.11648793f));
+        }
+    }
+
+    case TransferFunctionCV::kITU_R_2020: {
+        switch (range) {
+        case PixelRange::Full:
+            return simd::float4x3(scaledColumn(+1.00000000f, +1.00000000f, +1.00000000f),
+                scaledColumn(+0.00000000f, -0.16455310f, +1.88140000f),
+                scaledColumn(+1.47460000f, -0.57135310f, +0.00000000f),
+                simd::make_float3(-0.74019137f, +0.36939605f, -0.94438902f));
+        case PixelRange::Video:
+            return simd::float4x3(scaledColumn(+1.16438356f, +1.16438356f, +1.16438356f),
+                scaledColumn(+0.00000000f, -0.18732607f, +2.14177231f),
+                scaledColumn(+1.67867410f, -0.65042428f, +0.00000000f),
+                simd::make_float3(-0.91568793f, +0.34745847f, -1.14814507f));
+        }
+    } }
+}
+
+static simd::float4x3 colorSpaceConversionMatrixForPixelBuffer(CVPixelBufferRef pixelBuffer)
+{
+    switch (CVPixelBufferGetPixelFormatType(pixelBuffer)) {
+    case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange:
+    case kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange:
+    case kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange:
+    case kCVPixelFormatType_420YpCbCr10BiPlanarFullRange:
+    case kCVPixelFormatType_422YpCbCr10BiPlanarFullRange:
+    case kCVPixelFormatType_444YpCbCr10BiPlanarFullRange:
+        return colorSpaceConversionMatrixForPixelBuffer<SampleNormalization::TenBitInSixteen>(pixelBuffer);
+    case kCVPixelFormatType_Lossless_420YpCbCr10PackedBiPlanarVideoRange:
+    case kCVPixelFormatType_Lossless_422YpCbCr10PackedBiPlanarVideoRange:
+    case kCVPixelFormatType_Lossless_420YpCbCr10PackedBiPlanarFullRange:
+    case kCVPixelFormatType_Lossy_420YpCbCr10PackedBiPlanarVideoRange:
+    case kCVPixelFormatType_Lossy_422YpCbCr10PackedBiPlanarVideoRange:
+    case kCVPixelFormatType_420YpCbCr10PackedBiPlanarVideoRange:
+    case kCVPixelFormatType_422YpCbCr10PackedBiPlanarVideoRange:
+    case kCVPixelFormatType_444YpCbCr10PackedBiPlanarVideoRange:
+        return colorSpaceConversionMatrixForPixelBuffer<SampleNormalization::TenBitPacked>(pixelBuffer);
+    default:
+        return colorSpaceConversionMatrixForPixelBuffer<SampleNormalization::EightBit>(pixelBuffer);
+    }
+}
+
+static MTLPixelFormat metalPixelFormat(CVPixelBufferRef pixelBuffer, size_t plane, std::optional<MTLTextureSwizzleChannels>& swizzle, bool supportsExtendedFormats)
+{
+    auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    auto biplanarFormat = [](int plane) {
+        return plane ? MTLPixelFormatRG8Unorm : MTLPixelFormatR8Unorm;
+    };
+    // Non-packed 10-bit formats keep each sample in the 10 MSBs of 16 bits, so both planes have to be
+    // read as 16-bit; reading the chroma plane as 8-bit pairs scrambles Cb and Cr.
+    auto biplanar16BitFormat = [](int plane) {
+        return plane ? MTLPixelFormatRG16Unorm : MTLPixelFormatR16Unorm;
+    };
+    // Packed 10-bit formats keep three samples to 32 bits with no padding, which only these formats
+    // read. The YCbCr formats which describe both planes at once sample as RGB, already converted with
+    // a matrix of Metal's choosing, which is no good to a shader applying the frame's own.
+    auto packed10BitFormat = [supportsExtendedFormats, biplanarFormat](int plane) -> MTLPixelFormat {
+        if (!supportsExtendedFormats)
+            return biplanarFormat(plane);
+        return plane ? static_cast<MTLPixelFormat>(MTLPixelFormatRG10Unorm_PACKED) : static_cast<MTLPixelFormat>(MTLPixelFormatR10Unorm_PACKED);
+    };
+
+    switch (pixelFormat) {
+    case kCVPixelFormatType_1Monochrome: /* 1 bit indexed */
+    case kCVPixelFormatType_2Indexed: /* 2 bit indexed */
+    case kCVPixelFormatType_4Indexed: /* 4 bit indexed */
+    case kCVPixelFormatType_8Indexed: /* 8 bit indexed */
+    case kCVPixelFormatType_1IndexedGray_WhiteIsZero: /* 1 bit indexed gray, white is zero */
+    case kCVPixelFormatType_2IndexedGray_WhiteIsZero: /* 2 bit indexed gray, white is zero */
+    case kCVPixelFormatType_4IndexedGray_WhiteIsZero: /* 4 bit indexed gray, white is zero */
+    case kCVPixelFormatType_8IndexedGray_WhiteIsZero: /* 8 bit indexed gray, white is zero */
+        return MTLPixelFormatA8Unorm;
+
+    case kCVPixelFormatType_16BE555: /* 16 bit BE RGB 555 */
+    case kCVPixelFormatType_16LE555:     /* 16 bit LE RGB 555 */
+    case kCVPixelFormatType_16LE5551:     /* 16 bit LE RGB 5551 */
+        return MTLPixelFormatBGR5A1Unorm;
+
+    case kCVPixelFormatType_16BE565:     /* 16 bit BE RGB 565 */
+    case kCVPixelFormatType_16LE565:     /* 16 bit LE RGB 565 */
+        return MTLPixelFormatB5G6R5Unorm;
+
+    case kCVPixelFormatType_24RGB: /* 24 bit RGB */
+        return MTLPixelFormatRGBA8Unorm;
+    case kCVPixelFormatType_32ABGR:     /* 32 bit ABGR */
+        swizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleZero, MTLTextureSwizzleZero, MTLTextureSwizzleZero);
+        return MTLPixelFormatBGRA8Unorm;
+    case kCVPixelFormatType_32ARGB: /* 32 bit ARGB */
+        swizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleZero, MTLTextureSwizzleZero, MTLTextureSwizzleZero);
+        return MTLPixelFormatRGBA8Unorm;
+    case kCVPixelFormatType_24BGR:     /* 24 bit BGR */
+    case kCVPixelFormatType_32BGRA:     /* 32 bit BGRA */
+        return MTLPixelFormatBGRA8Unorm;
+    case kCVPixelFormatType_32RGBA:     /* 32 bit RGBA */
+        return MTLPixelFormatRGBA8Unorm;
+    case kCVPixelFormatType_64ARGB:     /* 64 bit ARGB, 16-bit big-endian samples */
+        swizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleZero, MTLTextureSwizzleZero, MTLTextureSwizzleZero);
+        [[fallthrough]];
+    case kCVPixelFormatType_64RGBALE:     /* 64 bit RGBA, 16-bit little-endian full-range (0-65535) samples */
+        return MTLPixelFormatRGBA16Unorm;
+
+    case kCVPixelFormatType_48RGB:     /* 48 bit RGB, 16-bit big-endian samples */
+        ASSERT_NOT_REACHED();
+        return MTLPixelFormatBGRA8Unorm;
+
+    case kCVPixelFormatType_32AlphaGray:     /* 32 bit AlphaGray, 16-bit big-endian samples, black is zero */
+        return MTLPixelFormatR32Float;
+
+    case kCVPixelFormatType_16Gray:     /* 16 bit Grayscale, 16-bit big-endian samples, black is zero */
+        return MTLPixelFormatR16Float;
+
+    case kCVPixelFormatType_30RGB:     /* 30 bit RGB, 10-bit big-endian samples, 2 unused padding bits (at least significant end). */
+        return MTLPixelFormatBGR10A2Unorm;
+
+    case kCVPixelFormatType_422YpCbCr8:     /* Component Y'CbCr 8-bit 4:2:2, ordered Cb Y'0 Cr Y'1 */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_4444YpCbCrA8:     /* Component Y'CbCrA 8-bit 4:4:4:4, ordered Cb Y' Cr A */
+    case kCVPixelFormatType_4444YpCbCrA8R:     /* Component Y'CbCrA 8-bit 4:4:4:4, rendering format. full range alpha, zero biased YUV, ordered A Y' Cb Cr */
+    case kCVPixelFormatType_4444AYpCbCr8:     /* Component Y'CbCrA 8-bit 4:4:4:4, ordered A Y' Cb Cr, full range alpha, video range Y'CbCr. */
+    case kCVPixelFormatType_4444AYpCbCr16:     /* Component Y'CbCrA 16-bit 4:4:4:4, ordered A Y' Cb Cr, full range alpha, video range Y'CbCr, 16-bit little-endian samples. */
+        ASSERT_NOT_REACHED();
+        return MTLPixelFormatBGRA8Unorm;
+
+    case kCVPixelFormatType_444YpCbCr8:     /* Component Y'CbCr 8-bit 4:4:4, ordered Cr Y' Cb, video range Y'CbCr */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_422YpCbCr16:     /* Component Y'CbCr 10,12,14,16-bit 4:2:2 */
+        ASSERT_NOT_REACHED();
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_422YpCbCr10:     /* Component Y'CbCr 10-bit 4:2:2 */
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR8_422_1P) : biplanarFormat(plane);
+
+    case kCVPixelFormatType_444YpCbCr10:     /* Component Y'CbCr 10-bit 4:4:4 */
+        return !plane && supportsExtendedFormats ? static_cast<MTLPixelFormat>(MTLPixelFormatYCBCR10_444_1P) : biplanarFormat(plane);
+
+    case kCVPixelFormatType_420YpCbCr8Planar:   /* Planar Component Y'CbCr 8-bit 4:2:0.  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrPlanar struct */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_420YpCbCr8PlanarFullRange:   /* Planar Component Y'CbCr 8-bit 4:2:0, full range.  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrPlanar struct */
+    case kCVPixelFormatType_422YpCbCr_4A_8BiPlanar: /* First plane: Video-range Component Y'CbCr 8-bit 4:2:2, ordered Cb Y'0 Cr Y'1; second plane: alpha 8-bit 0-255 */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange: /* Bi-Planar Component Y'CbCr 8-bit 4:2:0, video-range (luma=[16,235] chroma=[16,240]).  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrBiPlanar struct */
+    case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange: /* Bi-Planar Component Y'CbCr 8-bit 4:2:0, full-range (luma=[0,255] chroma=[1,255]).  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrBiPlanar struct */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange: /* Bi-Planar Component Y'CbCr 8-bit 4:2:2, video-range (luma=[16,235] chroma=[16,240]).  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrBiPlanar struct */
+    case kCVPixelFormatType_422YpCbCr8BiPlanarFullRange: /* Bi-Planar Component Y'CbCr 8-bit 4:2:2, full-range (luma=[0,255] chroma=[1,255]).  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrBiPlanar struct */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_444YpCbCr8BiPlanarVideoRange: /* Bi-Planar Component Y'CbCr 8-bit 4:4:4, video-range (luma=[16,235] chroma=[16,240]).  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrBiPlanar struct */
+    case kCVPixelFormatType_444YpCbCr8BiPlanarFullRange: /* Bi-Planar Component Y'CbCr 8-bit 4:4:4, full-range (luma=[0,255] chroma=[1,255]).  baseAddr points to a big-endian CVPlanarPixelBufferInfo_YCbCrBiPlanar struct */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_422YpCbCr8_yuvs:     /* Component Y'CbCr 8-bit 4:2:2, ordered Y'0 Cb Y'1 Cr */
+    case kCVPixelFormatType_422YpCbCr8FullRange: /* Component Y'CbCr 8-bit 4:2:2, full range, ordered Y'0 Cb Y'1 Cr */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_OneComponent8:     /* 8 bit one component, black is zero */
+        return MTLPixelFormatR8Unorm;
+
+    case kCVPixelFormatType_TwoComponent8:     /* 8 bit two component, black is zero */
+        return MTLPixelFormatRG8Unorm;
+
+    case kCVPixelFormatType_30RGBLEPackedWideGamut: /* little-endian RGB101010, 2 MSB are zero, wide-gamut (384-895) */
+        return MTLPixelFormatRGB10A2Unorm;
+    case kCVPixelFormatType_ARGB2101010LEPacked:     /* little-endian ARGB2101010 full-range ARGB */
+        swizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleZero, MTLTextureSwizzleZero, MTLTextureSwizzleZero);
+        return MTLPixelFormatRGB10A2Unorm;
+
+    case kCVPixelFormatType_40ARGBLEWideGamut: /* little-endian ARGB10101010, each 10 bits in the MSBs of 16bits, wide-gamut (384-895, including alpha) */
+    case kCVPixelFormatType_40ARGBLEWideGamutPremultiplied: /* little-endian ARGB10101010, each 10 bits in the MSBs of 16bits, wide-gamut (384-895, including alpha). Alpha premultiplied */
+        return MTLPixelFormatInvalid;
+
+    case kCVPixelFormatType_OneComponent10:     /* 10 bit little-endian one component, stored as 10 MSBs of 16 bits, black is zero */
+        return MTLPixelFormatInvalid;
+
+    case kCVPixelFormatType_OneComponent12:     /* 12 bit little-endian one component, stored as 12 MSBs of 16 bits, black is zero */
+        return MTLPixelFormatInvalid;
+
+    case kCVPixelFormatType_OneComponent16:     /* 16 bit little-endian one component, black is zero */
+        return MTLPixelFormatR16Unorm;
+
+    case kCVPixelFormatType_TwoComponent16:     /* 16 bit little-endian two component, black is zero */
+        return MTLPixelFormatRG16Unorm;
+
+    case kCVPixelFormatType_OneComponent16Half:     /* 16 bit one component IEEE half-precision float, 16-bit little-endian samples */
+        return MTLPixelFormatR16Float;
+
+    case kCVPixelFormatType_OneComponent32Float:     /* 32 bit one component IEEE float, 32-bit little-endian samples */
+        return MTLPixelFormatR32Float;
+
+    case kCVPixelFormatType_TwoComponent16Half:     /* 16 bit two component IEEE half-precision float, 16-bit little-endian samples */
+        return MTLPixelFormatRG16Float;
+
+    case kCVPixelFormatType_TwoComponent32Float:     /* 32 bit two component IEEE float, 32-bit little-endian samples */
+        return MTLPixelFormatRG32Float;
+
+    case kCVPixelFormatType_64RGBAHalf:     /* 64 bit RGBA IEEE half-precision float, 16-bit little-endian samples */
+        return MTLPixelFormatRGBA16Float;
+
+    case kCVPixelFormatType_128RGBAFloat:     /* 128 bit RGBA IEEE float, 32-bit little-endian samples */
+        return MTLPixelFormatRGBA32Float;
+
+    case kCVPixelFormatType_14Bayer_GRBG:     /* Bayer 14-bit Little-Endian, packed in 16-bits, ordered G R G R... alternating with B G B G... */
+    case kCVPixelFormatType_14Bayer_RGGB:     /* Bayer 14-bit Little-Endian, packed in 16-bits, ordered R G R G... alternating with G B G B... */
+    case kCVPixelFormatType_14Bayer_BGGR:     /* Bayer 14-bit Little-Endian, packed in 16-bits, ordered B G B G... alternating with G R G R... */
+    case kCVPixelFormatType_14Bayer_GBRG:     /* Bayer 14-bit Little-Endian, packed in 16-bits, ordered G B G B... alternating with R G R G... */
+    case kCVPixelFormatType_DisparityFloat16:     /* IEEE754-2008 binary16 (half float), describing the normalized shift when comparing two images. Units are 1/meters: ( pixelShift / (pixelFocalLength * baselineInMeters) ) */
+    case kCVPixelFormatType_DisparityFloat32:     /* IEEE754-2008 binary32 float, describing the normalized shift when comparing two images. Units are 1/meters: ( pixelShift / (pixelFocalLength * baselineInMeters) ) */
+        ASSERT_NOT_REACHED();
+        return MTLPixelFormatBGRA8Unorm;
+
+    case kCVPixelFormatType_DepthFloat16:     /* IEEE754-2008 binary16 (half float), describing the depth (distance to an object) in meters */
+        return MTLPixelFormatDepth16Unorm;
+    case kCVPixelFormatType_DepthFloat32:     /* IEEE754-2008 binary32 float, describing the depth (distance to an object) in meters */
+        return MTLPixelFormatDepth32Float;
+
+    case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange: /* 2 plane YCbCr10 4:2:0, each 10 bits in the MSBs of 16bits, video-range (luma=[64,940] chroma=[64,960]) */
+        return biplanar16BitFormat(plane);
+    case kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange: /* 2 plane YCbCr10 4:2:2, each 10 bits in the MSBs of 16bits, video-range (luma=[64,940] chroma=[64,960]) */
+        return biplanar16BitFormat(plane);
+    case kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange: /* 2 plane YCbCr10 4:4:4, each 10 bits in the MSBs of 16bits, video-range (luma=[64,940] chroma=[64,960]) */
+        return biplanar16BitFormat(plane);
+    case kCVPixelFormatType_420YpCbCr10BiPlanarFullRange: /* 2 plane YCbCr10 4:2:0, each 10 bits in the MSBs of 16bits, full-range (Y range 0-1023) */
+        return biplanar16BitFormat(plane);
+    case kCVPixelFormatType_422YpCbCr10BiPlanarFullRange: /* 2 plane YCbCr10 4:2:2, each 10 bits in the MSBs of 16bits, full-range (Y range 0-1023) */
+        return biplanar16BitFormat(plane);
+    case kCVPixelFormatType_444YpCbCr10BiPlanarFullRange: /* 2 plane YCbCr10 4:4:4, each 10 bits in the MSBs of 16bits, full-range (Y range 0-1023) */
+        return biplanar16BitFormat(plane);
+    case kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar: /* first and second planes as per 420YpCbCr8BiPlanarVideoRange (420v), alpha 8 bits in third plane full-range.  No CVPlanarPixelBufferInfo struct. */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_16VersatileBayer:   /* Single plane Bayer 16-bit little-endian sensor element ("sensel") samples from full-size decoding of ProRes RAW images; Bayer pattern (sensel ordering) and other raw conversion information is described via buffer attachments */
+    case kCVPixelFormatType_64RGBA_DownscaledProResRAW:   /* Single plane 64-bit RGBA (16-bit little-endian samples) from downscaled decoding of ProRes RAW images; components--which may not be co-sited with one another--are sensel values and require raw conversion, information for which is described via buffer attachments */
+        ASSERT_NOT_REACHED();
+        return MTLPixelFormatBGRA8Unorm;
+
+    case kCVPixelFormatType_422YpCbCr16BiPlanarVideoRange: /* 2 plane YCbCr16 4:2:2, video-range (luma=[4096,60160] chroma=[4096,61440]) */
+        ASSERT_NOT_REACHED();
+        return MTLPixelFormatInvalid;
+
+    case kCVPixelFormatType_444YpCbCr16BiPlanarVideoRange: /* 2 plane YCbCr16 4:4:4, video-range (luma=[4096,60160] chroma=[4096,61440]) */
+    case kCVPixelFormatType_444YpCbCr16VideoRange_16A_TriPlanar: /* 3 plane video-range YCbCr16 4:4:4 with 16-bit full-range alpha (luma=[4096,60160] chroma=[4096,61440] alpha=[0,65535]).  No CVPlanarPixelBufferInfo struct. */
+        ASSERT_NOT_REACHED();
+        return MTLPixelFormatInvalid;
+
+    case kCVPixelFormatType_Lossless_32BGRA: /* Lossless-compressed form of case kCVPixelFormatType_32BGRA. */
+        return MTLPixelFormatBGRA8Unorm;
+
+        // Lossless-compressed Bi-planar YCbCr pixel format types
+    case kCVPixelFormatType_Lossless_420YpCbCr8BiPlanarVideoRange: /* Lossless-compressed form of case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. */
+    case kCVPixelFormatType_Lossless_420YpCbCr8BiPlanarFullRange: /* Lossless-compressed form of case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange.  No CVPlanarPixelBufferInfo struct. */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_Lossless_420YpCbCr10PackedBiPlanarVideoRange: /* Lossless-compressed-packed form of case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. Format is compressed-packed with no padding bits between pixels. */
+        return packed10BitFormat(plane);
+
+    case kCVPixelFormatType_Lossless_422YpCbCr10PackedBiPlanarVideoRange: /* Lossless-compressed form of case kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. Format is compressed-packed with no padding bits between pixels. */
+        return packed10BitFormat(plane);
+
+    case kCVPixelFormatType_Lossless_420YpCbCr10PackedBiPlanarFullRange: /* Lossless-compressed form of case kCVPixelFormatType_420YpCbCr10BiPlanarFullRange.  No CVPlanarPixelBufferInfo struct. Format is compressed-packed with no padding bits between pixels. */
+        return packed10BitFormat(plane);
+
+    case kCVPixelFormatType_Lossy_32BGRA: /* Lossy-compressed form of case kCVPixelFormatType_32BGRA. No CVPlanarPixelBufferInfo struct.  */
+        return MTLPixelFormatBGRA8Unorm;
+
+    case kCVPixelFormatType_Lossy_420YpCbCr8BiPlanarVideoRange: /* Lossy-compressed form of case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. */
+    case kCVPixelFormatType_Lossy_420YpCbCr8BiPlanarFullRange: /* Lossy-compressed form of case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange.  No CVPlanarPixelBufferInfo struct. */
+        return biplanarFormat(plane);
+
+    case kCVPixelFormatType_Lossy_420YpCbCr10PackedBiPlanarVideoRange: /* Lossy-compressed form of case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. Format is compressed-packed with no padding bits between pixels. */
+        return packed10BitFormat(plane);
+
+    case kCVPixelFormatType_Lossy_422YpCbCr10PackedBiPlanarVideoRange: /* Lossy-compressed form of kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange.  No CVPlanarPixelBufferInfo struct. Format is compressed-packed with no padding bits between pixels. */
+        return packed10BitFormat(plane);
+
+    case kCVPixelFormatType_420YpCbCr10PackedBiPlanarVideoRange:
+        return packed10BitFormat(plane);
+    case kCVPixelFormatType_422YpCbCr10PackedBiPlanarVideoRange:
+        return packed10BitFormat(plane);
+    case kCVPixelFormatType_444YpCbCr10PackedBiPlanarVideoRange:
+        return packed10BitFormat(plane);
+    }
+
+    return MTLPixelFormatInvalid;
+}
+
+// A single-plane frame carries straight alpha, but textureSampleBaseClampToEdge() has to return
+// premultiplied color, and premultiplying after the sampler has filtered the plane is not the same as
+// filtering color that was already premultiplied. So the color is premultiplied into a copy before
+// the sampler ever sees it. Because the copy is in natural RGBA order, the alpha-first formats need
+// their permutation undone on the way in: those reach Metal as a format naming a different channel
+// order, which is also why they carry a swizzle out of metalPixelFormat(). MTLPixelFormatInvalid means
+// "leave this frame alone", either because nothing here can premultiply the format or because the
+// frame's alpha is not straight to begin with.
+struct PremultiplyAlphaParameters {
+    MTLPixelFormat destinationFormat { MTLPixelFormatInvalid };
+    std::optional<MTLTextureSwizzleChannels> sourceSwizzle;
+};
+
+static PremultiplyAlphaParameters premultiplyAlphaParameters(CVPixelBufferRef pixelBuffer)
+{
+    if (adoptCF(CVBufferCopyAttachment(pixelBuffer, kCVImageBufferAlphaChannelIsOpaque, nullptr)).get() == kCFBooleanTrue)
+        return { };
+
+    if (RetainPtr alphaMode = adoptCF(CVBufferCopyAttachment(pixelBuffer, kCVImageBufferAlphaChannelModeKey, nullptr)); alphaMode && CFEqual(alphaMode.get(), kCVImageBufferAlphaChannelMode_PremultipliedAlpha))
+        return { };
+
+    // Alpha comes first in memory, so every channel is one place further along than the Metal format
+    // says: red is in green, green in blue, blue in alpha, and alpha in red.
+    auto alphaFirstSwizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleBlue, MTLTextureSwizzleAlpha, MTLTextureSwizzleRed);
+
+    switch (CVPixelBufferGetPixelFormatType(pixelBuffer)) {
+    case kCVPixelFormatType_32BGRA:
+    case kCVPixelFormatType_32RGBA:
+        return { MTLPixelFormatRGBA8Unorm, std::nullopt };
+    case kCVPixelFormatType_32ARGB:
+        return { MTLPixelFormatRGBA8Unorm, alphaFirstSwizzle };
+    case kCVPixelFormatType_64RGBALE:
+        return { MTLPixelFormatRGBA16Unorm, std::nullopt };
+    case kCVPixelFormatType_64ARGB:
+        return { MTLPixelFormatRGBA16Unorm, alphaFirstSwizzle };
+    default:
+        return { };
+    }
+}
+
+#endif
+
+id<MTLComputePipelineState> Device::premultiplyAlphaPipeline() const
+{
+    if (m_premultiplyAlphaPipeline)
+        return m_premultiplyAlphaPipeline;
+
+    NSError *error = nil;
+    /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+using namespace metal;
+[[kernel]] void premultiplyAlpha(texture2d<float, access::read> source [[texture(0)]],
+    texture2d<float, access::write> destination [[texture(1)]],
+    uint2 gid [[thread_position_in_grid]])
+{
+    if (gid.x >= destination.get_width() || gid.y >= destination.get_height())
+        return;
+
+    float4 texel = source.read(gid);
+    destination.write(float4(texel.rgb * texel.a, texel.a), gid);
+})" /* NOLINT */ options:nil error:&error];
+    if (error) {
+        WTFLogAlways("%@", error); // NOLINT
+        return nil;
+    }
+
+    m_premultiplyAlphaPipeline = [m_device newComputePipelineStateWithFunction:[library newFunctionWithName:@"premultiplyAlpha"] error:&error];
+    if (error)
+        WTFLogAlways("%@", error); // NOLINT
+
+    return m_premultiplyAlphaPipeline;
+}
+
+id<MTLTexture> Device::premultipliedAlphaTexture(id<MTLTexture> source, MTLPixelFormat destinationFormat, std::optional<MTLTextureSwizzleChannels> sourceSwizzle) const
+{
+    id<MTLComputePipelineState> pipeline = premultiplyAlphaPipeline();
+    if (!pipeline)
+        return nil;
+
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor new];
+    textureDescriptor.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite | MTLTextureUsagePixelFormatView;
+    textureDescriptor.textureType = MTLTextureType2D;
+    textureDescriptor.width = source.width;
+    textureDescriptor.height = source.height;
+    textureDescriptor.pixelFormat = destinationFormat;
+    textureDescriptor.mipmapLevelCount = 1;
+    textureDescriptor.sampleCount = 1;
+    textureDescriptor.storageMode = MTLStorageModePrivate;
+
+    id<MTLTexture> destination = [m_device newTextureWithDescriptor:textureDescriptor];
+    if (!destination)
+        return nil;
+    setOwnerWithIdentity(destination);
+
+    if (sourceSwizzle)
+        source = [source newTextureViewWithPixelFormat:source.pixelFormat textureType:source.textureType levels:NSMakeRange(0, source.mipmapLevelCount) slices:NSMakeRange(0, source.arrayLength) swizzle:*sourceSwizzle];
+
+    // The pass goes on the default queue, so the commands the page submits afterwards see the result
+    // without any further synchronization.
+    Ref queue = m_defaultQueue;
+    id<MTLCommandBuffer> commandBuffer = queue->commandBufferWithDescriptor([MTLCommandBufferDescriptor new]);
+    if (!commandBuffer)
+        return nil;
+
+    MTLComputePassDescriptor *computePassDescriptor = [MTLComputePassDescriptor new];
+    computePassDescriptor.dispatchType = MTLDispatchTypeSerial;
+    id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoderWithDescriptor:computePassDescriptor];
+    queue->setEncoderForBuffer(commandBuffer, computeEncoder);
+    [computeEncoder setComputePipelineState:pipeline];
+    [computeEncoder setTexture:source atIndex:0];
+    [computeEncoder setTexture:destination atIndex:1];
+    auto threadgroupSize = MTLSizeMake(16, 16, 1);
+    auto threadgroupCount = MTLSizeMake((source.width + threadgroupSize.width - 1) / threadgroupSize.width, (source.height + threadgroupSize.height - 1) / threadgroupSize.height, 1);
+    [computeEncoder dispatchThreadgroups:threadgroupCount threadsPerThreadgroup:threadgroupSize];
+    queue->endEncoding(computeEncoder, commandBuffer);
+    queue->commitMTLCommandBuffer(commandBuffer);
+
+    return destination;
+}
+
+// A single-plane frame has no chroma plane, so it gets a view of its own texture holding the two
+// channels the shader expects to find in a second plane, plus the frame's alpha in the channel a
+// real chroma plane leaves at 1. That gives the shader one way to reach a frame's alpha whether
+// the frame was decoded or came from a canvas. The blue channel, which a real chroma plane samples
+// as 0, tells the shader whether plane 0 already holds premultiplied color.
+static id<MTLTexture> gbTextureFromRGB(id<MTLTexture> texture, bool alphaFirst, bool premultiplied)
+{
+    MTLTextureSwizzle premultipliedChannel = premultiplied ? MTLTextureSwizzleOne : MTLTextureSwizzleZero;
+    auto swizzle = alphaFirst ? MTLTextureSwizzleChannelsMake(MTLTextureSwizzleBlue, MTLTextureSwizzleAlpha, premultipliedChannel, MTLTextureSwizzleRed) : MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen, MTLTextureSwizzleBlue, premultipliedChannel, MTLTextureSwizzleAlpha);
+    return [texture newTextureViewWithPixelFormat:texture.pixelFormat textureType:texture.textureType levels:NSMakeRange(0, texture.mipmapLevelCount) slices:NSMakeRange(0, texture.arrayLength) swizzle:swizzle];
+}
+
+Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, PremultiplyAlpha premultiplyAlpha) const
+{
+#if HAVE(COREVIDEO_METAL_SUPPORT)
+    // colorMatrixBetweenPrimaries() is row-major, and Metal indexes a float3x3 by column.
+    simd::float3x4 primariesConversionMatrix = simd::float3x4(0.f);
+    if (auto matrix = primariesConversionMatrixForPixelBuffer(pixelBuffer, colorSpace)) {
+        auto& m = *matrix;
+        primariesConversionMatrix = simd::float3x4(simd::make_float4(m[0], m[3], m[6], 0.f), simd::make_float4(m[1], m[4], m[7], 0.f), simd::make_float4(m[2], m[5], m[8], 0.f));
+    }
+    primariesConversionMatrix.columns[0].w = static_cast<float>(hdrTransferFunctionForPixelBuffer(pixelBuffer));
+
+    auto premultiplyParameters = premultiplyAlpha == PremultiplyAlpha::Yes ? premultiplyAlphaParameters(pixelBuffer) : PremultiplyAlphaParameters { };
+
+    std::optional<MTLTextureSwizzleChannels> firstPlaneSwizzle, secondPlaneSwizzle;
+
+    CVMetalTextureCacheFlush(m_coreVideoTextureCache.get(), 0);
+    const bool supportsExtendedFormats = [m_device supportsFamily:MTLGPUFamilyApple4];
+    RetainPtr ioSurface = CVPixelBufferGetIOSurface(pixelBuffer);
+    if (!ioSurface || isIntel()) {
+        auto planeCount = std::max<size_t>(CVPixelBufferGetPlaneCount(pixelBuffer), 1);
+        if (planeCount > 2) {
+            ASSERT_NOT_REACHED("non-IOSurface CVPixelBuffer instances with more than two planes are not supported");
+            return { };
+        }
+
+        CVReturn status = CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+        if (status != kCVReturnSuccess)
+            return { };
+
+        std::array<id<MTLTexture>, 2> mtlTextures { };
+
+        for (size_t plane = 0; plane < planeCount; ++plane) {
+            int width = CVPixelBufferGetWidthOfPlane(pixelBuffer, plane);
+            int height = CVPixelBufferGetHeightOfPlane(pixelBuffer, plane);
+
+            MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor new];
+            textureDescriptor.usage = MTLTextureUsageShaderRead;
+            textureDescriptor.textureType = MTLTextureType2D;
+            textureDescriptor.width = width;
+            textureDescriptor.height = height;
+            textureDescriptor.pixelFormat = metalPixelFormat(pixelBuffer, plane, firstPlaneSwizzle, supportsExtendedFormats);
+            if (firstPlaneSwizzle)
+                textureDescriptor.swizzle = *firstPlaneSwizzle;
+            textureDescriptor.mipmapLevelCount = 1;
+            textureDescriptor.sampleCount = 1;
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            textureDescriptor.storageMode = hasUnifiedMemory() ? MTLStorageModeShared : MTLStorageModeManaged;
+            ALLOW_DEPRECATED_DECLARATIONS_END
+#else
+            textureDescriptor.storageMode = hasUnifiedMemory() ? MTLStorageModeShared : MTLStorageModePrivate;
+#endif
+
+            id<MTLTexture> mtlTexture = [m_device newTextureWithDescriptor:textureDescriptor];
+            if (!mtlTexture)
+                return { };
+
+            uint8_t *imageBytes = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, plane));
+            int bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, plane);
+
+            [mtlTexture replaceRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0 withBytes:imageBytes bytesPerRow:bytesPerRow];
+            mtlTextures[plane] = mtlTexture;
+        }
+
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+
+        simd::float4x3 colorSpaceConversionMatrix;
+        if (planeCount > 1)
+            colorSpaceConversionMatrix = colorSpaceConversionMatrixForPixelBuffer(pixelBuffer);
+        else {
+            colorSpaceConversionMatrix = simd::float4x3(1.f);
+            id<MTLTexture> premultipliedTexture = premultiplyParameters.destinationFormat == MTLPixelFormatInvalid ? nil : premultipliedAlphaTexture(mtlTextures[0], premultiplyParameters.destinationFormat, premultiplyParameters.sourceSwizzle);
+            if (premultipliedTexture)
+                mtlTextures[0] = premultipliedTexture;
+            // The premultiplied copy is in natural RGBA order, whatever order the frame arrived in.
+            mtlTextures[1] = gbTextureFromRGB(mtlTextures[0], !premultipliedTexture && firstPlaneSwizzle.has_value(), !!premultipliedTexture);
+        }
+
+        return { mtlTextures[0], mtlTextures[1], simd::float3x2(1.f), colorSpaceConversionMatrix, primariesConversionMatrix };
+    }
+
+    if (auto optionalWebProcessID = webProcessID()) {
+        if (auto webProcessID = optionalWebProcessID->sendRight())
+            IOSurfaceSetOwnershipIdentity(ioSurface, webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
+    }
+
+    id<MTLTexture> baseTexture = nil;
+    id<MTLTexture> mtlTexture0 = nil;
+    id<MTLTexture> mtlTexture1 = nil;
+
+    CVMetalTextureRef plane0 = nullptr;
+    CVMetalTextureRef plane1 = nullptr;
+    auto planeCount = CVPixelBufferGetPlaneCount(pixelBuffer);
+    CVReturn status1 = kCVReturnInvalidPixelFormat;
+    CVReturn status2 = kCVReturnInvalidPixelFormat;
+    if (planeCount < 2)
+        status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, metalPixelFormat(pixelBuffer, 0, firstPlaneSwizzle, supportsExtendedFormats), CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
+    else {
+        auto format0 = metalPixelFormat(pixelBuffer, 0, firstPlaneSwizzle, supportsExtendedFormats);
+        if (format0 != MTLPixelFormatInvalid)
+            status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, format0, CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
+        auto format1 = metalPixelFormat(pixelBuffer, 1, secondPlaneSwizzle, supportsExtendedFormats);
+        if (format1 != MTLPixelFormatInvalid)
+            status2 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, format1, CVPixelBufferGetWidthOfPlane(pixelBuffer, 1), CVPixelBufferGetHeightOfPlane(pixelBuffer, 1), 1, &plane1);
+    }
+
+    std::array<float, 2> lowerLeft;
+    std::array<float, 2> lowerRight;
+    std::array<float, 2> upperRight;
+    std::array<float, 2> upperLeft;
+
+    if (status1 == kCVReturnSuccess) {
+        baseTexture = mtlTexture0 = CVMetalTextureGetTexture(plane0);
+        setOwnerWithIdentity(mtlTexture0);
+        CVMetalTextureGetCleanTexCoords(plane0, lowerLeft.begin(), lowerRight.begin(), upperRight.begin(), upperLeft.begin());
+        if (firstPlaneSwizzle)
+            mtlTexture0 = [mtlTexture0 newTextureViewWithPixelFormat:mtlTexture0.pixelFormat textureType:mtlTexture0.textureType levels:NSMakeRange(0, mtlTexture0.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture0.arrayLength) swizzle:*firstPlaneSwizzle];
+    } else {
+        if (plane1)
+            CFRelease(plane1);
+        return { };
+    }
+
+    if (status2 == kCVReturnSuccess) {
+        mtlTexture1 = CVMetalTextureGetTexture(plane1);
+        setOwnerWithIdentity(mtlTexture1);
+        if (secondPlaneSwizzle)
+            mtlTexture1 = [mtlTexture1 newTextureViewWithPixelFormat:mtlTexture1.pixelFormat textureType:mtlTexture1.textureType levels:NSMakeRange(0, mtlTexture1.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture1.arrayLength) swizzle:*secondPlaneSwizzle];
+    }
+
+    protect(m_defaultQueue)->onSubmittedWorkDone(CompletionHandler<void()> { [plane0 = adoptCF(plane0), plane1 = adoptCF(plane1)] { } });
+
+    float Ax = 1.f / (upperRight[0] - lowerLeft[0]);
+    float Bx = -Ax * lowerLeft[0];
+    float Ay = 1.f / (lowerRight[1] - upperLeft[1]);
+    float By = -Ay * upperLeft[1];
+    simd::float3x2 uvRemappingMatrix = simd::float3x2(simd::make_float2(Ax, 0.f), simd::make_float2(0.f, Ay), simd::make_float2(Bx, By));
+    simd::float4x3 colorSpaceConversionMatrix = mtlTexture1 ? colorSpaceConversionMatrixForPixelBuffer(pixelBuffer) : simd::float4x3(1.f);
+    if (!mtlTexture1) {
+        id<MTLTexture> premultipliedTexture = premultiplyParameters.destinationFormat == MTLPixelFormatInvalid ? nil : premultipliedAlphaTexture(baseTexture, premultiplyParameters.destinationFormat, premultiplyParameters.sourceSwizzle);
+        if (premultipliedTexture)
+            mtlTexture0 = baseTexture = premultipliedTexture;
+        // The premultiplied copy is in natural RGBA order, whatever order the frame arrived in.
+        mtlTexture1 = gbTextureFromRGB(baseTexture, !premultipliedTexture && firstPlaneSwizzle.has_value(), !!premultipliedTexture);
+    }
+
+    return { mtlTexture0, mtlTexture1, uvRemappingMatrix, colorSpaceConversionMatrix, primariesConversionMatrix };
+#else
+    UNUSED_PARAM(pixelBuffer);
+    UNUSED_PARAM(colorSpace);
+    UNUSED_PARAM(premultiplyAlpha);
+    return { };
+#endif
+}
+
+NODELETE static bool hasProperUsageFlags(BindGroupLayout::BufferBindingType bufferType, OptionSet<WebGPU::BufferUsage> usage)
+{
+    switch (bufferType) {
+    case BindGroupLayout::BufferBindingType::Uniform:
+        return usage.contains(WebGPU::BufferUsage::Uniform);
+    case BindGroupLayout::BufferBindingType::Storage:
+    case BindGroupLayout::BufferBindingType::ReadOnlyStorage:
+        return usage.contains(WebGPU::BufferUsage::Storage);
+    case BindGroupLayout::BufferBindingType::Float3x2:
+    case BindGroupLayout::BufferBindingType::Float4x3:
+    case BindGroupLayout::BufferBindingType::Float3x4:
+    case BindGroupLayout::BufferBindingType::UInt2:
+    case BindGroupLayout::BufferBindingType::ArrayLength:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+NODELETE static MTLResourceUsage resourceUsageForBindingAcccess(BindGroupLayout::BindingAccess bindingAccess)
+{
+    switch (bindingAccess) {
+    case BindGroupLayout::BindingAccessReadOnly:
+        return MTLResourceUsageRead;
+    case BindGroupLayout::BindingAccessWriteOnly:
+        return MTLResourceUsageWrite;
+    case BindGroupLayout::BindingAccessReadWrite:
+        return MTLResourceUsageRead | MTLResourceUsageWrite;
+    }
+}
+
+template <typename ExpectedType>
+static const ExpectedType* hasBinding(const BindGroupLayout::EntriesContainer& bindGroupLayoutEntries, auto bindingIndex)
+{
+    auto it = bindGroupLayoutEntries.find(bindingIndex);
+    RELEASE_ASSERT(it != bindGroupLayoutEntries.end());
+    return std::get_if<ExpectedType>(&it->value.bindingLayout);
+}
+
+static bool is32bppFloatFormat(id<MTLTexture> t)
+{
+    return t.pixelFormat == MTLPixelFormatR32Float || t.pixelFormat == MTLPixelFormatRG32Float || t.pixelFormat == MTLPixelFormatRGBA32Float;
+}
+
+NODELETE static bool valid32bppFloatSampleType(WebGPU::TextureSampleType sampleType)
+{
+    return sampleType == WebGPU::TextureSampleType::Float || sampleType == WebGPU::TextureSampleType::UnfilterableFloat;
+}
+
+enum FormatType {
+    FormatType_Undefined = 0,
+    FormatType_Float = 1 << 0,
+    FormatType_UnfilterableFloat = 1 << 1,
+    FormatType_Depth = 1 << 2,
+    FormatType_SignedInt = 1 << 3,
+    FormatType_UnsignedInt = 1 << 4
+};
+
+static std::underlying_type<FormatType>::type formatType(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
+{
+    switch (format) {
+    case WebGPU::TextureFormat::R8unorm:
+    case WebGPU::TextureFormat::R8snorm:
+        return FormatType_Float | FormatType_UnfilterableFloat;
+    case WebGPU::TextureFormat::R8uint:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::R8sint:
+        return FormatType_SignedInt;
+    case WebGPU::TextureFormat::R16uint:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::R16sint:
+        return FormatType_SignedInt;
+    case WebGPU::TextureFormat::R16unorm:
+    case WebGPU::TextureFormat::R16snorm:
+    case WebGPU::TextureFormat::Rg16unorm:
+    case WebGPU::TextureFormat::Rg16snorm:
+    case WebGPU::TextureFormat::Rgba16unorm:
+    case WebGPU::TextureFormat::Rgba16snorm:
+        return FormatType_Float | FormatType_UnfilterableFloat;
+    case WebGPU::TextureFormat::R16float:
+    case WebGPU::TextureFormat::Rg8unorm:
+    case WebGPU::TextureFormat::Rg8snorm:
+        return FormatType_Float | FormatType_UnfilterableFloat;
+    case WebGPU::TextureFormat::Rg8uint:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::Rg8sint:
+        return FormatType_SignedInt;
+    case WebGPU::TextureFormat::R32float:
+        return FormatType_UnfilterableFloat | (device.hasFeature(WebGPU::FeatureName::Float32Filterable) ? FormatType_Float : 0);
+    case WebGPU::TextureFormat::R32uint:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::R32sint:
+        return FormatType_SignedInt;
+    case WebGPU::TextureFormat::Rg16uint:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::Rg16sint:
+        return FormatType_SignedInt;
+    case WebGPU::TextureFormat::Rg16float:
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Rgba8unormSRGB:
+    case WebGPU::TextureFormat::Rgba8snorm:
+        return FormatType_Float | FormatType_UnfilterableFloat;
+    case WebGPU::TextureFormat::Rgba8uint:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::Rgba8sint:
+        return FormatType_SignedInt;
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Bgra8unormSRGB:
+        return FormatType_Float | FormatType_UnfilterableFloat;
+    case WebGPU::TextureFormat::Rgb10a2uint:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::Rgb10a2unorm:
+    case WebGPU::TextureFormat::Rg11b10ufloat:
+    case WebGPU::TextureFormat::Rgb9e5ufloat:
+        return FormatType_Float | FormatType_UnfilterableFloat;
+    case WebGPU::TextureFormat::Rg32float:
+        return FormatType_UnfilterableFloat | (device.hasFeature(WebGPU::FeatureName::Float32Filterable) ? FormatType_Float : 0);
+    case WebGPU::TextureFormat::Rg32uint:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::Rg32sint:
+        return FormatType_SignedInt;
+    case WebGPU::TextureFormat::Rgba16uint:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::Rgba16sint:
+        return FormatType_SignedInt;
+    case WebGPU::TextureFormat::Rgba16float:
+        return FormatType_Float | FormatType_UnfilterableFloat;
+    case WebGPU::TextureFormat::Rgba32float:
+        return FormatType_UnfilterableFloat | (device.hasFeature(WebGPU::FeatureName::Float32Filterable) ? FormatType_Float : 0);
+    case WebGPU::TextureFormat::Rgba32uint:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::Rgba32sint:
+        return FormatType_SignedInt;
+    case WebGPU::TextureFormat::Stencil8:
+        return FormatType_UnsignedInt;
+    case WebGPU::TextureFormat::Depth16unorm:
+    case WebGPU::TextureFormat::Depth24plus:
+        return FormatType_Depth | FormatType_UnfilterableFloat;
+    case WebGPU::TextureFormat::Depth24plusStencil8:
+    case WebGPU::TextureFormat::Depth32floatStencil8: {
+        switch (aspect) {
+        case WebGPU::TextureAspect::All:
+            return FormatType_Depth | FormatType_UnfilterableFloat | FormatType_UnsignedInt;
+        case WebGPU::TextureAspect::StencilOnly:
+            return FormatType_UnsignedInt;
+        case WebGPU::TextureAspect::DepthOnly:
+            return FormatType_Depth | FormatType_UnfilterableFloat;
+        }
+    }
+    case WebGPU::TextureFormat::Depth32float:
+        return FormatType_Depth | FormatType_UnfilterableFloat;
+    case WebGPU::TextureFormat::Bc1RgbaUnorm:
+    case WebGPU::TextureFormat::Bc1RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc2RgbaUnorm:
+    case WebGPU::TextureFormat::Bc2RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc3RgbaUnorm:
+    case WebGPU::TextureFormat::Bc3RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Bc4RUnorm:
+    case WebGPU::TextureFormat::Bc4RSnorm:
+    case WebGPU::TextureFormat::Bc5RgUnorm:
+    case WebGPU::TextureFormat::Bc5RgSnorm:
+    case WebGPU::TextureFormat::Bc6hRgbUfloat:
+    case WebGPU::TextureFormat::Bc6hRgbFloat:
+    case WebGPU::TextureFormat::Bc7RgbaUnorm:
+    case WebGPU::TextureFormat::Bc7RgbaUnormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unorm:
+    case WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB:
+    case WebGPU::TextureFormat::Etc2Rgba8unorm:
+    case WebGPU::TextureFormat::Etc2Rgba8unormSRGB:
+    case WebGPU::TextureFormat::EacR11unorm:
+    case WebGPU::TextureFormat::EacR11snorm:
+    case WebGPU::TextureFormat::EacRg11unorm:
+    case WebGPU::TextureFormat::EacRg11snorm:
+    case WebGPU::TextureFormat::Astc4x4Unorm:
+    case WebGPU::TextureFormat::Astc4x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x4Unorm:
+    case WebGPU::TextureFormat::Astc5x4UnormSRGB:
+    case WebGPU::TextureFormat::Astc5x5Unorm:
+    case WebGPU::TextureFormat::Astc5x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x5Unorm:
+    case WebGPU::TextureFormat::Astc6x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc6x6Unorm:
+    case WebGPU::TextureFormat::Astc6x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x5Unorm:
+    case WebGPU::TextureFormat::Astc8x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x6Unorm:
+    case WebGPU::TextureFormat::Astc8x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc8x8Unorm:
+    case WebGPU::TextureFormat::Astc8x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x5Unorm:
+    case WebGPU::TextureFormat::Astc10x5UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x6Unorm:
+    case WebGPU::TextureFormat::Astc10x6UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x8Unorm:
+    case WebGPU::TextureFormat::Astc10x8UnormSRGB:
+    case WebGPU::TextureFormat::Astc10x10Unorm:
+    case WebGPU::TextureFormat::Astc10x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x10Unorm:
+    case WebGPU::TextureFormat::Astc12x10UnormSRGB:
+    case WebGPU::TextureFormat::Astc12x12Unorm:
+    case WebGPU::TextureFormat::Astc12x12UnormSRGB:
+        return FormatType_Float | FormatType_UnfilterableFloat;
+    }
+}
+
+static bool formatIsFloat(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
+{
+    return formatType(format, aspect, device) & FormatType_Float;
+}
+static bool formatIsUnfilterableFloat(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
+{
+    return formatType(format, aspect, device) & FormatType_UnfilterableFloat;
+}
+static bool formatIsDepth(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
+{
+    return formatType(format, aspect, device) & FormatType_Depth;
+}
+static bool formatIsSignedInt(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
+{
+    return formatType(format, aspect, device) & FormatType_SignedInt;
+}
+static bool formatIsUnsignedInt(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect, const Device& device)
+{
+    return formatType(format, aspect, device) & FormatType_UnsignedInt;
+}
+
+static bool validateTextureSampleType(const BindGroupLayout::TextureBindingLayout* textureEntry, const auto& apiTextureView, const Device& device)
+{
+    if (!textureEntry)
+        return true;
+
+    auto format = apiTextureView->format();
+    auto aspect = apiTextureView->aspect();
+    switch (textureEntry->sampleType) {
+    case WebGPU::TextureSampleType::Float:
+        return formatIsFloat(format, aspect, device);
+    case WebGPU::TextureSampleType::UnfilterableFloat:
+        return formatIsUnfilterableFloat(format, aspect, device);
+    case WebGPU::TextureSampleType::Depth:
+        return formatIsDepth(format, aspect, device);
+    case WebGPU::TextureSampleType::Sint:
+        return formatIsSignedInt(format, aspect, device);
+    case WebGPU::TextureSampleType::Uint:
+        return formatIsUnsignedInt(format, aspect, device);
+    }
+}
+
+static const NSString* sampleType(const BindGroupLayout::TextureBindingLayout* textureEntry)
+{
+    switch (textureEntry->sampleType) {
+    case WebGPU::TextureSampleType::Float:
+        return @"float";
+    case WebGPU::TextureSampleType::UnfilterableFloat:
+        return @"unfilterable-float";
+    case WebGPU::TextureSampleType::Depth:
+        return @"depth";
+    case WebGPU::TextureSampleType::Sint:
+        return @"sint";
+    case WebGPU::TextureSampleType::Uint:
+        return @"uint";
+    }
+}
+
+static const NSString* sampleType(const auto& apiTextureView, const Device& device)
+{
+    auto format = apiTextureView->format();
+    auto aspect = apiTextureView->aspect();
+    auto type = formatType(format, aspect, device);
+
+    NSString* result = @"";
+#define MAKE_STRING(x) result.length ? (@" + " x) : (x)
+    if (type & FormatType_Float)
+        result = [result stringByAppendingString:MAKE_STRING(@"float")];
+    if (type & FormatType_UnfilterableFloat)
+        result = [result stringByAppendingString:MAKE_STRING(@"unfilterable-float")];
+    if (type & FormatType_Depth)
+        result = [result stringByAppendingString:MAKE_STRING(@"depth")];
+    if (type & FormatType_SignedInt)
+        result = [result stringByAppendingString:MAKE_STRING(@"sint")];
+    if (type & FormatType_UnsignedInt)
+        result = [result stringByAppendingString:MAKE_STRING(@"uint")];
+#undef MAKE_STRING
+
+    return result;
+}
+
+static bool validateTextureViewDimension(const auto* textureEntry, const auto& apiTextureView)
+{
+    if (!textureEntry)
+        return true;
+
+    WebGPU::TextureViewDimension viewDimension = textureEntry->viewDimension;
+    auto textureType = apiTextureView->texture().textureType;
+    switch (viewDimension) {
+    case WebGPU::TextureViewDimension::_1d:
+        return textureType == MTLTextureType1D;
+    case WebGPU::TextureViewDimension::_2d:
+        return textureType == MTLTextureType2D || textureType == MTLTextureType2DMultisample;
+    case WebGPU::TextureViewDimension::_2dArray:
+        return textureType == MTLTextureType2DArray || textureType == MTLTextureType2DMultisampleArray;
+    case WebGPU::TextureViewDimension::Cube:
+        return textureType == MTLTextureTypeCube;
+    case WebGPU::TextureViewDimension::CubeArray:
+        return textureType == MTLTextureTypeCubeArray;
+    case WebGPU::TextureViewDimension::_3d:
+        return textureType == MTLTextureType3D;
+    }
+}
+
+NODELETE static bool validateStorageTextureViewFormat(const BindGroupLayout::StorageTextureBindingLayout* storageTexture, const auto& apiTextureView)
+{
+    return !storageTexture || storageTexture->format == apiTextureView->format();
+}
+
+NODELETE static bool validateSamplerType(WebGPU::SamplerBindingType type, const Sampler& sampler)
+{
+    switch (type) {
+    case WebGPU::SamplerBindingType::Filtering:
+        return !sampler.isComparison();
+    case WebGPU::SamplerBindingType::NonFiltering:
+        return !sampler.isComparison() && !sampler.isFiltering();
+    case WebGPU::SamplerBindingType::Comparison:
+        return sampler.isComparison();
+    }
+}
+
+NODELETE static BindGroupEntryUsage usageForTexture(const BindGroupLayout::TextureBindingLayout&)
+{
+    return BindGroupEntryUsage::ConstantTexture;
+}
+
+NODELETE static BindGroupEntryUsage usageForStorageTexture(const BindGroupLayout::StorageTextureBindingLayout& textureLayout)
+{
+    switch (textureLayout.access) {
+    case WebGPU::StorageTextureAccess::ReadOnly:
+        return BindGroupEntryUsage::StorageTextureRead;
+    case WebGPU::StorageTextureAccess::ReadWrite:
+        return BindGroupEntryUsage::StorageTextureReadWrite;
+    case WebGPU::StorageTextureAccess::WriteOnly:
+        return BindGroupEntryUsage::StorageTextureWriteOnly;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return BindGroupEntryUsage::Undefined;
+}
+
+NODELETE static BindGroupEntryUsage usageForBuffer(BindGroupLayout::BufferBindingType bufferBindingType)
+{
+    switch (bufferBindingType) {
+    case BindGroupLayout::BufferBindingType::Uniform:
+        return BindGroupEntryUsage::Constant;
+    case BindGroupLayout::BufferBindingType::Storage:
+        return BindGroupEntryUsage::Storage;
+    case BindGroupLayout::BufferBindingType::ReadOnlyStorage:
+        return BindGroupEntryUsage::StorageRead;
+    case BindGroupLayout::BufferBindingType::Float3x2:
+    case BindGroupLayout::BufferBindingType::Float4x3:
+    case BindGroupLayout::BufferBindingType::Float3x4:
+    case BindGroupLayout::BufferBindingType::UInt2:
+    case BindGroupLayout::BufferBindingType::ArrayLength:
+        return BindGroupEntryUsage::Undefined;
+    }
+}
+
+template <typename T>
+static BindGroupEntryUsageData makeBindGroupEntryUsageData(BindGroupEntryUsage usage, uint32_t bindingIndex, const Ref<T>& resource, uint64_t entryOffset = 0, uint64_t entrySize = 0)
+{
+    return BindGroupEntryUsageData { .usage = usage, .binding = bindingIndex, .resource = resource.ptr(), .entryOffset = entryOffset, .entrySize = entrySize };
+}
+
+NODELETE static bool allowedExternalTextureFormat(WebGPU::TextureFormat format)
+{
+    switch (format) {
+    case WebGPU::TextureFormat::Rgba8unorm:
+    case WebGPU::TextureFormat::Bgra8unorm:
+    case WebGPU::TextureFormat::Rgba16float:
+        return true;
+    default:
+        return false;
+    }
+}
+
+template <typename T>
+static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Metal::Device &object, const Ref<T> &apiTextureView, BindGroup::ShaderStageArray<id<MTLBuffer>> &argumentBuffer, BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> &argumentEncoder, BindGroup::ShaderStageArray<BindGroupLayout::ArgumentIndices> &argumentIndices, const Ref<BindGroupLayout> &bindGroupLayout, const WebGPU::BindGroupEntry &entry, const BindGroupLayout::ExternalTextureBindingLayout *externalTextureEntry, NSUInteger index, MTLResourceUsage resourceUsage, ShaderStage stage, std::array<std::array<Vector<BindGroupEntryUsageData>, maxResourceUsageValue>, stagesPlusUndefinedCount> &stageResourceUsages, std::array<std::array<Vector<id<MTLResource>>, maxResourceUsageValue>, stagesPlusUndefinedCount> &stageResources, const BindGroupLayout::StorageTextureBindingLayout *storageTextureEntry, const BindGroupLayout::TextureBindingLayout *textureEntry)
+{
+#define INTERNAL_ERROR_STRING(x) [NSString stringWithFormat:@"GPUDevice.createBindGroup: %@", x]
+#define VALIDATION_ERROR(...) object.generateAValidationError(INTERNAL_ERROR_STRING((__VA_ARGS__)))
+
+    object.getQueue()->clearTextureViewIfNeeded(apiTextureView);
+
+    id<MTLTexture> texture = (textureEntry && !externalTextureEntry) ? apiTextureView->sampledTexture() : apiTextureView->texture();
+    if (!apiTextureView->isDestroyed()) {
+        if (!apiTextureView->isValid()) {
+            VALIDATION_ERROR(@"Underlying texture is not valid");
+            return BindGroup::createInvalid(object);
+        }
+        if (&apiTextureView->device() != &object) {
+            VALIDATION_ERROR(@"Underlying texture was created from a different device");
+            return BindGroup::createInvalid(object);
+        }
+        auto textureUsage = apiTextureView->usage();
+        if ((textureEntry && !textureUsage.contains(WebGPU::TextureUsage::TextureBinding)) || (storageTextureEntry && !textureUsage.contains(WebGPU::TextureUsage::StorageBinding))) {
+            VALIDATION_ERROR([NSString stringWithFormat:@"Storage texture usage(%llu) did not have storage usage or storage texture entry did not have storage binding", toAPI(textureUsage)]);
+            return BindGroup::createInvalid(object);
+        }
+        if (textureEntry && (3 * (textureEntry->multisampled ? 1 : 0) + 1 != apiTextureView->sampleCount())) {
+            VALIDATION_ERROR([NSString stringWithFormat:@"Bind group entry multisampled(%d) state does not match underlying texture sample count(%d)", textureEntry->multisampled, apiTextureView->sampleCount()]);
+            return BindGroup::createInvalid(object);
+        }
+        if (!bindGroupLayout->isAutoGenerated() && !validateTextureSampleType(textureEntry, apiTextureView, object)) {
+            VALIDATION_ERROR([NSString stringWithFormat:@"Bind group entry sampleType(%@) does not match TextureView sampleType(%@) for texture format(%s)", sampleType(textureEntry), sampleType(apiTextureView, object), Texture::formatToString(apiTextureView->format()).characters()]);
+            return BindGroup::createInvalid(object);
+        }
+        if (!validateTextureViewDimension(textureEntry, apiTextureView) || !validateTextureViewDimension(storageTextureEntry, apiTextureView)) {
+            VALIDATION_ERROR(@"Bind group entry viewDimension does not match TextureView viewDimension");
+            return BindGroup::createInvalid(object);
+        }
+        if (!validateStorageTextureViewFormat(storageTextureEntry, apiTextureView)) {
+            VALIDATION_ERROR(@"Bind group storage texture entry format does not match TextureView format");
+            return BindGroup::createInvalid(object);
+        }
+        if (storageTextureEntry && apiTextureView->hasSwizzle()) {
+            VALIDATION_ERROR(@"Storage textures must be bound through a view whose swizzle is \"rgba\"");
+            return BindGroup::createInvalid(object);
+        }
+        if (storageTextureEntry && apiTextureView->texture().mipmapLevelCount != 1) {
+            VALIDATION_ERROR([NSString stringWithFormat:@"Storage textures must have a single mip level(%lu)", static_cast<unsigned long>(apiTextureView->texture().mipmapLevelCount)]);
+            return BindGroup::createInvalid(object);
+        }
+
+        if (textureEntry && is32bppFloatFormat(texture) && (!valid32bppFloatSampleType(textureEntry->sampleType) || (textureEntry->sampleType == WebGPU::TextureSampleType::Float && !object.hasFeature(WebGPU::FeatureName::Float32Filterable)))) {
+            VALIDATION_ERROR(@"Can not create bind group with filterable 32bpp floating point texture as float32-filterable feature is not enabled");
+            return BindGroup::createInvalid(object);
+        }
+        if (externalTextureEntry) {
+            if (!textureUsage.contains(WebGPU::TextureUsage::TextureBinding)) {
+                VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture slot which does not have usage containing texture binding.");
+                return BindGroup::createInvalid(object);
+            }
+            if (!apiTextureView->is2DTexture()) {
+                VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture slot when the texture view is not a 2D texture.");
+                return BindGroup::createInvalid(object);
+            }
+            if (apiTextureView->mipLevelCount() != 1) {
+                VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture slot when the texture view has more than 1 mip level");
+                return BindGroup::createInvalid(object);
+            }
+            if (!allowedExternalTextureFormat(apiTextureView->format())) {
+                VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture which is not an allowed external texture format");
+                return BindGroup::createInvalid(object);
+            }
+            if (apiTextureView->sampleCount() != 1) {
+                VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture which has a sample count greater than 1");
+                return BindGroup::createInvalid(object);
+            }
+        }
+    } else if (stage != ShaderStage::Undefined) {
+        argumentEncoder[stage] = nil;
+        argumentBuffer[stage] = { };
+    }
+
+    // An external texture slot is six argument buffer entries wide, and every one of them has to be
+    // written: an entry the encoder never reaches leaves an argument index unconsumed and makes the
+    // whole bind group invalid. A plain texture view is a single plane already in the color space it
+    // was written in, so the two conversion matrices are the identity and the primaries matrix is the
+    // all-zero one that tells the shader there is no color space to travel to. Its texels are taken as
+    // they are found, which for alpha means as premultiplied.
+    if (externalTextureEntry) {
+        id<MTLTexture> secondPlane = gbTextureFromRGB(texture, false, true);
+
+        if (stage != ShaderStage::Undefined) {
+            auto externalIndex = index;
+            argumentIndices[stage].remove(externalIndex);
+            [argumentEncoder[stage] setTexture:texture atIndex:externalIndex++];
+
+            argumentIndices[stage].remove(externalIndex);
+            [argumentEncoder[stage] setTexture:secondPlane atIndex:externalIndex++];
+
+            argumentIndices[stage].remove(externalIndex);
+            if (auto* uvRemapAddress = static_cast<simd::float3x2*>([argumentEncoder[stage] constantDataAtIndex:externalIndex++]))
+                *uvRemapAddress = simd::float3x2(1.f);
+
+            argumentIndices[stage].remove(externalIndex);
+            if (auto* cscMatrixAddress = static_cast<simd::float4x3*>([argumentEncoder[stage] constantDataAtIndex:externalIndex++]))
+                *cscMatrixAddress = simd::float4x3(1.f);
+
+            argumentIndices[stage].remove(externalIndex);
+            if (auto* primariesMatrixAddress = static_cast<simd::float3x4*>([argumentEncoder[stage] constantDataAtIndex:externalIndex++]))
+                *primariesMatrixAddress = simd::float3x4(0.f);
+
+            argumentIndices[stage].remove(externalIndex);
+            if (auto* visibleSizeAddress = static_cast<simd::uint2*>([argumentEncoder[stage] constantDataAtIndex:externalIndex++]))
+                *visibleSizeAddress = simd::uint2 { static_cast<uint32_t>(texture.width), static_cast<uint32_t>(texture.height) };
+        }
+
+        auto metalStage = metalRenderStage(stage);
+        for (id<MTLTexture> plane : std::array<id<MTLTexture>, 2> { texture, secondPlane }) {
+            if (!plane)
+                continue;
+            stageResources[metalStage][resourceUsage - 1].append(plane);
+            stageResourceUsages[metalStage][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, apiTextureView));
+        }
+    } else {
+        if (stage != ShaderStage::Undefined) {
+            argumentIndices[stage].remove(index);
+            [argumentEncoder[stage] setTexture:texture atIndex:index];
+        }
+        if (texture) {
+            stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture);
+            // ASSERT(apiTextureView->isDestroyed() || texture.parentRelativeLevel == apiTextureView->baseMipLevel());
+            // ASSERT(apiTextureView->isDestroyed() || texture.parentRelativeSlice == apiTextureView->baseArrayLayer());
+            stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(textureEntry ? usageForTexture(*textureEntry) : (storageTextureEntry ? usageForStorageTexture(*storageTextureEntry) : BindGroupEntryUsage::ConstantTexture), entry.binding, apiTextureView));
+        }
+    }
+#undef VALIDATION_ERROR
+#undef INTERNAL_ERROR_STRING
+
+    return std::nullopt;
+}
+
+template<typename Holder>
+static void addResourceHolder(const BindGroupEntryUsageData::Resource& resource, const Holder& holder)
+{
+    WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
+        if (buffer)
+            buffer->addResourceHolder(holder);
+    }, [&](const RefPtr<const Texture>& texture) {
+        if (texture)
+            texture->addResourceHolder(holder);
+    }, [&](const RefPtr<const TextureView>& textureView) {
+        if (textureView)
+            textureView->apiParentTexture().addResourceHolder(holder);
+    }, [&](const RefPtr<const ExternalTexture>&) {
+    });
+}
+
+template<typename Holder>
+static void registerResourceHolderImpl(const Vector<BindableResources>& resources, const Holder& holder)
+{
+    for (const auto& bindableResources : borrow(resources)) {
+        for (const auto& resourceUsage : borrow(bindableResources.resourceUsages))
+            addResourceHolder(resourceUsage.resource, holder);
+    }
+}
+
+void registerResourceHolder(const Vector<BindableResources>& resources, const BindGroup& bindGroup)
+{
+    registerResourceHolderImpl(resources, bindGroup);
+}
+
+void registerResourceHolder(const Vector<BindableResources>& resources, const RenderBundle& renderBundle)
+{
+    registerResourceHolderImpl(resources, renderBundle);
+}
+
+id<MTLResource> placeholderForDestroyedResource(const BindGroupEntryUsageData::Resource& resource)
+{
+    id<MTLResource> placeholder = nil;
+    WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
+        if (buffer && buffer->isDestroyed())
+            placeholder = buffer->buffer();
+    }, [&](const RefPtr<const Texture>& texture) {
+        if (texture && texture->isDestroyed() && !texture->isCanvasBacking())
+            placeholder = texture->texture();
+    }, [&](const RefPtr<const TextureView>& textureView) {
+        if (textureView && textureView->isDestroyed() && !textureView->apiParentTexture().isCanvasBacking())
+            placeholder = textureView->texture();
+    }, [&](const RefPtr<const ExternalTexture>&) {
+    });
+    return placeholder;
+}
+
+bool replaceDestroyedResourcesWithPlaceholders(Vector<BindableResources>& resources)
+{
+    bool replacedAnything = false;
+    for (auto& bindableResources : borrow(resources)) {
+        auto resourceCount = std::min(bindableResources.mtlResources.size(), bindableResources.resourceUsages.size());
+        for (size_t i = 0; i < resourceCount; ++i) {
+            id<MTLResource> placeholder = placeholderForDestroyedResource(bindableResources.resourceUsages[i].resource);
+            if (!placeholder || placeholder == bindableResources.mtlResources[i])
+                continue;
+            bindableResources.mtlResources[i] = placeholder;
+            replacedAnything = true;
+        }
+    }
+    return replacedAnything;
+}
+
+RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescriptor& descriptor)
+{
+#define INTERNAL_ERROR_STRING(x) [NSString stringWithFormat:@"GPUDevice.createBindGroup: %@", x]
+#define VALIDATION_ERROR(...) generateAValidationError(INTERNAL_ERROR_STRING((__VA_ARGS__)))
+    if (!isValid())
+        return BindGroup::createInvalid(*this);
+
+    Ref bindGroupLayout = metal(descriptor.layout.get());
+    if (!bindGroupLayout->isValid() || (!bindGroupLayout->isAutoGenerated() && descriptor.entries.size() != bindGroupLayout->entries().size()) || &bindGroupLayout->device() != this) {
+        VALIDATION_ERROR(@"invalid BindGroupLayout createBindGroup");
+        return BindGroup::createInvalid(*this);
+    }
+
+    BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoder = std::array<id<MTLArgumentEncoder>, stageCount>({ bindGroupLayout->vertexArgumentEncoder(), bindGroupLayout->fragmentArgumentEncoder(), bindGroupLayout->computeArgumentEncoder() });
+    BindGroup::ShaderStageArray<ExternalTextureIndices> externalTextureIndices = std::array<ExternalTextureIndices, stageCount>({ ExternalTextureIndices(), ExternalTextureIndices(), ExternalTextureIndices() });
+    BindGroup::ShaderStageArray<id<MTLBuffer>> argumentBuffer;
+    BindGroup::ShaderStageArray<BindGroupLayout::ArgumentIndices> argumentIndices;
+    for (ShaderStage stage : stages) {
+        auto encodedLength = bindGroupLayout->encodedLength(stage);
+        if (encodedLength)
+            argumentBuffer[stage] = safeCreateBuffer(encodedLength, MTLStorageModeShared);
+        [argumentEncoder[stage] setArgumentBuffer:argumentBuffer[stage] offset:0];
+        argumentIndices[stage] = bindGroupLayout->argumentIndices(stage);
+    }
+
+    static_assert(maxResourceUsageValue == 3, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3");
+    std::array<std::array<Vector<id<MTLResource>>, maxResourceUsageValue>, stagesPlusUndefinedCount> stageResources { };
+    std::array<std::array<Vector<BindGroupEntryUsageData>, maxResourceUsageValue>, stagesPlusUndefinedCount> stageResourceUsages { };
+    auto& bindGroupLayoutEntries = bindGroupLayout->entries();
+    BindGroup::DynamicBuffersContainer dynamicBuffers;
+    BindGroup::SamplersContainer samplersSet;
+    HashSet<uint32_t> usedBindingSlots;
+
+    for (auto& entry : descriptor.entries) {
+        auto* bufferBinding = std::get_if<WebGPU::BufferBinding>(&entry.resource);
+        auto* samplerResource = std::get_if<Ref<WebGPU::Sampler>>(&entry.resource);
+        auto* textureResource = std::get_if<Ref<WebGPU::Texture>>(&entry.resource);
+        auto* textureViewResource = std::get_if<Ref<WebGPU::TextureView>>(&entry.resource);
+        auto* externalTextureResource = std::get_if<Ref<WebGPU::ExternalTexture>>(&entry.resource);
+
+        bool bindingContainedInStage = false;
+        bool appendedBufferToDynamicBuffers = false;
+        auto bindingIndex = entry.binding;
+        if (usedBindingSlots.contains(bindingIndex)) {
+            VALIDATION_ERROR([NSString stringWithFormat:@"Binding %u is duplicated in the bind group descriptor", bindingIndex]);
+            return BindGroup::createInvalid(*this);
+        }
+        usedBindingSlots.add(bindingIndex);
+        for (ShaderStage stage : stagesPlusUndefined) {
+            auto index = bindGroupLayout->argumentBufferIndexForEntryIndex(bindingIndex, stage);
+            if (index == NSNotFound)
+                continue;
+
+            bindingContainedInStage = true;
+            auto optionalAccess = bindGroupLayout->bindingAccessForBindingIndex(bindingIndex, stage);
+            RELEASE_ASSERT(optionalAccess);
+            auto bufferSizeArgumentBufferIndex = bindGroupLayout->bufferSizeIndexForEntryIndex(bindingIndex, stage);
+            MTLResourceUsage resourceUsage = resourceUsageForBindingAcccess(*optionalAccess);
+
+            if (bufferBinding) {
+                auto* layoutBinding = hasBinding<BindGroupLayout::BufferBindingLayout>(bindGroupLayoutEntries, bindingIndex);
+                if (!layoutBinding) {
+                    VALIDATION_ERROR(@"Expected buffer but it was not present in the bind group layout");
+                    return BindGroup::createInvalid(*this);
+                }
+                Ref apiBuffer = metal(bufferBinding->buffer.get());
+                id<MTLBuffer> buffer = apiBuffer->buffer();
+                bool isDestroyed = apiBuffer->isDestroyed();
+                if (isDestroyed && stage != ShaderStage::Undefined) {
+                    argumentEncoder[stage] = nil;
+                    argumentBuffer[stage] = { };
+                }
+
+                auto entryOffset = isDestroyed ? 0 : bufferBinding->offset;
+                auto bufferLengthMinusOffset = buffer.length > entryOffset ? (buffer.length - entryOffset) : 0;
+                auto entrySize = bufferBinding->size.value_or(bufferLengthMinusOffset);
+                if (layoutBinding->hasDynamicOffset && !appendedBufferToDynamicBuffers) {
+                    dynamicBuffers.append({ .type = layoutBinding->type, .bindingSize = entrySize, .bufferSize = bufferLengthMinusOffset, .bindingIndex = bindingIndex });
+                    appendedBufferToDynamicBuffers = true;
+                }
+
+                if (!apiBuffer->isValid() || &apiBuffer->device() != this) {
+                    if (!isDestroyed)
+                        VALIDATION_ERROR(@"Buffer is invalid or created from a different device");
+                    return BindGroup::createInvalid(*this);
+                }
+
+                auto& deviceLimits = limits();
+                const bool isUniformBuffer = layoutBinding->type == BindGroupLayout::BufferBindingType::Uniform;
+                const bool isStorageBuffer = layoutBinding->type == BindGroupLayout::BufferBindingType::Storage || layoutBinding->type == BindGroupLayout::BufferBindingType::ReadOnlyStorage;
+                if (!apiBuffer->isDestroyed()) {
+                    if (bufferBinding->offset >= buffer.length) {
+                        VALIDATION_ERROR([NSString stringWithFormat:@"Unexpected entry.offset(%llu) >= buffer length(%lu)", bufferBinding->offset, (unsigned long)buffer.length]);
+                        return BindGroup::createInvalid(*this);
+                    }
+
+                    if (!hasProperUsageFlags(layoutBinding->type, apiBuffer->usage())) {
+                        VALIDATION_ERROR([NSString stringWithFormat:@"Unexpected type(%u), buffer.usage(%llu)", layoutBinding->type, toAPI(apiBuffer->usage())]);
+                        return BindGroup::createInvalid(*this);
+                    }
+
+                    if ((isUniformBuffer && (bufferBinding->offset % deviceLimits.minUniformBufferOffsetAlignment))
+                        || (isStorageBuffer && (bufferBinding->offset % deviceLimits.minStorageBufferOffsetAlignment))) {
+                        VALIDATION_ERROR([NSString stringWithFormat:@"Buffer offset(%llu) is not a multiple of the device buffer alignment(%u)", bufferBinding->offset, deviceLimits.minStorageBufferOffsetAlignment]);
+                        return BindGroup::createInvalid(*this);
+                    }
+
+                    if ((isUniformBuffer && entrySize > deviceLimits.maxUniformBufferBindingSize)
+                        || (isStorageBuffer && entrySize > deviceLimits.maxStorageBufferBindingSize)) {
+                        VALIDATION_ERROR([NSString stringWithFormat:@"Buffer size(%llu) is larger than the device limits(%llu)", entrySize, isUniformBuffer ? deviceLimits.maxUniformBufferBindingSize : deviceLimits.maxStorageBufferBindingSize]);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (isStorageBuffer && entrySize % 4) {
+                        VALIDATION_ERROR([NSString stringWithFormat:@"Storage buffer size(%llu) is not multiple of 4", entrySize]);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (!entrySize || entrySize + entryOffset > buffer.length || (layoutBinding->minBindingSize && layoutBinding->minBindingSize > entrySize)) {
+                        VALIDATION_ERROR([NSString stringWithFormat:@"entrySize == 0 or entrySize(%llu) + entryOffset(%llu) > buffer size(%lu) or layoutBinding->minBindingSize(%llu) > entrySize(%llu)", entrySize, entryOffset, static_cast<unsigned long>(buffer.length), layoutBinding->minBindingSize, entrySize]);
+                        return BindGroup::createInvalid(*this);
+                    }
+                }
+
+                if (stage != ShaderStage::Undefined && buffer.length) {
+                    argumentIndices[stage].remove(index);
+                    [argumentEncoder[stage] setBuffer:buffer offset:entryOffset atIndex:index];
+                    if (bufferSizeArgumentBufferIndex) {
+                        argumentIndices[stage].remove(*bufferSizeArgumentBufferIndex);
+                        if (auto* lengthAddress = (uint32_t*)[argumentEncoder[stage] constantDataAtIndex:*bufferSizeArgumentBufferIndex])
+                            *lengthAddress = std::min<uint32_t>(entrySize, buffer.length);
+                    }
+                }
+                if (buffer) {
+                    stageResources[metalRenderStage(stage)][resourceUsage - 1].append(buffer);
+                    stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(usageForBuffer(layoutBinding->type), entry.binding, apiBuffer, entryOffset, entrySize));
+                }
+            } else if (samplerResource) {
+                auto* layoutBinding = hasBinding<BindGroupLayout::SamplerBindingLayout>(bindGroupLayoutEntries, bindingIndex);
+                if (!layoutBinding) {
+                    VALIDATION_ERROR(@"Expected sampler but it was not present in the bind group layout");
+                    return BindGroup::createInvalid(*this);
+                }
+                Ref apiSampler = metal(samplerResource->get());
+                if (!apiSampler->isValid() || &apiSampler->device() != this) {
+                    VALIDATION_ERROR(@"Underlying sampler is not valid or created from a different device");
+                    return BindGroup::createInvalid(*this);
+                }
+
+                if (!validateSamplerType(layoutBinding->type, apiSampler)) {
+                    VALIDATION_ERROR([NSString stringWithFormat:@"Expected sampler type(%u) has wrong comparison or filtering modes", layoutBinding->type]);
+                    return BindGroup::createInvalid(*this);
+                }
+
+                id<MTLSamplerState> sampler = apiSampler->tryCacheSamplerState();
+                if (stage != ShaderStage::Undefined) {
+                    argumentIndices[stage].remove(index);
+                    [argumentEncoder[stage] setSamplerState:sampler atIndex:index];
+                    samplersSet.add(WTF::move(apiSampler), BindGroup::ShaderStageArray<std::optional<uint32_t>> { }).iterator->value[stage] = index;
+                }
+            } else if (textureViewResource || textureResource) {
+                auto it = bindGroupLayoutEntries.find(bindingIndex);
+                RELEASE_ASSERT(it != bindGroupLayoutEntries.end());
+                auto* textureEntry = std::get_if<BindGroupLayout::TextureBindingLayout>(&it->value.bindingLayout);
+                auto* storageTextureEntry = std::get_if<BindGroupLayout::StorageTextureBindingLayout>(&it->value.bindingLayout);
+                auto* externalTextureEntry = std::get_if<BindGroupLayout::ExternalTextureBindingLayout>(&it->value.bindingLayout);
+                if (!textureEntry && !storageTextureEntry && !externalTextureEntry) {
+                    VALIDATION_ERROR(@"Expected texture or storage texture but it was not present in the bind group layout");
+                    return BindGroup::createInvalid(*this);
+                }
+
+                if (textureViewResource) {
+                    Ref apiTextureView = metal(textureViewResource->get());
+                    if (auto result = validateTextureOrBindGroup(*this, apiTextureView, argumentBuffer, argumentEncoder, argumentIndices, bindGroupLayout, entry, externalTextureEntry, index, resourceUsage, stage, stageResourceUsages, stageResources, storageTextureEntry, textureEntry))
+                        return WTF::move(*result);
+                } else {
+                    Ref apiTexture = metal(textureResource->get());
+                    if (auto result = validateTextureOrBindGroup(*this, apiTexture, argumentBuffer, argumentEncoder, argumentIndices, bindGroupLayout, entry, externalTextureEntry, index, resourceUsage, stage, stageResourceUsages, stageResources, storageTextureEntry, textureEntry))
+                        return WTF::move(*result);
+                }
+
+            } else if (externalTextureResource) {
+                if (!hasBinding<BindGroupLayout::ExternalTextureBindingLayout>(bindGroupLayoutEntries, bindingIndex)) {
+                    VALIDATION_ERROR(@"Expected external texture but it was not present in the bind group layout");
+                    return BindGroup::createInvalid(*this);
+                }
+                Ref externalTexture = metal(externalTextureResource->get());
+                if (&externalTexture->device() != this) {
+                    VALIDATION_ERROR(@"External texture was created from a different device");
+                    return BindGroup::createInvalid(*this);
+                }
+                auto textureData = createExternalTextureFromPixelBuffer(protect(externalTexture->pixelBuffer()), externalTexture->colorSpace(), PremultiplyAlpha::Yes);
+                id<MTLTexture> texture0 = textureData.texture0 ?: placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
+                auto metalStage = metalRenderStage(stage);
+                if (stage != ShaderStage::Undefined) {
+                    externalTextureIndices[stage].argumentBufferIndex = index;
+                    externalTextureIndices[stage].resourceIndex = stageResources[metalStage][resourceUsage - 1].size();
+                }
+                if (texture0) {
+                    stageResources[metalStage][resourceUsage - 1].append(texture0);
+                    stageResourceUsages[metalStage][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
+                }
+                id<MTLTexture> texture1 = textureData.texture1 ?: placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
+                if (texture1) {
+                    stageResources[metalStage][resourceUsage - 1].append(texture1);
+                    stageResourceUsages[metalStage][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
+                }
+
+                if (stage != ShaderStage::Undefined) {
+                    argumentIndices[stage].remove(index);
+                    externalTexture->updateExternalTextures(texture0, texture1);
+                    [argumentEncoder[stage] setTexture:texture0 atIndex:index++];
+
+                    argumentIndices[stage].remove(index);
+                    [argumentEncoder[stage] setTexture:texture1 atIndex:index++];
+
+                    argumentIndices[stage].remove(index);
+                    if (auto* uvRemapAddress = static_cast<simd::float3x2*>([argumentEncoder[stage] constantDataAtIndex:index++]))
+                        *uvRemapAddress = textureData.uvRemappingMatrix;
+
+                    argumentIndices[stage].remove(index);
+                    if (auto* cscMatrixAddress = static_cast<simd::float4x3*>([argumentEncoder[stage] constantDataAtIndex:index++]))
+                        *cscMatrixAddress = textureData.colorSpaceConversionMatrix;
+
+                    argumentIndices[stage].remove(index);
+                    if (auto* primariesMatrixAddress = static_cast<simd::float3x4*>([argumentEncoder[stage] constantDataAtIndex:index++]))
+                        *primariesMatrixAddress = textureData.primariesConversionMatrix;
+
+                    argumentIndices[stage].remove(index);
+                    if (auto* visibleSizeAddress = static_cast<simd::uint2*>([argumentEncoder[stage] constantDataAtIndex:index++]))
+                        *visibleSizeAddress = externalTexture->visibleSize();
+                }
+            }
+        }
+
+        if (!bindingContainedInStage && !bindGroupLayout->isAutoGenerated()) {
+            VALIDATION_ERROR([NSString stringWithFormat:@"Binding %d was not contained in the bind group", entry.binding]);
+            return BindGroup::createInvalid(*this);
+        }
+    }
+
+    for (auto& indices : argumentIndices) {
+        if (indices.size())
+            return BindGroup::createInvalid(*this);
+    }
+
+    Vector<BindableResources> resources;
+    for (ShaderStage stage : stagesPlusUndefined) {
+        for (size_t i = 0; i < maxResourceUsageValue; ++i) {
+            auto renderStage = metalRenderStage(stage);
+            auto &v = stageResources[renderStage][i];
+            auto &u = stageResourceUsages[renderStage][i];
+            static_assert(MTLResourceUsageRead == 1 && !BindGroupLayout::BindingAccessReadOnly);
+            if (v.size()) {
+                if (stage != ShaderStage::Undefined && i == BindGroupLayout::BindingAccessReadOnly)
+                    externalTextureIndices[stage].containerIndex = resources.size();
+                resources.append(BindableResources {
+                    .mtlResources = WTF::move(v),
+                    .resourceUsages = WTF::move(u),
+                    .usage = static_cast<MTLResourceUsage>(i + 1),
+                    .renderStages = renderStage
+                });
+            }
+        }
+    }
+
+    argumentBuffer[ShaderStage::Vertex].label = bindGroupLayout->vertexArgumentEncoder().label;
+    argumentBuffer[ShaderStage::Fragment].label = bindGroupLayout->fragmentArgumentEncoder().label;
+    argumentBuffer[ShaderStage::Compute].label = bindGroupLayout->computeArgumentEncoder().label;
+
+    std::ranges::sort(dynamicBuffers, { }, &BindGroup::BufferAndType::bindingIndex);
+
+    if (m_bindGroupId == std::numeric_limits<decltype(m_bindGroupId)>::max()) {
+        loseTheDevice(WebGPU::DeviceLostReason::Unknown);
+        return BindGroup::createInvalid(*this);
+    }
+
+    Ref bindGroup = BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTF::move(resources), bindGroupLayout, WTF::move(dynamicBuffers), WTF::move(samplersSet), WTF::move(externalTextureIndices), ++m_bindGroupId, *this);
+    registerResourceHolder(bindGroup->resources(), bindGroup);
+    return bindGroup;
+#undef VALIDATION_ERROR
+#undef INTERNAL_ERROR_STRING
+}
+
+bool BindGroup::isValid() const
+{
+    return !!bindGroupLayout();
+}
+
+BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, ShaderStageArray<ExternalTextureIndices>&& externalTextureIndices, uint32_t uniqueIdentifier, Device& device)
+    : m_vertexArgumentBuffer(vertexArgumentBuffer)
+    , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
+    , m_computeArgumentBuffer(computeArgumentBuffer)
+    , m_device(device)
+    , m_resources(WTF::move(resources))
+    , m_bindGroupLayout(&bindGroupLayout)
+    , m_dynamicBuffers(WTF::move(dynamicBuffers))
+    , m_samplers(WTF::move(samplers))
+    , m_externalTextureIndices(WTF::move(externalTextureIndices))
+    , m_uniqueIdentifier(uniqueIdentifier)
+{
+    for (size_t index = 0, maxIndex = m_dynamicBuffers.size(); index < maxIndex; ++index)
+        m_dynamicOffsetsIndices.add(m_dynamicBuffers[index].bindingIndex, index);
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BindGroup);
+
+BindGroup::BindGroup(Device& device)
+    : m_device(device)
+{
+}
+
+BindGroup::~BindGroup() = default;
+
+const BindGroup::BufferAndType* BindGroup::dynamicBuffer(uint32_t i) const
+{
+    ASSERT(i < m_dynamicBuffers.size());
+    return i < m_dynamicBuffers.size() ? &m_dynamicBuffers[i] : nullptr;
+}
+
+uint32_t BindGroup::dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>* dynamicOffsets) const
+{
+    if (auto it = m_dynamicOffsetsIndices.find(bindingIndex); it != m_dynamicOffsetsIndices.end())
+        return dynamicOffsets && it->value < dynamicOffsets->size() ? (*dynamicOffsets)[it->value] : 0u;
+
+    return 0u;
+}
+
+void BindGroup::setLabel(String&& label)
+{
+    RetainPtr labelString = label.createNSString();
+    m_vertexArgumentBuffer.label = labelString.get();
+    m_fragmentArgumentBuffer.label = labelString.get();
+    m_computeArgumentBuffer.label = labelString.get();
+}
+
+bool BindGroup::allowedUsage(const OptionSet<BindGroupEntryUsage>& allowedUsage)
+{
+    if ((allowedUsage & BindGroupEntryUsage::Storage) && (allowedUsage != BindGroupEntryUsage::Storage))
+        return false;
+
+    if ((allowedUsage & BindGroupEntryUsage::StorageTextureWriteOnly) && (allowedUsage != BindGroupEntryUsage::StorageTextureWriteOnly))
+        return false;
+
+    if ((allowedUsage & BindGroupEntryUsage::StorageTextureReadWrite) && (allowedUsage != BindGroupEntryUsage::StorageTextureReadWrite))
+        return false;
+
+    if ((allowedUsage & BindGroupEntryUsage::Attachment) && (allowedUsage != BindGroupEntryUsage::Attachment))
+        return false;
+
+    return true;
+}
+
+NSString* BindGroup::usageName(const OptionSet<BindGroupEntryUsage>& allowedUsage)
+{
+    NSString* result = @"";
+    if (allowedUsage & BindGroupEntryUsage::Input)
+        result = [result stringByAppendingString:@"Input "];
+    if (allowedUsage & BindGroupEntryUsage::Constant)
+        result = [result stringByAppendingString:@"Constant "];
+    if (allowedUsage & BindGroupEntryUsage::Storage)
+        result = [result stringByAppendingString:@"Storage "];
+    if (allowedUsage & BindGroupEntryUsage::StorageRead)
+        result = [result stringByAppendingString:@"StorageRead "];
+    if (allowedUsage & BindGroupEntryUsage::Attachment)
+        result = [result stringByAppendingString:@"Attachment "];
+    if (allowedUsage & BindGroupEntryUsage::AttachmentRead)
+        result = [result stringByAppendingString:@"AttachmentRead "];
+    if (allowedUsage & BindGroupEntryUsage::ConstantTexture)
+        result = [result stringByAppendingString:@"ConstantTexture "];
+    if (allowedUsage & BindGroupEntryUsage::StorageTextureWriteOnly)
+        result = [result stringByAppendingString:@"StorageTextureWriteOnly "];
+    if (allowedUsage & BindGroupEntryUsage::StorageTextureRead)
+        result = [result stringByAppendingString:@"StorageTextureRead "];
+    if (allowedUsage & BindGroupEntryUsage::StorageTextureReadWrite)
+        result = [result stringByAppendingString:@"StorageTextureReadWrite "];
+
+    return result;
+}
+
+uint64_t BindGroup::makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WebGPU::TextureAspect aspect)
+{
+    RELEASE_ASSERT(aspect != WebGPU::TextureAspect::All);
+    uint64_t aspectBit = aspect == WebGPU::TextureAspect::DepthOnly ? 1 : 0;
+    return aspectBit | (static_cast<uint64_t>(baseMipLevel) << 1) | (static_cast<uint64_t>(baseArrayLayer) << 32);
+}
+
+[[nodiscard]] static bool setArgumentBuffer(id<MTLArgumentEncoder> encoder, id<MTLBuffer> buffer)
+{
+    if (!encoder || !buffer)
+        return false;
+
+    [encoder setArgumentBuffer:buffer offset:0];
+    return true;
+}
+
+bool BindGroup::rebindSamplersIfNeeded() const
+{
+    if (!m_bindGroupLayout)
+        return true;
+
+    for (auto& [samplerRef, shaderStageArray] : m_samplers) {
+        Ref sampler = samplerRef;
+        if (sampler->cachedSamplerState())
+            continue;
+
+        WTFLogAlways("Rebinding of samplers required, if this occurs frequently the application is using too many unique samplers");
+        id<MTLSamplerState> samplerState = sampler->tryCacheSamplerState();
+        if (!samplerState)
+            return false;
+        if (shaderStageArray[ShaderStage::Vertex].has_value() && setArgumentBuffer(m_bindGroupLayout->vertexArgumentEncoder(), vertexArgumentBuffer()))
+            [m_bindGroupLayout->vertexArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Vertex]];
+
+        if (shaderStageArray[ShaderStage::Fragment].has_value() && setArgumentBuffer(m_bindGroupLayout->fragmentArgumentEncoder(), fragmentArgumentBuffer()))
+            [m_bindGroupLayout->fragmentArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Fragment]];
+
+        if (shaderStageArray[ShaderStage::Compute].has_value() && setArgumentBuffer(m_bindGroupLayout->computeArgumentEncoder(), computeArgumentBuffer()))
+            [m_bindGroupLayout->computeArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Compute]];
+    }
+    return true;
+}
+
+bool BindGroup::updateExternalTextures(WebGPU::ExternalTexture& apiExternalTexture)
+{
+    // Every WebGPU::ExternalTexture that reaches a WebGPU::Metal::BindGroup is a WebGPU::Metal::ExternalTexture.
+    auto& externalTexture = downcast<ExternalTexture>(apiExternalTexture);
+    if (m_renderBundleConsumerCount)
+        return false;
+
+    if (!m_bindGroupLayout || &externalTexture.device() != m_device.ptr())
+        return false;
+
+    bool foundBoundExternalTexture = false;
+    for (auto& resource : borrow(m_resources)) {
+        for (auto& resourceUsage : borrow(resource.resourceUsages)) {
+            auto* boundExternalTexture = std::get_if<RefPtr<const ExternalTexture>>(&resourceUsage.resource);
+            if (!boundExternalTexture || !*boundExternalTexture)
+                continue;
+
+            if (boundExternalTexture->get() != &externalTexture || (*boundExternalTexture)->openCommandEncoderCount())
+                return false;
+
+            foundBoundExternalTexture = true;
+        }
+    }
+
+    if (!foundBoundExternalTexture)
+        return false;
+
+    Ref device = m_device;
+    auto textureData = device->createExternalTextureFromPixelBuffer(protect(externalTexture.pixelBuffer()), externalTexture.colorSpace(), Device::PremultiplyAlpha::Yes);
+    id<MTLTexture> texture0 = textureData.texture0 ?: device->placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
+    id<MTLTexture> texture1 = textureData.texture1 ?: device->placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
+    externalTexture.updateExternalTextures(texture0, texture1);
+    if (!texture0 || !texture1)
+        return false;
+
+    BindGroup::ShaderStageArray<id<MTLBuffer>> argumentBuffers = std::array<id<MTLBuffer>, 3>({ vertexArgumentBuffer(), fragmentArgumentBuffer(), computeArgumentBuffer() });
+    BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoders = std::array<id<MTLArgumentEncoder>, 3>({ m_bindGroupLayout->vertexArgumentEncoder(), m_bindGroupLayout->fragmentArgumentEncoder(), m_bindGroupLayout->computeArgumentEncoder() });
+    for (ShaderStage stage : stages) {
+        auto& indices = m_externalTextureIndices[stage];
+        auto index = indices.argumentBufferIndex;
+        auto resourceIndex = indices.resourceIndex;
+        auto containerIndex = indices.containerIndex;
+        if (index == NSNotFound || containerIndex >= m_resources.size() || resourceIndex >= m_resources[containerIndex].mtlResources.size() || (resourceIndex + 1) >= m_resources[containerIndex].mtlResources.size())
+            continue;
+
+        m_resources[containerIndex].mtlResources[resourceIndex] = texture0;
+        m_resources[containerIndex].mtlResources[resourceIndex + 1] = texture1;
+
+        id<MTLArgumentEncoder> argumentEncoder = argumentEncoders[stage];
+        if (!setArgumentBuffer(argumentEncoder, argumentBuffers[stage]))
+            continue;
+
+        [argumentEncoder setTexture:texture0 atIndex:index++];
+        [argumentEncoder setTexture:texture1 atIndex:index++];
+
+        if (auto* uvRemapAddress = static_cast<simd::float3x2*>([argumentEncoder constantDataAtIndex:index++]))
+            *uvRemapAddress = textureData.uvRemappingMatrix;
+
+        if (auto* cscMatrixAddress = static_cast<simd::float4x3*>([argumentEncoder constantDataAtIndex:index++]))
+            *cscMatrixAddress = textureData.colorSpaceConversionMatrix;
+
+        if (auto* primariesMatrixAddress = static_cast<simd::float3x4*>([argumentEncoder constantDataAtIndex:index++]))
+            *primariesMatrixAddress = textureData.primariesConversionMatrix;
+
+        if (auto* visibleSizeAddress = static_cast<simd::uint2*>([argumentEncoder constantDataAtIndex:index++]))
+            *visibleSizeAddress = externalTexture.visibleSize();
+    }
+
+    return true;
+}
+
+void BindGroup::releaseDestroyedResources()
+{
+    replaceDestroyedResourcesWithPlaceholders(m_resources);
+}
+
+bool BindGroup::makeSubmitInvalid(ShaderStage stage, const BindGroupLayout* pipelineLayout) const
+{
+    if (!pipelineLayout || pipelineLayout->entries().isEmpty())
+        return false;
+
+    if (!m_bindGroupLayout)
+        return true;
+
+    Ref pipelineBindGroupLayout { *pipelineLayout };
+    switch (stage) {
+    case ShaderStage::Vertex:
+        return m_vertexArgumentBuffer.length != pipelineBindGroupLayout->encodedLength(stage);
+    case ShaderStage::Fragment:
+        return m_fragmentArgumentBuffer.length != pipelineBindGroupLayout->encodedLength(stage);
+    case ShaderStage::Compute:
+        return m_computeArgumentBuffer.length != pipelineBindGroupLayout->encodedLength(stage);
+    case ShaderStage::Undefined:
+        return true;
+    }
+
+    return true;
+}
+
+NODELETE static uint64_t makePipelineBindGroupKey(uint32_t groupIndex, uint64_t pipelineIndex)
+{
+    return static_cast<uint64_t>(groupIndex) | (pipelineIndex << Device::maxBindGroups);
+}
+
+void BindGroup::validatedSuccessfully(uint32_t groupIndex, uint64_t pipelineIndex, uint32_t maxOffset) const
+{
+    auto it = m_validatedBindGroup.add(makePipelineBindGroupKey(groupIndex, pipelineIndex), maxOffset).iterator;
+    it->value = std::max(it->value, maxOffset);
+}
+
+bool BindGroup::previouslyValidatedBindGroup(uint32_t groupIndex, uint64_t pipelineIndex, uint32_t maxOffset) const
+{
+    auto it = m_validatedBindGroup.find(makePipelineBindGroupKey(groupIndex, pipelineIndex));
+    return it != m_validatedBindGroup.end() && it->value >= maxOffset;
+}
+
+} // namespace WebGPU::Metal
+
+#pragma mark WGPU Stubs
+
+NODELETE void wgpuBindGroupAddRef(WGPUBindGroup bindGroup)
+{
+    WebGPU::Metal::fromAPI(bindGroup).ref();
+}
+
+void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
+{
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(bindGroup).deref();
+    }
+}
+
+void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, WGPUStringView label)
+{
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(bindGroup))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
+}

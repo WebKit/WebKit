@@ -1,0 +1,3 @@
+
+PASS canvas drawElementImage should not throw on empty elements.
+

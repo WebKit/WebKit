@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<title>prefers-color-scheme in an iframe follows the system preference when the parent page has no explicit color-scheme</title>
+
+<style>
+  #ifr {
+    width: 500px;
+    height: 500px;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    display: block;
+  }
+</style>
+
+<p>Test passes if the box is red.</p>
+<iframe id="ifr"></iframe>
+
+<script>
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setUseDarkAppearanceForTesting(true);
+
+    ifr.addEventListener("load", () => {
+      testRunner.notifyDone();
+    })
+  }
+
+  ifr.src = "resources/prefers-color-scheme-iframe.html";
+</script>

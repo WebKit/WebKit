@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<head>
+    <style>
+        img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 200px;
+        }
+
+        button {
+            margin-top: 250px;
+            font-size: 32px;
+        }
+    </style>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script src="../../../../resources/js-test.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        description("Verifies that it is possible to tap a button after long pressing an image with active event listeners. To manually run the test, long press the image to show the context menu, and then tap the button.");
+
+        const button = document.querySelector("button");
+        button.addEventListener("click", () => {
+            testPassed("Clicked the button");
+            finishJSTest();
+        });
+
+        const image = document.querySelector("img");
+        image.addEventListener("touchstart", () => { });
+        image.addEventListener("touchend", () => { });
+        image.addEventListener("touchcancel", () => { });
+
+        if (!window.testRunner || !testRunner.runUIScript)
+            return;
+
+        await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().begin(100, 100).wait(2).end().takeResult());
+        await UIHelper.waitForContextMenuToShow();
+        testPassed("Presented the context menu");
+
+        await UIHelper.tapAt(0, 0);
+        await UIHelper.waitForContextMenuToHide();
+        testPassed("Dismissed the context menu");
+
+        await UIHelper.activateElement(button);
+    });
+    </script>
+</head>
+<body>
+    <div id="description"></div>
+    <div id="console"></div>
+    <img src="../../../images/resources/dice.png">
+    <button>Tap here</button>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS position-area does not affect resolved inset properties
+PASS 'auto' inset properties resolve to 0px when position-area is non-initial
+

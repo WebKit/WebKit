@@ -1,0 +1,5 @@
+Text!
+
+
+PASS Test toJSON() in LargestContentfulPaint.
+

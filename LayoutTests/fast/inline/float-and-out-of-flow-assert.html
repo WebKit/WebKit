@@ -1,0 +1,16 @@
+<style>
+.out_of_flow {
+  position: absolute;
+}
+
+.float_box {
+  float: left;
+}
+</style>
+</head>
+PASS if no crash or assert.
+<div><span class=out_of_flow></span><span class=out_of_flow></span><span class=float_box></span></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

@@ -1,0 +1,9 @@
+
+PASS animation-timeline: scroll(nearest)
+PASS animation-timeline: scroll(root)
+PASS animation-timeline: scroll(self)
+PASS animation-timeline: scroll(self), on non-scroller
+PASS animation-timeline: scroll(inline)
+PASS animation-timeline: scroll(x)
+PASS animation-timeline: scroll(y)
+

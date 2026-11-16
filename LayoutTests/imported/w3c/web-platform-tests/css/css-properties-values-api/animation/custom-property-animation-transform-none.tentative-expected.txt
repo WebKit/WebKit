@@ -1,0 +1,4 @@
+
+PASS Animating a custom property of type "<transform-list>|none" from "none" to <transform-list> value
+PASS Animating a custom property of type "<transform-function>|none" from "none" to <transform-function> value
+

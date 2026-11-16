@@ -1,0 +1,14 @@
+<body>
+    <p>Passes if it does not crash.</p>
+    <svg id="svg">
+        <rect width="100" height="100" fill="green">
+            <animate attributeName="x" from="0" to="10" dur="0.0001s" repeatCount="indefinite"/>
+        </rect>
+    </svg>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        svg.setCurrentTime(400000);
+    </script>
+</body>

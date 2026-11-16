@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `merchantCategoryCode` as part of `ApplePayRequestBase`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+    setup({ explicit_done: true, explicit_timeout: true });
+    test((test) => {
+        const method = validPaymentMethod();
+        method.data.features = ["paymentRequestMerchantCategoryCode"];
+        new PaymentRequest([method], validPaymentDetails());
+    }, "Should have a feature for `paymentRequestMerchantCategoryCode`.");
+    
+    user_activation_test(async (test) => {
+        const request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        
+        request.addEventListener("shippingaddresschange", (event) => {
+            assert_equals(internals.mockPaymentCoordinator.merchantCategoryCode, null, "check that the `merchantCategoryCode` is still `null` after an update");
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+        
+        const response = await request.show();
+        
+        assert_equals(internals.mockPaymentCoordinator.merchantCategoryCode, null, "check that the `merchantCategoryCode` is still `null` after the payment is accepted");
+        
+        await response.complete("success");
+    }, "Should not have a default value for `merchantCategoryCode`.");
+    
+    user_activation_test(async (test) => {
+        const method = validPaymentMethod();
+        
+        // Example MCC value - valid MCCs can range from 0 to 9999
+        method.data.merchantCategoryCode = "0739";
+        
+        const request = new PaymentRequest([method], validPaymentDetails());
+        
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        
+        request.addEventListener("shippingaddresschange", (event) => {
+            assert_equals(internals.mockPaymentCoordinator.merchantCategoryCode, method.data.merchantCategoryCode, "check that the `merchantCategoryCode` still matches after an update");
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+        
+        const response = await request.show();
+        
+        assert_equals(internals.mockPaymentCoordinator.merchantCategoryCode, method.data.merchantCategoryCode, "check that the `merchantCategoryCode` still matches after the payment is accepted");
+        
+        await response.complete("success");
+    }, "Should propagate `merchantCategoryCode` if provided.");
+    
+    done();
+</script>

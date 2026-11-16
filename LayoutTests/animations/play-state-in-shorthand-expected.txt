@@ -1,0 +1,2 @@
+PASS - animation is running upon receiving animationstart event
+PASS - animation is paused after setting the animation-play-state property to paused through the shorthand

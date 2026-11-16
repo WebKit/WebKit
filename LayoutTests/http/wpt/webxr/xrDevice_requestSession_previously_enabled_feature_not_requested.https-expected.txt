@@ -1,0 +1,4 @@
+
+PASS requestSession should not grant previously enabled features if not requested - webgl
+PASS requestSession should not grant previously enabled features if not requested - webgl2
+

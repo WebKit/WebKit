@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests mouseenter and mouseleave events inside a shadow tree.<br>
+To manually test, move the mouse cursor vertically across "hello, world" below.<br>
+WebKit must generate mouseenter and mouseleve events exactly once on host (as well as hostParent, continer, and target).</p>
+<div id="hostParent"><div id="host"></div></div><pre id="log"></pre>
+<script>
+
+const host = document.getElementById('host');
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = `
+    <div id="container">
+        <span id="target">hello, world</span>
+    </div>`;
+const container = shadowRoot.getElementById('container');
+const target = shadowRoot.getElementById('target');
+
+for (const element of [host.parentNode, host, container, target]) {
+    element.addEventListener('mouseenter', logEvent);
+    element.addEventListener('mouseleave', logEvent);
+}
+
+function log(text) {
+    document.getElementById('log').textContent += text + '\n';
+}
+
+function logEvent(event) {
+    if (event.composed)
+        log(`FAIL - ${event.type} on ${event.target.id} was composed`);
+    log(`${event.type} on ${event.target.id}`);
+}
+
+function logPhase(phase) {
+    log(`\n==${phase}==`);
+}
+
+if (!window.eventSender)
+    document.write('This test requires eventSender');
+else {
+    testRunner.dumpAsText();
+    const targetRect = target.getBoundingClientRect();
+    const x = targetRect.x + 5;
+    logPhase('Entering target');
+    eventSender.mouseMoveTo(x, targetRect.top + 5);
+    logPhase('Leaving target');
+    eventSender.mouseMoveTo(x, targetRect.bottom + 5);
+
+    host.parentNode.style.display = 'none';
+}
+
+</script>
+</body>
+</html>

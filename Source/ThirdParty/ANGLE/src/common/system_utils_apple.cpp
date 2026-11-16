@@ -1,0 +1,74 @@
+//
+// Copyright 2020 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+
+// system_utils_apple.cpp: Implementation of OS-specific functions for Apple platforms
+
+#include "common/unsafe_buffers.h"
+#include "system_utils.h"
+
+#include <unistd.h>
+
+#include <CoreServices/CoreServices.h>
+#include <mach-o/dyld.h>
+#include <mach/mach.h>
+#include <mach/mach_time.h>
+#include <cstdlib>
+#include <vector>
+
+#include <array>
+
+namespace angle
+{
+std::string GetExecutablePath()
+{
+    std::string result;
+
+    uint32_t size = 0;
+    _NSGetExecutablePath(nullptr, &size);
+
+    std::vector<char> buffer;
+    buffer.resize(size + 1);
+
+    _NSGetExecutablePath(buffer.data(), &size);
+    buffer[size] = '\0';
+
+    if (ANGLE_UNSAFE_TODO(!strrchr(buffer.data(), '/')))
+    {
+        return "";
+    }
+    return buffer.data();
+}
+
+std::string GetExecutableDirectory()
+{
+    std::string executablePath = GetExecutablePath();
+    size_t lastPathSepLoc      = executablePath.find_last_of("/");
+    return (lastPathSepLoc != std::string::npos) ? executablePath.substr(0, lastPathSepLoc) : "";
+}
+
+double GetCurrentSystemTime()
+{
+    mach_timebase_info_data_t timebaseInfo;
+    mach_timebase_info(&timebaseInfo);
+
+    double secondCoeff = timebaseInfo.numer * 1e-9 / timebaseInfo.denom;
+    return secondCoeff * mach_absolute_time();
+}
+
+uint64_t GetCurrentSystemTimeNs()
+{
+    mach_timebase_info_data_t timebaseInfo;
+    mach_timebase_info(&timebaseInfo);
+
+    double nanosecondCoeff = static_cast<double>(timebaseInfo.numer) / timebaseInfo.denom;
+    return static_cast<uint64_t>(nanosecondCoeff * mach_absolute_time());
+}
+
+void SetCurrentThreadName(const char *name)
+{
+    pthread_setname_np(name);
+}
+}  // namespace angle

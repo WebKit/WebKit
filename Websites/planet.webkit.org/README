@@ -1,0 +1,13 @@
+This directory contains files for Planet WebKit <http://planet.webkit.org/>.
+
+Some directories/files of interest are:
+
+* config.ini
+    Contains the configuration for Planet WebKit
+* planet/
+    Contains the Planet 2.0 software <http://planetplanet.org/>
+* templates/
+    Contains the templates used to build the HTML and feeds for Planet WebKit
+* wwwroot/
+    Serves as the document root on http://planet.webkit.org/
+

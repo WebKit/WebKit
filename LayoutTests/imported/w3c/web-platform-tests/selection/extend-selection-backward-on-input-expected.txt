@@ -1,0 +1,4 @@
+
+
+PASS Should not crash if block node is in an inline node and block_flow is a pseudo node
+

@@ -1,0 +1,18 @@
+
+PASS sending one chunk through a transferred stream should work
+PASS sending ten chunks through a transferred stream should work
+PASS sending ten chunks one at a time should work
+PASS sending ten chunks on demand should work
+PASS transferring a stream should relieve backpressure
+PASS transferring a stream should add one chunk to the queue size
+PASS the extra queue from transferring is counted in chunks
+PASS cancel should be propagated to the original
+PASS cancel should abort a pending read()
+PASS stream cancel should not wait for underlying source cancel
+PASS serialization should not happen until the value is read
+PASS transferring a non-serializable chunk should error both sides
+PASS errors should be passed through
+PASS race between cancel() and error() should leave sides in different states
+PASS race between cancel() and close() should be benign
+PASS race between cancel() and enqueue() should be benign
+

@@ -1,0 +1,3 @@
+
+PASS Element#requestFullscreen() on two elements in the same document
+

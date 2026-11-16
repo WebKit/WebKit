@@ -1,0 +1,6 @@
+
+
+PASS CSS invalidation fires for :playing when no :paused rule is present
+PASS CSS invalidation fires for :paused when no :playing rule is present
+PASS CSS invalidation fires for both :playing and :paused rules
+

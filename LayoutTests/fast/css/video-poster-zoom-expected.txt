@@ -1,0 +1,5 @@
+
+PASS Video poster size with zoom:1
+PASS Video poster size with zoom:1.5
+PASS Video poster size with zoom:2 and non-square dimensions
+

@@ -1,0 +1,13 @@
+Verifies the microphone Permissions API reflects permissions policy on cross-site frames
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS state is "denied"
+PASS event.origin is 'http://localhost:8000'
+PASS state === 'denied' is false
+PASS event.origin is 'http://localhost:8000'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

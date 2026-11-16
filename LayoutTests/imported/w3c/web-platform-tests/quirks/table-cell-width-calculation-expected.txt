@@ -1,0 +1,17 @@
+
+PASS The table cell width calculation quirk, baseline
+PASS The table cell width calculation quirk, basic
+PASS The table cell width calculation quirk, inline-block
+PASS The table cell width calculation quirk, img in span
+PASS The table cell width calculation quirk, the don't-wrap rule is only for the purpose of calculating the width of the cell
+PASS The table cell width calculation quirk, the quirk only applies when the cell is the containing block
+PASS The table cell width calculation quirk, the quirk shouldn't apply for generated content
+PASS The table cell width calculation quirk, the quirk shouldn't apply for <input>
+PASS The table cell width calculation quirk, the quirk shouldn't apply for <object>
+PASS The table cell width calculation quirk, the quirk shouldn't apply for <embed>
+PASS The table cell width calculation quirk, the quirk shouldn't apply for <video poster>
+PASS The table cell width calculation quirk, non-auto width on cell
+PASS The table cell width calculation quirk, zero width on cell, specified with on table
+PASS The table cell width calculation quirk, display:table-cell on span
+PASS The table cell width calculation quirk, display:table-cell on span, wbr
+

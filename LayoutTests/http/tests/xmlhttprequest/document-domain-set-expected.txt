@@ -1,0 +1,4 @@
+Waiting...
+PASS: XMLHttpRequest allowed with document.domain set.
+
+

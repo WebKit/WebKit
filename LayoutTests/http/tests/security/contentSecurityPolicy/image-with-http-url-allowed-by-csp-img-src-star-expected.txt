@@ -1,0 +1,10 @@
+This tests that loading an image with an HTTP URL is allowed when the page has Content Security Policy "img-src *".
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS did load image.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

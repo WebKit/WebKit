@@ -1,0 +1,13 @@
+Tests that a percentage -webkit-text-size-adjust on canvas ancestors does not affect canvas text metrics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS measure('adjusted', '20px Ahem', '1em', '0px') is measure('control', '20px Ahem', '1em', '0px')
+PASS measure('adjusted', '20px Ahem', '0px', '1em') is measure('control', '20px Ahem', '0px', '1em')
+PASS measure('adjusted', '1em Ahem', '0px', '0px') is measure('control', '1em Ahem', '0px', '0px')
+PASS measure('control', '20px Ahem', '0px', '0px') is 60
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

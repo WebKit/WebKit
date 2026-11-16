@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<div id="parentNode0">
+<div id="previousSibling0"></div><div id="target0"><div id="firstChild0"></div><div id="lastChild0"></div></div><div id="nextSibling0"></div>
+</div>
+
+<section id="parentNode1">
+<section id="previousSibling1"></section><section id="target1"><section id="firstChild1"></section><section id="lastChild1"></section></section><section id="nextSibling1"></section>
+</section>
+
+<span id="parentNode2">
+<span id="previousSibling2"></span><span id="target2"><span id="firstChild2"></span><span id="lastChild2"></span></span><span id="nextSibling2"></span>
+</span>
+
+<script>
+description('Test DOMJIT accessors work in polymorphic call sites.');
+var tests = [
+    "firstChild",
+    "lastChild",
+    "nextSibling",
+    "previousSibling",
+    "parentNode",
+].map(function (name) {
+    var func = `
+        return function ${name}(name, element, result) {
+            if (element.${name} !== result)
+                return false;
+            return true;
+        };
+    `;
+    return [ name, Function(func)() ];
+});
+
+for (var [name, func] of tests) {
+    for (var i = 0; i < 1e4; ++i) {
+        for (var j = 0; j < 3; ++j) {
+            shouldBeTrueQuiet(`func("${name}", document.getElementById("target${j}"), document.getElementById("${name}${j}"))`);
+        }
+    }
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

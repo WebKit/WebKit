@@ -1,0 +1,4 @@
+
+PASS New registered property declaration
+PASS Registered property overrides a previous declaration
+

@@ -1,0 +1,3 @@
+
+PASS GainNode should scale gains properly across notes
+

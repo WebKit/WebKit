@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="number" id="number-input" value="5">
+
+<script>
+var output = "This test ensures pressing the spin button parts exposed as AXDecrementButton and AXIncrementButton actually steps the value of the input type='number' behind them, down and then back up.\n\n";
+
+function spinButtonPart(attributeName)
+{
+    return accessibilityController.accessibleElementById("number-input").childAtIndex(0).uiElementAttributeValue(attributeName);
+}
+
+function axValue()
+{
+    return accessibilityController.accessibleElementById("number-input").stringValue;
+}
+
+function domValue()
+{
+    return document.getElementById("number-input").value;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("spinButtonPart('AXDecrementButton').subrole", "'AXSubrole: AXDecrementArrow'");
+    output += expect("spinButtonPart('AXIncrementButton').subrole", "'AXSubrole: AXIncrementArrow'");
+    output += expect("axValue()", "'AXValue: 5'");
+
+    setTimeout(async function() {
+        spinButtonPart("AXDecrementButton").press();
+        output += await expectAsync("axValue()", "'AXValue: 4'");
+        output += expect("domValue()", "'4'");
+
+        spinButtonPart("AXIncrementButton").press();
+        output += await expectAsync("axValue()", "'AXValue: 5'");
+        output += expect("domValue()", "'5'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

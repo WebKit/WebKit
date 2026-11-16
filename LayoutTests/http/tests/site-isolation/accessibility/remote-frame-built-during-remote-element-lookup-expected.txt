@@ -1,0 +1,12 @@
+This test ensures that building the accessibility tree for a page with an out-of-process iframe does not deadlock when it happens inside an AXRuntime remote element lookup, as it does when XCTest snapshots a newly loaded page on iOS.
+
+PASS: The remote element lookup returned.
+PASS: headingSearchReturnsRemoteFrame() === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+start
+Local heading
+
+

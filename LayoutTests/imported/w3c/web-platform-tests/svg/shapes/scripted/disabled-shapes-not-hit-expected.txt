@@ -1,0 +1,5 @@
+
+PASS Disabled shapes are not rendered and cannot be hit: <rect>
+PASS Disabled shapes are not rendered and cannot be hit: <circle>
+PASS Disabled shapes are not rendered and cannot be hit: <ellipse>
+

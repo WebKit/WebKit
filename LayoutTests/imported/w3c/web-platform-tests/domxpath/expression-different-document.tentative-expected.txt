@@ -1,0 +1,10 @@
+
+PASS expression from XML document, context node in XML document, no namespace resolver
+PASS expression from HTML document, context node in HTML document, no namespace resolver
+PASS expression from XML document, context node in HTML document, no namespace resolver
+PASS expression from HTML document, context node in XML document, no namespace resolver
+PASS expression from XML document, context node in XML document, with namespace resolver
+PASS expression from HTML document, context node in HTML document, with namespace resolver
+PASS expression from XML document, context node in HTML document, with namespace resolver
+PASS expression from HTML document, context node in XML document, with namespace resolver
+

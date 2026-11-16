@@ -1,0 +1,8 @@
+
+Test that events with a small X delta do not cause trapping in the horizontal overflow
+PASS overflowScrollEventCount == 0 is true
+PASS windowScrollEventCount > 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

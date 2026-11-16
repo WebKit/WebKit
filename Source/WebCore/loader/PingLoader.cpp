@@ -1,0 +1,305 @@
+/*
+ * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Roopesh Chander (roop@roopc.net)
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+#include "config.h"
+#include "PingLoader.h"
+
+#include "CachedRawResource.h"
+#include "CachedRawResourceClient.h"
+#include "CachedResourceHandle.h"
+#include "CachedResourceRequest.h"
+#include "ContentRuleListResults.h"
+#include "ContentSecurityPolicy.h"
+#include "DocumentLoader.h"
+#include "DocumentPage.h"
+#include "DocumentResourceLoader.h"
+#include "FrameLoader.h"
+#include "HTTPHeaderValues.h"
+#include "InspectorInstrumentation.h"
+#include "LoaderStrategy.h"
+#include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
+#include "NetworkLoadMetrics.h"
+#include "OriginAccessPatterns.h"
+#include "Page.h"
+#include "PlatformStrategies.h"
+#include "ProgressTracker.h"
+#include "ResourceError.h"
+#include "ResourceLoadInfo.h"
+#include "ResourceRequest.h"
+#include "ResourceResponse.h"
+#include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
+#include "UserContentController.h"
+#include "ViolationReportType.h"
+#include <wtf/text/CString.h>
+#include "LocalFrameInlines.h"
+
+namespace WebCore {
+
+class DeferredFetchLoader final : public RefCounted<DeferredFetchLoader>, private CachedRawResourceClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DeferredFetchLoader);
+public:
+    static void create(Ref<CachedRawResource>&& resource)
+    {
+        Ref loader = adoptRef(*new DeferredFetchLoader(resource.copyRef()));
+        loader->m_selfReference = loader.copyRef();
+        resource->addClient(loader);
+    }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
+    explicit DeferredFetchLoader(Ref<CachedRawResource>&& resource)
+        : m_resource(WTF::move(resource))
+    {
+    }
+
+    void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final
+    {
+        Ref protectedThis { *this };
+        resource.removeClient(*this);
+        m_resource = nullptr;
+        m_selfReference = nullptr;
+    }
+
+    CachedResourceHandle<CachedRawResource> m_resource;
+    RefPtr<DeferredFetchLoader> m_selfReference;
+};
+
+#if ENABLE(CONTENT_EXTENSIONS)
+
+// Returns true if we should block the load.
+static bool processContentRuleListsForLoad(const LocalFrame& frame, ResourceRequest& request, OptionSet<ContentExtensions::ResourceType> resourceType)
+{
+    RefPtr documentLoader = frame.loader().documentLoader();
+    if (!documentLoader)
+        return false;
+
+    RefPtr page = frame.page();
+    if (!page)
+        return false;
+
+    RefPtr userContentProvider = frame.userContentProvider();
+    if (!userContentProvider)
+        return false;
+
+    auto results = userContentProvider->processContentRuleListsForLoad(*page, request.url(), resourceType, *documentLoader);
+    bool shouldBlock = results.shouldBlock();
+    ContentExtensions::applyResultsToRequest(WTF::move(results), page.get(), request);
+    return shouldBlock;
+}
+
+#endif
+
+void PingLoader::loadImage(LocalFrame& frame, URL&& url)
+{
+    ASSERT(frame.document());
+    Ref document = *frame.document();
+
+    if (!protect(document->securityOrigin())->canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
+        FrameLoader::reportLocalLoadFailed(&frame, url.string());
+        return;
+    }
+
+    if (!portAllowed(url)) {
+        FrameLoader::reportBlockedLoadFailed(frame, url);
+        return;
+    }
+
+    ResourceRequest request(WTF::move(url));
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::Image))
+        return;
+#endif
+
+    protect(document->contentSecurityPolicy())->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
+
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
+
+    String referrer = SecurityPolicy::generateReferrerHeader(document->referrerPolicy(), request.url(), frame.loader().outgoingReferrerURL(), OriginAccessPatternsForWebProcess::singleton());
+    if (!referrer.isEmpty())
+        request.setHTTPReferrer(referrer);
+    frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
+
+    startPingLoad(frame, request, ShouldFollowRedirects::Yes, ContentSecurityPolicyImposition::DoPolicyCheck, ReferrerPolicy::EmptyString);
+}
+
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
+void PingLoader::sendPing(LocalFrame& frame, URL&& sendPingURL, const URL& destinationURL)
+{
+    ASSERT(frame.document());
+
+    if (!sendPingURL.protocolIsInHTTPFamily())
+        return;
+
+    ResourceRequest request(WTF::move(sendPingURL));
+    const auto& pingURL = request.url();
+    request.setRequester(ResourceRequestRequester::Ping);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::Ping))
+        return;
+#endif
+
+    Ref document = *frame.document();
+    if (!protect(document->contentSecurityPolicy())->allowConnectToSource(pingURL, document->currentParserSourcePosition()))
+        return;
+    protect(document->contentSecurityPolicy())->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
+
+    request.setHTTPMethod("POST"_s);
+    request.setHTTPContentType("text/ping"_s);
+    request.setHTTPBody(FormData::create("PING"_span8));
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
+
+    Ref sourceOrigin = document->securityOrigin();
+    FrameLoader::addHTTPOriginIfNeeded(request, SecurityPolicy::generateOriginHeader(document->referrerPolicy(), request.url(), sourceOrigin, OriginAccessPatternsForWebProcess::singleton()));
+
+    frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
+
+    // https://html.spec.whatwg.org/multipage/links.html#hyperlink-auditing
+    if (protect(document->securityOrigin())->isSameOriginAs(SecurityOrigin::create(pingURL).get())
+        || !document->url().protocolIs("https"_s))
+        request.setHTTPHeaderField(HTTPHeaderName::PingFrom, document->url().string());
+    request.setHTTPHeaderField(HTTPHeaderName::PingTo, destinationURL.string());
+
+    startPingLoad(frame, request, ShouldFollowRedirects::Yes, ContentSecurityPolicyImposition::DoPolicyCheck, ReferrerPolicy::NoReferrer);
+}
+
+void PingLoader::sendViolationReport(LocalFrame& frame, URL&& violationReportURL, Ref<FormData>&& report, ViolationReportType reportType)
+{
+    ASSERT(frame.document());
+
+    // FIXME: Add the concept of browsing context group like in the specification instead of treating the whole process as a group.
+    // https://bugs.webkit.org/show_bug.cgi?id=244945
+    if (reportType == ViolationReportType::CrossOriginOpenerPolicy && Page::nonUtilityPageCount() <= 1)
+        return;
+
+    ResourceRequest request(WTF::move(violationReportURL));
+    const auto& reportURL = request.url();
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::CSPReport))
+        return;
+#endif
+
+    Ref document = *frame.document();
+    protect(document->contentSecurityPolicy())->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
+
+    request.setHTTPMethod("POST"_s);
+    request.setHTTPBody(WTF::move(report));
+    switch (reportType) {
+    case ViolationReportType::ContentSecurityPolicy:
+        request.setHTTPContentType("application/csp-report"_s);
+        break;
+    case ViolationReportType::COEPInheritenceViolation:
+    case ViolationReportType::CORPViolation:
+    case ViolationReportType::CSPHashReport:
+    case ViolationReportType::CrossOriginOpenerPolicy:
+    case ViolationReportType::Deprecation:
+    case ViolationReportType::StandardReportingAPIViolation:
+    case ViolationReportType::Test:
+    case ViolationReportType::IntegrityPolicy:
+        request.setHTTPContentType("application/reports+json"_s);
+        break;
+    }
+
+    bool removeCookies = true;
+    if (protect(document->securityOrigin())->isSameSchemeHostPort(SecurityOrigin::create(reportURL).get()))
+        removeCookies = false;
+    if (removeCookies)
+        request.setAllowCookies(false);
+
+    if (reportType == ViolationReportType::ContentSecurityPolicy)
+        frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
+
+    String referrer = SecurityPolicy::generateReferrerHeader(document->referrerPolicy(), reportURL, frame.loader().outgoingReferrerURL(), OriginAccessPatternsForWebProcess::singleton());
+    if (!referrer.isEmpty())
+        request.setHTTPReferrer(referrer);
+
+    startPingLoad(frame, request, ShouldFollowRedirects::No, ContentSecurityPolicyImposition::SkipPolicyCheck, ReferrerPolicy::EmptyString, reportType);
+}
+
+void PingLoader::startPingLoad(LocalFrame& frame, ResourceRequest& request, ShouldFollowRedirects shouldFollowRedirects, ContentSecurityPolicyImposition policyCheck, ReferrerPolicy referrerPolicy, std::optional<ViolationReportType> violationReportType)
+{
+    auto identifier = ResourceLoaderIdentifier::generate();
+    // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
+    // It seems like the PingLoader should be associated with the current
+    // Document in the Frame, but the activeDocumentLoader will be associated
+    // with the provisional DocumentLoader if there is a provisional
+    // DocumentLoader.
+    bool shouldUseCredentialStorage = frame.loader().client().shouldUseCredentialStorage(protect(frame.loader().activeDocumentLoader()), identifier);
+    ResourceLoaderOptions options;
+    options.credentials = shouldUseCredentialStorage ? FetchOptions::Credentials::Include : FetchOptions::Credentials::Omit;
+    options.redirect = shouldFollowRedirects == ShouldFollowRedirects::Yes ? FetchOptions::Redirect::Follow : FetchOptions::Redirect::Error;
+    options.keepAlive = true;
+    options.contentSecurityPolicyImposition = policyCheck;
+    options.referrerPolicy = referrerPolicy;
+    options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
+    options.cache = FetchOptions::Cache::NoCache;
+
+    // https://www.w3.org/TR/reporting/#try-delivery
+    if (violationReportType && *violationReportType != ViolationReportType::ContentSecurityPolicy) {
+        options.credentials = FetchOptions::Credentials::SameOrigin;
+        options.mode = FetchOptions::Mode::Cors;
+        options.serviceWorkersMode = ServiceWorkersMode::None;
+        options.destination = FetchOptions::Destination::Report;
+    }
+
+    CachedResourceRequest cachedResourceRequest { ResourceRequest { request }, options };
+    std::ignore = protect(protect(frame.document())->cachedResourceLoader())->requestPingResource(WTF::move(cachedResourceRequest));
+}
+
+void PingLoader::startDeferredFetch(LocalFrame& frame, ResourceRequest& request, const ResourceLoaderOptions& options)
+{
+    // Deferred fetches are sent as keepalive loads, so the network process keeps
+    // them alive after the document that queued them has gone away.
+    ASSERT(options.keepAlive);
+
+    Ref cachedResourceLoader = protect(frame.document())->cachedResourceLoader();
+    CachedResourceRequest cachedResourceRequest { ResourceRequest { request }, options };
+    auto cachedResourceOrError = cachedResourceLoader->requestBeaconResource(WTF::move(cachedResourceRequest));
+    if (cachedResourceOrError)
+        DeferredFetchLoader::create(WTF::move(cachedResourceOrError.value()));
+}
+
+// // https://html.spec.whatwg.org/multipage/origin.html#sanitize-url-report
+String PingLoader::sanitizeURLForReport(const URL& url)
+{
+    URL sanitizedURL = url;
+    sanitizedURL.removeCredentials();
+    sanitizedURL.removeFragmentIdentifier();
+    return sanitizedURL.string();
+}
+
+} // namespace WebCore

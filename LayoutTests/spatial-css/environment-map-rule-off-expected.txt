@@ -1,0 +1,3 @@
+
+PASS @environment-map is unavailable when the spatial portal feature is off
+

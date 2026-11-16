@@ -1,0 +1,5 @@
+Select and paste something (like plain text) into the middle of this text node. This is a contentEditable=false after the paste, the contentEditable=false and everything after it, should not get lost.
+
+
+FAIL Copy pasting in editable area should not lose data in non-editable area assert_equals: expected "Select and paste Selectsomething (like plain text) into the middle of this text node. <span contenteditable=\"false\" style=\"border: 1px solid gray;\">This is a contentEditable=false</span> after the paste, the contentEditable=false and everything after it, should not get lost." but got "Select and paste something (like plain text) into the middle of this text node. <span contenteditable=\"false\" style=\"border: 1px solid gray\">This is a contentEditable=false</span> after the paste, the contentEditable=false and everything after it, should not get lost."
+

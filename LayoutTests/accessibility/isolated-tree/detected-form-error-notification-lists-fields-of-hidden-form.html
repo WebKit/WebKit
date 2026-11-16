@@ -1,0 +1,62 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.field-error { color: #c62828; }
+</style>
+</head>
+<body>
+
+<!-- The form is hidden, and every control is associated with it by id from elsewhere on the page. -->
+<form id="checkout" hidden></form>
+
+<label for="name">Name</label><input id="name" type="text" form="checkout">
+<div id="name-error" class="field-error"></div>
+<label for="email">Email</label><input id="email" type="text" form="checkout">
+<div id="email-error" class="field-error"></div>
+<button id="submit" type="submit" form="checkout">Place order</button>
+
+<script>
+var output = "This tests that the possible form validation error notification lists the fields of a form that is hidden. The form has nothing in it and no accessibility object to search, so an assistive technology can only find the fields because the notification lists them.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var payload = "";
+    var fields;
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXPossibleFormValidationError") {
+            payload = formatFormValidationUserInfo(userInfo);
+            fields = userInfo["AXFormValidationFields"].map((field) => field.domIdentifier).join(", ");
+        }
+    });
+
+    document.getElementById("checkout").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("name-error").textContent = "Enter your name.";
+        document.getElementById("email-error").textContent = "Enter a valid email address.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("!axElement('checkout')", "true");
+        output += expect("axElement('name').stringAttributeValue('AXInvalid')", "'false'");
+
+        axElement("submit").press();
+
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\\nAXFormValidationErrorFieldCount: 2\\n'");
+        output += expect("fields", "'name, email'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

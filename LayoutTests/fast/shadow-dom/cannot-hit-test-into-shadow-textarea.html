@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function runTest() {
+    const bounds = textareaElement.getBoundingClientRect();
+    range = document.caretRangeFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+    shouldBe("range.commonAncestorContainer", "textareaElement");
+    finishJSTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <textarea id="textareaElement" style="position:absolute; height: 100px; width: 100px;">Text Area</textarea>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Verifies a sandboxed cross-origin iframe with allow-top-navigation can navigate its parent popup to a blob URL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.data is "blob loaded"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+click to run test manually in a browser

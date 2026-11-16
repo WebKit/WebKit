@@ -1,0 +1,8 @@
+x
+x
+x
+x
+
+PASS Empty content pseudo-element does not generate baseline
+PASS Empty content pseudo-element does not generate baseline with white-space: pre
+

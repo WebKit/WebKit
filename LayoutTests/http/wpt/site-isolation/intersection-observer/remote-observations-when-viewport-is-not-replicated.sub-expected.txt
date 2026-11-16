@@ -1,0 +1,4 @@
+
+
+PASS Remote intersection observations stay correct once the viewport stops being replicated
+

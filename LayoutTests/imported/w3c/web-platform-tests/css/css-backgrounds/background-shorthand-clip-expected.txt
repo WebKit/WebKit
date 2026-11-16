@@ -1,0 +1,6 @@
+
+PASS putting background-clip initial value after background shorthand
+PASS putting background-clip value after background shorthand
+PASS overwrite background-clip value after background shorthand with one <visual-box>
+PASS overwrite background-clip value after background shorthand with two <visual-box>
+

@@ -1,0 +1,42 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+PASS .target > * 1
+PASS .target > * 2
+PASS .target > * 3
+PASS .target > * 4
+PASS .target > * 5
+FAIL .target > * 6 assert_equals:
+<div class="inner" data-offset-y="30">
+    <div style="margin-block-start: -200px;">
+      <span></span><br><span></span>
+    </div>
+  </div>
+offsetTop expected 30 but got 185
+PASS .target > * 7
+FAIL .target > * 8 assert_equals:
+<div class="inner" data-offset-y="50">
+    <div style="margin-block-start: -200px;">
+      <span></span><br><span></span>
+    </div>
+  </div>
+offsetTop expected 50 but got 175
+FAIL .target > * 9 assert_equals:
+<div data-offset-y="110"><span></span><br><span></span></div>
+offsetTop expected 110 but got 245
+PASS .target > * 10
+FAIL .target > * 11 assert_equals:
+<div data-offset-y="90"><span></span><br><span></span></div>
+offsetTop expected 90 but got 255
+PASS .target > * 12
+

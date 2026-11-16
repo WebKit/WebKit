@@ -1,0 +1,25 @@
+This test ensures we produce the right rects via the bounds-for-range API for multi-byte glyphs.
+
+PASS: text.role.toLowerCase().includes('text') === true
+PASS: text.boundsForRangeWithPagePosition(0, 1) was equal or approximately equal to (x: 8, y: 14, w: 13, h: 18).
+PASS: text.boundsForRangeWithPagePosition(1, 1) was equal or approximately equal to (x: 19, y: 14, w: 10, h: 18).
+PASS: text.boundsForRangeWithPagePosition(2, 1) was equal or approximately equal to (x: 27, y: 14, w: 9, h: 18).
+PASS: text.boundsForRangeWithPagePosition(3, 2) was equal or approximately equal to (x: 34, y: 14, w: 23, h: 18).
+PASS: text.boundsForRangeWithPagePosition(5, 1) was equal or approximately equal to (x: 55, y: 14, w: 10, h: 18).
+PASS: text.boundsForRangeWithPagePosition(6, 1) was equal or approximately equal to (x: 63, y: 14, w: 9, h: 18).
+PASS: text.boundsForRangeWithPagePosition(7, 1) was equal or approximately equal to (x: 70, y: 14, w: 7, h: 18).
+PASS: text.boundsForRangeWithPagePosition(8, 11) was equal or approximately equal to (x: 75, y: 14, w: 23, h: 18).
+PASS: text.boundsForRangeWithPagePosition(19, 1) was equal or approximately equal to (x: 96, y: 14, w: 10, h: 18).
+PASS: text.boundsForRangeWithPagePosition(20, 1) was equal or approximately equal to (x: 104, y: 14, w: 10, h: 18).
+PASS: text.boundsForRangeWithPagePosition(21, 1) was equal or approximately equal to (x: 112, y: 14, w: 7, h: 18).
+PASS: text.boundsForRangeWithPagePosition(22, 2) was equal or approximately equal to (x: 117, y: 14, w: 23, h: 18).
+PASS: text.boundsForRangeWithPagePosition(24, 1) was equal or approximately equal to (x: 138, y: 14, w: 13, h: 18).
+PASS: text.boundsForRangeWithPagePosition(25, 1) was equal or approximately equal to (x: 149, y: 14, w: 10, h: 18).
+PASS: text.boundsForRangeWithPagePosition(26, 1) was equal or approximately equal to (x: 157, y: 14, w: 9, h: 18).
+PASS: text.boundsForRangeWithPagePosition(0, 26) was equal or approximately equal to (x: 8, y: 14, w: 151, h: 18).
+PASS: text.boundsForRangeWithPagePosition(0, 27) was equal or approximately equal to (x: 8, y: 14, w: 158, h: 18).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

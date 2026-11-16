@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Inline box with negative margin-left canceling padding-left</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<style>
+body {
+    margin: 0;
+    padding: 50px;
+}
+.test {
+    padding-left: 30px;
+    margin-left: -30px;
+    font: 20px/1 Ahem;
+    background: green;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>Inline box with negative margin-left that cancels padding-left should still shift the border box left.</p>
+<div><span class="test" id="s1">XXXXXX</span></div>
+<pre id="result"></pre>
+<script>
+var span = document.getElementById('s1');
+var rect = span.getBoundingClientRect();
+var results = [];
+
+// body padding=50, margin-left=-30 => border box at 20, padding-left=30 => text at 50
+// width = padding(30) + 6 chars * 20px = 150
+var expectedX = 20;
+var expectedWidth = 150;
+
+results.push(rect.x === expectedX
+    ? "PASS: x = " + rect.x
+    : "FAIL: x = " + rect.x + " (expected " + expectedX + ")");
+results.push(Math.round(rect.width) === expectedWidth
+    ? "PASS: width = " + Math.round(rect.width)
+    : "FAIL: width = " + Math.round(rect.width) + " (expected " + expectedWidth + ")");
+
+document.getElementById('result').textContent = results.join('\n') + '\n';
+</script>

@@ -1,0 +1,880 @@
+templates:
+  sequoia-m2pro:
+    worker:
+      platform: '*'
+      os: macOS Sequoia 15.7.3-24G419
+      device: 'Mac14,12'
+  sequoia-macmini-intel:
+    worker:
+      platform: '*'
+      os: macOS Sequoia 15.7.3-24G419
+      device: 'Macmini8,1'
+  sequoia-macpro-intel:
+    worker:
+      platform: '*'
+      os: macOS Sequoia 15.7.3-24G419
+      device: 'MacPro7,1'
+  tahoe-m1:
+    worker:
+      platform: '*'
+      os: macOS Tahoe 26.6-25G72
+      device: 'Macmini9,1'
+  tahoe-m1ultra:
+    worker:
+      platform: '*'
+      os: macOS Tahoe 26.6-25G72
+      device: 'Mac13,2'
+  tahoe-m2:
+    worker:
+      platform: '*'
+      os: macOS Tahoe 26.6-25G72
+      device: 'Mac14,3'
+  tahoe-m2pro:
+    worker:
+      platform: '*'
+      os: macOS Tahoe 26.6-25G72
+      device: 'Mac14,12'
+  tahoe-m4:
+    worker:
+      platform: '*'
+      os: macOS Tahoe 26.6-25G72
+      device: 'Mac16,10'
+  tahoe-m4pro:
+    worker:
+      platform: '*'
+      os: macOS Tahoe 26.6-25G72
+      device: 'Mac16,11'
+  golden-gate-m1:
+    worker:
+      platform: '*'
+      os: macOS Golden Gate 27.2-26B123
+      device: 'Macmini9,1'
+  golden-gate-m2:
+    worker:
+      platform: '*'
+      os: macOS Golden Gate 27.2-26B123
+      device: 'Mac14,3'
+  golden-gate-m2pro:
+    worker:
+      platform: '*'
+      os: macOS Golden Gate 27.2-26B123
+      device: 'Mac14,12'
+  golden-gate-m4pro:
+    worker:
+      platform: '*'
+      os: macOS Golden Gate 27.2-26B123
+      device: 'Mac16,11'
+  disconnected:
+    worker:
+      platform: '*'
+  mac-sequoia-aircloud:
+    worker:
+      platform: mac-sequoia
+      os: macOS Sequoia 15.7.3-24G419
+      device: Mac16,11
+      xcode: Xcode 26.2-17C52
+      fleet: air-cloud
+  mac-tahoe-aws:
+    worker:
+      platform: '*'
+      os: macOS Tahoe 26.6-25G72
+      device: Mac16,11
+      xcode: Xcode 26.5-17F42
+      fleet: aws
+  mac-golden-gate-aws:
+    worker:
+      platform: '*'
+      os: macOS Golden Gate 27.0-26A428
+      device: Mac16,11
+      xcode: Xcode 27.0-27A266a
+      fleet: aws
+  playstation:
+    worker:
+      platform: playstation
+  igalia-gtk-big:
+    worker:
+      platform: gtk
+      cpus: 32
+  igalia-gtk-medium:
+    worker:
+      platform: gtk
+      cpus: 16
+  igalia-gtk-tiny:
+    worker:
+      platform: gtk
+      cpus: 4
+  igalia-wpe-big:
+    worker:
+      platform: wpe
+      cpus: 32
+  igalia-wpe-medium:
+    worker:
+      platform: wpe
+      cpus: 16
+  igalia-wpe-small:
+    worker:
+      platform: wpe
+      cpus: 8
+  igalia-wpe-tiny:
+    worker:
+      platform: wpe
+      cpus: 4
+  win-build:
+    worker:
+      platform: win
+      os: Windows Server 2025
+      device: Azure D4ads v7
+  win-tests:
+    worker:
+      platform: win
+      os: Windows Server 2025
+      device: Azure D8ads v7
+---
+workers:
+  $flatten:
+    $map:
+      - {name: igalia1-gtk-wk2-ews, template: igalia-gtk-medium, tag: gtk-clang}
+      - {name: igalia2-gtk-wk2-ews, template: igalia-gtk-medium, tag: gtk-clang}
+      - {name: igalia3-gtk-wk2-ews, template: igalia-gtk-tiny}
+      - {name: igalia4-gtk-wk2-ews, template: igalia-gtk-tiny}
+      - {name: igalia5-gtk-wk2-ews, template: igalia-gtk-big}
+      - {name: igalia6-gtk-wk2-ews, template: igalia-gtk-big}
+      - {name: igalia7-gtk-wk2-ews, template: igalia-gtk-big}
+      - {name: igalia8-gtk-wk2-ews, template: igalia-gtk-big}
+      - {name: igalia9-gtk-wk2-ews, template: igalia-gtk-big}
+      - {name: igalia10-gtk-wk2-ews, template: igalia-gtk-big}
+      - {name: igalia11-gtk-wk2-ews, template: igalia-gtk-big}
+      - {name: igalia12-gtk-wk2-ews, template: igalia-gtk-big}
+      - {name: igalia13-gtk-wk2-ews, template: igalia-gtk-medium, tag: gtk-clang}
+      - {name: igalia14-gtk-wk2-ews, template: igalia-gtk-tiny}
+      - {name: igalia15-gtk-wk2-ews, template: igalia-gtk-tiny}
+      - {name: aperez-gtk-ews, template: igalia-gtk-medium, tag: gtk-clang}
+      - {name: csaavedra-gtk-ews, template: igalia-gtk-medium, tag: gtk-clang}
+      - {name: igalia-wpe-ews, template: igalia-wpe-medium}
+      - {name: igalia2-wpe-ews, template: igalia-wpe-medium}
+      - {name: igalia3-wpe-ews, template: igalia-wpe-medium}
+      - {name: igalia4-wpe-ews, template: igalia-wpe-big}
+      - {name: igalia5-wpe-ews, template: igalia-wpe-big}
+      - {name: igalia6-wpe-ews, template: igalia-wpe-big}
+      - {name: igalia7-wpe-ews, template: igalia-wpe-big}
+      - {name: igalia8-wpe-ews, template: igalia-wpe-big}
+      - {name: igalia9-wpe-ews, template: igalia-wpe-big}
+      - {name: igalia10-wpe-ews, template: igalia-wpe-big}
+      - {name: igalia11-wpe-ews, template: igalia-wpe-big}
+      - {name: igalia12-wpe-ews, template: igalia-wpe-tiny}
+      - {name: igalia13-wpe-ews, template: igalia-wpe-tiny}
+      - {name: igalia14-wpe-ews, template: igalia-wpe-tiny}
+      - {name: igalia15-wpe-ews, template: igalia-wpe-tiny}
+      - {name: igalia16-wpe-ews, template: igalia-gtk-medium, tag: gtk-gcc}
+      - {name: igalia17-wpe-ews, template: igalia-gtk-medium, tag: gtk-gcc}
+      - {name: igalia18-wpe-ews, template: igalia-gtk-medium, tag: gtk-gcc}
+      - {name: igalia19-wpe-ews, template: igalia-gtk-medium, tag: gtk-gcc}
+      - {name: igalia20-wpe-ews, template: igalia-wpe-medium}
+      - {name: igalia21-wpe-ews, template: igalia-wpe-medium}
+      - {name: igalia22-wpe-ews, template: igalia-wpe-medium}
+      - {name: igalia23-wpe-ews, template: igalia-wpe-small}
+      - {name: igalia24-wpe-ews, template: igalia-wpe-small}
+      - {name: igalia25-wpe-ews, template: igalia-wpe-small}
+      - {name: igalia26-wpe-ews, template: igalia-wpe-small}
+      - {name: aperez-wpe-ews, template: igalia-wpe-medium}
+      - {template: playstation, prefix: playstation-ews-00, first: 1, count: 9}
+      - {name: win-bot-001, template: win-build}
+      - {name: win-bot-002, template: win-build}
+      - {name: win-bot-003, template: win-tests}
+      - {name: win-bot-004, template: win-tests}
+      - {name: win-bot-005, template: win-tests}
+      - {name: win-bot-006, template: win-tests}
+      - {name: win-bot-007, template: win-build}
+      - {name: win-bot-008, template: win-build}
+      - {name: webkit-cq-01, template: golden-gate-m4pro, tag: webkit-cq}
+      - {name: webkit-cq-02, template: golden-gate-m4pro, tag: webkit-cq}
+      - {name: webkit-cq-03, template: golden-gate-m4pro, tag: webkit-cq}
+      - {name: webkit-cq-04, template: golden-gate-m2pro, tag: webkit-cq}
+      - {name: webkit-cq-05, template: golden-gate-m4pro, tag: webkit-cq}
+      - {name: webkit-cq-06, template: golden-gate-m4pro, tag: webkit-cq}
+      - {name: webkit-misc, template: golden-gate-m1, tag: webkit-misc, max_builds: 3}
+      - {name: ews151, template: golden-gate-m2, tag: webkit-misc, max_builds: 3}
+      - {name: ews253, template: golden-gate-m1, tag: webkit-misc, max_builds: 3}
+      - {name: ews100, template: sequoia-m2pro}
+      - {name: ews101, template: golden-gate-m2pro}
+      - {name: ews102, template: golden-gate-m2pro}
+      - {name: ews103, template: golden-gate-m2pro}
+      - {name: ews104, template: sequoia-m2pro}
+      - {name: ews105, template: golden-gate-m2pro}
+      - {name: ews106, template: sequoia-m2pro}
+      - {name: ews107, template: sequoia-m2pro}
+      - {name: ews108, template: golden-gate-m2pro}
+      - {name: ews109, template: golden-gate-m2pro}
+      - {name: ews110, template: golden-gate-m4pro}
+      - {name: ews111, template: golden-gate-m4pro}
+      - {name: ews112, template: sequoia-m2pro}
+      - {name: ews113, template: sequoia-m2pro}
+      - {name: ews114, template: golden-gate-m4pro}
+      - {name: ews115, template: sequoia-m2pro}
+      - {name: ews116, template: golden-gate-m2pro}
+      - {name: ews117, template: golden-gate-m2pro}
+      - {name: ews118, template: golden-gate-m2pro}
+      - {name: ews119, template: golden-gate-m2pro}
+      - {name: ews120, template: golden-gate-m2pro}
+      - {name: ews121, template: golden-gate-m2pro}
+      - {name: ews122, template: golden-gate-m2pro}
+      - {name: ews123, template: golden-gate-m2pro}
+      - {name: ews124, template: golden-gate-m2pro}
+      - {name: ews125, template: golden-gate-m2pro}
+      - {name: ews126, template: golden-gate-m2pro}
+      - {name: ews127, template: sequoia-macmini-intel}
+      - {name: ews128, template: sequoia-macmini-intel}
+      - {name: ews129, template: sequoia-m2pro}
+      - {name: ews130, template: golden-gate-m1}
+      - {name: ews131, template: golden-gate-m1}
+      - {name: ews132, template: golden-gate-m1}
+      - {name: ews133, template: golden-gate-m1}
+      - {name: ews134, template: golden-gate-m1}
+      - {name: ews135, template: golden-gate-m1}
+      - {name: ews136, template: golden-gate-m2pro}
+      - {name: ews137, template: golden-gate-m2pro}
+      - {name: ews138, template: golden-gate-m4pro}
+      - {name: ews139, template: golden-gate-m4pro}
+      - {name: ews140, template: golden-gate-m4pro}
+      - {name: ews141, template: golden-gate-m2pro}
+      - {name: ews142, template: sequoia-m2pro}
+      - {name: ews143, template: sequoia-m2pro}
+      - {name: ews144, template: sequoia-m2pro}
+      - {name: ews145, template: golden-gate-m2pro}
+      - {name: ews146, template: sequoia-m2pro}
+      - {name: ews147, template: golden-gate-m2pro}
+      - {name: ews148, template: golden-gate-m2pro}
+      - {name: ews149, template: sequoia-m2pro}
+      - {name: ews150, template: sequoia-m2pro}
+      - {name: ews152, template: golden-gate-m2pro}
+      - {name: ews153, template: sequoia-m2pro}
+      - {name: ews154, template: golden-gate-m2pro}
+      - {name: ews155, template: sequoia-m2pro}
+      - {name: ews156, template: golden-gate-m2pro}
+      - {name: ews157, template: golden-gate-m2pro}
+      - {name: ews158, template: golden-gate-m2pro}
+      - {name: ews159, template: golden-gate-m2pro}
+      - {name: ews160, template: golden-gate-m2pro}
+      - {name: ews161, template: golden-gate-m2pro}
+      - {name: ews162, template: golden-gate-m2pro}
+      - {name: ews163, template: golden-gate-m1}
+      - {name: ews164, template: golden-gate-m1}
+      - {name: ews165, template: golden-gate-m1}
+      - {name: ews166, template: golden-gate-m1}
+      - {name: ews167, template: golden-gate-m1}
+      - {name: ews168, template: golden-gate-m1}
+      - {name: ews169, template: sequoia-m2pro}
+      - {name: ews170, template: golden-gate-m1}
+      - {name: ews171, template: golden-gate-m2pro}
+      - {name: ews172, template: golden-gate-m2pro}
+      - {name: ews173, template: golden-gate-m2pro}
+      - {name: ews174, template: golden-gate-m2pro}
+      - {name: ews175, template: golden-gate-m4pro}
+      - {name: ews176, template: golden-gate-m4pro}
+      - {name: ews177, template: golden-gate-m4pro}
+      - {name: ews178, template: golden-gate-m4pro}
+      - {name: ews179, template: golden-gate-m4pro}
+      - {name: ews180, template: golden-gate-m4pro}
+      - {name: ews181, template: sequoia-m2pro}
+      - {name: ews182, template: sequoia-m2pro}
+      - {name: ews183, template: golden-gate-m2pro}
+      - {name: ews184, template: golden-gate-m2pro}
+      - {name: ews185, template: golden-gate-m2pro}
+      - {name: ews186, template: sequoia-m2pro}
+      - {name: ews187, template: sequoia-m2pro}
+      - {name: ews188, template: sequoia-m2pro}
+      - {name: ews189, template: sequoia-m2pro}
+      - {name: ews190, template: disconnected}
+      - {name: ews191, template: golden-gate-m2pro}
+      - {name: ews192, template: golden-gate-m2pro}
+      - {name: ews193, template: golden-gate-m2pro}
+      - {name: ews194, template: golden-gate-m2pro}
+      - {name: ews195, template: golden-gate-m2pro}
+      - {name: ews196, template: golden-gate-m2pro}
+      - {name: ews197, template: golden-gate-m2pro}
+      - {name: ews198, template: golden-gate-m2pro}
+      - {name: ews200, template: sequoia-macpro-intel}
+      - {name: ews201, template: sequoia-macpro-intel}
+      - {name: ews202, template: sequoia-macpro-intel}
+      - {name: ews203, template: sequoia-macpro-intel}
+      - {name: ews204, template: sequoia-macpro-intel}
+      - {name: ews205, template: sequoia-macmini-intel}
+      - {name: ews206, template: sequoia-macmini-intel}
+      - {name: ews207, template: golden-gate-m4pro}
+      - {name: ews208, template: golden-gate-m4pro}
+      - {name: ews209, template: golden-gate-m4pro}
+      - {name: ews210, template: golden-gate-m4pro}
+      - {name: ews211, template: golden-gate-m4pro}
+      - {name: ews212, template: tahoe-m4pro}
+      - {name: ews213, template: golden-gate-m4pro}
+      - {name: ews214, template: tahoe-m4pro}
+      - {name: ews216, template: disconnected}
+      - {name: ews217, template: golden-gate-m1}
+      - {name: ews218, template: golden-gate-m1}
+      - {name: ews219, template: golden-gate-m1}
+      - {name: ews220, template: golden-gate-m1}
+      - {name: ews221, template: golden-gate-m1}
+      - {name: ews222, template: golden-gate-m1}
+      - {name: ews223, template: golden-gate-m1}
+      - {name: ews224, template: golden-gate-m1}
+      - {name: ews225, template: golden-gate-m1}
+      - {name: ews226, template: golden-gate-m2pro}
+      - {name: ews227, template: golden-gate-m2pro}
+      - {name: ews228, template: golden-gate-m2pro}
+      - {name: ews229, template: golden-gate-m2pro}
+      - {name: ews230, template: golden-gate-m2pro}
+      - {name: ews237, template: tahoe-m4pro}
+      - {name: ews238, template: golden-gate-m2pro}
+      - {name: ews239, template: golden-gate-m2pro}
+      - {name: ews240, template: golden-gate-m2pro}
+      - {name: ews243, template: golden-gate-m2pro}
+      - {name: ews244, template: golden-gate-m2pro}
+      - {name: ews245, template: golden-gate-m2pro}
+      - {name: ews246, template: tahoe-m4pro}
+      - {name: ews247, template: tahoe-m4pro}
+      - {name: ews248, template: tahoe-m4pro}
+      - {name: ews249, template: tahoe-m4pro}
+      - {name: ews250, template: tahoe-m4pro}
+      - {name: ews251, template: sequoia-macmini-intel}
+      - {name: ews252, template: sequoia-macmini-intel}
+      - {name: ews254, template: golden-gate-m2pro}
+      - {name: ews255, template: golden-gate-m2pro}
+      - {name: ews256, template: golden-gate-m2}
+      - {name: ews257, template: golden-gate-m2}
+      - {name: ews258, template: golden-gate-m2}
+      - {name: ews259, template: golden-gate-m2}
+      - {name: ews260, template: golden-gate-m4pro}
+      - {name: ews261, template: tahoe-m1ultra}
+      - {name: ews262, template: tahoe-m4pro}
+      - {name: ews263, template: tahoe-m4pro}
+      - {name: ews264, template: tahoe-m4pro}
+      - {name: ews265, template: golden-gate-m2pro}
+      - {name: ews266, template: golden-gate-m2pro}
+      - {name: ews2000, template: tahoe-m4pro}
+      - {name: ews2001, template: tahoe-m4pro}
+      - {name: ews2002, template: tahoe-m4pro}
+      - {name: ews2003, template: tahoe-m4pro}
+      - {name: ews2004, template: tahoe-m4pro}
+      - {name: ews2006, template: tahoe-m4pro}
+      - {name: ews2007, template: tahoe-m4}
+      - {name: ews2008, template: tahoe-m4pro}
+      - {name: ews2009, template: tahoe-m4pro}
+      - {name: ews2010, template: tahoe-m4pro}
+      - {template: mac-sequoia-aircloud, prefix: ews, first: 2011, count: 5}
+      - {template: mac-tahoe-aws, prefix: ews, first: 3000, count: 5}
+      - {template: mac-golden-gate-aws, prefix: ews, first: 3005, count: 37}
+      - {template: mac-golden-gate-aws, prefix: ews, first: 3042, count: 2, tag: webdriver}
+    each(w):
+      $if: "'template' in w"
+      then:
+        $let:
+          tag: {$if: "'tag' in w", then: {$eval: w.tag}, else: {$eval: w.template}}
+        in:
+          $if: "'name' in w"
+          then: [{$merge: [{name: {$eval: w.name}, tag: {$eval: tag}}, {$eval: "templates[w.template].worker"}, {$if: "'max_builds' in w", then: {max_builds: {$eval: w.max_builds}}, else: {}}]}]
+          else:
+            $map: {$eval: "range(0, w.count)"}
+            each(i):
+              $let:
+                suffix: {$if: "'suffix' in w", then: {$eval: w.suffix}, else: ''}
+              in: {$merge: [{name: "${w.prefix}${w.first + i}${suffix}", tag: {$eval: tag}}, {$if: "'platform' in w", then: {platform: {$eval: w.platform}}, else: {}}, {$eval: "templates[w.template].worker"}]}
+      else: [{$merge: [{name: {$eval: w.name}, tag: null}, {$eval: w}]}]
+
+builders:
+  - name: Style-EWS
+    shortname: style
+    icon: testOnly
+    factory: StyleFactory
+    platform: '*'
+    workernames: {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webkit-misc'", then: {$eval: w.name}}}
+  - name: Bindings-Tests-EWS
+    shortname: bindings
+    icon: testOnly
+    factory: BindingsFactory
+    platform: '*'
+    workernames: {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webkit-misc'", then: {$eval: w.name}}}
+  - name: WebKitPy-Tests-EWS
+    shortname: webkitpy
+    icon: testOnly
+    factory: WebKitPyFactory
+    platform: '*'
+    workernames: {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webkit-misc'", then: {$eval: w.name}}}
+  - name: WebKitPerl-Tests-EWS
+    shortname: webkitperl
+    icon: testOnly
+    factory: WebKitPerlFactory
+    platform: '*'
+    workernames: {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webkit-misc'", then: {$eval: w.name}}}
+  - name: Services-EWS
+    shortname: services
+    icon: testOnly
+    factory: ServicesFactory
+    platform: '*'
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'webkit-misc'\").name"}}
+        - {$map: {$eval: "range(0, 1)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+  - name: GTK-Build-EWS
+    shortname: gtk
+    icon: buildOnly
+    factory: GTKBuildFactory
+    platform: gtk
+    configuration: release
+    architectures: [x86_64]
+    triggers: [api-tests-gtk-ews, gtk-wk2-tests-ews]
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'gtk-clang'\").name"}}
+  - name: GTK-WK2-Tests-EWS
+    shortname: gtk-wk2
+    icon: testOnly
+    factory: GTKTestsFactory
+    platform: gtk
+    configuration: release
+    triggered_by: [gtk-build-ews]
+    workernames: {$map: {$eval: "range(0, 8)"}, each(i): {$eval: "pop(workers, \"tag == 'igalia-gtk-big'\").name"}}
+  - name: iOS-26-Build-EWS
+    shortname: ios
+    icon: buildOnly
+    factory: iOSEmbeddedBuildFactory
+    platform: ios-26
+    configuration: release
+    architectures: [arm64]
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-tahoe-aws'\").name"}}
+  - name: iOS-27-Simulator-Build-EWS
+    shortname: ios-sim-cmake
+    icon: buildOnly
+    factory: iOSBuildFactory
+    platform: ios-simulator-27
+    configuration: release
+    architectures: [arm64]
+    additionalArguments: [--cmake]
+    rebuild_without_change_on_builder: true
+    triggers: [api-tests-ios-sim-ews, ios-27-sim-wk2-tests-ews, ios-27-sim-wpt-wk2-tests-ews]
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m1'\").name"}}
+        - {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+  - name: iOS-27-Simulator-WK2-Tests-EWS
+    shortname: ios-cmake-wk2
+    icon: testOnly
+    factory: iOSTestsFactory
+    platform: ios-simulator-27
+    configuration: release
+    triggered_by: [ios-27-sim-build-ews]
+    additionalArguments: [--child-processes=5, --exclude-tests, imported/w3c/web-platform-tests]
+    workernames: {$map: {$eval: "range(0, 8)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
+  - name: iOS-27-Simulator-WPT-WK2-Tests-EWS
+    shortname: ios-cmake-wk2-wpt
+    icon: testOnly
+    factory: iOSTestsFactory
+    platform: ios-simulator-27
+    configuration: release
+    triggered_by: [ios-27-sim-build-ews]
+    additionalArguments: [--child-processes=4, imported/w3c/web-platform-tests]
+    workernames: {$map: {$eval: "range(0, 16)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
+  - name: macOS-Golden-Gate-Debug-Build-EWS
+    shortname: mac-cmake-debug
+    icon: buildOnly
+    factory: macOSBuildOnlyFactory
+    platform: mac-golden-gate
+    configuration: debug
+    architectures: [arm64]
+    additionalArguments: [--cmake]
+    rebuild_without_change_on_builder: true
+    triggers: [macos-golden-gate-debug-api-tests-ews, macos-golden-gate-debug-wk2-tests-ews, macos-golden-gate-debug-webdriver-tests-ews]
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
+        - {$map: {$eval: "range(0, 2)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+  - name: macOS-Golden-Gate-Debug-API-Tests-EWS
+    shortname: api-mac-cmake-debug
+    icon: testOnly
+    factory: APITestsFactory
+    platform: mac-golden-gate
+    configuration: debug
+    triggered_by: [macos-golden-gate-debug-build-ews]
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 11)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
+        - {$map: {$eval: "range(0, 11)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m1'\").name"}}
+  - name: macOS-Golden-Gate-Debug-WK2-Tests-EWS
+    shortname: mac-cmake-debug-wk2
+    icon: testOnly
+    factory: macOSWK2Factory
+    platform: mac-golden-gate
+    configuration: debug
+    triggered_by: [macos-golden-gate-debug-build-ews]
+    additionalArguments: ['-2', '-1']
+    workernames: {$map: {$eval: "range(0, 19)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m4pro'\").name"}}
+  - name: macOS-Golden-Gate-Debug-WebDriver-Tests-EWS
+    shortname: mac-webdriver
+    icon: testOnly
+    factory: WebDriverTestsFactory
+    platform: mac-golden-gate
+    configuration: debug
+    triggered_by: [macos-golden-gate-debug-build-ews]
+    additionalArguments: [--site-isolation]
+    workernames: {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webdriver'", then: {$eval: w.name}}}
+  - name: macOS-Sequoia-Release-Build-EWS
+    shortname: mac
+    icon: buildOnly
+    factory: macOSBuildFactory
+    platform: mac-sequoia
+    configuration: release
+    architectures: [x86_64, arm64]
+    deployment_target: '15.4'
+    rebuild_without_change_on_builder: true
+    triggers: [api-tests-mac-ews, macos-sequoia-release-wk2-tests-ews, macos-sequoia-release-wk2-intel-tests-ews, macos-release-wk2-stress-tests-ews, macos-sequoia-release-site-isolation-tests-ews, jsc-tests-x86-64-ews]
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
+        - {$map: {$eval: "range(0, 6)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+  - name: macOS-Sequoia-Release-WK2-Tests-EWS
+    shortname: mac-wk2
+    icon: testOnly
+    factory: macOSWK2Factory
+    platform: mac-sequoia
+    configuration: release
+    triggered_by: [macos-sequoia-release-build-ews]
+    additionalArguments: ['-2', '-1']
+    workernames: {$map: {$eval: "range(0, 10)"}, each(i): {$eval: "pop(workers, \"tag == 'sequoia-m2pro'\").name"}}
+  - name: macOS-Sequoia-Release-Site-Isolation-Tests-EWS
+    shortname: mac-site-isolation
+    icon: testOnly
+    factory: macOSSiteIsolationFactory
+    platform: mac-sequoia
+    configuration: release
+    triggered_by: [macos-sequoia-release-build-ews]
+    additionalArguments: [imported/w3c/web-platform-tests, --site-isolation-enabled-by-default, --exclude-tests, imported/w3c/web-platform-tests/css]
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-sequoia-aircloud'\").name"}}
+  - name: macOS-Sequoia-Release-WK2-Intel-Tests-EWS
+    shortname: mac-intel-wk2
+    icon: testOnly
+    factory: macOSWK2Factory
+    platform: mac-sequoia
+    configuration: release
+    triggered_by: [macos-sequoia-release-build-ews]
+    additionalArguments: ['-2', '-1']
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'sequoia-macpro-intel'\").name"}}
+  - name: macOS-Release-WK2-Stress-Tests-EWS
+    shortname: mac-wk2-stress
+    icon: testOnly
+    factory: StressTestFactory
+    platform: mac-sequoia
+    configuration: release
+    triggered_by: [macos-sequoia-release-build-ews]
+    workernames: {$map: {$eval: "range(0, 2)"}, each(i): {$eval: "pop(workers, \"tag == 'sequoia-m2pro'\").name"}}
+  - name: macOS-Safer-CPP-Checks-EWS
+    shortname: mac-safer-cpp
+    icon: buildOnly
+    factory: SaferCPPStaticAnalyzerFactory
+    platform: mac-tahoe
+    configuration: release
+    architectures: [arm64]
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 10)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4pro'\").name"}}
+        - {$map: {$eval: "range(0, 1)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m1ultra'\").name"}}
+  - name: Apple-iOS-26-Safer-CPP-Checks-EWS
+    shortname: ios-safer-cpp
+    icon: buildOnly
+    factory: SaferCPPStaticAnalyzerFactory
+    platform: ios-26
+    configuration: release
+    architectures: [arm64]
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 10)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4pro'\").name"}}
+        - {$map: {$eval: "range(0, 1)"}, each(i): {$eval: "pop(workers, \"tag == 'tahoe-m4'\").name"}}
+  - name: watchOS-27-Build-EWS
+    shortname: watch
+    icon: buildOnly
+    factory: watchOSBuildFactory
+    platform: watchos-27
+    configuration: release
+    architectures: [arm64_32, arm64]
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+  - name: watchOS-27-Simulator-Build-EWS
+    shortname: watch-sim
+    icon: buildOnly
+    factory: watchOSBuildFactory
+    platform: watchos-simulator-27
+    configuration: release
+    architectures: [arm64]
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+  - name: tvOS-27-Build-EWS
+    shortname: tv
+    icon: buildOnly
+    factory: tvOSBuildFactory
+    platform: tvos-27
+    configuration: release
+    architectures: [arm64]
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+  - name: tvOS-27-Simulator-Build-EWS
+    shortname: tv-sim
+    icon: buildOnly
+    factory: tvOSBuildFactory
+    platform: tvos-simulator-27
+    configuration: release
+    architectures: [arm64]
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+  - name: visionOS-27-Build-EWS
+    shortname: vision
+    icon: buildOnly
+    factory: visionOSEmbeddedBuildFactory
+    platform: visionos-27
+    configuration: release
+    architectures: [arm64]
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
+  - name: visionOS-27-Simulator-Build-EWS
+    shortname: vision-sim
+    icon: buildOnly
+    factory: visionOSBuildFactory
+    platform: visionos-simulator-27
+    configuration: release
+    architectures: [arm64]
+    triggers: [visionos-27-sim-wk2-tests-ews]
+    workernames: {$map: {$eval: "range(0, 7)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m1'\").name"}}
+  - name: visionOS-27-Simulator-WK2-Tests-EWS
+    shortname: vision-wk2
+    icon: testOnly
+    factory: visionOSTestsFactory
+    platform: visionos-simulator-27
+    configuration: release
+    triggered_by: [visionos-27-sim-build-ews]
+    additionalArguments: [--child-processes=2]
+    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
+  - name: PlayStation-Build-EWS
+    shortname: playstation
+    icon: buildOnly
+    factory: PlayStationBuildFactory
+    configuration: release
+    architectures: [x86_64]
+    platform: playstation
+    workernames: {$map: {$eval: "range(0, 9)"}, each(i): {$eval: "pop(workers, \"tag == 'playstation'\").name"}}
+  - name: Win-Build-EWS
+    shortname: win
+    icon: buildOnly
+    factory: WinBuildFactory
+    configuration: release
+    architectures: [x86_64]
+    platform: win
+    triggers: [win-tests-ews]
+    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'win-build'\").name"}}
+  - name: Win-Tests-EWS
+    shortname: win-tests
+    icon: testOnly
+    factory: WinTestsFactory
+    configuration: release
+    architectures: [x86_64]
+    platform: win
+    triggered_by: [win-build-ews]
+    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'win-tests'\").name"}}
+  - name: WPE-Build-EWS
+    shortname: wpe
+    icon: buildOnly
+    factory: WPEBuildFactory
+    platform: wpe
+    configuration: release
+    architectures: [x86_64]
+    triggers: [wpe-wk2-tests-ews, api-tests-wpe-ews, jsc-tests-wpe-ews]
+    workernames: {$map: {$eval: "range(0, 7)"}, each(i): {$eval: "pop(workers, \"tag == 'igalia-wpe-medium'\").name"}}
+  - name: WPE-WK2-Tests-EWS
+    shortname: wpe-wk2
+    icon: testOnly
+    factory: WPETestsFactory
+    platform: wpe
+    configuration: release
+    architectures: [x86_64]
+    triggered_by: [wpe-build-ews]
+    workernames: {$map: {$eval: "range(0, 8)"}, each(i): {$eval: "pop(workers, \"tag == 'igalia-wpe-big'\").name"}}
+  - name: JSC-Tests-WPE-EWS
+    shortname: jsc-wpe
+    icon: testOnly
+    factory: JSCTestsFactory
+    platform: wpe
+    configuration: release
+    architectures: [x86_64]
+    triggered_by: [wpe-build-ews]
+    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'igalia-wpe-small'\").name"}}
+  - name: GTK-GTK3-GCC-Build-EWS
+    shortname: gtk3-gcc
+    icon: buildOnly
+    factory: GTK3GCCBuildFactory
+    platform: gtk
+    configuration: release
+    architectures: [x86_64]
+    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'gtk-gcc'\").name"}}
+  - name: JSC-Tests-x86-64-EWS
+    shortname: jsc-x86-64
+    icon: testOnly
+    factory: JSCTestsFactory
+    platform: mac-sequoia
+    configuration: release
+    triggered_by: [macos-sequoia-release-build-ews]
+    workernames: {$map: {$eval: "range(0, 6)"}, each(i): {$eval: "pop(workers, \"tag == 'sequoia-macmini-intel'\").name"}}
+  - name: JSC-Tests-O3-Debug-arm64-EWS
+    shortname: jsc-debug-arm64
+    icon: buildAndTest
+    factory: JSCBuildO3AndTestsFactory
+    platform: mac-sequoia
+    configuration: debug
+    additionalArguments: [--cmake]
+    runTests: 'true'
+    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
+  - name: API-Tests-iOS-Simulator-EWS
+    shortname: api-ios-cmake
+    icon: testOnly
+    factory: APITestsFactory
+    platform: '*'
+    triggered_by: [ios-27-sim-build-ews]
+    additionalArguments: [--child-processes=5]
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 11)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
+        - {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2'\").name"}}
+  - name: API-Tests-macOS-EWS
+    shortname: api-mac
+    icon: testOnly
+    factory: APITestsFactory
+    platform: mac-sequoia
+    triggered_by: [macos-sequoia-release-build-ews]
+    workernames: {$map: {$eval: "range(0, 11)"}, each(i): {$eval: "pop(workers, \"tag == 'sequoia-m2pro'\").name"}}
+  - name: API-Tests-GTK-EWS
+    shortname: api-gtk
+    icon: testOnly
+    factory: APITestsFactory
+    platform: gtk
+    configuration: release
+    triggered_by: [gtk-build-ews]
+    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'igalia-gtk-tiny'\").name"}}
+  - name: API-Tests-WPE-EWS
+    shortname: api-wpe
+    icon: testOnly
+    factory: APITestsFactory
+    platform: wpe
+    configuration: release
+    architectures: [x86_64]
+    triggered_by: [wpe-build-ews]
+    workernames: {$map: {$eval: "range(0, 4)"}, each(i): {$eval: "pop(workers, \"tag == 'igalia-wpe-tiny'\").name"}}
+  - name: Unsafe-Merge-Queue
+    shortname: unsafe-merge
+    icon: buildAndTest
+    factory: UnsafeMergeQueueFactory
+    platform: mac-sequoia
+    configuration: release
+    architectures: [arm64]
+    workernames:
+      $flatten:
+        - [{$eval: "pop(workers, \"name == 'webkit-cq-04'\").name"}]
+        - {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webkit-cq'", then: {$eval: w.name}}}
+  - name: Merge-Queue
+    shortname: merge
+    icon: buildAndTest
+    factory: MergeQueueFactory
+    platform: mac-sequoia
+    configuration: release
+    architectures: [arm64]
+    workernames: {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webkit-cq'", then: {$eval: w.name}}}
+  - name: Safe-Merge-Queue
+    shortname: safe-merge
+    icon: buildAndTest
+    factory: SafeMergeQueueFactory
+    platform: '*'
+    workernames: {$map: {$eval: "range(0, 5)"}, each(i): {$eval: "pop(workers, \"tag == 'webkit-cq'\").name"}}
+
+unusedWorkers:
+  $map: {$eval: workers}
+  each(w): "${w.name} (${w.tag})"
+
+schedulers:
+  - type: AnyBranchScheduler
+    name: pull_request
+    builderNames: [Bindings-Tests-EWS, GTK-Build-EWS, iOS-26-Build-EWS, iOS-27-Simulator-Build-EWS, JSC-Tests-O3-Debug-arm64-EWS, macOS-Golden-Gate-Debug-Build-EWS, macOS-Sequoia-Release-Build-EWS, macOS-Safer-CPP-Checks-EWS, Apple-iOS-26-Safer-CPP-Checks-EWS, Services-EWS, Style-EWS, Style-EWS, tvOS-27-Build-EWS, tvOS-27-Simulator-Build-EWS, visionOS-27-Build-EWS, visionOS-27-Simulator-Build-EWS, watchOS-27-Build-EWS, watchOS-27-Simulator-Build-EWS, WPE-Build-EWS, WebKitPerl-Tests-EWS, WebKitPy-Tests-EWS, PlayStation-Build-EWS, Win-Build-EWS, GTK-GTK3-GCC-Build-EWS]
+  - type: AnyBranchScheduler
+    name: merge_queue
+    builderNames: [Merge-Queue]
+  - type: AnyBranchScheduler
+    name: unsafe_merge_queue
+    builderNames: [Unsafe-Merge-Queue]
+  - type: Periodic
+    name: safe-merge-queue
+    periodicBuildTimer: 900
+    builderNames: [Safe-Merge-Queue]
+  - type: Triggerable
+    name: macos-sequoia-release-build-ews
+    builderNames: [macOS-Sequoia-Release-Build-EWS]
+  - type: Triggerable
+    name: macos-sequoia-release-wk2-tests-ews
+    builderNames: [macOS-Sequoia-Release-WK2-Tests-EWS]
+  - type: Triggerable
+    name: macos-sequoia-release-site-isolation-tests-ews
+    builderNames: [macOS-Sequoia-Release-Site-Isolation-Tests-EWS]
+  - type: Triggerable
+    name: macos-sequoia-release-wk2-intel-tests-ews
+    builderNames: [macOS-Sequoia-Release-WK2-Intel-Tests-EWS]
+  - type: Triggerable
+    name: macos-release-wk2-stress-tests-ews
+    builderNames: [macOS-Release-WK2-Stress-Tests-EWS]
+  - type: Triggerable
+    name: macos-golden-gate-debug-build-ews
+    builderNames: [macOS-Golden-Gate-Debug-Build-EWS]
+  - type: Triggerable
+    name: macos-golden-gate-debug-api-tests-ews
+    builderNames: [macOS-Golden-Gate-Debug-API-Tests-EWS]
+  - type: Triggerable
+    name: macos-golden-gate-debug-wk2-tests-ews
+    builderNames: [macOS-Golden-Gate-Debug-WK2-Tests-EWS]
+  - type: Triggerable
+    name: macos-golden-gate-debug-webdriver-tests-ews
+    builderNames: [macOS-Golden-Gate-Debug-WebDriver-Tests-EWS]
+  - type: Triggerable
+    name: ios-27-sim-build-ews
+    builderNames: [iOS-27-Simulator-Build-EWS]
+  - type: Triggerable
+    name: ios-27-sim-wk2-tests-ews
+    builderNames: [iOS-27-Simulator-WK2-Tests-EWS]
+  - type: Triggerable
+    name: ios-27-sim-wpt-wk2-tests-ews
+    builderNames: [iOS-27-Simulator-WPT-WK2-Tests-EWS]
+  - type: Triggerable
+    name: api-tests-ios-sim-ews
+    builderNames: [API-Tests-iOS-Simulator-EWS]
+  - type: Triggerable
+    name: api-tests-mac-ews
+    builderNames: [API-Tests-macOS-EWS]
+  - type: Triggerable
+    name: jsc-tests-x86-64-ews
+    builderNames: [JSC-Tests-x86-64-EWS]
+  - type: Triggerable
+    name: gtk-build-ews
+    builderNames: [GTK-Build-EWS]
+  - type: Triggerable
+    name: api-tests-gtk-ews
+    builderNames: [API-Tests-GTK-EWS]
+  - type: Triggerable
+    name: gtk-wk2-tests-ews
+    builderNames: [GTK-WK2-Tests-EWS]
+  - type: Triggerable
+    name: visionos-27-sim-build-ews
+    builderNames: [visionOS-27-Simulator-Build-EWS]
+  - type: Triggerable
+    name: visionos-27-sim-wk2-tests-ews
+    builderNames: [visionOS-27-Simulator-WK2-Tests-EWS]
+  - type: Triggerable
+    name: win-build-ews
+    builderNames: [Win-Build-EWS]
+  - type: Triggerable
+    name: win-tests-ews
+    builderNames: [Win-Tests-EWS]
+  - type: Triggerable
+    name: wpe-build-ews
+    builderNames: [WPE-Build-EWS]
+  - type: Triggerable
+    name: wpe-wk2-tests-ews
+    builderNames: [WPE-WK2-Tests-EWS]
+  - type: Triggerable
+    name: api-tests-wpe-ews
+    builderNames: [API-Tests-WPE-EWS]
+  - type: Triggerable
+    name: jsc-tests-wpe-ews
+    builderNames: [JSC-Tests-WPE-EWS]

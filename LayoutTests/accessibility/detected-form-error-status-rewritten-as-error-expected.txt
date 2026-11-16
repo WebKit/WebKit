@@ -1,0 +1,20 @@
+This tests that a message the page rewrites in place, like a status that becomes an error, is reported with the wording and color it has once the page settles.
+
+PASS: axElement('password').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('username').stringAttributeValue('AXInvalid') === 'false'
+PASS: payload === 'AXFormValidationUnannouncedText: Incorrect password.\nAXFormValidationErrorFieldCount: 1\n'
+PASS: errorMessageText(axElement('password')) === 'Incorrect password.'
+PASS: payload === 'AXFormValidationUnannouncedText: That username is taken.\nAXFormValidationErrorFieldCount: 1\n'
+PASS: axElement('username').stringAttributeValue('AXInvalid') === 'true'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email
+Password
+Incorrect password.
+Sign in
+Username
+That username is taken.
+Password
+Create account

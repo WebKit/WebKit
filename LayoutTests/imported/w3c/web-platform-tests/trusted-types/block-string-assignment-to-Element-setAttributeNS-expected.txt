@@ -1,0 +1,13 @@
+
+PASS Element.setAttributeNS assigned via policy (successful HTML transformation)
+PASS Element.setAttributeNS assigned via policy (successful Script transformation)
+PASS Element.setAttributeNS assigned via policy (successful ScriptURL transformation)
+PASS Element.setAttributeNS accepts untrusted string for non-specced accessor
+PASS Element.setAttributeNS accepts null for non-specced accessor
+PASS Assigning TrustedScriptURL to <svg:script xlink:href=...> works
+PASS Blocking non-TrustedScriptURL assignment to <svg:script xlink:href=...> works
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "SRCDOC" (ns=null) for "iframe" element (ns=http://www.w3.org/1999/xhtml).
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "SRC" (ns=null) for "script" element (ns=http://www.w3.org/1999/xhtml).
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "HREF" (ns=null) for "script" element (ns=http://www.w3.org/2000/svg).
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "HREF" (ns=http://www.w3.org/1999/xlink) for "script" element (ns=http://www.w3.org/2000/svg).
+

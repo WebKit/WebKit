@@ -1,0 +1,6 @@
+{
+    "name": "sanitize-language",
+    "version": "1.0.0",
+    "description": "A script to parse files for non-inclusive words.",
+    "main": "index.js"
+}

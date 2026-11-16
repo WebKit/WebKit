@@ -1,0 +1,105 @@
+<!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test.js"></script>
+</head>
+<body>
+    <canvas id="canvas" width="64" height="64" content="drawable">
+        <div id="box" style="width: 20px; height: 20px; background-color: green" drawable></div>
+    </canvas>
+    <script>
+        description("Tests the input validation of WebGL texElementSubImage2D().");
+        jsTestIsAsync = true;
+
+        const canvas = document.getElementById("canvas");
+        const box = document.getElementById("box");
+        let gl;
+        let texture;
+
+        const errorNames = {};
+
+        function expectError(expected, name, test) {
+            gl.getError(); // Clear any stale error.
+            test();
+            const actual = gl.getError();
+            if (actual === expected)
+                testPassed(name + " generated " + errorNames[expected]);
+            else
+                testFailed(name + " generated " + errorNames[actual] + ", expected " + errorNames[expected]);
+        }
+
+        function runTest() {
+            if (window.internals)
+                internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+            gl = canvas.getContext("webgl2");
+            for (const name of ["NO_ERROR", "INVALID_ENUM", "INVALID_VALUE", "INVALID_OPERATION"])
+                errorNames[gl[name]] = name;
+
+            // Calling before any texture is bound.
+            expectError(gl.INVALID_OPERATION, "no texture bound", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box));
+
+            texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+
+            // The image at the level is not defined yet.
+            expectError(gl.INVALID_OPERATION, "undefined level", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box));
+
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            expectError(gl.NO_ERROR, "texImage2D", () => { });
+
+            expectError(gl.NO_ERROR, "valid call", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box));
+            expectError(gl.NO_ERROR, "valid call with empty config", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { }));
+            expectError(gl.NO_ERROR, "valid call with full source rect", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sx: 0, sy: 0, swidth: 10, sheight: 10 }));
+            expectError(gl.NO_ERROR, "valid call with size", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 4, 4, box, { width: 8, height: 8 }));
+
+            // Invalid target.
+            expectError(gl.INVALID_ENUM, "invalid target", () => gl.texElementSubImage2D(gl.ARRAY_BUFFER, 0, 0, 0, box));
+
+            // Invalid level and offsets.
+            expectError(gl.INVALID_VALUE, "negative level", () => gl.texElementSubImage2D(gl.TEXTURE_2D, -1, 0, 0, box));
+            expectError(gl.INVALID_VALUE, "negative xoffset", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, -1, 0, box));
+            expectError(gl.INVALID_VALUE, "negative yoffset", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, -1, box));
+
+            // Destination region outside the texture.
+            expectError(gl.INVALID_VALUE, "region outside texture", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 60, 60, box, { width: 8, height: 8 }));
+
+            // Partial source rectangle.
+            expectError(gl.INVALID_VALUE, "only sx", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sx: 0 }));
+            expectError(gl.INVALID_VALUE, "only sy", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sy: 0 }));
+            expectError(gl.INVALID_VALUE, "only swidth", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { swidth: 10 }));
+            expectError(gl.INVALID_VALUE, "only sheight", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sheight: 10 }));
+            expectError(gl.INVALID_VALUE, "three of four source rect members", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sx: 0, sy: 0, swidth: 10 }));
+
+            // Partial destination size.
+            expectError(gl.INVALID_VALUE, "only width", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { width: 8 }));
+            expectError(gl.INVALID_VALUE, "only height", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { height: 8 }));
+
+            // Negative and non-positive config members.
+            expectError(gl.INVALID_VALUE, "negative sx", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sx: -1, sy: 0, swidth: 10, sheight: 10 }));
+            expectError(gl.INVALID_VALUE, "negative sy", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sx: 0, sy: -1, swidth: 10, sheight: 10 }));
+            expectError(gl.INVALID_VALUE, "negative swidth", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sx: 0, sy: 0, swidth: -10, sheight: 10 }));
+            expectError(gl.INVALID_VALUE, "negative sheight", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sx: 0, sy: 0, swidth: 10, sheight: -10 }));
+            expectError(gl.INVALID_VALUE, "negative width", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { width: -8, height: 8 }));
+            expectError(gl.INVALID_VALUE, "negative height", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { width: 8, height: -8 }));
+            expectError(gl.INVALID_VALUE, "zero swidth", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sx: 0, sy: 0, swidth: 0, sheight: 10 }));
+            expectError(gl.INVALID_VALUE, "zero width", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { width: 0, height: 8 }));
+            expectError(gl.INVALID_VALUE, "zero height", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { width: 8, height: 0 }));
+
+            // A buffer bound to PIXEL_UNPACK_BUFFER.
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, buffer);
+            gl.bufferData(gl.PIXEL_UNPACK_BUFFER, 64 * 64 * 4, gl.STATIC_DRAW);
+            expectError(gl.INVALID_OPERATION, "PIXEL_UNPACK_BUFFER bound", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box));
+            gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, null);
+            expectError(gl.NO_ERROR, "PIXEL_UNPACK_BUFFER unbound", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box));
+
+            finishJSTest();
+        }
+
+        // Let the drawable child be painted so that a snapshot exists.
+        requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(runTest, 0))));
+    </script>
+</body>
+</html>

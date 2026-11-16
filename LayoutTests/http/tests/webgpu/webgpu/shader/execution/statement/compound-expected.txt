@@ -1,0 +1,6 @@
+
+PASS :decl:case="uses"
+PASS :decl:case="shadowed"
+PASS :decl:case="gone"
+PASS :eval_order:
+

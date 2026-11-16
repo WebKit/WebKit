@@ -1,0 +1,41 @@
+--- a/resources/shared/step-runner.mjs
++++ b/resources/shared/step-runner.mjs
+@@ -39,6 +39,8 @@
+         const syncStartLabel = `${suiteName}.${stepName}-start`;
+         const syncEndLabel = `${suiteName}.${stepName}-sync-end`;
+         const asyncEndLabel = `${suiteName}.${stepName}-async-end`;
++        const syncName = `${suiteName}.${stepName}-sync`;
++        const asyncName = `${suiteName}.${stepName}-async`;
+ 
+         let syncTime;
+         let asyncStartTime;
+@@ -53,6 +55,7 @@
+                     continue;
+                 performance.mark("warmup-end");
+             }
++            __signpostStart(syncName);
+             performance.mark(syncStartLabel);
+             const syncStartTime = performance.now();
+ 
+@@ -63,9 +66,12 @@
+ 
+             const mark = performance.mark(syncEndLabel);
+             const syncEndTime = mark.startTime;
++            __signpostStop(syncName);
+ 
+             syncTime = syncEndTime - syncStartTime;
+-            asyncStartTime = syncEndTime;
++
++            __signpostStart(asyncName);
++            asyncStartTime = performance.now();
+         };
+         const measureAsync = () => {
+             // Some browsers don't immediately update the layout for paint.
+@@ -87,6 +93,7 @@
+                 performance.measure("warmup", "warmup-start", "warmup-end");
+             performance.measure(`${suiteName}.${stepName}-sync`, syncStartLabel, syncEndLabel);
+             performance.measure(`${suiteName}.${stepName}-async`, syncEndLabel, asyncEndLabel);
++            __signpostStop(asyncName);
+         };
+ 
+         const report = () => this.#callback(this.#step, syncTime, asyncTime);

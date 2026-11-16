@@ -1,0 +1,4 @@
+
+PASS An SVG image smaller than a pixel loads
+PASS An SVG image with a width and height of 0 loads
+

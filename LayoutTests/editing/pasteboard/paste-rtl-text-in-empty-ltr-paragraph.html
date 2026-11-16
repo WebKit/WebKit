@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true BidiContentAwarePasteEnabled=true ] -->
+<html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+div[contenteditable] {
+    border: 1px solid orange;
+    padding: 1em;
+    outline: none;
+}
+
+.rtl {
+    direction: rtl;
+    margin: 1em;
+}
+
+button {
+    font-size: 20px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that copying and pasting Arabic text in an empty paragraph produces right-to-left text");
+
+    const source = document.querySelector(".source");
+    const copyButton = document.querySelector("button");
+    copyButton.addEventListener("click", () => {
+        getSelection().selectAllChildren(source);
+        document.execCommand("Copy");
+    });
+
+    await UIHelper.activateElement(copyButton);
+
+    const destination = document.querySelector(".destination");
+    getSelection().selectAllChildren(destination);
+    document.execCommand("Paste");
+
+    container = getSelection().anchorNode;
+    if (!(container instanceof Element))
+        container = container.parentElement;
+
+    shouldBeEqualToString("getComputedStyle(container).direction", "rtl");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="rtl">
+        <p>الإنجليزي مثل<span class="source">الإنجليزي مثل “hello world” يُكتب من اليسار إلى</span>الاتجاهين</p>
+        <button>Click to copy</button>
+    </div>
+    <div contenteditable>
+        Testing
+        <br>
+        <span class="destination">Foo</span>
+    </div>
+</body>
+</html>

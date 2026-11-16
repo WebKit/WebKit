@@ -1,0 +1,6 @@
+
+
+
+FAIL Validation for placeholder option assert_true: A non-empty option value should be a valid choice. expected true got false
+PASS Check form not submitted for invalid select
+

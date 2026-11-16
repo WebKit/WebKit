@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that switching first responder from a native text field to web content by tapping on an editable element does not cause the keyboard to quickly disappear and reappear. This test requires WebKitTestRunner.");
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    // Start by focusing a native text field.
+    await UIHelper.addChromeInputField();
+    await UIHelper.setTextInChromeInputField("Foo bar");
+    await UIHelper.selectChromeInputField();
+    await UIHelper.waitForKeyboardToShow();
+
+    keyboardWillHideCountBefore = await UIHelper.keyboardWillHideCount();
+
+    // Then tap to focus the editable body.
+    await UIHelper.activateElement(document.body);
+
+    document.body.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    keyboardWillHideCountAfter = await UIHelper.keyboardWillHideCount();
+    shouldBe("keyboardWillHideCountAfter - keyboardWillHideCountBefore", "1");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body contenteditable>
+</body>
+</html>

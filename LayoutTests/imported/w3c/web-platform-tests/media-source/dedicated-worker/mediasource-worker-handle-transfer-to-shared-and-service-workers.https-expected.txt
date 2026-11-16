@@ -1,0 +1,6 @@
+
+PASS A plain object can be posted to a shared worker
+PASS MediaSourceHandle cannot be transferred to a shared worker
+PASS A plain object can be posted to a service worker
+PASS MediaSourceHandle cannot be transferred to a service worker
+

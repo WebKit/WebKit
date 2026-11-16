@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests table cell can survive width/height related calls while it is in detached state.</title>
+<style>
+	h1 {
+    	display: table-cell !important;
+    	background-clip: padding-box;
+    	-webkit-transform: rotateX(0deg);
+	}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+Pass if no crash or assert in debug.
+<h1></h1>
+</body>
+</html>

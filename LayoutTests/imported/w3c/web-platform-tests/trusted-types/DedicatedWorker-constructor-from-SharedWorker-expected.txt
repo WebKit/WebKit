@@ -1,0 +1,5 @@
+
+PASS Creating a Worker from a string should throw (shared worker scope)
+PASS Creating a Worker from a TrustedScriptURL should not throw (shared worker scope)
+PASS Creating a Worker from a string with a default policy should not throw (shared worker scope)
+

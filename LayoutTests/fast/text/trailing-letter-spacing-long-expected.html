@@ -1,0 +1,18 @@
+<html>
+<head>
+<title>This tests that we don't trim the trailing letter-spacing.</title>
+<style>
+div {
+	font-size: 12px;
+    background-color: cyan;
+    width: 1000px;
+    letter-spacing: 200px;
+}
+</style>
+</head>
+<body>
+We don't yet trim trailing letter-spacing.
+<!-- This forced line breaks should move over by one character once we start trimming trailing letter-spacing -->
+<div>l e<br>t t<br>e r<br>s p<br>a c<br>i n<br>g</div>
+</body>
+</html>

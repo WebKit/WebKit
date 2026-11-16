@@ -1,0 +1,3 @@
+
+PASS Resource fetched by HTTP protocol should have resource timing entry emitted,   even when the fetch failed.
+

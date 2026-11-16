@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+    var blob = new Blob([`
+        <!DOCTYPE html>
+        <script>
+            opener.postMessage("blob loaded", "*");
+        <\/script>
+    `], { type: 'text/html' });
+    parent.location = URL.createObjectURL(blob);
+</script>
+</body>
+</html>

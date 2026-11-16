@@ -1,0 +1,24 @@
+<style>
+body {
+  font-family: Ahem;
+  font-size: 20px;
+}
+
+.test {
+  width: min-content;
+  color: red;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.ref {
+  position: absolute;
+  top: 8px;
+  color: green;
+}
+</style>
+<div class=test><div class=inline-block>X</div>X&#8203;<span>X</span></div></div>
+<div class=ref>X<br>X<br>X</div>
+<br>PASS if no red

@@ -1,0 +1,15 @@
+Under site isolation, when one process plays audible media and another captures the microphone, the real audio session resolves to PlayAndRecord. Each process computes the category for its own sessions only, so this checks that the process owning the session reconciles them: MediaPlayback from the playing process, PlayAndRecord from the capturing process, and the higher priority of the two wins.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS playingProcessCategory is "MediaPlayback"
+PASS the real audio session's category is MediaPlayback while only media is playing
+PASS capturingProcessCategory is "PlayAndRecord"
+PASS playingProcessCategoryWhileCapturing is "MediaPlayback"
+PASS the real audio session's category is PlayAndRecord once one process captures
+PASS the real audio session's category is MediaPlayback again once capture stops
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

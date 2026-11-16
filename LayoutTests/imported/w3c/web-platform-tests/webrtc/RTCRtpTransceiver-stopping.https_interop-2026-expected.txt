@@ -1,0 +1,8 @@
+
+PASS [audio] Locally stopped transceiver goes from stopping to stopped
+PASS [audio] Remotely stopped transceiver goes directly to stopped
+PASS [audio] Rollback when removing transceiver makes it stopped
+PASS [video] Locally stopped transceiver goes from stopping to stopped
+PASS [video] Remotely stopped transceiver goes directly to stopped
+PASS [video] Rollback when removing transceiver makes it stopped
+

@@ -1,0 +1,3 @@
+
+PASS Reporting endpoints received credentials.
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.animated {
+    opacity: 0;
+    animation: fadeIn 0.01s forwards;
+}
+.box {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    margin: 10px;
+}
+</style>
+</head>
+<body>
+<p>You should see two green boxes below when printed.</p>
+<div class="box animated" id="box1"></div>
+<div class="box animated" id="box2"></div>
+<script>
+(async function () {
+    window.testRunner?.waitUntilDone();
+    await Promise.all(document.getAnimations().map(animation => animation.finished));
+    window.testRunner?.setPrinting();
+    window.testRunner?.notifyDone();
+})();
+</script>
+</body>
+</html>

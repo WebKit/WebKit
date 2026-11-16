@@ -1,0 +1,17 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests to see if deletion correctly prunes the containers of the paragraph being moved during a merge.  You should see 'foo<b>bar</b>' below.</p>
+
+<div id="test" contenteditable="true"><div>foo</div><div style="border: 1px solid blue; padding: 5px; font-weight: bold;"><div style="border: 1px solid red; padding: 5px">bar</div></div></div>
+
+<script>
+var e = document.getElementById("test");
+var s = window.getSelection();
+s.setPosition(e, 0);
+s.modify("move", "forward", "line");
+
+document.execCommand("Delete");
+
+</script>

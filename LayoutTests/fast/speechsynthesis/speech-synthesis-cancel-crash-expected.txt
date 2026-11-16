@@ -1,0 +1,9 @@
+This tests that cancelling speech at the right time will not crash due to mismanaging of the queue during a cancel.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

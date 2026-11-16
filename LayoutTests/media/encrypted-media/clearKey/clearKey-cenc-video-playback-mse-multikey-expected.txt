@@ -1,0 +1,15 @@
+
+EME API is supported OK
+Media source is opened OK
+EVENT(encrypted)
+MediaKeys is created OK
+EVENT(message)
+EVENT(keystatuseschange)
+Session: keyId=d0d1d2d3d4d5d6d7d8d9dadbdcdddedf status=usable OK
+EVENT(encrypted)
+EVENT(message)
+EVENT(keystatuseschange)
+Session: keyId=b0b1b2b3b4b5b6b7b8b9babbbcbdbebf status=usable OK
+EXPECTED (video.currentTime >= '4') OK
+END OF TEST
+

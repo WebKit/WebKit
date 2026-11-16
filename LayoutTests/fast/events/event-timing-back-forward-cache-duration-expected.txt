@@ -1,0 +1,10 @@
+Tests that event timing entries do not have inflated durations after back-forward cache restore.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Event timing entries have reasonable durations after back-forward restore
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Navigate

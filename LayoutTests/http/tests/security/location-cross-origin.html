@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<iframe src="http://localhost:8000/security/resources/iframe-with-element.html"></iframe>
+<script>
+description("Test security checking for access to Location.");
+jsTestIsAsync = true;
+
+onload = function() {
+    shouldThrowErrorName("frames[0].location.protocol", "SecurityError");
+    shouldThrowErrorName("frames[0].location.host", "SecurityError");
+    shouldThrowErrorName("frames[0].location.hostname", "SecurityError");
+    shouldThrowErrorName("frames[0].location.port", "SecurityError");
+    shouldThrowErrorName("frames[0].location.pathname", "SecurityError");
+    shouldThrowErrorName("frames[0].location.search", "SecurityError");
+    shouldThrowErrorName("frames[0].location.hash", "SecurityError");
+    shouldThrowErrorName("frames[0].location.origin", "SecurityError");
+    shouldThrowErrorName("frames[0].location.ancestorOrigins", "SecurityError");
+    shouldThrowErrorName("frames[0].location.toString()", "SecurityError");
+    shouldThrowErrorName("frames[0].location.reload()", "SecurityError");
+    shouldThrowErrorName("frames[0].location.assign('about:blank')", "SecurityError");
+    shouldThrowErrorName("frames[0].location.href", "SecurityError");
+
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'protocol').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'host').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'hostname').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'port').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'pathname').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'search').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'hash').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'origin').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'ancestorOrigins').get.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'toString').value.call(frames[0].location)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'href').get.call(frames[0].location)", "SecurityError");
+
+    shouldThrowErrorName("frames[0].location.protocol = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.host = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.hostname = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.port = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.pathname = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.search = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.hash = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.origin = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.ancestorOrigins = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.toString = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.reload = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.replace = 1", "SecurityError");
+    shouldThrowErrorName("frames[0].location.assign = 1", "SecurityError");
+
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'protocol').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'host').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'hostname').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'port').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'pathname').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'search').set.call(frames[0].location, 1)", "SecurityError");
+    shouldThrowErrorName("Object.getOwnPropertyDescriptor(window.location, 'hash').set.call(frames[0].location, 1)", "SecurityError");
+
+    shouldThrowErrorName("Object.defineProperty(frames[0].location, 'foo', { value: 1 })", "SecurityError");
+
+    // Setting 'href' cross origin should be allowed.
+    shouldNotThrow("frames[0].location.href = 'about:blank'");
+    handle = setInterval(function() {
+        try {
+            frames[0].location.href; // Should throw if still cross-origin.
+
+            shouldBeEqualToString("frames[0].location.href", "about:blank");
+            clearInterval(handle);
+            finishJSTest();
+        } catch (e) { }
+    }, 5);
+};
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+A
+long text will now be LCP
+
+PASS Largest Contentful Paint: first-letter is observable.
+

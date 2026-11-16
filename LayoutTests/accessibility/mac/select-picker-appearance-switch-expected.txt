@@ -1,0 +1,23 @@
+This test ensures that a base appearance select gets new accessibility objects when only its picker switches appearance, so that it exposes its base appearance picker only while it has one.
+
+native-to-base:
+PASS: axSelect?.role === 'AXRole: AXPopUpButton'
+PASS: pickerMenu() === null
+PASS: select.matches(':open') === true
+PASS: pickerMenu()?.role === 'AXRole: AXMenu'
+PASS: pickerMenu()?.childrenCount === 2
+PASS: pickerMenu()?.childAtIndex(0)?.role === 'AXRole: AXMenuItem'
+PASS: select.matches(':open') === false
+base-to-native:
+PASS: axSelect?.role === 'AXRole: AXPopUpButton'
+PASS: select.matches(':open') === true
+PASS: pickerMenu()?.role === 'AXRole: AXMenu'
+PASS: select.matches(':open') === false
+PASS: axSelect?.role === 'AXRole: AXPopUpButton'
+PASS: axSelect?.stringValue === 'AXValue: Apple'
+PASS: pickerMenu() === null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

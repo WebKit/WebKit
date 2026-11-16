@@ -1,0 +1,30 @@
+
+PASS e.style['timeline-trigger-name'] = "initial" should set the property value
+PASS e.style['timeline-trigger-name'] = "inherit" should set the property value
+PASS e.style['timeline-trigger-name'] = "unset" should set the property value
+PASS e.style['timeline-trigger-name'] = "revert" should set the property value
+PASS e.style['timeline-trigger-name'] = "none" should set the property value
+PASS e.style['timeline-trigger-name'] = "--abc" should set the property value
+PASS e.style['timeline-trigger-name'] = "  --abc" should set the property value
+PASS e.style['timeline-trigger-name'] = "--aBc" should set the property value
+PASS e.style['timeline-trigger-name'] = "--foo, --bar" should set the property value
+PASS e.style['timeline-trigger-name'] = "--bar, --foo" should set the property value
+PASS e.style['timeline-trigger-name'] = "none, none" should set the property value
+PASS e.style['timeline-trigger-name'] = "--a, none, --b" should set the property value
+PASS Property timeline-trigger-name value 'none'
+PASS Property timeline-trigger-name value '--abc'
+PASS Property timeline-trigger-name value '  --abc'
+PASS Property timeline-trigger-name value '--aBc'
+PASS Property timeline-trigger-name value '--foo, --bar'
+PASS Property timeline-trigger-name value '--bar, --foo'
+PASS Property timeline-trigger-name value 'none, none'
+PASS Property timeline-trigger-name value '--a, none, --b'
+PASS e.style['timeline-trigger-name'] = "auto" should not set the property value
+PASS e.style['timeline-trigger-name'] = "abc" should not set the property value
+PASS e.style['timeline-trigger-name'] = "default" should not set the property value
+PASS e.style['timeline-trigger-name'] = "10px" should not set the property value
+PASS e.style['timeline-trigger-name'] = "foo bar" should not set the property value
+PASS e.style['timeline-trigger-name'] = "\"foo\" \"bar\"" should not set the property value
+PASS e.style['timeline-trigger-name'] = "rgb(1, 2, 3)" should not set the property value
+PASS e.style['timeline-trigger-name'] = "#fefefe" should not set the property value
+

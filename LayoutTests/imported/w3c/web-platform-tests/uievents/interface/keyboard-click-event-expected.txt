@@ -1,0 +1,9 @@
+Tests that a button pressed by using Space or Enter will fire only the click event
+
+Click Me by pressing Enter or Space
+
+PASS Test that the Keyboard generated click does not fire pointer or mouse events for button when pressing space key
+PASS Test that the Keyboard generated click does not fire pointer or mouse events for inputbutton when pressing space key
+PASS Test that the Keyboard generated click does not fire pointer or mouse events for button when pressing enter key
+PASS Test that the Keyboard generated click does not fire pointer or mouse events for inputbutton when pressing enter key
+

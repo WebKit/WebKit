@@ -1,0 +1,14 @@
+Tests internals.dumpJSNodeStatistics()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS before.nodes.count > 0 is true
+PASS after["A-B"].count - (before["A-B"]?.count || 0) is 1
+PASS after["A-B"].connected - (before["A-B"]?.connected || 0) is 0
+PASS after["A-B"].count - (before["A-B"]?.count || 0) is 2
+PASS after["A-B"].connected - (before["A-B"]?.connected || 0) is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hi!

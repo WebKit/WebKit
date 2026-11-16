@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true useHardwareKeyboardMode=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    font-size: 16px;
+}
+</style>
+</head>
+<body onload="runTest()">
+<input type="text" id="input" autocapitalize="none" autocorrect="off" spellcheck="false">
+<pre id="description"></pre>
+<pre id="console"></pre>
+<script>
+jsTestIsAsync = true;
+
+async function runTest() {
+    description("This test verifies that dead keys don't break text input if keydown is prevented. To manually run the test, type Option+E and then O, and verify that ó is inserted.");
+
+    input = document.getElementById("input");
+    input.addEventListener("keydown", event => {
+        event.preventDefault();
+    });
+
+    await UIHelper.activateElementAndWaitForInputSession(input);
+
+    for (const [deadKey, unmodifiedCharacter] of [["e", "o"], ["i", "a"], ["u", "y"]]) {
+        await UIHelper.keyDown(deadKey, ["altKey"]);
+        await UIHelper.keyDown(unmodifiedCharacter);
+        await UIHelper.ensurePresentationUpdate();
+    }
+
+    shouldBeEqualToString("input.value", "óâÿ");
+
+    input.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+}
+</script>
+</body>
+</html>

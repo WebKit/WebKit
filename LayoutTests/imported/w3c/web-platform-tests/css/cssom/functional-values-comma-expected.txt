@@ -1,0 +1,9 @@
+
+PASS rgb(): commas should be followed by a single space
+PASS rgba(): commas should be followed by a single space
+PASS rgb(): already spaced input should remain correctly spaced
+PASS clamp(): commas should be followed by a single space
+PASS min(): commas should be followed by a single space
+PASS min(): multiple spaces should be collapsed to a single space
+PASS linear-gradient(): commas should be followed by a single space
+

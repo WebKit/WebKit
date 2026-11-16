@@ -1,0 +1,10 @@
+Test for bug 33641: Assertion failure in Lexer.cpp if input stream ends while in string escape.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Passed if no assertion failure.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

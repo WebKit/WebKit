@@ -1,0 +1,48 @@
+<!doctype html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<script>
+
+// existence of this classic script is the key to this test failing.
+console.log(`in classic script => document.readyState = ${document.readyState}`);
+
+</script>
+
+This timing test verifies that inline module scripts with imports block readyState completion
+
+<script type="module">
+
+import { delayedExport } from './resources/delayed-module.js';
+
+console.log(`[module script with import] in module script => document.readyState = ${document.readyState}`);
+console.log(`[module script with import] imported value = ${delayedExport}`);
+
+promise_test(async t => {
+  console.log(`[module script with import] in promise_test => document.readyState = ${document.readyState}`);
+  t.step(() => {
+    assert_equals(document.readyState, "interactive", "readyState should be 'interactive' during module execution");
+    assert_equals(delayedExport, "delayed-value", "Import should be resolved before module execution");
+  });
+
+  // Track when load event fires
+  let loadEventFired = false;
+  let loadEventReadyState = null;
+
+  window.addEventListener('load', () => {
+    loadEventFired = true;
+    loadEventReadyState = document.readyState;
+    console.log(`[module script with import] in window.onload => document.readyState = ${document.readyState}`);
+  });
+
+  // Wait a bit to ensure load event has time to fire
+  await new Promise(resolve => t.step_timeout(resolve, 50));
+
+  t.step(() => {
+    assert_true(loadEventFired, "Load event should have fired");
+    assert_equals(loadEventReadyState, "complete", "readyState should be 'complete' when load event fires");
+    assert_equals(document.readyState, "complete", "readyState should be 'complete' after load event");
+  });
+}, "Inline module script with imports blocks readyState completion until imports are loaded");
+
+</script>

@@ -1,0 +1,21 @@
+foo
+bar
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 26.00)
+          (bounds 120.00 120.00)
+          (drawsContent 1)
+          (backdrop layer 0.00, 0.00 120.00 x 120.00)
+        )
+      )
+    )
+  )
+)
+

@@ -1,0 +1,3 @@
+
+FAIL currentTime and getOutputTimestamp().contextTime should not reset after setSinkId assert_unreached: Not enough audio output devices to run this test. Need at least 2. Reached unreachable code
+

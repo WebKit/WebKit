@@ -1,0 +1,105 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Regression test for bugs.webkit.org/show_bug.cgi?id=264219: a render bundle containing " +
+           "drawIndexedIndirect whose pipeline consumes a real vertex-step-mode @location buffer, so the " +
+           "draw must go through the batched two-dispatch index clamp path " +
+           "(clampIndirectIndexBufferDispatch1Batched + clampIndirectIndexBufferDispatch2Batched + the " +
+           "anyIndexedClamp barrier, where the offset/length overflow guard lives) at executeBundles time " +
+           "rather than reading the app's raw args. Renders a full-target triangle via a bundle of " +
+           "drawIndexedIndirect into a 1x1 texture, reads the pixel back, and executes the bundle twice.");
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    // The vertex shader reads a real @location(0) attribute, so the pipeline has a required vertex-step-mode
+    // buffer. computeMininumVertexInstanceCount then returns a finite minVertexCount (not the invalid
+    // sentinel), which makes IndirectEncodeWork::clamps true and routes the draw through the clamp path.
+    let module = device.createShaderModule({ code: `
+        @vertex fn vs(@location(0) p: vec2f) -> @builtin(position) vec4f {
+            return vec4f(p, 0, 1);
+        }
+        @fragment fn fs() -> @location(0) vec4f { return vec4f(0, 1, 0, 1); }
+    ` });
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module,
+            entryPoint: 'vs',
+            buffers: [{ arrayStride: 8, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x2' }] }],
+        },
+        fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+        primitive: { topology: 'triangle-list' },
+    });
+
+    // A full-target triangle indexed as 0,1,2. 3 vertices => vertex buffer big enough that the clamp keeps
+    // vertexCount at 3.
+    let vertexData = new Float32Array([-1, -3, -1, 1, 3, 1]);
+    let vertexBuffer = device.createBuffer({ size: vertexData.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(vertexBuffer, 0, vertexData);
+
+    let indexData = new Uint16Array([0, 1, 2, 0]); // 4 => 8 bytes (uint16 index buffer must be > 4 bytes)
+    let indexBuffer = device.createBuffer({ size: indexData.byteLength, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(indexBuffer, 0, indexData);
+
+    // MTLDrawIndexedPrimitivesIndirectArguments layout: indexCount, instanceCount, firstIndex, baseVertex, firstInstance.
+    let args = new Uint32Array([3, 1, 0, 0, 0]);
+    let argsBuffer = device.createBuffer({ size: args.byteLength, usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(argsBuffer, 0, args);
+
+    let enc = device.createRenderBundleEncoder({ colorFormats: [format] });
+    enc.setPipeline(pipeline);
+    enc.setVertexBuffer(0, vertexBuffer);
+    enc.setIndexBuffer(indexBuffer, 'uint16');
+    enc.drawIndexedIndirect(argsBuffer, 0);
+    let bundle = enc.finish();
+
+    let texture = device.createTexture({ size: [1, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    function drawAndReadback() {
+        let commandEncoder = device.createCommandEncoder();
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{ view: texture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 1, g: 0, b: 0, a: 1 } }],
+        });
+        pass.executeBundles([bundle]);
+        pass.end();
+        commandEncoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow: 256 }, [1, 1]);
+        device.queue.submit([commandEncoder.finish()]);
+    }
+
+    // Two frames reusing the same bundle: both must render the clamped triangle (green), not the clear (red).
+    drawAndReadback();
+    await device.queue.onSubmittedWorkDone();
+    await readback.mapAsync(GPUMapMode.READ);
+    let frame0 = [...new Uint8Array(readback.getMappedRange(0, 4))];
+    readback.unmap();
+
+    drawAndReadback();
+    await device.queue.onSubmittedWorkDone();
+    await readback.mapAsync(GPUMapMode.READ);
+    let frame1 = [...new Uint8Array(readback.getMappedRange(0, 4))];
+    readback.unmap();
+
+    window.frame0 = frame0;
+    window.frame1 = frame1;
+    shouldBeEqualToString('frame0.join()', '0,255,0,255');
+    shouldBeEqualToString('frame1.join()', '0,255,0,255');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

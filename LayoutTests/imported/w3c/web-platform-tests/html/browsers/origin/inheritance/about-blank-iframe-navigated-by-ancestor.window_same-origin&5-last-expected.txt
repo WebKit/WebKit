@@ -1,0 +1,6 @@
+
+PASS about:blank gets the initiator's origin again after traversal
+PASS about:blank gets the initiator's origin again after reload
+PASS about:blank in a sandboxed iframe gets an opaque origin
+PASS about:blank in an iframe sandboxed with allow-same-origin gets the initiator's origin
+

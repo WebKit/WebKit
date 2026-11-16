@@ -1,0 +1,20 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests moving the caret forward through content of mixed editability.  The caret should move down one line from the editable piece to the editable piece that's embedded in a non-editable piece.</p>
+
+<div contenteditable="true">
+editable
+<table border="1" contenteditable="false"><tr><td contenteditable="true" id="test">editable</td></tr></table>
+editable
+</div>
+
+<script>
+var e = document.getElementById("test");
+var s = window.getSelection();
+
+s.setPosition(e, 0);
+
+s.modify("move", "backward", "line");
+</script>

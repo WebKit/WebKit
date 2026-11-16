@@ -1,0 +1,21 @@
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 320.00 240.00)
+        )
+      )
+    )
+  )
+)
+RUN(internals.enableGStreamerHolePunching(video))
+RUN(video.src = findMediaFile('video', '../../../media/content/test'))
+RUN(video.play())
+

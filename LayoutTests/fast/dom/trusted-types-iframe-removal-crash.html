@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner && window.GCController) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    targetElement = document.createElement('div');
+
+    let iframe = document.createElement('iframe');
+
+    iframe.srcdoc = `<!DOCTYPE html>
+    <meta http-equiv="Content-Security-Policy" content="require-trusted-types-for \'script\'">
+    <body><script>document.body.appendChild(parent.targetElement); parent.innerTrustedTypes = trustedTypes;</` + 'script>';
+
+    iframe.onload = () => setTimeout(() => {
+        TrustedTypePolicyFactory.prototype.createPolicy.call(window.innerTrustedTypes, 'default', { createHTML: function () {
+            document.adoptNode(targetElement);
+            iframe.remove();
+            iframe = null;
+            GCController.collect();
+        } });
+        window.innerTrustedTypes = null;
+
+        GCController.collect();
+        try {
+            targetElement.innerHTML = 'x';
+        } catch (e) {
+            e.toString();
+        }
+
+        document.body.innerHTML = '<p>This test passes if WebKit does not hit assertions or crash under ASAN</p>PASS';
+
+        testRunner.notifyDone();
+    }, 0);
+
+    document.body.appendChild(iframe);
+} else
+    document.write('<p>This test requires testRunner and GCController</p>');
+
+</script>
+</body>
+</html>

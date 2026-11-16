@@ -1,0 +1,59 @@
+Asserts that AXReplaceRangeWithText writes at the character index it is given when the
+call arrives on the web area of a document made editable by design mode, the same as it
+does for a body carrying a contenteditable attribute.
+
+--- design mode ---
+start of the document: replacing {0, 0}
+PASS: webArea.replaceTextInRange("XX", 0, 0) === true
+PASS: body.innerText === "XXabcdefghij"
+
+interior index: replacing {3, 0}
+PASS: webArea.replaceTextInRange("XX", 3, 0) === true
+PASS: body.innerText === "abcXXdefghij"
+
+later interior index: replacing {7, 0}
+PASS: webArea.replaceTextInRange("XX", 7, 0) === true
+PASS: body.innerText === "abcdefgXXhij"
+
+replacing a run of characters: replacing {3, 2}
+PASS: webArea.replaceTextInRange("XX", 3, 2) === true
+PASS: body.innerText === "abcXXfghij"
+
+location past the end of the value: replacing {99, 0}
+PASS: webArea.replaceTextInRange("XX", 99, 0) === true
+PASS: body.innerText === "abcdefghijXX"
+
+length running past the end of the value: replacing {3, 99}
+PASS: webArea.replaceTextInRange("XX", 3, 99) === true
+PASS: body.innerText === "abcXX"
+
+--- contenteditable attribute ---
+start of the document: replacing {0, 0}
+PASS: webArea.replaceTextInRange("XX", 0, 0) === true
+PASS: body.innerText === "XXabcdefghij"
+
+interior index: replacing {3, 0}
+PASS: webArea.replaceTextInRange("XX", 3, 0) === true
+PASS: body.innerText === "abcXXdefghij"
+
+later interior index: replacing {7, 0}
+PASS: webArea.replaceTextInRange("XX", 7, 0) === true
+PASS: body.innerText === "abcdefgXXhij"
+
+replacing a run of characters: replacing {3, 2}
+PASS: webArea.replaceTextInRange("XX", 3, 2) === true
+PASS: body.innerText === "abcXXfghij"
+
+location past the end of the value: replacing {99, 0}
+PASS: webArea.replaceTextInRange("XX", 99, 0) === true
+PASS: body.innerText === "abcdefghijXX"
+
+length running past the end of the value: replacing {3, 99}
+PASS: webArea.replaceTextInRange("XX", 3, 99) === true
+PASS: body.innerText === "abcXX"
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+Description
+
+This test validates that PerformanceObserver can observe nav timing 2 instance and that the expected attributes in nav timing 2 instance exist (but does not validate that the values are correct).
+
+
+PASS Performance navigation timing entries are observable.
+

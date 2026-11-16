@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #box {
+            margin: 10px;
+            width: 200px;
+            height: 2500px;
+            background-color: silver;
+            -webkit-transform: translateZ(0);
+        }
+        
+        #box.empty .content {
+            display: none;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function doTest()
+        {
+            if (window.internals)
+                window.internals.layerTreeAsText(document); // Force layer update.
+
+            document.getElementById('box').classList.remove('empty');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="box" class="empty">
+        <div class="content">
+            Here is some text.
+        </div>
+    </div>
+</body>
+</html>

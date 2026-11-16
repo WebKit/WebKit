@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reference: selection gaps are painted for a line whose selection top is above its block container.</title>
+<style>
+  ::selection { background-color: green; }
+  body { margin: 0; color: transparent; }
+  #container { position: absolute; top: 120px; left: 0; width: 200px; font: 50px/50px Ahem; }
+</style>
+</head>
+<body>
+<div id="container">xxxx</div>
+<script>
+  var range = document.createRange();
+  range.selectNodeContents(document.getElementById("container"));
+  window.getSelection().addRange(range);
+</script>
+</body>
+</html>

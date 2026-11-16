@@ -1,0 +1,11 @@
+Verifies that a drag on the left side of the viewport, where a position:fixed overlay sits in a vertical-rl page, scrolls the overlay's contents and not the main page.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS overlayScrolled is true
+PASS documentScrolled is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

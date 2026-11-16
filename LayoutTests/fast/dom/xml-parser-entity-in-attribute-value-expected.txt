@@ -1,0 +1,11 @@
+This test verifies the parsing of unicode html entities used as an invalid style attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS paragraphElement.getAttribute("style") is "0񶔬"
+PASS paragraphElement.style.cssText is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+x

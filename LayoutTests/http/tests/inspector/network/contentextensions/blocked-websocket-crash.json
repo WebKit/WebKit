@@ -1,0 +1,10 @@
+[
+    {
+        "trigger": {
+            "url-filter": "^ws://"
+        },
+        "action": {
+            "type": "block"
+        }
+    }
+]

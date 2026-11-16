@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>media-source-inband-cea608-track</title>
+  <script src="media-source-loader.js"></script>
+  <script src="../video-test.js"></script>
+  <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+      return new Promise((resolve, reject) => {
+        loader.onload = resolve;
+        loader.onerror = reject;
+      });
+    }
+
+    window.addEventListener('load', async event => {
+      try {
+        findMediaElement();
+        loader = new MediaSourceLoader('content/test-inband-cea608-track-manifest.json');
+        await loaderPromise(loader);
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        waitForEventAndFail('error');
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('<br/>Append media segments.');
+
+        for (let i = 0; i < loader.mediaSegmentsLength(); i++) {
+          run(`sourceBuffer.appendBuffer(loader.mediaSegment(${i}))`);
+          await waitFor(sourceBuffer, 'update');
+        }
+
+        consoleWrite('<br/>Verify track properties.');
+        testExpected('video.videoTracks.length', 1);
+        testExpected('video.audioTracks.length', 0);
+        testExpected('video.textTracks.length', 1);
+        run('track = video.textTracks[0]');
+        testExpected('track.id', '2');
+
+        consoleWrite('<br/>Start playback and verify cues');
+        run('track.mode = "showing"');
+        await waitFor(video.textTracks, 'change');
+
+        run('cues = track.cues');
+        testExpected('cues.length', 30);
+
+        run('video.play()');
+        run('video.pause()');
+
+        testExpected('cues[0].text', '1.');
+        testExpected('cues[1].text', '2.');
+        testExpected('cues[15].text', '16.');
+
+        endTest();
+      } catch (e) {
+        failTest(`Caught exception: "${e}"`);
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div>
+    media-source-inband-cea608-track
+  </div>
+  <video controls></video>
+</body>
+
+</html>

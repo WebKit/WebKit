@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+.container {
+  position: fixed;
+  width: 200px;
+  height: 50px;
+  overflow: hidden;
+}
+
+#change_this {
+  position: absolute;
+  z-index: 1;
+}
+
+#change_this[data-value]::before {
+  position: absolute;
+  content: attr(data-value);
+}
+</style>
+PASS if it reads 'new'.
+<div class=container>
+  <div id=change_this data-value="I"></div>
+</div>
+<script>
+
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  if (testRunner.dontForceRepaint)
+    testRunner.dontForceRepaint();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  change_this.style.left = "100px";
+  change_this.setAttribute("data-value", "new");
+
+  await UIHelper.renderingUpdate();
+  await UIHelper.renderingUpdate();
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

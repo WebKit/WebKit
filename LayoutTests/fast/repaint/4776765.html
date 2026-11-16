@@ -1,0 +1,32 @@
+<title>This tests for a repaint bug.  The old caret position should be invalidated when a paragraph separator is inserted.</title>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<script type="text/javascript">
+function repaintTest() {
+    document.execCommand("InsertParagraph");
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    });
+}
+
+function startTest() {
+    requestAnimationFrame(() => {
+        setTimeout(runRepaintTest, 0);
+    });
+}
+</script>
+<body onload="startTest()">
+<div contenteditable="true">
+<div><br></div>
+<div id="div"><br></div>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+var div = document.getElementById("div");
+var sel = window.getSelection();
+sel.setPosition(div, 0);
+</script>
+</body>

@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px">
+    <g id="plain" style="display: none"><rect x="50" y="50" width="100" height="100" fill="green"/></g>
+    <g id="layered" style="display: none; isolation: isolate"><rect x="250" y="50" width="100" height="100" fill="green"/></g>
+</svg>
+<script>
+    // The left group has no layer of its own, the right one has. Both repaint once they are shown.
+    function repaintTest() {
+        for (const id of ["plain", "layered"])
+            document.getElementById(id).style.display = "inline";
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

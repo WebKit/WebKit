@@ -1,0 +1,2 @@
+content before empty line
+span position on empty line: 28

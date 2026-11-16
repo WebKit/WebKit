@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<span hidden id="description-span">descriptive text</span>
+
+<script>
+var output = "This test ensures we don't crash when font dynamically changes with dirty style and accessibility relations cache.\n\n";
+
+if (window.accessibilityController) {
+    const html = document.documentElement;
+    // Make sure accessibility is enabled by walking the tree. Otherwise we won't actually be hooked into the style
+    // changes needed to trigger the bug.
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    // Use offsetParent to force layout, starting the below sequence from a clean slate.
+    html.offsetParent;
+
+    // Create a new element that has a relation. When relations are un-dirtied, this button will not have been
+    // getOrCreate'd yet. When we do create it, this will call isIgnored(), necessary to cause the crash (see the
+    // full sequence description below).
+    const button = document.createElement("button");
+    // The new element must be a node-only object, as AXObjectCache::getOrCreate(Node&) can (and in this case, will)
+    // update the relations cache if it is dirty.
+    button.style.display = "contents";
+    // This will dirty the relations cache, which is necessary to trigger the bug.
+    button.setAttribute("aria-describedby", "description-span");
+    // Changing an element's id also dirties the relations cache, so this is just extra insurance that we've dirtied it.
+    button.id = "button";
+
+    document.body.appendChild(button);
+    // Change the font, then force layout (and style resolution as a by-product) by calling offsetParent.
+    // The style resolution will result in this sequence or something similar if our implementation is broken:
+    //  1. Style::TreeResolver::resolve()
+    //  2. AXObjectCache::onFontChange()
+    //  3. AXObjectCache::getOrCreate(WebCore::Node&) for our new buttons
+    //  4. Relations are dirty, so we'll resolve them
+    //  5. A call to isIgnored() happens, which calls AccessibilityObject::style(), which tries to resolve style(),
+    //     thus causing re-entrant style resolution, and a crash.
+    document.body.style.fontFamily = "Arial, sans-serif";
+    html.offsetParent;
+
+    touchAccessibilityTree(accessibilityController.rootElement);
+    output += "PASS: No crash.\n";
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

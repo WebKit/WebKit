@@ -1,0 +1,16 @@
+Restyling the host of an image overlay without changing its size should not need layout, and should keep the size of the overlay.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS overlayRect().width is 400
+PASS overlayRect().height is 400
+PASS layoutCount is 0
+PASS overlayRect().width is 400
+PASS overlayRect().height is 400
+PASS overlayRect().width is 200
+PASS overlayRect().height is 200
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

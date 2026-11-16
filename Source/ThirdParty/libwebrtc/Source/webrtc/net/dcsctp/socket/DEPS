@@ -1,0 +1,6 @@
+specific_include_rules = {
+  "dcsctp_socket_network_test\\.cc": [
+    "+call",
+    "+system_wrappers/include/clock.h",
+  ]
+}

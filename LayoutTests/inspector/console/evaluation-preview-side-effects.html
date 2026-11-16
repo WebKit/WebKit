@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+window.counter = 0;
+
+function resetState()
+{
+    for (let iframe of document.querySelectorAll("iframe"))
+        iframe.remove();
+    window.counter = 0;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.EvaluationPreview.SideEffects");
+
+    const appendIframeSnippet = `let f = document.createElement('iframe');
+f.id = 'appended-frame';
+f.src = 'about:blank';
+document.body.appendChild(f);`;
+
+    function evaluatePreview(text) {
+        return new Promise((resolve) => {
+            let delegate = {_evaluationPreviewRequestIdentifier: 0};
+            WI.JavaScriptLogViewController.prototype.consolePromptGetEvaluationPreviewObject.call(delegate, null, text, (result, wasThrown) => {
+                resolve({result, wasThrown});
+            });
+        });
+    }
+
+    function evaluateCommit(text) {
+        return new Promise((resolve) => {
+            let options = {
+                objectGroup: WI.RuntimeManager.ConsoleObjectGroup,
+                includeCommandLineAPI: true,
+                doNotPauseOnExceptionsAndMuteConsole: false,
+                returnByValue: false,
+                generatePreview: true,
+                saveResult: true,
+                sourceURLAppender: appendWebInspectorConsoleEvaluationSourceURL,
+            };
+            WI.runtimeManager.evaluateInInspectedWindow(text, options, (result, wasThrown) => {
+                resolve({result, wasThrown});
+            });
+        });
+    }
+
+    function iframeCount() {
+        return InspectorTest.evaluateInPage(`document.querySelectorAll("iframe").length`);
+    }
+
+    suite.addTestCase({
+        name: "Console.EvaluationPreview.SideEffects.AppendIframe",
+        description: "Previewing a snippet that appends an iframe should not append an iframe.",
+        async setup() {
+            await InspectorTest.evaluateInPage(`resetState()`);
+        },
+        async test() {
+            await evaluatePreview(appendIframeSnippet);
+            InspectorTest.expectEqual(await iframeCount(), 0, "Evaluation preview should not append an iframe to the page.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.EvaluationPreview.SideEffects.PreviewThenCommit",
+        description: "Previewing then committing a snippet that appends an iframe should append exactly one iframe.",
+        async setup() {
+            await InspectorTest.evaluateInPage(`resetState()`);
+        },
+        async test() {
+            await evaluatePreview(appendIframeSnippet);
+            await evaluateCommit(appendIframeSnippet);
+            InspectorTest.expectEqual(await iframeCount(), 1, "Exactly one iframe should be appended to the page.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.EvaluationPreview.SideEffects.Increment",
+        description: "Previewing an increment should not modify the page.",
+        async setup() {
+            await InspectorTest.evaluateInPage(`resetState()`);
+        },
+        async test() {
+            await evaluatePreview(`window.counter++`);
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage(`window.counter`), 0, "Evaluation preview should not increment the counter.");
+
+            await evaluateCommit(`window.counter++`);
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage(`window.counter`), 1, "Committing should increment the counter exactly once.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.EvaluationPreview.SideEffects.PropertyAccess",
+        description: "Previewing a side-effect free property access should still produce a result.",
+        async test() {
+            let {result, wasThrown} = await evaluatePreview(`document.body.tagName`);
+            InspectorTest.expectFalse(wasThrown, "Evaluation preview should not throw.");
+            InspectorTest.expectEqual(result?.value, "BODY", "Evaluation preview should produce the property value.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.EvaluationPreview.SideEffects.ObjectLiteral",
+        description: "Previewing an object literal without parentheses should produce an object.",
+        async test() {
+            let {result, wasThrown} = await evaluatePreview(`{a: 1}`);
+            InspectorTest.expectFalse(wasThrown, "Evaluation preview should not throw.");
+            InspectorTest.expectEqual(result?.type, "object", "Evaluation preview should produce an object.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.EvaluationPreview.SideEffects.GetterDefinition",
+        description: "Previewing an object literal with a getter should not invoke the getter.",
+        async setup() {
+            await InspectorTest.evaluateInPage(`resetState()`);
+        },
+        async test() {
+            await evaluatePreview(`({get a() { window.counter++; return 1; }})`);
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage(`window.counter`), 0, "Evaluation preview should not invoke the getter.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.EvaluationPreview.SideEffects.AllowList",
+        description: "Only text that cannot modify the inspected page should be evaluated for a preview.",
+        async test() {
+            const cases = [
+                ["this", true],
+                ["foo.bar", true],
+                ["foo.bar.baz", true],
+                ["a?.b", true],
+                ["a[0]", true],
+                ["a['x']", true],
+                ["a[b]", true],
+                ["a[/x/]", true],
+                ["!a", true],
+                ["-a", true],
+                ["typeof a", true],
+                ["1 + 2", true],
+                ["a in b", true],
+                ["a && b || c", true],
+                ["a ?? b", true],
+                ["a ? b : c", true],
+                ["[1, a]", true],
+                ["({a: 1, b})", true],
+                ["{a: 1}", true],
+                ["({[a]: 1})", true],
+                ["({...a})", true],
+                ["({get a() {}})", true],
+                ["({a() { foo(); }})", true],
+                ["() => foo()", true],
+                ["(class { foo() { bar(); } })", true],
+                ["(class { x = foo(); })", true],
+                ["(class { static x = 1; })", true],
+                ["(class extends a {})", true],
+                ["`x`", true],
+                ["`${x}`", true],
+                ["foo()", false],
+                ["a?.()", false],
+                ["x++", false],
+                ["x = 1", false],
+                ["delete a.b", false],
+                ["new Foo", false],
+                ["tag`x`", false],
+                ["[...a]", false],
+                ["a[b()]", false],
+                ["({[b()]: 1})", false],
+                ["`${b()}`", false],
+                ["({...b()})", false],
+                ["-b()", false],
+                ["1 + b()", false],
+                ["a, b()", false],
+                ["(class { static { foo(); } })", false],
+                ["(class { static x = foo(); })", false],
+                ["(class { [foo()]() {} })", false],
+                ["(class extends foo() {})", false],
+                ["(@foo class {})", false],
+                ["await x", false],
+                ["let f = 1", false],
+                ["{foo()}", false],
+                ["a; b", false],
+                ["a.", false],
+            ];
+            for (let [text, expected] of cases)
+                InspectorTest.expectEqual(WI.JavaScriptLogViewController.isSideEffectFreeForEvaluationPreview(text), expected, `Should ${expected ? "allow" : "reject"} "${text}".`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Console evaluation previews do not have side effects in the inspected page.</p>
+</body>
+</html>

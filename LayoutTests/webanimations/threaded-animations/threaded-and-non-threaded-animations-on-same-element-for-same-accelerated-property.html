@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ThreadedTimeBasedAnimationsEnabled=false ] -->
+<body>
+<style>
+
+html {
+    height: 2000px;
+}
+
+</style>
+
+<script src="threaded-animations-utils.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+
+<script>
+
+promise_test(async t => { 
+    const target = createDiv(t);
+    
+    const timeline = new ScrollTimeline({ source : document.documentElement });
+    target.animate({ scale: [0, 1] }, { timeline });
+    target.animate({ translate: '0 100px' }, 1000 * 1000);
+
+    await legacyAnimationCommit();
+
+    const animations = window.internals?.acceleratedAnimationsForElement(target);
+    assert_equals(animations.length, 0);
+}, "Scroll-driven and monotonic animations on the same element cannot be accelerated if they affect the same underlying property.");
+
+</script>
+</body>

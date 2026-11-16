@@ -1,0 +1,13 @@
+<script src="../resources/js-test-pre.js"></script>
+<body>
+<script>
+function timeRenderTreeCreation(count) {
+    var t = Date.now();
+    for (var i = 0; i < count; ++i)
+        document.body.appendChild(document.createElement('div'));
+    document.body.offsetTop;
+    return Date.now() - t;
+}
+shouldBe("timeRenderTreeCreation(5000) < 20 * timeRenderTreeCreation(500)", "true");
+</script>
+<script src="../resources/js-test-post.js"></script>

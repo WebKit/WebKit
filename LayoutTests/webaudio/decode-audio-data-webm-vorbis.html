@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+<body>
+<script>
+description("Test that decoding an vorbis webm file succeeds");
+
+window.jsTestIsAsync = true;
+
+var context = new window.AudioContext();
+var request = new XMLHttpRequest();
+request.open("GET", 'resources/media/vorbis.webm', true);
+request.responseType = "arraybuffer";
+
+request.onload = function() {
+    context.decodeAudioData(request.response, (buffer) => {
+        testPassed("Successfully decoded content");
+        finishJSTest();
+      }, () => {
+        testFailed("Failed to decode file");
+        finishJSTest();
+      });
+}
+request.send();
+
+</script>
+</body>
+</html>

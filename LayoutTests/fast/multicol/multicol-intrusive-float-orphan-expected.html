@@ -1,0 +1,22 @@
+<style>
+.columns {
+  width: 250px;
+  column-width: 250px;
+  height: 160px;
+  font-size: 22px;
+}
+img {
+  float: left;
+  background-color: red;
+  width: 100px;
+  height: 100px;
+}
+.widower {
+  orphans: 1;
+  widows: 2;
+}
+</style>
+<div class="columns">
+  <div class="first">first<br>second<br>third<br>fourth<br></div>
+  <div class=widower>PASS if this text does not overlap <img>the red box on the second column.</div>
+</div>

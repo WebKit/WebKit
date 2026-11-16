@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-scrub-then-play</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Reproduces a stall caused by backward fastSeek while playing.
+    // The renderer's synchronizer rate drops to 0 and never recovers.
+    var source;
+    var sourceBuffer;
+    var timeAfterPlay;
+    var timeLater;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(MP4.VIDEO_TYPE);
+
+        var initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        });
+        var media = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+            ]}]
+        });
+
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Play and let video advance past 1 second
+        video.loop = true;
+        run('video.play()');
+        await waitFor(video, 'playing');
+        await testExpectedEventually('video.currentTime', 1, '>=');
+
+        // Rapid backward fastSeek while playing — triggers the stall
+        for (var j = 0; j < 10; j++) {
+            video.fastSeek(Math.max(0, video.currentTime - 0.5));
+            await sleepFor(0);
+        }
+
+        // Verify playback continues after the seeks
+        run('timeAfterLastSeek = video.currentTime');
+        await testExpectedEventually('video.currentTime > timeAfterLastSeek', true);
+
+        run('video.pause()');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!-- webkit-test-runner [ runSingly=true ] -->
+<!doctype html>
+<html class="reftest-wait">
+<script src="../../../resources/ui-helper.js"></script>
+<input type=checkbox switch disabled>
+<script>
+function end() {
+    document.documentElement.removeAttribute("class");
+}
+
+window.onload = async () => {
+    if (UIHelper.isIOSFamily()) {
+        const eventStreamData = new UIHelper.EventStreamBuilder()
+            .begin(10, 10)
+            .takeResult();
+        UIHelper.sendEventStream(eventStreamData).then(() => end());
+        return;
+    }
+    await eventSender.asyncMouseMoveTo(10, 10);
+    await eventSender.asyncMouseDown();
+    end();
+}
+</script>

@@ -1,0 +1,5 @@
+
+PASS Refresh does not affect Fetch API.
+PASS Refresh does not affect XMLHttpRequest.
+PASS Refresh does not affect Image.
+

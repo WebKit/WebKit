@@ -1,0 +1,23 @@
+<style>
+body, dialog {
+  container-type: size;
+}
+
+dialog {
+  padding-bottom: 10%;
+}
+
+@container (orientation: landscape) {
+  :is(:where(&))::selection {
+    color: green;
+  }
+}
+</style>
+<dialog id=show_this></dialog>
+This test passes if it doesn't crash.
+<script>
+testRunner?.dumpAsText();
+onload = () => {
+    show_this.showModal();
+};
+</script>

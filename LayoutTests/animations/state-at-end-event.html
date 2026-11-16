@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    #container {
+      position: relative;
+      width: 400px;
+      height: 100px;
+      border: 1px solid  black;
+    }
+    
+    .box {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background-color: green;
+    }
+    
+    .indicator {
+      left: 0;
+      top: 0;
+      background-color: red;
+    }
+
+    #container.moved .hardware {
+      -webkit-animation: move 300ms linear;
+    }
+
+    @-webkit-keyframes move {
+      from { left: 0; }
+      to   { left: 300px; }
+    }
+   </style>
+
+   <script type="text/javascript">
+    function testEnded()
+    {
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+    
+    function startTest()
+    {
+      if (window.testRunner)
+        testRunner.waitUntilDone();
+
+      document.getElementById('tester').addEventListener('webkitAnimationEnd', testEnded, false);
+      document.getElementById('container').className = 'moved';
+    }
+    
+    window.addEventListener('load', startTest, false);
+   </script>
+</head>
+<body>
+
+  <p>At the end of the test the green box should obscure the red box.</p>
+  <div id="container">
+    <div class="indicator box"></div>
+    <div id="tester" class="hardware box"></div>
+  </div>
+
+  <div id="result"></div>
+
+</body>
+</html>

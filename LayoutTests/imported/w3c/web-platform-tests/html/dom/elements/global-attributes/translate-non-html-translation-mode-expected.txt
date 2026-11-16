@@ -1,0 +1,5 @@
+
+PASS Non-HTML elements default to translate-enabled
+PASS Non-HTML elements inherit their parent's translation-enabled state
+PASS Non-HTML elements inherit their parent's no-translation state
+

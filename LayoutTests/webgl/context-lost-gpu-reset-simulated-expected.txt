@@ -1,0 +1,35 @@
+Tests that a simulated GPU failure loses the context, and that the context is restored. The simulated failure loses only the context, so the other contexts keep working. A context created after the failure works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context renders
+PASS getError was expected value: NO_ERROR : context has no errors
+PASS other context renders
+PASS getError was expected value: NO_ERROR : other context has no errors
+PASS gl.isBuffer(buffer) is true
+Simulating a GPU failure.
+PASS failureGL is non-null.
+PASS context created after the failure renders
+PASS getError was expected value: NO_ERROR : context created after the failure has no errors
+PASS The context was lost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS The context was restored.
+PASS gl.isContextLost() is false
+PASS restored context renders
+PASS getError was expected value: NO_ERROR : restored context has no errors
+PASS gl.isBuffer(buffer) is false
+PASS otherGL.isContextLost() is false
+PASS other context renders
+PASS getError was expected value: NO_ERROR : other context has no errors
+PASS failureGL.isContextLost() is false
+PASS context created after the failure renders
+PASS getError was expected value: NO_ERROR : context created after the failure has no errors
+PASS newGL is non-null.
+PASS context created after the restore renders
+PASS getError was expected value: NO_ERROR : context created after the restore has no errors
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,64 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+
+button {
+    font-size: 20px;
+}
+
+iframe {
+    width: 300px;
+    height: 360px;
+}
+</style>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<main aria-label="Main content">
+    <h3>Before subframes</h3>
+    <aside role="document">
+        <iframe class="same-origin" title="Same origin iframe"></iframe>
+    </aside>
+    <aside role="document">
+        <iframe class="cross-origin" title="Cross origin iframe"></iframe>
+    </aside>
+    <button aria-label="Submit">After subframes</button>
+    <a href="https://webkit.org/">Link in mainframe</a>
+</main>
+<script>
+async function loadFrame(iframe, src) {
+    await new Promise(resolve => {
+        addEventListener("message", event => {
+            if (event.data === "loaded")
+                resolve();
+        }, { once: true });
+        iframe.src = src;
+    });
+}
+
+addEventListener("load", async () => {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    await loadFrame(document.querySelector("iframe.same-origin"), "resources/subframe1.html");
+    await loadFrame(document.querySelector("iframe.cross-origin"), "http://localhost:8000/text-extraction/resources/subframe2.html");
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        includeURLs: true,
+        shortenURLs: true,
+        includeAccessibilityAttributes: true,
+        nodeIdentifierInclusion: "none",
+    });
+
+    window.testRunner?.notifyDone();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .container {
+      position: relative;
+      overflow: hidden;
+      height: 190px;
+      width: 200px;
+      border: 1px solid black;
+      z-index: 0;
+    }
+
+    .box {
+      height: 100px;
+      width: 100px;
+      margin: -10px;
+      background-color: blue;
+    }
+
+    .behind {
+      position: absolute;
+      top: 0;
+      z-index: -1;
+    }
+
+    .composited {
+      position: absolute;
+      top: 50px;
+      -webkit-transform: translateZ(0);
+      background-color: green;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+  </script>
+</head>
+<body>
+  <p>This test should not ASSERT in debug builds.</p>
+  <div class="container">
+    <div class="behind box"></div>
+    <div class="composited box"></div>
+  </div>
+</body>
+</html>

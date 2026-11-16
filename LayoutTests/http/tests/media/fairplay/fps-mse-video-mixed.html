@@ -1,0 +1,65 @@
+<!-- webkit-test-runner [ VideoRendererUseDecompressionSessionForProtected=false ] -->
+ <!DOCTYPE html>
+<html>
+<head>
+    <title>fps-mse-video-mixed</title>
+    <script>window.requirePixelDump = true</script>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=support.js></script>
+    <script src="eme2016.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(() => {
+            consoleWrite('TESTDONE');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+
+    async function startTest() {
+        window.video = document.querySelector('video');
+        let options = {video: window.video, setMediaKeys: true, silent: true, capabilities: [{
+            initDataTypes: ['sinf'],
+            videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]};
+        let keys = await startEME(options);
+
+        let mediaSource = new MediaSource;
+        video.srcObject = mediaSource;
+        await waitFor(mediaSource, 'sourceopen');
+
+        // Appending Encrypted Video Header.
+
+        let {sourceBuffer: sourceBuffer, session: session} = await createBufferAppendAndWaitForEncrypted(video, mediaSource, keys, 'video/mp4', 'content/elementary-stream-video-header-keyid-1.m4v', options);
+
+        // Appending Encrypted Video Payload.
+
+        let fetchPromise = fetchAndAppend(sourceBuffer, 'content/elementary-stream-video-payload.m4v', options);
+        let canplayPromise = waitFor(video, 'canplay');
+        await Promise.all([fetchPromise, canplayPromise]);
+
+        // Appending Clear Video Payload at end of buffered data.
+
+        let timeSeek = sourceBuffer.buffered.end(0) - 1;
+        sourceBuffer.appendWindowStart = sourceBuffer.buffered.end(0);
+        sourceBuffer.appendWindowEnd = sourceBuffer.buffered.end(0) + 1;
+        sourceBuffer.timestampOffset = sourceBuffer.appendWindowStart;
+
+        await fetchAndAppend(sourceBuffer, '../resources/test-video.mp4', options);
+        mediaSource.endOfStream();
+
+        // Seek in encrypted buffer.
+        video.currentTime = timeSeek;
+        await waitFor(video, 'seeked');
+        await shouldResolve(run('video.play()'));
+        await waitFor(video, 'ended');
+    }
+    </script>
+</head>
+<body>
+    <video width="480"></audio>
+</body>
+</html>

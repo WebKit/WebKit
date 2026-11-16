@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-test'">
+<script nonce="test">
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Include a script not included in the script-src to cause a violation.
+// Include another script to report the document URI of this report, expecting
+// it to be stripped to only consist of the URL protocol.
+var violatingScript = "<script>\n\<" + "/script>"
+var reportingScript = "<script nonce=\"test\"> testRunner.waitUntilDone(); document.addEventListener('securitypolicyviolation', e => { document.body.innerHTML += `documentURI = <b>${e.documentURI}</b><br/><br/>`; testRunner.notifyDone(); });<" + "/script>";
+    
+let blob = new Blob([violatingScript + reportingScript], {type : "text/html"});
+if (window.testRunner)
+    testRunner.queueLoad(URL.createObjectURL(blob));
+</script>
+<body>
+<p>Initial page</p>
+</body>
+</head>
+</html>

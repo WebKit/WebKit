@@ -1,0 +1,8 @@
+elementFromPoint(100, 30) is vertical: PASS
+elementFromPoint(100, 70) is vertical: PASS
+elementFromPoint(100, 110) is vertical: PASS
+elementFromPoint(100, 150) is vertical: PASS
+elementFromPoint(100, 190) is vertical: PASS
+elementFromPoint(100, 380) is none: PASS
+elementFromPoint(200, 33) is horizontal: PASS
+

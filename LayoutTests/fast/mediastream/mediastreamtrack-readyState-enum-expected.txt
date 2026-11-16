@@ -1,0 +1,5 @@
+
+PASS readyState is in MediaStreamTrackState enum after creation and after stop()
+PASS readyState is in MediaStreamTrackState enum after cloning live and ended tracks
+PASS readyState stringifies and round-trips as an enum-set value
+

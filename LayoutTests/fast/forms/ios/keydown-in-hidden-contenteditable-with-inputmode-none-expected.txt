@@ -1,0 +1,13 @@
+This test verifies that key events are dispatched when performing a keypress in a programmatically focused hidden editable container with inputmode='none'. To manually run the test, load the page with a hardware keyboard attached and press the 'a' key.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Observed keydown with key: "a"
+PASS Observed keypress with key: "a"
+PASS Observed keyup with key: "a"
+PASS observedKeyUp became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

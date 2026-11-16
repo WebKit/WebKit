@@ -1,0 +1,21 @@
+Test that a color-to-transparent gradient produces valid premultiplied pixels, where no color component exceeds alpha.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Unaccelerated radial gradient:
+PASS context.getEffectiveRenderingModeForTesting() is "Unaccelerated"
+PASS invalidPixelCount is 0
+Unaccelerated linear gradient:
+PASS context.getEffectiveRenderingModeForTesting() is "Unaccelerated"
+PASS invalidPixelCount is 0
+Accelerated radial gradient:
+PASS context.getEffectiveRenderingModeForTesting() is "Accelerated"
+PASS invalidPixelCount is 0
+Accelerated linear gradient:
+PASS context.getEffectiveRenderingModeForTesting() is "Accelerated"
+PASS invalidPixelCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

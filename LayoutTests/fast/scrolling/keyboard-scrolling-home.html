@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        async function runTest()
+        {
+            await UIHelper.keyDown("home");
+            await UIHelper.renderingUpdate();
+            
+            shouldBeZero("window.scrollY");
+            finishJSTest();
+        }
+        
+        window.addEventListener('load', () => {
+            runTest();
+        }, false);
+    </script>
+    <style>
+        body {
+            height: 3000px;
+        }
+    </style>
+</head>
+<body>
+    Scrolling via the "Home" key should leave this page at the top.
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

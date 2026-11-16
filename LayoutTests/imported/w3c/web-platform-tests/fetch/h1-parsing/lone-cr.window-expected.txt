@@ -1,0 +1,37 @@
+
+PASS Parsing response with a lone CR before message-body (HTTP/1.1\r200 OK
+
+BODY)
+PASS Parsing response with a lone CR before message-body (HTTP/1.1 200\rOK
+
+BODY)
+PASS Parsing response with a lone CR before message-body (HTTP/1.1 200 OK
+\rHeader: Value
+
+BODY)
+FAIL Parsing response with a lone CR before message-body (HTTP/1.1 200 OK
+Header\r: Value
+
+BODY) assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Parsing response with a lone CR before message-body (HTTP/1.1 200 OK
+Header:\r Value
+
+BODY) assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Parsing response with a lone CR before message-body (HTTP/1.1 200 OK
+Header: Value\r
+
+Body) assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Parsing response with a lone CR before message-body (HTTP/1.1 200 OK
+Header: Value\r\r
+BODY) assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Parsing response with a lone CR before message-body (HTTP/1.1 200 OK
+Header: Value\rHeader2: Value2
+
+BODY)
+PASS Parsing response with a lone CR before message-body (HTTP/1.1 200 OK
+Header: Value
+\rBODY)
+FAIL Parsing response with a lone CR before message-body (HTTP/1.1 200 OK
+Header: Value
+\r) assert_unreached: Should have rejected: undefined Reached unreachable code
+

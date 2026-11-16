@@ -1,0 +1,15 @@
+
+FAIL setPathData() accepts plain object literals path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [10, 10] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() accepts spread from a generator path.setPathData is not a function. (In 'path.setPathData([...gen()])', 'path.setPathData' is undefined)
+FAIL setPathData() accepts typed-array values path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: new Float32Array([0, 0]) },
+    { type: "L", values: new Float64Array([7, 7]) }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() ignores extra properties on segment objects path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0], extra: "ignored" },
+    { type: "L", values: [3, 3], foo: 42 }
+  ])', 'path.setPathData' is undefined)
+

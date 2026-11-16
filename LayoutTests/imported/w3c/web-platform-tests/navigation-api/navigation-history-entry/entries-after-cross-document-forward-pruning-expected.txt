@@ -1,0 +1,4 @@
+
+
+PASS navigation.entries() behavior after forward-pruning due to cross-document navs
+

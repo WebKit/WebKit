@@ -1,0 +1,3 @@
+
+PASS scrollbar-width auto on the root defers to ::-webkit-scrollbar
+

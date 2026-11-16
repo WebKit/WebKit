@@ -1,0 +1,4 @@
+Green
+
+PASS #inner color change to red triggers a step transition starting at green
+

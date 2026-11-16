@@ -1,0 +1,59 @@
+<html><head></head><body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description("Test the intersects function that checks if a range intersects a node.")
+
+function range(startContainer, startOffset, endContainer, endOffset)
+{
+    return new StaticRange({ startContainer: startContainer, startOffset: startOffset, endContainer: endContainer, endOffset: endOffset })
+}
+
+function contentsRange(node)
+{
+    return range(node, 0, node, node.childNodes.length)
+}
+
+let documentElement = document.documentElement;
+let body = document.body;
+
+shouldBeTrue("internals.rangeIntersectsNode(contentsRange(document), documentElement, 'ComposedTree')")
+shouldBeTrue("internals.rangeIntersectsNode(contentsRange(document), body, 'ComposedTree')");
+shouldBeTrue("internals.rangeIntersectsNode(contentsRange(documentElement), body, 'ComposedTree')");
+
+shouldBeTrue("internals.rangeIntersectsNode(contentsRange(document), document, 'ComposedTree')");
+shouldBeTrue("internals.rangeIntersectsNode(range(document, 0, document, 2), document, 'ComposedTree')");
+shouldBeFalse("internals.rangeIntersectsNode(range(document, 0, documentElement, 0), body, 'ComposedTree')");
+shouldBeFalse("internals.rangeIntersectsNode(range(document, 0, documentElement, 1), body, 'ComposedTree')");
+shouldBeTrue("internals.rangeIntersectsNode(range(document, 0, body, 0), body, 'ComposedTree')");
+shouldBeTrue("internals.rangeIntersectsNode(range(document, 0, body, 1), body, 'ComposedTree')");
+shouldBeTrue("internals.rangeIntersectsNode(range(document, 0, documentElement, 2), body, 'ComposedTree')");
+
+let a = document.createElement("div")
+shouldBeFalse("internals.rangeIntersectsNode(contentsRange(document), a, 'ComposedTree')")
+
+body.appendChild(a)
+
+let b = document.createElement("div")
+body.appendChild(b)
+
+let c = document.createElement("div")
+b.appendChild(c)
+
+let d = document.createElement("div")
+a.appendChild(d)
+
+let e = document.createElement("div")
+let f = document.createElement("div")
+e.appendChild(f)
+shouldBeFalse("internals.rangeIntersectsNode(contentsRange(body), e, 'ComposedTree')")
+shouldBeTrue("internals.rangeIntersectsNode(contentsRange(f), e, 'ComposedTree')")
+shouldBeFalse("internals.rangeIntersectsNode(contentsRange(body), f, 'ComposedTree')")
+
+let g = document.createElement("textarea");
+c.appendChild(g)
+let h = internals.ensureUserAgentShadowRoot(g).firstChild
+shouldBeTrue("internals.rangeIntersectsNode(contentsRange(body), h, 'ComposedTree')")
+
+</script>
+</body></html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      left: 0;
+      top: 0;
+      background-color: silver;
+    }
+    
+    .perspective {
+      width: 300px;
+      border: 1px solid black;
+      padding: 20px;
+      -webkit-perspective: 500px;
+    }
+    
+    .composited {
+      -webkit-transform: translateZ(1px);
+    }
+  </style>
+
+  <script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+    
+  function dumpLayers()
+  {
+    var layersResult = document.getElementById('layers');
+    if (window.testRunner)
+      layersResult.innerText = window.internals.layerTreeAsText(document);
+    
+  }
+  window.addEventListener('load', dumpLayers, false)
+  </script>
+
+</head>
+<body>
+
+  <div class="perspective">
+    This layer should not have backing store.
+    <div class="perspective">
+      This layer should not have backing store.
+      <div class="box composited">
+      </div>
+    </div>
+  </div>
+
+<pre id="layers">Layer tree goes here in DRT</pre>
+
+</body>
+</html>

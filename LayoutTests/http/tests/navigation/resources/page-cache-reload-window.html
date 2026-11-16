@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+
+window.addEventListener("pageshow", function(event) {
+    const state = sessionStorage.getItem("state");
+    if (!state) {
+        sessionStorage.setItem("state", "reloaded");
+        setTimeout(function() {
+            location.reload();
+        }, 0);
+        return;
+    }
+
+    if (state == "reloaded") {
+        sessionStorage.setItem("state", "navigatedCrossSite");
+        // A navigation from the load event would not create a history entry.
+        setTimeout(function() {
+            location.href = params.get("crossSiteURL");
+        }, 0);
+        return;
+    }
+
+    // Reached by restoring this document from the back/forward cache, or by
+    // reloading it, which is the failure this test looks for.
+    sessionStorage.removeItem("state");
+    setTimeout(function() {
+        location.href = "report-pageshow-persisted.html?channel=" + encodeURIComponent(params.get("channel")) + "&persisted=" + event.persisted;
+    }, 0);
+}, false);
+</script>
+</body>
+</html>

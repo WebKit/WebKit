@@ -1,0 +1,10 @@
+Tests that Page.setBootstrapScript is executed exactly once per navigation, including in script-less subframes.
+
+
+== Running test suite: Page.setBootstrapScript.RunsOncePerNavigation
+-- Running test case: Page.setBootstrapScript.NotExecutedTwiceInScriptlessSubframe
+Setting bootstrap script that counts its own executions...
+Adding a script-less subframe (its execution context is force-created on frameNavigated)...
+Bootstrap script executions in the script-less subframe: 1
+PASS: Bootstrap script should run exactly once in the script-less subframe.
+

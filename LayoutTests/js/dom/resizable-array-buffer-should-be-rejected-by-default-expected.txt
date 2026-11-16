@@ -1,0 +1,15 @@
+Resizable ArrayBuffers should be rejected by IDLs by default
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS arrayBuffer.resizable is true
+PASS sharedArrayBuffer.growable is true
+PASS internals.deserializeBuffer(arrayBuffer) threw exception TypeError: Argument 1 ('buffer') to Internals.deserializeBuffer must be an instance of ArrayBuffer.
+PASS internals.deserializeBuffer(sharedArrayBuffer) threw exception TypeError: Argument 1 ('buffer') to Internals.deserializeBuffer must be an instance of ArrayBuffer.
+PASS internals.acceptTypedArrays(new Int32Array(arrayBuffer)) threw exception TypeError: Argument 1 ('target') to Internals.acceptTypedArrays must be an instance of Int32Array.
+PASS internals.acceptTypedArrays(new Int32Array(sharedArrayBuffer)) threw exception TypeError: Argument 1 ('target') to Internals.acceptTypedArrays must be an instance of Int32Array.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

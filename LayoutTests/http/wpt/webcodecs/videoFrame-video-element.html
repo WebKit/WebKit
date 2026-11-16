@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+promise_test(async t => {
+  let video = document.createElement('video');
+  video.src = '/webcodecs/h264.mp4';
+  video.autoplay = true;
+  video.controls = false;
+  video.muted = false;
+  document.body.appendChild(video);
+
+  const loadVideo = new Promise((resolve) => {
+    video.onloadeddata = () => resolve();
+  });
+  await loadVideo;
+
+  let frame = new VideoFrame(video, {timestamp: 10});
+  frame.close();
+}, 'Test we can construct a VideoFrame from a <video> who just fired onloadeddata.');
+</script>
+</body>
+</html>

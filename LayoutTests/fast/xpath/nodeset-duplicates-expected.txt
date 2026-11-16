@@ -1,0 +1,3 @@
+Test for bug 12359: XPathEvaluator may return some nodes more than once in a result set.
+
+SUCCESS

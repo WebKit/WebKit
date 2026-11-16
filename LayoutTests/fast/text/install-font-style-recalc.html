@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<span id="target" style="font: 50px 'Helvetica2';">rrrr</span>
+<script>
+description("This test makes sure that installing a font causes a style recalc. The test only runs in DumpRenderTree/WebKitTestRunner. It passes if the text above is rendered as black boxes (aka in Ahem).");
+window.jsTestIsAsync = true;
+let target = document.getElementById("target");
+target.offsetWidth; // Force a font lookup
+if (window.testRunner)
+    testRunner.installFakeHelvetica("Helvetica2-400");
+shouldBecomeEqual("target.offsetWidth", "200", function() {
+    testPassed("The font was used.");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

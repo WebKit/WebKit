@@ -1,0 +1,12 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Snaps to bottom-left after pressing ArrowDown Test timed out
+NOTRUN Snaps to top-left after pressing ArrowUp
+NOTRUN Snaps to top-right after pressing ArrowRight
+NOTRUN Snaps to top-left after pressing ArrowLeft
+NOTRUN If the original intended offset is valid as making a snap area cover thesnapport, and there's no other snap offset in between, use the originalintended offset
+NOTRUN If the original intended offset is valid as making a snap area cover the snapport, but there's a defined snap offset in between, use the defined snap offset.
+NOTRUN If there is no valid snap offset on the arrow key's direction other than the current offset, and the scroll-snap-type is mandatory, stay at the current offset.
+NOTRUN If there is no valid snap offset on the arrow key's direction other than the current offset, and the scroll-snap-type is proximity, go to the original intended offset
+

@@ -1,0 +1,3 @@
+
+PASS Opacity at start of reverse running animation
+

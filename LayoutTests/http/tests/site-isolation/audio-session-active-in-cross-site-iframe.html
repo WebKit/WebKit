@@ -1,0 +1,27 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Under site isolation, audio played in a cross-site iframe activates the audio session in the iframe's own process. The main frame runs in a separate process that produced no audio, so it does not observe the session as active (own-process attribution).");
+jsTestIsAsync = true;
+
+onload = () => {
+    window.onmessage = (event) => {
+        frameResult = event.data;
+        shouldBeEqualToString("frameResult", "active");
+        shouldBeEqualToString("event.origin", "http://localhost:8000");
+        shouldBeFalse("internals.audioSessionActive()");
+        finishJSTest();
+    };
+    // localhost and 127.0.0.1 are different sites, so the iframe runs in a different process.
+    const iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/resources/audio-session-active-frame.html";
+    document.body.appendChild(iframe);
+};
+</script>
+</body>
+</html>

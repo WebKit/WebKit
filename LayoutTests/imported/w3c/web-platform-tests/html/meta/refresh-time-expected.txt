@@ -1,0 +1,6 @@
+
+
+PASS Ensure that refresh is observed
+PASS Ensure that non-fractional part in refresh time does not get discarded
+PASS Ensure that multiple periods in refresh time just get ignored
+

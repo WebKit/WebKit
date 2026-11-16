@@ -1,0 +1,26 @@
+<html>
+<head>
+<script>
+    async function runTest() {
+        if (!window.eventSender)
+            return;
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            await testRunner.setObscuredContentInsets(100, 0, 0, 0);
+            testRunner.dumpAsText();
+        }
+
+        eventSender.mouseMoveTo(20, 120);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="runTest()">
+    <iframe src="resources/iframe-to-hit-test.html" scrolling="no" frameborder="no" height="300" width="600"></iframe>
+    <div id="result">This test needs to be run through WebKitTestRunner.</div>
+</body>
+</html>

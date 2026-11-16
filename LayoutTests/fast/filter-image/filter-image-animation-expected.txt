@@ -1,0 +1,7 @@
+
+PASS filter() with a single filter function animates discretely
+PASS filter() with multiple filter functions animates discretely
+PASS animation from url() to filter() is discrete
+PASS animation from filter() to url() is discrete
+PASS filter() images with different input images animate discretely
+

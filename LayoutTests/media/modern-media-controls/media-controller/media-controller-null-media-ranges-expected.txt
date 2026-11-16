@@ -1,0 +1,17 @@
+Testing that the range properties of MediaController.NullMedia do not throw and return MediaController.EmptyRanges. NullMedia is returned by the media getter once the media element's weak reference has been collected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS MediaController.NullMedia.buffered did not throw exception.
+PASS MediaController.NullMedia.played did not throw exception.
+PASS MediaController.NullMedia.seekable did not throw exception.
+PASS MediaController.NullMedia.buffered is MediaController.EmptyRanges
+PASS MediaController.NullMedia.played is MediaController.EmptyRanges
+PASS MediaController.NullMedia.seekable is MediaController.EmptyRanges
+PASS MediaController.NullMedia.buffered.length is 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

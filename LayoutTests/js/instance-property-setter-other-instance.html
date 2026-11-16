@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<body onload="runTest()">
+<script src="../resources/js-test-pre.js"></script>
+<iframe id="subframe" src="about:blank"></iframe>
+<script>
+description("Tests that calling an instance property setter on another instance works as expected");
+jsTestIsAsync = true;
+
+function printSuccessAndFinish()
+{
+    testPassed("Changed iframe document's location");
+    finishJSTest();
+}
+
+function runTest()
+{
+    locationSetter = Object.getOwnPropertyDescriptor(window.document, "location").set;
+    shouldBeType("locationSetter", Function);
+    shouldBeEqualToString("frames[0].document.location.toString()", "about:blank");
+    evalAndLog("locationSetter.call(frames[0].document, 'resources/pass-and-finish.html')");
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>

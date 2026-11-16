@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+</head>
+<body>
+<video></video>
+<script>
+description("Under site isolation, pausing a video element and immediately playing it again re-activates the audio session, without racing the stale in-flight deactivation.");
+jsTestIsAsync = true;
+
+let video;
+
+onload = async () => {
+    if (!window.internals) {
+        testFailed("This test requires the Internals API");
+        finishJSTest();
+        return;
+    }
+
+    video = document.querySelector("video");
+    video.src = "/media/resources/test.mp4";
+    video.volume = 0.001;
+
+    playIgnoringAbort(video);
+    try {
+        await waitForAudioSessionActiveState(true);
+        testPassed("the audio session is active");
+
+        // Stop, then immediately replay. Any deactivation triggered by the pause is still in flight when
+        // the new playback starts; the replay must still leave the audio session active.
+        video.pause();
+        playIgnoringAbort(video);
+        await waitForAudioSessionActiveState(true);
+        testPassed("the audio session is active after replay");
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+    video.pause();
+    finishJSTest();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div role="textbox" id="ariaTextBox" aria-multiline="false" tabindex="0">Some text in a textbox</div>
+<div role="textbox" id="multilineAriaTextBox" aria-multiline="true" tabindex="0"><div>Some text in a</div><div>multiline textbox.</div></div>
+<script>
+var output = "This tests that the AXSelection property is correctly reported for non-native text boxes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var ariaTextBox = document.getElementById("ariaTextBox");
+    var axElement = accessibilityController.accessibleElementById("ariaTextBox");
+    var multilineAriaTextBox = document.getElementById("multilineAriaTextBox");
+    window.getSelection().setBaseAndExtent(ariaTextBox.childNodes[0], 0, ariaTextBox.childNodes[0], 0);
+    setTimeout(async function() {
+        output += await expectAsync("axElement.insertionPointLineNumber", "0");
+        axElement = accessibilityController.accessibleElementById("multilineAriaTextBox");
+
+        window.getSelection().setBaseAndExtent(multilineAriaTextBox.childNodes[0], 1, multilineAriaTextBox.childNodes[0], 1);
+        output += await expectAsync("axElement.insertionPointLineNumber", "0");
+
+        window.getSelection().setBaseAndExtent(multilineAriaTextBox.childNodes[1], 1, multilineAriaTextBox.childNodes[1], 1);
+        output += await expectAsync("axElement.insertionPointLineNumber", "1");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

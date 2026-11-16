@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input id="input" type="color"/>
+<script>
+const input = document.getElementById("input");
+
+// Report value changes back to parent
+input.addEventListener("change", () => {
+    window.parent.postMessage({
+        type: "result",
+        value: input.value
+    }, "*");
+});
+</script>
+</body>
+</html>

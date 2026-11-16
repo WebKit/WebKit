@@ -1,0 +1,18 @@
+This tests that the headers attribute returns the correct headers for a table cell.
+
+PASS: colHeaders.length === 3
+PASS: colHeaders[0].isEqual(table.cellForColumnAndRow(0, 0)) === true
+PASS: colHeaders[1].isEqual(table.cellForColumnAndRow(2, 0)) === true
+PASS: colHeaders[2].isEqual(table.cellForColumnAndRow(4, 0)) === true
+PASS: colHeaders.length === 2
+PASS: colHeaders[0].isEqual(table.cellForColumnAndRow(3, 0)) === true
+PASS: colHeaders[1].isEqual(table.cellForColumnAndRow(2, 0)) === true
+
+Changing `headers` attribute of #cell2 to be 'header1'.
+PASS: cell2.columnHeaders()[0].isEqual(table.cellForColumnAndRow(0, 0)) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Course Name	Course Tutor	Summary	Code	Fee
+After the Civil War	Dr. John Wroughton	October	H27	Â£32	Â£32

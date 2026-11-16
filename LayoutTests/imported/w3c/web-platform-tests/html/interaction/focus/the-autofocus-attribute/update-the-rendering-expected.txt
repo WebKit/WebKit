@@ -1,0 +1,3 @@
+
+PASS "Flush autofocus candidates" should be happen before a scroll event and animation frame callbacks
+

@@ -1,0 +1,13 @@
+Tests that Network.getResponseBody returns HTML document content from a cross-origin iframe's main resource.
+
+
+== Running test suite: Network.getResponseBody.CrossOriginIframe.Document
+-- Running test case: Network.getResponseBody.CrossOriginIframe.Document.HTML
+Child frame added: http://localhost:8000/inspector/network/resources/data.html
+PASS: Child frame should be cross-origin.
+PASS: Child frame should have a main resource.
+PASS: Main resource should be Document type.
+PASS: Should not have an error retrieving content.
+PASS: Content should not be base64 encoded.
+PASS: Content should contain the expected HTML.
+

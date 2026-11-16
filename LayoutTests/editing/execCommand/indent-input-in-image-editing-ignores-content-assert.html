@@ -1,0 +1,24 @@
+<style>
+  head {
+    display: block;
+  }
+  img {
+    content: counter(section, lower-roman);
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    document.designMode = 'on';
+    let img0 = document.createElement('img');
+    document.head.appendChild(img0);
+    let div0 = document.createElement('div');
+    img0.appendChild(div0);
+    let input = document.createElement('input');
+    div0.appendChild(input);
+    getSelection().setBaseAndExtent(input, 0, input, 0);
+    document.execCommand('Indent');
+    document.body.innerHTML = "This test passes if it does not assert.";
+  };
+</script>

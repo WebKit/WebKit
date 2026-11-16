@@ -1,0 +1,8 @@
+
+PASS Path data with an error renders up to the command containing it
+PASS A path data command with an incorrect set of parameters renders up to the last correctly defined segment
+PASS Path data whose first command is in error renders nothing
+PASS Path data that is empty or wholly invalid renders nothing
+PASS A path with no d attribute renders nothing
+PASS Path data in error does not rewrite the content attribute
+

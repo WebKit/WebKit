@@ -1,0 +1,759 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+#if HAVE_APPKIT_GESTURES_SUPPORT
+
+import Foundation
+import struct Foundation.URL
+@_spi(Testing) import WebKit
+import SwiftUI
+import struct Swift.String
+private import struct TestWebKitAPILibrary.DOMRect
+import Testing
+@_spi(WebKitAdditions_Testing) private import TestWebKitAPILibrary
+private import Recap
+private import AppKit_Private.NSMenu_Private
+
+extension MacTouchSupportTests {
+    @MainActor
+    @Suite(.serialized, .timeLimit(.minutes(1)))
+    final class DoubleTap: MacTouchSupportTestSuite {
+        static let text = "Here's to the crazy ones."
+
+        let recap = Recap.shared
+
+        let page: WebPage = {
+            var configuration = WebPage.Configuration()
+            configuration.requiresUserActionForEditingControlsManager = true
+            return WebPage(configuration: configuration)
+        }()
+
+        let windowHost: TestWindowHost
+
+        init() async throws {
+            let contentSize = NSSize(width: 800, height: 600)
+
+            self.windowHost = TestWindowHost(size: contentSize) { [page] in
+                WebView(page)
+                    .webViewBackForwardNavigationGestures(.enabled)
+            }
+
+            await NSApp.waitForActivation()
+        }
+    }
+}
+
+extension MacTouchSupportTests.DoubleTap {
+    // MARK: - DOM dblclick / detail==2 coverage
+
+    @Test(
+        .bug("https://webkit.org/b/324987")
+    )
+    func doubleTapReportsHeldButtonAndPressure() async throws {
+        try await loadHTML(dblclickHandler: true)
+
+        try await page.callJavaScript {
+            """
+            window.fieldLog = [];
+            let pointerDownCount = 0;
+            for (const type of ["pointerdown", "mousedown", "pointerup", "mouseup", "dblclick"]) {
+                document.addEventListener(type, event => {
+                    // Record only the second tap -- what this test is about. Pointer events always
+                    // report a `detail` of 0, so count pointerdown events instead.
+                    if (event instanceof PointerEvent) {
+                        if (event.type === "pointerdown")
+                            pointerDownCount++;
+                        if (pointerDownCount !== 2)
+                            return;
+                    } else if (event.detail !== 2)
+                        return;
+                    window.fieldLog.push(
+                        `${event.type}:${event.buttons}:${event.pressure ?? "-"}:${event.webkitForce}`
+                    );
+                });
+            }
+            """
+        }
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        await recap.play { composer in
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let fieldLog = try await page.callJavaScript(returning: [String].self) {
+            """
+            return window.fieldLog;
+            """
+        }
+
+        #expect(
+            fieldLog == [
+                "pointerdown:1:0.5:0",
+                "pointerup:0:0:0",
+                "mousedown:1:-:1",
+                "mouseup:0:-:0",
+                "dblclick:0:-:0",
+            ]
+        )
+    }
+
+    @Test
+    func doubleTapWithListenerFiresDblclickAndSelectsWord() async throws {
+        // A dblclick listener and a word selection coexist (only smart magnification
+        // could suppress the selection, and this content is not zoomable).
+        try await loadHTML(dblclickHandler: true)
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
+        await page.waitForNextPresentationUpdate()
+
+        await recap.play { composer in
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 2),
+            DOMEvent(type: .dblclick, detail: 2),
+        ]
+
+        #expect(actual == expected)
+
+        #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
+    }
+
+    @Test(arguments: [false, true])
+    func doubleTapDoesNotSelectWordWhenPagePreventsMousedown(dblclickHandler: Bool) async throws {
+        try await loadHTML(dblclickHandler: dblclickHandler)
+        // Only log dblclick events when the page listens for them, since listening for them changes how the clicks are delivered.
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: dblclickHandler ? [.click, .dblclick] : [.click]))
+        try await page.callJavaScript {
+            """
+            document.addEventListener("mousedown", event => event.preventDefault());
+            """
+        }
+
+        try await doubleTapText("crazy")
+
+        // A late click for the second tap would arrive after the double tap, so give it time to.
+        try await Task.sleep(for: .seconds(0.5))
+
+        // The page still gets both clicks: as a double click (detail 2, then dblclick) when it listens for dblclick,
+        // otherwise as two single clicks.
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected =
+            dblclickHandler
+            ? [
+                DOMEvent(type: .click, detail: 1),
+                DOMEvent(type: .click, detail: 2),
+                DOMEvent(type: .dblclick, detail: 2),
+            ]
+            : [
+                DOMEvent(type: .click, detail: 1),
+                DOMEvent(type: .click, detail: 1),
+            ]
+
+        #expect(actual == expected)
+
+        try await expectNoRangeSelection()
+    }
+
+    @Test
+    func doubleTapSelectsWordWhenPageObservesMousedownWithoutPreventingIt() async throws {
+        try await loadHTML()
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.mousedown]))
+
+        try await doubleTapText("crazy")
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
+    }
+
+    @Test
+    func doubleTapAndHoldDoesNotSelectWordWhenPagePreventsMousedown() async throws {
+        try await loadHTML()
+        try await page.callJavaScript {
+            """
+            document.addEventListener("mousedown", event => event.preventDefault());
+            """
+        }
+
+        try await doubleTapText("crazy", secondTapDuration: .seconds(1.2))
+
+        try await expectNoRangeSelection()
+    }
+
+    @Test
+    func doubleTapAndHoldSelectsWord() async throws {
+        try await loadHTML()
+
+        try await doubleTapText("crazy", secondTapDuration: .seconds(1.2))
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
+    }
+
+    @Test
+    func doubleTapOnCanvasThatPreventsMousedownDeliversBothClicksWithoutSelecting() async throws {
+        let html = """
+            <body style="margin: 0; touch-action: none;">
+                <div id="map" tabindex="0" role="application" style="position: absolute; inset: 0;">
+                    <canvas id="canvas" width="400" height="300"></canvas>
+                    <img id="logo" width="100" height="20" style="position: absolute; left: 150px; top: 250px;" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+                </div>
+            </body>
+            """
+        try await page.load(html: html).wait()
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "canvas", for: [.click]))
+        try await page.callJavaScript {
+            """
+            document.getElementById("map").addEventListener("mousedown", event => event.preventDefault());
+            """
+        }
+
+        let canvasBounds = try await screenBounds(ofElementWithID: "canvas")
+
+        await recap.play { composer in
+            composer.humanTap(at: canvasBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: canvasBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        try await Task.sleep(for: .seconds(0.5))
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 1),
+        ]
+
+        #expect(actual == expected)
+
+        try await expectNoRangeSelection()
+    }
+
+    @Test
+    func doubleTapWithListenerDoesNotSelectWordWhenPagePreventsSecondMousedown() async throws {
+        // A page that listens for dblclick gets the second tap as a mousedown with a detail of 2, before AppKit begins the selection.
+        try await loadHTML(dblclickHandler: true)
+        try await page.callJavaScript {
+            """
+            document.addEventListener("mousedown", event => {
+                if (event.detail > 1)
+                    event.preventDefault();
+            });
+            """
+        }
+
+        try await doubleTapText("crazy")
+
+        try await expectNoRangeSelection()
+    }
+
+    @Test
+    func doubleTapDoesNotSelectWordWhenBusyPagePreventsMousedown() async throws {
+        try await loadHTML()
+        try await page.callJavaScript {
+            """
+            document.addEventListener("mousedown", event => {
+                event.preventDefault();
+                // Keep the web process busy past the second tap, like a page that is busy rendering.
+                const end = performance.now() + 300;
+                while (performance.now() < end) { }
+            });
+            """
+        }
+
+        try await doubleTapText("crazy")
+
+        try await expectNoRangeSelection()
+    }
+
+    @Test
+    func doubleTapSelectsWordAfterTappingElementThatPreventsMousedown() async throws {
+        let html = """
+            <button id="button" style="font-size: 30px;">Button</button>
+            <div id="div" style="font-size: 30px;">\(Self.text)</div>
+            """
+        try await page.load(html: html).wait()
+        try await page.callJavaScript {
+            """
+            document.getElementById("button").addEventListener("mousedown", event => event.preventDefault());
+            """
+        }
+
+        let buttonBounds = try await screenBounds(ofElementWithID: "button")
+
+        await recap.play { composer in
+            composer.humanTap(at: buttonBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        // Far enough apart that AppKit does not treat this tap and the next as a double tap.
+        try await Task.sleep(for: .seconds(0.5))
+
+        try await doubleTapText("crazy")
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
+    }
+
+    @Test(arguments: [true, false])
+    func doubleTapWithListenerFiresDblclickRegardlessOfEditability(contentEditable: Bool) async throws {
+        try await loadHTML(contentEditable: contentEditable, dblclickHandler: true)
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
+
+        if contentEditable {
+            // Establish a selection first so the synthetic tap does not just move the insertion point.
+            try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
+            await page.waitForNextPresentationUpdate()
+        }
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        await recap.play { composer in
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 2),
+            DOMEvent(type: .dblclick, detail: 2),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test
+    func doubleTapWithListenerOnUnselectableContentFiresOneClickPerTap() async throws {
+        try await loadUnselectableHTML(dblclickHandler: true)
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.mousedown, .mouseup, .click, .dblclick]))
+
+        let bounds = try await screenBounds(ofElementWithID: "div")
+
+        await recap.play { composer in
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        // A redundant single click for the second tap can be dispatched after the dblclick, so give it time to arrive.
+        try await Task.sleep(for: .seconds(0.5))
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .mousedown, detail: 1),
+            DOMEvent(type: .mouseup, detail: 1),
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .mousedown, detail: 2),
+            DOMEvent(type: .mouseup, detail: 2),
+            DOMEvent(type: .click, detail: 2),
+            DOMEvent(type: .dblclick, detail: 2),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test
+    func doubleTapWithoutListenerOnUnselectableContentFiresTwoSingleClicks() async throws {
+        try await loadUnselectableHTML()
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click]))
+
+        let bounds = try await screenBounds(ofElementWithID: "div")
+
+        await recap.play { composer in
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        try await Task.sleep(for: .seconds(0.5))
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 1),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test
+    func doubleTapWithAncestorListenerOnStyleAdjustedContentFiresOneClickPerTap() async throws {
+        try await loadUnselectableHTML()
+
+        try await page.callJavaScript(
+            arguments: ["elementID": "div", "interactive": true],
+        ) {
+            """
+            const touchActionValue = interactive ? "manipulation" : "none";
+            const element = document.getElementById(elementID);
+            element.style.touchAction = touchActionValue;
+            """
+        }
+
+        try await page.callJavaScript {
+            """
+            document.body.addEventListener("dblclick", () => { }, { capture: true });
+            """
+        }
+
+        await page.waitForNextPresentationUpdate()
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.mousedown, .mouseup, .click, .dblclick]))
+
+        let bounds = try await screenBounds(ofElementWithID: "div")
+
+        await recap.play { composer in
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        try await Task.sleep(for: .seconds(0.5))
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .mousedown, detail: 1),
+            DOMEvent(type: .mouseup, detail: 1),
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .mousedown, detail: 2),
+            DOMEvent(type: .mouseup, detail: 2),
+            DOMEvent(type: .click, detail: 2),
+            DOMEvent(type: .dblclick, detail: 2),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test
+    func doubleTapNextToClickableElementTargetsItWithBothClicks() async throws {
+        let html = """
+            <body style="margin: 0;">
+                <div id="target" style="position: absolute; left: 100px; top: 100px; width: 40px; height: 40px; background-color: black; -webkit-user-select: none;"></div>
+            </body>
+            """
+        try await page.load(html: html).wait()
+        try await page.callJavaScript {
+            """
+            document.body.addEventListener("dblclick", () => { });
+            """
+        }
+
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "target", for: [.click]))
+
+        let bounds = try await screenBounds(ofElementWithID: "target")
+        let besideTarget = CGPoint(x: bounds.maxX + 3, y: bounds.midY)
+
+        await recap.play { composer in
+            composer.humanTap(at: besideTarget, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: besideTarget, for: .seconds(0.1))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        try await Task.sleep(for: .seconds(0.5))
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 2),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test
+    func singleTapReportsDetailOne() async throws {
+        try await loadHTML()
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
+
+        let toBounds = try await screenBoundsOfText("to")
+
+        await recap.play { composer in
+            composer.humanTap(at: toBounds.center, for: .seconds(0.05))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1)
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test
+    func tappingTwoDifferentWordsDoesNotFireDblclick() async throws {
+        // Two taps far apart in space are two single taps, disambiguated by location — not a double tap.
+        try await loadHTML(dblclickHandler: true)
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
+
+        let toBounds = try await screenBoundsOfText("to")
+        let onesBounds = try await screenBoundsOfText("ones")
+
+        await recap.play { composer in
+            composer.humanTap(at: toBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: onesBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 1),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test(arguments: [true, false])
+    func doubleTapInsideExistingRangeSelectionFiresDblclick(afterSameProcessNavigation: Bool) async throws {
+        try await loadHTML(dblclickHandler: true)
+
+        if afterSameProcessNavigation {
+            let toBounds = try await screenBoundsOfText("to")
+            await recap.play { composer in
+                composer.humanTap(at: toBounds.center, for: .seconds(0.05))
+            }
+            await page.waitForPendingMouseEvents()
+            await page.waitForNextPresentationUpdate()
+
+            try await loadHTML(dblclickHandler: true)
+            await page.waitForNextPresentationUpdate()
+        }
+
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", range: crazyRange))
+        await page.waitForNextPresentationUpdate()
+
+        await recap.play { composer in
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        // FIXME: Consider if it's expected that a `.click` event with `detail = 1` is never fired first.
+        let expected = [
+            DOMEvent(type: .click, detail: 2),
+            DOMEvent(type: .dblclick, detail: 2),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    // MARK: - Smart magnification
+
+    @Test(.disabled())
+    func smartMagnificationGestureOnZoomableColumnDoesNotSelectWord() async throws {
+        try await loadZoomableHTML()
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
+        await page.waitForNextPresentationUpdate()
+
+        await recap.play { composer in
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+        }
+        await page.waitForNextPresentationUpdate()
+
+        #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) != crazySelection)
+    }
+
+    @Test(.disabled(), arguments: [false, true])
+    func styleAdjustmentCanBlockSmartMagnification(interactive: Bool) async throws {
+        try await loadZoomableHTML()
+        try await page.callJavaScript(
+            arguments: ["elementID": "div", "interactive": interactive],
+        ) {
+            """
+            const touchActionValue = interactive ? "manipulation" : "none";
+            const element = document.getElementById(elementID);
+            element.style.touchAction = touchActionValue;
+            """
+        }
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
+        await page.waitForNextPresentationUpdate()
+
+        await recap.play { composer in
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+        }
+        await page.waitForNextPresentationUpdate()
+
+        #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
+    }
+
+    @Test(.disabled())
+    func doubleTapOnZoomableColumnWithListenerSelectsWordAndFiresDblclick() async throws {
+        // A dblclick listener suppresses smart magnification, so
+        // the dblclick fires AND the word is selected (no zoom).
+        try await loadZoomableHTML(dblclickHandler: true)
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
+        await page.waitForNextPresentationUpdate()
+
+        await recap.play { composer in
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+        }
+        await page.waitForNextPresentationUpdate()
+
+        #expect(try await page.callJavaScript(JavaScriptMessages.EventLog()).contains(.init(type: .dblclick, detail: 2)))
+        #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
+    }
+
+    private func doubleTapText(
+        _ text: String,
+        secondTapDuration: Duration = .seconds(0.1)
+    ) async throws {
+        let bounds = try await screenBoundsOfText(text)
+
+        await recap.play { composer in
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: bounds.center, for: secondTapDuration)
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+    }
+
+    private func expectNoRangeSelection(sourceLocation: SourceLocation = #_sourceLocation) async throws {
+        let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        if case .range = selection {
+            Issue.record("Expected no range selection, but got \(selection)", sourceLocation: sourceLocation)
+        }
+    }
+
+    private func loadZoomableHTML(dblclickHandler: Bool = false) async throws {
+        let dblclickHandlerMarkup = dblclickHandler ? "ondblclick='void(0)'" : ""
+
+        let html = """
+            <div \(dblclickHandlerMarkup) id="div" style="width: 160px; font-size: 30px;">\(Self.text)</div>
+            """
+
+        try await page.load(html: html).wait()
+    }
+
+    private func loadUnselectableHTML(dblclickHandler: Bool = false) async throws {
+        let dblclickHandlerMarkup = dblclickHandler ? "ondblclick='void(0)'" : ""
+
+        let html = """
+            <div \(dblclickHandlerMarkup) id="div" style="width: 200px; height: 200px; background-color: black; -webkit-user-select: none;"></div>
+            """
+
+        try await page.load(html: html).wait()
+    }
+}
+
+#endif

@@ -1,0 +1,10 @@
+
+PASS Should generate an empty comment node in type text/xml
+PASS Should generate an empty CDATA Section node in type text/xml
+PASS Should generate an empty comment node in type application/xml
+PASS Should generate an empty CDATA Section node in type application/xml
+PASS Should generate an empty comment node in type application/xhtml+xml
+PASS Should generate an empty CDATA Section node in type application/xhtml+xml
+PASS Should generate an empty comment node in type image/svg+xml
+PASS Should generate an empty CDATA Section node in type image/svg+xml
+

@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let texture = device.createTexture({ size: [], mipLevelCount: 5, format: 'stencil8', usage: GPUTextureUsage.RENDER_ATTACHMENT, viewFormats: []});
+    let buffer = device.createBuffer({ size: 70725, usage: GPUBufferUsage.COPY_DST });
+    let commandEncoder = device.createCommandEncoder();
+    commandEncoder.copyTextureToTexture(
+        { texture: texture, mipLevel: 1, origin: {}, aspect: 'all'},
+        { texture: texture, mipLevel: 0, origin: {}, aspect: 'stencil-only'},
+        { width: 48, height: 0, depthOrArrayLayers: 1 }
+    );
+    device.queue.writeBuffer(buffer, 18040, new DataView(new ArrayBuffer(61249)), 20749);
+    let commandBuffers = [];
+    for (let i = 0; i < 100; i++) {
+        commandBuffers.push(device.createCommandEncoder());
+    }
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

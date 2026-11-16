@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+if (window.internals) {
+    let settings = internals.mockContentFilterSettings;
+    settings.enabled = true;
+    settings.decision = "allow";
+    settings.blockedString = "FAIL";
+    settings.decisionPoint = "afterFinishedAddingData";
+}
+
+jsTestIsAsync = true;
+
+async function appendAndLoadSubframe() {
+    return new Promise(resolve => {
+        let frame = document.createElement("iframe");
+        document.body.appendChild(frame);
+        frame.addEventListener("load", resolve);
+        frame.src = "/contentfiltering/resources/lots-of-text.html";
+    });
+}
+
+async function removeSubframeAndClearMemoryCache() {
+    document.querySelector("iframe").remove();
+    await UIHelper.delayFor(50);
+    if (window.internals)
+        internals.clearMemoryCache();
+}
+
+description("This test verifies that the load event is dispatched for a subframe that is allowed by content filters, in the case where the data for the subframe resource request comes from the disk cache. This test requires WebKitTestRunner.");
+
+addEventListener("load", async () => {
+    for (let frameNumber = 1; frameNumber <= 5; ++frameNumber) {
+        await appendAndLoadSubframe();
+        testPassed(`Finished loading subframe #${frameNumber}`);
+        await removeSubframeAndClearMemoryCache();
+    }
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Hello!
+
+PASS A <model> nested in a spatial portal fires load/ready and displays properly
+

@@ -1,0 +1,40 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px;
+    word-wrap: break-word;
+    -khtml-nbsp-mode: space;
+    -khtml-line-break: after-white-space;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 4; i++)
+        moveSelectionForwardByCharacterCommand();    
+    for (i = 0; i < 3; i++)
+        extendSelectionForwardByCharacterCommand();    
+    deleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test">bar baz<span>    </span>foo</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description('Tests that cloneNode produces the correct document type for XML, XHTML, and SVG documents.');
+
+// Plain XML document should clone as XMLDocument.
+var xmlDoc = document.implementation.createDocument(null, 'root', null);
+var xmlClone = xmlDoc.cloneNode(true);
+shouldBeEqualToString('xmlClone.contentType', 'application/xml');
+shouldBe('xmlClone.__proto__', 'XMLDocument.prototype');
+shouldBeEqualToString('xmlClone.documentElement.localName', 'root');
+
+// XHTML document should clone as XMLDocument (XHTML flavor).
+var xhtmlDoc = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null);
+var xhtmlClone = xhtmlDoc.cloneNode(true);
+shouldBeEqualToString('xhtmlClone.contentType', 'application/xhtml+xml');
+shouldBe('xhtmlClone.__proto__', 'XMLDocument.prototype');
+shouldBeEqualToString('xhtmlClone.documentElement.localName', 'html');
+
+// SVG document should clone as XMLDocument (SVG flavor).
+var svgDoc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', null);
+var svgClone = svgDoc.cloneNode(true);
+shouldBeEqualToString('svgClone.contentType', 'image/svg+xml');
+shouldBe('svgClone.__proto__', 'XMLDocument.prototype');
+shouldBeEqualToString('svgClone.documentElement.localName', 'svg');
+
+</script>
+</body>
+</html>

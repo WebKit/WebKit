@@ -1,0 +1,18 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px">
+    <svg id="viewport" x="50" y="50" width="40" height="100" style="overflow: visible"><rect width="100" height="100" fill="green"/></svg>
+</svg>
+<script>
+    // The viewport now clips the rect, so the part it hides must be repainted.
+    function repaintTest() {
+        document.getElementById("viewport").style.overflow = "hidden";
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

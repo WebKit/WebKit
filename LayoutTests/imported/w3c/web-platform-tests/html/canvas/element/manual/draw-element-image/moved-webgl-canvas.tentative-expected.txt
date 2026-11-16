@@ -1,0 +1,5 @@
+
+Harness Error (FAIL), message = InvalidStateError: CanvasRenderingContext2DBase failed to get a snapshot for a drawableElement.
+
+PASS WebGL canvas moved into a content=drawable canvas after first paint should reflect subsequent updates
+

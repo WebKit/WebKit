@@ -1,0 +1,4 @@
+
+PASS Moving <source> out of <picture> triggers a relevant mutation on sibling <img>
+PASS Moving <img> into a <picture> triggers a relevant mutation on the <img>, loading <source>
+

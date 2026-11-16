@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64e-ios, arm64e.x1-ios]
+install-name: /System/Library/PrivateFrameworks/AppServerSupport.framework/AppServerSupport
+current-version: 3298.0.14
+exports:
+-       targets: [arm64e-ios, arm64e.x1-ios]
+        objc-classes: [OSLaunchdJob]
+...

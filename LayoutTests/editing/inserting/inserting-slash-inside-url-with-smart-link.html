@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<textarea id="editor" cols="50" rows="5">
+</textarea>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    internals.setAutomaticLinkDetectionEnabled(true);
+    internals.setAutomaticQuoteSubstitutionEnabled(true);
+}
+
+description('Test inserting a character inside a URL with both smart quote and smart link doesn\'t move the caret to the end of text\n'
+    + 'To manually run this test, enable "Check Spelling While Typing", "Smart Link", and "Smart Quotes", and insert a character inside the URL');
+
+var editor = document.getElementById('editor');
+editor.focus();
+document.execCommand('InsertText', false, 'Why don\u2019t you take a look at https:/webkit.org/');
+for (var i = 0; i < 'webkit.org/'.length; i++)
+    getSelection().modify('move', 'backward', 'character');
+shouldBe('caretOffset = editor.selectionStart; caretOffset', 'editor.selectionEnd');
+
+document.execCommand('InsertText', false, '/');
+
+shouldBe('editor.selectionStart', 'caretOffset + 1');
+shouldBe('editor.selectionEnd', 'caretOffset + 1');
+
+editor.style.display = 'none';
+
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+Tests that when the storage blocking policy is BlockThirdParty, IndexedDB opened by a third-party iframe is transient.
+
+Third-party iframe stored data in IndexedDB; terminating network process.
+PASS: Third-party IndexedDB did not persist across network process restart.
+

@@ -1,0 +1,37 @@
+Tests that the presence of a source nonce triggers a token signing request.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Token signing request received.
+REQUEST_METHOD: GET
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /privateClickMeasurement/resources/fraudPreventionTestURL.py
+No cookies in token signing request.
+Request body:
+
+REQUEST_METHOD: POST
+HTTP_HOST: 127.0.0.1:8000
+Content type: application/json
+REQUEST_URI: /privateClickMeasurement/resources/fraudPreventionTestURL.py
+No cookies in token signing request.
+Request body:
+{"source_engagement_type":"click","source_nonce":"ABCDEFabcdef0123456789","source_unlinkable_token":"unlinkableToken","version":3}
+REQUEST_METHOD: GET
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /privateClickMeasurement/resources/fraudPreventionTestURL.py
+No cookies in token signing request.
+Request body:
+
+REQUEST_METHOD: POST
+HTTP_HOST: 127.0.0.1:8000
+Content type: application/json
+REQUEST_URI: /privateClickMeasurement/resources/fraudPreventionTestURL.py
+No cookies in token signing request.
+Request body:
+{"source_engagement_type":"click","source_site":"127.0.0.1","source_id":3,"attributed_on_site":"localhost","trigger_data":12,"version":3,"source_secret_token":"secretToken","source_secret_token_signature":"signature"}
+
+
+No stored Private Click Measurement data.

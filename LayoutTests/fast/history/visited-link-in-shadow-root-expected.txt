@@ -1,0 +1,4 @@
+Light DOM link
+
+PASS Links in shadow trees are restyled when they become visited
+

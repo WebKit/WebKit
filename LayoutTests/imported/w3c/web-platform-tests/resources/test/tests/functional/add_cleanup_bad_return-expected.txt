@@ -1,0 +1,7 @@
+
+Harness Error (FAIL), message = Test named 'Test that returns a value in three "cleanup" functions' specified 6 'cleanup' functions, and 1 failed, and 3 returned a non-undefined value.
+
+PASS Test that returns a value in three "cleanup" functions
+NOTRUN The test runner is in an unpredictable state #1 ('NOT RUN')
+NOTRUN The test runner is in an unpredictable state #2 ('NOT RUN')
+

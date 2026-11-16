@@ -1,0 +1,19 @@
+<meta charset="utf-8">
+<style>
+div {
+ font-family: Ahem;
+  height: 200px;
+}
+span {
+  text-decoration: underline;
+  text-underline-offset: 100px;
+}
+</style>
+<div id=clear_this>✌️</div>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<script>
+  repaintTest = function() {
+    clear_this.innerText = "";
+  };
+runRepaintTest();
+</script>

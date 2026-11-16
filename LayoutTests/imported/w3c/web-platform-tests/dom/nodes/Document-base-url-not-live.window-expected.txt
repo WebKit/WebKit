@@ -1,0 +1,4 @@
+
+PASS about:blank base URL is not live
+PASS about:srcdoc base URL is not live
+

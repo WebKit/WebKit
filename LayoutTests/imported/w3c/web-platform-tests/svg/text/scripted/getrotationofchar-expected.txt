@@ -1,0 +1,52 @@
+M月X
+T火
+W水
+t木cde
+F金r
+M月X
+T火
+W水
+t木cde
+F金r
+M月X
+T火
+W水
+t木cde
+F金r
+M月X
+T火
+W水
+t木cde
+F金r
+M月X
+T火
+W水
+t木cde
+F金r
+
+PASS 'text-orientation: mixed' - horizontal-tb
+PASS 'text-orientation: upright' - horizontal-tb
+PASS 'text-orientation: sideways' - horizontal-tb
+PASS Rotation attribute - horizontal-tb
+PASS <textPath> - horizontal-tb
+PASS 'text-orientation: mixed' - vertical-rl
+PASS 'text-orientation: upright' - vertical-rl
+PASS 'text-orientation: sideways' - vertical-rl
+PASS Rotation attribute - vertical-rl
+PASS <textPath> - vertical-rl
+PASS 'text-orientation: mixed' - vertical-lr
+PASS 'text-orientation: upright' - vertical-lr
+PASS 'text-orientation: sideways' - vertical-lr
+PASS Rotation attribute - vertical-lr
+PASS <textPath> - vertical-lr
+PASS 'text-orientation: mixed' - sideways-rl
+PASS 'text-orientation: upright' - sideways-rl
+PASS 'text-orientation: sideways' - sideways-rl
+PASS Rotation attribute - sideways-rl
+PASS <textPath> - sideways-rl
+PASS 'text-orientation: mixed' - sideways-lr
+PASS 'text-orientation: upright' - sideways-lr
+PASS 'text-orientation: sideways' - sideways-lr
+PASS Rotation attribute - sideways-lr
+PASS <textPath> - sideways-lr
+

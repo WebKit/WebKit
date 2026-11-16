@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=100 ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    body, html {
+        width: 100%;
+        margin: 0;
+        font-family: system-ui;
+        background: #eee;
+    }
+
+    header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 50px;
+        z-index: 100;
+        background: rgb(250, 60, 0);
+    }
+
+    .tall {
+        width: 10px;
+        height: 5000px;
+    }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    window.internals?.settings.setAllowUnclampedScrollPosition(true);
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        const header = document.querySelector("header");
+        addEventListener("scroll", () => {
+            header.style.background = pageYOffset >= 0 ? "rgb(250, 60, 0)" : "black";
+        });
+
+        await UIHelper.setObscuredInsets(100, 0, 0, 0);
+        await UIHelper.ensurePresentationUpdate();
+        colorsBeforeScrolling = await UIHelper.fixedContainerEdgeColors();
+        shouldBeEqualToString("colorsBeforeScrolling.top", "rgb(250, 60, 0)");
+        shouldBeNull("colorsBeforeScrolling.left");
+        shouldBeNull("colorsBeforeScrolling.right");
+        shouldBeNull("colorsBeforeScrolling.bottom");
+
+        scrollTo(0, -200);
+        await UIHelper.ensurePresentationUpdate();
+
+        colorsAfterScrolling = await UIHelper.fixedContainerEdgeColors();
+        shouldBeEqualToString("colorsAfterScrolling.top", "rgb(250, 60, 0)");
+        shouldBeNull("colorsAfterScrolling.left");
+        shouldBeNull("colorsAfterScrolling.right");
+        shouldBeNull("colorsAfterScrolling.bottom");
+
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <header></header>
+    <div class="tall"></div>
+</body>
+</html>

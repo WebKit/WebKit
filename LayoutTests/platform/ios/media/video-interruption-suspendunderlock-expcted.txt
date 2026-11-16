@@ -1,0 +1,18 @@
+
+Test that playback is paused by an SuspendUnderLock, even when it is not paused by EnteringBackground, and that ending the interruption does not automatically resume playback.
+
+Start
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+RUN(video.webkitSetPresentationMode('picture-in-picture'))
+RUN(internals.beginMediaSessionInterruption('EnteringBackground'))
+EXPECTED (video.paused == 'false') OK
+RUN(internals.beginMediaSessionInterruption('SuspendedUnderLock'))
+EXPECTED (video.paused == 'true') OK
+RUN(internals.endMediaSessionInterruption('MayResumePlaying'))
+EXPECTED (video.paused == 'true') OK
+RUN(internals.endMediaSessionInterruption(''))
+EXPECTED (video.paused == 'true') OK
+END OF TEST
+

@@ -1,0 +1,4 @@
+
+PASS Element#requestFullscreen() rejects without user activation by default
+FAIL Element#requestFullscreen() resolves without user activation with permission promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "fullscreen"."
+

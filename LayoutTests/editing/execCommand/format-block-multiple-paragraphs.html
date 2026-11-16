@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="test0" contenteditable>
+<div>hello</div><div>world</div><div>WebKit</div>
+</div>
+<div id="test1" contenteditable>
+<p>hello</p><p>world</p>
+</div>
+<div id="test2" contenteditable>
+<div>hello<pre>world</pre></div>
+</div>
+<div id="test3" contenteditable>
+<h1>hello</h1><div><h2>world</h2><h3>WebKit</h3></div>
+</div>
+<div id="test4" contenteditable>
+<div>hello<p>world</p>webkit</div>
+</div>
+<div id="test5" contenteditable>
+<pre>hello
+world
+webkit
+</pre>
+</div>
+<div id="test6" contenteditable>
+<pre>hello
+world
+webkit
+</pre>
+</div>
+<div id="test7" contenteditable>
+hello<p>world</p><p>webkit</p>
+</pre>
+</div>
+<div id="test8" contenteditable>
+<div>hello</div><div>world</div><div>webkit</div>
+</div>
+<div id="test9" contenteditable>
+<ul><li>hello</li><li>world</li></ul>
+</div>
+<script>
+
+Markup.description('This tests ensures formatBlock do not make multiple elements when formatting multiple paragraphs.')
+
+function testIndentation(containerId, selector, value) {
+    var container = document.getElementById(containerId);
+    selector(container);
+    Markup.dump(container, 'Formatting');
+    document.execCommand('FormatBlock', false, value);
+    Markup.dump(container, 'by ' + value + ' yields');
+}
+
+function selectAll(container) {
+    window.getSelection().selectAllChildren(container);
+}
+
+function selectorForLines(first, last) {
+    return function (container) {
+        window.getSelection().setPosition(container, 0);
+        for (var i = 0; i < first - 1; i++)
+            window.getSelection().modify('move', 'forward', 'line');
+        for (var i = 0; i < Math.abs(last - first, 0) + 1; i++)
+            window.getSelection().modify('extend', 'forward', 'line');
+        window.getSelection().modify('extend', 'backward', 'character');
+    }
+}
+
+testIndentation('test0', selectAll, 'p');
+testIndentation('test1', selectAll, 'blockquote');
+testIndentation('test2', selectAll, 'p');
+testIndentation('test3', selectAll, 'pre');
+testIndentation('test4', selectorForLines(2, 3), 'h1');
+testIndentation('test5', selectorForLines(1, 2), 'blockquote');
+testIndentation('test6', selectorForLines(2, 3), 'blockquote');
+testIndentation('test7', selectorForLines(1, 2), 'pre');
+testIndentation('test8', selectorForLines(2, 3), 'pre');
+testIndentation('test9', selectAll, 'blockquote');
+
+</script>
+</body>
+</html>

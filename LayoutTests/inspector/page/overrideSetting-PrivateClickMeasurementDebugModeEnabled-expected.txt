@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: [Private Click Measurement] Turned Debug Mode on.
+Tests for the Page.overrideSetting command.
+
+
+== Running test suite: Page.overrideSetting
+-- Running test case: Page.overrideSetting.PrivateClickMeasurementDebugModeEnabled
+Enabling private click measurement debug mode...
+PASS: Should broadcast at least one console message.
+

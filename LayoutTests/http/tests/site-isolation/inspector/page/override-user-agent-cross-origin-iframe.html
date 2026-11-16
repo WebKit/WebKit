@@ -1,0 +1,96 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/user-agent-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    const testUserAgent = "TEST USER AGENT FOR SITE ISOLATION";
+
+    async function addIFrameAndGetTarget() {
+        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await targetAddedPromise;
+        return event.data.target;
+    }
+
+    async function getUserAgentInTarget(target) {
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: "navigator.userAgent", objectGroup: "test", returnByValue: true});
+        InspectorTest.assert(response.result.value, "Should be able to evaluate navigator.userAgent in cross-origin target.");
+        return response.result.value;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.OverrideUserAgentCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.OverrideUserAgent.DefaultUserAgent",
+        description: "Both the main page and cross-origin iframe should have the same default user agent.",
+        async test() {
+            let target = await addIFrameAndGetTarget();
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added target should have Frame type.");
+
+            let mainPageUA = await InspectorTest.evaluateInPage(`navigator.userAgent`);
+            InspectorTest.expectGreaterThan(mainPageUA.length, 0, "Main page should have a default UserAgent.");
+
+            let iframeUA = await getUserAgentInTarget(target);
+            InspectorTest.expectGreaterThan(iframeUA.length, 0, "Cross-origin iframe should have a default UserAgent.");
+            InspectorTest.expectEqual(iframeUA, mainPageUA, "Main page and cross-origin iframe should have the same default UserAgent.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.OverrideUserAgent.OverrideAndReload",
+        description: "Overriding the user agent and reloading should update the user agent in the cross-origin iframe.",
+        async test() {
+            InspectorTest.log("Overriding UserAgent...");
+            await PageAgent.overrideUserAgent(testUserAgent);
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            let mainPageUA = await InspectorTest.evaluateInPage(`navigator.userAgent`);
+            InspectorTest.expectEqual(mainPageUA, testUserAgent, "Main page should have the overridden UserAgent.");
+
+            InspectorTest.log("Re-adding cross-origin iframe...");
+            let target = await addIFrameAndGetTarget();
+            let iframeUA = await getUserAgentInTarget(target);
+            InspectorTest.expectEqual(iframeUA, testUserAgent, "Cross-origin iframe should have the overridden UserAgent.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.OverrideUserAgent.RemoveOverrideAndReload",
+        description: "Removing the user agent override and reloading should restore the default in both frames.",
+        async test() {
+            InspectorTest.log("Removing UserAgent override...");
+            await PageAgent.overrideUserAgent();
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            let mainPageUA = await InspectorTest.evaluateInPage(`navigator.userAgent`);
+            InspectorTest.expectGreaterThan(mainPageUA.length, 0, "Main page should have a default UserAgent.");
+            InspectorTest.expectNotEqual(mainPageUA, testUserAgent, "Main page UserAgent should no longer be the overridden value.");
+
+            InspectorTest.log("Re-adding cross-origin iframe...");
+            let target = await addIFrameAndGetTarget();
+            let iframeUA = await getUserAgentInTarget(target);
+            InspectorTest.expectEqual(iframeUA, mainPageUA, "Cross-origin iframe should have the same restored default UserAgent as the main page.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Page.overrideUserAgent propagates to cross-origin iframes under site isolation.</p>
+</body>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    div {
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+        display: inline-block;
+        border-style: solid;
+        border-width: 21px 30px 30px 21px;
+    }
+    /* With a fractional image-set resolution, slice numbers must be scaled by the exact resolution
+       (not a truncated integer), so each of these selects the same source slices (21 30 30 21) as a 1x image. */
+    .scale-1-5x {
+        border-image: image-set(url("resources/border-image.png") 1.5x) 14 20 20 14 fill stretch;
+    }
+    .scale-0-5x {
+        border-image: image-set(url("resources/border-image.png") 0.5x) 42 60 60 42 fill stretch;
+    }
+</style>
+</head>
+<body>
+    <div class="scale-1-5x"></div>
+    <div class="scale-0-5x"></div>
+</body>
+</html>

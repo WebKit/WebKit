@@ -1,0 +1,10 @@
+Tests that the Cookie Store API set() function sets a secure cookie
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Cookie set by CookieStore::set() is secure
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

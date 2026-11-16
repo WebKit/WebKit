@@ -1,0 +1,7 @@
+
+PASS e.style['grid-lanes-pack'] = "auto" should not set the property value
+PASS e.style['grid-lanes-pack'] = "100px" should not set the property value
+PASS e.style['grid-lanes-pack'] = "normal dense" should not set the property value
+PASS e.style['grid-lanes-pack'] = "dense reverse" should not set the property value
+PASS e.style['grid-lanes-pack'] = "pack" should not set the property value
+

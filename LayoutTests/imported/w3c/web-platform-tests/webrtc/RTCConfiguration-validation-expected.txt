@@ -1,0 +1,3 @@
+
+PASS setConfiguration only applies if the entire configuration is valid
+

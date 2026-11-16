@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script>
+            async function runTest() {
+                findMediaElement();
+                const file = "white.webm"
+                const resp = await fetch(file);
+                const blob = await resp.blob();
+                waitForEventAndEnd('loadedmetadata');
+                waitForEventAndFail('error');
+                video.srcObject = blob;
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <video></video>
+    </body>
+</html>

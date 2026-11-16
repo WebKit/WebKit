@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+<script type="text/javascript" src="resources/channel-order-utilities.js"></script>
+</head>
+<body>
+<script>
+description("Test that decoding a 5.1 flac file returns the channels in Web Audio order");
+
+window.jsTestIsAsync = true;
+
+var context = new window.AudioContext({ sampleRate: 48000 });
+var request = new XMLHttpRequest();
+request.open("GET", 'resources/media/sfx-5.1.flac', true);
+request.responseType = "arraybuffer";
+
+request.onload = function() {
+    context.decodeAudioData(request.response, (buffer) => {
+        testPassed("Successfully decoded content");
+        checkChannelOrder(buffer);
+        finishJSTest();
+    }, () => {
+        testFailed("Failed to decode file");
+        finishJSTest();
+    });
+}
+request.send();
+
+</script>
+</body>
+</html>

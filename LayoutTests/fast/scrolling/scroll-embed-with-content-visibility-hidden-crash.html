@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<style>
+  #container { content-visibility: hidden; }
+  #embed {
+    padding-top: 200vh;
+    content-visibility: hidden;
+    container-type: size;
+  }
+</style>
+<div id="container"><embed id="embed" src="about:blank"></embed></div>
+<script>
+  window.testRunner?.dumpAsText();
+  embed.scrollBy({});
+  document.body.innerHTML = "PASS if no crash.";
+</script>

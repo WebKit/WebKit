@@ -1,0 +1,17 @@
+
+PASS e.style['min-size'] = "100px" should set min-height
+PASS e.style['min-size'] = "100px" should set min-width
+PASS e.style['min-size'] = "100px" should not set unrelated longhands
+PASS e.style['min-size'] = "100px 100px" should set min-height
+PASS e.style['min-size'] = "100px 100px" should set min-width
+PASS e.style['min-size'] = "100px 100px" should not set unrelated longhands
+PASS e.style['min-size'] = "100px 200px" should set min-height
+PASS e.style['min-size'] = "100px 200px" should set min-width
+PASS e.style['min-size'] = "100px 200px" should not set unrelated longhands
+PASS e.style['min-size'] = "auto" should set min-height
+PASS e.style['min-size'] = "auto" should set min-width
+PASS e.style['min-size'] = "auto" should not set unrelated longhands
+PASS e.style['min-size'] = "min-content max-content" should set min-height
+PASS e.style['min-size'] = "min-content max-content" should set min-width
+PASS e.style['min-size'] = "min-content max-content" should not set unrelated longhands
+

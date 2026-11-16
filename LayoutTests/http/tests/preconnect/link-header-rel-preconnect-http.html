@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that Link header's rel=preconnect on a subresource is ignored.");
+jsTestIsAsync = true;
+
+var preconnected = false;
+internals.setConsoleMessageListener(function() {
+    preconnected = true;
+});
+var script = document.createElement("script");
+script.src = "resources/header-preconnect.py";
+script.onload = script.onerror = function() {
+    setTimeout(function() {
+        shouldBeFalse("preconnected");
+        finishJSTest();
+    }, 500);
+};
+document.body.appendChild(script);
+</script>
+</body>
+</html>

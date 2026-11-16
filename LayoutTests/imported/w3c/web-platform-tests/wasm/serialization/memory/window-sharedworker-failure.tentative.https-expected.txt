@@ -1,0 +1,5 @@
+
+PASS precondition: window is cross-origin isolated
+PASS Shared WebAssembly.Memory from window to SharedWorker fires messageerror on the SharedWorker
+PASS Shared WebAssembly.Memory from SharedWorker to window fires messageerror on the window
+

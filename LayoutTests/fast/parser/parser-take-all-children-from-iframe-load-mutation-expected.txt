@@ -1,0 +1,16 @@
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|     "\n"
+|   <body>
+|     <p>
+|       "This test passes if WebKit does not crash."
+|     "\n"
+|     <a>
+|     <menu>
+|       <a>
+|         " "
+|       <a>
+|         "\n"

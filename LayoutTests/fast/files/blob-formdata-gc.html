@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="../../resources/gc.js"></script>
+    </head>
+    <body>
+        <script>
+let totalCounter = 0;
+let okCounter = 0;
+function textFromBlobFormData()
+{
+    const blob = new Blob(["123"], {type: "text/plain"});
+    const formData = new FormData();
+    formData.append("file", blob, "");
+    const response = new Response(formData);
+    response.text().then(() => {
+          ++okCounter;
+    }).finally(() => {
+          ++totalCounter;
+    });
+}
+
+promise_test(async () => {
+    for (let i = 0; i < 10; i++) {
+       textFromBlobFormData();
+       gc();
+    }
+
+    let i = 0;
+    while (++i < 100 && totalCounter < 10)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_equals(totalCounter, 10, "total counter");
+    assert_equals(okCounter, 10, "ok counter");
+}, "Validate response is taking a pending activity when reading a form data blob");
+        </script>
+    </body>
+</html>

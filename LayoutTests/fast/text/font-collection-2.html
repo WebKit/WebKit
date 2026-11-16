@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebFont1";
+    src: url("resources/collection2.ttc#Ahemerator");
+}
+@font-face {
+    font-family: "WebFont2";
+    src: url("resources/collection2.ttc#Ahem");
+}
+</style>
+</head>
+<body>
+This test makes sure that font collections work correctly. The font passes if you see a letter "A" followed by two squares below.
+<div style="-webkit-font-smoothing: none;">
+<div style="display: inline-block; width: 1px; height: 100px;"></div>
+<div style="display: inline-block; margin: 5px; font: 48px 'WebFont1', 'Helvetica';">A</div>
+<div style="display: inline-block; margin: 5px; font: 48px 'WebFont2', 'Helvetica';">A</div>
+<div style="display: inline-block; margin: 5px; font: 48px 'WebFont1', 'Helvetica';">B</div>
+</div>
+</body>
+</html>

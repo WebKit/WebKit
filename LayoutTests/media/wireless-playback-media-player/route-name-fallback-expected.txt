@@ -1,0 +1,14 @@
+
+Test that the AirPlay placard title falls back to "AirPlay" when the MediaDeviceRoute has no routeName.
+
+EXPECTED (video.remote.state == 'disconnected') OK
+RUN(video.src = findMediaFile('video', '../content/test'))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (route.routeName == '') OK
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+EVENT(connect)
+EXPECTED (placardTitleText() === "AirPlay" == 'true') OK
+END OF TEST
+

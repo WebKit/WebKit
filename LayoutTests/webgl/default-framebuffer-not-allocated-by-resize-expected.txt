@@ -1,0 +1,208 @@
+Tests that resizing a canvas that has not been drawn to does not allocate the default framebuffer storage, also after the next rendering update and after a context restore, and that resizing a canvas that has been drawn to reallocates the storage at the next rendering update.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+WebGL 1 {"antialias":false,"preserveDrawingBuffer":false}: resizing a canvas that has not been drawn to does not allocate the default framebuffer.
+PASS allocatedSize() is "0x0"
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "2x2"
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":false,"preserveDrawingBuffer":false}: resizing a canvas that has not been drawn to since the context was restored does not allocate the default framebuffer.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":false,"preserveDrawingBuffer":false}: resizing a canvas that has been drawn to reallocates the default framebuffer at the next rendering update.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "8x6"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":false}: resizing a canvas that has not been drawn to does not allocate the default framebuffer.
+PASS allocatedSize() is "0x0"
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "2x2"
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":false}: resizing a canvas that has not been drawn to since the context was restored does not allocate the default framebuffer.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":false}: resizing a canvas that has been drawn to reallocates the default framebuffer at the next rendering update.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "8x6"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 1 {"antialias":true,"preserveDrawingBuffer":false}: resizing a canvas that has not been drawn to does not allocate the default framebuffer.
+PASS allocatedSize() is "0x0"
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "2x2"
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":true,"preserveDrawingBuffer":false}: resizing a canvas that has not been drawn to since the context was restored does not allocate the default framebuffer.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":true,"preserveDrawingBuffer":false}: resizing a canvas that has been drawn to reallocates the default framebuffer at the next rendering update.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "8x6"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":false}: resizing a canvas that has not been drawn to does not allocate the default framebuffer.
+PASS allocatedSize() is "0x0"
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "2x2"
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":false}: resizing a canvas that has not been drawn to since the context was restored does not allocate the default framebuffer.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":false}: resizing a canvas that has been drawn to reallocates the default framebuffer at the next rendering update.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "8x6"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 1 {"antialias":false,"preserveDrawingBuffer":true}: resizing a canvas that has not been drawn to does not allocate the default framebuffer.
+PASS allocatedSize() is "0x0"
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "2x2"
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":false,"preserveDrawingBuffer":true}: resizing a canvas that has not been drawn to since the context was restored does not allocate the default framebuffer.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":false,"preserveDrawingBuffer":true}: resizing a canvas that has been drawn to reallocates the default framebuffer at the next rendering update.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "8x6"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":true}: resizing a canvas that has not been drawn to does not allocate the default framebuffer.
+PASS allocatedSize() is "0x0"
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "2x2"
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":true}: resizing a canvas that has not been drawn to since the context was restored does not allocate the default framebuffer.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":true}: resizing a canvas that has been drawn to reallocates the default framebuffer at the next rendering update.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "8x6"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 1 {"antialias":true,"preserveDrawingBuffer":true}: resizing a canvas that has not been drawn to does not allocate the default framebuffer.
+PASS allocatedSize() is "0x0"
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "2x2"
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":true,"preserveDrawingBuffer":true}: resizing a canvas that has not been drawn to since the context was restored does not allocate the default framebuffer.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":true,"preserveDrawingBuffer":true}: resizing a canvas that has been drawn to reallocates the default framebuffer at the next rendering update.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "8x6"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":true}: resizing a canvas that has not been drawn to does not allocate the default framebuffer.
+PASS allocatedSize() is "0x0"
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "2x2"
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":true}: resizing a canvas that has not been drawn to since the context was restored does not allocate the default framebuffer.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "0x0"
+PASS allocatedSize() is "0x0"
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":true}: resizing a canvas that has been drawn to reallocates the default framebuffer at the next rendering update.
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "4x4"
+PASS allocatedSize() is "8x6"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

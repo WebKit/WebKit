@@ -1,0 +1,11 @@
+This tests that a call to array.sort(compareFunction) works correctly for numeric comparisons (arg1 - arg2), and also for things that might look like numeric comparisons.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS [3,1,5,2,4].sort(doSort) is [1,2,3,4,5]
+PASS [3,1,5,2,4].sort(dontSort) is [3,1,5,2,4]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

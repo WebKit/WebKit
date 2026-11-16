@@ -1,0 +1,4 @@
+
+PASS Multiple concurrent imports of a failing module should all reject but only fetch once
+PASS A joined import is notified with its own fetch result even if a sibling's rejection handler re-imports the same specifier
+

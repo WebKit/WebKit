@@ -1,0 +1,10 @@
+<label>
+    Credit card number
+    <input id="card">
+</label>
+<script>
+    window.parent.postMessage("ready", "*");
+    document.getElementById("card").addEventListener("focus", () => {
+        window.parent.postMessage("text-field-focused", "*");
+    });
+</script>

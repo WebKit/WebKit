@@ -1,0 +1,11 @@
+PASS scroll origin is 0
+PASS arrow keys allow escaping first snap position
+PASS right arrow key snapped back to first snap position
+PASS left arrow keys allow escaping second snap position
+PASS right arrow key snapped back to second snap position
+PASS right arrow keys allow escaping second snap position
+PASS left arrow key snapped back to second snap position
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

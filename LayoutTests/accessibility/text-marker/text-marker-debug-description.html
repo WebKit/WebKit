@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+<div id="text">some text</div>
+<a href="#" id="link">Click on the hypertext.</a>
+</div>
+
+<script>
+function containsExpectedFields(string) {
+    // Match key-value pairs using regex.
+    const fieldPattern = /(\w+)\s+([^,}]+)/g;
+    let match;
+    const fields = {};
+
+    // Parse all key-value pairs into an object.
+    while ((match = fieldPattern.exec(string)) !== null) {
+        const key = match[1];
+        const value = match[2].trim();
+        fields[key] = value;
+    }
+
+    const hasValidID = fields.hasOwnProperty("ID") && !isNaN(fields.ID) && Number(fields.ID) !== 0;
+    const hasValidOffset = fields.hasOwnProperty("offset") && !isNaN(fields.offset);
+    return hasValidID && hasValidOffset && fields.role == "StaticText";
+}
+
+if (window.accessibilityController) {
+    let output = "This tests the AXTextMarker and AXTextMarkerRange DebugDescription APIs.\n\n";
+
+    var axElement, range, start, end;
+    let ids = ["text", "link"];
+    ids.forEach((id) => {
+        output += `${id}:\n`;
+        axElement = accessibilityController.accessibleElementById(id);
+        range = axElement.textMarkerRangeForElement(axElement);
+        output += expect("containsExpectedFields(axElement.textMarkerRangeDebugDescription(range))", "true");
+
+        start = axElement.startTextMarkerForTextMarkerRange(range);
+        end = axElement.endTextMarkerForTextMarkerRange(range);
+        output += expect("containsExpectedFields(axElement.textMarkerDebugDescription(start))", "true");
+        output += expect("containsExpectedFields(axElement.textMarkerDebugDescription(end))", "true");
+    });
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

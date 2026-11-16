@@ -1,0 +1,5 @@
+ Everything in this paragraph should have a green background
+
+
+PASS NEGATED :checked pseudo-class
+

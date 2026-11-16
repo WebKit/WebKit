@@ -1,0 +1,67 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<input type="text" id="outerInput">
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/focus-blur-event-order-iframe.html" onload="runTest()"></iframe>
+<script>
+description("Tests that moving focus from the main frame into a cross-origin iframe fires the main frame's element blur and focusout before its window blur.");
+jsTestIsAsync = true;
+
+const outerInput = document.getElementById("outerInput");
+const iframe = document.getElementById("frame");
+let recording = false;
+let mainFrameEvents = [];
+let iframeEvents;
+
+function record(name)
+{
+    if (recording)
+        mainFrameEvents.push(name);
+}
+
+function maybeFinish()
+{
+    if (!iframeEvents || !mainFrameEvents.includes("outerInput:focusout") || !mainFrameEvents.includes("window:blur"))
+        return;
+
+    recording = false;
+    shouldBeEqualToString("mainFrameEvents.join(', ')", "outerInput:blur, outerInput:focusout, window:blur");
+    shouldBeEqualToString("iframeEvents.join(', ')", "window:focus, input:focus, input:focusin");
+    finishJSTest();
+}
+
+outerInput.addEventListener("blur", () => record("outerInput:blur"));
+outerInput.addEventListener("focusout", () => {
+    record("outerInput:focusout");
+    maybeFinish();
+});
+window.addEventListener("blur", () => {
+    record("window:blur");
+    maybeFinish();
+});
+
+window.addEventListener("message", async (event) => {
+    if (event.data.type === "recording") {
+        recording = true;
+        const iframeRect = iframe.getBoundingClientRect();
+        await UIHelper.activateAt(iframeRect.left + 50, iframeRect.top + 15);
+    } else if (event.data.type === "iframeEvents") {
+        iframeEvents = event.data.events;
+        maybeFinish();
+    }
+});
+
+async function runTest()
+{
+    outerInput.addEventListener("focus", () => {
+        iframe.contentWindow.postMessage({ type: "startRecording" }, "http://localhost:8000");
+    }, { once: true });
+    await UIHelper.activateElement(outerInput);
+}
+</script>
+</body>
+</html>

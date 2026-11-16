@@ -1,0 +1,13 @@
+<style>
+#clamp {
+  width: 100px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: block-axis;
+}
+</style>
+<div id=clamp>This text should stay visible after setting line clamp on it.</div>
+<script>
+document.body.offsetHeight;
+clamp.style.webkitLineClamp = '2';
+</script>

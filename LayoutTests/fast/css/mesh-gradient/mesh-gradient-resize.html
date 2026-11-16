@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSMeshGradientsEnabled=true ] -->
+<html class="reftest-wait">
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-20000">
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    background-image: mesh-gradient(in srgb, red, blue; red, blue);
+}
+</style>
+<div></div>
+<script>
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        document.querySelector("div").style.width = "200px";
+        document.documentElement.classList.remove("reftest-wait");
+    });
+});
+</script>
+</html>

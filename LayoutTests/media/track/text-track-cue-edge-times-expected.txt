@@ -1,0 +1,6 @@
+
+PASS unbounded cue (endTime = Infinity) stays active across monotonic advance
+PASS VTTCue accepts negative startTime and endTime
+PASS cue entirely before time 0 cannot be active
+PASS cue spanning time 0 is active when currentTime is within range
+

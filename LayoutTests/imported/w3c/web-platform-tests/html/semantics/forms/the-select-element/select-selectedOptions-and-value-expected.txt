@@ -1,0 +1,3 @@
+
+PASS `HTMLSelectElement.selectedOptions` is correctly updated when `HTMLSelectElement.value` changes
+

@@ -1,0 +1,4 @@
+s0s1s2
+
+PASS Range.intersectsNode() simple cases
+

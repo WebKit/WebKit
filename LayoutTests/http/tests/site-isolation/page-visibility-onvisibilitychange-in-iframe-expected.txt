@@ -1,0 +1,10 @@
+This test checks the onvisibilitychange event handler attribute in an iframe.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.data.text is "visibility change triggered"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

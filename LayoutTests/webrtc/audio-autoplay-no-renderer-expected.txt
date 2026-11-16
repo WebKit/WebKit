@@ -1,0 +1,8 @@
+
+PASS Detached audio element does not autoplay a remote audio track when not capturing
+PASS Start capturing microphone
+PASS Detached audio element autoplays a remote audio track
+PASS display:none video element autoplays a remote audio track
+PASS Detached audio element autoplays when the remote audio track is added after srcObject is set
+PASS Stop capturing microphone
+

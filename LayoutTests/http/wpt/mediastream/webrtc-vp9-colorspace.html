@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebRTC VP9 encoder color space preservation</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/webrtc/RTCPeerConnection-helper.js"></script>
+</head>
+<body>
+<script>
+async function getLocalTrack(test, colorPrimaries)
+{
+    const generatorWorkerCode = `
+        function makeVideoFrameFromBuffer(width, height, colorSpace) {
+            // Create I420 buffer (YUV 4:2:0 planar format)
+            const yPlaneSize = width * height;
+            const uvPlaneSize = (width / 2) * (height / 2);
+            const totalSize = yPlaneSize + 2 * uvPlaneSize;
+
+            const buffer = new Uint8Array(totalSize);
+
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const index = y * width + x;
+                    // Create a simple pattern
+                    buffer[index] = ((x + y) % 256);
+                }
+            }
+
+            const uOffset = yPlaneSize;
+            for (let y = 0; y < height / 2; y++) {
+                for (let x = 0; x < width / 2; x++) {
+                    const index = uOffset + y * (width / 2) + x;
+                    buffer[index] = 128 + (x % 64);
+                }
+            }
+
+            const vOffset = yPlaneSize + uvPlaneSize;
+            for (let y = 0; y < height / 2; y++) {
+                for (let x = 0; x < width / 2; x++) {
+                    const index = vOffset + y * (width / 2) + x;
+                    buffer[index] = 128 + (y % 64);
+                }
+            }
+
+            return new VideoFrame(buffer, {
+                format: 'I420',
+                codedWidth: width,
+                codedHeight: height,
+                timestamp: performance.now() * 1000,
+                colorSpace: colorSpace
+            });
+        }
+
+        let frameInterval = null;
+        let writer = null;
+        let generator = null;
+
+        self.onmessage = async (event) => {
+            if (event.data.type === 'start') {
+                generator = new VideoTrackGenerator();
+                writer = generator.writable.getWriter();
+
+                const colorSpace = {
+                    primaries: "${colorPrimaries}"
+                };
+
+                frameInterval = setInterval(() => {
+                    const frame = makeVideoFrameFromBuffer(320, 240, colorSpace);
+                    writer.write(frame).catch(() => {});
+                }, 100);
+
+                const processor = new MediaStreamTrackProcessor({ track: generator.track });
+                const reader = processor.readable.getReader();
+
+                const result = await reader.read();
+                const frame = result.value;
+
+                const colorSpaceInfo = {
+                    primaries: frame.colorSpace.primaries,
+                    transfer: frame.colorSpace.transfer,
+                    matrix: frame.colorSpace.matrix
+                };
+
+                frame.close();
+                reader.releaseLock();
+
+                self.postMessage({
+                    type: 'track',
+                    track: generator.track,
+                    colorSpace: colorSpaceInfo
+                }, [generator.track]);
+            } else if (event.data.type === 'stop') {
+                if (frameInterval)
+                    clearInterval(frameInterval);
+                if (writer)
+                    writer.close().catch(() => {});
+            }
+        };
+    `;
+
+    const generatorBlob = new Blob([generatorWorkerCode], { type: 'application/javascript' });
+    const generatorWorkerUrl = URL.createObjectURL(generatorBlob);
+    const generatorWorker = new Worker(generatorWorkerUrl);
+
+    test.add_cleanup(() => {
+        generatorWorker.postMessage({ type: 'stop' });
+        generatorWorker.terminate();
+        URL.revokeObjectURL(generatorWorkerUrl);
+    });
+
+    const { localTrack, localColorSpace } = await new Promise((resolve) => {
+        generatorWorker.onmessage = (event) => {
+            if (event.data.type === 'track')
+                resolve({
+                    localTrack: event.data.track,
+                    localColorSpace: event.data.colorSpace
+                });
+        };
+        generatorWorker.postMessage({ type: 'start' });
+    });
+
+    test.add_cleanup(() => {
+        localTrack.stop();
+    });
+
+    assert_equals(localColorSpace.primaries, colorPrimaries, "Local frame primaries should be " + colorPrimaries);
+
+    return localTrack;
+}
+
+async function sendTrackWithVP9(test, localTrack)
+{
+    const pc1 = new RTCPeerConnection();
+    const pc2 = new RTCPeerConnection();
+
+    test.add_cleanup(() => {
+        pc1.close();
+        pc2.close();
+    });
+
+    const sender = pc1.addTrack(localTrack);
+    const transceiver = pc1.getTransceivers().find(t => t.sender === sender);
+
+    const capabilities = RTCRtpSender.getCapabilities('video');
+    const vp9Codecs = capabilities.codecs.filter(codec => codec.mimeType === 'video/VP9');
+    assert_true(vp9Codecs.length > 0, "VP9 codec should be supported");
+    transceiver.setCodecPreferences(vp9Codecs);
+
+    const remoteTrackPromise = new Promise((resolve) => {
+        pc2.ontrack = (event) => {
+            resolve(event.track);
+        };
+    });
+
+    pc1.onicecandidate = (event) => {
+        if (event.candidate)
+            pc2.addIceCandidate(event.candidate);
+    };
+
+    pc2.onicecandidate = (event) => {
+        if (event.candidate)
+            pc1.addIceCandidate(event.candidate);
+    };
+
+    const offer = await pc1.createOffer();
+    await pc1.setLocalDescription(offer);
+    await pc2.setRemoteDescription(offer);
+
+    const answer = await pc2.createAnswer();
+    await pc2.setLocalDescription(answer);
+    await pc1.setRemoteDescription(answer);
+
+    return remoteTrackPromise;
+}
+
+function getRemoteTrackColor(test, remoteTrack) {
+    const remoteVerifyWorkerCode = `
+        self.onmessage = async (event) => {
+            if (event.data.type === 'verify') {
+                const track = event.data.track;
+                const processor = new MediaStreamTrackProcessor({ track: track });
+                const reader = processor.readable.getReader();
+
+                const result = await reader.read();
+                const frame = result.value;
+                self.postMessage({ type: 'result', primaries:frame.colorSpace.primaries });
+                frame.close();
+                reader.releaseLock();
+            }
+        };
+    `;
+
+    const remoteVerifyBlob = new Blob([remoteVerifyWorkerCode], { type: 'application/javascript' });
+    const remoteVerifyWorkerUrl = URL.createObjectURL(remoteVerifyBlob);
+    const remoteVerifyWorker = new Worker(remoteVerifyWorkerUrl);
+
+    test.add_cleanup(() => {
+        remoteVerifyWorker.terminate();
+        URL.revokeObjectURL(remoteVerifyWorkerUrl);
+    });
+
+    const frameColorPromise = new Promise((resolve) => {
+        remoteVerifyWorker.onmessage = (event) => {
+            if (event.data.type === 'result')
+                resolve(event.data.primaries);
+        };
+    });
+    remoteVerifyWorker.postMessage({ type: 'verify', track: remoteTrack }, [remoteTrack]);
+    return frameColorPromise;
+}
+
+function doTest(colorPrimaries) {
+    promise_test(async (test) => {
+        const localTrack = await getLocalTrack(test, colorPrimaries);
+        const remoteTrack = await sendTrackWithVP9(test, localTrack);
+        const frameColor = await getRemoteTrackColor(test, remoteTrack);
+        assert_equals(frameColor, colorPrimaries,  "At least one remote frame should have the expected color space primaries");
+    }, "WebRTC VP9 encoder should preserve color space through WebRTC - " + colorPrimaries);
+}
+
+doTest("bt709");
+doTest("smpte170m");
+</script>
+</body>
+</html>

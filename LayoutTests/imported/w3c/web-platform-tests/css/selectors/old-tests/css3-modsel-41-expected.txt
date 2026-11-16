@@ -1,0 +1,5 @@
+You should see before this paragraph the words GENERATED CONTENT over green background
+
+
+PASS ::before pseudo-element background-color
+

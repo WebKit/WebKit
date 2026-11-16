@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+    .anchor { transform: translateZ(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function dumpLayers(out, label) {
+        if (!window.internals)
+            return;
+        out.textContent += '=== ' + label + ' ===\n' + internals.layerTreeAsText(document) + '\n';
+    }
+
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => {
+            document.body.offsetTop;
+            // Phase 1: both anchors active, middle rect painted into a trailing segment.
+            document.getElementById('first-anchor').setAttribute('class', 'anchor');
+            document.getElementById('last-anchor').setAttribute('class', 'anchor');
+            const out = document.getElementById('layers');
+            out.textContent = '';
+            dumpLayers(out, 'Initial: middle <rect> painted into trailing segment');
+
+            // Phase 2: decomposite the first anchor, the segment collapses and middle drops its segment.
+            document.getElementById('first-anchor').removeAttribute('class');
+            requestAnimationFrame(() => {
+                dumpLayers(out, 'After mutation: middle <rect> segment layer dropped');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        });
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g id="first-anchor"><rect x="10" y="10" width="120" height="120" fill="red"/></g>
+    <rect x="40" y="40" width="120" height="120" fill="green"/>
+    <g id="last-anchor"><rect x="70" y="70" width="120" height="120" fill="blue"/></g>
+</svg>
+<pre id="layers"></pre>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Description
+
+This test validates that PerformanceResourceTiming.decodedBodySize correctly reports the size of resources after removing content encoding (gzip, brotli, deflate, and compression dictionaries with dcb and dcz), and that it differs from encodedBodySize for compressed resources.
+
+
+PASS decodedBodySize for gzip-compressed XML resource
+PASS decodedBodySize for brotli-compressed text resource
+PASS decodedBodySize for gzip-compressed text resource
+PASS decodedBodySize for dynamically gzip-compressed JS resource
+PASS decodedBodySize for deflate-compressed JS resource
+PASS decodedBodySize equals encodedBodySize for uncompressed resource
+FAIL decodedBodySize for dictionary-compressed brotli (dcb) resource assert_equals: The resource should decompress correctly expected "This is compressed test data using a test dictionary" but got "\ufffdDCBS\ufffd\ufffd\ufffd^\ufffd\x0e\x0e\ufffd\ufffd\ufffdk\v>\ufffd\ufffd\ufffdV\ufffd[\ufffd΃\ufffdbBp\ufffd\x16\ufffd\ufffd\x01\ufffdb\ufffdL\x1d\ufffd\x12\ufffd\ufffd\ufffd\ufffd\ufffd`\"\x07n\ufffd\x05\x14ɷ\ufffdD\ufffd\ufffd\x16\ufffd\x15\x0e\ufffd\ufffd\ufffd43>\r"
+FAIL decodedBodySize for dictionary-compressed zstd (dcz) resource assert_equals: The resource should decompress correctly expected "This is compressed test data using a test dictionary" but got "^*M\x18 \0\0\0S\ufffd\ufffd\ufffd^\ufffd\x0e\x0e\ufffd\ufffd\ufffdk\v>\ufffd\ufffd\ufffdV\ufffd[\ufffd΃\ufffdbBp\ufffd\x16(\ufffd/\ufffd$4\ufffd\0\0\ufffdcompressedata using\x03\0Y\ufffdsTF'&\x10\ufffd\ufffd\ufffd"
+

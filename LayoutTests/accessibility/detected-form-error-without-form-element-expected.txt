@@ -1,0 +1,18 @@
+This tests that errors are found on a page that collects input without a form element, where the control the user activates is not a submit button. With no form there is no submission to watch for, so activating the control is what starts the watch. One message is red and the other orange, both colors a site gives an error. The notification also says it is posted on the control the user activated, so an assistive technology can offer that control with the fields.
+
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('name')) === 'Enter your name.'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: targetIsSubmitter === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Name
+Enter your name.
+Email
+Enter a valid email address.
+Place order

@@ -1,0 +1,8 @@
+
+PASS e.style['baseline-source'] = "foobar" should not set the property value
+PASS e.style['baseline-source'] = "default" should not set the property value
+PASS e.style['baseline-source'] = "auto first" should not set the property value
+PASS e.style['baseline-source'] = "first auto" should not set the property value
+PASS e.style['baseline-source'] = "3px" should not set the property value
+PASS e.style['baseline-source'] = "10%" should not set the property value
+

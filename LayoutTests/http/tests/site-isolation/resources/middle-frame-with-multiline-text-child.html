@@ -1,0 +1,8 @@
+<body style="margin: 0">
+<iframe style="position: absolute; left: 0; top: 80px; width: 400px; height: 360px; border: none;"></iframe>
+<script>
+// The child's host is passed as the query string so the child can be either same-site with this
+// frame or same-site with the main frame.
+document.querySelector("iframe").src = `http://${location.search.substring(1)}:8000/site-isolation/resources/multiline-selectable-text-frame.html`;
+</script>
+</body>

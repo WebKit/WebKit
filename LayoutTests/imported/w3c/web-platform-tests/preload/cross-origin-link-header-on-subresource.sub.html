@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<title>Link headers on a cross-origin subresource are ignored</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script src="/preload/resources/preload_helper.js"></script>
+<body>
+<script>
+setup({single_test: true});
+
+const remoteOrigin = get_host_info().HTTP_REMOTE_ORIGIN;
+
+// The preloaded path, resolved against each candidate base.
+const subresourcePreloadURL = remoteOrigin + "/preload/resources/dummy.css?cross-origin-link-header";
+const documentPreloadURL = "/preload/resources/dummy.css?cross-origin-link-header";
+
+// A cross-origin stylesheet whose Link response header preloads the path above.
+const linkHeader = "<" + documentPreloadURL + ">; rel=preload; as=style";
+const subresourceURL = remoteOrigin + "/preload/resources/echo-preload-header.py" +
+    "?type=" + encodeURIComponent("text/css") +
+    "&content=" + encodeURIComponent("/* dummy stylesheet carrying a preload Link header */") +
+    "&link=" + encodeURIComponent(linkHeader);
+
+function check_finished() {
+    // Link headers are only honored on the main resource of the main frame,
+    // so neither origin should see a preload.
+    verifyNumberOfResourceTimingEntries(documentPreloadURL, 0);
+    verifyNumberOfResourceTimingEntries(subresourcePreloadURL, 0);
+    done();
+}
+
+window.addEventListener("load", function() {
+    verifyPreloadAndRTSupport();
+    assert_not_equals(remoteOrigin, get_host_info().HTTP_ORIGIN,
+        "test requires the subresource to be cross-origin to the document");
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = subresourceURL;
+    document.head.appendChild(link);
+
+    step_timeout(check_finished, 1000);
+});
+</script>

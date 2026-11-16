@@ -1,0 +1,2 @@
+PASS: WebPageProxy::didFailLoadForFrame MESSAGE_CHECK rejected file:// failingURL
+

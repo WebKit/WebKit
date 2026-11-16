@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: This page has a responsive meta viewport tag. The page content is wider than the viewport. The page will be scaled to fit.
+PASS: Not allowed to share file with Web Share Level 2 disabled: TypeError: Type error
+

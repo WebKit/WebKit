@@ -1,0 +1,14 @@
+ALERT: 0
+ALERT: 1
+ALERT: 2
+Tests that we properly handle JavaScript URLs containing comment characters, newlines, and carriage returns.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Ignorable JavaScript URLs were ignored.
+PASS All executable JavaScript URLs were executed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

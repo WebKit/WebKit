@@ -1,0 +1,2 @@
+Exception: SyntaxError: new.target is not valid inside arrow functions in global code.
+at globalLambdaNewTargetSyntaxError.js:6

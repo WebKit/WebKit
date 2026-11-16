@@ -1,0 +1,9 @@
+
+Harness Error (FAIL), message = Error: '<position>' is not a valid CSS component
+
+PASS Can set 'object-position' to CSS-wide keywords: initial
+PASS Can set 'object-position' to CSS-wide keywords: inherit
+PASS Can set 'object-position' to CSS-wide keywords: unset
+PASS Can set 'object-position' to CSS-wide keywords: revert
+PASS Can set 'object-position' to var() references:  var(--A)
+

@@ -1,0 +1,7 @@
+<script>
+// Disable the page cache when running inside of Safari
+onunload = function() { }
+onpageshow = function() { if (event.persisted) alert("FAIL: Could not disable page cache"); }
+</script>
+<iframe src="history-subframe-with-name-2.html"></iframe>
+<iframe src="data:text/html,<script>window.name='foo';</script>window that changes its name"></iframe>

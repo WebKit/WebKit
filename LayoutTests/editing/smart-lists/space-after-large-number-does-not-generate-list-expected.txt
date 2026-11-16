@@ -1,0 +1,2 @@
+Numbers larger than 999 (more than 3 digits) are not valid ordered-list markers; typing "1000. hi" should not trigger smart-list conversion.
+| "1000. hi<#selection-caret>"

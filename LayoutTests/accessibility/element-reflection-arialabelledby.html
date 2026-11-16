@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<label id="label1">First label</label>
+<input id="input1"></input><br>
+<label>Second label</label>
+<input id="input2"></input><br>
+<label id="label3">Third label</label>
+<x-input></x-input><br>
+<label id="label4">Fourth label</label>
+<input id="input4"></input><br>
+<x-custom></x-custom>
+
+<script>
+class XInput extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        let input = document.createElement("input");
+        input.id = "innerinput";
+        input.ariaLabelledByElements = [label3];
+        this.shadowRoot.appendChild(input);
+    }
+}
+customElements.define("x-input", XInput);
+
+class XCustom extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        let label = document.createElement("div");
+        label.id = "label5";
+        label.textContent = "Fifth label";
+        let input = document.createElement("input");
+        input.id = "input5";
+        this.shadowRoot.appendChild(label);
+        this.shadowRoot.appendChild(input);
+        input.ariaLabelledByElements = [label];
+        document.body.appendChild(label);
+    }
+}
+customElements.define("x-custom", XCustom);
+
+var output = "Checks that element reflection is exposed to the a11y tree for 'ariaLabelledByElements'\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    input1.ariaLabelledByElements = [label1];
+    var axInput1, axInput2, axInput5, axInnerInput;
+    setTimeout(async function() {
+        axInput1 = accessibilityController.accessibleElementById("input1");
+        output += await expectAsync("platformValueForW3CName(axInput1)", "'First label'");
+
+        input2.ariaLabelledByElements = [document.getElementsByTagName("label")[1]];
+        axInput2 = accessibilityController.accessibleElementById("input2");
+        output += await expectAsync("platformValueForW3CName(axInput2)", "'Second label'");
+        input2.setAttribute("aria-labelledby", "label1");
+        output += await expectAsync("platformValueForW3CName(axInput2)", "'First label'");
+        axInnerInput = accessibilityController.accessibleElementById("innerinput");
+        output += expect("platformValueForW3CName(axInnerInput)", "'Third label'");
+
+        input2.ariaLabelledByElements = [label1, document.getElementsByTagName("label")[1], label3];
+        output += await expectAsync("platformValueForW3CName(axInput2)", "'First label Second label Third label'");
+        axInput5 = accessibilityController.accessibleElementById("input5");
+        output += expect("platformValueForW3CName(axInput5)", "'Fifth label'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

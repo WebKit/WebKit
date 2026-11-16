@@ -1,0 +1,6 @@
+
+
+FAIL Tests createValueRange returns OpaqueRange that extends AbstractRange. textarea.createValueRange is not a function. (In 'textarea.createValueRange(0, 5)', 'textarea.createValueRange' is undefined)
+FAIL OpaqueRange handles createValueRange correctly. textarea.createValueRange is not a function. (In 'textarea.createValueRange(1, 4)', 'textarea.createValueRange' is undefined)
+FAIL OpaqueRange handles empty value correctly. input.createValueRange is not a function. (In 'input.createValueRange(0, 0)', 'input.createValueRange' is undefined)
+

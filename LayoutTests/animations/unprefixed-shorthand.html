@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test the unprefixed animation shorthand.");
+
+// These have to be global for the test helpers to see them.
+var stylesheet, animationStyle;
+var styleElement = document.createElement("style");
+document.head.appendChild(styleElement);
+stylesheet = styleElement.sheet;
+
+function testAnimationShorthand(value, expectedName, expectedDuration, expectedDelay, expectedTimingFunction, expectedIterationCount, expectedDirection, expectedFillMode)
+{
+    debug("");
+    debug("Setting animation: " + value);
+    stylesheet.insertRule("body { animation: " + value + "; }", 0);
+
+    animationStyle = getComputedStyle(document.body)
+
+    shouldBeEqualToString("animationStyle.getPropertyValue('animation-name')", expectedName)
+    shouldBeEqualToString("animationStyle.getPropertyValue('animation-duration')", expectedDuration)
+    shouldBeEqualToString("animationStyle.getPropertyValue('animation-delay')", expectedDelay)
+    shouldBeEqualToString("animationStyle.getPropertyValue('animation-timing-function')", expectedTimingFunction)
+    shouldBeEqualToString("animationStyle.getPropertyValue('animation-iteration-count')", expectedIterationCount)
+    shouldBeEqualToString("animationStyle.getPropertyValue('animation-direction')", expectedDirection)
+    shouldBeEqualToString("animationStyle.getPropertyValue('animation-fill-mode')", expectedFillMode)
+
+    stylesheet.deleteRule(0);
+}
+
+testAnimationShorthand("waldo",
+                       "waldo",
+                       "0s",
+                       "0s",
+                       "ease",
+                       "1",
+                       "normal",
+                       "none");
+
+testAnimationShorthand("waldo 2s",
+                       "waldo",
+                       "2s",
+                       "0s",
+                       "ease",
+                       "1",
+                       "normal",
+                       "none");
+
+testAnimationShorthand("3s banana 500ms",
+                       "banana",
+                       "3s",
+                       "0.5s",
+                       "ease",
+                       "1",
+                       "normal",
+                       "none");
+
+testAnimationShorthand("infinite alternate eggs 5s",
+                       "eggs",
+                       "5s",
+                       "0s",
+                       "ease",
+                       "infinite",
+                       "alternate",
+                       "none");
+
+testAnimationShorthand("forwards normal ease-in-out bacon 1s 2s",
+                       "bacon",
+                       "1s",
+                       "2s",
+                       "ease-in-out",
+                       "1",
+                       "normal",
+                       "forwards");
+
+testAnimationShorthand("pastrami 100ms cubic-bezier(0, 0, 1, 1) alternate-reverse",
+                       "pastrami",
+                       "0.1s",
+                       "0s",
+                       "cubic-bezier(0, 0, 1, 1)",
+                       "1",
+                       "alternate-reverse",
+                       "none");
+
+testAnimationShorthand("slightly-invalid 2s a",
+                       "none",
+                       "0s",
+                       "0s",
+                       "ease",
+                       "1",
+                       "normal",
+                       "none");
+
+testAnimationShorthand("completely invalid",
+                       "none",
+                       "0s",
+                       "0s",
+                       "ease",
+                       "1",
+                       "normal",
+                       "none");
+
+successfullyParsed = true;
+
+</script>
+</body>
+</html>

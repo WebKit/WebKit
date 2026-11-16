@@ -1,0 +1,6 @@
+
+PASS createProjectionLayer with textureType 'texture-array' requires WebGL2 - webgl
+PASS createProjectionLayer with textureType 'texture-array' requires WebGL2 - webgl2
+PASS createProjectionLayer succeeds with the default textureType - webgl
+PASS createProjectionLayer succeeds with the default textureType - webgl2
+

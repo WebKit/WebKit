@@ -1,0 +1,9 @@
+Tests that a navigation of the main frame releases the page when a cross-site frame is stopped in the debugger.
+
+
+== Running test suite: SiteIsolation.Debugger.MainFrameNavigationWhileStopped
+-- Running test case: SiteIsolation.Debugger.MainFrameNavigationWhileStopped.CrossSiteFrameStopped
+PASS: Should find the frame target of the cross-site frame.
+PASS: The new document loaded.
+PASS: The new document's load listener should run.
+

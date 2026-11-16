@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test is designed to test the interaction between font-family and font-weight. In particular, our implementation of font-family accepts PostScript names, which may name a font with a particular weight. However, there is another CSS property, font-weight, in which the author may also name a particular weight. Our font selection algorithm takes both of these signals into account when choosing fonts.<br><br>There is currently no good way in JavaScript to find the actual font chosen for some text. Therefore, the best way to test this aspect of the font selection algorithm is to dump the render tree, therefore testing glyph advances (which are a property of font weight).
+<script>
+function generateElements(fontNames) {
+    ["normal", "italic"].forEach(function(fontStyle) {
+        fontNames.forEach(function(fontName) {
+            for (var fontWeight = 100; fontWeight < 1000; fontWeight += 100) {
+                var d = document.createElement("div");
+                d.style.fontFamily = fontName;
+                d.style.fontWeight = fontWeight;
+                d.style.fontStyle = fontStyle;
+                d.textContent = "Font: " + fontName + " Weight: " + fontWeight + " Style: " + fontStyle;
+                document.body.appendChild(d);
+            }
+        });
+    });
+}
+var helveticaFonts = ["Helvetica Neue", "HelveticaNeue-UltraLight", "HelveticaNeue-Light", "HelveticaNeue", "HelveticaNeue-Medium", "HelveticaNeue-Bold", "HelveticaNeue-UltraLightItalic", "HelveticaNeue-LightItalic", "HelveticaNeue-Italic", "HelveticaNeue-BoldItalic"];
+var avenirFonts = ["Avenir", "Avenir-Light", "Avenir-Book", "Avenir-Medium", "Avenir-Black", "Avenir-Heavy", "Avenir-LightOblique", "Avenir-BookOblique", "Avenir-MediumOblique", "Avenir-BlackOblique"];
+generateElements(helveticaFonts);
+generateElements(avenirFonts);
+</script>
+</body>
+</html>

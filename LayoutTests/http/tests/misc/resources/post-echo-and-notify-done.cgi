@@ -1,0 +1,14 @@
+#!/usr/bin/perl -w
+binmode STDIN;
+binmode STDOUT;
+
+print "Content-type: text/html\n\n"; 
+
+if ($ENV{'REQUEST_METHOD'} eq "POST") {
+    read(STDIN, $request, $ENV{'CONTENT_LENGTH'})
+                || die "Could not get query\n";
+    print $request;
+    print "<script>if (window.testRunner) testRunner.notifyDone();</script>";
+} else {
+    print "Wrong method: " . $ENV{'REQUEST_METHOD'} . "\n";
+} 

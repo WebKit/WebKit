@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+    .anchor { transform: translateZ(0); }
+</style>
+</head>
+<body>
+<!-- Plain rect between two composited anchors inside a <g transform="scale(2)">. Green must paint between red and blue in DOM order. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g transform="scale(2)">
+        <g class="anchor"><rect x="5" y="5" width="40" height="40" fill="red"/></g>
+        <rect x="25" y="25" width="40" height="40" fill="green"/>
+        <g class="anchor"><rect x="45" y="45" width="40" height="40" fill="blue"/></g>
+    </g>
+</svg>
+</body>
+</html>

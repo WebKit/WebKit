@@ -1,0 +1,21 @@
+
+PASS computedStyleMap serialization of width: calc-size(auto, size)
+PASS computedStyleMap serialization of width: calc-size(fit-content, size)
+PASS computedStyleMap serialization of height: calc-size(min-content, size * 2)
+FAIL computedStyleMap serialization of max-width: calc-size(max-content, size / 2) assert_equals: expected "calc-size(max-content, (0.5 * size))" but got "calc-size(max-content, 0.5 * size)"
+PASS computedStyleMap serialization of max-height: calc-size(fit-content, 30px + size / 2)
+PASS computedStyleMap serialization of width: calc-size(fit-content, 50% + size / 2)
+PASS computedStyleMap serialization of width: calc-size(any, 30px)
+PASS computedStyleMap serialization of width: calc-size(any, 25em)
+PASS computedStyleMap serialization of width: calc-size(any, 40%)
+PASS computedStyleMap serialization of width: calc-size(any, 50px + 30%)
+PASS computedStyleMap serialization of width: calc-size(any, min(30px, 2em))
+PASS computedStyleMap serialization of width: calc-size(10px, sign(size) * size)
+PASS computedStyleMap serialization of width: calc-size(30px, 25em)
+PASS computedStyleMap serialization of width: calc-size(calc-size(any, 30px), size)
+PASS computedStyleMap serialization of width: calc-size(calc-size(any, 30px), 25em)
+PASS computedStyleMap serialization of width: calc-size(calc-size(2in, 30px), 25em)
+PASS computedStyleMap serialization of width: calc-size(calc-size(min-content, 30px), 25em)
+PASS computedStyleMap serialization of width: calc-size(calc-size(min-content, size), size)
+PASS computedStyleMap serialization of width: calc-size(calc-size(fit-content, size * 2), size)
+

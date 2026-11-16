@@ -1,0 +1,12 @@
+Tests that a cross-site-initiated navigation of an iframe does not revoke the iframe's storage access while the navigation is still in flight. Storage access should only be revoked when the navigation commits.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Storage access was granted. document.cookie == firstPartyCookie=value
+Started a cross-site-initiated navigation of the iframe that stays in flight. The in-flight document should still have storage access because revocation only happens at commit.
+PASS The iframe retained storage access. document.cookie == firstPartyCookie=value
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,14 @@
+Ensures that we get exceptions when we do not include required arguments for localStorage methods.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS localStorage.key() threw exception TypeError: Not enough arguments.
+PASS localStorage.getItem() threw exception TypeError: Not enough arguments.
+PASS localStorage.setItem() threw exception TypeError: Not enough arguments.
+PASS localStorage.setItem("a") threw exception TypeError: Not enough arguments.
+PASS localStorage.removeItem() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

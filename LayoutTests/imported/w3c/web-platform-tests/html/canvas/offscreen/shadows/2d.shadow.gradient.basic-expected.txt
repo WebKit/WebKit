@@ -1,0 +1,7 @@
+2d.shadow.gradient.basic
+
+Shadows are drawn for gradient fills
+
+
+PASS Shadows are drawn for gradient fills
+

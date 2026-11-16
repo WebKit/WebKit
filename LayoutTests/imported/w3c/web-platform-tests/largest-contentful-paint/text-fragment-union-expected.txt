@@ -1,0 +1,4 @@
+This is a long text that wraps across several lines creating multiple layout fragments that must be unioned for correct LCP size calculation
+
+PASS Text fragment union: wrapped text LCP size reflects the union of all line boxes.
+

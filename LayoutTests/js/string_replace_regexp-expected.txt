@@ -1,0 +1,12 @@
+This will test string.replace with {n, m} regexp patterns.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "YY".replace(/Y{1,4}/g,"YYYY") is "YYYY"
+PASS "MM".replace(/M{1,2}/g,"M") is "M"
+PASS "YY".replace(/Y{1,4}/g,"MMMM") is "MMMM"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

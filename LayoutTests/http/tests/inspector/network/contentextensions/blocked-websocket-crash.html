@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/inspector-test.js"></script>
+<script>
+// Create a WebSocket before opening the inspector
+// url doesn't matter : it will be blocked by the content extension
+let ws = new WebSocket("ws://127.0.0.1");
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Network.BlockedRequests");
+    suite.addTestCase({
+        name: "Network.BlockedRequests.WebSocket",
+        description: "Ensure Web Inspector works even after a blocked WebSocket connection",
+        test(resolve, reject) {
+            InspectorTest.pass("Web Inspector initialized.");
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test opening inspector after a blocked WebSocket connection.</p>
+</body>
+</html>

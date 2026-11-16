@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<meta name="fuzzy" content="maxDifference=0-112; totalPixels=0-128">
+<body>
+<canvas id="canvas" width="200" height="200" content="drawable">
+    <!-- Offset so a composited child rendered directly on the page doesn't overlap the drawn snapshot. -->
+    <div id="box" drawable style="margin-left: 100px; width: 100px; height: 100px;">
+        <div style="width: 64px; height: 64px; background-color: green; will-change: transform;"></div>
+    </div>
+</canvas>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    const canvas = document.getElementById('canvas');
+    const box = document.getElementById('box');
+    const ctx = canvas.getContext('2d');
+
+    canvas.onpaint = () => {
+        ctx.reset();
+        ctx.drawElementImage(box, 0, 0);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+</script>
+</body>
+</html>

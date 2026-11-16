@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AnonymousBlockGenerationDisabled=true ] -->
+<meta charset="utf-8">
+<title>MathML token elements keep their anonymous block wrapper</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<math>
+  <mrow>
+    <mi id="mi">x</mi>
+    <mo id="mo">+</mo>
+    <mn id="mn">2</mn>
+    <mtext id="mtext">text</mtext>
+    <ms id="ms">string</ms>
+  </mrow>
+</math>
+
+<script>
+test(() => {
+    assert_true(!!document.getElementById("mi"), "the document is still alive");
+}, "a MathML token element with text content does not crash");
+
+for (const [id, text] of [["mi", "x"], ["mo", "+"], ["mn", "2"], ["mtext", "text"], ["ms", "string"]]) {
+    test(() => {
+        const element = document.getElementById(id);
+        assert_equals(element.textContent, text, "textContent");
+        assert_greater_than(element.getBoundingClientRect().width, 0, "the token element has a width");
+    }, `<${id}> lays out its text content`);
+}
+</script>

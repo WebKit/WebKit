@@ -1,0 +1,4 @@
+This tests that setting invalid header names, values and using an invalid method causes XMLHttpRequest to throw the appropriate exceptions.
+testInvalidMethod: SUCCESS
+testInvalidHeaderName: SUCCESS
+testInvalidHeaderValues: SUCCESS

@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>enumerateDevices truncates microphone/camera lists when permission is not granted</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+// MediaCapture-Main §"Device enumeration" — enumerateDevices algorithm,
+// device information exposure rules:
+//   https://w3c.github.io/mediacapture-main/#dom-mediadevices-enumeratedevices
+//   https://w3c.github.io/mediacapture-main/#microphone-information-can-be-exposed
+//
+// When the permission to access a device kind has not been granted, the
+// UA truncates that kind's device list returned by enumerateDevices() to
+// at most a single device. This prevents fingerprinting via device count
+// before the user grants permission. After permission is granted, the
+// full device list is returned with non-empty labels.
+//
+// To verify the truncation rule we need an environment with > 1 device
+// of each kind. The WebKit test runner ships multiple mock cameras and
+// microphones by default.
+
+async function countByKind(devices) {
+    return devices.reduce((acc, d) => {
+        acc[d.kind] = (acc[d.kind] || 0) + 1;
+        return acc;
+    }, {});
+}
+
+promise_test(async test => {
+    // Start fresh: no permissions yet.
+    if (window.testRunner) {
+        testRunner.resetUserMediaPermission();
+        testRunner.setMicrophonePermission(false);
+        testRunner.setCameraPermission(false);
+    }
+
+    // First, prove the test environment actually has > 1 device of each
+    // kind so the truncation rule has something to truncate. Grant both
+    // permissions briefly to observe the underlying device counts.
+    if (window.testRunner) {
+        testRunner.setMicrophonePermission(true);
+        testRunner.setCameraPermission(true);
+    }
+    const full = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => full.getTracks().forEach(t => t.stop()));
+    const fullDevices = await navigator.mediaDevices.enumerateDevices();
+    const fullCounts = await countByKind(fullDevices);
+    full.getTracks().forEach(t => t.stop());
+
+    // Sanity-precondition: the mock environment must expose > 1 microphone
+    // and > 1 camera, otherwise we can't tell whether truncation occurred.
+    assert_greater_than(fullCounts.audioinput || 0, 1,
+        "test precondition: mock environment exposes > 1 microphone");
+    assert_greater_than(fullCounts.videoinput || 0, 1,
+        "test precondition: mock environment exposes > 1 camera");
+}, "precondition: mock environment exposes multiple microphones and cameras");
+
+promise_test(async test => {
+    // When microphone info cannot be exposed (permission denied / prompt),
+    // the microphone list in enumerateDevices() is truncated to at most
+    // one entry.
+    if (window.testRunner) {
+        testRunner.resetUserMediaPermission();
+        testRunner.setMicrophonePermission(false);
+        testRunner.setCameraPermission(true);
+    }
+
+    // Need an active capture to expose ANY devices, per WebKit's existing
+    // privacy posture: use video so we trigger the enumeration path while
+    // microphone permission stays denied.
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const counts = await countByKind(devices);
+    assert_less_than_equal(counts.audioinput || 0, 1,
+        "microphone list is truncated to at most 1 entry when " +
+        "microphone permission is denied");
+}, "enumerateDevices truncates microphone list when microphone permission is denied");
+
+promise_test(async test => {
+    // Same rule applied to cameras.
+    if (window.testRunner) {
+        testRunner.resetUserMediaPermission();
+        testRunner.setMicrophonePermission(true);
+        testRunner.setCameraPermission(false);
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const counts = await countByKind(devices);
+    assert_less_than_equal(counts.videoinput || 0, 1,
+        "camera list is truncated to at most 1 entry when " +
+        "camera permission is denied");
+}, "enumerateDevices truncates camera list when camera permission is denied");
+
+promise_test(async test => {
+    // Sanity check: after both permissions are granted, the full device
+    // list is returned without truncation.
+    if (window.testRunner) {
+        testRunner.resetUserMediaPermission();
+        testRunner.setMicrophonePermission(true);
+        testRunner.setCameraPermission(true);
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const counts = await countByKind(devices);
+    assert_greater_than(counts.audioinput || 0, 1,
+        "microphone list is NOT truncated when permission is granted");
+    assert_greater_than(counts.videoinput || 0, 1,
+        "camera list is NOT truncated when permission is granted");
+}, "enumerateDevices returns full device lists when both permissions are granted");
+</script>
+</head>
+<body></body>
+</html>

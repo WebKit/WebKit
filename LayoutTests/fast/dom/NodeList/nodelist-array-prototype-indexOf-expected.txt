@@ -1,0 +1,11 @@
+
+PASS indexOf finds elements at correct index in static NodeList
+PASS indexOf returns -1 for node not in the list
+PASS indexOf returns -1 for non-Node values
+PASS indexOf returns -1 for undefined and null
+PASS indexOf respects fromIndex parameter
+PASS indexOf handles negative fromIndex
+PASS indexOf handles non-integer fromIndex
+PASS indexOf works on live ChildNodeList
+PASS indexOf returns -1 on empty NodeList
+

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<style>
+  body {
+    margin: 0;
+  }
+
+  .box {
+    width: 100px;
+    height: 100px;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .box { background-color: green; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .box { background-color: red; }
+  }
+</style>
+
+<div class="box"></div>

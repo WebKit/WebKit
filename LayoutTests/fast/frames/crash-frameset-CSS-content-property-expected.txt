@@ -1,0 +1,1 @@
+PASS, mouse event to <frameset> did not cause crash.

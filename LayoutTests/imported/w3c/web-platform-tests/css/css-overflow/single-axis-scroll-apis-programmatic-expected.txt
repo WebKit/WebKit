@@ -1,0 +1,6 @@
+
+FAIL LTR clipped X assert_equals: LTR clipped X: scrollTo ignores the clipped X-axis expected 0 but got 40
+FAIL RTL clipped X assert_equals: RTL clipped X: scrollTo ignores the clipped X-axis (negative in RTL) expected 0 but got -40
+FAIL LTR clipped Y assert_equals: LTR clipped Y: scrollTo ignores the clipped Y-axis expected 0 but got 50
+FAIL RTL clipped Y assert_equals: RTL clipped Y: scrollTo ignores the clipped Y-axis expected 0 but got 50
+

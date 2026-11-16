@@ -1,0 +1,30 @@
+<html>
+<body>
+
+    <video controls></video>
+    
+    <p>Test that setting currentTime changes the time, and that 'ended' event is fired in a reasonable amount of time</p>
+    
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+    waitForEvent('canplaythrough',  
+    function () { 
+        waitForEventAndEnd('ended');
+    
+        testExpected("video.currentTime", 0);
+        run("video.currentTime = video.duration - 0.2"); 
+    });
+
+    waitForEvent('seeked',
+    function () {
+        testExpected("video.currentTime.toFixed(2)", (video.duration - 0.2).toFixed(2));
+        run("video.play()"); 
+        consoleWrite("");
+    });
+
+    video.src = findMediaFile("video", "content/test");
+    </script>
+
+</body>
+</html>

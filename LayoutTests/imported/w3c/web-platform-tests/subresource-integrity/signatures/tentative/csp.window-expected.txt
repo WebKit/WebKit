@@ -1,0 +1,16 @@
+
+PASS `<script>`: No signature, no integrity check: blocked.
+PASS `<script>`: No signature, malformed integrity check: blocked.
+PASS `<script>`: No signature, integrity check: blocked.
+PASS `<script>`: Valid signature, no integrity check: blocked.
+PASS `<script>`: Valid signature, malformed integrity check: blocked.
+FAIL `<script>`: Valid signature, valid integrity check: loads. assert_unreached: Script should not fail. Reached unreachable code
+PASS `<script>`: Valid signature, one matching and one mismatched integrity check: blocked.
+PASS `<script>`: Valid signature, mismatched integrity check: blocked.
+PASS `<script>`: Valid signatures, no integrity check: blocked.
+PASS `<script>`: Valid signatures, malformed integrity check: blocked.
+FAIL `<script>`: Valid signatures, integrity check matches one: loads. assert_unreached: Script should not fail. Reached unreachable code
+PASS `<script>`: Valid signatures, integrity check matches the other: blocked.
+PASS `<script>`: Valid signatures, integrity check matches both, but only one in CSP: blocked.
+PASS `<script>`: Valid signatures, integrity check matches neither: blocked.
+

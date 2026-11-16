@@ -1,0 +1,23 @@
+<div style="position: relative;">
+    <div style="width: 100px; height: 100px; background-color: red;"></div>
+    <div style="visibility: hidden; position: absolute; top: 0;">
+        <div id="inner" style="width: 100px; height: 100px; background-color: green;"></div>
+    </div>
+</div>
+<script>
+    function test()
+    {
+        document.getElementById("inner").style.visibility = "visible";
+    }
+    
+    onload = async () => {
+        if (window.testRunner) {
+            document.body.offsetTop;
+            testRunner.waitUntilDone();
+            await testRunner.displayAndTrackRepaints();
+            test();
+            testRunner.notifyDone();
+        } else
+            setTimeout(test, 0);
+    }
+</script>

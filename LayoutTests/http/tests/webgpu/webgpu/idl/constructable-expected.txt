@@ -1,0 +1,10 @@
+
+PASS :gpu_errors:errorType="GPUInternalError"
+PASS :gpu_errors:errorType="GPUOutOfMemoryError"
+PASS :gpu_errors:errorType="GPUValidationError"
+PASS :pipeline_errors:msg="_undef_";options={"reason":"validation"}
+PASS :pipeline_errors:msg="_undef_";options={"reason":"internal"}
+PASS :pipeline_errors:msg="some%20msg";options={"reason":"validation"}
+PASS :pipeline_errors:msg="some%20msg";options={"reason":"internal"}
+PASS :uncaptured_error_event:
+

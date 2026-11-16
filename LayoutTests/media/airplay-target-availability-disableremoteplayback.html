@@ -1,0 +1,134 @@
+<html>
+<head>
+    <script src='media-file.js'></script>
+    <script src='video-test.js'></script>
+    <script>
+    window.addEventListener('load', async event => {
+        await runTest().then(endTest).catch(failTest);
+    });
+
+    function waitForTargetAvailableToBecome(element, state, duration, message) {
+        return new Promise(async (resolve, reject) => {
+            var timeout;
+            var listener;
+
+            let cleanup = () => {
+                clearTimeout(timeout);
+                element.removeEventListener('webkitplaybacktargetavailabilitychanged', listener);
+            };
+
+            listener = event => {
+                if (event.availability !== state)
+                    return;
+                consoleWrite(`EVENT(${event.type})`);
+                resolve(event);
+                cleanup();
+            };
+            element.addEventListener('webkitplaybacktargetavailabilitychanged', listener);
+
+            timeout = setTimeout(() => {
+                reject(new Error(message));
+                cleanup();
+            }, duration);
+        });
+    }
+
+    async function runTest() {
+        const tenSeconds = 10000;
+        let tests = [
+            async function() {
+                consoleWrite('Test that a webkitplaybacktargetavailabilitychanged is not fired when adding an event listener to a media element with disableRemotePlayback set');
+
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
+
+                run(`video = document.body.appendChild(document.createElement('video'))`);
+                run(`video.disableRemotePlayback = true`);
+
+                await shouldReject(waitForEventWithTimeout(video, 'webkitplaybacktargetavailabilitychanged', 100));
+                logResult(Success, 'Correctly failed to receive targetavailabilitychanged event')
+            },
+            async function() {
+                consoleWrite('Test that a webkitplaybacktargetavailabilitychanged is fired when setting disableRemotePlayback on an element with an event listener');
+
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
+
+                run(`video = document.body.appendChild(document.createElement('video'))`);
+
+                event = await waitForTargetAvailableToBecome(video, 'available', tenSeconds, 'Failed to receive targetavailabilitychanged event');
+                testExpected('event.availability', 'available');
+
+                let eventPromise = waitForTargetAvailableToBecome(video, 'not-available', tenSeconds, 'Failed to receive targetavailabilitychanged event');
+                run(`video.disableRemotePlayback = true`);
+
+                event = await eventPromise;
+                testExpected('event.availability', 'not-available');
+            },
+            async function() {
+                consoleWrite('Test that a webkitplaybacktargetavailabilitychanged is fired when clearing disableRemotePlayback on an element with an event listener');
+
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
+
+                run(`video = document.body.appendChild(document.createElement('video'))`);
+                run(`video.disableRemotePlayback = true`);
+
+                await shouldReject(waitForEventWithTimeout(video, 'webkitplaybacktargetavailabilitychanged', tenSeconds));
+                logResult(Success, 'Correctly failed to receive targetavailabilitychanged event')
+
+                let eventPromise = waitForTargetAvailableToBecome(video, 'available', tenSeconds, 'Failed to receive targetavailabilitychanged event');
+                run(`video.disableRemotePlayback = false`);
+
+                event = await eventPromise;
+                testExpected('event.availability', 'available');
+            },
+            async function() {
+                consoleWrite('Test that a webkitplaybacktargetavailabilitychanged is not received when setting disableRemotePlayback, when no targets were previously available');
+
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceUnavailable');
+
+                run(`video = document.body.appendChild(document.createElement('video'))`);
+
+                event = await waitForTargetAvailableToBecome(video, 'not-available', tenSeconds);
+                testExpected('event.availability', 'not-available');
+
+                run(`video.disableRemotePlayback = true`);
+
+                await shouldReject(waitForEventWithTimeout(video, 'webkitplaybacktargetavailabilitychanged', tenSeconds));
+                logResult(Success, 'Correctly failed to receive targetavailabilitychanged event')
+            },
+        ];
+
+        if (window.internals)
+            internals.setMockMediaPlaybackTargetPickerEnabled(true);
+
+        for (var test of tests) {
+            try {
+                await test();
+                logResult(Success, 'Test completed');
+            } catch(e) {
+                logResult(Failed, `ERROR: ${e.message}`);
+            } finally {
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceUnavailable');
+                video.src = '';
+                video.load();
+                document.body.removeChild(video);
+                consoleWrite('');
+            }
+        }
+
+        if (window.internals) {
+            internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceUnavailable');
+            internals.setMockMediaPlaybackTargetPickerEnabled(false);
+        }
+    }
+
+    </script>
+</head>
+
+<body>
+</body>
+</html>

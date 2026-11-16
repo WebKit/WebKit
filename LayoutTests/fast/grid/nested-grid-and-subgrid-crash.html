@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<style>
+  #outergrid, #grid, #subgrid { display: grid;}
+  #subgrid { grid-template-columns: subgrid;}
+  #griditem { writing-mode: vertical-lr; }
+</style>
+<div id="outergrid">
+  <div id="grid">
+    <div id="subgrid">
+      <div id="griditem"></div>
+    </div>
+  </div>
+</div>
+<div>PASS if no crash.</div>
+<script>
+  window.testRunner?.dumpAsText();
+</script>

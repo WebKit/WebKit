@@ -1,0 +1,49 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content"><p id="paragraph">plain<span style="color: red;">red</span><span style="background-color: yellow;">back</span>tail</p></div>
+
+<script>
+var output = "This test ensures AXStyleTextMarkerRangeForTextMarker splits an intra-paragraph style range on text color and on background color, and that two identically styled runs separated by differently styled ones stay separate ranges.\n\n";
+
+function styleRangeAt(marker)
+{
+    return webArea.stringForTextMarkerRange(webArea.styleTextMarkerRangeForTextMarker(marker));
+}
+
+function characterAt(marker)
+{
+    return webArea.stringForTextMarkerRange(webArea.textMarkerRangeForMarkers(marker, webArea.nextTextMarker(marker)));
+}
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+
+    var markers = [webArea.startTextMarkerForTextMarkerRange(webArea.textMarkerRangeForElement(paragraph))];
+    for (var i = 0; i < 16; i++)
+        markers.push(webArea.nextTextMarker(markers[i]));
+
+    var inPlain = markers[2];
+    var inRed = markers[6];
+    var inBack = markers[9];
+    var inTail = markers[13];
+
+    output += expect("characterAt(inRed)", "'e'");
+    output += expect("styleRangeAt(inRed)", "'red'");
+    output += expect("styleRangeAt(inBack)", "'back'");
+    output += expect("styleRangeAt(inPlain)", "'plain'");
+    output += expect("styleRangeAt(inTail)", "'tail'");
+
+    document.getElementById("content").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

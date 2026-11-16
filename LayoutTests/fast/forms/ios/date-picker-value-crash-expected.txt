@@ -1,0 +1,21 @@
+This test verifies that invoking a date picker for an input with a value outside or at the limit of the user-selectable range does not cause a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Date picker invocation did not crash for value 0001-01-01
+PASS Date picker invocation did not crash for value 10000-12-31
+PASS Date picker invocation did not crash for value 20000-12-31
+PASS Date picker invocation did not crash for value 0001-01
+PASS Date picker invocation did not crash for value 10000-12
+PASS Date picker invocation did not crash for value 20000-12
+PASS Date picker invocation did not crash for value 0001-01-01T00:00
+PASS Date picker invocation did not crash for value 10000-12-31T23:59
+PASS Date picker invocation did not crash for value 20000-12-31T00:00
+PASS Date picker invocation did not crash for value 0001-W01
+PASS Date picker invocation did not crash for value 10000-W52
+PASS Date picker invocation did not crash for value 20000-W52
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

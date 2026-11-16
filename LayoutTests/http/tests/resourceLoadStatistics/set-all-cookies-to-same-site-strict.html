@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/cookies/resources/cookie-utilities.js"></script>
+</head>
+<body onload="setTimeout('run()', 0)">
+<div id="description">Tests setting all of a site's cookies to SameSite=strict.</div>
+<br>
+<div id="output"></div>
+<br>
+<script>
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    function sortStringArray(a, b) {
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+
+        return a > b ? 1 : b > a ? -1 : 0;
+    }
+
+    function addLinebreakToOutput() {
+        let element = document.createElement("br");
+        output.appendChild(element);
+    }
+
+    function addOutput(message) {
+        let element = document.createElement("div");
+        element.innerText = message;
+        output.appendChild(element);
+    }
+
+    function stringifyCookieProperties(cookie, isBefore) {
+        let cookieString = "'" + cookie.name + (isBefore ? "' 1 Before Change --" : "' 2 After Change ---");
+        if (cookie.domain)
+            cookieString += " domain: '" + cookie.domain + "'";
+        if (cookie.path)
+            cookieString += " path: '" + cookie.path + "'";
+        if (cookie.expires)
+            cookieString += " expiry set";
+        if (cookie.isHttpOnly)
+            cookieString += " isHttpOnly: '" + cookie.isHttpOnly + "'";
+        if (cookie.isSecure)
+            cookieString += " isSecure: '" + cookie.isSecure + "'";
+        if (cookie.isSession)
+            cookieString += " isSession: '" + cookie.isSession + "'";
+        if (cookie.isSameSiteNone)
+            cookieString += " isSameSiteNone: '" + cookie.isSameSiteNone + "'";
+        if (cookie.isSameSiteLax)
+            cookieString += " isSameSiteLax: '" + cookie.isSameSiteLax + "'";
+        if (cookie.isSameSiteStrict)
+            cookieString += " isSameSiteStrict: '" + cookie.isSameSiteStrict + "'";
+        return cookieString;
+    }
+
+    let cookiesBeforeChange;
+    let cookiesAfterChange;
+
+    function checkCookies() {
+        if (!cookiesBeforeChange.length) {
+            addOutput("FAIL: No cookies found before change.");
+            testRunner.notifyDone();
+            return;
+        }
+
+        if (!cookiesBeforeChange.length || !cookiesAfterChange.length) {
+            addOutput("FAIL: No cookies found after change.");
+            testRunner.notifyDone();
+            return;
+        }
+
+        if (cookiesBeforeChange.length !== cookiesAfterChange.length) {
+            addOutput("FAIL: Not the same amount of cookies before and after change.");
+            testRunner.notifyDone();
+            return;
+        }
+
+        let unsortedTestPassedMessages = [];
+        for (let i = 0; i < cookiesBeforeChange.length; ++i) {
+            unsortedTestPassedMessages.push(stringifyCookieProperties(cookiesBeforeChange[i], true));
+            unsortedTestPassedMessages.push(stringifyCookieProperties(cookiesAfterChange[i], false));
+        }
+
+        let sortedTestPassedMessages = unsortedTestPassedMessages.sort(sortStringArray);
+        let row = 1;
+        for (let testPassedMessage of sortedTestPassedMessages) {
+            addOutput(testPassedMessage);
+            if (row % 2 === 0)
+                addLinebreakToOutput();
+            ++row;
+        }
+    }
+
+    function run() {
+        fetch("resources/set-all-kinds-of-cookies.py?dummy=" + Math.random())
+            .then(() => {
+                document.cookie = "clientSideCookie=1";
+                cookiesBeforeChange = internals.getCookies();
+                testRunner.statisticsSetToSameSiteStrictCookies("http://127.0.0.1:8000", function () {
+                    cookiesAfterChange = internals.getCookies();
+                    checkCookies();
+                    testRunner.notifyDone();
+                });
+            })
+    }
+</script>
+</body>
+</html>

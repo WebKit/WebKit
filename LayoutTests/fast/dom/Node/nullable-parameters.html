@@ -1,0 +1,28 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests the behavior of a few Node API parameters that should be nullable");
+
+var element = document.createElement("test");
+element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:c", "undefined");
+shouldBeEqualToString("element.lookupPrefix('undefined')", "c");
+shouldBeNull("element.lookupPrefix(null)");
+shouldBeNull("element.lookupPrefix(undefined)");
+
+debug("");
+element = document.createElement("test");
+element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:undefined", "test");
+shouldBeEqualToString("element.lookupNamespaceURI('undefined')", "test");
+shouldBeEqualToString("element.lookupNamespaceURI(null)", "http://www.w3.org/1999/xhtml");
+shouldBeEqualToString("element.lookupNamespaceURI(undefined)", "http://www.w3.org/1999/xhtml");
+
+debug("");
+var element = document.createElementNS("undefined", "test");
+shouldBeTrue("element.isDefaultNamespace('undefined')");
+shouldBeFalse("element.isDefaultNamespace(undefined)");
+
+element = document.createElementNS("null", "test");
+shouldBeTrue("element.isDefaultNamespace('null')");
+shouldBeFalse("element.isDefaultNamespace(null)");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+  <div id="container" style="position: absolute; width: 200px; height: 200px;">
+    <div id="visible" style="background: green; visibility:visible; width: 100px; height: 100px; mix-blend-mode: plus-lighter; position:relative"></div>
+    <div style="visibility: hidden; position: relative;" id="hidden-container">
+      <div id="hidden" style="background: blue; visibility:hidden; width: 100px; height: 100px; position:relative"></div>
+    </div>
+  </div>
+
+</body>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+window.onload = async () => {
+    await new Promise(requestAnimationFrame);
+    
+    document.getElementById("hidden").style.visibility = "visible";
+    
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</html>

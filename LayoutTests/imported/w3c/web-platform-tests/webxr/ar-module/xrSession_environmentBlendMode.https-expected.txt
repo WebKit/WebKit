@@ -1,0 +1,6 @@
+
+PASS Tests environmentBlendMode for an AR device - webgl
+PASS Tests environmentBlendMode for an AR device - webgl2
+PASS Tests environmentBlendMode for a VR device - webgl
+PASS Tests environmentBlendMode for a VR device - webgl2
+

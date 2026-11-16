@@ -1,0 +1,4 @@
+
+FAIL Ensure framebuffer scaling works as expected. - webgl assert_approx_equals: expected NaN +/- 0.001 but got 1
+FAIL Ensure framebuffer scaling works as expected. - webgl2 assert_approx_equals: expected NaN +/- 0.001 but got 1
+

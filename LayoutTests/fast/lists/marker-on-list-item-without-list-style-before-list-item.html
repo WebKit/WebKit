@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<style>
+li { list-style: none; }
+li::before { display: list-item; list-style: "X " inside; content: ""; }
+</style>
+<ul>
+  <li>list-style on a ::before list item still generates a marker</li>
+</ul>

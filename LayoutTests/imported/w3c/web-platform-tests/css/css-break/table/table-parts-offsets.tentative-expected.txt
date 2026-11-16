@@ -1,0 +1,19 @@
+
+FAIL table assert_equals: offsetWidth expected 584 but got 184
+FAIL colgroup assert_equals: offsetTop expected 18 but got 11
+FAIL col assert_equals: offsetTop expected 18 but got 11
+FAIL col2 assert_equals: offsetTop expected 18 but got 11
+FAIL colgroup2 assert_equals: offsetTop expected 18 but got 11
+FAIL col3 assert_equals: offsetTop expected 18 but got 11
+FAIL rowgroup assert_equals: offsetTop expected 18 but got 11
+FAIL row assert_equals: offsetLeft expected 18 but got 11
+FAIL cell assert_equals: offsetWidth expected 250 but got 50
+FAIL content assert_equals: offsetWidth expected 250 but got 50
+FAIL cell2 assert_equals: offsetWidth expected 250 but got 50
+FAIL content2 assert_equals: offsetWidth expected 250 but got 50
+FAIL cell3 assert_equals: offsetWidth expected 250 but got 50
+FAIL content3 assert_equals: offsetWidth expected 250 but got 50
+FAIL row2 assert_equals: offsetLeft expected 218 but got 211
+FAIL cell4 assert_equals: offsetWidth expected 250 but got 50
+FAIL content4 assert_equals: offsetWidth expected 250 but got 50
+

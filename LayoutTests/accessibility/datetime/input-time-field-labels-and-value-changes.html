@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="time" id="time" value="15:45" />
+
+<script>
+var output = "Tests that field values update correctly for time inputs.\n\n";
+
+function keyDown(key, repeat = 1) {
+    for (let i = 0; i < repeat; i++)
+        eventSender.keyDown(key);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    const timeInput = document.getElementById("time");
+    var axTimeInput = accessibilityController.accessibleElementById("time");
+
+    output+= "Original time value:\n";
+    output += expect("axTimeInput.stringValue.includes('3:45')", "true");
+    output += expect("axTimeInput.stringValue.includes('PM')", "true");
+
+    setTimeout(async () => {
+        output += "Focus input element and press up arrow to increment the hour field:\n";
+        timeInput.focus();
+        keyDown("upArrow");
+        output += await expectAsync("axTimeInput.stringValue.includes('4:45')", "true");
+
+        output += "Press down arrow twice to decrement the hour field.\n";
+        keyDown("downArrow", 2);
+        output += await expectAsync("axTimeInput.stringValue.includes('2:45')", "true");
+
+        output += "Press the tab key to move to the minutes field.\n";
+        keyDown("\t");
+        output += "Type 10 in the minutesfield.\n";
+        keyDown("1");
+        keyDown("0")
+        output += await expectAsync("axTimeInput.stringValue.includes('2:10')", "true");
+
+        output += "Press down arrow to decrement the minutes field.\n";
+        keyDown("downArrow");
+        output += await expectAsync("axTimeInput.stringValue.includes('2:09')", "true");
+
+        output += "Press up arrow twice to increment the minutes field.\n";
+        keyDown("upArrow", 2);
+        output += await expectAsync("axTimeInput.stringValue.includes('2:11')", "true");
+
+        output += "Press right arrow to move to the meridiem field.\n";
+        keyDown("rightArrow");
+
+        output += "Press down arrow to change from PM to AM.\n";
+        keyDown("downArrow");
+        output += await expectAsync("axTimeInput.stringValue.includes('AM')", "true");
+
+        output += "Press up arrow to change from AM to PM.\n";
+        keyDown("upArrow");
+        output += await expectAsync("axTimeInput.stringValue.includes('PM')", "true");
+
+        output += "Set the time via JavaScript.\n";
+        timeInput.value = "17:00";
+        output += await expectAsync("axTimeInput.stringValue.includes('5:00')", "true");
+        output += await expectAsync("axTimeInput.stringValue.includes('PM')", "true");
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

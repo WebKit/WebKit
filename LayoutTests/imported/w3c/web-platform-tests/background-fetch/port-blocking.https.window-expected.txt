@@ -1,0 +1,8 @@
+
+PASS fetch to default https port should register ok
+PASS fetch to default http port should register ok
+PASS fetch to port 443 should register ok
+PASS fetch to port 80 should register ok, even over https
+PASS fetch to non-default non-bad port (8080) should register ok
+PASS fetch to bad port (SMTP) should reject
+

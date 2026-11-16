@@ -1,0 +1,104 @@
+diagnostic(off, derivative_uniformity);
+diagnostic(off, chromium.unreachable_code);
+enable f16;
+struct FSOut {
+  @location(0) sk_FragColor: vec4<f16>,
+};
+struct _GlobalUniforms {
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
+};
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
+fn switch_with_continue_in_loop_bi(x: i32) -> bool {
+  {
+    var val: i32 = 0;
+    switch x {
+      case 1, default {
+        var _skTemp0: bool = false;
+        if x == 1 {
+          {
+            var i: i32 = 0;
+            for (; i < 10; i = i + i32(1)) {
+              {
+                val = val + i32(1);
+                continue;
+              }
+            }
+          }
+        }
+        val = val + i32(1);
+      }
+    }
+    return val == 11;
+  }
+}
+fn loop_with_break_in_switch_bi(x: i32) -> bool {
+  {
+    var val: i32 = 0;
+    {
+      var i: i32 = 0;
+      for (; i < 10; i = i + i32(1)) {
+        {
+          switch x {
+            case 1 {
+              val = val + i32(1);
+              break;
+            }
+            case default {
+              return false;
+            }
+          }
+          val = val + i32(1);
+        }
+      }
+    }
+    return val == 20;
+  }
+}
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
+  {
+    let x: i32 = i32(_globalUniforms.colorGreen.y);
+    var _0_val: i32 = 0;
+    switch x {
+      case 1, default {
+        var _skTemp1: bool = false;
+        if x == 1 {
+          {
+            var _1_i: i32 = 0;
+            for (; _1_i < 10; _1_i = _1_i + i32(1)) {
+              {
+                _0_val = _0_val + i32(1);
+                break;
+              }
+            }
+          }
+        }
+        _0_val = _0_val + i32(1);
+      }
+    }
+    var _skTemp2: vec4<f16>;
+    var _skTemp3: bool;
+    var _skTemp4: bool;
+    if _0_val == 2 {
+      _skTemp4 = switch_with_continue_in_loop_bi(x);
+    } else {
+      _skTemp4 = false;
+    }
+    if _skTemp4 {
+      _skTemp3 = loop_with_break_in_switch_bi(x);
+    } else {
+      _skTemp3 = false;
+    }
+    if _skTemp3 {
+      _skTemp2 = _globalUniforms.colorGreen;
+    } else {
+      _skTemp2 = _globalUniforms.colorRed;
+    }
+    return _skTemp2;
+  }
+}
+@fragment fn main() -> FSOut {
+  var _stageOut: FSOut;
+  _stageOut.sk_FragColor = _skslMain(/*fragcoord*/ vec2<f32>());
+  return _stageOut;
+}

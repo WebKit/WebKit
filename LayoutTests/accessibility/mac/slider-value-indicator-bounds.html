@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="range" id="slider" min="0" max="100" value="0" style="width: 300px;">
+
+<script>
+var output = "This test ensures the value indicator of a slider reports the thumb's own box, and that the box tracks the slider's value.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var slider = document.getElementById("slider");
+
+    function sliderElement() {
+        return accessibilityController.accessibleElementById("slider");
+    }
+
+    function indicator() {
+        return sliderElement().childAtIndex(0);
+    }
+
+    function indicatorWidth() {
+        return indicator().width;
+    }
+
+    function indicatorHeight() {
+        return indicator().height;
+    }
+
+    function sliderWidth() {
+        return sliderElement().width;
+    }
+
+    // Measured against the slider, not in absolute coordinates: the page's screen position is
+    // published a frame or two after load, so only the offset between the two boxes is stable.
+    function indicatorOffsetInSlider() {
+        var sliderAXObject = sliderElement();
+        return sliderAXObject.childAtIndex(0).x - sliderAXObject.x;
+    }
+
+    setTimeout(async function() {
+        // The rest only means anything if the first child really is the thumb.
+        output += expect("indicator().role", "'AXRole: AXValueIndicator'");
+
+        output += "\nThe indicator reports the thumb's box, which is a real box narrower than the slider.\n";
+        output += expect("indicatorWidth() > 0", "true");
+        output += expect("indicatorHeight() > 0", "true");
+        output += expect("sliderWidth() > indicatorWidth()", "true");
+
+        output += "\nAt the minimum value the thumb sits in the left half of the slider.\n";
+        output += await expectAsync("indicatorOffsetInSlider() < sliderWidth() / 2", "true");
+
+        slider.value = 100;
+
+        output += "\nAt the maximum value it sits in the right half, still within the slider.\n";
+        output += await expectAsync("indicatorOffsetInSlider() > sliderWidth() / 2", "true");
+        output += expect("indicatorOffsetInSlider() + indicatorWidth() <= sliderWidth()", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

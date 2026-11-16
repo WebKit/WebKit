@@ -1,0 +1,11 @@
+Test that we unconditionally allow copying from uneditable elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result.value is "foo"
+PASS doneWithPaste became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Copy foo Paste

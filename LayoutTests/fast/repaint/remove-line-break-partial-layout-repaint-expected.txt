@@ -1,0 +1,8 @@
+first
+aabb
+line
+last
+PASS: The last line moved up.
+PASS: The old last line was repainted.
+PASS: The new last line was repainted.
+PASS: The line before the damage was not repainted.

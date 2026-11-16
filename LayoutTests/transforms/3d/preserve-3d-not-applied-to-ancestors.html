@@ -1,0 +1,29 @@
+<!doctype HTML>
+<script src="../../resources/js-test-pre.js"></script>
+
+<style>
+  div {
+    width: 200px;
+    height: 200px;
+  }
+  .parent {
+    transform: rotateY(45deg)
+  }
+
+  .child {
+    transform-style: preserve-3d;
+    transform: rotateY(45deg);
+    background: lightblue
+  }
+</style>
+
+<div class="parent">
+  <div id=child class="child"></div>
+</div>
+
+<script>
+  shouldBe("child.getBoundingClientRect().width", "100");
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+

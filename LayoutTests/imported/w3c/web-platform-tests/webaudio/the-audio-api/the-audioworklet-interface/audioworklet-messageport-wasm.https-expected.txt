@@ -1,0 +1,4 @@
+
+PASS AudioWorkletGlobalScope: global port can exchange a WebAssembly.Module
+PASS AudioWorkletProcessor: processor port can exchange a WebAssembly.Module
+

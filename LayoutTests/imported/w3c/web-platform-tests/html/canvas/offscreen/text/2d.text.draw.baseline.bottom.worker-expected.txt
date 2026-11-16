@@ -1,0 +1,3 @@
+
+PASS textBaseline bottom is the bottom of the em square (not the bounding box)
+

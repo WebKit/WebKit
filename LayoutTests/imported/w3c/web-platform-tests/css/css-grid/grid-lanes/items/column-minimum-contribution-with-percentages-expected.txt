@@ -1,0 +1,10 @@
+
+PASS auto - columns
+PASS min - columns
+PASS max - columns
+PASS size - columns
+PASS min max - columns
+PASS min size - columns
+PASS max size - columns
+PASS min max size - columns
+

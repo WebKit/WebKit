@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+      height: 100px;
+      width: 100px;
+    }
+
+    .hidden {
+      visibility: hidden;
+    }
+
+    .container {
+      margin: 10px;
+      padding: 20px;
+      position: relative;
+    }
+
+    .container.hidden {
+      outline: 4px solid red;
+    }
+
+    .composited {
+      transform: translateZ(0);
+    }
+
+  </style>
+  <script>
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    async function doTest()
+    {
+      var initialLayers;
+      if (window.testRunner)
+        initialLayers = internals.elementRenderTreeAsText(document.documentElement);
+
+      await new Promise(resolve => requestAnimationFrame(resolve));
+
+      var firstImage = document.querySelectorAll('img')[0];
+      firstImage.classList.add("composited");
+
+      var secondImage = document.querySelectorAll('img')[1];
+      secondImage.classList.add("composited");
+
+      if (window.testRunner) {
+          document.getElementById('layers2').innerText = internals.elementRenderTreeAsText(document.documentElement);
+          document.getElementById('layers1').innerText = initialLayers;
+          testRunner.notifyDone();
+      }
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+    <!-- Tests dynamic changes of compositing inside visibility:hidden, using directly composited images. -->
+    <div class="container"><img src="../resources/thiswayup.png" class="hidden box"></div>
+    <div class="hidden container"><img src="../resources/thiswayup.png" class="box"></div>
+
+<h2>Initial</h2>
+<pre id="layers1"></pre>
+
+<h2>After step 1</h2>
+<pre id="layers2"></pre>
+
+</body>
+</html>

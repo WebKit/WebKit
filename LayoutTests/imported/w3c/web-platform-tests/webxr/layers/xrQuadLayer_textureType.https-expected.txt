@@ -1,0 +1,6 @@
+
+PASS createQuadLayer with textureType 'texture-array' requires WebGL2 and keeps stereo as stereo - webgl
+PASS createQuadLayer with textureType 'texture-array' requires WebGL2 and keeps stereo as stereo - webgl2
+PASS createQuadLayer with the default textureType resolves stereo to a concrete stereo packing - webgl
+PASS createQuadLayer with the default textureType resolves stereo to a concrete stereo packing - webgl2
+

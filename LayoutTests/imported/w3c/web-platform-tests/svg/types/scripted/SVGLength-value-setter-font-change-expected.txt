@@ -1,0 +1,8 @@
+
+PASS SVGLength, setting value uses up-to-date style, em
+PASS SVGLength, setting value uses up-to-date style, ex
+PASS SVGLength, setting value uses up-to-date style, ch
+PASS SVGLength, setting value uses up-to-date style, lh
+PASS SVGLength, setting value uses up-to-date style, rem
+PASS SVGLength, setting value uses up-to-date style, rlh
+

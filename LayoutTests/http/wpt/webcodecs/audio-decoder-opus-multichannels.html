@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+    <title>AudioDecoder decodes opus with more than 2 channels</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// 5.1 opus (channel mapping family 1), one 20ms packet per ogg page.
+const OPUS_5_1_DATA = {
+    src: 'resources/sfx-opus-5.1.ogg',
+    config: {
+        codec: 'opus',
+        sampleRate: 48000,
+        numberOfChannels: 6,
+        description: { offset: 28, size: 27 },
+    },
+    chunks: [
+        { offset: 159, size: 660 }, { offset: 849, size: 693 },
+        { offset: 1572, size: 692 }, { offset: 2294, size: 690 },
+        { offset: 3014, size: 714 }, { offset: 3758, size: 741 },
+        { offset: 4529, size: 732 }, { offset: 5291, size: 717 },
+        { offset: 6038, size: 708 }, { offset: 6776, size: 723 },
+        { offset: 7530, size: 928 }
+    ],
+    duration: 20000
+};
+
+function view(buffer, { offset, size })
+{
+    return new Uint8Array(buffer, offset, size);
+}
+
+let CONFIG = null;
+let CHUNKS = null;
+promise_setup(async () => {
+    const buf = await (await fetch(OPUS_5_1_DATA.src)).arrayBuffer();
+    CONFIG = { ...OPUS_5_1_DATA.config, description: view(buf, OPUS_5_1_DATA.config.description) };
+    CHUNKS = OPUS_5_1_DATA.chunks.map((chunk, i) => new EncodedAudioChunk({
+        type: 'key',
+        timestamp: i * OPUS_5_1_DATA.duration,
+        duration: OPUS_5_1_DATA.duration,
+        data: view(buf, chunk)
+    }));
+});
+
+promise_test(async () => {
+    const support = await AudioDecoder.isConfigSupported(CONFIG);
+    assert_true(support.supported);
+}, 'Opus with 6 channels and a description is supported');
+
+promise_test(async () => {
+    const outputs = [];
+    let error;
+    const decoder = new AudioDecoder({
+        output: audioData => {
+            outputs.push({ numberOfChannels: audioData.numberOfChannels, sampleRate: audioData.sampleRate });
+            audioData.close();
+        },
+        error: e => error = e
+    });
+    decoder.configure(CONFIG);
+    CHUNKS.forEach(chunk => decoder.decode(chunk));
+    await decoder.flush();
+    decoder.close();
+
+    assert_equals(error, undefined, 'decoding succeeds');
+    assert_equals(outputs.length, CHUNKS.length, 'outputs');
+    outputs.forEach((output, i) => {
+        assert_equals(output.numberOfChannels, 6, `output ${i} numberOfChannels`);
+        assert_equals(output.sampleRate, 48000, `output ${i} sampleRate`);
+    });
+}, 'Decoding opus with 6 channels');
+</script>
+</body>
+</html>

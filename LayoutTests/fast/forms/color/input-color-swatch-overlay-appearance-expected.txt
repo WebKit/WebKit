@@ -1,0 +1,11 @@
+Test that the used appearance for the swatch overlay is 'none' when the swatch uses `appearance: none` by comparing styles.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The style of an swatch overlay with appearance forced to `none` is the same as the style of an overlay whose swatch has style `appearance: none`.
+PASS The non-appearance-related styles were the same for both overlays.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

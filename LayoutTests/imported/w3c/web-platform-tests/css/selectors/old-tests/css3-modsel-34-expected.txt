@@ -1,0 +1,7 @@
+This div contains 3 addresses:
+A first address that should have a green background
+A second address with normal background
+A third address with normal background
+
+PASS :first-of-type
+

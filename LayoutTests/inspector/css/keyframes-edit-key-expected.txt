@@ -1,0 +1,38 @@
+
+== Running test suite: CSS.Keyframes
+-- Running test case: CSS.Keyframes.EditKeyTextRestylesAnimation
+PASS: First keyframe key is `0%`.
+PASS: Keyframe key is editable.
+PASS: Second keyframe key persisted as `0%`.
+PASS: Moving the `100%` key to `0%` restyles the paused animation to opacity 0.8.
+PASS: Editing the key should preserve the following rule's declaration.
+PASS: Editing the key should not associate a sibling rule with the selected element.
+PASS: The replacement key must replace the original source range rather than append to it.
+PASS: Reparsing the edited source should retain both keyframe rules.
+
+-- Running test case: CSS.Keyframes.InvalidKeyTextPreservesRule
+Setting key to "bad".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+Setting key to "-1%".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+Setting key to "101%".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+Setting key to "0%, bad".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+Setting key to "0% trailing".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+Setting key to "0% {} 100%".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+

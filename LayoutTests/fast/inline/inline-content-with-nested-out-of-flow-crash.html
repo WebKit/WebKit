@@ -1,0 +1,13 @@
+<style>
+.container, input {
+  position: absolute;
+}
+.parent {
+  float: left;
+}
+</style><div class=container><div class=parent><input id=input_field></div>Pass if no crash.</div><script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+input_field.focus();
+</script>

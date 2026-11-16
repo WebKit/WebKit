@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>fullscreen-env-initial</title>
+  <style>
+      #dummy {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 0;
+          height: 0;
+          --fullscreen-inset-top: env(fullscreen-inset-top);
+          --fullscreen-inset-right: env(fullscreen-inset-right);
+          --fullscreen-inset-bottom: env(fullscreen-inset-bottom);
+          --fullscreen-inset-left: env(fullscreen-inset-left);
+          --fullscreen-auto-hide-duration: env(fullscreen-auto-hide-duration);
+      }
+      @supports (padding: env(fullscreen-inset-top)) {
+          #should-be-green {
+              background-color: green;
+          }
+      }
+  </style>
+  <script>
+      const ENVS = ["fullscreen-inset-top", "fullscreen-inset-right", "fullscreen-inset-bottom", "fullscreen-inset-left", "fullscreen-auto-hide-duration"];
+      function runTest() {
+          const results = document.getElementById("results");
+          const dummyStyle = window.getComputedStyle(document.getElementById("dummy"));
+          const checkForValue = (accumulator, value) => {
+              if (!accumulator)
+                  return false;
+              return dummyStyle.getPropertyValue(`--${value}`) != "";
+          };
+          if (ENVS.reduce(checkForValue))
+              results.textContent = `${ENVS.join(" ")} all had initial values.`;
+          else
+              results.textContent = `Some/all of ${ENVS.join(" ")} had missing initial values.`;
+      }
+
+
+window.addEventListener("load", runTest, false);
+  </script>
+</head>
+<body>
+<span id="dummy"></span>
+<p id="should-be-green">This paragraph should have a green background.</p>
+<p id="results"></p>
+</body>
+</html>

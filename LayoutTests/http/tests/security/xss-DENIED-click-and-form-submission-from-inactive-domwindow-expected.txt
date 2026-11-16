@@ -1,0 +1,1 @@
+This page opens an about:blank window and navigates it to a victim page such that the about:blank page is put into the page cache. Once the victim page is loaded it tries to navigate to a javascript URL. Ensure that popup-blocking is disabled when running this test by hand. This test PASSED if no JavaScript alert dialogs are shown. Otherwise, it FAILED.

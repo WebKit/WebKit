@@ -1,0 +1,12 @@
+This tests that when all page content is inert and an aria-modal dialog is inside an aria-hidden container, the dialog content is still accessible.
+
+PASS: accessibilityController.accessibleElementById('article') === null
+PASS: heading && !heading.isIgnored === true
+PASS: button && !button.isIgnored === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Terms and Conditions
+
+Agree

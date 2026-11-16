@@ -1,0 +1,60 @@
+<html>
+<body>
+<iframe id="target" srcdoc="
+    <ul id='results'></ul>
+    <script>
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.obj)
+          window.webkit.messageHandlers.testHandler.postMessage(event.data.name + ': ' + event.data.obj.constructor.name);
+        else
+           window.webkit.messageHandlers.testHandler.postMessage(event.data.name + ': FAIL');
+      }, false);
+    </script>
+  "></iframe>
+  
+  <script>
+    const target = document.getElementById("target");
+    setTimeout(() => {
+      target.contentWindow.postMessage(
+        {
+          name: "Object",
+          obj: { }
+        },
+        "*",
+        []
+      );
+
+      const buf = new ArrayBuffer(8);
+      target.contentWindow.postMessage(
+        {
+          name: "ArrayBuffer",
+          obj: buf
+        },
+        "*",
+        [buf]
+      );
+
+      const canvas = new OffscreenCanvas(10, 10);
+      target.contentWindow.postMessage(
+        {
+          name: "OffscreenCanvas",
+          obj: canvas
+        },
+        "*",
+        [canvas]
+      );
+
+      const channel = new MessageChannel();
+      target.contentWindow.postMessage(
+        {
+          name: "MessagePort",
+          obj: channel.port2
+        },
+        "*",
+        [channel.port2]
+      );
+    }, 1000);
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,5 @@
+This is a dialog This is a dialog This is a dialog
+
+PASS <dialog> color and background match default
+PASS <dialog> colors react to dark mode
+

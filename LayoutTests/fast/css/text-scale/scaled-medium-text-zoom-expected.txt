@@ -1,0 +1,7 @@
+X X X
+
+PASS Category L with text zoom 1: text zoom and text scale multiply
+PASS Category XXXL with text zoom 1: text zoom and text scale multiply
+PASS Category L with text zoom 2: text zoom and text scale multiply
+PASS Category XXXL with text zoom 2: text zoom and text scale multiply
+

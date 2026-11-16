@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fonts-modification version="21">
+    <family name="mod-family">
+        <font weight="400" style="normal">ModFont.ttf</font>
+    </family>
+</fonts-modification>

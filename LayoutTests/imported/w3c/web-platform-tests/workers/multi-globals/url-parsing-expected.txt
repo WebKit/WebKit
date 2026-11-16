@@ -1,0 +1,4 @@
+
+
+PASS Multiple globals for Worker constructor: parsing scriptURL
+

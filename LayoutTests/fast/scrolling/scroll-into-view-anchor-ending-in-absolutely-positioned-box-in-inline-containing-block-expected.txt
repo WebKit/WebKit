@@ -1,0 +1,8 @@
+
+
+
+
+
+PASS Scrolling a link into view brings the end of its absolutely positioned image without insets in an inline box containing block to the end of the scroller
+PASS Scrolling a link into view brings the end of its absolutely positioned image with insets in an inline box containing block to the end of the scroller
+

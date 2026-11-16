@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ NeedsSiteSpecificQuirks=true ] -->
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input id="textField"></input>
+<script>
+jsTestIsAsync = true;
+receivedKeyUp = false;
+
+addEventListener("load", async () => {
+    description("Tests that basic key events work, and do not trigger assertions when quirks are enabled.");
+
+    let textField = document.getElementById("textField");
+    textField.addEventListener("keydown", () => testPassed("Received keydown"));
+    textField.addEventListener("keyup", () => {
+        testPassed("Received keyup");
+        receivedKeyUp = true;
+    });
+
+    await UIHelper.activateElementAndWaitForInputSession(textField);
+    await UIHelper.keyDown("a");
+
+    await shouldBecomeEqual("receivedKeyUp", "true");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

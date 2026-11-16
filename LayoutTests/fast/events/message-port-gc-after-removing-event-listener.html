@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Checks that MessagePort objects get GC'd once they no longer have an event listener");
+jsTestIsAsync = true;
+
+const messagePortsToCreate = 50;
+let portIdentifiers = [];
+let ports = [];
+let worker = new Worker("resources/message-port-gc-worker.js");
+for (let i = 0; i < messagePortsToCreate; ++i) {
+    let { port1, port2 } = new MessageChannel();
+    worker.postMessage("port", [port2]);
+    port1.onmessage = (event) => {
+        testFailed("Received unexpected message on MessagePort");
+    };
+    portIdentifiers.push(internals.messagePortIdentifier(port1));
+    ports.push(port1);
+}
+
+function checkSomePortsGotGCd()
+{
+    gc();
+    for (let portIdentifier of portIdentifiers) {
+        if (!internals.isMessagePortAlive(portIdentifier)) {
+            testPassed("At least one port got GC'd after removing their event listener");
+            finishJSTest();
+            clearInterval(intervalHandle);
+            return;
+        }
+    }
+}
+
+gc();
+setTimeout(() => {
+    gc();
+    for (let portIdentifier of portIdentifiers) {
+        if (!internals.isMessagePortAlive(portIdentifier)) {
+            testFailed("MessagePort was GC'd too eagerly");
+            finishJSTest();
+            return;
+        }
+    }
+    debug("Removing event listeners on ports...");
+    for (let port of ports)
+        port.onmessage = null;
+
+    ports = [];    
+
+    gc();
+    intervalHandle = setInterval(checkSomePortsGotGCd, 100);
+}, 0);
+</script>
+</body>
+</html>

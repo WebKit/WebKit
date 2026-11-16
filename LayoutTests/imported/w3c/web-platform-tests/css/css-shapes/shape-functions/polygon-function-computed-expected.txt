@@ -1,0 +1,6 @@
+
+PASS Property shape-outside value 'polygon(1% 2%)'
+PASS Property shape-outside value 'polygon(calc(100% - 20px) calc(30% + 10px))'
+PASS Property shape-outside value 'polygon(nonzero, 1px 2px, 3em 4em)'
+PASS Property shape-outside value 'polygon(evenodd, 1px 2px, 3em 4em, 6pt 6%)'
+

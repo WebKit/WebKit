@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.Audit.createSuite("Audit.DOMAttributes");
+
+    InspectorTest.Audit.addObjectTest("Audit.DOMAttributes.Valid", {level: WI.AuditTestCaseResult.Level.Pass, domAttributes: ["id", "tabindex"]}, WI.AuditTestCaseResult.Level.Pass);
+
+    InspectorTest.Audit.addObjectTest("Audit.DOMAttributes.Undefined", {level: WI.AuditTestCaseResult.Level.Pass, domAttributes: undefined}, WI.AuditTestCaseResult.Level.Pass);
+
+    InspectorTest.Audit.addObjectTest("Audit.DOMAttributes.Error.Null", {level: WI.AuditTestCaseResult.Level.Pass, domAttributes: null}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.DOMAttributes.Error.Number", {level: WI.AuditTestCaseResult.Level.Pass, domAttributes: 42}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.DOMAttributes.Error.String", {level: WI.AuditTestCaseResult.Level.Pass, domAttributes: "foo"}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.DOMAttributes.Error.Object", {level: WI.AuditTestCaseResult.Level.Pass, domAttributes: {}}, WI.AuditTestCaseResult.Level.Error);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing audits involving DOM attributes.</p>
+</body>
+</html>

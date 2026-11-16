@@ -1,0 +1,34 @@
+
+PASS drop-down box: parsing a selected option in wrappers after a selected option
+PASS list box: parsing a selected option in wrappers after a selected option
+PASS multiple: parsing a selected option in wrappers after a selected option
+PASS drop-down box: inserting a wrapper with a selected option
+PASS drop-down box: inserting nested wrappers with a selected option
+PASS drop-down box: inserting a wrapper with a selected option into a select that is not connected
+PASS drop-down box: inserting a selected option into a wrapper
+PASS drop-down box: setting innerHTML of a wrapper to a selected option
+PASS drop-down box: inserting a selected option into an optgroup
+PASS drop-down box: setting innerHTML to a selected option followed by a wrapper with a selected option
+PASS drop-down box: inserting a selected option followed by a wrapper with a selected option
+PASS drop-down box: inserting a wrapper with a selected option followed by a selected option
+PASS drop-down box: moving a wrapper with a selected option into the select
+PASS drop-down box: cloning a select with selected options in a wrapper
+PASS drop-down box: moving an ancestor of the select does not select an option later
+PASS drop-down box: inserting a select with innerHTML does not select an option later
+PASS list box: inserting a wrapper with a selected option
+PASS list box: inserting nested wrappers with a selected option
+PASS list box: inserting a wrapper with a selected option into a select that is not connected
+PASS list box: inserting a selected option into a wrapper
+PASS list box: setting innerHTML of a wrapper to a selected option
+PASS list box: inserting a selected option into an optgroup
+PASS list box: setting innerHTML to a selected option followed by a wrapper with a selected option
+PASS list box: inserting a selected option followed by a wrapper with a selected option
+PASS list box: inserting a wrapper with a selected option followed by a selected option
+PASS list box: moving a wrapper with a selected option into the select
+PASS list box: cloning a select with selected options in a wrapper
+PASS list box: moving an ancestor of the select does not select an option later
+PASS list box: inserting a select with innerHTML does not select an option later
+PASS multiple: inserting a wrapper with a selected option
+PASS drop-down box: inserting a wrapper with a selected option updates selectedcontent
+PASS drop-down box: inserting a selected option into selectedcontent does not select it
+

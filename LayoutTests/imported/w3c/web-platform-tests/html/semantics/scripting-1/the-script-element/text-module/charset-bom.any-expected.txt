@@ -1,0 +1,5 @@
+
+PASS UTF-8 BOM should be stripped when decoding text module script
+PASS UTF-16BE with BOM should be parsed as UTF-8
+PASS UTF-16LE with BOM should be parsed as UTF-8
+

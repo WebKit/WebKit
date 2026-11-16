@@ -1,0 +1,8 @@
+
+PASS History navigation: "about:blank" document is navigated back from history same-origin.
+PASS History navigation: "about:blank" document is navigated back from history cross-origin.
+PASS History navigation: blob URL document is navigated back from history same-origin.
+PASS History navigation: blob URL document is navigated back from history cross-origin.
+PASS History navigation: blob URL document is navigated back from history (without bfcache on Firefox) same-origin.
+PASS History navigation: blob URL document is navigated back from history (without bfcache on Firefox) cross-origin.
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="test()">
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Test that copyBufferSubData does not crash on overlapping data.");
+// Mostly crashes when running on ASAN.
+var wtu = WebGLTestUtils;
+var gl;
+function runTest(subcase)
+{
+    var c = document.createElement("canvas");
+	var gl = c.getContext("webgl2");
+    if (gl) {
+        var b = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(100), gl.STREAM_DRAW);
+        gl.copyBufferSubData(gl.ELEMENT_ARRAY_BUFFER, gl.ELEMENT_ARRAY_BUFFER, 84, 80, 16);
+    }
+    testPassed(`Did not crash.`);
+}
+
+function test()
+{
+    runTest();
+    finishTest();
+}
+</script>
+</body>
+</html>

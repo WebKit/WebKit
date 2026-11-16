@@ -1,0 +1,11 @@
+Two drawIndirect calls in one render pass, reading two different argument records out of one GPUBuffer, with a pipeline that declares a required vertex buffer layout so both draws take the min-count clamp path. The clamped arguments must land in per-draw scratch: a single per-Buffer scratch slot is written by the second draw's clamp dispatch at the same address the first draw fetches its arguments from, and no barrier can order a vertex-stage write against an indirect argument fetch. Each draw selects a differently coloured triangle via firstVertex and is scissored to its own pixel, so a clobbered record shows up as the wrong colour.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS leftPixel.join() is "0,255,0,255"
+PASS rightPixel.join() is "0,0,255,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

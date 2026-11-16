@@ -1,0 +1,16 @@
+
+PASS e.style['font-family'] = "random-item()" should not set the property value
+PASS e.style['font-family'] = "random-item( )" should not set the property value
+PASS e.style['font-family'] = "random-item(auto)" should not set the property value
+PASS e.style['font-family'] = "random-item(, serif, sans-serif)" should not set the property value
+PASS e.style['font-family'] = "random-item(auto, !)" should not set the property value
+PASS e.style['font-family'] = "random-item(auto, ;)" should not set the property value
+PASS e.style['font-family'] = "random-item(auto, })" should not set the property value
+PASS e.style['font-family'] = "random-item(auto, ])" should not set the property value
+PASS e.style['font-family'] = "random-item(auto, {serif)" should not set the property value
+PASS e.style['font-family'] = "random-item(auto, serif})" should not set the property value
+PASS e.style['font-family'] = "random-item(auto, {Times, serif)" should not set the property value
+PASS e.style['font-family'] = "random-item({auto, serif, sans-serif)" should not set the property value
+PASS e.style['font-family'] = "random-item(auto, {Times, serif} extra)" should not set the property value
+PASS e.style['font-family'] = "random-item(auto, extra {Times, serif})" should not set the property value
+

@@ -1,0 +1,356 @@
+/*
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WebAutomationSession.h"
+
+#if PLATFORM(COCOA)
+
+#import "AutomationKeyIdentity.h"
+#import "ViewSnapshotStore.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <wtf/FileSystem.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <ImageIO/CGImageDestination.h>
+#import <MobileCoreServices/UTCoreTypes.h>
+#import <WebCore/KeyEventCodesIOS.h>
+#endif
+
+namespace WebKit {
+using namespace WebCore;
+
+static std::optional<String> getBase64EncodedPNGData(const RetainPtr<CGImageRef>&& cgImage)
+{
+    RetainPtr<NSMutableData> imageData = adoptNS([[NSMutableData alloc] init]);
+    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), bridge_cast(UTTypePNG.identifier), 1, 0));
+    if (!destination)
+        return std::nullopt;
+
+    CGImageDestinationAddImage(destination.get(), cgImage.get(), 0);
+    CGImageDestinationFinalize(destination.get());
+
+    return String([imageData base64EncodedStringWithOptions:0]);
+}
+
+
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&& imageDataHandle)
+{
+    auto bitmap = ShareableBitmap::create(WTF::move(imageDataHandle), SharedMemory::Protection::ReadOnly);
+    if (!bitmap)
+        return std::nullopt;
+
+    return getBase64EncodedPNGData(bitmap->createPlatformImage(DontCopyBackingStore));
+}
+
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
+{
+    auto* snapshotSurface = snapshot.surface();
+    if (!snapshotSurface)
+        return std::nullopt;
+    auto context = snapshotSurface->createPlatformContext();
+    return getBase64EncodedPNGData(snapshotSurface->createImage(context.get()));
+}
+
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(CGImageRef image)
+{
+    return getBase64EncodedPNGData(RetainPtr { image });
+}
+
+std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents)
+{
+    RetainPtr<NSData> fileContents = adoptNS([[NSData alloc] initWithBase64EncodedString:base64EncodedFileContents.createNSString().get() options:0]);
+    if (!fileContents) {
+        LOG_ERROR("WebAutomationSession: unable to decode base64-encoded file contents.");
+        return std::nullopt;
+    }
+
+    RetainPtr temporaryDirectory = FileSystem::createTemporaryDirectory(@"WebDriver");
+    RetainPtr remoteFile = adoptNS([[NSURL alloc] initFileURLWithPath:remoteFilePath.createNSString().get() isDirectory:NO]);
+    RetainPtr localFilePath = [temporaryDirectory stringByAppendingPathComponent:retainPtr(remoteFile.get().lastPathComponent).get()];
+
+    NSError *fileWriteError = nil;
+    [fileContents.get() writeToFile:localFilePath.get() options:NSDataWritingAtomic error:&fileWriteError];
+    if (fileWriteError) {
+        LOG_ERROR("WebAutomationSession: Error writing image data to temporary file: %@", fileWriteError);
+        return std::nullopt;
+    }
+
+    return String(localFilePath.get());
+}
+
+std::optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
+{
+    switch (key) {
+    case Inspector::Protocol::Automation::VirtualKey::Shift:
+    case Inspector::Protocol::Automation::VirtualKey::ShiftRight:
+    case Inspector::Protocol::Automation::VirtualKey::Control:
+    case Inspector::Protocol::Automation::VirtualKey::ControlRight:
+    case Inspector::Protocol::Automation::VirtualKey::Alternate:
+    case Inspector::Protocol::Automation::VirtualKey::AlternateRight:
+    case Inspector::Protocol::Automation::VirtualKey::Meta:
+    case Inspector::Protocol::Automation::VirtualKey::MetaRight:
+    case Inspector::Protocol::Automation::VirtualKey::Command:
+    case Inspector::Protocol::Automation::VirtualKey::CommandRight:
+        return std::nullopt;
+    case Inspector::Protocol::Automation::VirtualKey::Help:
+        return NSHelpFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Backspace:
+        return NSBackspaceCharacter;
+    case Inspector::Protocol::Automation::VirtualKey::Tab:
+        return NSTabCharacter;
+    case Inspector::Protocol::Automation::VirtualKey::Clear:
+        return NSClearLineFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Enter:
+        return NSEnterCharacter;
+    case Inspector::Protocol::Automation::VirtualKey::Pause:
+        return NSPauseFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Cancel:
+        // The 'cancel' key does not exist on Apple keyboards and has no keycode.
+        // According to the internet its functionality is similar to 'Escape'.
+    case Inspector::Protocol::Automation::VirtualKey::Escape:
+        return 0x1B;
+    // The '*Right' variants use the numeric keypad's keyCodes so that the DOM reports code=Numpad*,
+    // but they still produce the navigation character rather than the digit, so that the DOM 'key'
+    // matches the primary key ("ArrowLeft", "Home", ...) as the WebDriver key table requires.
+    case Inspector::Protocol::Automation::VirtualKey::PageUp:
+    case Inspector::Protocol::Automation::VirtualKey::PageUpRight:
+        return NSPageUpFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::PageDown:
+    case Inspector::Protocol::Automation::VirtualKey::PageDownRight:
+        return NSPageDownFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::End:
+    case Inspector::Protocol::Automation::VirtualKey::EndRight:
+        return NSEndFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Home:
+    case Inspector::Protocol::Automation::VirtualKey::HomeRight:
+        return NSHomeFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::LeftArrow:
+    case Inspector::Protocol::Automation::VirtualKey::LeftArrowRight:
+        return NSLeftArrowFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::UpArrow:
+    case Inspector::Protocol::Automation::VirtualKey::UpArrowRight:
+        return NSUpArrowFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::RightArrow:
+    case Inspector::Protocol::Automation::VirtualKey::RightArrowRight:
+        return NSRightArrowFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::DownArrow:
+    case Inspector::Protocol::Automation::VirtualKey::DownArrowRight:
+        return NSDownArrowFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Insert:
+    case Inspector::Protocol::Automation::VirtualKey::InsertRight:
+        return NSInsertFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Delete:
+    case Inspector::Protocol::Automation::VirtualKey::DeleteRight:
+        return NSDeleteFunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Space:
+        return ' ';
+    case Inspector::Protocol::Automation::VirtualKey::Semicolon:
+        return ';';
+    case Inspector::Protocol::Automation::VirtualKey::Equals:
+        return '=';
+    case Inspector::Protocol::Automation::VirtualKey::Return:
+        return NSCarriageReturnCharacter;
+    case Inspector::Protocol::Automation::VirtualKey::NumberPad0:
+        return '0';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPad1:
+        return '1';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPad2:
+        return '2';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPad3:
+        return '3';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPad4:
+        return '4';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPad5:
+        return '5';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPad6:
+        return '6';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPad7:
+        return '7';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPad8:
+        return '8';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPad9:
+        return '9';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPadMultiply:
+        return '*';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPadAdd:
+        return '+';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPadSubtract:
+        return '-';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPadSeparator:
+        // The 'Separator' key is only present on a few international keyboards, where it is the
+        // keypad's comma. It is distinct from Decimal, which is the keypad's period.
+        return ',';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPadDecimal:
+        return '.';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPadDivide:
+        return '/';
+    case Inspector::Protocol::Automation::VirtualKey::Function1:
+        return NSF1FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function2:
+        return NSF2FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function3:
+        return NSF3FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function4:
+        return NSF4FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function5:
+        return NSF5FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function6:
+        return NSF6FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function7:
+        return NSF7FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function8:
+        return NSF8FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function9:
+        return NSF9FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function10:
+        return NSF10FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function11:
+        return NSF11FunctionKey;
+    case Inspector::Protocol::Automation::VirtualKey::Function12:
+        return NSF12FunctionKey;
+    default:
+        return std::nullopt;
+    }
+}
+
+std::optional<unichar> WebAutomationSession::charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
+{
+    switch (key) {
+    case Inspector::Protocol::Automation::VirtualKey::NumberPadMultiply:
+        return '8';
+    case Inspector::Protocol::Automation::VirtualKey::NumberPadAdd:
+        return '=';
+    default:
+        return charCodeForVirtualKey(key);
+    }
+}
+
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+
+// The WebDriver key table (https://w3c.github.io/webdriver/#keyboard-actions) assigns each key a
+// DOM 'key', 'code' and location. Most can be inferred from a platform key code, but the keypad's
+// navigation keys are indistinguishable from the primary ones on iOS, which supplies no key code at
+// all, and several keys have no equivalent on Apple keyboards. State those explicitly so that both
+// platforms report the same thing. Keys absent from this table keep their derived values.
+static std::optional<AutomationKeyIdentity::Identity> keyIdentityForVirtualKey(VirtualKey key)
+{
+    switch (key) {
+    // Keys with no equivalent on Apple keyboards, so no key code can carry their identity.
+    case VirtualKey::Insert:
+        return { { "Insert"_s, "Insert"_s, false } };
+    case VirtualKey::Pause:
+        return { { "Pause"_s, "Pause"_s, false } };
+    case VirtualKey::Cancel:
+        return { { "Cancel"_s, emptyString(), false } };
+    case VirtualKey::Clear:
+        return { { "Clear"_s, emptyString(), false } };
+    case VirtualKey::Semicolon:
+        return { { ";"_s, emptyString(), false } };
+
+    // The keypad's "right hand" navigation keys.
+    case VirtualKey::PageUpRight:
+        return { { "PageUp"_s, "Numpad9"_s, true } };
+    case VirtualKey::PageDownRight:
+        return { { "PageDown"_s, "Numpad3"_s, true } };
+    case VirtualKey::EndRight:
+        return { { "End"_s, "Numpad1"_s, true } };
+    case VirtualKey::HomeRight:
+        return { { "Home"_s, "Numpad7"_s, true } };
+    case VirtualKey::LeftArrowRight:
+        return { { "ArrowLeft"_s, "Numpad4"_s, true } };
+    case VirtualKey::UpArrowRight:
+        return { { "ArrowUp"_s, "Numpad8"_s, true } };
+    case VirtualKey::RightArrowRight:
+        return { { "ArrowRight"_s, "Numpad6"_s, true } };
+    case VirtualKey::DownArrowRight:
+        return { { "ArrowDown"_s, "Numpad2"_s, true } };
+    case VirtualKey::InsertRight:
+        return { { "Insert"_s, "Numpad0"_s, true } };
+    case VirtualKey::DeleteRight:
+        return { { "Delete"_s, "NumpadDecimal"_s, true } };
+
+    // The rest of the keypad.
+    case VirtualKey::NumberPad0:
+        return { { "0"_s, "Numpad0"_s, true } };
+    case VirtualKey::NumberPad1:
+        return { { "1"_s, "Numpad1"_s, true } };
+    case VirtualKey::NumberPad2:
+        return { { "2"_s, "Numpad2"_s, true } };
+    case VirtualKey::NumberPad3:
+        return { { "3"_s, "Numpad3"_s, true } };
+    case VirtualKey::NumberPad4:
+        return { { "4"_s, "Numpad4"_s, true } };
+    case VirtualKey::NumberPad5:
+        return { { "5"_s, "Numpad5"_s, true } };
+    case VirtualKey::NumberPad6:
+        return { { "6"_s, "Numpad6"_s, true } };
+    case VirtualKey::NumberPad7:
+        return { { "7"_s, "Numpad7"_s, true } };
+    case VirtualKey::NumberPad8:
+        return { { "8"_s, "Numpad8"_s, true } };
+    case VirtualKey::NumberPad9:
+        return { { "9"_s, "Numpad9"_s, true } };
+    case VirtualKey::NumberPadMultiply:
+        return { { "*"_s, "NumpadMultiply"_s, true } };
+    case VirtualKey::NumberPadAdd:
+        return { { "+"_s, "NumpadAdd"_s, true } };
+    case VirtualKey::NumberPadSubtract:
+        return { { "-"_s, "NumpadSubtract"_s, true } };
+    case VirtualKey::NumberPadSeparator:
+        return { { ","_s, "NumpadComma"_s, true } };
+    case VirtualKey::NumberPadDecimal:
+        return { { "."_s, "NumpadDecimal"_s, true } };
+    case VirtualKey::NumberPadDivide:
+        return { { "/"_s, "NumpadDivide"_s, true } };
+    case VirtualKey::Equals:
+        return { { "="_s, "NumpadEqual"_s, true } };
+
+    default:
+        // Everything else, including the modifiers, keeps the identity derived from the platform
+        // event. Modifier location (left vs. right) is not expressible here.
+        return std::nullopt;
+    }
+}
+
+void WebAutomationSession::setKeyIdentityForVirtualKeyIfNeeded(NSArray *events, const Variant<VirtualKey, CharKey>& key)
+{
+    auto* virtualKey = std::get_if<VirtualKey>(&key);
+    if (!virtualKey)
+        return;
+
+    auto identity = keyIdentityForVirtualKey(*virtualKey);
+    if (!identity)
+        return;
+
+    for (id event in events)
+        AutomationKeyIdentity::setIdentity(event, *identity);
+}
+
+#endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+
+} // namespace WebKit
+
+#endif // PLATFORM(COCOA)

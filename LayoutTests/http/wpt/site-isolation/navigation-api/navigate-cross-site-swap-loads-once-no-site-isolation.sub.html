@@ -1,0 +1,18 @@
+<!doctype html><!-- webkit-test-runner [ SiteIsolationEnabled=false ] -->
+<meta charset="utf-8">
+<title>Navigation API: a cross-site main frame navigation.navigate() loads the destination once, in the destination process (process swap without Site Isolation)</title>
+<script src="/common/utils.js"></script>
+<body>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+const REMOTE = "http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/navigation-api/resources/count-requests.py?token=" + token();
+
+onload = () => {
+    const result = navigation.navigate(REMOTE);
+    result.committed.catch(() => {});
+    result.finished.catch(() => {});
+};
+</script>
+</body>

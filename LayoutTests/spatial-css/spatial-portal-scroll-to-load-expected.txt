@@ -1,0 +1,3 @@
+
+PASS A <model> in a spatial portal loads only once the portal is scrolled into view
+

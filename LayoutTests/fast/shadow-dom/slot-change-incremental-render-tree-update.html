@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.box { display: inline-block; width: 20px; height: 20px; margin: 2px; }
+.a { background: red; } .b { background: orange; } .c { background: green; } .d { background: blue; }
+.fallback { background: gray; } .other { border-radius: 10px; }
+select, ::picker(select) { appearance: base-select; }
+</style>
+</head>
+<body>
+<div id="insertIntoEmpty"></div>
+<div id="removeLast"><span class="box a"></span><span class="box b" slot="first"></span></div>
+<div id="reassign"><span class="box a" slot="first"></span><span class="box c"></span></div>
+<div id="text"></div>
+<div id="move"><span class="box a"></span><span class="box b"></span><span id="c" class="box c"></span></div>
+<div id="moveOut"><span id="d" class="box d"></span></div>
+<div id="textFallback"></div>
+<div id="contentsFallback"></div>
+<details id="details" open><summary>Second</summary>Content</details>
+<details id="detailsRemove" open><summary>First</summary><summary>Second</summary>Content</details>
+<details id="detailsMove" open><summary id="movedSummary">First</summary><summary>Second</summary>Content</details>
+<details id="detailsSlotAttribute" open><div id="detailsDiv">Content</div></details>
+<select id="select"><button>Button</button><option>One</option></select>
+<select id="selectRemove"><option id="firstOption">One</option><button>Button</button><option>Two</option></select>
+<script src="resources/slot-change-incremental-render-tree-update.js"></script>
+<script>
+attachShadows();
+
+function box(name, slot)
+{
+    const box = document.createElement("span");
+    box.className = "box " + name;
+    if (slot)
+        box.slot = slot;
+    return box;
+}
+
+function option(text)
+{
+    const option = document.createElement("option");
+    option.textContent = text;
+    return option;
+}
+
+function summary(text)
+{
+    const summary = document.createElement("summary");
+    summary.textContent = text;
+    return summary;
+}
+
+const steps = [
+    () => insertIntoEmpty.append(box("a")),
+    () => insertIntoEmpty.prepend(box("b", "first")),
+    () => removeLast.querySelector("[slot=first]").remove(),
+    () => {
+        removeLast.firstChild.remove();
+        removeLast.append(box("c"));
+    },
+    () => {
+        const element = reassign.firstChild;
+        element.classList.add("other");
+        element.slot = "";
+    },
+    () => text.append("text"),
+    () => text.firstChild.remove(),
+    () => move.moveBefore(c, move.firstChild),
+    () => move.moveBefore(d, move.lastChild),
+    () => textFallback.append(box("a")),
+    () => textFallback.firstChild.remove(),
+    () => contentsFallback.append(box("a")),
+    () => contentsFallback.firstChild.remove(),
+    () => detailsDiv.slot = "summarySlot",
+    () => details.prepend(summary("First")),
+    () => detailsRemove.firstChild.remove(),
+    () => detailsRemove.firstChild.remove(),
+    () => detailsMove.moveBefore(movedSummary, null),
+    () => select.prepend(option("Zero")),
+    () => select.append(option("Two")),
+    () => firstOption.remove(),
+];
+
+document.body.offsetHeight;
+for (const step of steps) {
+    step();
+    document.body.offsetHeight;
+}
+
+// The same mutations again, without updating the rendering in between.
+for (const host of [insertIntoEmpty, text])
+    host.replaceChildren();
+document.body.offsetHeight;
+insertIntoEmpty.append(box("a"));
+insertIntoEmpty.prepend(box("b", "first"));
+text.append("text");
+text.firstChild.remove();
+text.append("more");
+</script>
+</body>
+</html>

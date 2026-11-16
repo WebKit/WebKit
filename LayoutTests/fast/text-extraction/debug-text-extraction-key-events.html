@@ -1,0 +1,51 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+    .key-event-target {
+        border: 2px solid tomato;
+        box-sizing: border-box;
+        width: 100px;
+        height: 100px;
+        outline: none;
+    }
+    </style>
+</head>
+<body>
+    <div class="key-event-target" tabindex="0" aria-label="print key events"></div>
+    <pre id="output"></pre>
+    <script>
+    jsTestIsAsync = true;
+
+    container = document.getElementById("output");
+
+    function printEvent(event) {
+        const line = document.createElement("div");
+        line.textContent = `${event.type}: type=${event.type} key=${event.key} keyCode=${event.keyCode} code=${event.code}`;
+        container.appendChild(line);
+        if (event.cancelable)
+            event.preventDefault();
+    }
+
+    addEventListener("load", async () => {
+        target = document.querySelector(".key-event-target");
+
+        for (const event of ["keydown", "keypress", "keyup"])
+            target.addEventListener(event, printEvent);
+
+        target.focus();
+
+        const keysToTest = ["a", "Escape", "ArrowLeft", "Enter", "/", "Shift", "Delete", "Backspace"];
+        for (const key of keysToTest)
+            await UIHelper.performTextExtractionInteraction("keypress", { text: key });
+
+        finishJSTest();
+    });
+    </script>
+</body>
+</html>

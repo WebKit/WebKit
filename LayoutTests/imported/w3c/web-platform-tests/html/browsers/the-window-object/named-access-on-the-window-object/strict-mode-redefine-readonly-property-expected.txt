@@ -1,0 +1,3 @@
+
+PASS Adding/removing form with a name referring to a non-configurable property
+

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/Ahem-sbix.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+<canvas id="canvas" width="775" height="550" style="width: 775px; height: 550px;"></canvas>
+<script>
+let font = "200px 'WebFont'";
+document.fonts.load(font).then(function() {
+    let canvas = document.getElementById("canvas");
+    let context = canvas.getContext("2d");
+    context.font = font;
+    context.fillText("A\u7EB5B", 200, 200);
+    context.fillStyle = "white";
+    context.fillRect(440, 200 - 160, 40, 200);
+    context.fillRect(600, 200 - 152, 160, 152);
+});
+</script>
+</body>
+</html>

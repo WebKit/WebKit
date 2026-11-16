@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Changing only the override background color repaints the element</title>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+    #target {
+        width: 100px;
+        height: 100px;
+        background-color: blue;
+    }
+</style>
+</head>
+<body>
+<div id="target"></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    if (testRunner.dontForceRepaint)
+        testRunner.dontForceRepaint();
+}
+
+window.addEventListener("load", async () => {
+    await UIHelper.ensurePresentationUpdate();
+
+    window.internals?.setOverrideBackgroundColor(target, "red");
+
+    await UIHelper.ensurePresentationUpdate();
+    window.testRunner?.notifyDone();
+});
+</script>
+</body>
+</html>

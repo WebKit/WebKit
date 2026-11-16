@@ -1,0 +1,6 @@
+
+
+PASS sending 2D canvas ImageBitmap to http://web-platform.test:8800
+PASS sending 2D canvas ImageBitmap to http://www1.web-platform.test:8800
+PASS sending 2D canvas ImageBitmap to http://not-web-platform.test:8800
+

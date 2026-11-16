@@ -1,0 +1,9 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+cc_library(
+    name = "egl",
+    linkopts = [
+        "-lEGL",
+    ],
+    visibility = ["//:__subpackages__"],
+)

@@ -1,0 +1,5 @@
+Tests that the close method of ImageBitmap does dispose the image data.
+
+
+PASS canvas-ImageBitmap-close
+

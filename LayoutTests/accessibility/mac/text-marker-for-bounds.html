@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="text">Text text text text text text text text text text.</div>
+
+<script>
+var output = "This tests that endTextMarkerForBounds and startTextMarkerForBounds work correctly.\n\n";
+
+var startMarker, endMarker, rangeFromBounds, rangeFromElement;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await waitForFrameGeometryReady();
+
+        var text = accessibilityController.accessibleElementById("text");
+        startMarker = text.startTextMarkerForBounds(text.x, text.y, text.width, text.height);
+        endMarker = text.endTextMarkerForBounds(text.x, text.y, text.width, text.height);
+
+        // Get text range from boundary markers.
+        rangeFromBounds = text.textMarkerRangeLength(text.textMarkerRangeForMarkers(startMarker, endMarker));
+        // Get text range from element.
+        rangeFromElement = text.textMarkerRangeLength(text.textMarkerRangeForElement(text));
+
+        output += expect("rangeFromBounds", "rangeFromElement");
+        debug(output);
+        finishJSTest();
+    })
+}
+</script>
+</body>
+</html>
+

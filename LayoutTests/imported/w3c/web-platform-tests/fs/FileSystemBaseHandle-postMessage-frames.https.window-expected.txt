@@ -1,0 +1,6 @@
+
+PASS Send and receive messages using a same origin iframe.
+PASS Send and receive messages using a sandboxed same origin iframe.
+PASS Send and receive messages using a blob iframe.
+PASS Send and receive messages using an iframe srcdoc.
+

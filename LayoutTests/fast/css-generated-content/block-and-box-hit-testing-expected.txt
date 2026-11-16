@@ -1,0 +1,1 @@
+Bug 105545 - RenderBlock and RenderBox hit testing should ignore PseudoElements

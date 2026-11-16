@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function loaded()
+    {
+        var p = document.createElement("p");
+        p.appendChild(document.createTextNode("PASS"));
+        document.body.appendChild(p);
+    }
+    </script>
+  </head>
+  <body>
+    This animated PNG has an embedded ICC profile and a second frame whose
+    xOffset + width equals the canvas width. Compositing it must not run the
+    ICC transform past the end of the frame buffer.
+    If the test succeeds this should not crash.
+    <img onload="loaded()" src="resources/animated-png-icc-transform-crash.png">
+  </body>
+</html>

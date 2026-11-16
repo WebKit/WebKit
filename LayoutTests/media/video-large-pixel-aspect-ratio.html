@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video with large pixel-aspect-ratio</title>
+    <script src="video-test.js"></script>
+    <script>
+    var video = null;
+
+    async function runTest() {
+        video = document.getElementById("video");
+
+        testExpected('video.videoWidth', 331);
+        testExpected('video.videoHeight', 196);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    Test that a video with a large pixel-aspect-ratio has the correct display width and display height.
+    <video id="video" src="content/video-with-large-par.mp4"></video>
+</body>
+</html>

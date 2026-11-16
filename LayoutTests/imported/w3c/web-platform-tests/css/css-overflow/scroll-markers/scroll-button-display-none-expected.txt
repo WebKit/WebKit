@@ -1,0 +1,3 @@
+
+PASS CSS Overflow Test: focused ::scroll-button() does not crash after becoming display none
+

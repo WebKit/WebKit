@@ -1,0 +1,28 @@
+
+PASS "button:not([disabled])" should be a valid selector
+PASS "*:not(foo)" should be a valid selector
+PASS ":not(:link):not(:visited)" should be a valid selector
+PASS "*|*:not(*)" should be a valid selector
+PASS ":not(:hover)" should be a valid selector
+PASS ":not(*|*)" should be a valid selector
+PASS "foo:not(bar)" should be a valid selector
+PASS ":not(:not(foo))" should be a valid selector
+PASS ":not(.a .b)" should be a valid selector
+PASS ":not(.a + .b)" should be a valid selector
+PASS ":not(.a .b ~ c)" should be a valid selector
+PASS ":not(span.a, div.b)" should be a valid selector
+PASS ":not(.a .b ~ c, .d .e)" should be a valid selector
+PASS ":not(:host)" should be a valid selector
+PASS ":not(:host(.a))" should be a valid selector
+PASS ":host(:not(.a))" should be a valid selector
+PASS ":not(:host(:not(.a)))" should be a valid selector
+PASS ":not([disabled][selected])" should be a valid selector
+PASS ":not([disabled],[selected])" should be a valid selector
+PASS ":not()" should be an invalid selector
+PASS ":not(:not())" should be an invalid selector
+PASS ":not(::before)" should be an invalid selector
+PASS ":not(:unknownpseudo)" should be an invalid selector
+PASS ":not(.a, :unknownpseudo)" should be an invalid selector
+PASS ":not(:unknownpseudo, .a)" should be an invalid selector
+FAIL ":host(:not(.a .b))" should be an invalid selector assert_throws_dom: ":host(:not(.a .b))" should throw in querySelector function "() => document.querySelector(selector)" did not throw
+

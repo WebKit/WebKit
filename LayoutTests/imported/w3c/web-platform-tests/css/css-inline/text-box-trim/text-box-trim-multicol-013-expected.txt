@@ -1,0 +1,52 @@
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+
+FAIL .multicol 1 assert_equals:
+<div class="multicol" data-expected-height="5">
+  <div style="column-span:all;">x</div>
+</div>
+height expected 5 but got 10
+FAIL .multicol 2 assert_equals:
+<div class="multicol" data-expected-height="15">
+  <div style="column-span:all;">x</div>
+  <div style="column-span:all;">x</div>
+</div>
+height expected 15 but got 20
+FAIL .multicol 3 assert_equals:
+<div class="multicol" data-expected-height="25">
+  <div style="column-span:all;">x</div>
+  x
+  <div style="column-span:all;">x</div>
+</div>
+height expected 25 but got 28
+FAIL .multicol 4 assert_equals:
+<div class="multicol" data-expected-height="35">
+  x
+  <div style="column-span:all;">x</div>
+  x
+  <div style="column-span:all;">x</div>
+</div>
+height expected 35 but got 40
+FAIL .multicol 5 assert_equals:
+<div class="multicol" data-expected-height="45">
+  x
+  <div style="column-span:all;">x</div>
+  x
+  <div style="column-span:all;">x</div>
+  x
+</div>
+height expected 45 but got 50
+

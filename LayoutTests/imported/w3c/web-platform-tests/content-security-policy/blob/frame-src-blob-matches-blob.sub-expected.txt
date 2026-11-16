@@ -1,0 +1,6 @@
+blob: URLs should match if the blob: scheme is explicitly specified in the frame-src directive.
+
+
+
+PASS Expecting logs: ["PASS (1/1)"]
+

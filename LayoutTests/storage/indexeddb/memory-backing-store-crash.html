@@ -1,0 +1,10 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText()
+  let request = indexedDB.open('a', 1);
+  request.addEventListener('upgradeneeded', () => {
+    request.result.createObjectStore('b').name = 'c';
+    request.result.deleteObjectStore('c');
+  });
+</script>

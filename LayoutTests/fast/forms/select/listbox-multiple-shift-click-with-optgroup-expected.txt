@@ -1,0 +1,10 @@
+Shift-clicking an option of a multiple-selection listbox should select the range from the selected option, also when an optgroup precedes it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectedOptionsText() is "B,C"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

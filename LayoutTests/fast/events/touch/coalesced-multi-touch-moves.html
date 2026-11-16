@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body onload="runTest();">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Tests that coalescing touch moves reports the latest position of every touch point and hides no touch point movement.');
+
+window.jsTestIsAsync = true;
+
+// Identifier of the touch point -> position it was last reported to have moved to.
+const movedTo = {};
+
+function recordChangedTouches(event)
+{
+    for (const touch of event.changedTouches)
+        movedTo[touch.identifier] = `${touch.clientX},${touch.clientY}`;
+}
+
+// Non-passive listeners make the UI process wait for the web process to handle each touch event, so
+// the touch moves sent below without awaiting pile up in its queue and get coalesced.
+document.addEventListener('touchstart', () => { }, { passive: false });
+document.addEventListener('touchmove', recordChangedTouches, { passive: false });
+document.addEventListener('touchend', () => { }, { passive: false });
+
+async function runTest()
+{
+    // Touch event regions must reach the scrolling tree before touch events are dispatched.
+    await UIHelper.renderingComplete();
+
+    if (!window.eventSender) {
+        debug('This test requires WebKitTestRunner.');
+        finishJSTest();
+        return;
+    }
+
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(20, 20);
+    eventSender.addTouchPoint(80, 20);
+
+    // Each touch move marks only the touch point that moved, like a platform touch move event does.
+    eventSender.asyncTouchStart();
+    eventSender.updateTouchPoint(0, 30, 40);
+    eventSender.asyncTouchMove();
+    eventSender.updateTouchPoint(1, 90, 60);
+    eventSender.asyncTouchMove();
+    eventSender.updateTouchPoint(0, 35, 50);
+    eventSender.asyncTouchMove();
+    eventSender.releaseTouchPoint(0);
+    eventSender.releaseTouchPoint(1);
+    await eventSender.asyncTouchEnd();
+
+    // Coalescing may deliver fewer touch move events than were dispatched, but the movement of
+    // neither touch point may be lost and neither position may be stale.
+    shouldBeEqualToString('movedTo[0]', '35,50');
+    shouldBeEqualToString('movedTo[1]', '90,60');
+    finishJSTest();
+}
+</script>
+</body>
+</html>

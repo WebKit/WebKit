@@ -1,0 +1,6 @@
+
+PASS responseText strips a UTF-8 byte order mark split across chunks
+PASS responseText uses a UTF-16LE byte order mark split across chunks
+PASS responseText does not strip a UTF-8 byte order mark in a later chunk
+PASS JSON response strips a UTF-8 byte order mark split across chunks
+

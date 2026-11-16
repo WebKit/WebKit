@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fill Window with Color</title>
+</head>
+<body>
+    <canvas id="glcanvas"></canvas>
+    <script>
+        function fillWindowWithColor(color) {
+            const canvas = document.getElementById('glcanvas');
+            const gl = canvas.getContext('webgl');
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const vsSource = `
+                attribute vec4 a_position;
+                void main() {
+                    gl_Position = a_position;
+                }
+            `;
+            const fsSource = `
+                precision mediump float;
+                uniform vec4 u_color;
+                void main() {
+                    gl_FragColor = u_color;
+                }
+            `;
+
+            function compileShader(type, source) {
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                    console.error(gl.getShaderInfoLog(shader));
+                }
+                return shader;
+            }
+
+            function createProgram(vsSource, fsSource) {
+                const program = gl.createProgram();
+                gl.attachShader(program, compileShader(gl.VERTEX_SHADER, vsSource));
+                gl.attachShader(program, compileShader(gl.FRAGMENT_SHADER, fsSource));
+                gl.linkProgram(program);
+                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                    console.error(gl.getProgramInfoLog(program));
+                }
+                return program;
+            }
+
+            const program = createProgram(vsSource, fsSource);
+            gl.useProgram(program);
+
+            const vertices = new Float32Array([
+                -1, -1, 0,
+                 1, -1, 0,
+                -1,  1, 0,
+                -1,  1, 0,
+                 1, -1, 0,
+                 1,  1, 0
+            ]);
+
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+            const positionLoc = gl.getAttribLocation(program, 'a_position');
+            gl.enableVertexAttribArray(positionLoc);
+            gl.vertexAttribPointer(positionLoc, 3, gl.FLOAT, false, 0, 0);
+
+            const colorLoc = gl.getUniformLocation(program, 'u_color');
+            const [r, g, b] = color.match(/\w\w/g).map(x => parseInt(x, 16) / 255);
+            gl.uniform4f(colorLoc, r, g, b, 1.0);
+
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+
+        // Example usage: fill the window with red color
+        fillWindowWithColor('#000000');
+    </script>
+</body>
+</html>

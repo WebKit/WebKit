@@ -1,0 +1,8 @@
+
+PASS @page { size: 50% } is invalid
+PASS @page { size: 10px 50% } is invalid
+PASS @page { size: min-content } is invalid
+PASS @page { size: max-content } is invalid
+PASS @page { size: fit-content(100px) } is invalid
+PASS @page { size: min-content max-content } is invalid
+

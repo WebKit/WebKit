@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/adding-only-snap-area.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/adding-snap-area-while-snapped.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-align-nested.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-align.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-type-on-root-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-type.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/focus-element-no-snap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/instant-resnap-to-target.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/layout-follows-focused-targeted-block-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/layout-follows-focused-targeted-block.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/move-current-target.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/not-resnap-outside-proximity-threshold.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/remove-current-target.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/resnap-on-oveflow-hidden-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/resnap-on-overflowing-snap-area.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/resnap-on-reconstructing-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/resnap-to-focused.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/snap-to-different-targets.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/two-consecutive-resnaps-align-end.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/two-consecutive-resnaps.html

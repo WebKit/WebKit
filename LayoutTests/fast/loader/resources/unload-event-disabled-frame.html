@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script>
+function report(type)
+{
+    parent.postMessage(type, "*");
+}
+addEventListener("unload", () => report("unload"));
+addEventListener("pagehide", () => report("pagehide"));
+addEventListener("load", () => parent.postMessage("loaded", "*"));
+</script>

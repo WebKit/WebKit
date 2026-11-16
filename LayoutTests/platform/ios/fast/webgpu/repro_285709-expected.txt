@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'adapter.requestDevice')
+
+WebGPU is only supported on Apple4 hardware or later or Mac2 hardware.

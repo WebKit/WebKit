@@ -1,0 +1,8 @@
+
+PASS All style elements should load because they have proper hashes
+Lorem ipsum
+Lorem ipsum
+Lorem ipsum
+Lorem ipsum
+Lorem ipsum
+Lorem ipsum

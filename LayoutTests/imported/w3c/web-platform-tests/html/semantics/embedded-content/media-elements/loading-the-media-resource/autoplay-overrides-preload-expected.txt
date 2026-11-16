@@ -1,0 +1,6 @@
+
+PASS autoplay (set first) overrides preload "none"
+PASS autoplay (set last) overrides preload "none"
+PASS autoplay (set first) overrides preload "metadata"
+PASS autoplay (set last) overrides preload "metadata"
+

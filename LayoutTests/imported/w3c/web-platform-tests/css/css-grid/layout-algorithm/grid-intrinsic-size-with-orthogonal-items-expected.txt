@@ -1,0 +1,47 @@
+rows: auto
+XXX XX X XXX XX X
+ rows: minmax(100px, 200px)
+XXX XX X XXX XX X
+ rows: minmax(auto, 200px)
+XXX XX X XXX XX X
+ rows: minmax(100px, auto)
+XXX XX X XXX XX X
+ rows: minmax(auto, 100px)
+XXX XX X XXX XX X
+ rows: minmax(100px, fit-content)
+XXX XX X XXX XX X
+ rows: minmax(100px, 1fr)
+XXX XX X XXX XX X
+
+FAIL .grid 1 assert_equals:
+<div class="grid" data-expected-width="75" data-expected-height="150">
+    <div class="item" data-expected-width="75" data-expected-height="150">XXX XX X XXX XX X</div>
+</div>
+width expected 75 but got 25
+FAIL .grid 2 assert_equals:
+<div class="grid minmax-100-200" data-expected-width="75" data-expected-height="150">
+    <div class="item" data-expected-width="75" data-expected-height="150">XXX XX X XXX XX X</div>
+</div>
+width expected 75 but got 50
+FAIL .grid 3 assert_equals:
+<div class="grid minmax-auto-200" data-expected-width="75" data-expected-height="150">
+    <div class="item" data-expected-width="75" data-expected-height="150">XXX XX X XXX XX X</div>
+</div>
+width expected 75 but got 50
+FAIL .grid 4 assert_equals:
+<div class="grid minmax-100-auto" data-expected-width="75" data-expected-height="150">
+    <div class="item" data-expected-width="75" data-expected-height="150">XXX XX X XXX XX X</div>
+</div>
+width expected 75 but got 25
+PASS .grid 5
+FAIL .grid 6 assert_equals:
+<div class="grid minmax-auto-fitcontent" data-expected-width="75" data-expected-height="150">
+    <div class="item" data-expected-width="75" data-expected-height="150">XXX XX X XXX XX X</div>
+</div>
+width expected 75 but got 25
+FAIL .grid 7 assert_equals:
+<div class="grid minmax-auto-1fr" data-expected-width="75" data-expected-height="150">
+    <div class="item" data-expected-width="75" data-expected-height="150">XXX XX X XXX XX X</div>
+</div>
+width expected 75 but got 25
+

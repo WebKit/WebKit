@@ -1,0 +1,6 @@
+
+PASS Inline injected style without text content should be allowed
+PASS Inline style sheet should be created with null child node
+PASS Inline style should be created with empty-string child node
+PASS Inline style should be applied
+Lorem ipsum

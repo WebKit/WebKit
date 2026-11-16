@@ -1,0 +1,46 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/ahem.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/assumptions.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/crashtest.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/css-metadata.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/css-user-styles.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/file-names.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/general-guidelines.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/github-intro.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/h2tests.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/idlharness.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/index.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/lint-tool.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/making-a-testing-plan.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/manual.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/print-reftests.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/reftest-tutorial.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/reftests.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/rendering.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/server-features.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/server-pipes.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/submission-process.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/test-templates.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/testdriver-extension-tutorial.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/testdriver.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/testharness-api.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/testharness-tutorial.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/testharness.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/tools.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/visual.md
+/LayoutTests/imported/w3c/web-platform-tests/docs/writing-tests/wdspec.md

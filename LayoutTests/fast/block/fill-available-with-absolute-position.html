@@ -1,0 +1,15 @@
+<style>
+.fill { 
+  width: 10px;
+  background-color: green;
+  height: -webkit-fill-available;
+  position: absolute;
+}
+.relative-containing-block {
+  position: relative;
+}
+</style>
+<div class=fill></div>
+<div class=relative-containing-block>
+  <div class=fill style="background-color: red"></div>
+</div>

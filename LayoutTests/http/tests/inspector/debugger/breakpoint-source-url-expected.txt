@@ -1,0 +1,35 @@
+Tests conditional checkout breakpoints in actual named network and Blob scripts, with an unnamed network control.
+
+40
+
+== Running test suite: Debugger.Breakpoint.SourceURL
+-- Running test case: Debugger.Breakpoint.SourceURL.NamedExternal
+PASS: The actual checkout breakpoint should resolve through the debugger.
+PASS: The order should complete without a debugger pause.
+PASS: The page should display the completed order total.
+PASS: The order should pause in the script loaded by this page.
+PASS: The real paused checkout should expose the matching order quantity.
+PASS: Resuming should finish the order and update the page.
+PASS: The order should complete without a debugger pause.
+PASS: The page should display the completed order total.
+
+-- Running test case: Debugger.Breakpoint.SourceURL.NamedBlob
+PASS: The actual checkout breakpoint should resolve through the debugger.
+PASS: The order should complete without a debugger pause.
+PASS: The page should display the completed order total.
+PASS: The order should pause in the script loaded by this page.
+PASS: The real paused checkout should expose the matching order quantity.
+PASS: Resuming should finish the order and update the page.
+PASS: The order should complete without a debugger pause.
+PASS: The page should display the completed order total.
+
+-- Running test case: Debugger.Breakpoint.SourceURL.UnnamedExternal
+PASS: The actual checkout breakpoint should resolve through the debugger.
+PASS: The order should complete without a debugger pause.
+PASS: The page should display the completed order total.
+PASS: The order should pause in the script loaded by this page.
+PASS: The real paused checkout should expose the matching order quantity.
+PASS: Resuming should finish the order and update the page.
+PASS: The order should complete without a debugger pause.
+PASS: The page should display the completed order total.
+

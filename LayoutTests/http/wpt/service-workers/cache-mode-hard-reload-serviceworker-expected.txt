@@ -1,0 +1,6 @@
+
+PASS : {"url":"http://localhost:8800/WebKit/service-workers/cache-mode-hard-reload-serviceworker.html","cache":"reload"}
+PASS : {"url":"http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?first-script-static","cache":"reload"}
+PASS : {"url":"http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?second-script-dynamic","cache":"reload"}
+PASS : {"url":"http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?third-script-async","cache":"reload"}
+

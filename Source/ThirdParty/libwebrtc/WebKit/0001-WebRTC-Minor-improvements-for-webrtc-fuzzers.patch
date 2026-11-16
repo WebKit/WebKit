@@ -1,0 +1,80 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/rtp_packetizer_av1_fuzzer.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/rtp_packetizer_av1_fuzzer.cc
+index e5550c1279cb..471ae9c3c67d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/rtp_packetizer_av1_fuzzer.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/rtp_packetizer_av1_fuzzer.cc
+@@ -14,6 +14,9 @@
+ #include "modules/rtp_rtcp/source/rtp_format.h"
+ #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+ #include "modules/rtp_rtcp/source/rtp_packetizer_av1.h"
++#ifdef WEBRTC_WEBKIT_BUILD
++#include "modules/rtp_rtcp/source/video_rtp_depacketizer_av1.h"
++#endif
+ #include "rtc_base/checks.h"
+ #include "test/fuzzers/fuzz_data_helper.h"
+ 
+@@ -45,27 +48,42 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
+   // When packetization was successful, validate NextPacket function too.
+   // While at it, check that packets respect the payload size limits.
+   RtpPacketToSend rtp_packet(nullptr);
++#ifdef WEBRTC_WEBKIT_BUILD
++  VideoRtpDepacketizerAv1 depacketizer;
++#endif
+   // Single packet.
+   if (num_packets == 1) {
+     RTC_CHECK(packetizer.NextPacket(&rtp_packet));
+     RTC_CHECK_LE(rtp_packet.payload_size(),
+                  limits.max_payload_len - limits.single_packet_reduction_len);
++#ifdef WEBRTC_WEBKIT_BUILD
++    depacketizer.Parse(rtp_packet.PayloadBuffer());
++#endif
+     return;
+   }
+   // First packet.
+   RTC_CHECK(packetizer.NextPacket(&rtp_packet));
+   RTC_CHECK_LE(rtp_packet.payload_size(),
+                limits.max_payload_len - limits.first_packet_reduction_len);
++#ifdef WEBRTC_WEBKIT_BUILD
++  depacketizer.Parse(rtp_packet.PayloadBuffer());
++#endif
+   // Middle packets.
+   for (size_t i = 1; i < num_packets - 1; ++i) {
+     RTC_CHECK(packetizer.NextPacket(&rtp_packet))
+         << "Failed to get packet#" << i;
+     RTC_CHECK_LE(rtp_packet.payload_size(), limits.max_payload_len)
+         << "Packet #" << i << " exceeds it's limit";
++#ifdef WEBRTC_WEBKIT_BUILD
++    depacketizer.Parse(rtp_packet.PayloadBuffer());
++#endif
+   }
+   // Last packet.
+   RTC_CHECK(packetizer.NextPacket(&rtp_packet));
+   RTC_CHECK_LE(rtp_packet.payload_size(),
+                limits.max_payload_len - limits.last_packet_reduction_len);
++#ifdef WEBRTC_WEBKIT_BUILD
++  depacketizer.Parse(rtp_packet.PayloadBuffer());
++#endif
+ }
+ }  // namespace webrtc
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/utils/rtp_replayer.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/utils/rtp_replayer.cc
+index 83f894dc28db..06a31ab881a2 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/utils/rtp_replayer.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/utils/rtp_replayer.cc
+@@ -187,8 +187,15 @@ void RtpReplayer::ReplayPackets(
+       RTC_LOG(LS_ERROR) << "Packet error, corrupt packets or incorrect setup?";
+       break;
+     }
++#ifdef WEBRTC_WEBKIT_BUILD
++    // Set the clock rate if zero - always 90K for video
++    if (received_packet.payload_type_frequency() == 0) {
++        received_packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
++    }
++#else
+     // Set the clock rate - always 90K for video
+     received_packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
++#endif
+ 
+     call->Receiver()->DeliverRtpPacket(
+         MediaType::VIDEO, std::move(received_packet),
+-- 
+2.39.3 (Apple Git-145)
+

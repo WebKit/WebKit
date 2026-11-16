@@ -1,0 +1,18 @@
+Bill Ted
+100 99
+
+Bill	Ted
+100	99
+This tests that tables return their column and row count correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS columnCount is 2
+PASS rowCount is 2
+PASS columnCount is 2
+PASS rowCount is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

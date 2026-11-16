@@ -1,0 +1,23 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    name = "webgl_factory",
+    srcs = [
+        "GrGLMakeNativeInterface_webgl.cpp",
+    ],
+    hdrs = [
+        "//include/gpu/ganesh/gl:webgl_hdrs",
+    ],
+    local_defines = ["SK_DISABLE_LEGACY_GL_MAKE_NATIVE_INTERFACE"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//:ganesh_gl",
+    ],
+)

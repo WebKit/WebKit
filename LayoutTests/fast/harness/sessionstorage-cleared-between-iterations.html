@@ -1,0 +1,45 @@
+<html>
+<head>
+<!--
+    Test verifies that the test harness itself starts each test run with an empty
+    sessionStorage. This matters when running with run-webkit-tests --iterations N
+    (N > 1): if sessionStorage is not cleared between iterations, the marker written
+    at the end of the first run leaks into the next run and the output diverges from
+    the expected result, failing the test.
+-->
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function runTest()
+{
+    if (!window.sessionStorage) {
+        log("window.sessionStorage DOES NOT exist");
+        return;
+    }
+
+    // At the start of every test run, sessionStorage should be empty. If a
+    // previous iteration's state leaked through, these values will differ from
+    // the expected output.
+    log("Length at start is " + window.sessionStorage.length);
+    log("Value for iterationMarker is " + window.sessionStorage.getItem("iterationMarker"));
+
+    // Leave a marker behind. If the harness clears sessionStorage between
+    // iterations this is harmless; if it does not, the next iteration will
+    // observe it and the test will fail.
+    window.sessionStorage.setItem("iterationMarker", "leaked");
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test verifies that sessionStorage is empty at the start of each test run (including subsequent iterations under run-webkit-tests --iterations N).<br>
+<div id="logger"></div>
+</body>
+</html>

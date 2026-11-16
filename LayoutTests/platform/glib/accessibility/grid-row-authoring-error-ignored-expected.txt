@@ -1,0 +1,78 @@
+Tests that tables with unignored objects between rows and cells behave as expected.
+
+Grid 1:
+AXRole: AXTable
+    AXRole: AXRow
+        AXRole: AXColumnHeader AXValue: A
+        AXRole: AXColumnHeader AXValue: B
+        AXRole: AXColumnHeader AXValue: C
+    AXRole: AXRow
+        AXRole: AXCell AXValue: D1
+        AXRole: AXCell AXValue: D2
+        AXRole: AXCell AXValue: D3
+
+
+Grid 2:
+AXRole: AXTable
+    AXRole: AXRow
+        AXRole: AXColumnHeader AXValue: A
+        AXRole: AXColumnHeader AXValue: B
+        AXRole: AXColumnHeader AXValue: C
+    AXRole: AXRow
+        AXRole: AXCell AXValue: X<\n>Y<\n>Z<\n>A1<\n>A2<\n>A3<\n>
+            AXRole: AXTable
+                AXRole: AXRow
+                    AXRole: AXColumnHeader AXValue: X
+                    AXRole: AXColumnHeader AXValue: Y
+                    AXRole: AXColumnHeader AXValue: Z
+                AXRole: AXRow
+                    AXRole: AXCell AXValue: A1
+                    AXRole: AXCell AXValue: A2
+                    AXRole: AXCell AXValue: A3
+        AXRole: AXCell AXValue: D2
+        AXRole: AXCell AXValue: D3
+
+
+Grid 3:
+AXRole: AXTable
+    AXRole: AXRow
+        AXRole: AXColumnHeader AXValue: A
+        AXRole: AXColumnHeader AXValue: B
+        AXRole: AXColumnHeader AXValue: C
+    AXRole: AXRow
+        AXRole: AXCell AXValue: D1
+        AXRole: AXCell AXValue: D2
+        AXRole: AXCell AXValue: D3
+
+
+Testing draggable row ignored status:
+PASS: !axRow === true
+Moving draggable row outside table...
+Draggable row no longer ignored.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+A
+B
+C
+D1
+D2
+D3
+A
+B
+C
+X
+Y
+Z
+A1
+A2
+A3
+D2
+D3
+A
+B
+C
+D1
+D2
+D3

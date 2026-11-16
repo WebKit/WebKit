@@ -1,0 +1,9 @@
+Tests that an XMLHttpRequest resource gives us JSON text even if it is marked as having blob content.
+
+
+== Running test suite: Network.RequestMainURL
+-- Running test case: Network.RequestMainURL.XHR
+PASS: Should have two resources for the main URL.
+PASS: First resource should be main resource.
+PASS: Second resource should be XHR.
+

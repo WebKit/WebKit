@@ -1,0 +1,3 @@
+
+PASS Setting 'animation-iteration-count: infinite' after a CSS Animation is completed restarts the animation.
+

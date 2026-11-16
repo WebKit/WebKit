@@ -1,0 +1,39 @@
+<!-- webkit-test-runner [ dumpResourceResponseMIMETypes=* ] -->
+<!DOCTYPE html>
+<script src="../../../../resources/srcset-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    if (window.internals)
+        internals.clearMemoryCache();
+
+    function fileName(src) {
+        var array = src.split('/');
+        return array[array.length -1];
+    };
+
+    function currentSrcFileName(id) {
+        var currentSrc = document.getElementById(id).currentSrc;
+        return fileName(currentSrc);
+    };
+
+    function updateSrc() {
+        var img = document.getElementById("foo");
+        // sizes must be set first, then srcset must be set, the 'src'
+        // This will be fixed when image loading is done is "stable-state"
+        img.sizes = "400px";
+        img.srcset = "../../../hidpi/resources/image-set-1x.png 200w, ../../../hidpi/resources/image-set-2x.png 400w, ../resources/image-set-4x.png 800w";
+        img.src = "../resources/blue-100-px-square.png"
+    }
+
+    addEventListener("DOMContentLoaded", function() {
+        updateSrc();
+    }, false);
+
+    function runTest()
+    {
+        shouldBe('currentSrcFileName("foo")', '"image-set-4x.png"');
+    }
+</script>
+<img id="foo">

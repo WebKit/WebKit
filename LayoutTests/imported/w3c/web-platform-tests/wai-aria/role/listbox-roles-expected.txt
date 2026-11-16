@@ -1,0 +1,15 @@
+Tests listbox and related roles.
+
+x
+x x
+x
+x
+x
+
+PASS div role is listbox
+PASS role is option (in div listbox)
+PASS role is group (in div listbox)
+PASS role is option (in group, in div listbox)
+PASS ul role is listbox
+PASS li role is option (in ul listbox)
+

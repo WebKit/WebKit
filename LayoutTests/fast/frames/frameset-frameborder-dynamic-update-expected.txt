@@ -1,0 +1,21 @@
+Tests that the frameset frameborder state updates correctly on dynamic changes: changing frameborder="no" to a true value restores the border, and removing the attribute restores the default (true) rather than forcing it off.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Changing frameborder="no" to frameborder="yes" restores the border:
+PASS frames[0].offsetWidth is 150
+PASS frames[0].offsetWidth is 145
+PASS frames[1].offsetWidth is 145
+
+
+Removing the frameborder attribute restores the default (true), not false:
+PASS frames[0].offsetWidth is 150
+PASS frames[0].offsetWidth is 145
+PASS frames[1].offsetWidth is 145
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

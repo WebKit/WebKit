@@ -1,0 +1,8 @@
+`
+
+PASS getBoundingClientRect for elements with css zoom
+PASS getBoundingClientRect for elements with css zoom 1
+PASS getBoundingClientRect for elements with css zoom 2
+PASS getBoundingClientRect for elements with css zoom 3
+PASS getBoundingClientRect for elements with css zoom 4
+

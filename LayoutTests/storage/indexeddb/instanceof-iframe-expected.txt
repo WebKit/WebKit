@@ -1,0 +1,35 @@
+indexedDB.deleteDatabase('testDB')
+indexedDB.open('testDB', 1)
+openRequest.result.createObjectStore('testObjectStore', {keyPath: 'id'})
+tx = openRequest.result.transaction('testObjectStore', 'readwrite')
+store = tx.objectStore('testObjectStore')
+store.put({id: 1, array:[1,2,3], arrayBuffer: new ArrayBuffer(3), set: new Set([1,2,3]), map: new Map([[1, 'one']]), object: { name: 'test' }})
+store.get(1)
+PASS result.array instanceof Array is true
+PASS result.arrayBuffer instanceof ArrayBuffer is true
+PASS result.set instanceof Set is true
+PASS result.map instanceof Map is true
+PASS result.object instanceof Object is true
+PASS result.array instanceof window.top.Array is true
+PASS result.arrayBuffer instanceof window.top.ArrayBuffer is true
+PASS result.set instanceof window.top.Set is true
+PASS result.map instanceof window.top.Map is true
+PASS result.object instanceof window.top.Object is true
+indexedDB.open('testDB', 1)
+tx = openRequest.result.transaction('testObjectStore', 'readwrite')
+store = tx.objectStore('testObjectStore')
+store.get(1)
+PASS result.array instanceof Array equals to true.
+PASS result.arrayBuffer instanceof ArrayBuffer equals to true.
+PASS result.set instanceof Set equals to true.
+PASS result.map instanceof Map equals to true.
+PASS result.object instanceof Object equals to true.
+PASS result.array instanceof window.top.Array equals to false.
+PASS result.arrayBuffer instanceof window.top.ArrayBuffer equals to false.
+PASS result.set instanceof window.top.Set equals to false.
+PASS result.map instanceof window.top.Map equals to false.
+PASS result.object instanceof window.top.Object equals to false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

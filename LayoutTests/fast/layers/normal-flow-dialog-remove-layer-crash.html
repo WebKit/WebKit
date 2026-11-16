@@ -1,0 +1,30 @@
+<style>
+  div {
+    overflow: hidden;
+  }
+  dialog {
+    overflow: hidden;
+    position: static;
+    display: inline;
+    float: left;
+  }
+  head {
+    display: inline;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+  onload = () => {
+    document.head.append(dialog);
+    setTimeout(() => {
+      dialog.showModal();
+      document.styleSheets[0].disabled = true;
+      testRunner.notifyDone();
+    }, 0);
+  };
+</script>
+<body>
+<dialog id="dialog"><div></div></dialog>
+Pass if no crash.
+</body>

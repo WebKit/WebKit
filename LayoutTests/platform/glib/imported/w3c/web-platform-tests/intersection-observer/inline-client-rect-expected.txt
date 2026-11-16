@@ -1,0 +1,6 @@
+1 2 3 4 5
+
+PASS Inline target
+FAIL First rAF assert_approx_equals: entries[0].boundingClientRect.top expected 48 +/- 0 but got 48.5
+FAIL scroller.scrollLeft = 90 assert_approx_equals: entries[1].boundingClientRect.top expected 48 +/- 0 but got 48.5
+

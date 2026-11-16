@@ -1,0 +1,22 @@
+<style>
+div {
+  font-size: 20px;
+  font-family: Monospace;
+  width: 150px;
+  outline: none;
+}
+</style>
+<div id=edit_this contenteditable="true">first secondline</div>
+<script>
+document.body.offsetHeight;
+let range = new Range();
+range.setStart(edit_this.firstChild, 12);
+
+let selection = window.getSelection();
+selection.removeAllRanges();
+selection.addRange(range);
+
+edit_this.focus();
+document.execCommand("insertText", false, " ");
+edit_this.blur();
+</script>

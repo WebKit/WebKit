@@ -1,0 +1,5 @@
+Service Worker intercepted navigation preserves document.referrer
+
+
+PASS document.referrer for a navigation intercepted by a Service Worker is unchanged and matches the parent URL
+

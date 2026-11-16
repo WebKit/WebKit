@@ -1,0 +1,6 @@
+
+PASS pendingLocalDescription is surfaced at the right time
+PASS pendingRemoteDescription is surfaced at the right time
+PASS currentLocalDescription is surfaced at the right time
+PASS currentRemoteDescription is surfaced at the right time
+

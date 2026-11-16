@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+    <title>In-band text tracks: cross-origin media exposure rules</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard:
+//   §4.8.13.7 "Text tracks", "Media resource with text tracks":
+//     https://html.spec.whatwg.org/multipage/media.html#media-resource-with-text-tracks
+//
+// Cross-origin media data does not expose its in-band text tracks: the
+// tracks are exposed only when the media data is CORS-same-origin (either
+// served from the same origin, or fetched with the crossorigin attribute
+// set and a passing CORS check).
+
+// Page is loaded from 127.0.0.1:8000; serve the captioned media from
+// localhost:8000 to make it cross-origin.
+const SAME_ORIGIN_SRC = "/media/resources/counting-captioned.mov";
+const CROSS_ORIGIN_NO_CORS = "http://localhost:8000/media/resources/serve_video.py?type=video/quicktime&name=counting-captioned.mov";
+const CROSS_ORIGIN_WITH_CORS = "http://localhost:8000/media/resources/serve_video_cors.py?type=video/quicktime&name=counting-captioned.mov";
+
+function loadAndCount(t, src, opts = {}) {
+    const video = document.createElement("video");
+    video.muted = true;
+    if (opts.crossOrigin)
+        video.crossOrigin = opts.crossOrigin;
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+    video.src = src;
+
+    // Resolve with textTracks.length once the video has settled.
+    // Prefer 'canplaythrough' as the canonical "everything loaded" signal.
+    //
+    // For cross-origin media without CORS, WebKit may not advance the
+    // video to canplaythrough at all (the media element's loading path
+    // is more conservative when CORS is unavailable). In that case the
+    // safety-net at 5s reads textTracks.length anyway. Both outcomes
+    // are spec-conforming for the no-CORS case (the spec only requires
+    // tracks not be exposed); a regression where tracks ARE exposed
+    // would populate textTracks during loadedmetadata and produce
+    // length > 0 at the safety-net.
+    return new Promise((resolve, reject) => {
+        video.addEventListener("canplaythrough",
+            () => resolve(video.textTracks.length), { once: true });
+        video.addEventListener("error",
+            e => reject(new Error(`video error: ${video.error?.message ?? e.type}`)),
+            { once: true });
+        t.step_timeout(() => resolve(video.textTracks.length), 5000);
+    });
+}
+
+promise_test(async t => {
+    // Same-origin media: in-band tracks are exposed.
+    const count = await loadAndCount(t, SAME_ORIGIN_SRC);
+    assert_greater_than(count, 0,
+        "same-origin captioned media exposes its in-band text tracks");
+}, "same-origin: in-band text tracks are exposed");
+
+promise_test(async t => {
+    // Cross-origin media without crossorigin attribute: tracks NOT exposed.
+    const count = await loadAndCount(t, CROSS_ORIGIN_NO_CORS);
+    assert_equals(count, 0,
+        "cross-origin media without CORS does not expose in-band text tracks");
+}, "cross-origin without crossorigin attribute: tracks hidden");
+
+promise_test(async t => {
+    // Cross-origin media WITH crossorigin attribute and CORS-permitting
+    // server: tracks ARE exposed.
+    const count = await loadAndCount(t, CROSS_ORIGIN_WITH_CORS,
+        { crossOrigin: "anonymous" });
+    assert_greater_than(count, 0,
+        "cross-origin media with passing CORS exposes in-band text tracks");
+}, "cross-origin with crossorigin=anonymous and CORS: tracks exposed");
+</script>
+</body>
+</html>

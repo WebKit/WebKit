@@ -1,0 +1,48 @@
+Tests FrameDOMAgent event listener queries and the shadow-tree editing flag: getEventListenersForNode, setEventListenerDisabled, setAllowEditingUserAgentShadowTrees.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.EventListeners
+-- Running test case: Setup
+PASS: Should find a cross-origin frame target.
+PASS: Frame target should have a document.
+PASS: Should find #container.
+PASS: Should find #heading.
+PASS: Should find #button.
+
+-- Running test case: SiteIsolation.DOM.EventListeners.Basic
+PASS: Should return one listener.
+PASS: Listener type should be 'click'.
+PASS: Listener should be a bubble-phase listener.
+PASS: Listener should not be an attribute listener.
+PASS: Listener should have an eventListenerId.
+PASS: Listener handlerName should match the function name.
+
+-- Running test case: SiteIsolation.DOM.EventListeners.CaptureAndBubble
+PASS: Should find the capture listener.
+PASS: Should find the bubble listener.
+PASS: Capture listener should have useCapture=true.
+PASS: Bubble listener should have useCapture=false.
+
+-- Running test case: SiteIsolation.DOM.EventListeners.OnceAndPassive
+PASS: Should find the once listener.
+PASS: Once listener should have once=true.
+PASS: Should find the passive listener.
+PASS: Passive listener should have passive=true.
+
+-- Running test case: SiteIsolation.DOM.EventListeners.IncludeAncestors
+PASS: Should find the ancestor listener attached to document.body.
+
+-- Running test case: SiteIsolation.DOM.EventListeners.SetDisabled
+PASS: Baseline: handler should fire once before being disabled.
+PASS: Should find the basicClickHandler to disable.
+PASS: Handler should not fire while disabled.
+PASS: Handler should fire again once re-enabled.
+
+-- Running test case: SiteIsolation.DOM.EventListeners.SetDisabled.UnknownId
+PASS: setEventListenerDisabled with an unknown id should fail.
+
+-- Running test case: SiteIsolation.DOM.EventListeners.SetAllowEditingUserAgentShadowTrees
+PASS: setAllowEditingUserAgentShadowTrees(true) should succeed.
+PASS: setAllowEditingUserAgentShadowTrees(false) should succeed.
+

@@ -1,0 +1,10 @@
+Basic requestIdleCallback Tests
+
+
+PASS window.requestIdleCallback is defined
+PASS window.cancelIdleCallback is defined
+PASS window.requestIdleCallback() returns a number
+PASS window.cancelIdleCallback() returns undefined
+PASS requestIdleCallback schedules callbacks
+PASS cancelIdleCallback cancels callbacks
+

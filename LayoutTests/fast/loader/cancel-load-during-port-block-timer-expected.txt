@@ -1,0 +1,1 @@
+If this does not crash, the test has passed.

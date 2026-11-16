@@ -1,0 +1,2377 @@
+Tests that the queries involving the default framebuffer of an OffscreenCanvas WebGL context in a worker give the same answers in every state of the context. Part 2 of 4.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: resources/default-framebuffer-queries-worker.js#2-4
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: false, depth: false, stencil: true
+[Worker] fresh:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: true, depth: false, stencil: true
+[Worker] fresh:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, premultipliedAlpha: false, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: true
+[Worker] fresh:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, premultipliedAlpha: false, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: true
+[Worker] fresh:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: false, depth: false, stencil: false
+[Worker] fresh:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: true, depth: false, stencil: false
+[Worker] fresh:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, premultipliedAlpha: false, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: false
+[Worker] fresh:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, premultipliedAlpha: false, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: false
+[Worker] fresh:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 8
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: false, depth: true, stencil: true
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: true, depth: true, stencil: true
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: true
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: true
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: false, depth: true, stencil: false
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: true, depth: true, stencil: false
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: false
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: false
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is one of `16`, and `24`
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: false, depth: false, stencil: true
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: true, depth: false, stencil: true
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: true
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: true
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 8
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: false, depth: false, stencil: false
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: true, depth: false, stencil: false
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: false
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: false
+[Worker] fresh:
+[Worker] IMPLEMENTATION_COLOR_READ_FORMAT: RGBA
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] getError was expected value: INVALID_OPERATION : after evaluating: queryResult = gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+PASS [Worker] queryResult is null
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] drawn:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] after transferToImageBitmap():
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 2
+PASS [Worker] gl.drawingBufferHeight is 2
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+[Worker] resized:
+PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
+PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
+PASS [Worker] gl.getParameter(gl.BLUE_BITS) is 8
+PASS [Worker] gl.getParameter(gl.ALPHA_BITS) is 0
+PASS [Worker] gl.getParameter(gl.DEPTH_BITS) is 0
+PASS [Worker] gl.getParameter(gl.STENCIL_BITS) is 0
+PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 1
+PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
+PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
+PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
+PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
+PASS [Worker] gl.getParameter(drawBuffer0()) is gl.BACK
+PASS [Worker] drawBuffersAfterTheFirstAreNone() is true
+PASS [Worker] gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS [Worker] gl.drawingBufferWidth is 3
+PASS [Worker] gl.drawingBufferHeight is 3
+PASS [Worker] JSON.stringify(gl.getContextAttributes()) is JSON.stringify(attributes)
+PASS [Worker] getError was expected value: NO_ERROR : after the queries
+PASS [Worker] gl.isContextLost() is false
+PASS [Worker] contextLostEventCount is 0
+PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+
+PASS <model> stagemode=orbit resumes from the restored pose after an unload/reload cycle
+

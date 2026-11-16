@@ -1,0 +1,25 @@
+OPEN FILE PANEL
+
+PASS input[type=button].showPicker() does not focus the element
+PASS input[type=checkbox].showPicker() does not focus the element
+PASS input[type=color].showPicker() does not focus the element
+PASS input[type=date].showPicker() does not focus the element
+PASS input[type=datetime-local].showPicker() does not focus the element
+PASS input[type=email].showPicker() does not focus the element
+PASS input[type=file].showPicker() does not focus the element
+PASS input[type=hidden].showPicker() does not focus the element
+PASS input[type=image].showPicker() does not focus the element
+PASS input[type=month].showPicker() does not focus the element
+PASS input[type=number].showPicker() does not focus the element
+PASS input[type=password].showPicker() does not focus the element
+PASS input[type=radio].showPicker() does not focus the element
+PASS input[type=range].showPicker() does not focus the element
+PASS input[type=reset].showPicker() does not focus the element
+PASS input[type=search].showPicker() does not focus the element
+PASS input[type=submit].showPicker() does not focus the element
+PASS input[type=tel].showPicker() does not focus the element
+PASS input[type=text].showPicker() does not focus the element
+PASS input[type=time].showPicker() does not focus the element
+PASS input[type=url].showPicker() does not focus the element
+PASS input[type=week].showPicker() does not focus the element
+

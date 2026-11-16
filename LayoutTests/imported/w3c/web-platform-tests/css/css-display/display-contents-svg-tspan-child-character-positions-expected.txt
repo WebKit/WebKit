@@ -1,0 +1,4 @@
+ABC
+
+PASS Querying character positions across a display:contents tspan in SVG text should terminate
+

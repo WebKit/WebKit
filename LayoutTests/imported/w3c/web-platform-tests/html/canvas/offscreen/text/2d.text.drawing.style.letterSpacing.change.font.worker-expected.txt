@@ -1,0 +1,3 @@
+
+PASS Set letter spacing and word spacing to font dependent value and verify it works after font change.
+

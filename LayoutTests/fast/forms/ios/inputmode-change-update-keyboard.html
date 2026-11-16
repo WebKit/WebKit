@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input inputmode="text">
+<div id="countdown"></div>
+<script>
+jsTestIsAsync = true;
+
+description('This tests updating inputmode of an input element from "none" to "text". The software keyboard should be updated.<br>'
+    + 'To manually test, focus the input element below. The software keyboard should show up after 3 seconds');
+
+const input = document.querySelector("input");
+if (!window.testRunner) {
+    input.addEventListener('focus', () => {
+        let countdown = 3;
+        const id = setInterval(() => {
+            document.getElementById('countdown').textContent = countdown ? countdown : '';
+            if (!countdown) {
+                clearInterval(id);
+                input.setAttribute('inputmode', 'decimal');
+            }
+            countdown--;
+        }, 1000);
+    });
+}
+
+async function runTest() {
+    if (window.testRunner)
+        await UIHelper.setHardwareKeyboardAttached(false);
+
+    debug('inputmode="text"');
+
+    let didResize = () => { };
+    window.visualViewport.addEventListener('resize', () => didResize());
+
+    if (window.testRunner) {
+        await UIHelper.activateFormControl(input);
+        window.keyboardRect = await UIHelper.inputViewBounds();
+        shouldBeTrue('textHeight = keyboardRect.height; keyboardRect.height > 0');
+    } else {
+        await new Promise((resolve) => { didResize = resolve; });
+        shouldBeTrue('textHeight = document.documentElement.clientHeight - visualViewport.height; document.documentElement.clientHeight - visualViewport.height < 100');
+    }
+
+    if (window.testRunner)
+        input.setAttribute('inputmode', 'decimal');
+
+    await new Promise((resolve) => { didResize = resolve; });
+
+    debug('');
+    debug('inputmode="number"');
+
+    if (window.testRunner) {
+        window.keyboardRect = await UIHelper.inputViewBounds();
+        shouldNotBe('keyboardRect.height', 'textHeight');
+    } else
+        shouldNotBe('document.documentElement.clientHeight - visualViewport.height', 'textHeight');
+
+    finishJSTest();
+}
+
+window.onload = () => setTimeout(runTest, 0);
+
+</script>
+</body>
+</html>

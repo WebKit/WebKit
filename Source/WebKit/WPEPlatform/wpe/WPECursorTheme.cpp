@@ -1,0 +1,329 @@
+/*
+ * Copyright (C) 2023 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WPECursorTheme.h"
+
+#include <array>
+#include <stdio.h>
+#include <wtf/FileSystem.h>
+#include <wtf/glib/GLibExtras.h>
+#include <wtf/glib/GUniquePtr.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WPE {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CursorTheme);
+
+static UTF8CString cursorsPath(UTF8CStringView basePath, Vector<UTF8CString>& inherited)
+{
+    auto inheritedThemes = [&basePath] -> GMallocSpan<char*, WTF::GMallocStrv> {
+        auto index = gBuildFilename(basePath, "index.theme");
+        if (!g_file_test(index.utf8(), G_FILE_TEST_EXISTS))
+            return { };
+
+        GUniquePtr<GKeyFile> keyFile(g_key_file_new());
+        if (!g_key_file_load_from_file(keyFile.get(), index.utf8(), G_KEY_FILE_NONE, nullptr))
+            return { };
+
+        if (auto result = gKeyFileGetStringList(keyFile.get(), "Icon Theme"_s, "Inherits"_s))
+            return WTF::move(*result);
+
+        return { };
+    };
+
+    String pathOfIndex = FileSystem::pathByAppendingComponent(String::fromUTF8(basePath.span()), "index.theme"_s);
+    String canonicalPathOfIndex = FileSystem::realPath(pathOfIndex);
+    GUniquePtr<char> canonicalDirectoryOfIndex(g_path_get_dirname(canonicalPathOfIndex.utf8().legacyCStringPointer()));
+    auto actualBasePath = g_file_test(canonicalDirectoryOfIndex.get(), G_FILE_TEST_IS_DIR) ? UTF8CStringView::unsafeFromUTF8(canonicalDirectoryOfIndex.get()) : basePath;
+    auto baseCursorsPath = gBuildFilename(actualBasePath, "cursors");
+
+    if (auto inherits = inheritedThemes()) {
+        for (const char* themeName : inherits.span()) {
+            GUniquePtr<char> parentPath(g_path_get_dirname(actualBasePath.utf8()));
+            auto inheritedBasePath = gBuildFilename(parentPath.get(), themeName);
+            auto path = cursorsPath(inheritedBasePath, inherited);
+            auto exists = !path.isNull() && inherited.containsIf([&](const auto& item) {
+                return item == path;
+            });
+            if (!path.isNull() && !exists)
+                inherited.append(WTF::move(path));
+        }
+    }
+
+    if (g_file_test(baseCursorsPath.utf8(), G_FILE_TEST_IS_DIR))
+        return UTF8CString { baseCursorsPath.span() };
+
+    return { };
+}
+
+static std::unique_ptr<CursorTheme> tryCreateTheme(UTF8CStringView basePath, uint32_t size)
+{
+    if (!g_file_test(basePath.utf8(), G_FILE_TEST_IS_DIR))
+        return nullptr;
+
+    Vector<UTF8CString> inheritedThemes;
+    auto path = cursorsPath(basePath, inheritedThemes);
+    if (path.isNull() && inheritedThemes.isEmpty())
+        return nullptr;
+
+    if (path.isNull()) {
+        // If there's no cursors path, use the first inherited theme.
+        path = WTF::move(inheritedThemes[0]);
+        inheritedThemes.removeAt(0);
+    }
+
+    return makeUnique<CursorTheme>(WTF::move(path), size, WTF::move(inheritedThemes));
+}
+
+std::unique_ptr<CursorTheme> CursorTheme::create(const char* name, uint32_t size)
+{
+    auto tryLoadTheme = [](const char* name, uint32_t size) -> std::unique_ptr<CursorTheme> {
+        auto path = gBuildFilename(g_get_user_data_dir(), "icons", name);
+        if (auto theme = tryCreateTheme(path, size))
+            return theme;
+
+        path = gBuildFilename(g_get_home_dir(), ".icons", name);
+        if (auto theme = tryCreateTheme(path, size))
+            return theme;
+
+        for (const char* dataDir : span(g_get_system_data_dirs())) {
+            path = gBuildFilename(dataDir, "icons", name);
+            if (auto theme = tryCreateTheme(path, size))
+                return theme;
+        }
+
+        return nullptr;
+    };
+
+    bool isFallback = false;
+    for (const char* themeName : { name, "default", "Adwaita" }) {
+        if (isFallback && (themeName == name || !g_strcmp0(themeName, name)))
+            continue;
+
+        if (auto theme = tryLoadTheme(themeName, size))
+            return theme;
+
+        isFallback = true;
+    }
+
+    // FIXME: add builtin cursors to always have a valid fallback.
+    g_warning("Could not create cursor theme for '%s'", name);
+    return nullptr;
+}
+
+std::unique_ptr<CursorTheme> CursorTheme::create()
+{
+    return create("default", 24);
+}
+
+CursorTheme::CursorTheme(UTF8CString&& path, uint32_t size, Vector<UTF8CString>&& inherited)
+    : m_path(WTF::move(path))
+    , m_size(size)
+    , m_inherited(WTF::move(inherited))
+{
+}
+
+#define XCURSOR_MAGIC 0x72756358
+#define XCURSOR_IMAGE_TYPE 0xfffd0002
+#define XCURSOR_IMAGE_MAX_SIZE 0x7fff // 32767x32767 max cursor size.
+
+struct XcusorContent {
+    uint32_t type { 0 };
+    uint32_t subtype { 0 };
+    uint32_t position { 0 };
+};
+
+struct XcursorHeader {
+    uint32_t magic { 0 };
+    uint32_t length { 0 };
+    uint32_t version { 0 };
+    Vector<XcusorContent> contents;
+    uint32_t imageSize { 0 };
+    uint32_t imageCount { 0 };
+};
+
+struct XcursorChunkHeader {
+    uint32_t length { 0 };
+    uint32_t type { 0 };
+    uint32_t subtype { 0 };
+    uint32_t version { 0 };
+};
+
+static bool readUint32(FILE* file, uint32_t* value)
+{
+    std::array<unsigned char, 4> bytes;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    if (fread(bytes.data(), 1, 4, file) != 4)
+        return false;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+    *value = ((bytes[0] << 0) | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24));
+    return true;
+}
+
+#define distance(x, y) (x > y ? x - y : y - x)
+
+static std::optional<XcursorHeader> readHeader(FILE* file, uint32_t size)
+{
+    XcursorHeader header;
+    if (!readUint32(file, &header.magic) || header.magic != XCURSOR_MAGIC)
+        return std::nullopt;
+    if (!readUint32(file, &header.length))
+        return std::nullopt;
+    if (!readUint32(file, &header.version))
+        return std::nullopt;
+    uint32_t tocLength;
+    if (!readUint32(file, &tocLength) || tocLength > std::numeric_limits<uint16_t>::max())
+        return std::nullopt;
+    if (auto bytesToSkip = header.length - (4 * 4)) {
+        if (fseek(file, bytesToSkip, SEEK_CUR) == EOF)
+            return std::nullopt;
+    }
+
+    header.contents.grow(tocLength);
+    for (auto& entry : header.contents) {
+        if (!readUint32(file, &entry.type))
+            return std::nullopt;
+        if (!readUint32(file, &entry.subtype))
+            return std::nullopt;
+        if (!readUint32(file, &entry.position))
+            return std::nullopt;
+        if (entry.type != XCURSOR_IMAGE_TYPE)
+            continue;
+
+        if (!header.imageSize || distance(entry.subtype, size) < distance(header.imageSize, size)) {
+            header.imageSize = entry.subtype;
+            header.imageCount = 1;
+        } else if (entry.subtype == header.imageSize)
+            header.imageCount++;
+    }
+
+    if (!header.imageSize || !header.imageCount)
+        return std::nullopt;
+
+    return header;
+}
+
+static std::optional<XcursorChunkHeader> readChunkHeader(FILE* file, const XcusorContent& entry)
+{
+    if (fseek(file, entry.position, SEEK_SET) == EOF)
+        return std::nullopt;
+
+    XcursorChunkHeader chunkHeader;
+    if (!readUint32(file, &chunkHeader.length))
+        return std::nullopt;
+    if (!readUint32(file, &chunkHeader.type) || chunkHeader.type != entry.type)
+        return std::nullopt;
+    if (!readUint32(file, &chunkHeader.subtype) || chunkHeader.subtype != entry.subtype)
+        return std::nullopt;
+    if (!readUint32(file, &chunkHeader.version))
+        return std::nullopt;
+    return chunkHeader;
+}
+
+static std::optional<CursorTheme::CursorImage> readImage(FILE* file, const XcusorContent& entry)
+{
+    auto chunkHeader = readChunkHeader(file, entry);
+    if (!chunkHeader)
+        return std::nullopt;
+
+    CursorTheme::CursorImage image;
+    if (!readUint32(file, &image.width) || !image.width || image.width > XCURSOR_IMAGE_MAX_SIZE)
+        return std::nullopt;
+    if (!readUint32(file, &image.height) || !image.height || image.height > XCURSOR_IMAGE_MAX_SIZE)
+        return std::nullopt;
+    if (!readUint32(file, &image.hotspotX) || image.hotspotX > image.width)
+        return std::nullopt;
+    if (!readUint32(file, &image.hotspotY) || image.hotspotY > image.height)
+        return std::nullopt;
+    if (!readUint32(file, &image.delay))
+        return std::nullopt;
+
+    auto imageSize = image.width * image.height;
+    image.pixels.grow(imageSize);
+    auto* pixels = image.pixels.mutableSpan().data();
+    while (imageSize--) {
+        if (!readUint32(file, pixels))
+            return std::nullopt;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        pixels++;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    }
+
+    return image;
+}
+
+Vector<CursorTheme::CursorImage> CursorTheme::loadCursor(UTF8CStringView name, uint32_t size, std::optional<uint32_t> maxImages)
+{
+    auto path = gBuildFilename(m_path, name);
+    if (!g_file_test(path.utf8(), G_FILE_TEST_EXISTS)) {
+        path = nullptr;
+        for (auto& theme : m_inherited) {
+            path = gBuildFilename(theme, name);
+            if (g_file_test(path.utf8(), G_FILE_TEST_EXISTS))
+                break;
+            path = nullptr;
+        }
+    }
+
+    if (!path)
+        return { };
+
+    FILE* file = fopen(path.utf8(), "r");
+    if (!file)
+        return { };
+
+    auto header = readHeader(file, size);
+    if (!header) {
+        fclose(file);
+        return { };
+    }
+
+    header->imageCount = maxImages.value_or(header->imageCount);
+
+    Vector<CursorImage> cursorImages;
+    for (auto& entry : header->contents) {
+        if (entry.type != XCURSOR_IMAGE_TYPE)
+            continue;
+
+        if (entry.subtype != header->imageSize)
+            continue;
+
+        auto image = readImage(file, entry);
+        if (!image)
+            break;
+
+        cursorImages.append(WTF::move(*image));
+        if (cursorImages.size() == header->imageCount)
+            break;
+    }
+
+    fclose(file);
+
+    return cursorImages;
+}
+
+} // namespace WPE

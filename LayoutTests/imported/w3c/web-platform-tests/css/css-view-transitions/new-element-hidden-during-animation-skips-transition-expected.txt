@@ -1,0 +1,3 @@
+
+PASS Skipping the content of the captured new element during the animation phase skips the transition
+

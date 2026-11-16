@@ -1,0 +1,77 @@
+Test backtracking of a long chain of :empty siblings to catch any issue with register allocation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)").length is 3
+PASS document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)")[0] is document.getElementById("target1")
+PASS document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)")[1] is document.getElementById("target2")
+PASS document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)")[2] is document.getElementById("target3")
+PASS document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)>target-child").length is 1
+PASS document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)>target-child")[0] is document.getElementById("target4")
+PASS document.querySelectorAll("testcase").length is 61
+PASS getComputedStyle(document.querySelectorAll("testcase")[0]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[1]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[2]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[3]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[4]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[5]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[6]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[7]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[8]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[9]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[10]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[11]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[12]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[13]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[14]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[15]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[16]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[17]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[18]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[19]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[20]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[21]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[22]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[23]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[24]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[25]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[26]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[27]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[28]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[29]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[30]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[31]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[32]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[33]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[34]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[35]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[36]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[37]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[38]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[39]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[40]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[41]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[42]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[43]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[44]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[45]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[46]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[47]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[48]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[49]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[50]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[51]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[52]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[53]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[54]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[55]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[56]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[57]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[58]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[59]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("testcase")[60]).backgroundColor is "rgb(1, 2, 3)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

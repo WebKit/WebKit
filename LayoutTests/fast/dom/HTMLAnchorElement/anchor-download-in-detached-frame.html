@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>Test that detaching a frame that just clicked a link with a download attribute does not crash. The
+download's policy check outlives the navigation that started it, so it can be answered after the frame is
+gone; it must be discarded rather than applied to a frame that is no longer in a page.</p>
+<p>This test passes if it does not crash and no download callbacks are logged.</p>
+<iframe id="testFrame" srcdoc="<a id='download' download='test.html' href='data:text/html,HelloWorld!'>download</a>"></iframe>
+<script>
+onload = function() {
+    var frame = document.getElementById("testFrame");
+    frame.contentDocument.getElementById("download").click();
+    // Detaches the frame while the download's policy decision is still outstanding.
+    frame.remove();
+    if (window.testRunner) {
+        setTimeout(function() { testRunner.notifyDone(); }, 0);
+    }
+};
+</script>
+</body>
+</html>

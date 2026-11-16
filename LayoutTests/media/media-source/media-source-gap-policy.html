@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-gap-policy</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests MediaSourcePrivate's gap-handling policy:
+    //   - Start-of-stream allowance (1 s)
+    //   - Mid-stream gap tolerance (125 ms)
+    //   - Audio-covered gap tolerance (250 ms)
+    var source;
+    var videoBuffer;
+    var audioBuffer;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+        source = new MediaSource();
+        source.addEventListener('sourceopen', startLoad);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function samplesBetween(startMs, endMs, trackId) {
+        var samples = [];
+        for (var pts = startMs; pts < endMs; pts += 100)
+            samples.push(makeASample(pts, pts, 100, 1000, trackId, SAMPLE_FLAG.SYNC));
+        return concatenateSamples(samples);
+    }
+
+    async function startLoad() {
+        videoBuffer = source.addSourceBuffer('video/mock; codecs="mock"');
+        audioBuffer = source.addSourceBuffer('audio/mock; codecs="mock"');
+
+        videoBuffer.appendBuffer(makeAInit(4.0, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]));
+        await waitFor(videoBuffer, 'update');
+        audioBuffer.appendBuffer(makeAInit(4.0, [makeATrack(2, 'mock', TRACK_KIND.AUDIO)]));
+        await Promise.all([waitFor(video, 'loadedmetadata'), waitFor(audioBuffer, 'update')]);
+
+        audioBuffer.appendBuffer(samplesBetween(500, 4000, 2));
+        await waitFor(audioBuffer, 'update');
+
+        // ----- Start-of-stream allowance (1 s) -----
+        consoleWrite('=== Start-of-stream allowance (1 s) ===');
+
+        consoleWrite('Video [1500, 4000]: 1.5 s start gap > 1 s, readyState stays HAVE_METADATA.');
+        videoBuffer.appendBuffer(samplesBetween(1500, 4000, 1));
+        await waitFor(videoBuffer, 'update');
+        testExpected('video.readyState', HTMLMediaElement.HAVE_METADATA);
+
+        consoleWrite('Video [500, 1000]: 500 ms start gap <= 1 s, canplay fires.');
+        videoBuffer.appendBuffer(samplesBetween(500, 1000, 1));
+        await Promise.all([waitFor(video, 'canplay'), waitFor(videoBuffer, 'update')]);
+        testExpected('video.readyState', HTMLMediaElement.HAVE_FUTURE_DATA, '>=');
+
+        // ----- Mid-stream gap tolerance (125 ms) -----
+        consoleWrite('=== Mid-stream gap tolerance (125 ms) ===');
+        consoleWrite('Remove audio [1000, 1500) so it no longer bridges the 500 ms video gap.');
+        audioBuffer.remove(1.0, 1.5);
+        await waitFor(audioBuffer, 'update');
+
+        consoleWrite('500 ms gap > 125 ms tolerance: readyState below HAVE_ENOUGH_DATA.');
+        testExpected('video.readyState', HTMLMediaElement.HAVE_ENOUGH_DATA, '<');
+
+        // ----- Audio-covered gap tolerance (250 ms) -----
+        consoleWrite('=== Audio-covered gap tolerance (250 ms) ===');
+        consoleWrite('Re-append audio [1000, 1500): audio bridges the video gap.');
+        audioBuffer.appendBuffer(samplesBetween(1000, 1500, 2));
+        await waitFor(audioBuffer, 'update');
+
+        consoleWrite('500 ms gap > 250 ms audio-covered tolerance: readyState still below HAVE_ENOUGH_DATA.');
+        testExpected('video.readyState', HTMLMediaElement.HAVE_ENOUGH_DATA, '<');
+
+        consoleWrite('Append video [1200, 1500] to shrink the gap to 200 ms: canplaythrough fires.');
+        videoBuffer.appendBuffer(samplesBetween(1200, 1500, 1));
+        await Promise.all([waitFor(video, 'canplaythrough'), waitFor(videoBuffer, 'update')]);
+        testExpected('video.readyState', HTMLMediaElement.HAVE_ENOUGH_DATA);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

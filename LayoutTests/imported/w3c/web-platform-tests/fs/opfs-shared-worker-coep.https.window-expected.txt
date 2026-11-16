@@ -1,0 +1,3 @@
+
+FAIL SharedWorker served with COOP/COEP headers can use OPFS promise_test: Unhandled rejection with value: object "TypeError: main.addSharedWorker is not a function. (In 'main.addSharedWorker('workerVar')', 'main.addSharedWorker' is undefined)"
+

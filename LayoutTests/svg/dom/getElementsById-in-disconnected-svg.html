@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<link rel="help" href="https://www.w3.org/TR/SVG2/struct.html#__svg__SVGSVGElement__getElementById">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="test">
+    <svg xmlns="http://www.w3.org/2000/svg">
+        <g id="test"></g>
+        <g id="test"></g>
+    </svg>
+</div>
+<script>
+
+test(() => {
+    const div = document.querySelector('div');
+    const firstG = document.querySelector('g');
+    div.remove();
+    assert_equals(div.querySelector('svg').getElementById('test'), firstG);
+}, "SVGSVGElement.prototype.getElementById must return the first element in tree order,"
+    + " within the 'svg' element's descendants, whose ID is elementId, or null if there is no such element");
+
+</script>
+</body>
+</html>

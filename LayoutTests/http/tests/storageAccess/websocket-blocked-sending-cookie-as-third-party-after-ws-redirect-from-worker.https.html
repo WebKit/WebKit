@@ -1,0 +1,84 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+    <script>
+        description("Tests that a WebSocket opened from a DedicatedWorker in a cross-site iframe that has been granted storage access does not send the iframe's cookies after a WebSocket redirect.");
+        jsTestIsAsync = true;
+
+        const firstPartyUrl = "https://127.0.0.1:8443";
+        const thirdPartyUrl = "https://localhost:8443";
+
+        function finishTest()
+        {
+            testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                setEnableFeature(false, finishJSTest);
+            });
+        }
+
+        function receiveMessage(event)
+        {
+            if (event.origin !== thirdPartyUrl) {
+                testFailed("Received a message from an unexpected origin: " + event.origin);
+                finishTest();
+                return;
+            }
+
+            let { type, message } = event.data;
+            if (type === "pass")
+                testPassed(message);
+            else if (type === "fail")
+                testFailed(message);
+            else
+                debug(message);
+
+            if (type === "done")
+                finishTest();
+        }
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function activateElement(elementId)
+        {
+            let element = document.getElementById(elementId);
+            let centerX = element.offsetLeft + element.offsetWidth / 2;
+            let centerY = element.offsetTop + element.offsetHeight / 2;
+            UIHelper.activateAt(centerX, centerY).then(function() {
+                eventSender.keyDown("escape");
+            }, function() {
+                testFailed("Promise rejected.");
+                finishTest();
+            });
+        }
+
+        function runTest()
+        {
+            switch (document.location.hash) {
+            case "":
+                // Set a cookie for localhost that the storage access grant would expose to the iframe.
+                setEnableFeature(true, function() {
+                    document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.py?dummy=" + Math.random() + "&name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect-from-worker.https.html#runTest";
+                });
+                break;
+            case "#runTest":
+                testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
+                    testRunner.setStatisticsHasHadUserInteraction(thirdPartyUrl, true, function() {
+                        let iframeElement = document.createElement("iframe");
+                        iframeElement.id = "TheIframeThatRequestsStorageAccess";
+                        iframeElement.onload = function() {
+                            activateElement("TheIframeThatRequestsStorageAccess");
+                        };
+                        iframeElement.src = thirdPartyUrl + "/storageAccess/resources/websocket-redirect-from-worker-with-storage-access-iframe.html?dummy=" + Math.random();
+                        document.body.appendChild(iframeElement);
+                    });
+                }, false);
+                break;
+            }
+        }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

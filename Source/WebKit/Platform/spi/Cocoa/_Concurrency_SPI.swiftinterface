@@ -1,0 +1,11 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-library-evolution -swift-version 5 -O -library-level api -module-name _Concurrency_SPI -module-abi-name Swift
+// swift-module-flags-ignorable: -formal-cxx-interoperability-mode=off
+import Swift
+@_exported import _Concurrency
+
+@available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *)
+extension _Concurrency.Task where Failure == Swift.Never {
+  @discardableResult
+  @_Concurrency.MainActor public static func startOnMainActor(priority: _Concurrency.TaskPriority? = nil, @_inheritActorContext @_implicitSelfCapture _ operation: __owned @escaping @_Concurrency.MainActor @Sendable () async -> Success) -> _Concurrency.Task<Success, Swift.Never>
+}

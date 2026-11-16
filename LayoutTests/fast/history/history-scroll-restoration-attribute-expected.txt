@@ -1,0 +1,14 @@
+Tests the history.scrollRestoration attribute
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'scrollRestoration' in history is true
+PASS history.scrollRestoration is "auto"
+PASS history.scrollRestoration is "manual"
+PASS history.scrollRestoration is "manual"
+PASS history.scrollRestoration is "auto"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

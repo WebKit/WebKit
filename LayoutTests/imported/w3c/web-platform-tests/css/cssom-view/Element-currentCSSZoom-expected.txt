@@ -1,0 +1,4 @@
+
+PASS Element.currentCSSZoom basic test
+PASS Element.currentCSSZoom reacts to style changes
+

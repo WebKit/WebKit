@@ -1,0 +1,5 @@
+
+PASS ch in pseudo-element ::before should be recalculated after loading a web font
+PASS ch in pseudo-element ::after should be recalculated after loading a web font
+PASS ch in pseudo-element ::backdrop should be recalculated after loading a web font
+

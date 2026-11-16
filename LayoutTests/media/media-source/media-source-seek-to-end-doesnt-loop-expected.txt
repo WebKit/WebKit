@@ -1,0 +1,28 @@
+This tests that when seeking in an audio to the end, currentTime doesn't appear to go backwards due to an accidental loop.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(audioSourceBuffer = source.addSourceBuffer(audioLoader.type()))
+-
+Load audio sourceBuffer
+RUN(audioSourceBuffer.appendBuffer(audioLoader.initSegment()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(0)))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(1)))
+RUN(source.endOfStream())
+RUN(savedDuration = video.duration)
+EXPECTED (savedDuration > 0 == 'true') OK
+EXPECTED (video.buffered.length == '1') OK
+-
+RUN(video.play())
+Waiting for currentTime > 0s...
+-
+Seeking to the end and waiting...
+RUN(video.currentTime = savedDuration)
+-
+Seeking, seeked and ended events happened.
+EXPECTED (video.duration == savedDuration == 'true') OK
+EXPECTED (video.currentTime == savedDuration == 'true') OK
+EXPECTED (timesSeenInTimeupdateAfterSeek.length > 0 == 'true') OK
+EXPECTED (timesSeenInTimeupdateAfterSeek.indexOf(0) == '-1') OK
+END OF TEST
+

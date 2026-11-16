@@ -1,0 +1,164 @@
+// Copyright (C) 2025 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+#if HAVE_DIGITAL_CREDENTIALS_UI
+
+import IdentityDocumentServices
+import os
+
+#if WTF_PLATFORM_IOS_FAMILY
+import UIKit
+#else
+import AppKit
+#endif
+
+@objc
+@implementation
+extension WKISO18013Request {
+    var encryptionInfo: String?
+    var deviceRequest: String?
+
+    init?(encryptionInfo: String?, deviceRequest: String?) {
+        self.encryptionInfo = encryptionInfo
+        self.deviceRequest = deviceRequest
+    }
+}
+
+// `@objc @implementation` does not support stored properties whose size can change due to Library Evolution,
+// so the validator is stored inside a class, which has a fixed size.
+private final class RawRequestValidatorBox {
+    let validator = IdentityDocumentWebPresentmentRawRequestValidator()
+}
+
+@objc
+@implementation
+extension WKIdentityDocumentRawRequestValidator {
+    private static let isoMdocProtocol = "org.iso.mdoc"
+
+    private static let logger = Logger(subsystem: "com.apple.WebKit", category: "DigitalCredentials")
+
+    @nonobjc
+    private let validatorBox = RawRequestValidatorBox()
+
+    @nonobjc
+    private final var validator: IdentityDocumentWebPresentmentRawRequestValidator {
+        validatorBox.validator
+    }
+
+    @objc(validateISO18013Request:origin:error:)
+    func validate(_ iso18013Request: WKISO18013Request, origin: URL) throws -> WKIdentityDocumentPresentmentMobileDocumentRequest {
+        guard let deviceRequest = iso18013Request.deviceRequest, let encryptionInfo = iso18013Request.encryptionInfo else {
+            let debugDescription = "The request is missing its device request or encryption info."
+
+            Self.logger.debug(
+                "WKIdentityDocumentRawRequestValidator received invalid request \(String(describing: iso18013Request)). \(debugDescription)"
+            )
+
+            throw WKIdentityDocumentPresentmentError(.invalidRequest, userInfo: [NSDebugDescriptionErrorKey: debugDescription])
+        }
+
+        do {
+            let requestToEncode = [
+                "deviceRequest": deviceRequest,
+                "encryptionInfo": encryptionInfo,
+            ]
+
+            let encodedRequestData = try JSONSerialization.data(withJSONObject: requestToEncode)
+
+            let validatedResponse = try validator.validateISO18013MobileDocumentRequest(encodedRequestData, origin: origin)
+
+            return .init(validatedResponse)
+        } catch let error as IdentityDocumentPresentmentError {
+            let userInfo = [NSDebugDescriptionErrorKey: error.debugDescription]
+
+            Self.logger.debug(
+                """
+                WKIdentityDocumentRawRequestValidator encountered IdentityDocumentPresentmentError \
+                while validating request \(String(describing: iso18013Request)). \
+                Error: \(error)
+                """
+            )
+
+            switch error {
+            case .unknown:
+                throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
+            case .invalidRequest:
+                throw WKIdentityDocumentPresentmentError(.invalidRequest, userInfo: userInfo)
+            case .requestInProgress:
+                throw WKIdentityDocumentPresentmentError(.requestInProgress, userInfo: userInfo)
+            case .cancelled:
+                throw WKIdentityDocumentPresentmentError(.cancelled, userInfo: userInfo)
+            case .notEntitled:
+                throw WKIdentityDocumentPresentmentError(.notEntitled, userInfo: userInfo)
+            default:
+                throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
+            }
+        } catch {
+            Self.logger.debug(
+                "WKIdentityDocumentRawRequestValidator encountered error while validating request \(String(describing: iso18013Request)). Error: \(error)"
+            )
+
+            throw WKIdentityDocumentPresentmentError(.invalidRequest)
+        }
+    }
+
+    #if HAVE_DIGITAL_CREDENTIALS_OPENID4VP
+    @objc(validateOpenID4VPRequest:requestType:origin:error:)
+    func validateOpenID4VPRequest(
+        _ requestData: Data,
+        requestType: String,
+        origin: URL
+    ) throws -> WKIdentityDocumentPresentmentOpenID4VPRequest {
+        do {
+            return try wkPlatformValidateOpenID4VPRequest(
+                requestData,
+                requestType: requestType,
+                origin: origin,
+                using: validator
+            )
+        } catch let error as IdentityDocumentPresentmentError {
+            let userInfo = [NSDebugDescriptionErrorKey: error.debugDescription]
+
+            Self.logger.debug(
+                "WKIdentityDocumentRawRequestValidator encountered error validating an OpenID4VP request. Error: \(error)"
+            )
+
+            switch error {
+            case .invalidRequest:
+                throw WKIdentityDocumentPresentmentError(.invalidRequest, userInfo: userInfo)
+            case .notEntitled:
+                throw WKIdentityDocumentPresentmentError(.notEntitled, userInfo: userInfo)
+            default:
+                throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
+            }
+        } catch {
+            Self.logger.debug(
+                "WKIdentityDocumentRawRequestValidator encountered error validating an OpenID4VP request. Error: \(error)"
+            )
+
+            throw WKIdentityDocumentPresentmentError(.invalidRequest)
+        }
+    }
+    #endif // HAVE_DIGITAL_CREDENTIALS_OPENID4VP
+}
+#endif

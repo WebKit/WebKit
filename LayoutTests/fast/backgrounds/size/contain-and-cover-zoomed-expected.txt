@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x257
+  RenderBlock {HTML} at (0,0) size 800x258
+    RenderBody {BODY} at (0,0) size 800x0
+      RenderBlock (floating) {DIV} at (1,1) size 228x84 [bgcolor=#ADD8E6] [border: (1px solid #000000)]
+      RenderBlock (floating) {DIV} at (231,1) size 228x84 [bgcolor=#ADD8E6] [border: (1px solid #000000)]
+      RenderBlock (floating) {DIV} at (461,1) size 228x84 [bgcolor=#ADD8E6] [border: (1px solid #000000)]
+      RenderBlock (floating) {DIV} at (1,86) size 228x84 [bgcolor=#ADD8E6] [border: (1px solid #000000)]
+      RenderBlock (floating) {DIV} at (231,86) size 113x171 [bgcolor=#ADD8E6] [border: (1px solid #000000)]
+      RenderBlock (floating) {DIV} at (345,86) size 113x171 [bgcolor=#ADD8E6] [border: (1px solid #000000)]
+      RenderBlock (floating) {DIV} at (459,86) size 113x171 [bgcolor=#ADD8E6] [border: (1px solid #000000)]
+      RenderBlock (floating) {DIV} at (573,86) size 113x171 [bgcolor=#ADD8E6] [border: (1px solid #000000)]

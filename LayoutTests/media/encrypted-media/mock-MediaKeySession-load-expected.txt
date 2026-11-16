@@ -1,0 +1,54 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["keyids"])
+RUN(capabilities.initDataTypes = ["keyids"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+RUN(capabilities.sessionTypes = [ "temporary", "persistent-license" ])
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+Loading MediaKeySession with a persistent license and empty ID should reject.
+RUN(mediaKeySession = mediaKeys.createSession("persistent-license"))
+EXPECTED (typeof mediaKeySession == 'object') OK
+RUN(promise = mediaKeySession.load(""))
+Promise rejected correctly OK
+
+Loading MediaKeySession with a temporary license should reject.
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+EXPECTED (typeof mediaKeySession == 'object') OK
+RUN(promise = mediaKeySession.load("valid-loaded-session"))
+Promise rejected correctly OK
+
+Loading MediaKeySession with a non-sanitizable ID should reject.
+RUN(mediaKeySession = mediaKeys.createSession("persistent-license"))
+EXPECTED (typeof mediaKeySession == 'object') OK
+RUN(promise = mediaKeySession.load("non-sanitizable-loaded-session"))
+Promise rejected correctly OK
+
+Loading MediaKeySession should resolve.
+RUN(mediaKeySession = mediaKeys.createSession("persistent-license"))
+EXPECTED (typeof mediaKeySession == 'object') OK
+RUN(promise = mediaKeySession.load("valid-loaded-session"))
+EXPECTED (event.messageType == 'license-renewal') OK
+EXPECTED (new Uint8Array(event.message).length == '14') OK
+EXPECTED (new Uint8Array(event.message)[0] == '115') OK
+EXPECTED (new Uint8Array(event.message)[1] == '101') OK
+EXPECTED (new Uint8Array(event.message)[2] == '115') OK
+EXPECTED (new Uint8Array(event.message)[3] == '115') OK
+EXPECTED (new Uint8Array(event.message)[4] == '105') OK
+EXPECTED (new Uint8Array(event.message)[5] == '111') OK
+EXPECTED (new Uint8Array(event.message)[6] == '110') OK
+EXPECTED (new Uint8Array(event.message)[7] == '32') OK
+EXPECTED (new Uint8Array(event.message)[8] == '108') OK
+EXPECTED (new Uint8Array(event.message)[9] == '111') OK
+EXPECTED (new Uint8Array(event.message)[10] == '97') OK
+EXPECTED (new Uint8Array(event.message)[11] == '100') OK
+EXPECTED (new Uint8Array(event.message)[12] == '101') OK
+EXPECTED (new Uint8Array(event.message)[13] == '100') OK
+Promise resolved OK
+Load was successful.
+END OF TEST
+

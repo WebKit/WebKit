@@ -1,0 +1,54 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script>
+function addCrossOriginIframe() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/dom-debugger/resources/dom-debugger-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.NewFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOMDebugger.NewFrame.DOMContentLoaded",
+        description: "An existing listener breakpoint should pause in a cross-origin iframe added after it was set.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "DOMContentLoaded"});
+
+            let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            InspectorTest.log("Adding cross-origin iframe...");
+            InspectorTest.evaluateInPage("addCrossOriginIframe()");
+
+            await pausedPromise;
+
+            let activeCallFrame = WI.debuggerManager.activeCallFrame;
+            let frameTarget = activeCallFrame.target;
+            InspectorTest.expectEqual(frameTarget.type, WI.TargetType.Frame, "Should pause in a frame target.");
+            InspectorTest.expectThat(frameTarget !== InspectorTest.mainFrameTarget, "Should not pause in the main frame's target.");
+
+            let targetData = WI.debuggerManager.dataForTarget(frameTarget);
+            InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.Listener, `Pause reason should be "listener".`);
+            InspectorTest.expectEqual(targetData.pauseData?.eventName, "DOMContentLoaded", `Pause data eventName should be "DOMContentLoaded".`);
+            InspectorTest.expectEqual(activeCallFrame.functionName, "handleDOMContentLoaded", `Top call frame should be "handleDOMContentLoaded".`);
+
+            await WI.debuggerManager.resume();
+
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameTarget, "window.didFireDOMContentLoaded"), "DOMContentLoaded listener should run after resuming.");
+        },
+        async teardown() {
+            await removeAllDOMDebuggerBreakpoints();
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that event breakpoints are sent to a cross-origin iframe's frame target before the iframe runs any script.</p>
+</body>

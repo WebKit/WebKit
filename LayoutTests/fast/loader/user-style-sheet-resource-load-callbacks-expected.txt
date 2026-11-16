@@ -1,0 +1,4 @@
+This tests that no delegate methods are sent for the user style sheet. No stylesheet load messages should be dumped.
+user-style-sheet-resource-load-callbacks.html - willSendRequest <NSURLRequest URL user-style-sheet-resource-load-callbacks.html, main document URL user-style-sheet-resource-load-callbacks.html, http method GET> redirectResponse (null)
+user-style-sheet-resource-load-callbacks.html - didReceiveResponse <NSURLResponse user-style-sheet-resource-load-callbacks.html, http status code 0>
+user-style-sheet-resource-load-callbacks.html - didFinishLoading

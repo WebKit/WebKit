@@ -1,0 +1,9 @@
+<head>
+<script>
+indexedDB.deleteDatabase('getdatabase-otherframe').onsuccess = () => {
+    indexedDB.open('getdatabase-otherframe').onsuccess = () => {
+        window.parent.postMessage("Hi there!", "*");
+    }        
+}
+</script>
+</head>

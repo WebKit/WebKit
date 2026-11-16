@@ -1,0 +1,252 @@
+/*
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WKWebViewPrivateForTestingMac.h"
+
+#if PLATFORM(MAC)
+
+#import "AppKitSPI.h"
+#import "AudioSessionRoutingArbitratorProxy.h"
+#import "WKAppKitGestureController.h"
+#import "WKClickHighlightController.h"
+#import "WKNSData.h"
+#import "WKWebViewMac.h"
+#import "WebColorPicker.h"
+#import "WebPageProxy.h"
+#import "WebPopupMenuProxyMac.h"
+#import "WebProcessProxy.h"
+#import "WebViewImpl.h"
+#import "_WKFrameHandleInternal.h"
+#import <WebCore/ColorCocoa.h>
+#import <WebCore/DictionaryPopupInfo.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
+@implementation WKWebView (WKTestingMac)
+
+- (void)_requestControlledElementID
+{
+    if (_page)
+        _page->requestControlledElementID();
+}
+
+- (void)_handleControlledElementIDResponse:(NSString *)identifier
+{
+    // Overridden by subclasses.
+}
+
+- (void)_handleAcceptedCandidate:(NSTextCheckingResult *)candidate
+{
+    _impl->handleAcceptedCandidate(candidate);
+}
+
+- (void)_didHandleAcceptedCandidate
+{
+    // Overridden by subclasses.
+}
+
+- (void)_didUpdateCandidateListVisibility:(BOOL)visible
+{
+    // Overridden by subclasses.
+}
+
+- (void)_forceRequestCandidates
+{
+    _impl->forceRequestCandidatesForTesting();
+}
+
+- (BOOL)_shouldRequestCandidates
+{
+    return _impl->shouldRequestCandidates();
+}
+
+- (BOOL)_allowsInlinePredictions
+{
+#if HAVE(INLINE_PREDICTIONS)
+    return _impl->allowsInlinePredictions();
+#else
+    return NO;
+#endif
+}
+
+- (void)_insertText:(id)string replacementRange:(NSRange)replacementRange
+{
+    [self insertText:string replacementRange:replacementRange];
+}
+
+- (NSRect)_candidateRect
+{
+    if (!_page->editorState().postLayoutData)
+        return NSZeroRect;
+    return _page->editorState().postLayoutData->selectionBoundingRect;
+}
+
+- (NSRect)_caretRectForTesting
+{
+    if (!_page->editorState().visualData)
+        return NSZeroRect;
+    return _page->editorState().visualData->caretRectAtStart;
+}
+
+- (NSArray<NSValue *> *)_selectionRectsForTesting
+{
+    if (!_page->editorState().visualData)
+        return @[ ];
+    return createNSArray(_page->editorState().visualData->selectionGeometries, [](auto& geometry) {
+        return [NSValue valueWithRect:geometry.rect()];
+    }).autorelease();
+}
+
+- (NSSet<NSView *> *)_pdfHUDs
+{
+    return _impl->pdfHUDs().autorelease();
+}
+
+- (NSMenu *)_activeMenu
+{
+    if (RetainPtr contextMenu = _page->activeContextMenu())
+        return contextMenu.autorelease();
+    if (RetainPtr domPasteMenu = _impl->domPasteMenu())
+        return domPasteMenu.autorelease();
+    if (RefPtr popupMenu = dynamicDowncast<WebKit::WebPopupMenuProxyMac>(_page->activePopupMenu()); popupMenu && popupMenu->isVisible())
+        return [protect(popupMenu->popup()) menu];
+    return nil;
+}
+
+- (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler
+{
+    _page->getAccessibilityTreeData([completionHandler = makeBlockPtr(completionHandler)] (API::Data* data) {
+        completionHandler(protect(wrapper(data)).get(), nil);
+    });
+}
+
+- (BOOL)_secureEventInputEnabledForTesting
+{
+    return _impl->inSecureInputState();
+}
+
+- (NSRect)_windowRelativeBoundsForCustomSwipeViewsForTesting
+{
+    return _impl->windowRelativeBoundsForCustomSwipeViews();
+}
+
+- (void)_setSelectedColorForColorPicker:(NSColor *)color
+{
+    protect(_page->colorPickerClient())->didChooseColor(WebCore::colorFromCocoaColor(color));
+}
+
+- (void)_setDidPerformDictionaryLookupHandlerForTesting:(void (^)(NSString *, CGRect))handler
+{
+    if (!handler)
+        return _page->setDidPerformDictionaryLookupCallbackForTesting({ });
+
+    _page->setDidPerformDictionaryLookupCallbackForTesting([handler = makeBlockPtr(handler)](const WebCore::DictionaryPopupInfo& info) {
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+        RetainPtr text = [info.platformData.attributedString.nsAttributedString() string];
+#else
+        RetainPtr text = info.text.createNSString();
+#endif
+        RefPtr textIndicator = info.textIndicator;
+        handler(text.get(), textIndicator ? CGRect(textIndicator->textBoundingRectInRootViewCoordinates()) : CGRectNull);
+    });
+}
+
+- (void)_performDictionaryLookupAtLocationForTesting:(CGPoint)point
+{
+    _page->performDictionaryLookupAtLocation(WebCore::FloatPoint(point));
+}
+
+- (void)_createFlagsChangedEventMonitorForTesting
+{
+    _impl->createFlagsChangedEventMonitor();
+}
+
+- (BOOL)_hasFlagsChangedEventMonitorForTesting
+{
+    return _impl->hasFlagsChangedEventMonitor();
+}
+
+- (CGFloat)_fullScreenTitlebarOverlayHeightForTesting
+{
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    return _impl->fullScreenTitlebarOverlayHeight();
+#else
+    return 0;
+#endif
+}
+
+- (BOOL)isPointInScrollbar:(NSPoint)locationInView
+{
+    return _impl->isPointInScrollbar(locationInView);
+}
+
+- (BOOL)_refreshControlHostIsTrackingForTesting
+{
+#if HAVE(NSREFRESHCONTROLLER)
+    return _impl->refreshControllerIsTracking();
+#else
+    return NO;
+#endif
+}
+
+- (NSRect)_clickHighlightRectForTesting
+{
+#if ENABLE(TWO_PHASE_CLICKS)
+    if (RetainPtr controller = [protect(_impl->appKitGestureController()) clickHighlightController])
+        return [controller highlightViewFrame];
+#endif
+    return NSZeroRect;
+}
+
+- (BOOL)_isShowingClickHighlightForTesting
+{
+#if ENABLE(TWO_PHASE_CLICKS)
+    return [[protect(_impl->appKitGestureController()) clickHighlightController] isShowingHighlight];
+#else
+    return NO;
+#endif
+}
+
+- (NSColor *)_clickHighlightColorForTesting
+{
+#if ENABLE(TWO_PHASE_CLICKS)
+    if (RetainPtr controller = [protect(_impl->appKitGestureController()) clickHighlightController])
+        return WebCore::cocoaColor([controller highlightColor]).autorelease();
+#endif
+    return nil;
+}
+
+- (NSRect)_hoverActivatedByClickBoundsForTesting
+{
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    if (auto& bounds = _page->hoverActivatedByClickBounds())
+        return *bounds;
+#endif
+    return NSZeroRect;
+}
+
+@end
+
+#endif // PLATFORM(MAC)

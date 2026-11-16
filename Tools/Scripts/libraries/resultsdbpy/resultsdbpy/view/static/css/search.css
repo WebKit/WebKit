@@ -1,0 +1,140 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ 
+.search-candidates {
+    z-index: 50;
+    position: absolute;
+    -webkit-backdrop-filter: blur(5px) brightness(88%);
+    backdrop-filter: blur(5px) brightness(88%);
+    color: var(--inverseColor);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 5px 0 0 0;
+    padding: 5px;
+    font-size: var(--smallSize);
+    list-style: none;
+}
+
+.search-candidates em {
+    background-color: #ccc;
+    font-style: normal;
+}
+
+.search-candidates .selected {
+    background-color: var(--blue);
+    color: white;
+}
+
+.next-regress-bar {
+    width:100%;
+    z-index:10;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    column-gap: 4px;
+}
+
+.next-regress-bar button {
+    background-color: var(--blurBackgroundColor);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+.condensed-view {
+    --selectedColor: var(--blue);
+    padding-bottom: var(--tinySize);
+}
+
+.condensed-view .strip {
+    padding: var(--colPaddingSize) 0;
+    border-bottom: 1px solid var(--borderColorInlineElement);
+    isolation: isolate;
+}
+
+.condensed-view .dot {
+    margin: 1px;
+}
+
+.condensed-view .dot, .condensed-view .dot>* {
+    cursor: pointer;
+}
+
+.condensed-view .dot.selected::before, .condensed-view .dot.highlighted::before, .condensed-view .dot.line-before::before, .condensed-view .dot.line-after::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    background: var(--blueHighLight);
+    pointer-events: none;
+}
+
+.condensed-view .dot.selected::before {
+    background: var(--selectedColor);
+}
+
+.condensed-view .dot.line-before {
+    margin-left: 7px;
+}
+
+.condensed-view .dot.line-after {
+    margin-right: 7px;
+}
+
+.condensed-view .dot.line-before::before, .condensed-view .dot.line-after::before {
+    inset: -3px auto -3px -6px;
+    width: 4px;
+    background: var(--selectedColor);
+}
+
+.condensed-view .dot.line-after::before {
+    left: calc(100% + 2px);
+}
+
+.condensed-view .input {
+    max-width: 300px;
+}
+
+.condensed-view .input>input[type="range"] {
+    height: var(--tinySize);
+    background:
+        linear-gradient(var(--inverseColor), var(--inverseColor)) center / 100% 2px no-repeat,
+        linear-gradient(to right, var(--inverseColor) 1px, transparent 1px) calc(var(--tinySize) / 2) center / calc((100% - var(--tinySize)) / (var(--notches) - 1)) calc(var(--tinySize) / 2) repeat-x;
+}
+
+.table>thead>tr>th {
+    padding: 0px;
+}
+.table>tbody>tr>td {
+    padding: 0px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .next-regress-bar button{
+        background-color: var(--blurBackgroundColorDark);
+    }
+    .condensed-view {
+        --selectedColor: rgb(51, 160, 255);
+    }
+}

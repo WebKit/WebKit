@@ -1,0 +1,3 @@
+
+FAIL A worker is able to pipe data through a MediaStreamTrackGenerator without crashing promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackProcessor"
+

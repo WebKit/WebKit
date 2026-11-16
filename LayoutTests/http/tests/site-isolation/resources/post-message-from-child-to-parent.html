@@ -1,0 +1,6 @@
+<script>
+onmessage = (event) => {
+    window.parent.postMessage(event.data, "*");
+}
+</script>
+<iframe src="http://127.0.0.1:8000/site-isolation/resources/green-background.html"></iframe>

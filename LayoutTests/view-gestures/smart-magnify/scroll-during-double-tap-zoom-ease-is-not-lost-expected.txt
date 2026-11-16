@@ -1,0 +1,2 @@
+Zoomed in: true
+After the ease, the scrolling thread owns the layer position again: true

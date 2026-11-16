@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<a id="tbutton" role="button" aria-pressed="true">Toggle button</a>
+
+<div>
+    <button type="button" id="button" role="button"/>
+    <label>Button title</label>
+</div>
+
+<script>
+    if (window.accessibilityController) {
+        var output = "This tests that a toggle button properly exposes the title when there isn't a direct relation and textUnderElement is required to be used.\n";
+
+        tbutton1 = accessibilityController.accessibleElementById("tbutton");
+        if (accessibilityController.platformName == "atspi")
+            output += expect("tbutton1.role", "'AXRole: AXToggleButton'");
+        else
+            output += expect("tbutton1.role", "'AXRole: AXCheckBox'");
+        output += expect("tbutton1.title", "'AXTitle: Toggle button'");
+
+        button = accessibilityController.accessibleElementById("button");
+        output += expect("button.role", "'AXRole: AXButton'");
+        output += expect("button.title", "'AXTitle: Button title'");
+
+        debug(output);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+line one
+line two
+after break
+
+PASS A block level box starts where the line before it ends, in the column that line was moved to
+

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Replacing Contents Clipped</title>
+    <script src="../../media/media-file.js"></script>
+    <script>
+    var callback;
+    var video;
+
+    if (window.testRunner) {
+        window.testRunner.dumpAsText(true);
+        window.testRunner.waitUntilDone();
+    }
+
+    function runTest() {
+        video = document.getElementsByTagName('video')[0];
+        video.addEventListener('canplaythrough', canplaythrough);
+        callback = switchSrc;
+        video.src = findMediaFile('video', '../../media/content/counting');
+        video.load();
+    }
+
+    function canplaythrough() {
+        if (!callback)
+            return;
+
+        setTimeout(() => {
+            callback();
+        }, 0);
+    }
+
+    function switchSrc() {
+        callback = endTest;
+        video.src = findMediaFile('video', '../../media/content/test');
+        video.load();
+    }
+
+    function endTest() {
+        if (window.testRunner)
+            setTimeout(function() { testRunner.notifyDone(); }, 250);
+    }
+    </script>
+    <style>
+    /* The row holding the button has a fixed height so that the video starts at
+       an integer offset. At a fractional offset the video's content layer
+       paints on a different pixel boundary than the element's box, leaving a
+       sliver along the top edge that the video frame does not cover. */
+    .controls {
+        height: 40px;
+    }
+
+    video {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+    }
+    </style>
+</head>
+<body onload="runTest()">
+    <div class="controls"><button onclick="runTest()">run test</button></div>
+    <video></video>
+</body>

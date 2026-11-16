@@ -1,0 +1,25 @@
+This test ensures MathML table rows and cells have distinct, correct bounding boxes.
+
+MathML table rows should have increasing Y positions:
+PASS: mtr1.height > 0 === true
+PASS: mtr2.height > 0 === true
+PASS: mtr3.height > 0 === true
+PASS: mtr2.pageY > mtr1.pageY === true
+PASS: mtr3.pageY > mtr2.pageY === true
+
+MathML table cells in first row should have increasing X positions:
+PASS: cell1.width > 0 === true
+PASS: cell2.width > 0 === true
+PASS: cell2.pageX > cell1.pageX === true
+
+First cell in second row should be below first cell in first row:
+PASS: cell3.pageX === cell1.pageX === true
+PASS: cell3.pageY > cell1.pageY === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+[
+1	2	3	4	5	6
+]
+

@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+    <title>track element src attribute URL parsing</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard §4.8.13.3 "The track element", src attribute
+// and "track URL" determination algorithm:
+//   https://html.spec.whatwg.org/multipage/media.html#the-track-element
+//   https://html.spec.whatwg.org/multipage/media.html#sourcing-out-of-band-text-tracks
+//
+// The src attribute, if present, must be a valid non-empty URL potentially
+// surrounded by spaces. The track URL determination algorithm:
+//   - Let trackURL be failure.
+//   - Let value be the src attribute value.
+//   - If value is not the empty string, set trackURL to the result of
+//     encoding-parsing-and-serializing a URL given value, relative to the
+//     node document.
+//   - Set the element's track URL to trackURL if trackURL is not failure;
+//     otherwise to the empty string.
+//
+// Per the sourcing-out-of-band-text-tracks algorithm, when the track URL is
+// the empty string the user agent must queue a task to set the readiness
+// state to "failed to load" and fire 'error' at the track element.
+//
+// The "track URL" is not directly exposed via API. We verify the algorithm
+// indirectly through:
+//   (1) the src IDL getter (a ReflectURL-typed reflection of the content
+//       attribute), and
+//   (2) the load behavior — empty src must result in readiness=ERROR and
+//       an 'error' event (not a successful load).
+
+test(() => {
+    const track = document.createElement("track");
+    assert_equals(track.src, "", "no src attribute -> src IDL is empty string");
+}, "src: missing attribute -> IDL getter returns empty string");
+
+// Note: an *empty* src attribute resolves through ReflectURL against the
+// document base URL and returns the document URL, not empty. That's a
+// separate behavior from the "track URL" algorithm above, which sets the
+// track URL to the empty string in this case. The "track URL" is not
+// exposed via API; we verify it indirectly through the error-event test below.
+
+test(() => {
+    const track = document.createElement("track");
+    track.setAttribute("src", "resources/track.vtt");
+    // Should resolve against the document's base URL.
+    assert_equals(track.src, new URL("resources/track.vtt", document.baseURI).href,
+        "relative src resolves against document baseURI");
+}, "src: relative URL resolves against document base URL");
+
+test(() => {
+    const track = document.createElement("track");
+    track.setAttribute("src", "  https://example.com/t.vtt  ");
+    // "potentially surrounded by spaces" -> whitespace stripped before parsing.
+    assert_equals(track.src, "https://example.com/t.vtt",
+        "leading/trailing ASCII whitespace stripped during URL parse");
+}, "src: surrounding whitespace stripped before URL parse");
+
+async_test(t => {
+    // Per spec, empty src triggers: readiness state -> "failed to load",
+    // and an 'error' event at the track element. Specifically the
+    // sourcing-out-of-band-text-tracks algorithm says:
+    //   "If fetching fails for any reason ..., or if URL is the empty
+    //    string, then queue an element task on the DOM manipulation task
+    //    source given the media element to first change the text track
+    //    readiness state to 'failed to load' and then fire an event named
+    //    'error' at the track element."
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.src = "";
+    track.onload = t.unreached_func("empty src must not fire 'load'");
+    track.onerror = t.step_func_done(() => {
+        assert_equals(track.readyState, track.ERROR,
+            "empty src -> readyState is ERROR when error event fires");
+    });
+    video.appendChild(track);
+    track.track.mode = "showing";
+}, "src: empty value fires 'error' and sets readyState to ERROR");
+</script>
+</body>
+</html>

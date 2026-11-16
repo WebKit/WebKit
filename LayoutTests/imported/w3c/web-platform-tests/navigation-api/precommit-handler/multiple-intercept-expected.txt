@@ -1,0 +1,10 @@
+
+PASS precommitHandler + precommitHandler
+PASS precommitHandler + (not provided)
+PASS precommitHandler + handler
+PASS handler + precommitHandler
+PASS handler + (not provided)
+PASS handler + handler
+PASS (not provided) + precommitHandler
+PASS (not provided) + handler
+

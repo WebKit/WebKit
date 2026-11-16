@@ -1,0 +1,4 @@
+Ordered-list markers on consecutive lines should be treated as compatible even when they use different delimiters (period and parenthesis), producing a single ordered list.
+| "1. A"
+| <div>
+|   "2) B<#selection-caret>"

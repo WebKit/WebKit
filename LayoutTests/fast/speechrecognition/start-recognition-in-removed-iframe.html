@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Verify that process does not crash when starting recognition in a removed iframe.");
+
+if (window.testRunner) {
+    jsTestIsAsync = true;
+}
+
+function test()
+{
+    iframe = document.getElementsByTagName('iframe')[0];
+    shouldThrow("iframe.contentWindow.startRecognition()");
+}
+
+function removeFrame()
+{
+    shouldNotThrow("iframe.parentNode.removeChild(iframe)");
+    setTimeout(() => finishJSTest(), 0);
+}
+
+window.addEventListener('load', test, false);
+</script>
+<iframe src="resources/removed-iframe.html"></iframe>
+</body>
+</html>

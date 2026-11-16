@@ -1,0 +1,3 @@
+
+PASS FetchLater allowed by CSP should succeed
+

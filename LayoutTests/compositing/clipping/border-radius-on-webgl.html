@@ -1,0 +1,39 @@
+<html>
+<head>
+    <style>
+        .container {
+            width: 400px;
+            height: 400px;
+            clip-path: inset(10px 250px 250px 10px);
+        }
+        canvas {
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            padding: 120px;
+            border: 13px solid green;
+            background-color: cyan;
+        }
+    </style>
+    <script>
+        function redraw()
+        {
+            var canvas = document.getElementsByTagName('canvas')[0];
+            let context = canvas.getContext("webgl");
+            context.viewport(0, 0, context.drawingBufferWidth, context.drawingBufferHeight);
+            context.clearColor(1, 0, 0, 1);
+            context.clear(context.COLOR_BUFFER_BIT | context.DEPTH_BUFFER_BIT);
+        }
+
+        window.addEventListener('load', () => {
+            redraw();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <canvas></canvas>
+    </div>
+</body>
+</html>

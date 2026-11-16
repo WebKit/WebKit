@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>webm file with 2 audio tracks</title>
+<script src="../media/video-test.js"></script>
+<script>
+    async function runTest()
+    {
+        findMediaElement();
+        run('video.src = "content/vp9-opus-good-3tracks.webm"');
+        waitFor(video, 'error').then(failTest);
+        await waitFor(video, 'loadedmetadata');
+
+        testExpected('video.videoTracks.length', 1);
+        testExpected('video.audioTracks.length', 2);
+        endTest();
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+</script>
+</head>
+<body>
+<video id="video"/>
+</body>
+</html>

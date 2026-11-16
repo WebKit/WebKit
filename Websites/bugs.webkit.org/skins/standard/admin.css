@@ -1,0 +1,305 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
+ */
+
+.warningmessages, .criticalmessages {
+    background-color: white;
+    border: 1px solid;
+    padding: 1ex 1ex 1ex 4ex;
+    margin: 1ex;
+}
+
+.warningmessages {
+    border-color: yellow;
+}
+
+.criticalmessages {
+    border-color: red;
+}
+
+.alert {
+    color: red;
+    background-color: inherit;
+}
+
+.confirmation {
+    background-color: red;
+    padding: 3ex;
+    width: 70%;
+}
+
+p.areyoureallyreallysure {
+    color: red;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+#admin_table, #flag_types_bugs, #flag_types_attachments {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+#admin_table th, #admin_table td,
+#flag_types_bugs th , #flag_types_bugs td,
+#flag_types_attachments th, #flag_types_attachments td {
+    border: 1px solid black;
+    padding: 0.3em;
+}
+
+table.no-border th, table.no-border td {
+    border: 0 !important;
+}
+
+table.no-border th {
+    text-align: left;
+}
+
+tr.disabled {
+    background-color: lightgrey;
+}
+
+td.admin_links {
+    width: 50%;
+    padding: 1em;
+    vertical-align: top;
+}
+
+td.admin_links dt {
+    margin-top: 1em;
+}
+
+td.admin_links dt.forbidden, td.admin_links dd.forbidden {
+    font-size: smaller;
+    font-style: italic;
+    color: #aaa;
+}
+
+td.admin_links dt.forbidden a, td.admin_links dd.forbidden a {
+    text-decoration: none;
+    color: inherit;
+    cursor: default;
+}
+
+div.table {
+   display: inline-table;
+}
+
+div.cell {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.open-status, .closed-status {
+    width: 8em;
+    padding: 0.3em;
+}
+
+/* Grey-green color */
+.open-status {
+    color: #286;
+}
+
+/* Brown-red color */
+.closed-status {
+    color: #a63;
+}
+
+/* Dark green color */
+.checked {
+    background-color: #5b4;
+}
+
+/* Dark red color */
+td.forbidden {
+    background-color: #811;
+}
+
+/* Light green color */
+td.set {
+    background-color: #efe;
+}
+
+/* Light red color */
+td.unset {
+    background-color: #fee;
+}
+
+tr.highlight:hover {
+    background-color: yellow;
+}
+
+th.title {
+    font-size: larger;
+    text-align: center;
+    vertical-align: middle;
+}
+
+td.max-width {
+    width: 100%;
+}
+
+#flag_types_bugs .inactive, #flag_types_attachments .inactive {
+    color: #787878;
+}
+
+#flag_types_bugs .multiplicable, #flag_types_attachments .multiplicable {
+    display: block;
+}
+
+#flagtype_form div.inline {
+    white-space: nowrap;
+}
+
+#flagtype_form label, #grant_table label {
+    font-weight:bold;
+}
+
+table.whining_list, #group_settings_desc {
+    border: 1px solid black;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#group_settings_desc th, #group_settings_desc td {
+    border: 1px solid black;
+    padding: 0.3em;
+}
+
+table.whining_list th, table.whining_list td,
+#admin_table_edit th, #admin_table_edit td {
+    padding: 0.3em;
+}
+
+table.whining_list th {
+    text-align: right;
+    font-weight: normal !important;
+}
+
+table.whining_list th.subtitle {
+    font-weight: bold !important;
+    text-align: left !important;
+}
+
+table.schedule_list th, table.search_list th {
+    text-align: center;
+    font-weight: bold !important;
+}
+
+#settings #update {
+    margin-top: 2em;
+}
+
+#grant_table td, #grant_table th {
+    text-align: center;
+    padding: 0.5em;
+}
+
+#grant_table th {
+    padding: 2em 3em 0.5em 3em;
+}
+
+#grant_table tr:first-child th {
+    padding-top: 0.5em;
+}
+
+#mass-remove {
+    max-width: 50%;
+}
+
+#mass-remove legend {
+    white-space: nowrap;
+}
+
+#workflow {
+    border-collapse: collapse;
+}
+
+#workflow td {
+    border: 1px dotted black;
+    text-align: center;
+}
+
+#group_membership tr.indirect {
+    background-color: #cccccc;
+}
+
+#group_membership th {
+    text-align: left;
+    padding: 0 1ex;
+}
+
+#group_membership th.checkbox, #group_membership td.checkbox {
+    text-align: center;
+    white-space: nowrap;
+}
+
+#user_responsibilities th {
+    text-align: center;
+    padding: 0 1em 1em;
+}
+
+#user_responsibilities th.product {
+    text-align: left;
+    padding: 1em 0 0;
+}
+
+#menu {
+    width: 10em;
+    margin-right: 0.5em;
+    border: solid thin;
+    border-spacing: 0px;
+    border-collapse: collapse;
+    text-align: center;
+    color: black;
+    background-color: #edf2f2;
+    font-weight: normal;
+}
+
+#menu a:link, #menu a:visited {
+    color: #039;
+    background-color: transparent;
+}
+
+#menu a:hover, #menu a:active {
+    color: red;
+    background-color: transparent;
+}
+
+#menu td {
+    border: solid thin;
+    padding: 0.2em 0.5em;
+}
+
+#menu td.selected_section {
+    color: #090;
+    background-color: white;
+}
+
+#menu td.index {
+    color: black;
+    background-color: #edf;
+}
+
+#params_index {
+    padding-left: 1em;
+}
+
+#edit_params dd {
+    margin-bottom: 1.5em;
+}
+
+.sortlist_separator {
+    font-weight: bold;
+    font-size: 80%;
+    background-color: #dddddd;
+}
+
+#contribute {
+    border: 1px dotted black;
+    padding: .5em;
+    font-size: small;
+}

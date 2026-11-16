@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+var div = document.createElement("div");
+document.body.appendChild(div);
+
+var paragraph = "<p>";
+for (var i = 0; i < 12; i++)
+    paragraph += "Fish &amp; chips, caf&eacute; au lait &mdash; &quot;quoted&quot; text " + i + ". ";
+paragraph += "</p>";
+var markup = paragraph.repeat(500);
+
+PerfTestRunner.measureRunsPerSecond({
+    description: "This benchmark tests the innerHTML setter on text nodes that contain character references",
+    run: function() {
+        div.innerHTML = markup;
+        div.innerHTML = "";
+    }});
+</script>
+</body>
+</html>

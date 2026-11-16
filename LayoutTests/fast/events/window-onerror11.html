@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="resources/window-onerror.js">
+</script>
+</head>
+<body>
+<p>Test that window.onerror is called on window object. <a href="https://bugs.webkit.org/show_bug.cgi?id=8519">Bug 8519</a>.</p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg) {
+    document.getElementById("console").innerHTML += msg + "<br>";
+}
+
+window.onerror = function(msg, url, line, column, error)
+{
+    url = url ? url.match( /[^\/]+\/?$/ )[0] : url;
+    log("Main frame window.onerror: " + msg + " at " + url + ", line: " + line + ", column: " + column + ", error: " + error);
+    return true;
+}
+
+throwException();
+
+</script>
+</body>
+</html>

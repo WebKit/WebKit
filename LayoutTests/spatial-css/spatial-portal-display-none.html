@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<meta charset="utf-8">
+<title>A spatial portal without a renderer tears down its models</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="../model-element/resources/model-element-test-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+
+    assert_true(internals.establishesSpatialPortal(portal), "the portal is a portal while rendered");
+
+    portal.style.display = "none";
+    await UIHelper.ensureStablePresentationUpdate();
+
+    assert_false(internals.establishesSpatialPortal(portal), "a display:none portal is no longer a portal");
+    await waitForModelState(model, "Unloaded");
+
+    portal.style.display = "";
+    await UIHelper.ensureStablePresentationUpdate();
+
+    assert_true(internals.establishesSpatialPortal(portal), "the portal is re-established");
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 1, "its child is hosted again");
+    await waitForModelState(model, "Loaded");
+}, "display:none on a spatial portal unloads its models, and restoring it reloads them");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+
+    portal.remove();
+    await UIHelper.ensureStablePresentationUpdate();
+
+    assert_false(internals.establishesSpatialPortal(portal), "a removed portal is no longer a portal");
+}, "Removing a spatial portal from the document tears down its controller");
+
+</script>
+</body>
+</html>

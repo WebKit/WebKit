@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ColorFilterEnabled=true ] -->
+<!DOCTYPE html>
+
+<title>-apple-color-filter is applied to scrollbar color</title>
+
+<script src="../../resources/ui-helper.js"></script>
+
+<style>
+  :root {
+    -apple-color-filter: invert(1);
+    scrollbar-color: blue green;
+  }
+
+  .tall {
+    width: 100px;
+    height: 2000px;
+  }
+</style>
+
+<p id="result"></p>
+<div class="tall"></div>
+
+<script>
+  onload = async () => {
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    if (window.internals)
+      internals.setUsesOverlayScrollbars(true);
+
+    // Wait for the initial scroller.
+    await UIHelper.waitForConditionAsync(async () => {
+      let scrollerState = await UIHelper.verticalScrollbarState();
+
+      let correctThumbColor = scrollerState.indexOf("knobColor:#FFFF00") != -1;
+      let correctTrackColor = scrollerState.indexOf("trackColor:#FF7FFF") != -1;
+
+      return correctThumbColor && correctThumbColor;
+    });
+
+    // Change scrollbar-color and check the color changes accordingly.
+    document.styleSheets[0].cssRules[0].style.scrollbarColor = "green blue";
+
+    await UIHelper.waitForConditionAsync(async () => {
+      let scrollerState = await UIHelper.verticalScrollbarState();
+
+      let correctThumbColor = scrollerState.indexOf("knobColor:#FF7FFF") != -1;
+      let correctTrackColor = scrollerState.indexOf("trackColor:#FFFF00") != -1;
+
+      return correctThumbColor && correctThumbColor;
+    });
+
+    result.innerText = "PASS";
+    if (window.testRunner)
+      testRunner.notifyDone();
+  };
+</script>

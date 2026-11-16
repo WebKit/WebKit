@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<script src="../resources/runner.js"></script>
+<title>Tracking the performance of paint containment and inline text that is not wrapped</title>
+<style>
+    #listContainer {
+        margin: 0 auto;
+        width: 600px;
+        position: relative;
+        contain: paint;
+    }
+
+    .listItem {
+        outline: 2px solid green;
+        position: relative;
+    }
+</style>
+</head>
+
+<body>
+    <pre id="log"></pre>
+
+    <div id="listContainer"></div>
+    <script>
+        const LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.";
+
+        let listContainer = null;
+        function createListItem() {
+            let item = document.createElement("div");
+            item.classList.add("listItem");
+            item.textContent = LOREM_IPSUM.substr(
+                Math.floor(Math.random() * 100), Math.floor(Math.random() * 200) + 150);
+            item.style.whiteSpace = "nowrap";
+            listContainer.appendChild(item);
+        }
+
+        function setupTest() {
+            listContainer = document.getElementById("listContainer");
+            for (let i = 0; i < 10000; ++i)
+                createListItem();
+            window.requestAnimationFrame(runTest);
+        }
+
+        let isDone = false;
+        PerfTestRunner.prepareToMeasureValuesAsync({ done: done, unit: 'ms' });
+        function done() {
+            isDone = true;
+            listContainer.innerHTML = "";
+        }
+
+        let startTime;
+        let height = 0;
+        function runTest() {
+            if (startTime)
+                PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+
+            if (!isDone) {
+                startTime = PerfTestRunner.now();
+                listContainer.firstChild.style.height = height + "px";
+                height++;
+                window.requestAnimationFrame(runTest);
+            }
+        }
+
+        onload = setupTest;
+    </script>
+</body>
+</html>

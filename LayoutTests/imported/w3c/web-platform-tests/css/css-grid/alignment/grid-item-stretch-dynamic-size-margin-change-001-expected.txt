@@ -1,0 +1,10 @@
+The grids below had initially 'stretched' items, but we have changed 'height', 'width' and 'margin' to values which don't allow stretch. This test verifies that the items are no longer stretched after such changes, and that items whose 'height', 'width' or 'margin' changed back to 'auto' or '0' are stretched again.
+
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+

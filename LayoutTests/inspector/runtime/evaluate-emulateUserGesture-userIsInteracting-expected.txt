@@ -1,0 +1,9 @@
+Tests for Runtime emulateUserGesture option.
+
+
+== Running test suite: Runtime.evaluate.emulateUserGesture.userIsInteracting
+-- Running test case: EvaluateWithoutEmulatingUserGesture.userIsInteracting
+User is NOT Interacting
+-- Running test case: EvaluateWithEmulatingUserGesture.userIsInteracting
+User is Interacting
+

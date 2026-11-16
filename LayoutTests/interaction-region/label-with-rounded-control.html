@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    .row {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin: 20px;
+    }
+    .pill {
+        width: 264px;
+        height: 42px;
+        box-sizing: border-box;
+        padding: 0 20px;
+        border: 1px solid gray;
+        border-radius: 26px;
+        background-color: white;
+        appearance: none;
+        cursor: pointer;
+    }
+    #rounded-select {
+        border-radius: 8px;
+    }
+</style>
+<body>
+<!--
+    A label associated with a control shares the control's region. The control's region keeps its own corner
+    radius: the pill-shaped select and button get pill-shaped regions next to their label's rounded rect, whether
+    or not the control sits in a positioned wrapper that paints after the label. A control with the same radius as
+    its label is merged with it as before ("rounded-select").
+-->
+<section id="test">
+    <div class="row">
+        <label for="select">Compare with</label>
+        <select id="select" class="pill"><option>iPhone 14 Pro</option></select>
+    </div>
+    <div class="row">
+        <label for="positioned-select">Compare with</label>
+        <span style="position: relative"><select id="positioned-select" class="pill"><option>iPhone 14 Pro</option></select></span>
+    </div>
+    <div class="row">
+        <label for="button">Choose</label>
+        <button id="button" class="pill">iPhone 14 Pro</button>
+    </div>
+    <div class="row">
+        <label for="rounded-select">Compare with</label>
+        <select id="rounded-select" class="pill"><option>iPhone 14 Pro</option></select>
+    </div>
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById("test").remove();
+};
+</script>
+</body>
+</html>

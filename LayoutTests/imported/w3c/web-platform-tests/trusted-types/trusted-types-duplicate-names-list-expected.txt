@@ -1,0 +1,3 @@
+
+PASS TrustedTypePolicyFactory and policy list in CSP.
+

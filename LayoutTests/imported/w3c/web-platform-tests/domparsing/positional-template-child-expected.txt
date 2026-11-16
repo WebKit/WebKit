@@ -1,0 +1,20 @@
+
+FAIL afterHTML on a direct child of a template element throws HierarchyRequestError assert_throws_dom: function "() => {
+            child[method_name]('<span></span>');
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]('<span></span>')', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTML on a direct child of a template element throws HierarchyRequestError assert_throws_dom: function "() => {
+            child[method_name]('<span></span>');
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]('<span></span>')', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTML on a direct child of a template element throws HierarchyRequestError assert_throws_dom: function "() => {
+            child[method_name]('<span></span>');
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]('<span></span>')', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTMLUnsafe on a direct child of a template element throws HierarchyRequestError assert_throws_dom: function "() => {
+            child[method_name]('<span></span>');
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]('<span></span>')', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTMLUnsafe on a direct child of a template element throws HierarchyRequestError assert_throws_dom: function "() => {
+            child[method_name]('<span></span>');
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]('<span></span>')', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTMLUnsafe on a direct child of a template element throws HierarchyRequestError assert_throws_dom: function "() => {
+            child[method_name]('<span></span>');
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]('<span></span>')', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+

@@ -1,0 +1,15 @@
+<head>
+  <script>
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+    function test() {
+      document.documentElement.style = 'content: ' + '('.repeat(35000) + '";';
+      result.textContent = 'PASS';
+      window.testRunner?.notifyDone();
+    }
+  </script>
+</head>
+<body onload="test()">
+  <p>This test passes if webkit does not crash.</p>
+  <div id="result"></div>
+</body>

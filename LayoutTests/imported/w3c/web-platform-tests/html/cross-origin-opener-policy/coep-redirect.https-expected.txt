@@ -1,0 +1,8 @@
+
+PASS Redirect from coop/coep to coop/coep
+PASS Redirect from coop/coep to no coop/coep
+PASS Redirect from no coop/no coep to coop/coep
+PASS Redirect from coop/no coep to coop/coep
+PASS Redirect from coop unsafe-none/coep to coop/coep
+PASS Redirect from coop unsafe-none/coep to coop unsafe-inherit/coep
+

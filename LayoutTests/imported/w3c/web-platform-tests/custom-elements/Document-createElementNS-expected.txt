@@ -1,0 +1,6 @@
+
+PASS autonomous: document.createElementNS should create custom elements with prefixes.
+PASS autonomous: document.createElementNS should check namespaces.
+PASS autonomous: document.createElementNS should not create HTMLUnknownElement for a valid custom element name
+PASS autonomous: document.createElementNS with undefined options value should be upgraded.
+

@@ -1,0 +1,16 @@
+Test that a dirty rect whose pixels are all transparent is cleared once the canvas has been read back.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Initial canvas should not have pending dirty rects
+PASS fillRect with a transparent fill should require noise injection
+PASS getImageData should clear the dirty rect when every pixel in it is transparent
+PASS fillRect with a transparent fill should require noise injection
+PASS toDataURL should clear the dirty rect when every pixel in it is transparent
+PASS fillRect with an opaque fill should require noise injection
+PASS getImageData should apply all required noise
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

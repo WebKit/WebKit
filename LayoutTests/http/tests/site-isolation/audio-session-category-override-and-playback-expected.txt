@@ -1,0 +1,13 @@
+A navigator.audioSession.type override set by one frame applies to audible media played by another frame of the same page, and lowers the audio session's category. This test deliberately does not enable site isolation, so that the site-isolated run is compared against the same expectations: with site isolation the two frames are in separate processes and the type reaches the playing one through DocumentSyncData, without it they share a process and its audio session, and both must reach AmbientSound.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.audioSession.type is "ambient"
+PASS playingFrameCategory is "AmbientSound"
+PASS overridingFrameCategory is "AmbientSound"
+PASS the real audio session's category is AmbientSound
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

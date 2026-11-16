@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include "SVGTextPositioningElement.h"
+#include "SVGURIReference.h"
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+class SVGTRefTargetEventListener;
+
+class SVGTRefElement final : public SVGTextPositioningElement, public SVGURIReference {
+    WTF_MAKE_TZONE_ALLOCATED(SVGTRefElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTRefElement);
+public:
+    static Ref<SVGTRefElement> create(const QualifiedName&, Document&);
+
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTRefElement, SVGTextPositioningElement, SVGURIReference>;
+
+private:
+    friend class SVGTRefTargetEventListener;
+
+    SVGTRefElement(const QualifiedName&, Document&);
+    virtual ~SVGTRefElement();
+
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    bool childShouldCreateRenderer(const Node&) const override;
+    bool rendererIsNeeded(const Style::ComputedStyle&) override;
+
+    NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
+    void removingSteps(RemovalType, ContainerNode&) override;
+    void postConnectionSteps() override;
+
+    void clearTarget() override;
+    void updateReferencedText(Element*);
+    void detachTarget();
+    void buildPendingResource() override;
+
+    const Ref<SVGTRefTargetEventListener> m_targetListener;
+};
+
+} // namespace WebCore

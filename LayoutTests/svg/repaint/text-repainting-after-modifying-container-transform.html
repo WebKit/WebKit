@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/reftest-repaint.js"></script>
+</head>
+<body onload="runRepaintRefTest()">
+<svg style="position: absolute; top: 0px; left: 0px; width: 500px; height: 200px">
+    <g id="target" transform="scale(0.001)">
+        <text x="50" y="50" font-size="40" fill="#080">PASS</text>
+    </g>
+</svg>
+<script>
+    function repaintRefTest() {
+        document.getElementById("target").setAttribute('transform', 'scale(1)');
+    }
+</script>
+</body>
+</html>

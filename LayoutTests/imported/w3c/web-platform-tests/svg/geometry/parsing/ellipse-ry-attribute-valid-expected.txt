@@ -1,0 +1,7 @@
+
+PASS ry="auto" should be a valid attribute value
+PASS ry="0" should be a valid attribute value
+PASS ry="5" should be a valid attribute value
+PASS ry="5px" should be a valid attribute value
+PASS ry="5%" should be a valid attribute value
+

@@ -1,0 +1,23 @@
+Checks that element reflection is exposed to the a11y tree for 'ariaErrorMessageElements'
+
+PASS: axTarget1.ariaErrorMessageElementAtIndex(0).isEqual(axError1) === true
+PASS: axTarget2.ariaErrorMessageElementAtIndex(0).isEqual(axError2) === true
+PASS: axTarget2.ariaErrorMessageElementAtIndex(0).isEqual(axError1) === true
+PASS: axInnerTarget.ariaErrorMessageElementAtIndex(0).isEqual(axError3) === true
+PASS: axTarget2.ariaErrorMessageElementAtIndex(0).isEqual(axError1) === true
+PASS: axTarget2.ariaErrorMessageElementAtIndex(1).isEqual(axError2) === true
+PASS: axTarget2.ariaErrorMessageElementAtIndex(2).isEqual(axError3) === true
+PASS: axTarget4.ariaErrorMessageElementAtIndex(0).isEqual(axErrorMessage4) === true
+PASS: axTarget5.ariaErrorMessageElementAtIndex(0).isEqual(axErrorMessage5) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First error
+Target 1
+Second error
+Target 2
+Third error
+Fourth error
+Target 4
+Fifth error

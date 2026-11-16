@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#box {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    color: black;
+}
+</style>
+<script type="text/javascript" src="../../resources/snapshot-helper.js"></script>
+</head>
+<body>
+    <div id="box">
+        <div style="position: absolute; z-index: 1;">Is this included?</div>
+    </div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+async function main() {
+    if (!window.internals) {
+        console.log('FAIL: window.internals is not available');
+        return;
+    }
+    
+    const box = document.getElementById('box');
+    const canvas = await SnapshotHelper.takeSnapshot(box);
+    box.remove();
+    document.body.appendChild(canvas);
+
+    if (window.testRunner) {
+        testRunner.notifyDone();
+    }
+}
+
+window.addEventListener('load', main, false);
+</script>
+</body>
+</html>

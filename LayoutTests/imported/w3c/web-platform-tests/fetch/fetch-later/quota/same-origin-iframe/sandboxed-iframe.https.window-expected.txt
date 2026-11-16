@@ -1,0 +1,3 @@
+
+PASS A sandboxed iframe with 'allow-same-origin' should be treated as same-origin and share the parent's quota.
+

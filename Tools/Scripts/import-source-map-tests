@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2025 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above
+#    copyright notice, this list of conditions and the following
+#    disclaimer.
+# 2. Redistributions in binary form must reproduce the above
+#    copyright notice, this list of conditions and the following
+#    disclaimer in the documentation and/or other materials
+#    provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+# OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+# TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+# THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+
+# Updates the source map spec tests in LayoutTests/tc39-tg4/source-map-tests
+# with the latest upstream tests.
+
+import argparse
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+from pathlib import Path
+
+import webkitpy
+from webkitcorepy import run
+from webkitscmpy import local, remote
+
+layout_tests_directory = Path(__file__).parent / "../../LayoutTests"
+source_map_repo_url = "https://github.com/tc39/source-map-tests.git"
+source_map_repo_branch = "main"
+
+def generate_readme_contents(git_hash):
+    return """\
+This directory contains the imported TG4 source map tests
+
+  - URL: {url}
+  - Commit: {git_hash}
+
+To update the tests, run the script at Tools/Scripts/import-source-map-tests
+with no arguments. This will checkout out the repo above and copy the new
+tests over. You can also specify a different repo and branch (see usage
+info with the -h flag).
+""".format(url=source_map_repo_url, git_hash=git_hash)
+
+def checkout_tests(continuation):
+    temporary_directory = tempfile.mkdtemp()
+    try:
+        checkout_folder = "source-map-tests"
+        checkout_directory = os.path.join(temporary_directory, checkout_folder)
+        print("Checking out tests from " + source_map_repo_url + " into " + checkout_directory)
+        result = run([local.Git.executable(), "clone", "-b", source_map_repo_branch, source_map_repo_url, checkout_directory], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        result.check_returncode()
+        git = local.Scm.from_path(checkout_directory)
+        git_hash = git.commit().hash
+        print("Checked out git hash " + git_hash)
+        continuation(Path(checkout_directory), git_hash)
+    finally:
+        shutil.rmtree(temporary_directory)
+
+def copy_tests(tmp_path, git_hash):
+    tests_path = layout_tests_directory / "imported/tc39-tg4/source-map-tests"
+    result = run([local.Git.executable(), "status", "--porcelain=v2", "-z", tests_path], capture_output=True)
+    test_dir_clean = result.returncode == 0 and len(result.stdout) == 0
+    if not test_dir_clean:
+        print("Uncommitted changes in source map tests, please commit or discard them")
+        sys.exit(1)
+    print("Deleting old test files at " + tests_path.as_posix())
+    shutil.rmtree(tests_path)
+    print("Copying new tests from " + tmp_path.as_posix())
+    shutil.copytree(tmp_path, tests_path, ignore=shutil.ignore_patterns(".git", "*.patch"))
+    print("Generating WebKit README")
+    Path.write_text(tests_path / "README.WebKit", generate_readme_contents(git_hash))
+
+parser = argparse.ArgumentParser(description="Import source map tests from the TG4 or other git repo.",
+                                 epilog="Refer to LayoutTests/imported/tc39-tg4/README.webkit for more information.")
+parser.add_argument('--repo', help='Git repo to check out')
+parser.add_argument('--dir', help='Copy from local directory')
+parser.add_argument('--branch', help='Git branch to check out')
+options = parser.parse_args()
+
+if options.repo and options.dir:
+   print("Only one of --repo or --dir should be provided")
+   sys.exit(1)
+
+if options.dir and options.branch:
+   print("Option --branch must be paired with --repo")
+   sys.exit(1)
+
+if options.repo:
+   source_map_repo_url = options.repo
+   if options.branch:
+      source_map_repo_branch = options.branch
+
+   response = input("This script will check out and replace the contents of the TG4 tests, continue? [y/N] ")
+   if response.lower() == "y":
+       checkout_tests(copy_tests)
+elif options.dir:
+   response = input("This script will replace the contents of the TG4 tests, continue? [y/N] ")
+   if response.lower() == "y":
+       copy_tests(Path(options.dir), "local copy, no hash")
+else:
+    sys.exit(1)

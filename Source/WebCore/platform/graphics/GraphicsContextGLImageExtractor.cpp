@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "GraphicsContextGLImageExtractor.h"
+
+#if ENABLE(WEBGL)
+
+#include "NativeImage.h"
+
+namespace WebCore {
+
+// Returns whether uploading an image in format reads the alpha of the image.
+NODELETE static bool formatUsesAlpha(GCGLenum format)
+{
+    switch (format) {
+    case GraphicsContextGL::RED:
+    case GraphicsContextGL::RED_INTEGER:
+    case GraphicsContextGL::RG:
+    case GraphicsContextGL::RG_INTEGER:
+    case GraphicsContextGL::RGB:
+    case GraphicsContextGL::RGB_INTEGER:
+    case GraphicsContextGL::LUMINANCE:
+    case GraphicsContextGL::DEPTH_COMPONENT:
+    case GraphicsContextGL::DEPTH_STENCIL:
+        return false;
+    default:
+        // ALPHA, LUMINANCE_ALPHA, RGBA, RGBA_INTEGER and any unexpected value.
+        return true;
+    }
+}
+
+GraphicsContextGLImageExtractor::GraphicsContextGLImageExtractor(NativeImage& image, std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha, GCGLenum destinationFormat)
+    : m_image(image)
+    , m_destinationUsesAlpha(formatUsesAlpha(destinationFormat))
+{
+    m_extractSucceeded = extractImage(sourceAlphaPremultiplication, premultiplyAlpha);
+}
+
+auto GraphicsContextGLImageExtractor::alphaOpForPremultiplication(std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha) -> AlphaOp
+{
+    // Contents that were decoded for this upload already hold the premultiplication it asked for.
+    if (!sourceAlphaPremultiplication)
+        return AlphaOp::DoNothing;
+    if (*sourceAlphaPremultiplication == AlphaPremultiplication::Premultiplied) {
+        if (!premultiplyAlpha)
+            return AlphaOp::DoUnmultiply;
+    } else if (premultiplyAlpha)
+        return AlphaOp::DoPremultiply;
+    return AlphaOp::DoNothing;
+}
+
+}
+
+#endif

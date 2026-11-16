@@ -1,0 +1,22 @@
+<script>
+
+var request = window.indexedDB.open("IndexedDBPersistence");
+
+request.onsuccess = function(event)
+{
+    window.webkit.messageHandlers.testHandler.postMessage(event.target.result.version + " " + event.target.result.objectStoreNames[0]);
+}
+
+request.onerror = function()
+{
+    // Unexpected error
+    window.webkit.messageHandlers.testHandler.postMessage('Unexpected Error');
+}
+
+request.onupgradeneeded = function()
+{
+    // Unexpected error
+    window.webkit.messageHandlers.testHandler.postMessage('Unexpected UpgradeNeeded');
+}
+
+</script>

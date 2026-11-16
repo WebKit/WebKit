@@ -1,0 +1,10 @@
+After restoring a page with a loaded model element from the back/forward cache, ensurePositionInformationIsUpToDate should still be called during scroll gestures.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ensurePositionInformationIsUpToDate was called after back/forward cache restore
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

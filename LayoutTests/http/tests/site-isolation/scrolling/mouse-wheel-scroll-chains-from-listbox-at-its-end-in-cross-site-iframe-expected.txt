@@ -1,0 +1,17 @@
+Tests that mouse wheel events over a listbox that is already at its end scroll the nearest frame that can scroll, even when that frame is in another process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cross-site iframe that cannot scroll: scrolled the main frame
+PASS same-site frame inside a cross-site iframe that cannot scroll: scrolled the main frame
+PASS same-site frame inside a cross-site iframe that can scroll: scrolled the middle frame
+PASS cross-site iframe that can scroll: scrolled the listbox frame
+PASS cross-site iframe that is already scrolled to its end: scrolled nothing
+PASS cross-site iframe that cannot scroll with overscroll-behavior: contain: scrolled nothing
+PASS cross-site iframe whose wheel event listener calls preventDefault(): scrolled nothing
+PASS same-site iframe that cannot scroll: scrolled the main frame
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

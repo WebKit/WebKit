@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>Testing bug #301539</title>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+
+<style>
+#input {
+    /* make the page scrollable */
+    margin-bottom: 3000px;
+}
+</style>
+
+<script>
+    jsTestIsAsync = true;
+
+    async function init() {
+        await UIHelper.animationFrame();
+        document.getElementById("input").focus();
+        document.getElementById("input").select();
+
+        await UIHelper.animationFrame();
+        const fullScrollHeight = document.body.scrollHeight - window.innerHeight;
+        window.scrollTo(0, fullScrollHeight);
+
+        await UIHelper.animationFrame();
+        const iframe = document.querySelector("iframe");
+        const target = iframe.contentDocument.getElementById("input");
+        target.select();
+
+        await UIHelper.animationFrame();
+        shouldBe("window.scrollY", "document.body.scrollHeight - window.innerHeight");
+        finishJSTest();
+    }
+</script>
+<body onload="init()">
+    <input id="input" value="birthday">
+    <br>
+    <iframe width="500" height="300" srcdoc="<!DOCTYPE html><input id='input' value='hello'>"></iframe>
+</body>

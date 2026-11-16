@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src ="routines.js"></script>
+</head>
+<body>
+<video id=video autoplay muted></video>
+<script>
+
+const noiseContext = new AudioContext();
+const buffer = noiseContext.createBuffer(2, 10 * noiseContext.sampleRate, noiseContext.sampleRate);
+const source = new AudioBufferSourceNode(noiseContext, { buffer });
+const audioStreamDestination = noiseContext.createMediaStreamDestination({ channelCount : 2 });
+const audioTrack = audioStreamDestination.stream.getAudioTracks()[0];
+source.connect(audioStreamDestination);
+
+promise_test(async test => {
+    const localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => localStream.getAudioTracks()[0].stop());
+    test.add_cleanup(() => localStream.getVideoTracks()[0].stop());
+
+    let audioSender;
+
+    video.srcObject = await new Promise((resolve, reject) => {
+        createConnections(firstConnection => {
+            audioSender = firstConnection.addTrack(audioTrack, localStream);
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, secondConnection => {
+            secondConnection.ontrack = trackEvent => { resolve(trackEvent.streams[0]); };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+    await video.play();
+
+    let useWebAudio = false;
+    for (let i = 0; i < 100; i++) {
+        await new Promise(resolve => setTimeout(resolve, 5));
+        await audioSender.replaceTrack(useWebAudio ? localStream.getAudioTracks()[0] : audioTrack);
+        useWebAudio = !useWebAudio;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+}, "Use replaceTrack to migrate from web audio to microphone");
+
+</script>
+</body>
+</html>

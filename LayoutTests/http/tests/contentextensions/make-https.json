@@ -1,0 +1,10 @@
+[
+    {
+        "action": {
+            "type": "make-https"
+        },
+        "trigger": {
+            "url-filter": "promote"
+        }
+    }
+]

@@ -1,0 +1,7 @@
+
+PASS bdi element without dir content attribute
+PASS bdi element with invalid dir content attribute
+PASS bdi element with dir=auto content attribute
+PASS bdi element with dir=ltr content attribute
+PASS bdi element with dir=rtl content attribute
+

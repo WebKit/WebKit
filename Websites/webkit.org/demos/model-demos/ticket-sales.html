@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Selection</title>
+    <link rel="stylesheet" href="styles/ticket-sales.css">
+    <link rel="stylesheet" href="styles/ticket-sales-immersive.css">
+    <link rel="stylesheet" href="styles/ticket-sales-mobile.css">
+</head>
+<body>
+    <main class="main-grid">
+        <div class="venue-col">
+            <div class="seat-map" id="seatMap">
+                <div class="seat-map-loading">Loading seat map…</div>
+            </div>
+            <button class="pill-btn seatmap-exit-btn" id="seatmapExitBtn" hidden>
+                <img src="images/svg/exit-immersive.svg" alt="" width="16" height="16">
+                Exit Immersive
+            </button>
+        </div>
+
+        <div class="preview-col">
+            <div class="card event-card">
+                <h1 class="event-card-title">Select your seats on the map</h1>
+                <div class="event-card-meta">
+                    <span class="event-card-seats" id="eventSeats"></span>
+                    <span class="event-card-price" id="eventPrice"></span>
+                </div>
+            </div>
+            <div class="section-label">Your cart</div>
+            <div class="card purchase-bar">
+                <div class="selection-list">
+                    <div class="ticket-entry">
+                        <div class="ticket-color-bar" style="background: #f43f5e"></div>
+                        <div class="ticket-info">
+                            <span class="ticket-name">Balcony</span>
+                            <span class="ticket-location">Row D, Seat 44</span>
+                        </div>
+                        <span class="ticket-price">$120</span>
+                    </div>
+                    <div class="ticket-entry">
+                        <div class="ticket-color-bar" style="background: #f43f5e"></div>
+                        <div class="ticket-info">
+                            <span class="ticket-name">Balcony</span>
+                            <span class="ticket-location">Row D, Seat 45</span>
+                        </div>
+                        <span class="ticket-price">$120</span>
+                    </div>
+                </div>
+                <div class="purchase-actions">
+                    <span class="total-label">$240</span>
+                    <button class="cta">Buy Tickets</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="preview-backdrop" id="previewBackdrop">
+        <div class="preview-popup">
+            <div class="seat-preview" id="seatPreview">
+                <model id="model"
+                       class="theater-model"
+                       src="models/theater.usdz"
+                       environmentmap="images/hdr/theater-map.exr"></model>
+
+                <div class="preview-blur-bar"></div>
+
+                <div class="preview-overlay">
+                    <div class="preview-spinner" id="previewSpinner"></div>
+                    <div class="preview-unsupported" id="previewUnsupported" hidden>
+                        <span class="preview-unsupported-title">Preview unavailable</span>
+                        <span class="preview-unsupported-detail">3D seat view is not supported in this browser</span>
+                    </div>
+                    <div class="immersive-title">Immersive</div>
+
+                    <div class="preview-top">
+                        <button class="preview-close" id="dismissBtn" aria-label="Close preview">&times;</button>
+
+                        <button class="pill-btn immersive-btn" id="immersiveBtn" hidden>
+                            <img src="images/svg/enter-immersive.svg" alt="" width="16" height="16">
+                            <span>Immersive Preview</span>
+                        </button>
+                    </div>
+
+                    <div class="preview-bar">
+                        <div class="seat-info">
+                            <span class="seat-name"   id="seatName"></span>
+                            <span class="seat-detail" id="seatDetail"></span>
+                        </div>
+                        <span class="seat-price" id="seatPrice"></span>
+                        <button class="cta" id="addToCartBtn">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/ticket-sales.js"></script>
+</body>
+</html>

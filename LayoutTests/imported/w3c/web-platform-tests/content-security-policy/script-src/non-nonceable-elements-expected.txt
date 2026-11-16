@@ -1,0 +1,12 @@
+
+PASS Nonceable script element 0
+PASS Non-nonceable script element 1
+PASS Non-nonceable script element 2
+PASS Non-nonceable script element 3
+PASS Non-nonceable script element 4
+PASS Non-nonceable script element 5
+PASS Non-nonceable script element 6
+PASS Non-nonceable script element 7
+PASS Non-nonceable script element 8
+PASS Non-nonceable script element 9
+

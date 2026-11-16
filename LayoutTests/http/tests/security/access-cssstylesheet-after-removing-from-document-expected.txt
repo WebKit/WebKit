@@ -1,0 +1,33 @@
+Tests accessing CSSStyleSheet after removing from the document
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS () => stylesheet.cssRules did not throw exception.
+PASS () => stylesheet.insertRule('#element2 { margin: 10px; }') did not throw exception.
+PASS () => stylesheet.deleteRule(0) did not throw exception.
+PASS () => stylesheet.cssRules threw exception SecurityError: Not allowed to access cross-origin stylesheet.
+PASS () => stylesheet.insertRule('body { margin: 10px; } ') threw exception SecurityError: Not allowed to insert rule into cross-origin stylesheet.
+PASS () => stylesheet.deleteRule(0) threw exception SecurityError: Not allowed to delete rule from cross-origin stylesheet.
+PASS () => stylesheet.cssRules did not throw exception.
+PASS () => stylesheet.insertRule('#element2 { margin: 10px; }') did not throw exception.
+PASS () => stylesheet.deleteRule(0) did not throw exception.
+PASS () => stylesheet.cssRules did not throw exception.
+PASS () => stylesheet.insertRule('#element2 { margin: 10px; }') did not throw exception.
+PASS () => stylesheet.deleteRule(0) did not throw exception.
+PASS () => stylesheet.cssRules threw exception SecurityError: Not allowed to access cross-origin stylesheet.
+PASS () => stylesheet.insertRule('body { margin: 10px; } ') threw exception SecurityError: Not allowed to insert rule into cross-origin stylesheet.
+PASS () => stylesheet.deleteRule(0) threw exception SecurityError: Not allowed to delete rule from cross-origin stylesheet.
+PASS () => stylesheet.cssRules threw exception SecurityError: Not allowed to access cross-origin stylesheet.
+PASS () => stylesheet.insertRule('body { margin: 10px; } ') threw exception SecurityError: Not allowed to insert rule into cross-origin stylesheet.
+PASS () => stylesheet.deleteRule(0) threw exception SecurityError: Not allowed to delete rule from cross-origin stylesheet.
+PASS () => stylesheet.cssRules did not throw exception.
+PASS () => stylesheet.insertRule('#element2 { margin: 10px; }') did not throw exception.
+PASS () => stylesheet.deleteRule(0) did not throw exception.
+PASS () => stylesheet.cssRules threw exception SecurityError: Not allowed to access cross-origin stylesheet.
+PASS () => stylesheet.insertRule('body { margin: 10px; } ') threw exception SecurityError: Not allowed to insert rule into cross-origin stylesheet.
+PASS () => stylesheet.deleteRule(0) threw exception SecurityError: Not allowed to delete rule from cross-origin stylesheet.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

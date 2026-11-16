@@ -1,0 +1,3 @@
+
+PASS clip-path: shape() hit-test takes zoom into account
+

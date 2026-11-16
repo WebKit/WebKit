@@ -1,0 +1,6 @@
+Old P1
+Old P2
+Old P3
+
+FAIL Multiple <template for> assert_equals: expected "New P1" but got "Old P1"
+

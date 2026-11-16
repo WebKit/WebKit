@@ -1,0 +1,12 @@
+The headers in this directory are for compiling on Mac OS X 10.4 and newer.
+The Mac OS X 10.4 and subsequent releases include the ICU binary, but not ICU headers.
+
+For other platforms, installed ICU headers should be used rather than these.
+They are specific to the Mac OS X platform.
+
+The headers here are from ICU version 55.1 downloaded from the ICU project.
+http://site.icu-project.org/download/55#TOC-ICU4C-Download
+
+The following changes are needed again if you update the files:
+utypes.h:62 U_SHOW_CPLUSPLUS_API 0
+uconfig.h:90 U_DISABLE_RENAMING 1

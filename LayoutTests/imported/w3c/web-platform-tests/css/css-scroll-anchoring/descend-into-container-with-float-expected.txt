@@ -1,0 +1,4 @@
+after
+
+PASS Zero-height container with float.
+

@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable dir="rtl"></div>
+<script>
+Markup.description('Smart-list conversion should work inside a right-to-left contenteditable. Typing "1. تفاحة" + Enter + "2. برتقال" should produce an ordered list containing the Arabic text.');
+
+var test = document.getElementById('test');
+test.focus();
+[...'1. تفاحة\n2. برتقال'].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        input {
+            font-size: 12px;
+        }
+
+        .input-container {
+            margin: 80vh auto;
+        }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+
+        addEventListener("load", async () => {
+            description("Verifies that we zoom and scroll to reveal the focused element; requires WebKitTestRunner.");
+
+            const inputContainer = document.querySelector(".input-container");
+            const textField = document.querySelector("input");
+
+            await UIHelper.setHardwareKeyboardAttached(false);
+            await UIHelper.setShowKeyboardAfterElementFocusDelay(0.25);
+            await UIHelper.activateElementAndWaitForInputSession(textField);
+            await UIHelper.waitForZoomingOrScrollingToEnd();
+
+            await shouldBecomeEqual("pageYOffset > 0", "true");
+            await shouldBecomeEqual("visualViewport.scale > 1", "true");
+
+            textField.blur();
+            await UIHelper.waitForKeyboardToHide();
+            finishJSTest();
+        });
+    </script>
+</head>
+<body>
+    <div class="input-container">
+        <input type="text" placeholder="Focus me">
+    </div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

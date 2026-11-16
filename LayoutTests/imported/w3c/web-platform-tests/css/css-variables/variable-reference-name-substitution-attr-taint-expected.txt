@@ -1,0 +1,11 @@
+
+PASS attr()-tainted name argument makes an image-set() declaration invalid at computed-value time
+PASS attr()-tainted name argument taints a url() value
+PASS attr()-taint reaches the name argument through another custom property
+PASS attr()-tainted name argument taints the fallback
+PASS attr()-tainted name argument taints a registered <url> property
+PASS attr()-tainted name argument does not invalidate values that are not URLs
+PASS attr()-tainted name argument substitutes normally into a custom property
+PASS attr()-tainted name argument taints the value even when an earlier value was already tainted
+PASS untainted substituted name argument does not taint the value
+

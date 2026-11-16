@@ -1,0 +1,12 @@
+
+PASS `fetch()`: No signature, malformed integrity check: loads.
+FAIL `fetch()`: No signature, valid integrity check: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS `fetch()`: Valid signature, malformed integrity check: loads.
+FAIL `fetch()`: Valid signature, matching integrity check: loads. assert_equals: `accept-signature` was set. expected "sig0=(\"unencoded-digest\";sf);keyid=\"JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=\";tag=\"ed25519-integrity\"" but got ""
+FAIL `fetch()`: Valid signature, mismatched integrity check: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Valid signature, one valid integrity check: loads. assert_equals: `accept-signature` was set. expected "sig0=(\"unencoded-digest\";sf);keyid=\"JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=\";tag=\"ed25519-integrity\", sig1=(\"unencoded-digest\";sf);keyid=\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\";tag=\"ed25519-integrity\"" but got ""
+FAIL `fetch()`: Invalid signature, malformed integrity check: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Invalid signature, matching integrity check: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Invalid signature, mismatched integrity check: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Invalid signature, one valid integrity check: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+

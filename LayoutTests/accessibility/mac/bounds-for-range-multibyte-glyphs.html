@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content" role="presentation">
+Abc⁉️def🧑‍🧑‍🧒‍🧒ghi👫Abc
+</div>
+
+<script>
+var output = "This test ensures we produce the right rects via the bounds-for-range API for multi-byte glyphs.\n\n";
+// VoiceOver uses NSAccessibilityBoundsForRangeParameterizedAttribute when navigating character-by-character.
+
+var text;
+function verifyRect(location, length, x, width) {
+    // y and height are hardcoded because all rects in this test should have y=14 and height=18.
+    output += expectRectWithVariance(`text.boundsForRangeWithPagePosition(${location}, ${length})`, x, 14, width, 18, /* allowedVariance */ 2);
+}
+
+if (window.accessibilityController) {
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    text = webarea.childAtIndex(0);
+
+    output += expect("text.role.toLowerCase().includes('text')", "true");
+    // This sequence mirrors the exact ranges VoiceOver passes to NSAccessibilityBoundsForRangeParameterizedAttribute
+    // when navigating this text character-by-character.
+    // A
+    verifyRect(0, 1, 8, 13); 
+    // b
+    verifyRect(1, 1, 19, 10); 
+    // c
+    verifyRect(2, 1, 27, 9); 
+    // ⁉️
+    verifyRect(3, 2, 34, 23); 
+    // d
+    verifyRect(5, 1, 55, 10); 
+    // e
+    verifyRect(6, 1, 63, 9); 
+    // f
+    verifyRect(7, 1, 70, 7); 
+    // 🧑‍🧑‍🧒‍🧒
+    verifyRect(8, 11, 75, 23); 
+    // g
+    verifyRect(19, 1, 96, 10); 
+    // h
+    verifyRect(20, 1, 104, 10); 
+    // i
+    verifyRect(21, 1, 112, 7); 
+    // 👫
+    verifyRect(22, 2, 117, 23); 
+    // A
+    verifyRect(24, 1, 138, 13); 
+    // b
+    verifyRect(25, 1, 149, 10); 
+    // c
+    verifyRect(26, 1, 157, 9); 
+
+    // The full range minus the last character ("c").
+    verifyRect(0, 26, 8, 151); 
+
+    // The full range.
+    verifyRect(0, 27, 8, 158); 
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>
+
+

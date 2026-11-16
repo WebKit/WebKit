@@ -1,0 +1,17 @@
+This test ensures a dir=rtl paragraph of left-to-right words reports its text and index space in logical order. The words are drawn right to left while each word's letters are drawn left to right, so visual order and logical order disagree at the word level but not the letter level.
+
+The first word in the DOM is the first word in the string, though it is drawn rightmost.
+PASS: text() === 'alpha beta gamma'
+PASS: text().indexOf('alpha') === 0
+PASS: text().indexOf('gamma') === 11
+
+Every code unit has its own index, and it round-trips.
+PASS: walk.containerTextLength === 16
+PASS: walk.indicesChecked === 16
+PASS: walk.worstRoundTripDrift === 0
+PASS: walk.worstLengthDifference === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

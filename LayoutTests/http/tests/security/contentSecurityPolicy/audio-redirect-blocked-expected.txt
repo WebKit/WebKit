@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8000/resources/balls-of-the-orient.aif because it does not appear in the media-src directive of the Content Security Policy.
+blockedURI = http://127.0.0.1:8000/resources/redirect.py?code=307&url=http%3A//127.0.0.1%3A8000/resources/redirect.py%3Furl=http%3A//localhost%3A8000/resources/balls-of-the-orient.aif
+
+

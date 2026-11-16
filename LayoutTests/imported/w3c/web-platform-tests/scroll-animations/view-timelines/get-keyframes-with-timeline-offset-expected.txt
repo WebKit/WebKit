@@ -1,0 +1,8 @@
+
+PASS Report specified timeline offsets
+PASS Computed offsets can be outside [0,1] for keyframes with timeline offsets
+PASS Offsets can be outside [0%,100%] for keyframes with timeline range names
+PASS Retain specified ordering of keyframes with timeline offsets
+PASS Include unreachable keyframes
+PASS Mix of computed and timeline offsets.
+

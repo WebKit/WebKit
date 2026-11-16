@@ -1,0 +1,30 @@
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/page-go-back-onload.html
+main frame - didStartProvisionalLoadForFrame
+main frame - didCancelClientRedirectForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishLoadForFrame
+main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/page-go-back-onload.html
+main frame - didStartProvisionalLoadForFrame
+main frame - didCancelClientRedirectForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishLoadForFrame
+Test that main resource load delegates are the same when page cache is enabled and disabled
+http://127.0.0.1:8000/loading/main-resource-delegates-on-back-navigation.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/main-resource-delegates-on-back-navigation.html, main document URL http://127.0.0.1:8000/loading/main-resource-delegates-on-back-navigation.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/loading/main-resource-delegates-on-back-navigation.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/main-resource-delegates-on-back-navigation.html, http status code 200>
+http://127.0.0.1:8000/loading/main-resource-delegates-on-back-navigation.html - didFinishLoading
+http://127.0.0.1:8000/loading/resources/page-go-back-onload.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/page-go-back-onload.html, main document URL http://127.0.0.1:8000/loading/resources/page-go-back-onload.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/page-go-back-onload.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/page-go-back-onload.html, http status code 200>
+http://127.0.0.1:8000/loading/resources/page-go-back-onload.html - didFinishLoading

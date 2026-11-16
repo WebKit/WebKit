@@ -1,0 +1,4 @@
+not-web-platform.test:9443 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Simulating cancelled authentication sheet
+
+FAIL test www-authenticate basic does not forward credentials to cross-origin pages. assert_in_array: value undefined not in array ["prefetch", "prefetch;anonymous-client-ip"]
+

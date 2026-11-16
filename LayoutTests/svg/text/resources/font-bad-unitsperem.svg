@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="yes"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <font id="foo" horiz-adv-x="1000">
+            <font-face units-per-em="0" ascent="1000" descent="0">
+            </font-face>
+            <glyph unicode="A" horiz-adv-x="1000" d="M 500 0 H 1000 V 600 H 500 z"/>
+        </font>
+    </defs>
+</svg>

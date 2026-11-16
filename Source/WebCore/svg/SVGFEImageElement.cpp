@@ -1,0 +1,378 @@
+/*
+ * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) 2010 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "SVGFEImageElement.h"
+
+#include "CachedImage.h"
+#include "CachedResourceRequest.h"
+#include "ContainerNodeInlines.h"
+#include "DocumentResourceLoader.h"
+#include "FEImage.h"
+#include "GraphicsContext.h"
+#include "Image.h"
+#include "ImageBuffer.h"
+#include "LegacyRenderSVGResource.h"
+#include "LegacyRenderSVGResourceFEImage.h"
+#include "NativeImage.h"
+#include "RenderElementStyleInlines.h"
+#include "RenderImageResource.h"
+#include "RenderLayer.h"
+#include "RenderLayerInlines.h"
+#include "RenderLayerModelObject.h"
+#include "RenderObject.h"
+#include "RenderSVGResourceFEImage.h"
+#include "SVGElementInlines.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGImageIntrinsicSizing.h"
+#include "SVGNames.h"
+#include "SVGPreserveAspectRatioValue.h"
+#include "SVGRenderingContext.h"
+#include "SVGTransformComputation.h"
+#include "SVGVisitedRendererTracking.h"
+#include "Settings.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEImageElement);
+
+inline SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document& document)
+    : SVGFilterPrimitiveStandardAttributes(tagName, document, PropertyRegistry::singleton())
+    , SVGURIReference(this)
+{
+    ASSERT(hasTagName(SVGNames::feImageTag));
+
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
+        PropertyRegistry::registerProperty<SVGNames::preserveAspectRatioAttr, &SVGFEImageElement::m_preserveAspectRatio>();
+    }
+}
+
+Ref<SVGFEImageElement> SVGFEImageElement::create(const QualifiedName& tagName, Document& document)
+{
+    return adoptRef(*new SVGFEImageElement(tagName, document));
+}
+
+SVGFEImageElement::~SVGFEImageElement()
+{
+    clearResourceReferences();
+}
+
+bool SVGFEImageElement::renderingTaintsOrigin() const
+{
+    if (!m_cachedImage)
+        return false;
+    RefPtr image = protect(m_cachedImage)->image();
+    return image && image->renderingTaintsOrigin();
+}
+
+void SVGFEImageElement::clearResourceReferences()
+{
+    if (RefPtr cachedImage = std::exchange(m_cachedImage, nullptr))
+        cachedImage->removeClient(*this);
+    updateImageResource();
+
+    removeElementReference();
+}
+
+void SVGFEImageElement::requestImageResource()
+{
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.contentSecurityPolicyImposition = isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+
+    CachedResourceRequest request(ResourceRequest(protect(document())->encodingParseURL(href())), options);
+    request.setInitiator(*this);
+    m_cachedImage = protect(protect(document())->cachedResourceLoader())->requestImage(WTF::move(request)).value_or(nullptr);
+
+    if (RefPtr cachedImage = m_cachedImage)
+        cachedImage->addClient(*this);
+    updateImageResource();
+}
+
+String SVGFEImageElement::imageSourceURL() const
+{
+    return href();
+}
+
+RenderPtr<RenderElement> SVGFEImageElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+{
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGResourceFEImage>(*this, WTF::move(style));
+
+    return createRenderer<LegacyRenderSVGResourceFEImage>(*this, WTF::move(style));
+}
+
+RenderImageResource* SVGFEImageElement::imageResource() const
+{
+    if (CheckedPtr renderer = dynamicDowncast<RenderSVGResourceFEImage>(this->renderer()))
+        return &renderer->imageResource();
+    if (CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGResourceFEImage>(this->renderer()))
+        return &renderer->imageResource();
+    return nullptr;
+}
+
+void SVGFEImageElement::updateImageResource()
+{
+    if (CheckedPtr imageResource = this->imageResource())
+        imageResource->setCachedImage(protect(m_cachedImage));
+}
+
+void SVGFEImageElement::didAttachRenderers()
+{
+    SVGFilterPrimitiveStandardAttributes::didAttachRenderers();
+    updateImageResource();
+}
+
+void SVGFEImageElement::buildPendingResource()
+{
+    clearResourceReferences();
+    if (!isConnected())
+        return;
+
+    Ref treeScopeForReferences = treeScopeForSVGReferences();
+    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScopeForReferences);
+    if (!target.element) {
+        // A fragment in another resource's URL, such as an SVG image's svgView(), does not name an element here.
+        Ref document = this->document();
+        bool referencesThisDocument = href().startsWith('#') || equalIgnoringFragmentIdentifier(document->encodingParseURL(href()), document->url());
+        if (target.identifier.isEmpty() || !referencesThisDocument)
+            requestImageResource();
+        else {
+            treeScopeForReferences->addPendingSVGResource(target.identifier, *this);
+            ASSERT(hasPendingResources());
+        }
+    } else if (RefPtr element = dynamicDowncast<SVGElement>(*target.element))
+        element->addReferencingElement(*this);
+
+    updateSVGRendererForElementChange();
+}
+
+void SVGFEImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+{
+    if (name == SVGNames::preserveAspectRatioAttr)
+        m_preserveAspectRatio->setBaseValInternal(SVGPreserveAspectRatioValue { newValue });
+
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+}
+
+void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
+        ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
+        InstanceInvalidationGuard guard(*this);
+        markFilterEffectForRebuild();
+        updateSVGRendererForElementChange();
+        return;
+    }
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
+        buildPendingResource();
+        markFilterEffectForRebuild();
+        return;
+    }
+
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+}
+
+Node::NeedsPostConnectionSteps SVGFEImageElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+{
+    SVGFilterPrimitiveStandardAttributes::insertionSteps(insertionType, parentOfInsertedTree);
+    if (!insertionType.connectedToDocument)
+        return NeedsPostConnectionSteps::No;
+    return NeedsPostConnectionSteps::Yes;
+}
+
+void SVGFEImageElement::postConnectionSteps()
+{
+    SVGFilterPrimitiveStandardAttributes::postConnectionSteps();
+    buildPendingResource();
+}
+
+void SVGFEImageElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    SVGFilterPrimitiveStandardAttributes::removingSteps(removalType, oldParentOfRemovedTree);
+    if (removalType.disconnectedFromDocument)
+        clearResourceReferences();
+}
+
+void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
+{
+    if (!isConnected())
+        return;
+
+    RefPtr parent = parentElement();
+
+    if (!parent || !parent->hasTagName(SVGNames::filterTag))
+        return;
+
+    CheckedPtr parentRenderer = parent->renderer();
+    if (!parentRenderer)
+        return;
+
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        markFilterEffectForRebuild();
+        return;
+    }
+
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
+}
+
+std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffect(const GraphicsContext& destinationContext) const
+{
+    auto targetElement = dynamicDowncast<SVGElement>(SVGURIReference::targetElementFromIRIString(href(), protect(const_cast<SVGFEImageElement&>(*this).treeScopeForSVGReferences())).element);
+    if (!targetElement)
+        return { };
+
+    if (isShadowIncludingDescendantOf(targetElement.get()))
+        return { };
+
+    CheckedPtr renderer = targetElement->renderer();
+    if (!renderer)
+        return { };
+
+    // The layer-based engine paints the referenced subtree through its layer, the same way <mask>,
+    // <clipPath>, <pattern> and <marker> content is painted -- being referenced by an <feImage> is
+    // what gives that element a layer, see RenderLayerModelObject::requiresLayerForSVGIntrinsicReasons().
+    CheckedPtr<RenderLayerModelObject> layerRenderer;
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        layerRenderer = dynamicDowncast<RenderLayerModelObject>(*renderer);
+        if (!layerRenderer || !layerRenderer->hasLayer())
+            return { };
+    }
+
+    FloatSize scale;
+    if (layerRenderer) {
+        // Ancestor transforms -- the viewBox transform of the outermost <svg> above all -- live on
+        // RenderLayers, where calculateTransformationToOutermostCoordinateSystem() cannot see them.
+        scale = SVGTransformComputation(*layerRenderer).computeAccumulatedSVGAncestorTransformScale();
+        scale.scale(protect(document())->deviceScaleFactor());
+        if (scale.isEmpty())
+            return { };
+    } else {
+        auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*renderer);
+        if (!absoluteTransform.isInvertible())
+            return { };
+
+        // Ignore 2D rotation, as it doesn't affect the image size.
+        scale = { narrowPrecisionToFloat(absoluteTransform.xScale()), narrowPrecisionToFloat(absoluteTransform.yScale()) };
+    }
+
+    // The subtree paints in full, including descendants carrying a filter that references back to it
+    // (svg/filters/feImage-reentrant-filter-remove-crash.html). Break such cycles the same way the
+    // other SVG resources do. The legacy engine never recurses: it skips layered descendants.
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    std::optional<SVGVisitedRendererTracking::Scope> recursionScope;
+    if (layerRenderer) {
+        if (recursionTracking.isVisiting(*layerRenderer))
+            return { };
+        recursionScope.emplace(recursionTracking, *layerRenderer);
+    }
+
+    auto imageRect = renderer->repaintRectInLocalCoordinates();
+
+    RefPtr imageBuffer = destinationContext.createScaledImageBuffer(imageRect, scale);
+    if (!imageBuffer)
+        return { };
+
+    auto& context = imageBuffer->context();
+    if (layerRenderer)
+        protect(layerRenderer->layer())->paintResourceLayerForSVG(context, { });
+    else
+        SVGRenderingContext::renderSubtreeToContext(context, *renderer, AffineTransform());
+
+    return { WTF::move(imageBuffer), imageRect };
+}
+
+RefPtr<FilterEffect> SVGFEImageElement::imageEffect(const GraphicsContext& destinationContext) const
+{
+    // With nothing of the image to show, the effect draws transparent black rather than failing the whole filter.
+    auto emptyEffect = [&] -> RefPtr<FilterEffect> {
+        RefPtr nothing = ImageBuffer::sinkIntoNativeImage(ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8));
+        if (!nothing)
+            return nullptr;
+        return FEImage::create({ nothing.releaseNonNull() }, { });
+    };
+
+    // An <feImage> without a renderer, such as one in a display: none subtree, has no image to show.
+    CheckedPtr renderer = this->renderer();
+    CheckedPtr imageResource = this->imageResource();
+    RefPtr styleImage = imageResource ? imageResource->styleImage() : nullptr;
+    if (!styleImage || !styleImage->canDraw(*renderer))
+        return emptyEffect();
+
+    auto& placement = effectPlacement();
+    auto& positioningRectangle = placement.primitiveSubregion;
+    auto imagePlacement = calculateSVGImagePlacement(*styleImage, *renderer, preserveAspectRatio(), positioningRectangle);
+
+    auto visibleRect = intersection(positioningRectangle, placement.filterRegion);
+    visibleRect.scale(placement.filterScale);
+    auto visiblePixels = enclosingIntRect(visibleRect);
+    if (visiblePixels.isEmpty())
+        return emptyEffect();
+
+    RefPtr imageBuffer = destinationContext.createImageBuffer(visiblePixels.size());
+    if (!imageBuffer)
+        return emptyEffect();
+
+    auto imageRenderingSize = imagePlacement.imageRenderingRectangle.size();
+    auto& context = imageBuffer->context();
+    context.translate(-toFloatSize(visiblePixels.location()));
+    context.scale(placement.filterScale);
+
+    auto descriptor = calculateSVGImageDrawDescriptor(*styleImage, *renderer, context, imageRenderingSize, imagePlacement.destination.size(), { });
+    styleImage->draw(context, *renderer, descriptor, imagePlacement.destination, imagePlacement.source);
+
+    RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
+    if (!nativeImage)
+        return emptyEffect();
+
+    FloatRect imageRect { visiblePixels };
+    imageRect.scale(1 / placement.filterScale.width(), 1 / placement.filterScale.height());
+    return FEImage::create({ nativeImage.releaseNonNull() }, imageRect);
+}
+
+RefPtr<FilterEffect> SVGFEImageElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const
+{
+    if (m_cachedImage)
+        return imageEffect(destinationContext);
+
+    auto [imageBuffer, imageRect] = imageBufferForEffect(destinationContext);
+    if (!imageBuffer)
+        return nullptr;
+
+    return FEImage::create({ imageBuffer.releaseNonNull() }, imageRect);
+}
+
+void SVGFEImageElement::addSubresourceAttributeURLs(OrderedHashSet<URL>& urls) const
+{
+    SVGFilterPrimitiveStandardAttributes::addSubresourceAttributeURLs(urls);
+
+    addSubresourceURL(urls, protect(document())->encodingParseURL(href()));
+}
+
+} // namespace WebCore

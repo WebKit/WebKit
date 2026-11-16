@@ -1,0 +1,132 @@
+/*
+ * Copyright (C) 2016, 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.slider.default > .appearance {
+    top: 5.5px;
+    height: 5px;
+}
+
+.slider.default.allows-relative-scrubbing > .appearance {
+    transition-property: top, height;
+    transition-duration: 0.5s;
+}
+
+.slider.default.allows-relative-scrubbing > .appearance.changing {
+    top: 0.5px;
+    height: 15px;
+}
+
+.slider.default > .appearance > .fill {
+    position: relative;
+    height: 100%;
+    display: flex;
+}
+
+.slider.default > .appearance > .fill {
+    --fill-border-radius: 4.5px;
+}
+
+.slider.default > .appearance > .fill > :first-child {
+    border-top-left-radius: var(--fill-border-radius);
+    border-bottom-left-radius: var(--fill-border-radius);
+}
+
+.slider.default > .appearance > .fill > :last-child {
+    border-top-right-radius: var(--fill-border-radius);
+    border-bottom-right-radius: var(--fill-border-radius);
+}
+
+.slider.default.allows-relative-scrubbing > .appearance > .fill {
+    transition-property: border-radius;
+    transition-duration: 0.5s;
+}
+
+.slider.default.allows-relative-scrubbing > .appearance.changing > .fill {
+    --fill-border-radius: 7.5px;
+}
+
+.slider.default > .appearance > .fill > * {
+    top: 0;
+    height: 100%;
+    mix-blend-mode: plus-lighter;
+}
+
+.slider.default.allows-relative-scrubbing > .appearance > .fill > * {
+    mix-blend-mode: initial;
+}
+
+.slider.default > .appearance > .fill > .primary {
+    background-color: rgba(255, 255, 255, 0.45);
+}
+
+.slider.default.allows-relative-scrubbing > .appearance > .fill > .primary {
+    background-color: rgb(236, 236, 236);
+}
+
+.slider.default > .appearance > .fill > .track {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.slider.default.allows-relative-scrubbing > .appearance > .fill > .track {
+    background-color: rgb(102, 102, 102);
+}
+
+.slider.default > .appearance > .fill > .secondary {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.slider.default.allows-relative-scrubbing > .appearance > .fill > .track > .secondary {
+    background-color: rgb(128, 128, 128);
+}
+
+.slider.default > .appearance > .fill > .knob {
+    align-self: center;
+    background-color: white;
+}
+
+.slider.default > .appearance > .fill > .knob.circle {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin: -4.5px;
+}
+
+.slider.default > .appearance > .fill > .knob.bar {
+    width: 4px;
+    height: 17px;
+    border-radius: 4px;
+    margin: 1px;
+}
+
+.slider.default > .appearance > .fill > .knob.none {
+    display: none;
+}
+
+/* When disabled, we only want to show the track and turn off interaction. */
+
+.slider.default.disabled > .appearance > .fill > .primary,
+.slider.default.disabled > .appearance > .fill > .secondary {
+    display: none;
+}

@@ -1,0 +1,7 @@
+
+PASS Should have all additional line items and shipping options if `paymentMethodType` is not provided.
+PASS Should not have any additional line items or shipping options if a non-matching `paymentMethodType` is provided and the user has not chosen a payment method type yet.
+PASS Should not have any additional line items or shipping options if `paymentMethodType` is provided and the user chose a non-matching payment method type.
+PASS Should not have any additional line items or shipping options if a matching `paymentMethodType` is provided and the user has not chosen a payment method type yet.
+PASS Should have all additional line items and shipping options if `paymentMethodType` is provided and the user chose a matching payment method type.
+

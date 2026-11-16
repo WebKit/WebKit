@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-255; totalPixels=0-18081" />
+    <style>
+        svg {
+            width: 0px;
+            height: 0px;
+            border: 1px solid black;
+        }
+        .shadow-box {
+            position: absolute;
+            top: 200px;
+            left: 50px;
+            width: 200px;
+            height: 200px;
+            background-color: green;
+            filter: url('#filter');
+        }
+    </style>
+</head>
+<body>
+    <svg viewBox="0 0 400 400">
+        <defs>
+            <filter id="filter">
+                <feDropShadow dx="0" dy="0" stdDeviation="100" flood-color="black" result="drop-shadow" />
+                <feMerge>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                    <feMergeNode in="drop-shadow"></feMergeNode>
+                </feMerge>
+            </filter>
+        </defs>
+        <rect x=50 y=50 width=200 height=200 filter=url(#filter) fill="green">
+    </svg>
+    <div class="shadow-box"></div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals) {
+    const params = new URLSearchParams(window.location.search);
+    const channelName = params.get("channel");
+    if (channelName) {
+        const bc = new BroadcastChannel(channelName);
+        bc.postMessage({ type: "processId", pid: internals.processIdentifier });
+        bc.close();
+    }
+}
+</script>
+</head>
+<body>
+This page reports its process ID via BroadcastChannel.
+</body>
+</html>
+

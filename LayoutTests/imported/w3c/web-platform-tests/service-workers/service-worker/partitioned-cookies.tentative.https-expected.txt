@@ -1,0 +1,6 @@
+
+PASS Service Worker: Partitioned Cookies
+PASS Service Worker: Partitioned Cookies 3P Window
+PASS Service Worker: Partitioned Cookies 3P Iframe
+FAIL Service Worker: Partitioned Cookies 3P Credentialless Iframe assert_false: expected false got true
+

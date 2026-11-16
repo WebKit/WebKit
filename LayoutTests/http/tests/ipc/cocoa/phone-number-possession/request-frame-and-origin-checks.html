@@ -1,0 +1,45 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PhoneNumberPossessionEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/phone-number-possession-ipc.js"></script>
+<script>redirectToLocalhost();</script>
+<body>
+<script>
+const frameNotAvailable = "The requesting frame is not available.";
+
+phoneNumberPossessionIPCTest(async () => {
+    const result = await requestPhoneNumberPossession(IPC.frameID[0] + 1000000n);
+    assert_false(result.hasValue);
+    assert_equals(result.message, frameNotAvailable);
+}, "RequestPhoneNumberPossession for a frame that doesn't exist is rejected");
+
+phoneNumberPossessionIPCTest(async () => {
+    const otherWindow = window.open("about:blank");
+    try {
+        const result = await requestPhoneNumberPossession(frameIDOf(otherWindow));
+        assert_false(result.hasValue);
+        assert_equals(result.message, frameNotAvailable);
+    } finally {
+        otherWindow.close();
+    }
+}, "RequestPhoneNumberPossession for another page's frame is rejected");
+
+phoneNumberPossessionIPCTest(async () => {
+    const iframe = document.createElement("iframe");
+    try {
+        const frameID = await new Promise(resolve => {
+            window.addEventListener("message", event => resolve(BigInt(event.data)), { once: true });
+            iframe.sandbox = "allow-scripts";
+            iframe.srcdoc = "<script>parent.postMessage(IPC.frameID[0].toString(), '*');<\/script>";
+            document.body.appendChild(iframe);
+        });
+        const result = await requestPhoneNumberPossession(frameID);
+        assert_false(result.hasValue);
+        assert_equals(result.message, "The document's origin cannot request phone number possession.");
+        assert_false(await isAvailable(frameID));
+    } finally {
+        iframe.remove();
+    }
+}, "A sandboxed frame with an opaque origin can't request or check availability");
+</script>
+</body>

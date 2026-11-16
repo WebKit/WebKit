@@ -1,0 +1,6 @@
+
+PASS No violation reported for setTimeout with TrustedScript.
+PASS No violation reported for setInterval with TrustedScript.
+PASS Violation report for setTimeout with plain string.
+PASS Violation report for setInterval with plain string.
+

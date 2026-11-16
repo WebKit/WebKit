@@ -1,0 +1,10 @@
+Searching with the find interaction for a string that folds to an all-ignorable collation key (a lone soft hyphen, U+00AD) must not crash the Web Content process. rdar://170649898
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS matchCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello world

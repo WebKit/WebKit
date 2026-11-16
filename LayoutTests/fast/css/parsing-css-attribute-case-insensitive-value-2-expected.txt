@@ -1,0 +1,658 @@
+Test the parsing of attribute selector with the case-insensitive value flag (e.g. [foo=bar i]). This test cover the more advanced cases that do not use a canonical form but are still valid.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Various valid cases of the selector that are not using the canonical form.
+PASS document.querySelector("[foo=bar I]") did not throw exception.
+PASS document.querySelector("[*|foo=bar I]") did not throw exception.
+PASS document.querySelector("[|foo=bar I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("[foo=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[*|foo=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[|foo=\"bar\" I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("[foo~=bar I]") did not throw exception.
+PASS document.querySelector("[*|foo~=bar I]") did not throw exception.
+PASS document.querySelector("[|foo~=bar I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("[foo~=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[*|foo~=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[|foo~=\"bar\" I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("[foo|=bar I]") did not throw exception.
+PASS document.querySelector("[*|foo|=bar I]") did not throw exception.
+PASS document.querySelector("[|foo|=bar I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("[foo|=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[*|foo|=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[|foo|=\"bar\" I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("[foo^=bar I]") did not throw exception.
+PASS document.querySelector("[*|foo^=bar I]") did not throw exception.
+PASS document.querySelector("[|foo^=bar I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("[foo^=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[*|foo^=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[|foo^=\"bar\" I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("[foo$=bar I]") did not throw exception.
+PASS document.querySelector("[*|foo$=bar I]") did not throw exception.
+PASS document.querySelector("[|foo$=bar I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("[foo$=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[*|foo$=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[|foo$=\"bar\" I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("[foo*=bar I]") did not throw exception.
+PASS document.querySelector("[*|foo*=bar I]") did not throw exception.
+PASS document.querySelector("[|foo*=bar I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("[foo*=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[*|foo*=\"bar\" I]") did not throw exception.
+PASS document.querySelector("[|foo*=\"bar\" I]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("[foo=BaR i]") did not throw exception.
+PASS document.querySelector("[*|foo=BaR i]") did not throw exception.
+PASS document.querySelector("[|foo=BaR i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"BaR\" i]"
+PASS document.querySelector("[foo=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[*|foo=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[|foo=\"BaR\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"BaR\" i]"
+PASS document.querySelector("[foo~=BaR i]") did not throw exception.
+PASS document.querySelector("[*|foo~=BaR i]") did not throw exception.
+PASS document.querySelector("[|foo~=BaR i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"BaR\" i]"
+PASS document.querySelector("[foo~=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[*|foo~=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[|foo~=\"BaR\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"BaR\" i]"
+PASS document.querySelector("[foo|=BaR i]") did not throw exception.
+PASS document.querySelector("[*|foo|=BaR i]") did not throw exception.
+PASS document.querySelector("[|foo|=BaR i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"BaR\" i]"
+PASS document.querySelector("[foo|=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[*|foo|=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[|foo|=\"BaR\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"BaR\" i]"
+PASS document.querySelector("[foo^=BaR i]") did not throw exception.
+PASS document.querySelector("[*|foo^=BaR i]") did not throw exception.
+PASS document.querySelector("[|foo^=BaR i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"BaR\" i]"
+PASS document.querySelector("[foo^=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[*|foo^=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[|foo^=\"BaR\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"BaR\" i]"
+PASS document.querySelector("[foo$=BaR i]") did not throw exception.
+PASS document.querySelector("[*|foo$=BaR i]") did not throw exception.
+PASS document.querySelector("[|foo$=BaR i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"BaR\" i]"
+PASS document.querySelector("[foo$=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[*|foo$=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[|foo$=\"BaR\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"BaR\" i]"
+PASS document.querySelector("[foo*=BaR i]") did not throw exception.
+PASS document.querySelector("[*|foo*=BaR i]") did not throw exception.
+PASS document.querySelector("[|foo*=BaR i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"BaR\" i]"
+PASS document.querySelector("[foo*=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[*|foo*=\"BaR\" i]") did not throw exception.
+PASS document.querySelector("[|foo*=\"BaR\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"BaR\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"BaR\" i]"
+PASS document.querySelector("[foo=bar	i]") did not throw exception.
+PASS document.querySelector("[*|foo=bar	i]") did not throw exception.
+PASS document.querySelector("[|foo=bar	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("[foo=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[*|foo=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[|foo=\"bar\"	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("[foo~=bar	i]") did not throw exception.
+PASS document.querySelector("[*|foo~=bar	i]") did not throw exception.
+PASS document.querySelector("[|foo~=bar	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("[foo~=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[*|foo~=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[|foo~=\"bar\"	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("[foo|=bar	i]") did not throw exception.
+PASS document.querySelector("[*|foo|=bar	i]") did not throw exception.
+PASS document.querySelector("[|foo|=bar	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("[foo|=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[*|foo|=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[|foo|=\"bar\"	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("[foo^=bar	i]") did not throw exception.
+PASS document.querySelector("[*|foo^=bar	i]") did not throw exception.
+PASS document.querySelector("[|foo^=bar	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("[foo^=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[*|foo^=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[|foo^=\"bar\"	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("[foo$=bar	i]") did not throw exception.
+PASS document.querySelector("[*|foo$=bar	i]") did not throw exception.
+PASS document.querySelector("[|foo$=bar	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("[foo$=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[*|foo$=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[|foo$=\"bar\"	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("[foo*=bar	i]") did not throw exception.
+PASS document.querySelector("[*|foo*=bar	i]") did not throw exception.
+PASS document.querySelector("[|foo*=bar	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("[foo*=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[*|foo*=\"bar\"	i]") did not throw exception.
+PASS document.querySelector("[|foo*=\"bar\"	i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("[foo=bar i ]") did not throw exception.
+PASS document.querySelector("[*|foo=bar i ]") did not throw exception.
+PASS document.querySelector("[|foo=bar i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("[foo=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[*|foo=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[|foo=\"bar\" i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("[foo~=bar i ]") did not throw exception.
+PASS document.querySelector("[*|foo~=bar i ]") did not throw exception.
+PASS document.querySelector("[|foo~=bar i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("[foo~=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[*|foo~=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[|foo~=\"bar\" i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("[foo|=bar i ]") did not throw exception.
+PASS document.querySelector("[*|foo|=bar i ]") did not throw exception.
+PASS document.querySelector("[|foo|=bar i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("[foo|=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[*|foo|=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[|foo|=\"bar\" i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("[foo^=bar i ]") did not throw exception.
+PASS document.querySelector("[*|foo^=bar i ]") did not throw exception.
+PASS document.querySelector("[|foo^=bar i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("[foo^=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[*|foo^=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[|foo^=\"bar\" i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("[foo$=bar i ]") did not throw exception.
+PASS document.querySelector("[*|foo$=bar i ]") did not throw exception.
+PASS document.querySelector("[|foo$=bar i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("[foo$=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[*|foo$=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[|foo$=\"bar\" i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("[foo*=bar i ]") did not throw exception.
+PASS document.querySelector("[*|foo*=bar i ]") did not throw exception.
+PASS document.querySelector("[|foo*=bar i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("[foo*=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[*|foo*=\"bar\" i ]") did not throw exception.
+PASS document.querySelector("[|foo*=\"bar\" i ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("[foo=bar i	]") did not throw exception.
+PASS document.querySelector("[*|foo=bar i	]") did not throw exception.
+PASS document.querySelector("[|foo=bar i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("[foo=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[*|foo=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[|foo=\"bar\" i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("[foo~=bar i	]") did not throw exception.
+PASS document.querySelector("[*|foo~=bar i	]") did not throw exception.
+PASS document.querySelector("[|foo~=bar i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("[foo~=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[*|foo~=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[|foo~=\"bar\" i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("[foo|=bar i	]") did not throw exception.
+PASS document.querySelector("[*|foo|=bar i	]") did not throw exception.
+PASS document.querySelector("[|foo|=bar i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("[foo|=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[*|foo|=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[|foo|=\"bar\" i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("[foo^=bar i	]") did not throw exception.
+PASS document.querySelector("[*|foo^=bar i	]") did not throw exception.
+PASS document.querySelector("[|foo^=bar i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("[foo^=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[*|foo^=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[|foo^=\"bar\" i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("[foo$=bar i	]") did not throw exception.
+PASS document.querySelector("[*|foo$=bar i	]") did not throw exception.
+PASS document.querySelector("[|foo$=bar i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("[foo$=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[*|foo$=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[|foo$=\"bar\" i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("[foo*=bar i	]") did not throw exception.
+PASS document.querySelector("[*|foo*=bar i	]") did not throw exception.
+PASS document.querySelector("[|foo*=bar i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("[foo*=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[*|foo*=\"bar\" i	]") did not throw exception.
+PASS document.querySelector("[|foo*=\"bar\" i	]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("[foo=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo=bar 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("[foo=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("[foo~=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo~=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo~=bar 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("[foo~=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo~=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo~=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("[foo|=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo|=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo|=bar 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("[foo|=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo|=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo|=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("[foo^=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo^=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo^=bar 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("[foo^=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo^=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo^=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("[foo$=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo$=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo$=bar 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("[foo$=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo$=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo$=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("[foo*=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo*=bar 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo*=bar 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("[foo*=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[*|foo*=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.querySelector("[|foo*=\"bar\" 	 i 	 ]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

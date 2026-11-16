@@ -1,0 +1,200 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing basic data channel from offerer to receiver with MDNS ICE Candidates</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script src ="../routines.js"></script>
+    <script>
+if (window.internals)
+    internals.setICECandidateFiltering(true);
+
+var localChannel;
+var remoteChannel;
+
+function closeDataChannels() {
+    localChannel.close();
+    remoteChannel.close();
+    closeConnections();
+}
+
+function receiveMessages(event) {
+if (window.logReceivedMessage)
+    console.log("receiving " + event.data);
+
+try {
+    if (++counter === 1)
+        assert_equals(event.data, "one");
+    else if (counter === 2)
+        assert_equals(event.data, "two");
+    else if (counter === 3)
+        assert_equals(event.data, "three");
+    else if (counter === 4) {
+        assert_equals(event.data, "four");
+        closeDataChannels();
+        finishTest();
+    } else
+        assert_unreached();
+} catch(e) {
+    console.log(e);
+}
+}
+
+function sendMessages(channel)
+{
+    channel.send("one");
+    channel.send("two");
+    channel.send("three");
+    channel.send("four");
+}
+
+let connection;
+promise_test(async (test) => {
+    let localConnectionCandidates = [], remoteConnectionCandidates = [];
+    await new Promise((resolve, reject) => {
+        createConnections((localConnection) => {
+            connection = localConnection;
+            localConnection.createDataChannel('sendDataChannel');
+        }, () => {
+        }, {
+            filterOutICECandidate: (candidate, candidateConnection) => {
+                if (candidate && candidate.candidate.toLowerCase().indexOf("host") !== -1) {
+                    assert_true(candidate.candidate.indexOf(".local") !== -1);
+                    if (candidateConnection == connection)
+                       localConnectionCandidates.push(candidate.foundation);
+                    else
+                        remoteConnectionCandidates.push(candidate.foundation);
+                }
+                if (!candidate)
+                    resolve();
+                return false;
+            }
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+
+    for (const foundation of localConnectionCandidates)
+        assert_false(remoteConnectionCandidates.includes(foundation), "local connection foundation");
+
+    for (const foundation of remoteConnectionCandidates)
+        assert_false(localConnectionCandidates.includes(foundation), "remote connection foundation");
+
+    assert_true(connection.localDescription.sdp.includes(".local "));
+    closeConnections();
+}, "Getting some MDNS candidates");
+
+var finishTest;
+promise_test(async (test) => {
+    counter = 0;
+    await new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+    closeConnections();
+}, "Basic data channel exchange from offerer to receiver");
+
+promise_test(async (test) => {
+    counter = 0;
+    await new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onmessage = receiveMessages;
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onopen = () => { sendMessages(remoteChannel) };
+            };
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+    closeConnections();
+}, "Basic data channel exchange from receiver to offerer");
+
+
+promise_test(async (test) => {
+    counter = 0;
+    await new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        }, { filterOutICECandidate: (candidate) => { return candidate && candidate.candidate.toLowerCase().indexOf("udp") == -1; } });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+    closeConnections();
+}, "Basic data channel exchange from offerer to receiver using UDP only");
+
+promise_test(async (test) => {
+    window.logReceivedMessage = true;
+
+    counter = 0;
+    await new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            var init = { ordered: true };
+            localChannel = localConnection.createDataChannel('sendDataChannel', init);
+            localChannel.onopen = () => {
+                console.log("sending messages");
+                sendMessages(localChannel);
+            };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                console.log("ondatachannel event handler");
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+    closeConnections();
+
+    window.logReceivedMessage = false;
+}, "Basic data channel exchange from offerer to receiver 2");
+
+promise_test(async (test) => {
+    const pc = new RTCPeerConnection();
+    const channel = pc.createDataChannel('sendDataChannel');
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    const channel2 = pc.createDataChannel('sendDataChannel2');
+    const offer2 = await pc.createOffer();
+
+    // Make sure we can apply the filtered description.
+    await pc.setLocalDescription(pc.localDescription);
+
+    // Reapply description which should have candidates.
+    await pc.setLocalDescription(offer2);
+    const description = pc.localDescription;
+
+    const lines = description.sdp.split('\r\n').filter(line => {
+        return line.indexOf('a=candidate') === 0;
+    });
+
+    assert_true(lines.length > 0, "candidates are gathered");
+    assert_true(lines[0].includes(' host '), "candidate is host");
+    assert_true(lines[0].includes('.local '), "candidate is mDNS");
+}, "Ensure that local description SDP filtering is correctly filtering mDNS local candidates");
+
+    </script>
+  </body>
+</html>

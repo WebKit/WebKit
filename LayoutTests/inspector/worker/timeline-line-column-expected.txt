@@ -1,0 +1,140 @@
+Test that script Timeline records have column numbers in a Worker.
+
+PASS: Worker created.
+
+== Running test suite: Worker.Timeline.LineColumn
+-- Running test case: Worker.Timeline.LineColumn.willCallFunction
+Evaluating in page...
+PASS: Capturing started.
+{
+  "startTime": "<filtered>",
+  "data": {
+    "type": "custom",
+    "defaultPrevented": false
+  },
+  "children": [],
+  "endTime": "<filtered>",
+  "type": "EventDispatch"
+}
+{
+  "startTime": "<filtered>",
+  "data": {
+    "type": "custom",
+    "defaultPrevented": false
+  },
+  "children": [
+    {
+      "startTime": "<filtered>",
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "dispatchEvent",
+            "url": "[native code]",
+            "scriptId": "<filtered>",
+            "lineNumber": 0,
+            "columnNumber": 0
+          },
+          {
+            "functionName": "willCallFunctionTest",
+            "url": "worker/resources/worker-timeline.js",
+            "scriptId": "<filtered>",
+            "lineNumber": 16,
+            "columnNumber": 31
+          },
+          {
+            "functionName": "",
+            "url": "worker/resources/worker-timeline.js",
+            "scriptId": "<filtered>",
+            "lineNumber": 29,
+            "columnNumber": 29
+          }
+        ]
+      },
+      "data": {
+        "scriptName": "worker/resources/worker-timeline.js",
+        "scriptLine": 10,
+        "scriptColumn": 41
+      },
+      "children": [],
+      "endTime": "<filtered>",
+      "type": "FunctionCall"
+    }
+  ],
+  "endTime": "<filtered>",
+  "type": "EventDispatch"
+}
+{
+  "startTime": "<filtered>",
+  "stackTrace": {
+    "callFrames": [
+      {
+        "functionName": "profile",
+        "url": "[native code]",
+        "scriptId": "<filtered>",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      {
+        "functionName": "willCallFunctionTest",
+        "url": "worker/resources/worker-timeline.js",
+        "scriptId": "<filtered>",
+        "lineNumber": 15,
+        "columnNumber": 20
+      },
+      {
+        "functionName": "",
+        "url": "worker/resources/worker-timeline.js",
+        "scriptId": "<filtered>",
+        "lineNumber": 29,
+        "columnNumber": 29
+      }
+    ]
+  },
+  "data": {
+    "title": ""
+  },
+  "children": [],
+  "endTime": "<filtered>",
+  "type": "ConsoleProfile"
+}
+PASS: Capturing stopped.
+
+-- Running test case: Worker.Timeline.LineColumn.willEvaluateScript
+Evaluating in page...
+PASS: Capturing started.
+{
+  "startTime": "<filtered>",
+  "stackTrace": {
+    "callFrames": [
+      {
+        "functionName": "profile",
+        "url": "[native code]",
+        "scriptId": "<filtered>",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      {
+        "functionName": "willEvaluateScriptTest",
+        "url": "worker/resources/worker-timeline.js",
+        "scriptId": "<filtered>",
+        "lineNumber": 21,
+        "columnNumber": 20
+      },
+      {
+        "functionName": "",
+        "url": "worker/resources/worker-timeline.js",
+        "scriptId": "<filtered>",
+        "lineNumber": 32,
+        "columnNumber": 31
+      }
+    ]
+  },
+  "data": {
+    "title": ""
+  },
+  "children": [],
+  "endTime": "<filtered>",
+  "type": "ConsoleProfile"
+}
+PASS: Capturing stopped.
+

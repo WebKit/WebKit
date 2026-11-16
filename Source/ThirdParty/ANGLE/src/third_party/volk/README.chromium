@@ -1,0 +1,26 @@
+Name: Volk Meta loader for Vulkan API
+Short Name: volk
+URL: https://github.com/zeux/volk
+Update Mechanism: Manual
+Version: 1.4.350
+Revision: 3ca312a4f38baa63d8006b6905abbeeb89c8087d
+License: MIT
+License File: src/LICENSE.md
+Security Critical: yes
+Shipped: yes
+
+Description:
+volk is a meta-loader for Vulkan. It allows you to dynamically load
+entrypoints required to use Vulkan without linking to vulkan-1.dll
+or statically linking Vulkan loader. Additionally, volk simplifies
+the use of Vulkan extensions by automatically loading all associated
+entrypoints. Finally, volk enables loading Vulkan entrypoints directly
+from the driver which can increase performance by skipping loader
+dispatch overhead.
+
+Local Modifications:
+NONE
+
+Update instructions:
+Update commit hashes in crowbar.txtpb, then run from this directory:
+crowbar build --no-dry-run ./

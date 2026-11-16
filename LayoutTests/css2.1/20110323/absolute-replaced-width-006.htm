@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Absolute replaced elements and 'auto' specified for 'margin-left', 'margin-right' and percentage intrinsic width</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#abs-replaced-width">
+        <meta name="flags" content="image">
+        <meta name="assert" content="Percentage intrinsic widths are evaluated against the containing block's width.">
+        <style type="text/css">
+            div
+            {
+                line-height: 0;
+            }
+            #div1
+            {
+                border: solid black;
+                height: 3in;
+                position: relative;
+                width: 2in;
+            }
+            img
+            {
+                margin-left: auto;
+                margin-right: auto;
+                position: absolute;
+            }
+            div div
+            {
+                background: orange;
+                height: 1in;
+                margin-top: 1in;
+                width: 1in;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue and orange boxes below are the same width, and the blue box is in the upper-left corner of the black box.</p>
+        <div id="div1">
+            <img alt="blue 15x15" src="resources/blue15x15.png" width="50%">
+            <div></div>
+        </div>
+    </body>
+</html>

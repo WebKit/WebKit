@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.ResolveAttributeURLWithBaseElement");
+
+    suite.addTestCase({
+        name: "ResolveAttributeURLWithBaseElement",
+        description: "Attribute URLs should resolve against the document's <base> element so that clicking or copying a link matches the browser.",
+        async test() {
+            let childFrame = Array.from(WI.networkManager.mainFrame.childFrameCollection)[0];
+            InspectorTest.assert(childFrame, "Should have a subframe.");
+
+            let documentNode = await new Promise((resolve) => childFrame.domTree.requestRootDOMNode(resolve));
+            InspectorTest.assert(documentNode, "Should have a document node for the subframe.");
+
+            InspectorTest.expectEqual(documentNode.baseURL, "https://example.com/base/", "Document node should expose the <base> element URL.");
+            InspectorTest.expectThat(documentNode.baseURL !== documentNode.documentURL, "Base URL should differ from the document URL when a <base> element is present.");
+
+            let linkNodeId = await documentNode.querySelector("#link");
+            let linkNode = WI.domManager.nodeForId(linkNodeId);
+            InspectorTest.expectEqual(absoluteURL(linkNode.getAttribute("href"), documentNode.baseURL), "https://example.com/base/page.html", "Relative href should resolve against the <base> element URL.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing that attribute URLs resolve against the document's base element.</p>
+<iframe src="resources/base-element.html"></iframe>
+</body>
+</html>

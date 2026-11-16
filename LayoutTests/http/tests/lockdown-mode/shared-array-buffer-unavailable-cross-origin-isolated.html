@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that SharedArrayBuffer is not available in Lockdown Mode, even to a cross-origin isolated page, because Lockdown Mode disables signal handler based JSC options.");
+
+shouldBeTrue("self.crossOriginIsolated");
+shouldBe("typeof SharedArrayBuffer", "'undefined'");
+shouldThrow("new SharedArrayBuffer(8)");
+</script>
+</body>
+</html>

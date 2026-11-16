@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<details open id="details1">
+  <summary id="summary1"><p id="s1">Summary1</p></summary>
+  <p id="d1">Detail1</p>
+  <a href="" id="link">link</a>
+</details>
+
+<details id="details2">
+  <summary><p id="s2">Summary2</p></summary>
+  <p>Detail2</p>
+</details>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests the details element on iOS.");
+
+    var callbackCount = 0;
+    if (window.accessibilityController) {
+    
+        // Test that we are getting the expanded status for the summary text, but not for the details children.
+        var summary1 = accessibilityController.accessibleElementById("s1");
+        var detail1 = accessibilityController.accessibleElementById("d1");
+        var summary2 = accessibilityController.accessibleElementById("s2");
+        var link = accessibilityController.accessibleElementById("link");
+        
+        shouldBeTrue("summary1.isExpanded");
+        shouldBeFalse("detail1.isExpanded");
+        shouldBeFalse("summary2.isExpanded");
+        
+        // Test that VO focus onto the details children won't set focus to the summary/details element or its children.
+        summary1.assistiveTechnologySimulatedFocus();
+        shouldBeFalse("document.getElementById('summary1') === document.activeElement");
+        
+        detail1.assistiveTechnologySimulatedFocus();
+        shouldBeFalse("document.getElementById('details1') === document.activeElement");
+        
+        link.assistiveTechnologySimulatedFocus();
+        shouldBeFalse("document.getElementById('link') === document.activeElement");
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

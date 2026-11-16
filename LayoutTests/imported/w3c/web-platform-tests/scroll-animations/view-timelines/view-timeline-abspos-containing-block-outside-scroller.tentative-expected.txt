@@ -1,0 +1,4 @@
+
+PASS ViewTimeline source follows the containing block chain for absolutely positioned subjects.
+PASS View timeline ranges for an absolutely positioned subject whose containing block is outside the nearest DOM scroll container.
+

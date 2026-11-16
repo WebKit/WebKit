@@ -1,0 +1,24 @@
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function test()
+        {
+            var f = document.getElementById("frame");
+            f.contentDocument.open();
+            f.contentDocument.close();
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>
+        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=16097">http://bugs.webkit.org/show_bug.cgi?id=16097</a>
+        Safari crashes during load of LexisNexis search results</i>.
+    </p>
+    <p>
+        Testing that destroying the image element in a standalone image
+        document does not lead to a crash.
+    </p>
+    <iframe src="resources/apple.gif" id="frame"></iframe>
+</body>

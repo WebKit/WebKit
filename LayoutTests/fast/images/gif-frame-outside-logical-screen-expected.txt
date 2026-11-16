@@ -1,0 +1,4 @@
+A GIF frame placed entirely outside the logical screen must clamp to an empty frame rect, not to one whose width and height are negative. The test passes if the web process survives and the first frame still decodes.
+
+PASS
+

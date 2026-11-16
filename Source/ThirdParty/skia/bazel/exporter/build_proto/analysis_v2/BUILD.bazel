@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+go_library(
+    name = "analysis_v2",
+    srcs = ["analysis_v2.pb.go"],
+    importpath = "go.skia.org/skia/bazel/exporter/build_proto/analysis_v2",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//bazel/exporter/build_proto/build",
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+    ],
+)

@@ -1,0 +1,10 @@
+DOMException has the [[ErrorData]] internal slot (the "is-error" proposal / WebIDL PR #1421), so once its @@toStringTag (which is [[Configurable]]: true) is removed, Object.prototype.toString reports "[object Error]" per the ECMAScript specification. Note this differs from Chrome and Firefox, which still report "[object Object]". This test can be run directly in any browser to compare behavior.
+
+PASS: toString(new DOMException()) is "[object DOMException]"
+PASS: toString(new WebTransportError()) is true
+PASS: Error.isError(new DOMException()) is true
+PASS: Error.isError(new WebTransportError()) is true
+PASS: delete DOMException.prototype[@@toStringTag] is true
+PASS: delete WebTransportError.prototype[@@toStringTag] is true
+PASS: toString(new DOMException()) after delete is "[object Error]"
+PASS: toString(new WebTransportError()) after delete is true

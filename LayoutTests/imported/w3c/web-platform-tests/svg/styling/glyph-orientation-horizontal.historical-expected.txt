@@ -1,0 +1,6 @@
+text
+
+PASS glyph-orientation-horizontal is not a supported CSS property
+PASS glyph-orientation-horizontal is not parsed in a style declaration
+PASS glyph-orientation-horizontal is not a supported SVG presentation attribute
+

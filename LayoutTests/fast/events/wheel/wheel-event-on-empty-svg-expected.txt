@@ -1,0 +1,10 @@
+Wheel events should be dispatched to an empty SVG root element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS wheel event was dispatched to empty SVG element.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

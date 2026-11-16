@@ -1,0 +1,21 @@
+<style>
+.container {
+  width: 100px;
+  background-color: red;
+}
+
+.fill {
+  height: -webkit-fill-available;
+}
+
+.overflow-sibling {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+</style>
+<!-- PASS if no red -->
+<div class=container>
+  <div class=fill></div>
+  <div class=overflow-sibling></div>
+</div>

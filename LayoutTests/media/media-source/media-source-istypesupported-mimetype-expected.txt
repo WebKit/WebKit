@@ -1,0 +1,17 @@
+
+video/mp4; codecs="avc1.640028" : true
+video/mp4; codecs="dvh1.04.07" : true
+video/mp4; codecs="dvh1.05.07" : true
+video/mp4; codecs="dvh1.08.07" : true
+video/mp4; codecs="dva1.09.05" : true
+video/mp4; codecs="dav1.10.05" : true
+video/mp4; codecs="hvc1.1.6.L93.B0" : true
+video/mp4; codecs="hvc1.2.4.L153.B0" : true
+video/mp4; codecs="av01.0.01M.08" : true
+video/mp4; codecs="av01.0.12M.08" : true
+video/mp4; codecs="av01.0.13M.10" : true
+video/mp4; codecs="vp09.00.51.08.01.01.01.01" : true
+video/webm; codecs="vp8" : true
+video/webm; codecs="vp09.00.10.08" : true
+END OF TEST
+

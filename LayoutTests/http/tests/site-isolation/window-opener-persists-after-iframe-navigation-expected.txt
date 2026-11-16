@@ -1,0 +1,10 @@
+Verifies window.opener persists after an iframe navigation
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS received message from iframe prompted by its pop-up, after a navigation
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

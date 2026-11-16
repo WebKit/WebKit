@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: position-anchor on a <model> inside a spatial portal has no effect without position-context: anchor.
+CONSOLE MESSAGE: position-anchor on a <model> inside a spatial portal has no effect without position-context: anchor.
+CONSOLE MESSAGE: No other <model> in this spatial portal has anchor-name: --nonexistent.
+CONSOLE MESSAGE: No other <model> in this spatial portal has anchor-name: --self.
+CONSOLE MESSAGE: Ignoring position-anchor: --second because it would create a cycle between anchored models.
+CONSOLE MESSAGE: Ignoring position-anchor: --first because it would create a cycle between anchored models.
+CONSOLE MESSAGE: No other <model> in this spatial portal has anchor-name: --host.
+
+PASS position-context: anchor gates whether position-anchor takes effect
+PASS an anchor name that matches no other <model> in the portal does not resolve
+PASS a <model> cannot anchor to itself
+PASS two <model>s anchored to each other are both rejected
+PASS removing anchor-name from the host removes the anchor
+

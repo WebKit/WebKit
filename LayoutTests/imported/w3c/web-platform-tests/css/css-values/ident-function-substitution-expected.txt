@@ -1,0 +1,15 @@
+
+PASS var() in the ident() argument
+PASS attr() in the ident() argument
+PASS ident() in the ident() argument
+PASS ident() building the var() name argument from an attribute
+PASS sibling-index() in the ident() argument
+PASS a math function over sibling-index() in the ident() argument
+PASS an unresolvable argument makes ident() invalid at computed-value time
+PASS an argument that is not <ident-arg>+ makes ident() invalid at computed-value time
+PASS a cycle through the ident() argument
+PASS an ident() built from an attribute taints the property it names
+PASS the taint survives the ident() being held in a custom property
+PASS an ident() with no attr() involved does not taint the property it names
+PASS ident() substituting a value the property does not accept
+

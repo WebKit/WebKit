@@ -1,0 +1,3 @@
+
+PASS apply-inline-style-to-element-with-no-renderer-crash
+

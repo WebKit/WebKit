@@ -1,0 +1,14 @@
+
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to cross-http origin and keep-origin redirection from http context.
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to cross-http origin and keep-origin redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to cross-http origin and no-redirect redirection from http context.
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to cross-http origin and no-redirect redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to cross-http origin and swap-origin redirection from http context.
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to cross-http origin and swap-origin redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to same-http origin and keep-origin redirection from http context.
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to same-http origin and keep-origin redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to same-http origin and no-redirect redirection from http context.
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to same-http origin and no-redirect redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to same-http origin and swap-origin redirection from http context.
+PASS Content Security Policy: Expects blocked for sharedworker-import-data to same-http origin and swap-origin redirection from http context.: securitypolicyviolation
+

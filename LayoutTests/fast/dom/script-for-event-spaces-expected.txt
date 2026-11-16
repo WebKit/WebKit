@@ -1,0 +1,14 @@
+Tests that only HTML spaces in a script's 'event' / 'for' attributes are stripped.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* for="&#xb;window&#xb;" event="onload"
+PASS wasExecuted is false
+
+* for="window" event="&#xb;onload&#xb;"
+PASS wasExecuted is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

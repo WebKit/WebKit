@@ -1,0 +1,28 @@
+<style>
+  body {
+    writing-mode: vertical-rl;
+    block-size: 0;
+  }
+  div {
+    column-span: all;
+  }
+  :nth-child(2) {
+    float: left;
+  }
+  :read-only {
+    overflow-y: -webkit-paged-y;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    document.documentElement.appendChild(document.createElement('span'));
+    document.documentElement.appendChild(document.createElement('div'));
+    document.body.appendChild(document.createElement('div'));
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('InsertHorizontalRule');
+  };
+</script>
+PASS if no crash or assert.

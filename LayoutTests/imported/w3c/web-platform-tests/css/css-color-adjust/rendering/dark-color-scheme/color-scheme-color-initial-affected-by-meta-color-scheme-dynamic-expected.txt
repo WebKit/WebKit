@@ -1,0 +1,4 @@
+
+PASS In light mode as indicated by <meta> color-scheme, explicit color: initial matches CanvasText
+PASS In dark mode as indicated by <meta> color-scheme, explicit color: initial matches CanvasText
+

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>For <a href="https://bugs.webkit.org/show_bug.cgi?id=84891">Bug 84891</a> -
+mfenced add/remove child confusion.</p>
+
+<p>This test passes if the math element is changed to (x1y).</p>
+
+<math>
+  <mfenced id="mfenced" separators="12"></mfenced>
+  <mi id="mi1">x</mi>
+  <mi id="mi2">y</mi>
+</math>
+
+<script>
+var mfenced = document.getElementById("mfenced");
+var mi1 = document.getElementById("mi1"), mi2 = document.getElementById("mi2");
+mfenced.appendChild(mi2);
+mfenced.insertBefore(mi1, mi2);
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+[
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden"
+        },
+        "trigger": {
+            "url-filter": ".*css-display-none.html"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden_\u017D"
+        },
+        "trigger": {
+            "url-filter": ".*css-display-none.html"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden_global1"
+        },
+        "trigger": {
+            "url-filter": ".*"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden_global2"
+        },
+        "trigger": {
+            "url-filter": ".*"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": "div:has(.hidden_has_test_not_matching_everything)"
+        },
+        "trigger": {
+            "url-filter": ".*css-display-none.html"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": "div:has(.hidden_has_test_matching_everything)"
+        },
+        "trigger": {
+            "url-filter": ".*"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hiDDen"
+        },
+        "trigger": {
+            "url-filter": ".*css-display-none.html"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".HiDDeN"
+        },
+        "trigger": {
+            "url-filter": ".*"
+        }
+    },
+    {
+        "action": {
+            "type": "ignore-previous-rules"
+        },
+        "trigger": {
+            "url-filter": "never_used"
+        }
+    }
+]

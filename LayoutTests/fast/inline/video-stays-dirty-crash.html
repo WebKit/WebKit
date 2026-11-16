@@ -1,0 +1,41 @@
+<style id=style>
+video { 
+  position: absolute;
+}
+body { 
+  -webkit-user-modify: read-write;
+  position: relative;
+}
+.class5 { 
+  width: 1px;
+  overflow-x: scroll;
+}
+.class5 {
+  height: 1px;
+}
+</style>
+<div id=container></div><details></details><div class=class5>PASS if no crash or assert.</div>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+document.body.offsetHeight;
+document.execCommand("selectAll", false);
+document.execCommand("insertUnorderedList", false);
+
+setTimeout(function() {
+  var var00024 = document.createElement("video");
+  var00024.id = "video";
+  style.appendChild(var00024);
+  document.adoptNode(container);
+  setTimeout(function() {
+    var var00024 = document.createElement("video");
+    style.appendChild(var00024);
+    video.appendChild(var00024);
+    document.getElementsByTagName("li")[0].appendChild(var00024);
+    window.scrollBy();
+    style.appendChild(var00024);
+    window.testRunner?.notifyDone();
+  }, 0);
+}, 0);
+
+</script>

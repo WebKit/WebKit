@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.target { transition: filter 0.1s; }
+.dim { filter: brightness(0.95); }
+</style>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function runTest()
+{
+    const targets = Array.from({ length: 10 }, () => {
+        const target = document.createElement("div");
+        target.className = "target";
+        target.textContent = "hello";
+        document.body.appendChild(target);
+        return target;
+    });
+    document.body.offsetHeight;
+
+    for (let iteration = 0; iteration < 10; ++iteration) {
+        for (const dimmed of [true, false]) {
+            const finished = Promise.all(targets.map(target => new Promise(resolve => {
+                target.addEventListener("transitionend", resolve, { once: true });
+            })));
+            targets.forEach(target => target.classList.toggle("dim", dimmed));
+            await finished;
+        }
+    }
+
+    targets.forEach(target => target.remove());
+    document.body.append("PASS: Repeated filter transitions did not crash.");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runTest();
+</script>
+</body>
+</html>

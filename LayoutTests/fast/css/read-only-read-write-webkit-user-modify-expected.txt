@@ -1,0 +1,59 @@
+The CSS Property (-webkit-)user-modify must not have any effect on the resolution of ":read-write" and ":read-only". If a selector were to depend on a CSS property, it would create a style-depends-on-style loop and make a giant mess of querySelector.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[0]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[0]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[1]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[1]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[2]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[3]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[4]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[4]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[5]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[5]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[6]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[6]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[7]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[7]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[8]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[8]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[9]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[9]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[10]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[10]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[11]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[11]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[12]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[12]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[13]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[13]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[14]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[14]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[15]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[15]).backgroundColor is "rgb(255, 0, 0)"
+PASS document.querySelectorAll("#test-block :read-write").length is 6
+PASS document.querySelectorAll("#test-block :read-write")[0].id is "editing-host-1"
+PASS document.querySelectorAll("#test-block :read-write")[1].id is "editable-block-1"
+PASS document.querySelectorAll("#test-block :read-write")[2].id is "editing-host-2"
+PASS document.querySelectorAll("#test-block :read-write")[3].id is "read-write-input"
+PASS document.querySelectorAll("#test-block :read-write")[4].id is "editing-host-3"
+PASS document.querySelectorAll("#test-block :read-write")[5].id is "read-write-textarea"
+PASS document.querySelectorAll("#test-block :read-only").length is 10
+PASS document.querySelectorAll("#test-block :read-only")[0].id is "non-editable-block-1"
+PASS document.querySelectorAll("#test-block :read-only")[1].id is "non-editable-subblock-1"
+PASS document.querySelectorAll("#test-block :read-only")[2].id is "read-only-input-1"
+PASS document.querySelectorAll("#test-block :read-only")[3].id is "read-only-input-2"
+PASS document.querySelectorAll("#test-block :read-only")[4].id is "read-only-input-3"
+PASS document.querySelectorAll("#test-block :read-only")[5].id is "read-only-input-4"
+PASS document.querySelectorAll("#test-block :read-only")[6].id is "read-only-textarea-1"
+PASS document.querySelectorAll("#test-block :read-only")[7].id is "read-only-textarea-2"
+PASS document.querySelectorAll("#test-block :read-only")[8].id is "read-only-textarea-3"
+PASS document.querySelectorAll("#test-block :read-only")[9].id is "read-only-textarea-4"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

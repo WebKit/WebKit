@@ -1,0 +1,5 @@
+
+
+PASS common setup
+PASS requestStorageAccess() from about:blank Document before it gets replaced with a srcdoc resource does not crash the host process
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+(async () => {
+    if (window.internals)
+        internals.withUserGesture(() => {});
+    const output = document.createElement("output");
+    document.documentElement.appendChild(output);
+    const picture = document.createElement("picture");
+    output.appendChild(picture);
+    await output.requestFullscreen();
+    picture.outerText = "x";
+    document.execCommand("SelectAll");
+    document.designMode = "on";
+    document.execCommand("InsertText", false, "y");
+    document.designMode = "off";
+    await document.exitFullscreen();
+    output.remove();
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+.spacer {
+  background: lightgray;
+  block-size: 50px;
+}
+.target {
+  font: 50px/2 Ahem;
+  text-box-trim: trim-end;
+  text-box-edge: text;
+}
+</style>
+<div class="spacer"></div>
+<div class="target">
+  <span>
+    <div>X</div>
+  </span>
+</div>
+<div class="spacer"></div>
+<div class="target">
+  <span>
+    <div>X</div>X
+  </span>
+</div>
+<div class="spacer"></div>

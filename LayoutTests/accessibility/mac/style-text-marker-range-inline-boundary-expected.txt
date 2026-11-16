@@ -1,0 +1,11 @@
+This test ensures AXStyleTextMarkerRangeForTextMarker bounds a style range at inline style boundaries inside a single paragraph, so subscripted text forms its own range separate from the text on either side of it.
+
+PASS: characterAt(inSub) === 'u'
+PASS: styleRangeAt(inSub) === 'sub'
+PASS: styleRangeAt(inBefore) === 'before'
+PASS: styleRangeAt(inAfter) === 'after'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

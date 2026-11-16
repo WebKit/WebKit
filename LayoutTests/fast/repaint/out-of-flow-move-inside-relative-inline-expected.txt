@@ -1,0 +1,7 @@
+
+PASS inline box in the containing block's inline formatting context
+PASS relatively offset inline box
+PASS inline box inside an anonymous block
+PASS inline box with border and padding
+PASS inline box on the second line
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    -webkit-touch-callout: none;
+}
+</style>
+<body onload="runTest()">
+    <img src="../../resources/dice.png">
+    <img src="../../resources/dice.png">
+    <img src="../../resources/dice.png">
+    <img src="../../resources/dice.png">
+    <img src="../../resources/dice.png">
+    <img src="../../resources/dice.png">
+    <img src="../../resources/dice.png">
+    <img src="../../resources/dice.png">
+    <img src="../../resources/dice.png">
+    <img src="../../resources/dice.png">
+</body>
+<script>
+jsTestIsAsync = true;
+
+async function runTest()
+{
+    description("Verifies that long pressing an image while stopping momentum scrolling does not trigger spurious image analysis requests. This test requires WebKitTestRunner.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.dragFromPointToPoint(160, 500, 160, 50, 0.2);
+    await UIHelper.ensureVisibleContentRectUpdate();
+    imageAnalysisRequestIDBefore = await UIHelper.currentImageAnalysisRequestID();
+
+    await UIHelper.longPressAtPoint(160, document.scrollingElement.scrollTop + 250);
+    imageAnalysisRequestIDAfter = await UIHelper.currentImageAnalysisRequestID();
+
+    shouldBe("imageAnalysisRequestIDBefore", "imageAnalysisRequestIDAfter");
+    finishJSTest();
+}
+</script>
+</html>

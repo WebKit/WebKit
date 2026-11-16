@@ -1,0 +1,5 @@
+When you select this text, it shouldn't go red.
+
+
+PASS Invalid pseudo-element selector :selection should be ignored
+

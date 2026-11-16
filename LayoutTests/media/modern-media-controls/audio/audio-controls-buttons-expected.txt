@@ -1,0 +1,16 @@
+Testing the <audio> controls buttons.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Making AirPlay routes available.
+AirPlay routes became available.
+mediaController.controls.rightContainer.children.length: 3
+mediaController.controls.rightContainer.children[0].constructor.name: AirplayButton
+mediaController.controls.rightContainer.children[1].constructor.name: TracksButton
+PASS accessibilityController.accessibleElementById('audio-controls').description is "AXDescription: Audio Controls"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

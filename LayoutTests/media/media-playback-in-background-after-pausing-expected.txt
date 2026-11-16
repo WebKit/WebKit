@@ -1,0 +1,42 @@
+
+EVENT(canplay)
+RUN(video.play())
+Promise resolved OK
+RUN(internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 20))
+RUN(video.pause())
+EVENT(pause)
+Sleep 50ms:
+RUN(testRunner.setPageVisibility("hidden"))
+RUN(video.play())
+Promise resolved OK
+-
+RUN(internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 0.01))
+RUN(video.pause())
+Sleep 50ms:
+RUN(video.play())
+Promise rejected correctly OK
+- Muted media may start while hidden
+RUN(video.muted = true)
+RUN(video.play())
+Promise resolved OK
+RUN(video.pause())
+RUN(video.muted = false)
+- Video without audio may start while hidden
+RUN(videoOnly.src = "content/test-video-only.mp4")
+EVENT(canplay)
+RUN(videoOnly.play())
+Promise resolved OK
+RUN(videoOnly.pause())
+- MediaStream may start while hidden
+RUN(streamVideo.play())
+Promise resolved OK
+RUN(streamVideo.pause())
+- Audible media that never played may not start while hidden, before or after metadata is known
+RUN(fresh.src = findMediaFile("video", "content/test"))
+RUN(fresh.play())
+Promise rejected correctly OK
+EVENT(canplay)
+RUN(fresh.play())
+Promise rejected correctly OK
+END OF TEST
+

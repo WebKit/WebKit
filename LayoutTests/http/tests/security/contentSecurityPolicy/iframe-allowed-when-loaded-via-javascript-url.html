@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; child-src http://localhost:8000">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<script>
+var test = "javascript:'<iframe src=http://localhost:8000/security/contentSecurityPolicy/resources/alert-pass.html?notifyDone=1></iframe>'";
+window.open(test, "_self");
+</script>
+</body>
+</html>

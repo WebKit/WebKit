@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+td, th { display: contents; }
+</style>
+</head>
+<body id="body" role="group">
+
+<div id="test-contents">
+    Foo text
+
+    <table>
+    <caption>This is a table caption</caption>
+    <thead>
+        <tr>
+            <th>Author</th>
+            <th>Title</th>
+            <th>Year</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Stephen Hawking</td>
+            <td>A Brief History of Time</td>
+            <td>1988</td>
+        </tr>
+        <tr>
+            <td>Carl Sagan</td>
+            <td>Cosmos</td>
+            <td>1980</td>
+        </tr>
+        <tr>
+            <td>Will Gater</td>
+            <td>The Mysteries of the Universe</td>
+            <td>2020</td>
+        </tr>
+    </tbody>
+    </table>
+</div>
+
+<script>
+var output = "This test ensures that computing text markers includes all display:contents text content.\n\n";
+
+if (window.accessibilityController) {
+    const webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    const startMarker = webArea.startTextMarker;
+    const endMarker = webArea.endTextMarker;
+    const textMarkerRange = webArea.textMarkerRangeForMarkers(startMarker, endMarker);
+
+    output += `Web area string for start-to-end text marker range:\n\n${webArea.stringForTextMarkerRange(textMarkerRange)}\n`;
+    document.getElementById("test-contents").style.display = "none";
+    debug(output);
+}
+</script>
+</body>
+</html>

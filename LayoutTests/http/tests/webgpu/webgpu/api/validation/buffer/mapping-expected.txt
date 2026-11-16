@@ -1,0 +1,37 @@
+
+PASS :mapAsync,usage:
+PASS :mapAsync,invalidBuffer:
+PASS :mapAsync,state,destroyed:
+PASS :mapAsync,state,mappedAtCreation:
+PASS :mapAsync,state,mapped:
+PASS :mapAsync,state,mappingPending:
+PASS :mapAsync,sizeUnspecifiedOOB:
+PASS :mapAsync,offsetAndSizeAlignment:
+PASS :mapAsync,offsetAndSizeOOB:
+PASS :mapAsync,earlyRejection:
+PASS :mapAsync,abort_over_invalid_error:
+PASS :getMappedRange,state,mapped:
+PASS :getMappedRange,state,mappedAtCreation:
+PASS :getMappedRange,state,invalid_mappedAtCreation:
+PASS :getMappedRange,state,mappedAgain:
+PASS :getMappedRange,state,unmapped:
+PASS :getMappedRange,state,destroyed:
+PASS :getMappedRange,state,mappingPending:
+PASS :getMappedRange,subrange,mapped:mapMode=1
+PASS :getMappedRange,subrange,mapped:mapMode=2
+PASS :getMappedRange,subrange,mappedAtCreation:
+PASS :getMappedRange,offsetAndSizeAlignment,mapped:mapMode=1
+PASS :getMappedRange,offsetAndSizeAlignment,mapped:mapMode=2
+PASS :getMappedRange,offsetAndSizeAlignment,mappedAtCreation:
+PASS :getMappedRange,sizeAndOffsetOOB,mappedAtCreation:
+PASS :getMappedRange,sizeAndOffsetOOB,mapped:
+PASS :getMappedRange,disjointRanges:
+PASS :getMappedRange,disjointRanges_many:
+PASS :unmap,state,unmapped:
+PASS :unmap,state,destroyed:
+PASS :unmap,state,mappedAtCreation:
+PASS :unmap,state,mapped:
+PASS :unmap,state,mappingPending:
+PASS :gc_behavior,mappedAtCreation:
+PASS :gc_behavior,mapAsync:
+

@@ -1,0 +1,13 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '6') OK
+EXPECTED (source.readyState == 'ended') OK
+EXPECTED (source.duration == '6') OK
+END OF TEST
+

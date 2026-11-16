@@ -1,0 +1,16 @@
+
+PASS should return an empty map when there are no attributes
+PASS should return null when there is no toJSON method
+PASS should return null when there is a toJSON method but it does not have the [Default] extended attribute
+PASS should return null when there is a toJSON method but it does not have the [Default] extended attribute even if this extended attribute exists on inherited interfaces
+PASS should not include static attributes
+PASS should not include attributes which are not JSON types
+PASS should not include operations
+PASS should return a map whose key/value pair represent the identifier and IDL type of valid attributes
+PASS should return a properly ordered map that contains IDL types of valid attributes for inherited interfaces
+PASS should not include attributes of the current interface when the [Default] toJSON method in inherited
+PASS attributes declared further away in the inheritance hierarchy should be masked by attributes declared closer
+PASS should return an ordered map that ignores attributes of inherited interfaces which do not declare a [Default] toJSON operation.
+PASS should return a properly ordered map that accounts for mixed-in interfaces which declare a [Default] toJSON operation.
+PASS D includes M: member names are unique
+

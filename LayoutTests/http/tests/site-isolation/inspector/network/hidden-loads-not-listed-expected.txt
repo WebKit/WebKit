@@ -1,0 +1,25 @@
+Tests that FileReader reads and Network.loadResource, including one that follows a redirect, are not listed as network resources under Site Isolation, in the main frame and in a cross-origin iframe.
+
+
+
+== Running test suite: SiteIsolation.Network.HiddenLoadsNotListed
+-- Running test case: SiteIsolation.Network.HiddenLoadsNotListed.MainFrame
+PASS: Main frame: all four FileReader reads should complete.
+PASS: Main frame: Network.loadResource should load the resource.
+PASS: Main frame: Network.loadResource should follow a redirect.
+PASS: Main frame: control fetch should complete.
+PASS: Main frame: control fetch should be listed.
+PASS: Main frame: FileReader reads should not be listed.
+PASS: Main frame: Network.loadResource should not be listed.
+PASS: Main frame: a redirected Network.loadResource should not be listed.
+
+-- Running test case: SiteIsolation.Network.HiddenLoadsNotListed.CrossOriginIFrame
+PASS: Cross-origin iframe: all four FileReader reads should complete.
+PASS: Cross-origin iframe: Network.loadResource should load the resource.
+PASS: Cross-origin iframe: Network.loadResource should follow a redirect.
+PASS: Cross-origin iframe: control fetch should complete.
+PASS: Cross-origin iframe: control fetch should be listed.
+PASS: Cross-origin iframe: FileReader reads should not be listed.
+PASS: Cross-origin iframe: Network.loadResource should not be listed.
+PASS: Cross-origin iframe: a redirected Network.loadResource should not be listed.
+

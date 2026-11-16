@@ -1,0 +1,29 @@
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+cc_binary(
+    name = "sksllex",
+    srcs = [
+        "DFA.h",
+        "DFAState.h",
+        "LexUtil.h",
+        "Main.cpp",
+        "NFA.cpp",
+        "NFA.h",
+        "NFAState.h",
+        "NFAtoDFA.h",
+        "RegexNode.cpp",
+        "RegexNode.h",
+        "RegexParser.cpp",
+        "RegexParser.h",
+        "TransitionTable.cpp",
+        "TransitionTable.h",
+    ],
+)
+
+# TODO(kjlubick) we'll need to have a gen_rule or similar to replace //gn/run_sksllex.py

@@ -1,0 +1,18 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @font-face {
+      font-family: Ahem;
+      src: url(../../fonts/Ahem.ttf);
+    }
+  </style>
+  <g style="font: 32px Ahem; white-space: pre; fill: blue">
+    <text x="20" y="100">one</text>
+  </g>
+  <g fill="none" stroke="black" stroke-width="4" shape-rendering="crispEdges">
+    <rect x="20" y="73" width="96" height="32"/>
+  </g>
+</svg>

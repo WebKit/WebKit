@@ -1,0 +1,4 @@
+The viewport zoomed to scale: 1.6
+This test ensures that a page with width=device-width but content that causes a shrink-to-fit will not block double-tap-to-zoom. It runs automatically in WebKit tests. If you're viewing this manually, double tap on this text and the page should zoom in.
+
+This is an element that will cause shrinkage.

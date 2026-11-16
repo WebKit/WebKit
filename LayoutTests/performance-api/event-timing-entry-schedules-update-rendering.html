@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test.js"></script>
+</head>
+
+<body>
+
+<h1 id="h1">Click me!</h1>
+
+<script>
+
+description("Test if a rendering update is scheduled after an event timing entry is queued.")
+window.jsTestIsAsync = true;
+
+function busyWait(delay) {
+    const startTime = performance.now();
+    while (performance.now() < startTime + delay);
+}
+
+const timeToDispatch = [];
+
+async function test()
+{
+    // This test tries to detect https://bugs.webkit.org/show_bug.cgi?id=305251 by
+    // triggering an event and then measuring if an update the rendering step happened
+    // or is scheduled to happen. This is non-deterministic because an update may be
+    // scheduled for other reasons, so we try to avoid spurious passes with several
+    // iterations.
+
+    window.internals.startTrackingRenderingUpdates();
+    await new Promise( r => requestAnimationFrame(r) );
+    let renderingCountAtEventHandling;
+    h1.addEventListener('click', e => {
+        busyWait(30);
+        renderingCountAtEventHandling = window.internals.renderingUpdateCount();
+    });
+
+    let resolve;
+    new PerformanceObserver( evs => {
+        evs.getEntriesByName('click').forEach( e => resolve() );
+    }).observe({type: 'event', durationThreshold: 16});
+
+    for (let i=0; i<20; i++) {
+        let promise;
+        ( {promise, resolve} = Promise.withResolvers() );
+
+        await eventSender.asyncMouseMoveTo(h1.offsetLeft + 5, h1.offsetTop + 5);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+
+        let updateHappened = window.internals.renderingUpdateCount() > renderingCountAtEventHandling;
+        let timeToNextRenderingUpdate = window.internals.timeToNextRenderingUpdate();
+        if (updateHappened)
+            timeToDispatch.push(0);
+        else if (!timeToNextRenderingUpdate)
+            timeToDispatch.push(Infinity);
+        else
+            timeToDispatch.push(timeToNextRenderingUpdate);
+
+        await promise;
+    }
+
+    // We can only check results after all measurements are taken because
+    // shouldBe*() can effect how rendering is scheduled.
+    for (let i=0; i<timeToDispatch.length; i++) {
+        // An update must be scheduled in 100ms because this is the
+        // default cutoff for event timing entries:
+        shouldBeLessThanOrEqual(`timeToDispatch[${i}]`, "100");
+    }
+
+    finishJSTest();
+}
+
+test();
+
+</script>
+
+</body>
+</html>

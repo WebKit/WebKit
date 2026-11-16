@@ -1,0 +1,21 @@
+<!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    .container {
+        background-color: orange;
+        overflow: auto;
+        width: 200px;
+        height: 200px;
+        border: 1px solid black;
+    }
+
+    .content {
+        background-color: green;
+        height: 300px;
+        width: 100%;
+    }
+</style>
+    <div id="box" class="container" style="scrollbar-width: none;">
+        <div class="content"></div>
+    </div>

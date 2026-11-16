@@ -1,0 +1,34 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({requiredFeatures: ['shader-f16']});
+    device.pushErrorScope('validation');
+    let module = device.createShaderModule({
+      code: `
+enable f16;
+
+@compute @workgroup_size(1)
+fn c() {
+  let m = 1h;
+  let n = modf(radians(m));
+  let o = modf(degrees(m));
+}
+`,
+    });
+    device.createComputePipeline({
+      layout: 'auto',
+      compute: {module},
+    });
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log('Pass: no validation error');
+    }
+    globalThis.testRunner?.dumpAsText();
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

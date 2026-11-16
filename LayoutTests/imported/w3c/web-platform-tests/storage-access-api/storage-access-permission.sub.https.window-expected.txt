@@ -1,0 +1,9 @@
+
+PASS Permissions grants are observable across same-origin iframes
+PASS Permissions grants are observable across same-site iframes
+PASS IFrame tests
+PASS Permission default state can be queried
+PASS Permission granted state can be queried
+PASS Permission denied state is hidden
+PASS Permission state can be observed
+

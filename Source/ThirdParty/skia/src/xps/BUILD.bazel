@@ -1,0 +1,20 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+# Not yet used in Bazel build.
+# Files exported to xps.gni:skia_xps_sources.
+CORE_FILES = [
+    "SkXPSDevice.cpp",
+    "SkXPSDevice.h",
+    "SkXPSDocument.cpp",
+]
+
+split_srcs_and_hdrs(
+    name = "core",
+    files = CORE_FILES,
+)

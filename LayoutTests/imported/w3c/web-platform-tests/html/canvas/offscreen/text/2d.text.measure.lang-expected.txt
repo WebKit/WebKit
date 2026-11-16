@@ -1,0 +1,7 @@
+2d.text.measure.lang
+
+Testing the lang attribute
+
+
+PASS Testing the lang attribute
+

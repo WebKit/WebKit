@@ -1,0 +1,11 @@
+
+NOTRUN Test 16-bit high-bit-depth encoding of I420P10 Unsupported config: {"codec":"vp09.03.10.10.03","isHbd":true,"width":64,"height":48,"bitrate":1000000,"framerate":30}
+NOTRUN Test 16-bit high-bit-depth encoding of I422P10 Unsupported config: {"codec":"vp09.03.10.10.03","isHbd":true,"width":64,"height":48,"bitrate":1000000,"framerate":30}
+NOTRUN Test 16-bit high-bit-depth encoding of I444P10 Unsupported config: {"codec":"vp09.03.10.10.03","isHbd":true,"width":64,"height":48,"bitrate":1000000,"framerate":30}
+NOTRUN Test 16-bit high-bit-depth encoding of I420P12 Unsupported config: {"codec":"vp09.03.10.10.03","isHbd":true,"width":64,"height":48,"bitrate":1000000,"framerate":30}
+NOTRUN Test 16-bit high-bit-depth encoding of I422P12 Unsupported config: {"codec":"vp09.03.10.10.03","isHbd":true,"width":64,"height":48,"bitrate":1000000,"framerate":30}
+NOTRUN Test 16-bit high-bit-depth encoding of I444P12 Unsupported config: {"codec":"vp09.03.10.10.03","isHbd":true,"width":64,"height":48,"bitrate":1000000,"framerate":30}
+NOTRUN Test 16-bit high-bit-depth encoding of I420AP10 Unsupported config: {"codec":"vp09.03.10.10.03","isHbd":true,"width":64,"height":48,"bitrate":1000000,"framerate":30}
+NOTRUN Test 16-bit high-bit-depth encoding of I422AP10 Unsupported config: {"codec":"vp09.03.10.10.03","isHbd":true,"width":64,"height":48,"bitrate":1000000,"framerate":30}
+NOTRUN Test 16-bit high-bit-depth encoding of I444AP10 Unsupported config: {"codec":"vp09.03.10.10.03","isHbd":true,"width":64,"height":48,"bitrate":1000000,"framerate":30}
+

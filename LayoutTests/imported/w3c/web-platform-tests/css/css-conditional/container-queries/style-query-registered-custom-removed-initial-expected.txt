@@ -1,0 +1,4 @@
+
+PASS Query matching initial value of registered property
+PASS Query no longer matching initial value after @property rule is removed
+

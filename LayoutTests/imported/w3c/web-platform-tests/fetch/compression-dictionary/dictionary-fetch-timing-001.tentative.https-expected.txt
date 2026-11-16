@@ -1,0 +1,3 @@
+
+PASS Timing of compression dictionary fetches for <link> element and Link header.
+

@@ -1,0 +1,27 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (imports4.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (imports4.wast:8)
+PASS #4 Test that WebAssembly compilation succeeds (imports4.wast:19)
+PASS #5 Test that WebAssembly compilation succeeds (imports4.wast:28)
+PASS #6 Test that WebAssembly compilation succeeds (imports4.wast:39)
+PASS #7 Reinitialize the default imports
+PASS #8 Test that WebAssembly compilation succeeds (imports4.wast:1)
+PASS #9 Test that WebAssembly instantiation succeeds (imports4.wast:1)
+PASS #10 Test that WebAssembly compilation succeeds (imports4.wast:8)
+PASS #11 Test that WebAssembly instantiation succeeds (imports4.wast:8)
+PASS #12 Test that a WebAssembly code returns a specific result (imports4.wast:13)
+PASS #13 Test that a WebAssembly code returns a specific result (imports4.wast:14)
+PASS #14 Test that a WebAssembly code returns a specific result (imports4.wast:15)
+PASS #15 Test that a WebAssembly code returns a specific result (imports4.wast:16)
+PASS #16 Test that a WebAssembly code returns a specific result (imports4.wast:17)
+PASS #17 Test that WebAssembly compilation succeeds (imports4.wast:19)
+PASS #18 Test that WebAssembly instantiation succeeds (imports4.wast:19)
+PASS #19 Test that a WebAssembly code returns a specific result (imports4.wast:26)
+PASS #20 Test that WebAssembly compilation succeeds (imports4.wast:28)
+PASS #21 Test that WebAssembly instantiation succeeds (imports4.wast:28)
+PASS #22 Test that a WebAssembly code returns a specific result (imports4.wast:37)
+PASS #23 Test that WebAssembly compilation succeeds (imports4.wast:39)
+PASS #24 Test that WebAssembly instantiation succeeds (imports4.wast:39)
+PASS #25 Test that a WebAssembly code returns a specific result (imports4.wast:47)
+

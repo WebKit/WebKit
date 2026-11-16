@@ -1,0 +1,82 @@
+<!doctype html>
+<meta charset="utf8">
+<link rel="help" href="https://w3c.github.io/payment-request/#dom-paymentresponse-complete()">
+<title>
+  PaymentResponse.prototype.complete() method
+</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/helpers.js"></script>
+<script>
+setUpAndSmokeTest({ explicit_done: true, explicit_timeout: true });
+async function runTest({ completeWith: result }, button) {
+  button.disabled = true;
+  const { response, request } = await getPaymentRequestResponse();
+  promise_test(async () => {
+    try {
+      // We .complete() as normal, using the passed test value
+      const promise = response.complete(result);
+      assert_true(promise instanceof Promise, "returns a promise");
+      const returnedValue = await promise;
+      assert_equals(
+        returnedValue,
+        undefined,
+        "Returned value must always be undefined"
+      );
+      // We now call .complete() again, to force an exception
+      // because [[completeCalled]] is true.
+      try {
+        await response.complete(result);
+        assert_unreached("Expected InvalidStateError to be thrown");
+      } catch (err) {
+        assert_equals(
+          err.code,
+          DOMException.INVALID_STATE_ERR,
+          "Must throw an InvalidStateError"
+        );
+      }
+      button.innerHTML = `✅  ${button.textContent}`;
+    } catch (err) {
+      button.innerHTML = `❌  ${button.textContent}`;
+      assert_unreached("Unexpected exception: " + err.message);
+    }
+  }, button.textContent.trim());
+}
+</script>
+<ol>
+  <li>
+    <button id="button1">
+      If the value of the internal slot [[completeCalled]] is true,
+      reject promise with an "InvalidStateError" DOMException.
+    </button>
+  </li>
+  <li>
+    <button id="button2">
+      Passing no argument defaults to "unknown",
+      eventually closing the sheet and doesn't throw.
+    </button>
+  </li>
+  <li>
+    <button id="button3">
+      Passing "success" eventually closes the sheet and doesn't throw.
+    </button>
+  </li>
+  <li>
+    <button id="button4">
+      Passing "fail" eventually closes the sheet and doesn't throw.
+    </button>
+  </li>
+</ol>
+<script>
+    async function runTests()
+    {
+        await runTest({completeWith: "success"}, document.getElementById("button1"));
+        await runTest({completeWith: "unknown"}, document.getElementById("button2"));
+        await runTest({completeWith: "success"}, document.getElementById("button3"));
+        await runTest({completeWith: "fail"}, document.getElementById("button4"));
+        done();
+    }
+    runTests();
+</script>

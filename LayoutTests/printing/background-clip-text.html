@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-size: 12pt;
+        }
+                
+        .exact {
+            print-color-adjust: exact;
+        }
+        .economy {
+            print-color-adjust: economy;
+        }
+
+        .container {
+            border: 4px solid black;
+            margin: 10px;
+            padding: 4px;
+            text-align: center;
+        }
+        
+        .blue-red {
+            color: blue;
+            background-color: red;
+            border-color: green;
+        }
+
+        .gradient {
+            color: blue;
+            background: linear-gradient(to bottom right, green, yellow);
+        }
+        
+        .background-clip {
+            background: linear-gradient(to bottom right, green, yellow);
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+    <script>
+        if (window.internals)
+            internals.setPrinting(600, 600);
+    </script>
+</head>
+<body>
+    <div class="exact grouping">
+        <h2><code>print-color-adjust: exact</code></h2>
+        <div class="container">
+            Black on white
+        </div>
+
+        <div class="container blue-red">
+            Blue on red
+        </div>
+
+        <div class="container gradient">
+            Gradient
+        </div>
+
+        <div class="container background-clip">
+            background-clip: text
+        </div>
+    </div>
+    
+    <div class="economy grouping">
+        <h2><code>print-color-adjust: economy</code></h2>
+        <div class="container">
+            Black on white
+        </div>
+
+        <div class="container blue-red">
+            Blue on red
+        </div>
+
+        <div class="container gradient">
+            Gradient
+        </div>
+
+        <div class="container background-clip">
+            background-clip: text
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ OverlayRegionsEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ContentInsetBackgroundFillEnabled=false ] -->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <style>
+        html, body { margin: 0; padding: 0; }
+
+        #content {
+            height: 3000px;
+            width: 100vw;
+        }
+
+        #content.horizontal {
+            height: 100vh;
+            width: 3000px;
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script src="./overlay-region-helper.js"></script>
+</head>
+<body>
+<div id="content"></div>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    await UIHelper.ensureStablePresentationUpdate();
+
+    document.getElementById("content").classList.add("horizontal");
+    await UIHelper.ensureStablePresentationUpdate();
+
+    results.textContent = filterUIViewTree(await UIHelper.getUIViewTree());
+    document.getElementById('content').remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

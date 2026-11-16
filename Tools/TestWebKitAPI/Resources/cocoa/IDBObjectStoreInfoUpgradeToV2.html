@@ -1,0 +1,38 @@
+<script>
+
+var databaseName = "objectstoreinfo-upgrade-test";
+var openRequest = indexedDB.open(databaseName);
+var db;
+openRequest.onupgradeneeded = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage("Unexpected upgrade needed");
+}
+
+openRequest.onsuccess = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage("Success");
+    var transaction = event.target.result.transaction(['objectStore', 'anotherObjectStore']);
+    var indexCount = transaction.objectStore('objectStore').indexNames;
+    if (indexes.length != 2)
+        window.webkit.messageHandlers.testHandler.postMessage("Unexpected count of indexes in objectStore 'objectStore': " + indexes.length);
+    
+    indexCount = transaction.objectStore('anotherObjectStore').indexNames;
+    if (indexes.length != 1)
+        window.webkit.messageHandlers.testHandler.postMessage("Unexpected count of indexes in objectStore 'anotherObjectStore': " + indexes.length);
+
+    req = transaction.objectStore('objectStore').index('indexKey').get("indexKey1");
+    req.onsuccess = function(event) {
+        if (req.result.value != "value1")
+            window.webkit.messageHandlers.testHandler.postMessage("Unexpected get result: " +  req.result.value);
+        else
+            window.webkit.messageHandlers.testHandler.postMessage("Success");
+    }
+    req.onerror = function(event) {
+        window.webkit.messageHandlers.testHandler.postMessage("Unexpected get result: " +  req.result.value);
+    }
+}
+
+openRequest.onerror = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage("Unexpected open error");
+}
+
+</script>
+

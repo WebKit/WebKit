@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description("This test ensures border shorthand property initializes longhand properties such as border-top-style and border-right-color.");
+
+var div = document.createElement('div');
+shouldBeEqualToString("div.setAttribute('style', 'border: 1px');div.style.borderTopStyle", "none");
+shouldBeEqualToString("div.style.borderRightStyle", "none");
+shouldBeEqualToString("div.style.borderBottomStyle", "none");
+shouldBeEqualToString("div.style.borderLeftStyle", "none");
+
+shouldBeEqualToString("div.style.borderTopColor", "currentcolor");
+shouldBeEqualToString("div.style.borderRightColor", "currentcolor");
+shouldBeEqualToString("div.style.borderBottomColor", "currentcolor");
+shouldBeEqualToString("div.style.borderLeftColor", "currentcolor");
+
+shouldBeEqualToString("div.setAttribute('style', 'border: solid');div.style.borderTopWidth", "medium");
+shouldBeEqualToString("div.style.borderRightWidth", "medium");
+shouldBeEqualToString("div.style.borderBottomWidth", "medium");
+shouldBeEqualToString("div.style.borderLeftWidth", "medium");
+
+</script>
+</body>
+</html>

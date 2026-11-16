@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script>
+"use strict";
+
+const totalMessages = 10000;
+
+const channel = new MessageChannel();
+const sender = channel.port1;
+const receiver = channel.port2;
+
+let pendingDeliveries = 0;
+let iterationStart = 0;
+
+function onMessage()
+{
+    if (--pendingDeliveries !== 0)
+        return;
+
+    const elapsed = PerfTestRunner.now() - iterationStart;
+    if (!PerfTestRunner.measureValueAsync(elapsed))
+        return;
+
+    setTimeout(runIteration, 0);
+}
+
+receiver.onmessage = onMessage;
+
+function runIteration()
+{
+    pendingDeliveries = totalMessages;
+    iterationStart = PerfTestRunner.now();
+    for (let i = 0; i < totalMessages; ++i)
+        sender.postMessage(0);
+}
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    description: 'Time to deliver a batch of ' + totalMessages + ' messages, '
+    + 'in a never-shipped, same-context MessagePort pair.',
+    unit: 'ms',
+});
+
+setTimeout(runIteration, 0);
+</script>
+</body>
+</html>

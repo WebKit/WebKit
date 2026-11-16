@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+      mediaelementaudiosourcenode-preservespitch.html
+  </title>
+  <script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+  <script src="../../resources/testharnessreport.js"></script>
+  <script src="../resources/audit-util.js"></script>
+  <script src="../resources/audit.js"></script>
+</head>
+<body>
+    <script id="layout-test-code">
+        let audit = Audit.createTaskRunner();
+
+        function waitFor(element, type) {
+            return new Promise(resolve => {
+                element.addEventListener(type, resolve, { once: true });
+            });
+        }
+
+        function sleepFor(time) {
+            return new Promise(resolve => setTimeout(resolve, time));
+        }
+
+        audit.define(
+        {
+            label: 'mediaelementsourcenode-volume',
+            description: 'Verify volume changes to the media element are audible when attached to a MediaElementSourceNode'
+        },
+        async (task, should) => {
+            window.audioElement = new Audio('../resources/media/sine440.mp3');
+            waitFor(audioElement, 'error').then(event => {
+                throw new Error(`Audio element fired "${event.type}" with error code: ${event.target.error.code}, "${event.target.error.message}"`);
+            });
+
+            let context = new AudioContext({sampleRate: 48000});
+            let mediaSource = context.createMediaElementSource(audioElement);
+            let analyser = context.createAnalyser();
+            let gain = context.createGain();
+
+            analyser.fftSize = 2048;
+            analyser.smoothingTimeConstant = 0;
+            analyser.minDecibels = -40;
+            analyser.maxDecibels = 0;
+            let frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+            // Silence test output
+            gain.gain.value = 0;
+
+            mediaSource.connect(analyser);
+            analyser.connect(gain);
+            gain.connect(context.destination);
+
+            context.resume();
+            audioElement.play();
+
+            let getDecibels = async function(frequency) {
+                let attempts = 0;
+                while (audioElement.currentTime < 0.5) {
+                    if (++attempts >= 20)
+                        throw new Error(`audioElement.currentTime stuck at ${audioElement.currentTime} after ${attempts} attempts`);
+                    await sleepFor(100);
+                }
+                analyser.getByteFrequencyData(frequencyData);
+                const binIndex = Math.round(frequency * analyser.fftSize / context.sampleRate);
+                return frequencyData[binIndex];
+            }
+
+            let fullVolumeDecibels = await getDecibels(440);
+            should(fullVolumeDecibels > 0, 'fullVolumeDecibels > 0').beTrue();
+
+            audioElement.load();
+            audioElement.volume = 0.5;
+            audioElement.play();
+
+            let halfVolumeDecibels = await getDecibels(440);
+            should(halfVolumeDecibels > 0, 'halfVolumeDecibels > 0').beTrue();
+            should(halfVolumeDecibels < fullVolumeDecibels, 'halfVolumeDecibels < fullVolumeDecibels').beTrue();
+
+            audioElement.pause();
+            context.suspend();
+            task.done();
+        });
+        audit.run();
+    </script>
+</body>
+</html>

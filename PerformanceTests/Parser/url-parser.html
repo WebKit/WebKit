@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+var urls = PerfTestRunner.loadFile("resources/final-url-en").split("\n");
+var anchor = document.createElement("a");
+
+PerfTestRunner.measureRunsPerSecond({run:function() {
+    for (var x = 0; x < urls.length; x++) {
+        anchor.href = urls[x];
+    }
+}});
+</script>
+</body>

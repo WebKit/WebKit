@@ -1,0 +1,11 @@
+prefix=@CMAKE_BINARY_DIR@
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}
+
+Name: Headless Wayland Platform
+Description: Headless platform implementation for WPE WebKit
+URL: https://wpewebkit.org
+Version: @PROJECT_VERSION@
+Requires: wpe-platform-@WPE_API_VERSION@-uninstalled
+Cflags: -I@WEBKIT_DIR@/WPEPlatform

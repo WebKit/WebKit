@@ -1,0 +1,16 @@
+Test that nested cross-origin frame protocol ids are collision-free under site isolation (webkit.org/b/316663).
+
+
+== Running test suite: SiteIsolation.Page.FrameIdCollisionFreeNestedCrossOrigin
+-- Running test case: SiteIsolation.Page.FrameIdCollisionFreeNestedCrossOrigin.DistinctIds
+PASS: Tree should contain main + child + grandchild.
+PASS: Main frame should have a child frame.
+PASS: Child frame should have a grandchild frame.
+PASS: Child frame name should be reported.
+PASS: Grandchild frame name should be reported.
+PASS: Child's parentId should match the main frame id.
+PASS: Grandchild's parentId should match the child frame id.
+PASS: Every frame should have a non-empty id.
+PASS: All frame protocol ids should be unique.
+PASS: Grandchild id should differ from main frame id.
+

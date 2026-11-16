@@ -1,0 +1,18 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "non_arc_srcs",
+    testonly = True,
+    srcs = [
+        "Window_mac.h",
+        "Window_mac.mm",
+        "main_mac.mm",
+    ],
+    visibility = ["//tools/sk_app:__pkg__"],
+)

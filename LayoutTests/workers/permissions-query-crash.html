@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+const workerCode = `
+onmessage = () => {
+    for (let i = 0; i < 20; i++) {
+        navigator.permissions.query({name: i % 3 === 0 ? 'camera' : (i % 3 === 1 ? 'geolocation' : 'notifications')}).catch(()=>{});
+    }
+    postMessage('go');
+};
+`;
+
+const blob = new Blob([workerCode], {type: 'application/javascript'});
+const blobURL = URL.createObjectURL(blob);
+
+let iterations = 0;
+const maxIterations = 20;
+
+function next() {
+    iterations++;
+    if (iterations > maxIterations) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    
+    let w = new Worker(blobURL);
+    w.onmessage = () => {
+        w.terminate();
+        setTimeout(next, 0);
+    };
+    w.postMessage(0);
+}
+
+window.onload = () => {
+    next();
+};
+</script>
+</head>
+<body>
+This test passes if it does not crash.
+</body>
+</html>

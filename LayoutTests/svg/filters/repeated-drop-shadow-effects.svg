@@ -1,0 +1,26 @@
+<svg width="404" height="404" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <filter id="repeated-drop-shadow" filterUnits="userSpaceOnUse"/>
+    </defs>
+    <rect x="200" y="200" width="4" height="4" style="fill:green; filter:url(#repeated-drop-shadow);"/>
+    <script><![CDATA[
+        let nameSpace = "http://www.w3.org/2000/svg";
+        let filterElement = document.getElementById("repeated-drop-shadow");
+
+        function createDropShadowEffects(count, dx, dy) {
+            for (let i = 0; i < count; i++) {
+                var dropShadowElement = document.createElementNS(nameSpace, "feDropShadow");
+                dropShadowElement.setAttribute("dx", dx.toString());
+                dropShadowElement.setAttribute("dy", dy.toString());
+                dropShadowElement.setAttribute("stdDeviation", "0");
+                dropShadowElement.setAttribute("flood-color", "green");
+                filterElement.appendChild(dropShadowElement);
+            }
+        }
+
+        createDropShadowEffects(50, -2,  2);
+        createDropShadowEffects(50,  2, -2);
+        createDropShadowEffects(50,  2,  2);
+        createDropShadowEffects(50, -2, -2);
+    ]]></script>
+</svg>

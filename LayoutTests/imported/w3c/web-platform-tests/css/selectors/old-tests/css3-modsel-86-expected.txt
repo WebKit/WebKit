@@ -1,0 +1,5 @@
+This text should be green.
+
+
+PASS Nondeterministic matching of descendant and child combinators
+

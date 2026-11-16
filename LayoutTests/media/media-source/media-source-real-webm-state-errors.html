@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-state-errors</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests that MSE methods throw correct exceptions when called in
+    // invalid states. MSE spec sections 2 and 3.
+
+    var source;
+    var sourceBuffer;
+    var thrownError;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+
+        // --- appendBuffer while updating ---
+        consoleWrite('Test: appendBuffer while updating must throw InvalidStateError');
+        testExpected('sourceBuffer.updating', true);
+        thrownError = null;
+        try { sourceBuffer.appendBuffer(initData); } catch (e) { thrownError = e; }
+        testExpected('thrownError.name', 'InvalidStateError');
+
+        // --- remove while updating ---
+        consoleWrite('Test: remove while updating must throw InvalidStateError');
+        thrownError = null;
+        try { sourceBuffer.remove(0, 1); } catch (e) { thrownError = e; }
+        testExpected('thrownError.name', 'InvalidStateError');
+
+        await waitFor(sourceBuffer, 'updateend');
+
+        // --- abort while not updating is allowed ---
+        consoleWrite('Test: abort while not updating does not throw');
+        thrownError = null;
+        try { sourceBuffer.abort(); } catch (e) { thrownError = e; }
+        testExpected('thrownError', null);
+
+        // --- set duration while updating ---
+        consoleWrite('Test: set duration while updating must throw InvalidStateError');
+        sourceBuffer.appendBuffer(initData);
+        testExpected('sourceBuffer.updating', true);
+        thrownError = null;
+        try { source.duration = 10; } catch (e) { thrownError = e; }
+        testExpected('thrownError.name', 'InvalidStateError');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // --- endOfStream while updating ---
+        consoleWrite('Test: endOfStream while updating must throw InvalidStateError');
+        sourceBuffer.appendBuffer(initData);
+        thrownError = null;
+        try { source.endOfStream(); } catch (e) { thrownError = e; }
+        testExpected('thrownError.name', 'InvalidStateError');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // --- addSourceBuffer when ended ---
+        consoleWrite('Test: addSourceBuffer when ended must throw InvalidStateError');
+        source.endOfStream();
+        testExpected('source.readyState', 'ended');
+        thrownError = null;
+        try { source.addSourceBuffer(WebM.VIDEO_TYPE); } catch (e) { thrownError = e; }
+        testExpected('thrownError.name', 'InvalidStateError');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

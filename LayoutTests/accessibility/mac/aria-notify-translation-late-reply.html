@@ -1,0 +1,46 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsARIANotifyEnabled=true displayedTranslationLocale=fr announcementTranslationMode=delayed ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<script>
+var output = "Tests that a translation arriving after its announcement already timed out is discarded rather than announced a second time.\n\n";
+var notificationCount = 0;
+var timedOutAnnouncementReceived = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAriaNotifyUserInfo(userInfo);
+        notificationCount++;
+        timedOutAnnouncementReceived = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // The client replies well after this deadline, so the announcement goes out untranslated first.
+    internals.setAccessibilityAnnouncementTranslationTimeout(0.05);
+    accessibilityController.addNotificationListener(notificationCallback);
+
+    document.ariaNotify("San Francisco");
+
+    setTimeout(async function() {
+        await waitFor(() => timedOutAnnouncementReceived);
+        // Outlive the client's reply, so a late translation reaching the platform would appear below
+        // as a second entry instead of going unnoticed.
+        await new Promise(resolve => setTimeout(resolve, 500));
+        output += `Total announcements: ${notificationCount}\n`;
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

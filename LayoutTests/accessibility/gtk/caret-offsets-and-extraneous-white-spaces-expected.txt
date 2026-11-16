@@ -1,0 +1,14 @@
+This paragraph is borked!
+
+This test is replicated from old file testatk.c and tests text length, setting caret offset and receiving text-caret-moved signal on a paragraph with lots of whitespace.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS borkedTextLength is 25
+PASS caretMovedData is "Paragraph|24"
+PASS caretMovedData is "Paragraph|25"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

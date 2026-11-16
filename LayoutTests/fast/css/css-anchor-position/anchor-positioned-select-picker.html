@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<script src="../../../resources/js-test-pre.js"></script>
+
+<style>
+  #anchor {
+    anchor-name: --anchor;
+  }
+
+  #anchored {
+    position-anchor: --anchor;
+    margin: 0;
+    border: 0;
+    top: anchor(bottom);
+    left: anchor(left);
+    display: block !important;
+  }
+</style>
+
+<div id="anchor"></div>
+<div id="anchored" popover>
+  <template shadowrootmode="open">
+    <select id="select">
+      <option>Option</option>
+    </select>
+  </template>
+</div>
+
+<script>
+  description("Checks that an anchor-positioned select element will display its picker at the same location as the element");
+  window.jsTestIsAsync = true;
+
+  const select = anchored.shadowRoot.getElementById("select");
+
+  buttonClientRect = select.getBoundingClientRect();
+  const buttonCenterX = buttonClientRect.x + (buttonClientRect.width / 2);
+  const buttonCenterY = buttonClientRect.y + (buttonClientRect.height / 2);
+
+  // eventSender.moveMouseTo/mouseDown/mouseUp would hang WebContent/UI process
+  // while it waits for something, so use UI script here to simulate clicking on
+  // the <select>. HTMLSelectElement.showPicker doesn't reproduce the issue,
+  // hence the need to simulate actual mouse clicks to open the picker.
+  const uiScript = `
+    uiController.activateAtPoint(${buttonCenterX}, ${buttonCenterY}, () => {
+      uiController.uiScriptComplete();
+    });`
+
+  function check() {
+    popupLocation = internals.lastSelectPopupLocation(select);
+    if (!popupLocation) {
+      setTimeout(check, 10);
+      return;
+    }
+
+    shouldBe('popupLocation.x', 'buttonClientRect.x');
+    shouldBe('popupLocation.y', 'buttonClientRect.y');
+    finishJSTest();
+  }
+
+  // It's not guaranteed that the system picker would be displayed after the
+  // UI script completes, so we poll every 10ms whether the picker has been
+  // displayed or not.
+  testRunner.runUIScript(uiScript, check);
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>

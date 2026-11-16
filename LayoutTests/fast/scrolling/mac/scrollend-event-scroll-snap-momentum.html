@@ -1,0 +1,93 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .slider {
+            display: flex;
+            overflow-x: scroll;
+            width: 300px;
+            height: 150px;
+            scroll-snap-type: x mandatory;
+        }
+        .slide {
+            flex: 0 0 100%;
+            scroll-snap-align: center;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var slider;
+        var scrollendEventCount = 0;
+
+        async function testMomentumScrollInSnapContainer()
+        {
+            debug('Flick in a scroll-snap container: scrollend should fire once, after momentum and snapping finish.');
+            slider.scrollLeft = 0;
+            await UIHelper.ensurePresentationUpdate();
+            scrollendEventCount = 0;
+
+            await UIHelper.startMonitoringWheelEvents();
+            await UIHelper.mouseWheelSequence({
+                "events" : [
+                    {
+                        type : "wheel",
+                        viewX : 100,
+                        viewY : 75,
+                        deltaX : -10,
+                        phase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaX : -40,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        phase : "ended"
+                    },
+                    {
+                        type : "wheel",
+                        deltaX : -40,
+                        momentumPhase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaX : -20,
+                        momentumPhase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        momentumPhase : "ended"
+                    }
+                ]
+            });
+            await UIHelper.waitForScrollCompletion();
+            await UIHelper.ensurePresentationUpdate();
+            await UIHelper.renderingUpdate();
+
+            shouldBeTrue('slider.scrollLeft > 0');
+            shouldBe('scrollendEventCount', '1');
+        }
+
+        window.addEventListener('load', async () => {
+            slider = document.querySelector('.slider');
+            slider.addEventListener('scrollend', () => {
+                ++scrollendEventCount;
+            });
+
+            await testMomentumScrollInSnapContainer();
+            finishJSTest();
+        });
+    </script>
+</head>
+<body>
+    <div class="slider">
+        <div class="slide" style="background: #5085c0"></div>
+        <div class="slide" style="background: #8dbb14"></div>
+        <div class="slide" style="background: #566b2d"></div>
+    </div>
+</body>
+</html>

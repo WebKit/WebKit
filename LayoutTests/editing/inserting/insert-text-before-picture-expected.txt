@@ -1,0 +1,23 @@
+Test text insertion before <picture>.
+
+Initial state:
+| <picture>
+|   <source>
+|     media="(min-width: 600px)"
+|     srcset="resources/apple.gif"
+|   <source>
+|     srcset="resources/mozilla.gif"
+|   <#selection-caret>
+|   <img>
+|     src=""
+
+After insertion:
+| "text<#selection-caret>"
+| <picture>
+|   <source>
+|     media="(min-width: 600px)"
+|     srcset="resources/apple.gif"
+|   <source>
+|     srcset="resources/mozilla.gif"
+|   <img>
+|     src=""

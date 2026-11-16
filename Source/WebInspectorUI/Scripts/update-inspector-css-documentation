@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2021 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# This script generates the file with CSS documentation shown in Web Inspector:
+# Source/WebInspectorUI/UserInterface/External/CSSDocumentation/CSSDocumentation.js
+#
+# The upstream data comes from the VSCode custom data repository:
+# https://github.com/microsoft/vscode-custom-data/blob/main/web-data/data/browsers.css-data.json
+#
+# To overwrite descriptions and other CSS documentation fields obtained from the upstream data, update the file:
+# Source/WebInspectorUI/UserInterface/External/CSSDocumentation/CSSDocumentation-overrides.json
+
+import json
+import urllib.request
+import urllib.error
+from pathlib import Path
+
+VSCODE_CSS_DATA_JSON_URL = "https://raw.githubusercontent.com/microsoft/vscode-custom-data/main/web-data/data/browsers.css-data.json"
+ROOT_DIR = (Path(__file__).parent / ".." / ".." / "..").resolve()
+OUTPUT_DIR = "Source/WebInspectorUI/UserInterface/External/CSSDocumentation"
+OUTPUT_FILENAME = "CSSDocumentation.js"
+CSS_DATA_OVERRIDES_JSON_PATH = Path(ROOT_DIR, OUTPUT_DIR, "CSSDocumentation-overrides.json").resolve()
+
+try:
+    print(f"Downloading: {VSCODE_CSS_DATA_JSON_URL}")
+    response = urllib.request.urlopen(VSCODE_CSS_DATA_JSON_URL)
+except urllib.error.URLError as err:
+    print("Download failed\n{0}".format(err))
+    exit()
+
+try:
+    print("Parsing")
+    data = json.load(response)
+except json.JSONDecodeError as err:
+    print("Parsing failed\n{0}".format(err))
+    exit()
+
+try:
+    print("Parsing local JSON with overrides")
+    overrides = json.load(open(CSS_DATA_OVERRIDES_JSON_PATH, "r"))
+except json.JSONDecodeError as err:
+    print("Parsing failed\n{0}".format(err))
+    exit()
+
+print("Extracting CSS property data")
+
+def build_property_object(name, property_override = {}, property_payload = {}):
+    description = property_override.get("description") or property_payload.get("description")
+    syntax = property_override.get("syntax") or property_payload.get("syntax")
+    references = property_override.get("references") or property_payload.get("references")
+    url = ""
+
+    if (references):
+        url = references[0].get("url")
+
+    if (url and not url.startswith("https://developer.mozilla.org")):
+        print(f"WARNING: Skipping unexpected MDN reference URL: {url}")
+        url = ""
+
+    # Skip properties with unsupported prefixes. Keep in sync with prefix list from WI.CSSManager.canonicalNameForPropertyName().
+    if (name.startswith("-") and not name.startswith(("-webkit-", "-khtml-", "-apple-"))):
+        return None
+
+    # Skip properties lacking any meaningful content.
+    if (not description and not syntax):
+        return None
+
+    property_object = {}
+
+    if (description):
+        property_object["description"] = description
+
+    if (syntax):
+        property_object["syntax"] = syntax
+
+    if (url):
+        property_object["url"] = url
+
+    return property_object
+
+properties = {}
+for property_payload in data["properties"]:
+    name = property_payload.get("name")
+    property_override = overrides.get(name, {})
+    property_object = build_property_object(name, property_override, property_payload)
+
+    if (property_object):
+        properties[name] = property_object
+
+# Ensure properties defined only in local overrides but not in the upstream payload are added to the output.
+for (name, property_override) in overrides.items():
+    if (name not in properties):
+        properties[name] = build_property_object(name, property_override, {})
+
+try:
+    file_path = Path(ROOT_DIR, OUTPUT_DIR, OUTPUT_FILENAME).resolve()
+    print(f"Writing file: {file_path}")
+    file = open(file_path, "w")
+    file.write("// DO NOT EDIT THIS FILE. It is automatically generated by the script: Source/WebInspectorUI/Scripts/update-inspector-css-documentation.\n")
+    file.write("CSSDocumentation = ")
+    file.write(json.dumps(properties, indent=4, sort_keys=True))
+    file.write(";\n")
+    file.close()
+except OSError as err:
+    print("Writing failed\n{0}".format(err))
+    exit()
+
+print("Success!")

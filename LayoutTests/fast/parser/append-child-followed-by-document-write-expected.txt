@@ -1,0 +1,4 @@
+ALERT: document child nodes: A
+document.documentElement === a: true
+document.getElementById('b'): null
+

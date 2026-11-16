@@ -1,0 +1,14 @@
+<input id="color" type=color>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    color.style.border = "1px solid red";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>

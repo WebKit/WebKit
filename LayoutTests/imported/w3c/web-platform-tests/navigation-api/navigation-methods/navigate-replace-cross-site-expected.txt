@@ -1,0 +1,5 @@
+
+PASS navigate() with history: 'replace' from a same-origin iframe to another site
+PASS navigate() with history: 'replace' from a cross-site iframe to this site
+PASS navigate() with history: 'replace' from a cross-site popup to this site
+

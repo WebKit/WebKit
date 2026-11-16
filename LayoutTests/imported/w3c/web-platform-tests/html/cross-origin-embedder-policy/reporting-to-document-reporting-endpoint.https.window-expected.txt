@@ -1,0 +1,5 @@
+
+PASS subresource CORP
+PASS navigation CORP on cross origin
+PASS navigation CORP on same origin
+

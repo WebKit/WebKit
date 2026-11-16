@@ -1,0 +1,24 @@
+
+PASS :only_in_compute:entry_point="none";call="bar()"
+PASS :only_in_compute:entry_point="none";call="workgroupUniformLoad(%26wgvar)"
+PASS :only_in_compute:entry_point="compute";call="bar()"
+PASS :only_in_compute:entry_point="compute";call="workgroupUniformLoad(%26wgvar)"
+PASS :only_in_compute:entry_point="vertex";call="bar()"
+PASS :only_in_compute:entry_point="vertex";call="workgroupUniformLoad(%26wgvar)"
+PASS :only_in_compute:entry_point="fragment";call="bar()"
+PASS :only_in_compute:entry_point="fragment";call="workgroupUniformLoad(%26wgvar)"
+PASS :only_in_compute:entry_point="compute_and_fragment";call="bar()"
+PASS :only_in_compute:entry_point="compute_and_fragment";call="workgroupUniformLoad(%26wgvar)"
+PASS :only_in_compute:entry_point="fragment_without_call";call="bar()"
+PASS :only_in_compute:entry_point="fragment_without_call";call="workgroupUniformLoad(%26wgvar)"
+PASS :no_atomics:type="bool";call="bar()"
+PASS :no_atomics:type="bool";call="workgroupUniformLoad(%26wgvar)"
+PASS :no_atomics:type="array%3Catomic%3Ci32%3E,%204%3E";call="bar()"
+PASS :no_atomics:type="array%3Catomic%3Ci32%3E,%204%3E";call="workgroupUniformLoad(%26wgvar)"
+PASS :no_atomics:type="AtomicStruct";call="bar()"
+PASS :no_atomics:type="AtomicStruct";call="workgroupUniformLoad(%26wgvar)"
+PASS :param_constructible_only:stage="const"
+PASS :param_constructible_only:stage="override"
+PASS :must_use:use=true
+PASS :must_use:use=false
+

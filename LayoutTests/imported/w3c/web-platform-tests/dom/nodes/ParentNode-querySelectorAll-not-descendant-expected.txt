@@ -1,0 +1,3 @@
+
+PASS querySelectorAll with :not() pseudo-class and descendant selector
+

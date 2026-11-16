@@ -1,0 +1,5 @@
+This should be unstyled.
+This should have a green background.
+
+PASS Direct adjacent combinator and classes
+

@@ -1,0 +1,4 @@
+
+PASS Category L: content=scale does not scale font sizes when the feature is disabled
+PASS Category XXXL: content=scale does not scale font sizes when the feature is disabled
+

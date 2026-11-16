@@ -1,0 +1,24 @@
+Tests that requestAnimationFrame is throttled in subframes that are outside the viewport
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Frame is initially outside the viewport so requestAnimationFrame should be throttled
+PASS testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons() became "OutsideViewport"
+PASS internals.requestAnimationFrameThrottlingReasons() is "[Unthrottled]"
+PASS testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons() is "OutsideViewport"
+PASS grandChildFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons() is "OutsideViewport"
+Scrolling frame into view.
+RequestAnimationFrame should no longer be throttled
+PASS internals.requestAnimationFrameThrottlingReasons() is "[Unthrottled]"
+PASS grandChildFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons() is "[Unthrottled]"
+PASS testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons() is "[Unthrottled]"
+Scrolling frame out of view again.
+PASS internals.requestAnimationFrameThrottlingReasons() is "[Unthrottled]"
+PASS testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons() became "OutsideViewport"
+PASS testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons() is "OutsideViewport"
+PASS grandChildFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons() is "OutsideViewport"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+
+PASS The speculation rules set should always be encoded using UTF-8.
+

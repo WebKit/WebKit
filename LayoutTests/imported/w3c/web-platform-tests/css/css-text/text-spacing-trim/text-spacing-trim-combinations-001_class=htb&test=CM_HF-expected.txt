@@ -1,0 +1,113 @@
+
+FAIL 0: 》・ assert_equals: expected "HF" but got "FF"
+FAIL 1: 》　 assert_equals: expected "HF" but got "FF"
+FAIL 2: 》： assert_equals: expected "HF" but got "FF"
+FAIL 3: 》； assert_equals: expected "HF" but got "FF"
+FAIL 4: 」・ assert_equals: expected "HF" but got "FF"
+FAIL 5: 」　 assert_equals: expected "HF" but got "FF"
+FAIL 6: 」： assert_equals: expected "HF" but got "FF"
+FAIL 7: 」； assert_equals: expected "HF" but got "FF"
+FAIL 8: 』・ assert_equals: expected "HF" but got "FF"
+FAIL 9: 』　 assert_equals: expected "HF" but got "FF"
+FAIL 10: 』： assert_equals: expected "HF" but got "FF"
+FAIL 11: 』； assert_equals: expected "HF" but got "FF"
+FAIL 12: 〕・ assert_equals: expected "HF" but got "FF"
+FAIL 13: 〕　 assert_equals: expected "HF" but got "FF"
+FAIL 14: 〕： assert_equals: expected "HF" but got "FF"
+FAIL 15: 〕； assert_equals: expected "HF" but got "FF"
+FAIL 16: 〗・ assert_equals: expected "HF" but got "FF"
+FAIL 17: 〗　 assert_equals: expected "HF" but got "FF"
+FAIL 18: 〗： assert_equals: expected "HF" but got "FF"
+FAIL 19: 〗； assert_equals: expected "HF" but got "FF"
+FAIL 20: 〙・ assert_equals: expected "HF" but got "FF"
+FAIL 21: 〙　 assert_equals: expected "HF" but got "FF"
+FAIL 22: 〙： assert_equals: expected "HF" but got "FF"
+FAIL 23: 〙； assert_equals: expected "HF" but got "FF"
+FAIL 24: 〟・ assert_equals: expected "HF" but got "FF"
+FAIL 25: 〟　 assert_equals: expected "HF" but got "FF"
+FAIL 26: 〟： assert_equals: expected "HF" but got "FF"
+FAIL 27: 〟； assert_equals: expected "HF" but got "FF"
+FAIL 28: ）・ assert_equals: expected "HF" but got "FF"
+FAIL 29: ）　 assert_equals: expected "HF" but got "FF"
+FAIL 30: ）： assert_equals: expected "HF" but got "FF"
+FAIL 31: ）； assert_equals: expected "HF" but got "FF"
+FAIL 32: ｝・ assert_equals: expected "HF" but got "FF"
+FAIL 33: ｝　 assert_equals: expected "HF" but got "FF"
+FAIL 34: ｝： assert_equals: expected "HF" but got "FF"
+FAIL 35: ｝； assert_equals: expected "HF" but got "FF"
+FAIL 36: ｠・ assert_equals: expected "HF" but got "FF"
+FAIL 37: ｠　 assert_equals: expected "HF" but got "FF"
+FAIL 38: ｠： assert_equals: expected "HF" but got "FF"
+FAIL 39: ｠； assert_equals: expected "HF" but got "FF"
+FAIL 40: 、・ assert_equals: expected "HF" but got "FF"
+FAIL 41: 、　 assert_equals: expected "HF" but got "FF"
+FAIL 42: 、： assert_equals: expected "HF" but got "FF"
+FAIL 43: 、； assert_equals: expected "HF" but got "FF"
+FAIL 44: 。・ assert_equals: expected "HF" but got "FF"
+FAIL 45: 。　 assert_equals: expected "HF" but got "FF"
+FAIL 46: 。： assert_equals: expected "HF" but got "FF"
+FAIL 47: 。； assert_equals: expected "HF" but got "FF"
+FAIL 48: ，・ assert_equals: expected "HF" but got "FF"
+FAIL 49: ，　 assert_equals: expected "HF" but got "FF"
+FAIL 50: ，： assert_equals: expected "HF" but got "FF"
+FAIL 51: ，； assert_equals: expected "HF" but got "FF"
+FAIL 52: ．・ assert_equals: expected "HF" but got "FF"
+FAIL 53: ．　 assert_equals: expected "HF" but got "FF"
+FAIL 54: ．： assert_equals: expected "HF" but got "FF"
+FAIL 55: ．； assert_equals: expected "HF" but got "FF"
+》・
+》　
+》：
+》；
+」・
+」　
+」：
+」；
+』・
+』　
+』：
+』；
+〕・
+〕　
+〕：
+〕；
+〗・
+〗　
+〗：
+〗；
+〙・
+〙　
+〙：
+〙；
+〟・
+〟　
+〟：
+〟；
+）・
+）　
+）：
+）；
+｝・
+｝　
+｝：
+｝；
+｠・
+｠　
+｠：
+｠；
+、・
+、　
+、：
+、；
+。・
+。　
+。：
+。；
+，・
+，　
+，：
+，；
+．・
+．　
+．：
+．；

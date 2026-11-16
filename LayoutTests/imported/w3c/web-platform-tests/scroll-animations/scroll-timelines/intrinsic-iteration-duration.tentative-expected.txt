@@ -1,0 +1,8 @@
+
+PASS Computed duration in percent even when specified in ms
+PASS Time-based duration normalized to fill animation range.
+PASS Time-based duration normalized to preserve proportional delays.
+PASS Intrinsic iteration duration fills timeline.
+PASS Intrinsic iteration duration accounts for animation range.
+PASS Intrinsic iteration duration accounts for number of iterations
+

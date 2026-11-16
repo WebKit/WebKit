@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" class="reftest-wait" onload="f()">
+  <title>Test that changing conditional processing attributes dynamically elements while redraw is suspended is honored</title>
+  <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=615146 -->
+
+  <script>
+    function f() {
+      var svg = document.documentElement;
+      svg.suspendRedraw(10000);
+      setTimeout(function() {
+        document.getElementById("r").setAttribute("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Gradient");
+        svg.unsuspendRedrawAll();
+        setTimeout(function() {
+          svg.removeAttribute("class");
+        }, 1);
+      }, 1);
+    }
+  </script>
+  <rect id="r" width="100%" height="100%" fill="lime" requiredFeatures="x"/>
+</svg>

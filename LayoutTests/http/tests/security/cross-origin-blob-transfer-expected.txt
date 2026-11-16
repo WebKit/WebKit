@@ -1,0 +1,4 @@
+
+
+PASS Test for creating blob in iframe and then transferring it cross-origin.
+

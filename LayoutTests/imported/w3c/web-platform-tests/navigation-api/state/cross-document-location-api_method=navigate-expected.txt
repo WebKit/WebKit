@@ -1,0 +1,4 @@
+
+
+PASS entry.getState() behavior after cross-document location API navigation
+

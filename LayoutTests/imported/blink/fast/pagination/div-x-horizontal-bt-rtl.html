@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Paged X overflow, bottom to top block flow, rtl inline flow</title>
+    </head>
+    <body>
+        <div style="position:relative; width:35em; height:10em; border:1px solid black; -webkit-writing-mode:horizontal-bt; direction:rtl; overflow:-webkit-paged-x; overflow:paged-x; -webkit-column-gap:0;">
+            <div style="display:table; direction:ltr; -webkit-writing-mode:horizontal-tb;">
+                This text should be at the bottom right of the first page<br>
+                There should be two pages<br>
+                The second page should be to the left of this one<br>
+            </div>
+            <div style="height:110%;"></div>
+        </div>
+    </body>
+</html>

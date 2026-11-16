@@ -1,0 +1,60 @@
+/*
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <Metal/Metal.h>
+#include <WebGPU/WebGPU.h>
+#include <WebGPU/WebGPUCpp.h>
+#include <optional>
+#include <wtf/Vector.h>
+
+namespace WebGPU::Metal {
+
+struct HardwareCapabilities {
+    Limits limits { };
+    Vector<WebGPU::FeatureName> features;
+
+    struct BaseCapabilities {
+        MTLArgumentBuffersTier argumentBuffersTier { MTLArgumentBuffersTier1 };
+        id<MTLCounterSet> timestampCounterSet { nil };
+        id<MTLCounterSet> statisticCounterSet { nil };
+        uint32_t memoryBarrierLimit { 0 };
+        bool supportsNonPrivateDepthStencilTextures { false };
+        bool supportsMemorylessTextures { false };
+        bool canPresentRGB10A2PixelFormats { false };
+        bool supportsResidencySets { false };
+    } baseCapabilities;
+};
+
+std::optional<HardwareCapabilities> hardwareCapabilities(id<MTLDevice>);
+NODELETE bool isValid(const Limits&);
+NODELETE Limits defaultLimits();
+NODELETE bool anyLimitIsBetterThan(const Limits& target, const Limits& reference);
+bool includesUnsupportedFeatures(const Vector<WebGPU::FeatureName>& target, const Vector<WebGPU::FeatureName>& reference);
+bool isShaderValidationEnabled(id<MTLDevice>);
+bool isWebGPUSwiftEnabled();
+
+} // namespace WebGPU::Metal

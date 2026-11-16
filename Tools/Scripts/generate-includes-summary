@@ -1,0 +1,244 @@
+#!/usr/bin/env python3
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import json
+import os
+import re
+
+SYSTEM_HEADER_INCLUDE_PATTERN_REGEX = re.compile(r'\s*\#include\s+\<(?P<include>.+)\>\s*')
+LOCAL_HEADER_INCLUDE_PATTERN_REGEX = re.compile(r'\s*\#include\s+"(?P<include>.+)"\s*')
+
+def main():
+    root_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), '../../'))
+    source_dir = os.path.join(root_dir, 'Source')
+    derived_sources_dir = os.path.join(root_dir, 'WebKitBuild', 'Release', 'DerivedSources')
+    if not os.path.isdir(derived_sources_dir):
+        derived_sources_dir = os.path.join(root_dir, 'WebKitBuild', 'Debug', 'DerivedSources')
+        if not os.path.isdir(derived_sources_dir):
+            print('No valid WebKitBuild directory')
+            derived_sources_dir = None
+
+    projects = []
+    for dir_name in os.listdir(source_dir):
+        full_path = os.path.join(source_dir, dir_name)
+        if not os.path.isdir(full_path) or dir_name in ['ThirdParty', 'cmake']:
+            continue
+        if dir_name == 'WebCore':
+            projects.append(Project('PAL', find_source_files('PAL', root_dir, os.path.join(full_path, 'PAL'))))
+        sources = find_source_files(dir_name, root_dir, full_path)
+        if derived_sources_dir:
+            sources += find_source_files(dir_name, os.path.dirname(derived_sources_dir), os.path.join(derived_sources_dir, dir_name))
+        projects.append(Project(dir_name, sources))
+
+    project_map = {}
+    system_header_map = {}
+    for project in projects:
+        for source in project.sources():
+            system_header_map[source.system_include_path()] = source
+        project_map[project.name()] = project
+
+    for project in projects:
+        project.resolve_includes(system_header_map)
+
+    result = {'projects': [], 'sources': []}
+    for project in projects:
+        result['projects'].append(project.to_dict())
+        for source in project.sources():
+            result['sources'].append(source.to_dict())
+
+    print(json.dumps(result))
+
+    return
+
+    for project in projects:
+        project.compute_include_origins()
+
+    for project in projects:
+        print('====================', project.name(), '====================')
+        for source in sorted(project.sources(), key=lambda source: source.total_include_count(), reverse=True):
+            if not source.total_include_count():
+                continue
+            print(source.path(), 'included by', source.total_include_count(), 'files')
+
+
+def find_source_files(project, root_dir, dir_path):
+    source_files = []
+    for dirpath, dirnames, filenames in os.walk(dir_path):
+        for file_name in filenames:
+            file_path = os.path.join(dirpath, file_name)
+            _, ext = os.path.splitext(file_path)
+            if os.path.relpath(os.path.dirname(file_path), dir_path) == 'PAL':
+                continue
+            if ext not in ['.c', '.cpp', '.m', '.mm', '.h']:
+                continue
+            with open(file_path) as source_file:
+                system_includes = []
+                local_includes = []
+                for line in source_file:
+                    include_match = SYSTEM_HEADER_INCLUDE_PATTERN_REGEX.match(line)
+                    if include_match:
+                        system_includes.append(include_match.group('include'))
+                    include_match = LOCAL_HEADER_INCLUDE_PATTERN_REGEX.match(line)
+                    if include_match:
+                        local_includes.append(include_match.group('include'))
+                rel_path = os.path.relpath(file_path, dir_path) if project in ['WTF', 'PAL'] else file_name
+                rel_path_to_root = os.path.relpath(file_path, root_dir)
+                source_files.append(SourceFile(project, rel_path, rel_path_to_root, file_path, system_includes, local_includes))
+    return source_files
+
+
+class Project(object):
+    def __init__(self, name, sources):
+        self._name = name
+        self._sources = sources
+        self._source_map = {}
+        for source in sources:
+            if name == 'WTF' and source.local_include_path().startswith('icu/unicode/'):
+                self._source_map[source.local_include_path().removeprefix('icu/')] = source
+            else:
+                self._source_map[source.local_include_path()] = source
+
+    def to_dict(self):
+        return {'name': self._name, 'sources': [source.path() for source in self._sources]}
+
+    def name(self):
+        return self._name
+
+    def sources(self):
+        return self._sources
+
+    def resolve_includes(self, system_header_map):
+        for source in self._sources:
+            source.resolve_local_includes(self._source_map)
+            source.resolve_system_includes(system_header_map)
+
+    def compute_include_origins(self):
+        for source in self._sources:
+            if source.is_included_by_other_sources():
+                continue
+            includes = compute_all_includes(source)
+            for target in includes:
+                target.add_total_include_count()
+
+
+def compute_all_includes(source, targets=set(), working_set=set()):
+    if source in working_set:
+        return targets; # Detected a cycle.
+    for included_source in source.includes():
+        if included_source in targets:
+            continue
+        targets.add(included_source)
+        compute_all_includes(included_source, targets, set(list(working_set) + [source]))
+    return targets
+
+
+class SourceFile(object):
+    def __init__(self, project, rel_path, rel_path_to_root, file_path, system_include_paths, local_include_paths):
+        self._project = project
+        self._rel_path = rel_path
+        self._rel_path_to_root = rel_path_to_root
+        self._file_path = file_path
+        self._system_include_paths = system_include_paths
+        self._system_includes = []
+        self._local_include_paths = local_include_paths
+        self._local_includes = []
+        self._include_origins = []
+        self._transitive_include_count = None
+        self._total_include_count = 0
+        self._not_found = []
+
+    def to_dict(self):
+        return {
+            'project': self._project,
+            'name': self.local_include_path(),
+            'relative': self._rel_path_to_root,
+            'path': self.path(),
+            'includes': [source.path() for source in self.includes()],
+            'notFound': self._not_found,
+        }
+
+    def project(self):
+        return self._project
+
+    def path(self):
+        return self._file_path
+
+    def local_include_path(self):
+        return self._rel_path
+
+    def system_include_path(self):
+        if self._project in ['WTF', 'PAL']:
+            return self._rel_path
+        return os.path.join(self._project, self._rel_path)
+
+    def resolve_local_includes(self, source_map):
+        for path in self._local_include_paths:
+            target_source = source_map.get(path)
+            if target_source:
+                target_source.add_include_origin(self)
+                self._local_includes.append(target_source)
+            else:
+                self._not_found.append(path)
+
+    def resolve_system_includes(self, system_header_map):
+        for path in self._system_include_paths:
+            target_source = system_header_map.get(path)
+            if target_source:
+                target_source.add_include_origin(self)
+                self._system_includes.append(target_source)
+            else:
+                self._not_found.append(path)
+
+    def add_total_include_count(self):
+        self._total_include_count += 1
+
+    def total_include_count(self):
+        return self._total_include_count
+
+    def add_include_origin(self, source):
+        self._include_origins.append(source)
+
+    def is_included_by_other_sources(self):
+        return len(self._include_origins)
+
+    def compute_include_count(self, current_path=[]):
+        if current_path.count(self):
+            print('Detected a cycle!', [source.path() for source in current_path] + [self.path()])
+            return 0
+        if self._transitive_include_count is None:
+            count = 1
+            for origin in self._include_origins:
+                count += origin.compute_include_count(current_path + [self])
+            self._transitive_include_count = count
+            print('transitive count:', count, 'origins:', len(self._include_origins), self.path())
+        return self._transitive_include_count
+
+    def includes(self):
+        return self._system_includes + self._local_includes
+
+    def not_found(self):
+        return self._not_found
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,9 @@
+Tests that Network.setExtraHTTPHeaders replaces previously set headers instead of accumulating them.
+
+
+== Running test suite: Network.setExtraHTTPHeaders
+-- Running test case: Network.setExtraHTTPHeaders.Replace
+PASS: First request should include "X-WebKit-Test-Header-A".
+PASS: Second request should include "X-WebKit-Test-Header-B".
+PASS: Second request should not include "X-WebKit-Test-Header-A" from the previous call.
+

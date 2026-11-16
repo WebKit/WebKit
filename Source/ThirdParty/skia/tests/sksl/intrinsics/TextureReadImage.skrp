@@ -1,0 +1,21 @@
+### Compilation failed:
+
+error: 1: type 'texture2D' does not support qualifier 'readonly'
+layout(binding=0, rgba32f) readonly texture2D t;
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: 1: invalid type
+layout(binding=0, rgba32f) readonly texture2D t;
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: 2: 'main' must return: 'vec4', 'float4', or 'half4'
+void main()
+^^^^^^^^^^^
+error: 4: unknown identifier 'sk_FragColor'
+    sk_FragColor = half4(textureRead(t, uint2(0)));
+    ^^^^^^^^^^^^
+error: 4: unknown identifier 'textureRead'
+    sk_FragColor = half4(textureRead(t, uint2(0)));
+                         ^^^^^^^^^^^
+error: 4: unknown identifier 't'
+    sk_FragColor = half4(textureRead(t, uint2(0)));
+                                     ^
+6 errors

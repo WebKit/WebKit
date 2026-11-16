@@ -1,0 +1,5 @@
+
+PASS Check scroll-state(scrollable) initially matching
+PASS Check scroll-state(scrollable) not matching when overflow is removed
+PASS Check scroll-state(scrollable) not matching when container-type is removed
+

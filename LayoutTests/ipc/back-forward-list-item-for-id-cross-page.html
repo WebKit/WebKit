@@ -1,0 +1,122 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script>
+
+// Makes sure web content processes can only refernece bflist items in the UI process that they own.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const messageHeaderSize = 16;
+const syncMessageTimeoutInSeconds = 5;
+const stepTimeoutInMilliseconds = 5000;
+
+const failures = [];
+
+function readUint64(bytes, offset)
+{
+    let value = 0n;
+    for (let i = 7; i >= 0; --i)
+        value = (value << 8n) | BigInt(bytes[offset + i]);
+    return value;
+}
+
+function identifierFromGoToItemMessage(message)
+{
+    const body = new Uint8Array(message.buffer).slice(messageHeaderSize);
+    if (body.length < 16)
+        return null;
+    const identifier = { object: readUint64(body, 0), process: readUint64(body, 8) };
+    if (!identifier.object || !identifier.process)
+        return null;
+    return identifier;
+}
+
+function identifierOfNextItemThisPageTraversesTo()
+{
+    return new Promise(resolve => {
+        IPC.addOutgoingMessageListener("UI", message => {
+            if (message.name !== IPC.messages.WebBackForwardList_BackForwardGoToItem.name)
+                return;
+            if (BigInt(message.destinationID) !== BigInt(IPC.pageID))
+                return;
+            const identifier = identifierFromGoToItemMessage(message);
+            if (identifier)
+                resolve(identifier);
+        });
+    });
+}
+
+function listForPageResolvesItem(pageID, identifier)
+{
+    const reply = IPC.sendSyncMessage("UI", pageID,
+        IPC.messages.WebBackForwardList_BackForwardListContainsItem.name, syncMessageTimeoutInSeconds,
+        [{ type: "uint64_t", value: identifier.object }, { type: "uint64_t", value: identifier.process }]);
+    const contains = reply && reply.arguments && reply.arguments.length ? reply.arguments[0].value : undefined;
+    if (typeof contains !== "boolean")
+        throw new Error("BackForwardListContainsItem did not reply for page " + pageID);
+    return contains;
+}
+
+function expect(description, actual, expected)
+{
+    if (actual !== expected)
+        failures.push("FAIL: " + description + " (expected " + expected + ", got " + actual + ")");
+}
+
+function withTimeout(promise, description)
+{
+    return Promise.race([promise, new Promise((resolve, reject) => {
+        setTimeout(() => reject(new Error("timed out waiting for " + description)), stepTimeoutInMilliseconds);
+    })]);
+}
+
+async function main()
+{
+    if (!window.IPC)
+        return;
+
+    const ourItem = identifierOfNextItemThisPageTraversesTo();
+
+    history.pushState({ }, "", "#second");
+    history.back();
+    const ourIdentifier = await withTimeout(ourItem, "this page to traverse its own history");
+
+    const reportFromOtherPage = new Promise(resolve => {
+        window.addEventListener("message", event => {
+            if (event.data && event.data.type === "back-forward-item")
+                resolve(event.data);
+        });
+    });
+    const otherPage = window.open("resources/back-forward-list-item-for-id-cross-page-window.html", "_blank");
+    const report = await withTimeout(reportFromOtherPage, "the other page to traverse its own history");
+    if (report.error)
+        throw new Error("the other page could not name one of its own items: " + report.error);
+    const theirIdentifier = { object: BigInt(report.object), process: BigInt(report.process) };
+
+    expect("the other page's list resolves the other page's item", report.resolvedByItsOwnList, true);
+    expect("this page's list resolves this page's item", listForPageResolvesItem(IPC.pageID, ourIdentifier), true);
+
+    expect("this page's list does not resolve the other page's item",
+        listForPageResolvesItem(IPC.pageID, theirIdentifier), false);
+
+    otherPage.close();
+}
+
+window.onload = () => {
+    main().then(() => {
+        document.body.textContent = failures.length ? failures.join("\n") : "PASS";
+    }, error => {
+        document.body.textContent = "FAIL: " + error;
+    }).then(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+</script>
+</head>
+<body></body>
+</html>

@@ -1,0 +1,3 @@
+
+FAIL The initiator Url for /images/blue.png?initiator_url_setinterval_worker initiatorUrl from setInterval() in worker thread must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/set-interval.any.worker.js' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/set-interval.any.worker.js" but got (undefined) undefined
+

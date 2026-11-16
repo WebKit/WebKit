@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<input type="text" id="input">
+<script>
+description("This tests that querying for the last auto fill button type works. This test must be run in WebKitTestRunner or DumpRenderTree.");
+
+if (!window.internals)
+    testFailed("Must be run in WebKitTestRunner or DumpRenderTree");
+else {
+    var inputElement = document.getElementById("input");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "None");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'Credentials')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "Credentials");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "None");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'Contacts')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "Contacts");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "Credentials");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'StrongPassword')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "StrongPassword");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "Contacts");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'Credentials')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "Credentials");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "StrongPassword");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'CreditCard')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "CreditCard");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "Credentials");
+    evalAndLog("internals.setAutofillButtonType(inputElement, 'None')");
+    shouldBeEqualToString("internals.autofillButtonType(inputElement)", "None");
+    shouldBeEqualToString("internals.lastAutofillButtonType(inputElement)", "CreditCard");
+}
+</script>
+</body>
+</html>

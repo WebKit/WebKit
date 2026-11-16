@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+body {
+    margin: 0;
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1;
+}
+
+#testArea {
+    white-space: pre;
+}
+
+#testArea2 {
+    width: 0px;
+    line-break: anywhere;
+}
+</style>
+<div id="testArea"></div>
+<div id="testArea2"></div>
+<script>
+test(function() {
+    var div = document.getElementById("testArea");
+    div.textContent = 'a\nb\n\n\nc';
+
+    var rects = [];
+    for (var i = 0; i < div.textContent.length; ++i) {
+        var range = document.createRange();
+        range.setStart(div.firstChild, i);
+        range.setEnd(div.firstChild, i + 1);
+        rects.push(range.getBoundingClientRect());
+    }
+
+    assert_greater_than(rects[2].top, rects[1].top,
+            'Top of the rect of offset(2,3) should be greater than offset(1,2)');
+    assert_greater_than(rects[4].top, rects[3].top,
+            'Top of the rect of offset(4,5) should be greater than offset(3,4)');
+    assert_greater_than(rects[5].top, rects[4].top,
+            'Top of the rect of offset(5,6) should be greater than offset(4,5)');
+    assert_greater_than(rects[6].top, rects[5].top,
+            'Top of the rect of offset(6,7) should be greater than offset(5,6)');
+}, 'BoundingClientRect of linebreak character should be calculated correctly');
+
+test(function() {
+    var div = document.getElementById("testArea2");
+    div.textContent = 'ab';
+
+    var range = document.createRange();
+    range.setStart(div.firstChild, 1);
+    range.setEnd(div.firstChild, 2);
+    var rect = range.getBoundingClientRect();
+
+    var range0 = document.createRange();
+    range0.setStart(div.firstChild, 0);
+    range0.setEnd(div.firstChild, 1);
+    var rect0 = range0.getBoundingClientRect();
+
+    assert_greater_than(rect.top, rect0.top,
+            'Top of "b" on second line should be greater than "a" on first line');
+}, 'BoundingClientRect should not include rects from previous text boxes at line break boundaries');
+</script>

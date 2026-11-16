@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Animated SVG image with object-view-box should repaint the region where the change is painted</title>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+    img {
+        display: block;
+        width: 200px;
+        height: 200px;
+        /* The top-left quarter of the 200x200 image fills the 200x200 box, so the image is painted at 2x. */
+        object-view-box: inset(0 50% 50% 0);
+    }
+</style>
+</head>
+<body>
+<p>You should see a green square in the bottom-right quarter of a white 200x200 box, with no red.</p>
+<img id="image">
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dontForceRepaint();
+}
+
+window.addEventListener('load', async () => {
+    const loaded = new Promise(resolve => image.addEventListener('load', resolve, { once: true }));
+    // The random comment keeps the memory cache from reusing an SVGImage whose animation already finished.
+    image.src = `data:image/svg+xml,
+        <svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>
+            <!-- ${Math.random()} -->
+            <style>
+                @keyframes recolor {
+                    0% { fill: red; }
+                    50%, 100% { fill: green; }
+                }
+                rect {
+                    animation: recolor 1s steps(1, end) forwards;
+                }
+            </style>
+            <rect x='50' y='50' width='100' height='100' fill='red'/>
+        </svg>`;
+    await loaded;
+
+    // Make sure the red state has been painted before the fill changes to green halfway through the animation.
+    await UIHelper.ensurePresentationUpdate();
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+});
+</script>
+</body>
+</html>

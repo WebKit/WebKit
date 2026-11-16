@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="target"></div>
+<script>
+description("Testing for the font-variant-alternates computed values");
+
+const target = document.getElementById("target");
+evalAndLog("target.style.fontVariantAlternates = 'historical-forms swash(flowing)';");
+shouldBeEqualToString("getComputedStyle(target).fontVariantAlternates", "historical-forms swash(flowing)");
+
+evalAndLog("target.style.fontVariantAlternates = 'historical-forms';");
+shouldBeEqualToString("getComputedStyle(target).fontVariantAlternates", "historical-forms");
+
+evalAndLog("target.style.fontVariantAlternates = 'normal';");
+shouldBeEqualToString("getComputedStyle(target).fontVariantAlternates", "normal");
+</script>
+</body>
+</html>

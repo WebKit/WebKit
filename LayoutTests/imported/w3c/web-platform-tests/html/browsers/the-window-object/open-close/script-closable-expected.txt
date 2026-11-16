@@ -1,0 +1,8 @@
+
+PASS Window created by form with opener is script-closable
+PASS Window created by form with noopener is script-closable
+PASS Window created by link with opener is script-closable
+PASS Window created by link with noopener is script-closable
+PASS Window created by script with opener is script-closable
+PASS Window created by script with noopener is script-closable
+

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+class ConsoleHeapSnapshotMarker {}
+
+let marker = new ConsoleHeapSnapshotMarker;
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Heap.ConsoleHeapSnapshotInFrame");
+
+    const markerClassName = "ConsoleHeapSnapshotMarker";
+
+    let mainFrameTarget = null;
+    let snapshot = null;
+
+    // Capture the snapshot instead of adding it to the active recording, which has no JavaScript Allocations timeline.
+    function awaitHeapSnapshotAdded() {
+        return new Promise((resolve) => {
+            let originalHeapSnapshotAdded = WI.timelineManager.heapSnapshotAdded;
+            WI.timelineManager.heapSnapshotAdded = function(timestamp, addedSnapshot) {
+                WI.timelineManager.heapSnapshotAdded = originalHeapSnapshotAdded;
+                resolve(addedSnapshot);
+            };
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.ConsoleHeapSnapshotInFrame.Snapshot",
+        description: "console.takeHeapSnapshot() in the main frame should report the snapshot on the main frame's target.",
+        async test() {
+            mainFrameTarget = await waitForFrameTargetForURLContaining("console-heap-snapshot-in-frame-target.html");
+            InspectorTest.assert(mainFrameTarget, "Should find the main frame's target.");
+
+            let snapshotAddedPromise = awaitHeapSnapshotAdded();
+            await mainFrameTarget.RuntimeAgent.evaluate.invoke({expression: "console.takeHeapSnapshot()"});
+            snapshot = await snapshotAddedPromise;
+
+            InspectorTest.expectEqual(snapshot.target, mainFrameTarget, "The snapshot should come from the main frame's target.");
+            // A document from an earlier run in the same process can still be alive, with its own marker.
+            InspectorTest.expectGreaterThanOrEqual(snapshot.categories.get(markerClassName)?.objectCount, 1, "The snapshot should include the marker.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.ConsoleHeapSnapshotInFrame.Preview",
+        description: "Previewing an object of the snapshot should fail without throwing while frame targets do not have the Heap domain.",
+        async test() {
+            // FIXME: <https://webkit.org/b/298984> Expect a preview and a remote object once frame targets have the Heap domain.
+            InspectorTest.expectFalse(mainFrameTarget.hasDomain("Heap"), "The main frame's target should not have the Heap domain.");
+
+            let [node] = await new Promise((resolve) => snapshot.instancesWithClassName(markerClassName, resolve));
+            InspectorTest.assert(node, "Should find the marker in the snapshot.");
+
+            let [previewError] = await new Promise((resolve) => WI.heapManager.getPreview(node, (...args) => resolve(args)));
+            InspectorTest.expectThat(previewError, "Getting a preview of the marker should fail.");
+
+            let [remoteObjectError] = await new Promise((resolve) => WI.heapManager.getRemoteObject(node, "test", (...args) => resolve(args)));
+            InspectorTest.expectThat(remoteObjectError, "Getting a remote object for the marker should fail.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing that a heap snapshot from console.takeHeapSnapshot() in a frame does not break previews under Site Isolation.</p>
+</body>
+</html>

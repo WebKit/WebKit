@@ -1,0 +1,3 @@
+
+PASS navigator.canShare must be undefined in non-secure context
+

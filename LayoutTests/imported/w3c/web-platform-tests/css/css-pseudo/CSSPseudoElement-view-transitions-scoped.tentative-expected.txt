@@ -1,0 +1,4 @@
+
+FAIL CSSPseudoElement hierarchy works for scoped view transitions assert_implements: CSSPseudoElement interface not supported undefined
+FAIL CSSPseudoElement proxies are identity-consistent across multiple view transitions on the same element assert_implements: Element.startViewTransition not supported undefined
+

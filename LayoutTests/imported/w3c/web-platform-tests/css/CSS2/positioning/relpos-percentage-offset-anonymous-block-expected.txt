@@ -1,0 +1,11 @@
+
+
+
+
+
+PASS Percentage top on relative inline works with sibling block
+PASS Percentage top on relative inline works without sibling block
+PASS Sibling block does not affect percentage top resolution
+PASS Percentage left on relative inline works with sibling block
+PASS Fixed top on relative inline works with sibling block
+

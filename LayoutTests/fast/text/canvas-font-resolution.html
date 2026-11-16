@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure that canvas2d's text functions don't crash when passed unexpected font strings.
+The test passes if there is no crash.
+<canvas id="c" width="20" height="20"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+var context = document.getElementById("c").getContext("2d");
+context.font = "100px ''";
+context.measureText("hello");
+context.font = "100px 'initial'";
+context.measureText("hello");
+context.font = "100px 'inherit'";
+context.measureText("hello");
+context.font = "100px 'revert'";
+context.measureText("hello");
+context.font = "100px 'thisisnotarealfontname'";
+context.measureText("hello");
+context.font = "100px '~~~~~~~~'";
+context.measureText("hello");
+context.font = "100px '~~~~~~~~'";
+context.measureText("hello");
+context.font = "100px '\u0660'";
+context.measureText("hello");
+context.font = "~~~~~";
+context.measureText("hello");
+</script>
+</body>
+</html>
+</script>
+</body>
+</html>

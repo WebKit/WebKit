@@ -1,0 +1,26 @@
+This tests that hiding an error message stops the field reporting invalid, even though the message's wording is still in the document. Sites commonly hide a message with a class or a style rather than emptying it, and a field still reporting a problem after the page has taken its message away sends the user looking for an error that is no longer there.
+
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+PASS: axElement('password').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('password')) === 'Enter your password.'
+PASS: fieldsWithError() === 2
+document.getElementById('email').classList.remove('is-invalid');
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageText(axElement('email')) === 'no error messages'
+document.getElementById('password-error').style.visibility = 'hidden';
+PASS: axElement('password').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageText(axElement('password')) === 'no error messages'
+PASS: fieldsWithError() === 0
+document.getElementById('email').classList.add('is-invalid');
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email
+Enter a valid email address.
+Password
+Sign in

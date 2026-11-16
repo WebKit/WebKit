@@ -1,0 +1,8 @@
+A percent-height block in a block-in-inline continuation of a stretched flex item should fill the item after it is restyled.
+
+text
+text
+text
+PASS: initial: height is 120
+PASS: after the flex container grows: height is 200
+PASS: after the inline is restyled: height is 200

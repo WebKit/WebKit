@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+
+<!-- 1. An <img> inside the <figcaption> it derives its accessible name from. The caption's
+        name-from-content traversal re-enters the image's alternative text, which comes back to the
+        caption. This cycle needs no ARIA at all. -->
+<figure><figcaption id="cyclicCaption"><img id="cyclicImage" src="resources/cake.png"></figcaption></figure>
+
+<!-- 2. Acyclic version of the same content. -->
+<figure><figcaption>Caption text</figcaption><img id="image" src="resources/cake.png"></figure>
+
+<!-- 3. A <fieldset> whose <legend> subtree is labeled by the fieldset. -->
+<fieldset id="fieldset"><legend><span aria-labelledby="fieldset">legend text</span></legend>fieldset text</fieldset>
+
+<!-- 4. Two shadow hosts labeled by each other, each naming a <slot>. Which of the two names wins
+        depends on the order the cycle is broken in, so this one only has to terminate. -->
+<div id="host1" aria-labelledby="host2"><span>host1 text</span></div>
+<div id="host2" aria-labelledby="host1"><span>host2 text</span></div>
+
+<!-- 5. A short acyclic aria-labelledby chain, which must resolve all the way to its end. -->
+<div id="chainTarget1"><span aria-labelledby="chainTarget2">1</span></div>
+<div id="chainTarget2"><span aria-labelledby="chainTarget3">2</span></div>
+<div id="chainTarget3">chain end</div>
+<div><span id="chainStart" aria-labelledby="chainTarget1">start</span></div>
+
+</div>
+
+<script>
+var output = "This tests that cyclic accessible name computations terminate without crashing, and that bounding them does not truncate legitimate names.\n\n";
+
+// 6. Deeply nested but acyclic content under a name-from-content role. This is a plain DOM descent
+// rather than a chain of name computations, so it must not be bounded at all.
+var deepRoot = document.createElement("div");
+deepRoot.id = "deepRoot";
+deepRoot.setAttribute("role", "button");
+var deepLeaf = deepRoot;
+for (var i = 0; i < 500; i++) {
+    var child = document.createElement("div");
+    deepLeaf.appendChild(child);
+    deepLeaf = child;
+}
+deepLeaf.textContent = "deeply nested text";
+document.getElementById("content").appendChild(deepRoot);
+
+for (var id of ["host1", "host2"])
+    document.getElementById(id).attachShadow({ mode: "open" }).innerHTML = "<slot></slot>";
+
+if (window.accessibilityController) {
+    // Cyclic content. The main assertion is that we reach this point without crashing; whatever
+    // name is computed, it has to be finite.
+    for (var id of ["cyclicImage", "cyclicCaption", "host1"]) {
+        var boundedName = accessibilityController.accessibleElementById(id);
+        output += expect("typeof platformValueForW3CName(boundedName)", "'string'");
+    }
+
+    // Legitimate names that the recursion bound must leave intact.
+    var image = accessibilityController.accessibleElementById("image");
+    output += expect("platformValueForW3CName(image)", "'Caption text'");
+
+    // The cycle is in the <legend> subtree, so the fieldset itself is still named by its content.
+    var fieldset = accessibilityController.accessibleElementById("fieldset");
+    output += expect("platformValueForW3CName(fieldset)", "'fieldset text'");
+
+    var chainStart = accessibilityController.accessibleElementById("chainStart");
+    output += expect("platformValueForW3CName(chainStart)", "'chain end'");
+
+    // Name-from-content is exposed as the title on the platforms this test runs on.
+    var deepButton = accessibilityController.accessibleElementById("deepRoot");
+    output += expect("deepButton.title.includes('deeply nested text')", "true");
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

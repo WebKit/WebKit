@@ -1,0 +1,4 @@
+
+PASS Initially, 1rem equals 16px, less than the container's width
+PASS Changing the :root font-size makes 1rem equal 30px, greater than the container's width
+

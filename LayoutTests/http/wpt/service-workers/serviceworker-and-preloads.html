@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<title>Service Worker Fetch Event</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="testElement"></div>
+<script>
+var scope = "/WebKit/service-workers/resources/serviceworker-and-preloads-iframe.html";
+
+let activeWorker;
+
+promise_test(async (t) => {
+    let registration = await navigator.serviceWorker.register("serviceworker-and-preloads-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    await new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "setup");
+
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.className = 'test-iframe';
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+promise_test(async t => {
+    const iframe = await with_iframe("resources/serviceworker-and-preloads-iframe.html");
+    //t.add_cleanup(() => iframe.remove());
+
+    activeWorker.postMessage("clear urls");
+    await new Promise(resolve => navigator.serviceWorker.onmessage = e => resolve(e.data));
+
+    iframe.contentWindow.location.reload();
+
+    let results = [];
+    let counter = 0;
+    while (counter++ < 50 && results.length < 4) {
+        activeWorker.postMessage("get urls");
+        results = await new Promise(resolve => navigator.serviceWorker.onmessage = e => resolve(e.data));
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    activeWorker.postMessage("get urls");
+    results = await new Promise(resolve => navigator.serviceWorker.onmessage = e => resolve(e.data));
+
+    assert_array_equals(results, [
+        "http://localhost:8800/WebKit/service-workers/resources/serviceworker-and-preloads-iframe.html",
+        "http://localhost:8800/WebKit/service-workers/resources/serviceworker-preload-script.js?first",
+        "http://localhost:8800/WebKit/service-workers/resources/serviceworker-preload-script.js?second",
+        "http://localhost:8800/WebKit/service-workers/resources/serviceworker-preload-img.png",
+    ]);
+}, "preloads should not trigger double loads");
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<script src="../../../resources/dump-as-markup.js"></script>
+<!DOCTYPE html>
+<html>
+<body>
+<div id="test" contenteditable="true">xx</div>
+
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+Markup.description("Tests for a case where paste's end merge was failing. You should see xfoo\nbar\nbazx.");
+
+var e = document.getElementById("test");
+var s = window.getSelection();
+
+s.setPosition(e, 0);
+moveSelectionForwardByCharacterCommand();
+insertHTMLCommand("<div>foo</div><div>bar</div>baz");
+
+Markup.dump('test');
+
+</script>
+</body>
+</html>

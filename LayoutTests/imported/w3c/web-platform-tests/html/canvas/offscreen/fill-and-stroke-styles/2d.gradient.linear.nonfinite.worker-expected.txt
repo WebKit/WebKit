@@ -1,0 +1,3 @@
+
+PASS createLinearGradient() throws TypeError if arguments are not finite
+

@@ -1,0 +1,7 @@
+This paragraph, and all textual contents in the document, should be green.
+
+This item should be green.
+And this element, part of a non-HTML namespace, should be green too
+
+PASS Universal selector matches expected elements
+

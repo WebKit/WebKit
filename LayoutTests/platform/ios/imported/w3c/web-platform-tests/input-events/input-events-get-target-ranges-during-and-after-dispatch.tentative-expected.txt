@@ -1,0 +1,7 @@
+abc
+
+
+FAIL Check consistency of getTargetRanges() result between during propagation and after propagation assert_equals: Should "b" be deleted expected "<p>ac</p>" but got "<p>abc</p>"
+FAIL Check consistency of getTargetRanges() result between before and after changing selection in an event listener assert_equals: Should "c" be deleted expected "<p>ab</p>" but got "<p>abc</p>"
+FAIL The result of getTargetRanges() of beforeinput event should be fixed at being dispatched assert_equals: Should "c" be deleted expected "<p>ab</p>" but got "<p>abc</p>"
+

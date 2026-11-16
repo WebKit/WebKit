@@ -1,0 +1,3 @@
+
+PASS Verify that when four radii are given to roundRect(), the second radius, specified as a DOMPoint, applies to the top-right corner.
+

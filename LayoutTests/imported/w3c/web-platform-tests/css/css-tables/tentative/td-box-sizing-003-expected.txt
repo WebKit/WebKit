@@ -1,0 +1,45 @@
+Tests of intrinsic cell sizing wrt border/padding, and box-sizing.
+
+box-sizing: content-box; border px; padding px.
+
+0,0
+0,0
+0,0
+box-sizing: border-box, border px, padding px.
+
+0,0
+0,0
+0,0
+box-sizing: border-box;padding: px, width px
+
+td's intrinsic width must be >= border + padding
+auto	auto
+box-sizing: border-box; border px; padding %.
+
+intrinsic size of % padding is 0.
+final size of % padding is computed against table's width.
+0,0
+0,0
+300px caption
+0,0
+0,0
+Block percentage resolution of TD children + row fixed height during intrinsic pass
+
+Chrome Legacy/Edge/Safari do not use row fixed height for percetage block size resolution.
+FF uses row height as %ge resolution size.
+Proposal: file an issue on what is the right thing to do.
+y
+y
+
+PASS table 1
+PASS table 2
+PASS table 3
+PASS table 4
+PASS table 5
+PASS table 6
+PASS table 7
+PASS table 8
+PASS table 9
+PASS table 10
+PASS table 11
+

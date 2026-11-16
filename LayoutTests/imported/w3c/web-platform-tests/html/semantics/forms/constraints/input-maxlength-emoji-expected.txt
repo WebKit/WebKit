@@ -1,0 +1,4 @@
+
+
+PASS Emoji gets truncated due to maxlength attribute
+

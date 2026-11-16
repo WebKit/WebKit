@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div contenteditable id="editable">First line.<br>Some text <a href="#">click me</a> <span>more</span> text.<br><i>Another line.</i></div>
+
+<script>
+if (accessibilityController) {
+    let output = "Tests that AttributedStrings are retrieved properly from line ranges within a contenteditable with children.\n\n";
+
+    let text = accessibilityController.accessibleElementById("editable");
+    let range = text.textMarkerRangeForElement(text);
+    let string = text.attributedStringForTextMarkerRange(range);
+    output += `All text in the contenteditable: "${string}"\n`;
+
+    // Get the line ranges for each of the three lines of text.
+    let start = text.startTextMarkerForTextMarkerRange(range);
+    for (i = 1; i <= 3; ++i) {
+        range = text.lineTextMarkerRangeForTextMarker(start);
+        string = text.attributedStringForTextMarkerRange(range);
+        output += `Line ${i}: "${string}"\n`;
+
+        // Get the range for the next line using the end of the current line:
+        start = text.endTextMarkerForTextMarkerRange(range);
+    }
+
+    debug(output);
+}
+</script>
+</body>
+</html>

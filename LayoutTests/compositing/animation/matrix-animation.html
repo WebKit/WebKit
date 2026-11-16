@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #box {
+            height: 100px;
+            width: 100px;
+            background-color: blue;
+            -webkit-transform: scale(0.1, 0.1);
+        }
+        
+        .animating {
+            -webkit-animation: zoom 1 0.05s forwards;
+        }
+        
+        @-webkit-keyframes zoom {
+            from {  }
+            to { -webkit-transform: scale(1, 1) translate(10px, 10px); }
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        
+        function doTest()
+        {
+            var box = document.getElementById('box');
+            box.addEventListener('webkitAnimationEnd', function() {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, false);
+            box.classList.add('animating');
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="box">
+    </div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<meta name="fuzzy" content="maxDifference=0-66; totalPixels=0-1680" />
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const c = document.getElementById("canvas");
+        const ctx = c.getContext("2d");
+
+        ctx.strokeStyle = "color(display-p3 1 0 0 / 1)";
+
+        ctx.beginPath();
+        ctx.moveTo(10, 10);
+        ctx.lineTo(290, 10);
+        ctx.stroke();
+
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(10, 50);
+        ctx.lineTo(290, 50);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgb(0, 255, 0)";
+
+        ctx.beginPath();
+        ctx.moveTo(10, 90);
+        ctx.lineTo(290, 90);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgb(0, 0, 255)";
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+        ctx.moveTo(10, 130);
+        ctx.lineTo(290, 130);
+        ctx.stroke();
+
+    </script>
+</body>

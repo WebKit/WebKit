@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<style>
+x-foo:state(a) { color: green; }
+</style>
+<x-foo id="host"></x-foo>
+<script>
+description("Mutating a CustomStateSet without changing its contents must not invalidate style.");
+
+class XFoo extends HTMLElement {
+    constructor() {
+        super();
+        this.internals = this.attachInternals();
+    }
+}
+customElements.define("x-foo", XFoo);
+
+const states = document.getElementById("host").internals.states;
+
+let lastCount = 0;
+function recalcs() {
+    document.body.offsetWidth;
+    const count = internals.styleRecalcCount();
+    const delta = count - lastCount;
+    lastCount = count;
+    return delta;
+}
+
+internals.startTrackingStyleRecalcs();
+recalcs();
+
+states.add("a");
+const addNew = recalcs();
+states.add("a");
+const addExisting = recalcs();
+states.delete("b");
+const deleteMissing = recalcs();
+states.delete("a");
+const deleteExisting = recalcs();
+states.add("a");
+recalcs();
+states.clear();
+const clearNonEmpty = recalcs();
+
+shouldBeTrue("addNew > 0");
+shouldBe("addExisting", "0");
+shouldBe("deleteMissing", "0");
+shouldBeTrue("deleteExisting > 0");
+shouldBeTrue("clearNonEmpty > 0");
+</script>

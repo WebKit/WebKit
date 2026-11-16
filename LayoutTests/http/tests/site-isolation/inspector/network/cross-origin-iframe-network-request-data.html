@@ -1,0 +1,66 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.RequestData");
+
+    function awaitResourceWithURLContaining(substring) {
+        return new Promise((resolve) => {
+            let listener = WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
+                if (!event.data.resource.url.includes(substring))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, listener);
+                resolve(event.data.resource);
+            });
+        });
+    }
+
+    async function triggerInIFrame(expression, urlSubstring) {
+        let frameTarget = await frameTargetForURLContaining("iframe-with-request-extras.html");
+        InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+        await waitForExpressionInTarget(frameTarget, `typeof ${expression.replace("()", "")} === 'function'`);
+
+        let resourcePromise = awaitResourceWithURLContaining(urlSubstring);
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        return resourcePromise;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.RequestData.CrossOriginIFrame.FetchText",
+        description: "A fetch POST with a text body in a cross-origin iframe should report the body as the resource's request data.",
+        async test() {
+            let resource = await triggerInIFrame("postTextWithFetch()", "fetch-post-text");
+            InspectorTest.expectEqual(resource.requestMethod, "POST", "Request method should be POST.");
+            InspectorTest.expectEqual(resource.requestData, "fetch body 👍", "Request data should be the fetch body.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.RequestData.CrossOriginIFrame.FetchEmpty",
+        description: "A fetch POST with an empty body in a cross-origin iframe should report no request data.",
+        async test() {
+            let resource = await triggerInIFrame("postEmptyWithFetch()", "fetch-post-empty");
+            InspectorTest.expectEqual(resource.requestMethod, "POST", "Request method should be POST.");
+            InspectorTest.expectNull(resource.requestData, "Request data should be null.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.RequestData.CrossOriginIFrame.XHRForm",
+        description: "An XHR POST with a form-encoded body in a cross-origin iframe should report the body as the resource's request data.",
+        async test() {
+            let resource = await triggerInIFrame("postFormWithXHR()", "xhr-post-form");
+            InspectorTest.expectEqual(resource.requestMethod, "POST", "Request method should be POST.");
+            InspectorTest.expectEqual(resource.requestData, "utf8=👍&name=value", "Request data should be the form-encoded body.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that request bodies of fetch and XHR POSTs sent from a cross-origin iframe reach the frontend under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-request-extras.html"></iframe>
+</body>

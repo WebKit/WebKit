@@ -1,0 +1,8 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation fails (memory_size3.wast:3)
+PASS #3 Test that WebAssembly compilation fails (memory_size3.wast:14)
+PASS #4 Reinitialize the default imports
+PASS #5 Test that WebAssembly compilation fails (memory_size3.wast:3)
+PASS #6 Test that WebAssembly compilation fails (memory_size3.wast:14)
+

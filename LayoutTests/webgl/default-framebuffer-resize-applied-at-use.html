@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL default framebuffer resize is applied when the default framebuffer is used</title>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that resizing the canvas updates the drawing buffer size at once, and that the default framebuffer is reallocated and cleared before it is next used, also when the canvas is resized back to the original size and read with readPixels(), drawImage() or toDataURL(), when the application state would affect the clear, or when the default framebuffer is used through blitFramebuffer(), and that the display buffer is cleared also when the canvas is resized back to the original size.");
+
+jsTestIsAsync = true;
+
+// The errors that the GPU process reports are printed asynchronously, which would make the output
+// depend on timing. The tests check the errors with getError().
+if (window.internals)
+    internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var canvas;
+var placeholder;
+var gl;
+var extension;
+var framebuffer;
+var renderbuffer;
+var pixel;
+
+function readPixel(x, y)
+{
+    var result = new Uint8Array(4);
+    gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, result);
+    return result.toString();
+}
+
+function releaseContext()
+{
+    if (gl && !gl.isContextLost()) {
+        var loseContext = gl.getExtension("WEBGL_lose_context");
+        if (loseContext)
+            loseContext.loseContext();
+    }
+    canvas = null;
+    placeholder = null;
+    gl = null;
+    extension = null;
+    framebuffer = null;
+    renderbuffer = null;
+    pixel = null;
+    gc();
+}
+
+function createContext(version, parameters)
+{
+    releaseContext();
+    canvas = document.createElement("canvas");
+    canvas.width = 4;
+    canvas.height = 4;
+    gl = canvas.getContext(version == 2 ? "webgl2" : "webgl", parameters);
+    if (!gl)
+        testFailed("Unable to create the context.");
+    return !!gl;
+}
+
+function testSeparateWidthAndHeight(version, parameters)
+{
+    debug("");
+    debug("WebGL " + version + " " + JSON.stringify(parameters) + ": the drawing buffer size follows each of separate width and height assignments.");
+    if (!createContext(version, parameters))
+        return;
+    canvas.width = 8;
+    shouldBe("gl.drawingBufferWidth", "8");
+    shouldBe("gl.drawingBufferHeight", "4");
+    canvas.height = 6;
+    shouldBe("gl.drawingBufferWidth", "8");
+    shouldBe("gl.drawingBufferHeight", "6");
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    pixel = readPixel(7, 5);
+    shouldBeEqualToString("pixel", "0,255,0,255");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    shouldBeFalse("gl.isContextLost()");
+}
+
+function testResizeBackClears(version, parameters)
+{
+    debug("");
+    debug("WebGL " + version + " " + JSON.stringify(parameters) + ": resizing and resizing back without using the default framebuffer clears it.");
+    if (!createContext(version, parameters))
+        return;
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    pixel = readPixel(0, 0);
+    shouldBeEqualToString("pixel", "0,255,0,255");
+    canvas.width = 5;
+    canvas.width = 4;
+    pixel = readPixel(0, 0);
+    shouldBeEqualToString("pixel", "0,0,0,0");
+    pixel = readPixel(3, 3);
+    shouldBeEqualToString("pixel", "0,0,0,0");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+function testBlitFromResizedDefaultFramebuffer(parameters)
+{
+    debug("");
+    debug("WebGL 2 " + JSON.stringify(parameters) + ": blitFramebuffer() from the default framebuffer after a resize reads the cleared drawing buffer at the new size.");
+    if (!createContext(2, parameters))
+        return;
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    canvas.width = 8;
+    canvas.height = 8;
+
+    framebuffer = gl.createFramebuffer();
+    renderbuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA8, 8, 8);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, renderbuffer);
+    gl.clearColor(1, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, framebuffer);
+    gl.blitFramebuffer(0, 0, 8, 8, 0, 0, 8, 8, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
+    pixel = readPixel(0, 0);
+    shouldBeEqualToString("pixel", "0,0,0,0");
+    pixel = readPixel(7, 7);
+    shouldBeEqualToString("pixel", "0,0,0,0");
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+function testBlitToResizedDefaultFramebuffer(parameters)
+{
+    debug("");
+    debug("WebGL 2 " + JSON.stringify(parameters) + ": blitFramebuffer() to the default framebuffer after a resize writes the drawing buffer at the new size.");
+    if (!createContext(2, parameters))
+        return;
+    canvas.width = 8;
+    canvas.height = 8;
+
+    framebuffer = gl.createFramebuffer();
+    renderbuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA8, 8, 8);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, renderbuffer);
+    gl.clearColor(0, 0, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+    gl.blitFramebuffer(0, 0, 8, 8, 0, 0, 8, 8, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+    // A multisampled draw framebuffer can't be the destination of a blit.
+    if (parameters.antialias) {
+        shouldBe("gl.getError()", "gl.INVALID_OPERATION");
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        return;
+    }
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    pixel = readPixel(0, 0);
+    shouldBeEqualToString("pixel", "0,0,255,255");
+    pixel = readPixel(7, 7);
+    shouldBeEqualToString("pixel", "0,0,255,255");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+function testResizeBackClearsWithApplicationState(parameters, state)
+{
+    debug("");
+    debug("WebGL 2 " + JSON.stringify(parameters) + ": resizing and resizing back without using the default framebuffer clears it when the application set " + state + ".");
+    if (!createContext(2, parameters))
+        return;
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    pixel = readPixel(0, 0);
+    shouldBeEqualToString("pixel", "0,255,0,255");
+    if (state == "RASTERIZER_DISCARD")
+        gl.enable(gl.RASTERIZER_DISCARD);
+    else
+        gl.drawBuffers([gl.NONE]);
+    canvas.width = 5;
+    canvas.width = 4;
+    pixel = readPixel(0, 0);
+    shouldBeEqualToString("pixel", "0,0,0,0");
+    pixel = readPixel(3, 3);
+    shouldBeEqualToString("pixel", "0,0,0,0");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+function readPixelThroughDrawImage(x, y)
+{
+    var canvas2D = document.createElement("canvas");
+    canvas2D.width = canvas.width;
+    canvas2D.height = canvas.height;
+    var context2D = canvas2D.getContext("2d");
+    context2D.drawImage(canvas, 0, 0);
+    return Array.from(context2D.getImageData(x, y, 1, 1).data).toString();
+}
+
+function drawRedAndResizeBack()
+{
+    gl.clearColor(1, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    // Resize to 2x8 and back to 4x4. No intermediate size needs less storage than 4x4, so the
+    // storage is reallocated only at the next use, to the size it already has.
+    canvas.height = 8;
+    canvas.width = 2;
+    canvas.width = 4;
+    canvas.height = 4;
+}
+
+var emptyDataURL;
+var dataURL;
+
+function testResizeBackClearsOtherReads(version, parameters)
+{
+    debug("");
+    debug("WebGL " + version + " " + JSON.stringify(parameters) + ": resizing and resizing back without using the default framebuffer clears it for the reads of the canvas contents.");
+    if (!createContext(version, parameters))
+        return;
+    emptyDataURL = canvas.toDataURL();
+
+    gl.clearColor(1, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    pixel = readPixelThroughDrawImage(0, 0);
+    shouldBeEqualToString("pixel", "255,0,0,255");
+    dataURL = canvas.toDataURL();
+    shouldBeFalse("dataURL == emptyDataURL");
+
+    drawRedAndResizeBack();
+    pixel = readPixelThroughDrawImage(0, 0);
+    shouldBeEqualToString("pixel", "0,0,0,0");
+    pixel = readPixelThroughDrawImage(3, 3);
+    shouldBeEqualToString("pixel", "0,0,0,0");
+
+    drawRedAndResizeBack();
+    dataURL = canvas.toDataURL();
+    shouldBeTrue("dataURL == emptyDataURL");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+function waitForPlaceholderCommit()
+{
+    return new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+}
+
+function placeholderPixel()
+{
+    var canvas2D = document.createElement("canvas");
+    canvas2D.width = 4;
+    canvas2D.height = 4;
+    var context2D = canvas2D.getContext("2d");
+    context2D.drawImage(placeholder, 0, 0);
+    return Array.from(context2D.getImageData(0, 0, 1, 1).data).toString();
+}
+
+async function testPlaceholderAfterResizeBack(parameters)
+{
+    debug("");
+    debug("WebGL 1 " + JSON.stringify(parameters) + ": resizing an OffscreenCanvas and resizing it back without using the default framebuffer clears the placeholder canvas.");
+    releaseContext();
+    placeholder = document.createElement("canvas");
+    placeholder.width = 4;
+    placeholder.height = 4;
+    canvas = placeholder.transferControlToOffscreen();
+    gl = canvas.getContext("webgl", parameters);
+    if (!gl) {
+        testFailed("Unable to create the context.");
+        return;
+    }
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    await waitForPlaceholderCommit();
+    pixel = placeholderPixel();
+    shouldBeEqualToString("pixel", "0,255,0,255");
+    // The placeholder is updated from the display buffer, which the resize back to the size of
+    // the storage does not reallocate.
+    canvas.width = 5;
+    canvas.width = 4;
+    await waitForPlaceholderCommit();
+    pixel = placeholderPixel();
+    shouldBeEqualToString("pixel", "0,0,0,0");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+var configurations = [
+    { antialias: false, preserveDrawingBuffer: false },
+    { antialias: true, preserveDrawingBuffer: false },
+    { antialias: false, preserveDrawingBuffer: true },
+    { antialias: true, preserveDrawingBuffer: true },
+];
+for (var parameters of configurations) {
+    for (var version of [1, 2]) {
+        testSeparateWidthAndHeight(version, parameters);
+        testResizeBackClears(version, parameters);
+        for (var premultipliedAlpha of [true, false])
+            testResizeBackClearsOtherReads(version, Object.assign({ premultipliedAlpha: premultipliedAlpha }, parameters));
+    }
+    testResizeBackClearsWithApplicationState(parameters, "RASTERIZER_DISCARD");
+    testResizeBackClearsWithApplicationState(parameters, "drawBuffers([NONE])");
+    testBlitFromResizedDefaultFramebuffer(parameters);
+    testBlitToResizedDefaultFramebuffer(parameters);
+}
+(async () => {
+    for (var parameters of configurations)
+        await testPlaceholderAfterResizeBack(parameters);
+    releaseContext();
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<script>
+  window.addEventListener('message', (event) => {
+
+    // Chrome can't access either frame.
+    // Firefox can access frame2 but not frame1.
+    // Safari can access frame1 but not frame2.
+    try {
+      window.parent.frames['frame1'];
+      alert('successfully accessed frame1');
+    } catch (e) { alert('could not access frame1'); }
+
+    try {
+      window.parent.frames['frame2'];
+      alert('successfully accessed frame2');
+    } catch (e) { alert('could not access frame2'); }
+
+    if (window.testRunner) { testRunner.notifyDone() }
+  });
+</script>

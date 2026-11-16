@@ -1,0 +1,12 @@
+
+PASS "left=500" should set BarProp visibility to false
+PASS "screenX=500" should set BarProp visibility to false
+PASS "top=500" should set BarProp visibility to false
+PASS "screenY=500" should set BarProp visibility to false
+PASS "width=500" should set BarProp visibility to false
+PASS "innerWidth=500" should set BarProp visibility to false
+PASS "outerWidth=500" should set BarProp visibility to false
+PASS "height=500" should set BarProp visibility to false
+PASS "innerHeight=500" should set BarProp visibility to false
+PASS "outerHeight=500" should set BarProp visibility to false
+

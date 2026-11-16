@@ -1,0 +1,32 @@
+
+PASS :configured:canvasType="onscreen"
+PASS :configured:canvasType="offscreen"
+PASS :single_frames:canvasType="onscreen"
+PASS :single_frames:canvasType="offscreen"
+PASS :multiple_frames:canvasType="onscreen"
+PASS :multiple_frames:canvasType="offscreen"
+PASS :resize:canvasType="onscreen"
+PASS :resize:canvasType="offscreen"
+PASS :expiry:canvasType="onscreen";prevFrameCallsite="runInNewCanvasFrame";getCurrentTextureAgain=true
+PASS :expiry:canvasType="onscreen";prevFrameCallsite="runInNewCanvasFrame";getCurrentTextureAgain=false
+PASS :expiry:canvasType="onscreen";prevFrameCallsite="requestAnimationFrame";getCurrentTextureAgain=true
+PASS :expiry:canvasType="onscreen";prevFrameCallsite="requestAnimationFrame";getCurrentTextureAgain=false
+PASS :expiry:canvasType="offscreen";prevFrameCallsite="runInNewCanvasFrame";getCurrentTextureAgain=true
+PASS :expiry:canvasType="offscreen";prevFrameCallsite="runInNewCanvasFrame";getCurrentTextureAgain=false
+PASS :expiry:canvasType="offscreen";prevFrameCallsite="requestAnimationFrame";getCurrentTextureAgain=true
+PASS :expiry:canvasType="offscreen";prevFrameCallsite="requestAnimationFrame";getCurrentTextureAgain=false
+PASS :compatibility:canvasType="onscreen"
+PASS :compatibility:canvasType="offscreen"
+PASS :usage_as_color_attachment_and_resolve_target:canvasType="onscreen";withView=true;asResolveTarget=true
+PASS :usage_as_color_attachment_and_resolve_target:canvasType="onscreen";withView=true;asResolveTarget=false
+PASS :usage_as_color_attachment_and_resolve_target:canvasType="onscreen";withView=false;asResolveTarget=true
+PASS :usage_as_color_attachment_and_resolve_target:canvasType="onscreen";withView=false;asResolveTarget=false
+PASS :usage_as_color_attachment_and_resolve_target:canvasType="offscreen";withView=true;asResolveTarget=true
+PASS :usage_as_color_attachment_and_resolve_target:canvasType="offscreen";withView=true;asResolveTarget=false
+PASS :usage_as_color_attachment_and_resolve_target:canvasType="offscreen";withView=false;asResolveTarget=true
+PASS :usage_as_color_attachment_and_resolve_target:canvasType="offscreen";withView=false;asResolveTarget=false
+PASS :usage_as_texture_binding:canvasType="onscreen";withView=true
+PASS :usage_as_texture_binding:canvasType="onscreen";withView=false
+PASS :usage_as_texture_binding:canvasType="offscreen";withView=true
+PASS :usage_as_texture_binding:canvasType="offscreen";withView=false
+

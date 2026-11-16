@@ -1,0 +1,6 @@
+
+
+PASS Checks that ':focus' pseudo-class matches inside 'focus' event handler
+PASS Checks that ':focus-visible' pseudo-class matches inside 'focus' event handler
+PASS Checks that ':focus-within' pseudo-class matches inside 'focus' event handler
+

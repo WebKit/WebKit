@@ -1,0 +1,39 @@
+Test stack trace detection heuristic.
+
+
+== Running test suite: WI.StackTrace.isLikelyStackTrace
+-- Running test case: notStacktrace
+PASS: Should NOT be a stacktrace.
+
+-- Running test case: WI.StackTrace.isLikelyStackTrace.TypeError
+PASS: Should be a stacktrace.
+
+-- Running test case: WI.StackTrace.isLikelyStackTrace.AnonymousFunctionError
+PASS: Should be a stacktrace.
+
+-- Running test case: WI.StackTrace.isLikelyStackTrace.NativeFunctionCallsError
+PASS: Should be a stacktrace.
+
+-- Running test case: WI.StackTrace.isLikelyStackTrace.ValidStackStrings
+PASS: "a@file:///ex.html:10:6\nb@file:///ex.html:7:6\nglobal code@file:///ex.html:12:2" should be a stacktrace.
+PASS: "global code@file:///ex.html:12:2\na@file:///ex.html:10:6\nb@file:///ex.html:7:6" should be a stacktrace.
+PASS: "global code@file:///ex.html:1:1\nmap@[native code]" should be a stacktrace.
+PASS: "object.run@http://example.com/app.js:10:6\nobject.get@http://example.com/app.js:7:6" should be a stacktrace.
+PASS: "render@http://localhost:3000/app.js:10:6\nupdate@http://localhost:3000/app.js:7:6" should be a stacktrace.
+PASS: "render@https://localhost:8443/app.js:10:6\nglobal code@https://localhost:8443/:7:6" should be a stacktrace.
+PASS: "render@blob:http://localhost:3000/9cd65344-d7a7-4d31-9b33-4fba1d8f4d0c:10:6\nupdate@blob:http://localhost:3000/9cd65344-d7a7-4d31-9b33-4fba1d8f4d0c:7:6" should be a stacktrace.
+PASS: "render@blob:https://example.com/9cd65344-d7a7-4d31-9b33-4fba1d8f4d0c:10:6\nupdate@blob:https://example.com/9cd65344-d7a7-4d31-9b33-4fba1d8f4d0c:7:6" should be a stacktrace.
+
+-- Running test case: WI.StackTrace.isLikelyStackTrace.InvalidStackStrings
+PASS: "video:1:2" should not be a stacktrace.
+PASS: "video/mp4:1:2" should not be a stacktrace.
+PASS: "video/mp4 : 11:22:33-44:55:66" should not be a stacktrace.
+PASS: "http://video:1:2" should not be a stacktrace.
+PASS: "http://video/mp4:1:2" should not be a stacktrace.
+PASS: "http://video/mp4 : 11:22:33-44:55:66" should not be a stacktrace.
+PASS: "caller@map@[native code]\nnext@map@[native code]" should not be a stacktrace.
+PASS: "render@http://localhost:invalid/app.js:10:6\nupdate@http://localhost:invalid/app.js:7:6" should not be a stacktrace.
+PASS: "render@http://localhost:3000/app.js:10\nupdate@http://localhost:3000/app.js:7" should not be a stacktrace.
+PASS: "render@blob:http://localhost:invalid/9cd65344-d7a7-4d31-9b33-4fba1d8f4d0c:10:6\nupdate@blob:http://localhost:invalid/9cd65344-d7a7-4d31-9b33-4fba1d8f4d0c:7:6" should not be a stacktrace.
+PASS: "render@blob:http://localhost:3000/9cd65344-d7a7-4d31-9b33-4fba1d8f4d0c:10\nupdate@blob:http://localhost:3000/9cd65344-d7a7-4d31-9b33-4fba1d8f4d0c:7" should not be a stacktrace.
+

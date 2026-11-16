@@ -1,0 +1,101 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addIFrame() {
+    iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/inspector/network/resources/get-response-body-iframe.html";
+    iframe.addEventListener("load", () => iframe.contentWindow.postMessage({type: "TriggerLoads"}, "*"));
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    // Exercises the error paths of Network.getResponseBody under Site Isolation, all issued
+    // against ProxyingNetworkAgent (WI.backendTarget.NetworkAgent). A process-qualified
+    // requestId has the form "request-<processID>.<resourceID>" (see InspectorIdentifierRegistry).
+    // We derive a real, live requestId from a loaded resource, then perturb it to hit each
+    // failure branch: malformed (parse failure), unknown process, and unknown resource in a
+    // real process (BackendResourceDataStore miss).
+
+    function waitForResource(urlSubstring) {
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource || !resource.url || !resource.url.includes(urlSubstring))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    async function expectGetResponseBodyToFail(requestId, label) {
+        try {
+            await WI.backendTarget.NetworkAgent.getResponseBody(requestId);
+            InspectorTest.expectThat(false, `${label}: getResponseBody should have failed.`);
+        } catch (e) {
+            InspectorTest.expectThat(true, `${label}: getResponseBody should fail.`);
+            InspectorTest.log(`  Error: ${e.message || e}`);
+        }
+    }
+
+    let realRequestId;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ErrorCases");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ErrorCases.ValidControl",
+        description: "A valid requestId for a loaded cross-origin-iframe resource should succeed (control).",
+        async test() {
+            let resourcePromise = waitForResource("echo.py");
+            InspectorTest.evaluateInPage("addIFrame()");
+            let resource = await resourcePromise;
+            if (!resource.finished && !resource.failed)
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+            realRequestId = resource.requestIdentifier;
+            InspectorTest.expectThat(!!realRequestId, "Loaded resource should have a request identifier.");
+
+            let {body} = await WI.backendTarget.NetworkAgent.getResponseBody(realRequestId);
+            InspectorTest.expectEqual(body, "si-cross-origin-response-body", "Control: valid requestId should return the served content.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ErrorCases.Malformed",
+        description: "A malformed requestId should fail to parse (Invalid requestId format).",
+        async test() {
+            await expectGetResponseBodyToFail("not-a-valid-request-id", "Malformed string");
+            await expectGetResponseBodyToFail("request-abc.def", "Non-numeric ids");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ErrorCases.UnknownProcess",
+        description: "A well-formed requestId whose process does not exist should fail (WebProcess not found).",
+        async test() {
+            // Keep the resource id, swap in a process id that cannot match any live WebContent process.
+            let unknownProcess = realRequestId.replace(/^request-\d+\./, "request-4294967295.");
+            await expectGetResponseBodyToFail(unknownProcess, "Unknown process");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ErrorCases.UnknownResource",
+        description: "A well-formed requestId routed to a real process but for an unknown resource should fail (missing in BackendResourceDataStore).",
+        async test() {
+            // Keep the (real, live) process id, swap in a resource id that was never created.
+            let unknownResource = realRequestId.replace(/\.\d+$/, ".4294967295");
+            await expectGetResponseBodyToFail(unknownResource, "Unknown resource in real process");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests the error paths of Network.getResponseBody under Site Isolation (malformed requestId, unknown process, unknown resource), routed through ProxyingNetworkAgent.</p>
+</body>

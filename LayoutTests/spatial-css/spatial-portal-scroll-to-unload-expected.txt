@@ -1,0 +1,3 @@
+
+PASS A <model> in a spatial portal unloads when scrolled out of view and reloads when scrolled back
+

@@ -1,0 +1,5 @@
+
+FAIL In singlecast, encodingIndex is 0 assert_equals: encodingIndex is 0 expected (number) 0 but got (undefined) undefined
+FAIL In simulcast, encodingIndex reflects index of sendEncodings assert_equals: outbound-rtp with rid:'foo' has encodingIndex 0 expected (number) 0 but got (undefined) undefined
+PASS encodingIndex is undefined for audio streams
+

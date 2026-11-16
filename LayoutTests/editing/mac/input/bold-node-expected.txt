@@ -1,0 +1,3 @@
+Test for rdar://problem/6988023: Only the last Korean character can be shown if font style is enabled while typing.
+
+PASS

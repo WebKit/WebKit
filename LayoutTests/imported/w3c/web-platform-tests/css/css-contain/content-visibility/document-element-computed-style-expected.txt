@@ -1,0 +1,3 @@
+
+PASS Verifies that ComputedStyle gets updated when the documentElement's style is dirtied in the presence of content-visibility.
+

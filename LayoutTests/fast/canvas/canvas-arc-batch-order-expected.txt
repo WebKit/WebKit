@@ -1,0 +1,12 @@
+Single-arc strokes are batched with their stroke color and width. Interleaved with lines, fills, transforms and style changes, they must draw in order and with the right style, and a cross-buffer drawImage must flush them.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS batchedNonBlank is > 10000
+PASS unbatchedBytesDifferent is 0
+PASS crossBufferBytesDifferent is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,5 @@
+press me press me too
+
+FAIL preventDefault() in a pointerdown listener on the link does not suppress the prefetch assert_equals: conservative candidate must not be prefetched before any interaction expected 0 but got 1
+FAIL preventDefault() and stopImmediatePropagation() in a capturing window listener do not suppress the prefetch assert_equals: conservative candidate must not be prefetched before any interaction expected 0 but got 1
+

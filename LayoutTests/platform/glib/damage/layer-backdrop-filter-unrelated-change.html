@@ -1,0 +1,23 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .far { position: fixed; left: 400px; top: 400px; width: 50px; height: 50px; background-color: green; }
+      .backdrop { position: fixed; left: 20px; top: 20px; width: 60px; height: 60px; backdrop-filter: blur(5px); }
+    </style>
+  </head>
+  <body>
+    <div class="far"></div>
+    <div class="backdrop"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+      var far = document.getElementsByClassName("far")[0];
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { far.style.backgroundColor = "red"; },
+          () => { assertRectsEq(latestFrameDamage().rects, [[400, 400, 50, 50]]); },
+      ], 0);
+    </script>
+  </body>
+</html>

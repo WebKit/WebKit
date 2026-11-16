@@ -1,0 +1,17 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "SkAnimCodecPlayer.cpp",
+        "SkAnimCodecPlayer.h",
+        "SkResources.cpp",
+    ],
+    visibility = ["//modules/skresources:__pkg__"],
+)

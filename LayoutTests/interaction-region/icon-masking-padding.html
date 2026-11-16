@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    img {
+        position: absolute;
+        top: 20px;
+        cursor: pointer;
+    }
+    #no-padding { left: 20px; }
+    #padding {
+        left: 80px;
+        padding: 14px 0 22px 0;
+    }
+    #padding-swapped {
+        left: 640px;
+        padding: 22px 0 14px 0;
+    }
+    #padding-and-border {
+        left: 140px;
+        padding: 10px 6px 0 20px;
+        border: 4px solid transparent;
+    }
+    #object-fit-contain {
+        left: 240px;
+        width: 62px;
+        height: 62px;
+        object-fit: contain;
+    }
+    #object-fit-none {
+        left: 340px;
+        width: 61px;
+        height: 63px;
+        object-fit: none;
+        object-position: 5px 40px;
+    }
+    #object-fit-cover {
+        left: 440px;
+        width: 62px;
+        height: 62px;
+        object-fit: cover;
+    }
+    #empty-content-box {
+        left: 540px;
+        padding: 20px;
+    }
+    #flipped {
+        left: 20px;
+        top: 120px;
+        padding-left: 20px;
+        transform: scaleX(-1);
+    }
+    #scaled-container {
+        position: absolute;
+        left: 100px;
+        top: 120px;
+        width: 31px;
+        height: 49px;
+        transform: scale(2);
+        transform-origin: 0 0;
+    }
+    #scaled {
+        left: 0;
+        top: 0;
+        padding: 14px 0 22px 0;
+    }
+    #clipping-container {
+        position: absolute;
+        left: 200px;
+        top: 120px;
+        width: 31px;
+        height: 30px;
+        overflow: hidden;
+    }
+    #clipped {
+        left: 0;
+        top: -10px;
+        padding-top: 24px;
+    }
+</style>
+<body>
+<!--
+    An icon's interaction region covers its border box and is clipped to the shape of its image. The image is
+    painted inside the padding and border, and object-fit and object-position can move and resize it, so the
+    shape is rasterized where the image is painted, instead of stretching the image over the border box, and a
+    guard around the shape keeps the rest of the box interactive. Copies of the same image in boxes of the same
+    size get their own shape when their padding puts the image somewhere else. Under a transform the shape stays
+    where the image is, even when a flip moves it. Painting clips an overflowing image to the content box, which
+    the shape can't represent, so such an image, and one without a content box, uses the shape of its box.
+-->
+<section id="test">
+    <img id="no-padding" src="resources/color-dots.png" width="31" height="13">
+    <img id="padding" src="resources/color-dots.png" width="31" height="13">
+    <img id="padding-swapped" src="resources/color-dots.png" width="31" height="13">
+    <img id="padding-and-border" src="resources/color-dots.png" width="31" height="13">
+    <img id="object-fit-contain" src="resources/color-dots-2x.png">
+    <img id="object-fit-none" src="resources/color-dots.png">
+    <img id="object-fit-cover" src="resources/color-dots.png">
+    <img id="empty-content-box" src="resources/color-dots.png" width="0" height="0">
+    <img id="flipped" src="resources/color-dots.png" width="31" height="13">
+    <div id="scaled-container">
+        <img id="scaled" src="resources/color-dots-2x.png" width="31" height="13">
+    </div>
+    <div id="clipping-container">
+        <img id="clipped" src="resources/color-dots.png" width="31" height="13">
+    </div>
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById("test").remove();
+};
+</script>
+</body>
+</html>

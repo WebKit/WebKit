@@ -1,0 +1,44 @@
+<html>
+<head>
+<style>
+div {
+  display: -moz-box;
+  display: -webkit-box;
+  display: box;
+  background-color: blue;
+  width: 100px;
+  height: 100px;
+}
+
+.first {
+  visibility: collapse;
+  background-color: red;
+  -moz-box-flex: 1;
+  -webkit-box-flex: 1;
+  box-flex: 1;
+  width: 50px;
+  height: 100px;
+}
+
+.second {
+  background-color: green;
+  -moz-box-flex: 1;
+  -webkit-box-flex: 1;
+  box-flex: 1;
+  width: 50px;
+  height: 100px;
+}
+
+</style>
+</head>
+<body>
+<!--
+If used on elements other than rows, row groups, columns, or column groups, collapse has the same meaning as hidden.
+https://drafts.csswg.org/css2/#visibility
+-->
+<div>
+  <div class="first"></div>
+  <div class="second"></div>
+</div>
+</body>
+</html>

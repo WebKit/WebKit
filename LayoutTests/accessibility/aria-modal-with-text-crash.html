@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="modal" role="dialog" aria-modal="true">
+  <span>Foo</span>
+</div>
+    
+<script>
+    var testOutput = "This test ensures we don't crash when using search to traverse an aria-modal with text.\n\n";
+
+    if (window.accessibilityController) {
+        const modal = accessibilityController.accessibleElementById("modal");
+        let searchResult = null;
+        while (true) {
+            searchResult = modal.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+            if (!searchResult)
+                break;
+            const role = searchResult.role;
+            testOutput += `\n${role}`;
+            if (role.includes("StaticText")) {
+                let textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+                testOutput += `\n${textContent}`;
+            }
+            testOutput += "\n";
+        }
+        debug(testOutput);
+    }
+</script>
+</body>
+</html>
+
+

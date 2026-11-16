@@ -1,0 +1,5 @@
+
+
+FAIL `window.requestResize()` from the parent frame throws DOM NotAllowedError assert_throws_dom: function "() => window.requestResize()" threw object "TypeError: window.requestResize is not a function. (In 'window.requestResize()', 'window.requestResize' is undefined)" that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+FAIL `window.requestResize()` from iframe without `responsive-embedded-sizing` meta tag throws DOM NotAllowedError assert_equals: expected "NotAllowedError" but got "TypeError"
+

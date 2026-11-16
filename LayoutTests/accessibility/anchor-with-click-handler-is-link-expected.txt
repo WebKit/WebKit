@@ -1,0 +1,24 @@
+This test ensures an anchor with a click handler but no href is exposed as a link.
+
+PASS: isExposedAsLink('anchor-with-onclick') === true
+PASS: isExposedAsLink('anchor-without-handler') === false
+
+Dynamically added anchor with onclick is a link:
+PASS: isExposedAsLink('dynamic-anchor-with-onclick') === true
+
+Adding a click handler to a hrefless anchor turns it into a link:
+PASS: isExposedAsLink('click-toggle-anchor') === true
+
+Removing the only click handler reverts it to not being a link:
+PASS: isExposedAsLink('click-toggle-anchor') === false
+
+Removing the href from a link with no click handler stops it being a link:
+PASS: isExposedAsLink('href-toggle-anchor') === false
+
+Restoring the href makes it a link again:
+PASS: isExposedAsLink('href-toggle-anchor') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Anchor with onclick Anchor without click handler or href Anchor that gains then loses a click handler Anchor that loses then regains its href Dynamically added anchor with onclick

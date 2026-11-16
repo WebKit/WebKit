@@ -1,0 +1,18 @@
+Tests that an observation is received after disconnecting a visible target
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS observations.length is 1
+PASS observations[0].target.tagName is "DIV"
+PASS observations[0].target.foo is 1
+PASS observations[0].isIntersecting is true
+* Removing target from document
+PASS observations.length is 1
+PASS observations[0].target.tagName is "DIV"
+PASS observations[0].target.foo is 1
+PASS observations[0].isIntersecting is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

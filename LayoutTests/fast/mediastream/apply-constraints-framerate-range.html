@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test.js"></script>
+        <script src="resources/apply-constraints-utils.js"></script>
+        <script>
+
+            let tests = [
+                {
+                    message: "set width, height, and frame rate to valid values.",
+                    constraint: { width: 1280, height: 720, frameRate: 20 },
+                    expected: { width: 1280, height: 720, frameRate: 20 },
+                },
+                {
+                    message: "frame rate 'min' and 'max' set, current value already satisfies both and there is no 'ideal', frame rate should not change.",
+                    constraint: { frameRate: { min: 10, max: 25 } },
+                    expected: { frameRate: 20 },
+                },
+                {
+                    message: "frame rate 'max' only set, current value already satisfies it and there is no 'ideal', frame rate should not change.",
+                    constraint: { frameRate: { max: 25 } },
+                    expected: { frameRate: 20 },
+                },
+                {
+                    message: "frame rate 'max' only set, current value exceeds it, frame rate should be clamped down.",
+                    constraint: { frameRate: { max: 15 } },
+                    expected: { frameRate: 15 },
+                },
+                {
+                    message: "frame rate 'min' only set, current value already satisfies it and there is no 'ideal', frame rate should not change.",
+                    constraint: { frameRate: { min: 10 } },
+                    expected: { frameRate: 15 },
+                },
+                {
+                    message: "frame rate 'min' only set, current value is below it, frame rate should be clamped up.",
+                    constraint: { frameRate: { min: 20 } },
+                    expected: { frameRate: 20 },
+                },
+            ];
+
+            let tester = new ConstraintsTest({ video: true }, tests, "Tests applyConstraints with frame rate min/max range constraints on a video stream track.")
+                .onStreamReady((s) => {
+                    stream = s;
+                    shouldBe('stream.getVideoTracks().length', '1');
+                    tester.setStreamTrack(stream.getVideoTracks()[0]);
+                })
+                .onVideoReady((v) => {
+                    video = v;
+                })
+                .start();
+
+        </script>
+    </head>
+    <body>
+        <video controls id="video"</video>
+        <br>
+        <div id="div"></div>
+
+    </body>
+</html>

@@ -1,0 +1,15 @@
+
+PASS eval of TrustedScript works.
+PASS indirect eval of TrustedScript works.
+PASS eval of string fails.
+PASS indirect eval of string fails.
+PASS eval of !TrustedScript and !string works.
+PASS Function constructor of TrustedScript works.
+PASS Function constructor of string fails.
+PASS Function constructor of all TrustedScripts works.
+PASS Function constructor of all strings fails.
+PASS Function constructor of string and TrustedScript fails.
+PASS AsyncFunction constructor of string fails.
+PASS GeneratorFunction constructor of string fails.
+PASS AsyncGeneratorFunction constructor of string fails.
+

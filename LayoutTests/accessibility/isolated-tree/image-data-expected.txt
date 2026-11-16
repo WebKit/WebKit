@@ -1,0 +1,17 @@
+This tests that AXImageDataSize and AXImageData can be retrieved for image elements.
+
+PASS: image.imageDataSize.indexOf('AXImageDataSize') >= 0 === true
+PASS: image.imageDataSize.indexOf('{0, 0}') >= 0 === false
+PASS: image.imageDataForParameters(100, 100) === 'AXImageData: 40000 bytes'
+PASS: image.imageDataForParameters(0, 0) === 'AXImageData: 234080 bytes'
+PASS: image.imageDataForParametersWithFormat(100, 100, 'PNG') === '(null)'
+PASS: image.imageDataForSubrect(200, 200, 10, 10, 50, 50) === 'AXImageData: 10000 bytes'
+PASS: image.imageDataForSubrect(100, 100, 80, 80, 50, 50) === 'AXImageData: 10000 bytes'
+PASS: image.imageDataForSubrect(0, 0, 250, 200, 100, 100) === 'AXImageData: 40000 bytes'
+PASS: nonImage.imageDataForParameters(100, 100) === '(null)'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Not an image

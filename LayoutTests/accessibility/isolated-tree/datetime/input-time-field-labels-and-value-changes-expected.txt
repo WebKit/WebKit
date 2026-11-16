@@ -1,0 +1,29 @@
+Tests that field values update correctly for time inputs.
+
+Original time value:
+PASS: axTimeInput.stringValue.includes('3:45') === true
+PASS: axTimeInput.stringValue.includes('PM') === true
+Focus input element and press up arrow to increment the hour field:
+PASS: axTimeInput.stringValue.includes('4:45') === true
+Press down arrow twice to decrement the hour field.
+PASS: axTimeInput.stringValue.includes('2:45') === true
+Press the tab key to move to the minutes field.
+Type 10 in the minutesfield.
+PASS: axTimeInput.stringValue.includes('2:10') === true
+Press down arrow to decrement the minutes field.
+PASS: axTimeInput.stringValue.includes('2:09') === true
+Press up arrow twice to increment the minutes field.
+PASS: axTimeInput.stringValue.includes('2:11') === true
+Press right arrow to move to the meridiem field.
+Press down arrow to change from PM to AM.
+PASS: axTimeInput.stringValue.includes('AM') === true
+Press up arrow to change from AM to PM.
+PASS: axTimeInput.stringValue.includes('PM') === true
+Set the time via JavaScript.
+PASS: axTimeInput.stringValue.includes('5:00') === true
+PASS: axTimeInput.stringValue.includes('PM') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

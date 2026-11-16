@@ -1,0 +1,16 @@
+
+PASS Property view-transition-name value 'ident(myident)'
+PASS Property view-transition-name value 'ident("myident")'
+PASS Property view-transition-name value 'ident("myident" 3)'
+PASS Property view-transition-name value 'ident(3 "myident")'
+PASS Property view-transition-name value 'ident("my" "ident")'
+PASS Property view-transition-name value 'ident(my "ident")'
+PASS Property view-transition-name value 'ident("my" ident)'
+PASS Property view-transition-name value 'ident(my ident)'
+PASS Property view-transition-name value 'ident(-- myident)'
+PASS Property view-transition-name value 'ident(my 3 3 3 3 ident)'
+PASS Property view-transition-name value 'ident("--prop" calc(1 + 2))'
+PASS Property view-transition-name value 'ident(5px)'
+PASS Property view-transition-name value 'ident(rgb(1, 2, 3))'
+PASS Property view-transition-name value 'ident("myident" 42)'
+

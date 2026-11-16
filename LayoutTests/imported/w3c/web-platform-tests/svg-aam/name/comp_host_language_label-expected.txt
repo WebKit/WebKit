@@ -1,0 +1,39 @@
+SVG-AAM: Label Tests
+
+Tests SVG-specific host language label rules (title element and xlink:title attr) in SVG-AAM Â§8.1 Name and Description, but note the open issues in SVG-AAM #31.
+
+SVG * > title
+
+
+
+Interactive Elements > SVG > title
+
+
+SVG a[xlink:title][href]
+
+
+
+SVG a[xlink:title][xlink:href]:not([href])
+
+
+
+
+PASS circle > title
+PASS rect > title
+PASS polygon > title
+PASS g > title
+PASS a > circle > title
+PASS a > rect > title
+PASS a > polygon > title
+PASS button > circle > title
+PASS button > rect > title
+PASS button > polygon > title
+PASS [xlink:title][href] > circle
+PASS [xlink:title][href] > rect
+PASS [xlink:title][href] > polygon
+PASS [xlink:title][href] > g
+PASS [xlink:title][xlink:href] > circle
+PASS [xlink:title][xlink:href] > rect
+PASS [xlink:title][xlink:href] > polygon
+PASS [xlink:title][xlink:href] > g
+

@@ -1,0 +1,8 @@
+This tests that the AXMenuOpened notification does not get fired for a menu that is invalid (does not have a menu item child).
+
+The item should not have a menu role: AXRole: AXGroup
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

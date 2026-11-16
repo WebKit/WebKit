@@ -1,0 +1,4 @@
+
+
+PASS Cross-origin element ready check with no allowfullscreen or allow attribute
+

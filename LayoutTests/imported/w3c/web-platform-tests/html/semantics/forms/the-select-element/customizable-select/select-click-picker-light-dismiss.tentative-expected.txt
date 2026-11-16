@@ -1,0 +1,4 @@
+
+
+PASS Clicking directly on ::picker(select) should not trigger light dismiss.
+

@@ -1,0 +1,23 @@
+ic letter-spacing with zoom 1.5
+em letter-spacing with zoom 1.5
+ic letter-spacing with zoom 2
+em letter-spacing with zoom 2
+ic line-height with zoom 1.5
+em line-height with zoom 1.5
+cap font-size with zoom 1.5
+ex font-size with zoom 1.5
+ch font-size with zoom 1.5
+ic font-size with zoom 1.5
+cap font-size with zoom 2
+ex font-size with zoom 2
+ch font-size with zoom 2
+ic font-size with zoom 2
+
+PASS ic equals em for letter-spacing under CSS zoom 1.5
+PASS ic equals em for letter-spacing under CSS zoom 2
+PASS ic equals em for line-height under CSS zoom 1.5
+PASS cap font-size resolves to identical unzoomed value across CSS zoom levels
+PASS ex font-size resolves to identical unzoomed value across CSS zoom levels
+PASS ch font-size resolves to identical unzoomed value across CSS zoom levels
+PASS ic font-size resolves to identical unzoomed value across CSS zoom levels
+

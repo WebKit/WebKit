@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Partial repaint inside a CSS-zoomed iframe must propagate a zoom-scaled damage rect to the owner</title>
+<style>
+  iframe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200px;
+    height: 200px;
+    border: none;
+    zoom: 1.5;
+  }
+</style>
+</head>
+<body>
+<iframe id="frame" scrolling="no" srcdoc="
+  <!DOCTYPE html>
+  <style>
+    html, body {
+      margin: 0;
+    }
+    #canvas {
+      display: block;
+    }
+  </style>
+  <canvas id='canvas' width='80' height='80'></canvas>
+"></iframe>
+<pre id="repaints"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const frame = document.getElementById("frame");
+
+async function test() {
+    await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    const canvasContext = frame.contentDocument.getElementById("canvas").getContext("2d");
+    canvasContext.fillStyle = "green";
+    canvasContext.fillRect(0, 0, 80, 80);
+
+    document.body.offsetTop;
+
+    if (window.internals) {
+        document.getElementById("repaints").textContent = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+test();
+</script>
+</body>
+</html>

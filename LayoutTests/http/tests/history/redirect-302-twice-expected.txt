@@ -1,0 +1,10 @@
+This page is the target of a redirect.
+
+PASS: History item count should be 3 and is.
+
+
+============== Back Forward List ==============
+        http://127.0.0.1:8000/history/redirect-302-twice.html
+        http://127.0.0.1:8000/history/resources/redirect-target.html#2
+curr->  http://127.0.0.1:8000/history/resources/redirect-target.html#3
+===============================================

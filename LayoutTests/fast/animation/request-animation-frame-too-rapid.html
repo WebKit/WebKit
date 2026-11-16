@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<span id="e"></span>
+<span id="f"></span>
+<script>
+window.jsTestIsAsync = true;
+description("Tests that requestAnimationFrame callbacks aren't called too rapidly (above 1000FPS)");
+
+var numCallbacks = 0;
+var e = document.getElementById("e");
+
+function next() {
+    window.requestAnimationFrame(function () {
+        numCallbacks++;
+        next();
+    }, e);
+}
+
+next();
+
+// Set the timeout after the first callback.
+setTimeout(function() {
+    shouldBeGreaterThanOrEqual("100", "numCallbacks");
+    finishJSTest();
+}, 100);
+
+
+</script>
+</body>
+</html>

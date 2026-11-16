@@ -1,0 +1,13 @@
+This tests that modifier keys are propagated to the fake mouse event created when you press return and a link has focus.
+
+If the test succeeds, you should see six "PASS" messages below.
+
+This is the link used for testing.
+
+PASS: click event had all the right key state.
+PASS: click event had all the right key state.
+PASS: click event had all the right key state.
+PASS: click event had all the right key state.
+PASS: click event had all the right key state.
+PASS: click event had all the right key state.
+

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+</head>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<style>
+* { outline: none; }
+div { width: 100px; height: 100px; background: gray; }
+div:focus { background: red; }
+div:focus-within { color: green; }
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+const host = document.createElement('div');
+document.body.appendChild(host);
+
+const shadowRoot = host.attachShadow({mode: 'closed', delegatesFocus: true});
+shadowRoot.innerHTML = `
+<style>
+:host { position: relative; }
+div { position: absolute; width: 100px; height: 100px; left: 0px; top: 0px; }
+div:focus { background: green; }
+</style>
+<div id="target" tabindex="0"></div>
+<div>Click here</div>`;
+
+async function runTest() {
+    testRunner.dumpAsText();
+
+    await UIHelper.activateElement(host);
+    await UIHelper.ensurePresentationUpdate();
+    await new Promise(requestAnimationFrame);
+
+    const pre = document.body.appendChild(document.createElement('pre'));
+    log = (text) => pre.textContent += text + '\n';
+
+    log('document.activeElement: ' + (document.activeElement == host ? 'PASS' : 'FAIL'));
+    log('host.activeElement: ' + (shadowRoot.activeElement == shadowRoot.getElementById('target') ? 'PASS' : 'FAIL'));
+}
+
+if (window.testRunner)
+    UIHelper.wait(runTest());
+
+</script>
+</body>
+</html>

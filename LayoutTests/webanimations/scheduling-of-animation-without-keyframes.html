@@ -1,0 +1,20 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div></div>
+<script>
+
+const noKeyframesTest = (keyframes, label) => {
+    promise_test(async () => {
+        const animation = document.querySelector("div").animate(keyframes, 1000);
+        await animation.ready;
+        animation.currentTime = 100;
+        assert_equals(internals.timeToNextAnimationTick(animation), 900);
+    }, `Computing the time until the next tick for an effect with ${label} keyframes parameter.`);
+}
+
+noKeyframesTest(null, "null");
+noKeyframesTest({}, "{}");
+noKeyframesTest([], "[]");
+noKeyframesTest({ foo: "bar" }, "invalid CSS property");
+
+</script>

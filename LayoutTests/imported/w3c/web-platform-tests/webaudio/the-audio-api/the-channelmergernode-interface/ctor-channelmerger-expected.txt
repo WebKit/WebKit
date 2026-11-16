@@ -1,0 +1,7 @@
+
+PASS Initialize AudioContext for ChannelMergerNode tests
+PASS Invalid constructor behavior for ChannelMergerNode
+PASS Default constructor behavior for ChannelMergerNode
+PASS AudioNodeOptions behavior for ChannelMergerNode
+PASS Constructor options validation for ChannelMergerNode
+

@@ -1,0 +1,4 @@
+Old content in light DOM
+
+FAIL <template contentmethod> inside a <template shadowrootmode><div> should apply directly to its target assert_equals: expected "New content" but got "Old content in shadow DOM"
+

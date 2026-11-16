@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that removing the document element inside an intercepted navigate handler does not crash. WebKit should not hit assertions or crash under ASAN.</p>
+<iframe src="resources/navigation-api-remove-document-element-in-navigate-handler-crash-inner.html"></iframe>
+<div id="result"></div>
+<script>
+
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+
+function scheduleFinish() {
+  setTimeout(() => {
+    result.textContent = 'PASS';
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }, 0);
+}
+
+</script>
+</body>
+</html>

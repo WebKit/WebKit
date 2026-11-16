@@ -1,0 +1,20 @@
+<script src="/media-resources/utilities.js"></script>
+<script>
+// Plays a near-silent WebAudio tone, then reports to its parent whether its own process's audio
+// session became active. Used by the same-site and cross-site iframe activation tests.
+let context;
+
+async function startAudioAndReport()
+{
+    context = await startNearSilentAudioContext();
+    let active = true;
+    try {
+        await waitForAudioSessionActiveState(true);
+    } catch (e) {
+        active = false;
+    }
+    window.parent.postMessage(active ? "active" : "inactive", "*");
+}
+
+startAudioAndReport();
+</script>

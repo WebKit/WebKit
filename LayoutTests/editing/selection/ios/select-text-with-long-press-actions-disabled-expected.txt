@@ -1,0 +1,10 @@
+Verifies that text can be selected in a web view with long press actions disabled. Requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().toString() became 'Apple'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Apple

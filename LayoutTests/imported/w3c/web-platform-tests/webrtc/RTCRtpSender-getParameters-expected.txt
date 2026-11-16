@@ -1,0 +1,3 @@
+
+PASS getParameters() surfaces codecs on two-way sender with addTrack at the right time
+

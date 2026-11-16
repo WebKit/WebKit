@@ -1,0 +1,17 @@
+
+FAIL A writable stream opens in siloed mode by default assert_equals: expected (string) "siloed" but got (undefined) undefined
+FAIL A writable stream in siloed mode has a mode property equal to siloed assert_equals: expected (string) "siloed" but got (undefined) undefined
+PASS A writable stream in siloed mode takes a lock that is shared
+PASS When there's an open writable stream in siloed mode on a file, can open another writable stream in siloed on a different file
+PASS When there's an open writable stream in siloed mode on a file, can open another writable stream in exclusive on a different file
+FAIL When there's an open writable stream in siloed mode on a file, cannot open another writable stream in exclusive on that same file assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL After all writable streams in siloed mode on a file has been closed, can open another writable stream in exclusive on the same file assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL A writable stream in exclusive mode has a mode property equal to exclusive assert_equals: expected (string) "exclusive" but got (undefined) undefined
+FAIL A writable stream in exclusive mode takes a lock that is exclusive assert_equals: expected "exclusive" but got "shared"
+PASS When there's an open writable stream in exclusive mode on a file, can open another writable stream in siloed on a different file
+FAIL When there's an open writable stream in exclusive mode on a file, cannot open another writable stream in siloed on that same file assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL After a writable stream in exclusive mode on a file has been closed, can open another writable stream in siloed on the same file assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS When there's an open writable stream in exclusive mode on a file, can open another writable stream in exclusive on a different file
+FAIL When there's an open writable stream in exclusive mode on a file, cannot open another writable stream in exclusive on that same file assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL After a writable stream in exclusive mode on a file has been closed, can open another writable stream in exclusive on the same file assert_unreached: Should have rejected: undefined Reached unreachable code
+

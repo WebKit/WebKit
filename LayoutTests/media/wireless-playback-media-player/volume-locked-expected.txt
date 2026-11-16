@@ -1,0 +1,14 @@
+
+Test that setVolumeLocked prevents video.volume from being propagated to a MediaDeviceRoute.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+RUN(internals.setPageMediaVolume(1))
+RUN(internals.setMediaElementVolumeLocked(video, true))
+RUN(video.volume = 0.5)
+EXPECTED (route.volume == '1') OK
+END OF TEST
+

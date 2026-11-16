@@ -1,0 +1,16 @@
+This tests that resize event is not dispatched on visualViewport as a part of updateLayout
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+iframeB.style.width = "200px"; updateLayout(iframeB)
+iframeA.style.width = "200px"; updateLayout(iframeA)
+iframeAA.style.width = "200px"; updateLayout(iframeAA)
+PASS logs.length is 0
+After requestAnimationFrame
+PASS logs.length is 3
+PASS logs.join(", ") is "A, AA, B"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

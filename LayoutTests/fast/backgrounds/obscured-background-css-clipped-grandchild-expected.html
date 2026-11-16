@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<title>An opaque grandchild inside a CSS clipped child does not obscure the parent's background</title>
+<style>
+#parent {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    background-color: green;
+}
+#grandchild {
+    position: absolute;
+    left: 50px;
+    top: 50px;
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+}
+</style>
+<body>
+<p>The green square below should have a blue square in its center. There should be no white area inside the green square.</p>
+<div id="parent">
+    <div id="grandchild"></div>
+</div>
+</body>
+</html>

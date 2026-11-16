@@ -1,0 +1,30 @@
+Test for CSSStyleDeclaration.variableStylesByType
+
+
+== Running test suite: CSSStyleDeclaration.variableStylesByType
+-- Running test case: CSSStyleDeclaration.variableStylesByType.Colors
+PASS: Should have "colors" variables group.
+PASS: Group should include all expected variables.
+
+-- Running test case: CSSStyleDeclaration.variableStylesByType.Dimensions
+PASS: Should have "dimensions" variables group.
+PASS: Group should include all expected variables.
+
+-- Running test case: CSSStyleDeclaration.variableStylesByType.Numbers
+PASS: Should have "numbers" variables group.
+PASS: Group should include all expected variables.
+
+-- Running test case: CSSStyleDeclaration.variableStylesByType.Other
+PASS: Should have "other" variables group.
+PASS: Group should include all expected variables.
+
+-- Running test case: CSSStyleDeclaration.variableStylesByType.Mixed
+PASS: Should have "colors" variables group.
+PASS: Group should include all expected variables.
+PASS: Should have "dimensions" variables group.
+PASS: Group should include all expected variables.
+PASS: Should have "numbers" variables group.
+PASS: Group should include all expected variables.
+PASS: Should have "other" variables group.
+PASS: Group should include all expected variables.
+

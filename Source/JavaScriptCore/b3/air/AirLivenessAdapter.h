@@ -1,0 +1,344 @@
+/*
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(B3_JIT)
+
+#include "AirBasicBlock.h"
+#include "AirCFG.h"
+#include "AirCode.h"
+#include "AirInstInlines.h"
+#include "AirStackSlot.h"
+#include "AirTmpInlines.h"
+#include <wtf/ForbidHeapAllocation.h>
+#include <wtf/IndexMap.h>
+#include <wtf/ListDump.h>
+#include <wtf/SequesteredMalloc.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace JSC { namespace B3 { namespace Air {
+
+namespace AirLivenessAdapterInternal {
+static constexpr bool verbose = false;
+}
+
+template<typename Adapter>
+struct LivenessAdapter {
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    typedef Air::CFG CFG;
+
+    typedef Vector<unsigned, 4> ActionsList;
+
+    struct Actions {
+        Actions() { }
+
+        ActionsList use;
+        ActionsList def;
+    };
+
+    typedef Vector<Actions, 0, UnsafeVectorOverflow> ActionsForBoundary;
+
+    LivenessAdapter(Code& code)
+        : code(code)
+        , actions(code.size())
+    {
+    }
+
+    Adapter& adapter()
+    {
+        return *static_cast<Adapter*>(this);
+    }
+
+    void prepareToCompute()
+    {
+        ensureActions();
+    }
+
+    // The fixpoint can read the use and def sets straight off the instructions, so the per-boundary
+    // table is only materialized for a client that walks a block itself through LocalCalc.
+    static constexpr bool streamsActions = true;
+
+    struct StreamedActions {
+        Vector<unsigned, 8> use;
+        Vector<unsigned, 8> def;
+    };
+
+    // A boundary sits between two instructions and takes the early roles of the one below it in the
+    // descending walk and the late roles of the one above.
+    struct StreamedGroup {
+        const StreamedActions* early;
+        const StreamedActions* late;
+    };
+
+    template<typename Func>
+    void forEachActionGroupDescendingStreaming(BasicBlock* block, NOESCAPE const Func& func)
+    {
+        unsigned blockSize = block->size();
+        StreamedActions* early = &m_streamedEarly[0];
+        StreamedActions* nextEarly = &m_streamedEarly[1];
+        early->use.shrink(0);
+        early->def.shrink(0);
+
+        for (unsigned boundary = blockSize + 1; boundary--;) {
+            m_streamedLate.use.shrink(0);
+            m_streamedLate.def.shrink(0);
+            nextEarly->use.shrink(0);
+            nextEarly->def.shrink(0);
+
+            if (boundary) {
+                Inst& inst = block->at(boundary - 1);
+                inst.forEach<typename Adapter::Thing>(
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                        if (!Adapter::acceptsBank(bank) || !Adapter::acceptsRole(role))
+                            return;
+
+                        unsigned index = adapter().valueToIndex(thing);
+
+                        if (Arg::isEarlyUse(role))
+                            nextEarly->use.append(index);
+                        if (Arg::isEarlyDef(role))
+                            nextEarly->def.append(index);
+                        if (Arg::isLateUse(role))
+                            m_streamedLate.use.append(index);
+                        if (Arg::isLateDef(role))
+                            m_streamedLate.def.append(index);
+                    });
+            }
+
+            StreamedGroup group { early, &m_streamedLate };
+            func(boundary, &group);
+            std::swap(early, nextEarly);
+        }
+    }
+
+    template<typename Func>
+    static void forEachUseInGroup(const StreamedGroup* group, NOESCAPE const Func& func)
+    {
+        for (unsigned index : group->early->use)
+            func(index);
+        for (unsigned index : group->late->use)
+            func(index);
+    }
+
+    template<typename Func>
+    static void forEachDefInGroup(const StreamedGroup* group, NOESCAPE const Func& func)
+    {
+        for (unsigned index : group->early->def)
+            func(index);
+        for (unsigned index : group->late->def)
+            func(index);
+    }
+
+    void ensureActions()
+    {
+        if (m_actionsBuilt)
+            return;
+        m_actionsBuilt = true;
+        dataLogLnIf(AirLivenessAdapterInternal::verbose, "Prepare to compute tmp or stack slot liveness for code: ", code);
+        for (BasicBlock* block : code) {
+            ActionsForBoundary& actionsForBoundary = actions[block];
+            actionsForBoundary.resize(block->size() + 1);
+
+            for (size_t instIndex = block->size(); instIndex--;) {
+                Inst& inst = block->at(instIndex);
+                inst.forEach<typename Adapter::Thing>(
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                        if (!Adapter::acceptsBank(bank) || !Adapter::acceptsRole(role))
+                            return;
+
+                        unsigned index = adapter().valueToIndex(thing);
+
+                        if (Arg::isEarlyUse(role))
+                            actionsForBoundary[instIndex].use.appendIfNotContains(index);
+                        if (Arg::isEarlyDef(role))
+                            actionsForBoundary[instIndex].def.appendIfNotContains(index);
+                        if (Arg::isLateUse(role))
+                            actionsForBoundary[instIndex + 1].use.appendIfNotContains(index);
+                        if (Arg::isLateDef(role))
+                            actionsForBoundary[instIndex + 1].def.appendIfNotContains(index);
+                    });
+            }
+        }
+
+        if (AirLivenessAdapterInternal::verbose) {
+            for (size_t blockIndex = code.size(); blockIndex--;) {
+                BasicBlock* block = code[blockIndex];
+                if (!block)
+                    continue;
+                ActionsForBoundary& actionsForBoundary = actions[block];
+                dataLogLn("Block ", blockIndex);
+
+                dataLogLn("(null) | use: ", listDump(actionsForBoundary[block->size()].use),
+                        " def: ", listDump(actionsForBoundary[block->size()].def));
+                for (size_t instIndex = block->size(); instIndex--;) {
+                    dataLogLn(block->at(instIndex), " | use: ", listDump(actionsForBoundary[instIndex].use),
+                        " def: ", listDump(actionsForBoundary[instIndex].def));
+                }
+                dataLogLn(block->at(0), " | use: ", listDump(actionsForBoundary[0].use),
+                        " def: ", listDump(actionsForBoundary[0].def));
+            }
+        }
+    }
+
+    Actions& actionsAt(BasicBlock* block, unsigned instBoundaryIndex)
+    {
+        ensureActions();
+        return actions[block][instBoundaryIndex];
+    }
+
+    unsigned blockSize(BasicBlock* block)
+    {
+        return block->size();
+    }
+
+    // Nearly every instruction mentions a Tmp, so every boundary is worth visiting and a group is
+    // just the one record that holds both of that boundary's lists.
+    using ActionGroup = Actions*;
+
+    template<typename Func>
+    void forEachActionGroupDescending(BasicBlock* block, NOESCAPE const Func& func)
+    {
+        ensureActions();
+        ActionsForBoundary& actionsForBoundary = actions[block];
+        for (unsigned boundary = block->size() + 1; boundary--;)
+            func(boundary, &actionsForBoundary[boundary]);
+    }
+
+    template<typename Func>
+    static void forEachUseInGroup(ActionGroup group, NOESCAPE const Func& func)
+    {
+        for (unsigned index : group->use)
+            func(index);
+    }
+
+    template<typename Func>
+    static void forEachDefInGroup(ActionGroup group, NOESCAPE const Func& func)
+    {
+        for (unsigned index : group->def)
+            func(index);
+    }
+
+    // The tail boundary only ever holds the late roles of the last instruction, which is cheaper to
+    // read off that instruction than to materialize the whole per-boundary table for.
+    template<typename Func>
+    void forEachUseAtTail(BasicBlock* block, NOESCAPE const Func& func)
+    {
+        if (!block->size())
+            return;
+        block->last().template forEach<typename Adapter::Thing>(
+            [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                if (!Adapter::acceptsBank(bank) || !Adapter::acceptsRole(role))
+                    return;
+                if (Arg::isLateUse(role))
+                    func(adapter().valueToIndex(thing));
+            });
+    }
+
+    template<typename Func>
+    void forEachUse(BasicBlock* block, size_t instBoundaryIndex, NOESCAPE const Func& func)
+    {
+        for (unsigned index : actionsAt(block, instBoundaryIndex).use)
+            func(index);
+    }
+
+    template<typename Func>
+    void forEachDef(BasicBlock* block, size_t instBoundaryIndex, NOESCAPE const Func& func)
+    {
+        for (unsigned index : actionsAt(block, instBoundaryIndex).def)
+            func(index);
+    }
+
+    Code& code;
+    IndexMap<BasicBlock*, ActionsForBoundary> actions;
+
+private:
+    std::array<StreamedActions, 2> m_streamedEarly;
+    StreamedActions m_streamedLate;
+    bool m_actionsBuilt { false };
+};
+
+template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>
+struct TmpLivenessAdapter : LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> {
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE(TmpLivenessAdapter);
+public:
+    typedef LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> Base;
+
+    static constexpr ASCIILiteral name = "TmpLiveness"_s;
+    typedef Tmp Thing;
+
+    TmpLivenessAdapter(Code& code)
+        : Base(code)
+    {
+    }
+
+    unsigned numIndices()
+    {
+        return Tmp::absoluteIndexEnd(Base::code, adapterBank);
+    }
+    static bool acceptsBank(Bank bank) { return bank == adapterBank; }
+    static bool acceptsRole(Arg::Role role) { return Arg::temperature(role) >= minimumTemperature; }
+    static unsigned valueToIndex(Tmp tmp) { return AbsoluteTmpMapper<adapterBank>::absoluteIndex(tmp); }
+    static Tmp indexToValue(unsigned index) { return AbsoluteTmpMapper<adapterBank>::tmpFromAbsoluteIndex(index); }
+};
+
+#define TZONE_TEMPLATE_PARAMS template<Bank adapterBank, Arg::Temperature minimumTemperature>
+#define TZONE_TYPE TmpLivenessAdapter<adapterBank, minimumTemperature>
+
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
+
+#undef TZONE_TEMPLATE_PARAMS
+#undef TZONE_TYPE
+
+struct UnifiedTmpLivenessAdapter : LivenessAdapter<UnifiedTmpLivenessAdapter> {
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(UnifiedTmpLivenessAdapter);
+public:
+    typedef LivenessAdapter<UnifiedTmpLivenessAdapter> Base;
+
+    static constexpr ASCIILiteral name = "UnifiedTmpLiveness"_s;
+
+    typedef Tmp Thing;
+
+    UnifiedTmpLivenessAdapter(Code& code)
+        : Base(code)
+    {
+    }
+
+    unsigned numIndices()
+    {
+        return Tmp::linearIndexEnd(code);
+    }
+
+    static bool acceptsBank(Bank) { return true; }
+    static bool acceptsRole(Arg::Role) { return true; }
+    unsigned valueToIndex(Tmp tmp) { return tmp.linearlyIndexed(code).index(); }
+    Tmp indexToValue(unsigned index) { return Tmp::tmpForLinearIndex(code, index); }
+};
+
+} } } // namespace JSC::B3::Air
+
+#endif // ENABLE(B3_JIT)
+

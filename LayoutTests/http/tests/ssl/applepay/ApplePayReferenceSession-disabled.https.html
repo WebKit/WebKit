@@ -1,0 +1,17 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ApplePayReferenceSessionEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that ApplePayReferenceSession is not exposed when ApplePayReferenceSessionEnabled is off, and that Apple Pay is.");
+
+shouldBeEqualToString("typeof ApplePayReferenceSession", "undefined");
+shouldBeEqualToString("typeof ApplePaySession", "function");
+
+</script>
+</body>
+</html>

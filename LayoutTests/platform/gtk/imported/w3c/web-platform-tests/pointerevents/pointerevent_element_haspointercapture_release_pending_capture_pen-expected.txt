@@ -1,0 +1,12 @@
+Element.hasPointerCapture test after the pending pointer capture element releases pointer capture
+
+Test Description: This test checks if Element.hasPointerCapture returns value correctly after the pending pointer capture element releases pointer capture
+Press black rectangle and do not release
+Move your pointer to purple rectangle
+Release the pointer
+
+The following pointer types were detected: pen.
+
+
+PASS hasPointerCapture test after the pending pointer capture element releases pointer capture
+

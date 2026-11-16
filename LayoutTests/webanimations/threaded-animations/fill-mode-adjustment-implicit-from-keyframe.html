@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<style>
+
+#target {
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+
+<div id="target"></div>
+
+<script>
+
+promise_test(async t => {
+    const target = document.getElementById("target");
+
+    const duration = 1000 * 1000;
+    const animations = [
+        target.animate({ translate: "100px" }, duration),
+        target.animate({ translate: "200px" }, duration)
+    ];
+
+    await Promise.all(animations.map(animation => animationAcceleration(animation)));
+
+    const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(target);
+    const remoteAnimations = remoteAnimationStack.animations;
+    assert_equals(remoteAnimations.length, 2, "We have the expected number of animations in the remote layer tree");
+    assert_equals(remoteAnimations[0].timing.fill, 'auto', 'Omitted fill mode is preserved for effect that is composed with another effect further up the stack');
+    assert_equals(remoteAnimations[1].timing.fill, 'forwards', 'Omitted fille mode is set to "forwards" for the last effect animating a given property');
+}, 'Fill mode is not adjusted for effects that participate in composition due to an implicit "from" keyframe.');
+
+</script>
+</body>

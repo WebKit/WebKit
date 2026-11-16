@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300">
+  <g style="font: 16px Ahem">
+    <text x="100" y="50" text-anchor="end">h</text>
+    <text x="200" y="50" text-anchor="end">ello</text>
+    <text x="100" y="100" text-anchor="middle">h</text>
+    <text x="200" y="100" text-anchor="middle">ello</text>
+    <text x="100" y="150" text-anchor="end">a</text>
+    <text x="150" y="150" text-anchor="end">b</text>
+    <text x="250" y="150" text-anchor="end">cde</text>
+    <text x="100" y="200" text-anchor="end">ab</text>
+    <text x="200" y="200" text-anchor="end">cd</text>
+  </g>
+</svg>

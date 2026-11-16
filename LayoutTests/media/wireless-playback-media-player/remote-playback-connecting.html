@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                video = document.getElementsByTagName('video')[0];
+                testExpected('video.remote.state', 'disconnected');
+
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                await waitFor(video, 'canplaythrough');
+
+                run(`video.play()`)
+                await waitFor(video, 'playing');
+
+                const connectingPromise = waitFor(video.remote, 'connecting');
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+                await connectingPromise;
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that a 'connecting' event is dispatched when a MediaDeviceRoute activates.</p> 
+    </body>
+</html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+window.localStorage; // Creates local storage
+window.close();
+if (window.localStorage)
+    localStorage["test"] = "DidSetValueAfterCallingWindowClose";
+window.opener.checkResultAndNotifyDone();
+</script>
+</head>
+</html>

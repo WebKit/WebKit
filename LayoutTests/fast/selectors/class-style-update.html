@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    color: black;
+}
+target.Case1 {
+    color: rgb(0, 1, 2);
+}
+target:matches(foo, .Case2, bar) {
+    color: rgb(3, 4, 5);
+}
+target:matches(foo1, :matches(foo2, .Case3, bar1), bar2) {
+    color: rgb(6, 7, 8);
+}
+target:matches(foo1, :matches(foo2, :matches(foo3, .Case4, bar1), bar2), bar3) {
+    color: rgb(9, 10, 11);
+}
+</style>
+</head>
+<body>
+    <div>
+        <!-- With renderer -->
+        <target></target>
+    </div>
+    <div style="display:none;">
+        <!-- Without renderer -->
+        <target></target>
+    </div>
+</body>
+<script>
+
+description('Test that the style of elements is invalidated correctly when class changes can affect its style. Elements are only invalidate if the class changed affects the style. It is important to account nested selector lists.');
+
+function addClass(name) {
+    var allTargets = document.querySelectorAll("target");
+    allTargets[0].classList.add(name);
+    allTargets[1].classList.add(name);
+}
+
+function removeClass(name) {
+    var allTargets = document.querySelectorAll("target");
+    allTargets[0].classList.remove(name);
+    allTargets[1].classList.remove(name);
+}
+
+function checkStyle(expectedColor) {
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[0]).color', expectedColor);
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[1]).color', expectedColor);
+}
+
+// Force a layout to ensure we don't have dirty styles.
+var offsetTop = document.documentElement.offsetTop;
+
+checkStyle('rgb(0, 0, 0)');
+
+// Add the classes one by one.
+addClass('Case1');
+checkStyle('rgb(0, 1, 2)');
+removeClass('Case1');
+checkStyle('rgb(0, 0, 0)');
+addClass('case1');
+checkStyle('rgb(0, 0, 0)');
+removeClass('Case1');
+checkStyle('rgb(0, 0, 0)');
+
+addClass('Case2');
+checkStyle('rgb(3, 4, 5)');
+removeClass('Case2');
+checkStyle('rgb(0, 0, 0)');
+addClass('case2');
+checkStyle('rgb(0, 0, 0)');
+removeClass('Case2');
+checkStyle('rgb(0, 0, 0)');
+
+addClass('Case3');
+checkStyle('rgb(6, 7, 8)');
+removeClass('Case3');
+checkStyle('rgb(0, 0, 0)');
+addClass('case3');
+checkStyle('rgb(0, 0, 0)');
+removeClass('Case3');
+checkStyle('rgb(0, 0, 0)');
+
+addClass('Case4');
+checkStyle('rgb(9, 10, 11)');
+removeClass('Case4');
+checkStyle('rgb(0, 0, 0)');
+addClass('case4');
+checkStyle('rgb(0, 0, 0)');
+removeClass('Case4');
+checkStyle('rgb(0, 0, 0)');
+
+// Add the classes one after the other.
+addClass('Case1');
+checkStyle('rgb(0, 1, 2)');
+addClass('Case2');
+checkStyle('rgb(3, 4, 5)');
+addClass('Case3');
+checkStyle('rgb(6, 7, 8)');
+addClass('Case4');
+checkStyle('rgb(9, 10, 11)');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

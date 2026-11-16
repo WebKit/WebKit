@@ -1,0 +1,4 @@
+
+FAIL play-forwards plays a finished animation if reversing direction, and does not restart it once finished assert_equals: should start running forwards expected "running" but got "finished"
+FAIL play-backwards plays a finished animation if reversing direction, and does not restart it once finished assert_equals: should start running backwards expected "running" but got "finished"
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we paint at least one device pixel width border when border-width > 0.</title>
+<style>
+  div {
+    height: 100px;
+    width: 10px;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    border: solid 0.5px green;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  var left = 0;
+  for (var i = 0; i < 50; ++i) {
+    var e = document.createElement("div");
+    e.style.left = left + "px";
+    container.appendChild(e);
+    left += 11;
+  }
+</script>
+</body>
+</html>

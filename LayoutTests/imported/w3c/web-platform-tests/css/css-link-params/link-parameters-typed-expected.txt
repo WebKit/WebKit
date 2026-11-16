@@ -1,0 +1,17 @@
+
+PASS e.style['link-parameters'] = "param(--a <color>, orange)" should set the property value
+PASS e.style['link-parameters'] = "param(--a <length>, 10px)" should set the property value
+PASS e.style['link-parameters'] = "param(--a <color>, currentcolor)" should set the property value
+PASS e.style['link-parameters'] = "param(--a type(<color>), orange)" should set the property value
+PASS e.style['link-parameters'] = "param(--a type(<color> | <length>), orange)" should set the property value
+PASS e.style['link-parameters'] = "param(--a <color>, orange), param(--b, blue)" should set the property value
+PASS e.style['link-parameters'] = "param(color, blue)" should set the property value
+PASS e.style['link-parameters'] = "param(accent-color, blue)" should set the property value
+PASS e.style['link-parameters'] = "param(--a <notatype>, orange)" should not set the property value
+PASS e.style['link-parameters'] = "param(--a <color> <length>, orange)" should not set the property value
+PASS e.style['link-parameters'] = "param(<color>, orange)" should not set the property value
+PASS e.style['link-parameters'] = "param(--a, orange) <color>" should not set the property value
+PASS Property link-parameters value 'param(--a <color>, orange)'
+PASS Property link-parameters value 'param(--a <color>, currentcolor)'
+PASS Property link-parameters value 'param(--a <color>, orange), param(--b, blue)'
+

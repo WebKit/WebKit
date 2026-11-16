@@ -1,0 +1,11 @@
+Tests that setting the value of a <select> element to an <option> within an <optgroup> sets the correct value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "A"
+PASS select.value is "B"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

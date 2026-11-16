@@ -1,0 +1,4406 @@
+Test HTML SourceMap with inline script and multi-line JS template literals
+
+
+== Running test suite: SourceMaps.HTML
+-- Running test case: SourceMaps.HTML.3
+Original Content Length
+Formatted Content Length
+---- Original to Formatted ----
+Original: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <body><script>
+  2| `A
+Formatted: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <body>
+  2|     <script>
+
+Original: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <body><script>
+  2| `A
+Formatted: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <body>
+  2|     <script>
+
+Original: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <body><script>
+  2| `A
+Formatted: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <body>
+  2|     <script>
+
+Original: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <body><script>
+  2| `A
+Formatted: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <body>
+  2|     <script>
+
+Original: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <body><script>
+  2| `A
+Formatted: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <body>
+  2|     <script>
+
+Original: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <body><script>
+  2| `A
+Formatted: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <body>
+  2|     <script>
+
+Original: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <body><script>
+  2| `A
+Formatted: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <body>
+  2|     <script>
+
+Original: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <body><script>
+  2| `A
+Formatted: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <body>
+  2|     <script>
+
+Original: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <body><script>
+  2| `A
+Formatted: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <body>
+  2|     <script>
+
+Original: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <body><script>
+  2| `A
+Formatted: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <body>
+  2|     <script>
+
+Original: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <body><script>
+  2| `A
+Formatted: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <body>
+  2|     <script>
+
+Original: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <body><script>
+  2| `A
+Formatted: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <body>
+  2|     <script>
+
+Original: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <body><script>
+  2| `A
+Formatted: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <body>
+  2|     <script>
+
+Original: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <body><script>
+  2| `A
+Formatted: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <body>
+  2|     <script>
+
+Original: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <body><script>
+  2| `A
+Formatted: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <body>
+  2|     <script>
+
+Original: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<body><script>
+  2| `A
+  3| B
+Formatted: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<body>
+  2|     <script>
+  3|     `A
+
+Original: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#body><script>
+  2| `A
+  3| B
+Formatted: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#body>
+  2|     <script>
+  3|     `A
+
+Original: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <b#ody><script>
+  2| `A
+  3| B
+Formatted: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <b#ody>
+  2|     <script>
+  3|     `A
+
+Original: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <bo#dy><script>
+  2| `A
+  3| B
+Formatted: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <bo#dy>
+  2|     <script>
+  3|     `A
+
+Original: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <bod#y><script>
+  2| `A
+  3| B
+Formatted: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <bod#y>
+  2|     <script>
+  3|     `A
+
+Original: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <body#><script>
+  2| `A
+  3| B
+Formatted: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <body#>
+  2|     <script>
+  3|     `A
+
+Original: 21 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| `A
+  3| B
+Formatted: 21 (2, 4)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     #<script>
+  3|     `A
+  4|     B
+
+Original: 22 (1, 7)
+  0| <!DOCTYPE html>
+  1| <body><#script>
+  2| `A
+  3| B
+Formatted: 27 (2, 5)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <#script>
+  3|     `A
+  4|     B
+
+Original: 23 (1, 8)
+  0| <!DOCTYPE html>
+  1| <body><s#cript>
+  2| `A
+  3| B
+Formatted: 28 (2, 6)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <s#cript>
+  3|     `A
+  4|     B
+
+Original: 24 (1, 9)
+  0| <!DOCTYPE html>
+  1| <body><sc#ript>
+  2| `A
+  3| B
+Formatted: 29 (2, 7)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <sc#ript>
+  3|     `A
+  4|     B
+
+Original: 25 (1, 10)
+  0| <!DOCTYPE html>
+  1| <body><scr#ipt>
+  2| `A
+  3| B
+Formatted: 30 (2, 8)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scr#ipt>
+  3|     `A
+  4|     B
+
+Original: 26 (1, 11)
+  0| <!DOCTYPE html>
+  1| <body><scri#pt>
+  2| `A
+  3| B
+Formatted: 31 (2, 9)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scri#pt>
+  3|     `A
+  4|     B
+
+Original: 27 (1, 12)
+  0| <!DOCTYPE html>
+  1| <body><scrip#t>
+  2| `A
+  3| B
+Formatted: 32 (2, 10)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scrip#t>
+  3|     `A
+  4|     B
+
+Original: 28 (1, 13)
+  0| <!DOCTYPE html>
+  1| <body><script#>
+  2| `A
+  3| B
+Formatted: 33 (2, 11)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <script#>
+  3|     `A
+  4|     B
+
+Original: 29 (1, 14)
+  0| <!DOCTYPE html>
+  1| <body><script>#
+  2| `A
+  3| B
+Formatted: 34 (2, 12)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <script>#
+  3|     `A
+  4|     B
+
+Original: 30 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #`A
+  3| B
+  4| C`;
+Formatted: 35 (3, 4)
+  1| <body>
+  2|     <script>
+  3|     #`A
+  4|     B
+  5|     C`;
+
+Original: 31 (2, 1)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| `#A
+  3| B
+  4| C`;
+Formatted: 40 (3, 5)
+  1| <body>
+  2|     <script>
+  3|     `#A
+  4|     B
+  5|     C`;
+
+Original: 32 (2, 2)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| `A#
+  3| B
+  4| C`;
+Formatted: 41 (3, 6)
+  1| <body>
+  2|     <script>
+  3|     `A#
+  4|     B
+  5|     C`;
+
+Original: 33 (3, 0)
+  1| <body><script>
+  2| `A
+  3| #B
+  4| C`;
+  5| let a=1,b=2,c=3;
+Formatted: 42 (4, 4)
+  2|     <script>
+  3|     `A
+  4|     #B
+  5|     C`;
+  6|     let a = 1,
+
+Original: 34 (3, 1)
+  1| <body><script>
+  2| `A
+  3| B#
+  4| C`;
+  5| let a=1,b=2,c=3;
+Formatted: 47 (4, 5)
+  2|     <script>
+  3|     `A
+  4|     B#
+  5|     C`;
+  6|     let a = 1,
+
+Original: 35 (4, 0)
+  2| `A
+  3| B
+  4| #C`;
+  5| let a=1,b=2,c=3;
+  6| test`A
+Formatted: 48 (5, 4)
+  3|     `A
+  4|     B
+  5|     #C`;
+  6|     let a = 1,
+  7|         b = 2,
+
+Original: 36 (4, 1)
+  2| `A
+  3| B
+  4| C#`;
+  5| let a=1,b=2,c=3;
+  6| test`A
+Formatted: 53 (5, 5)
+  3|     `A
+  4|     B
+  5|     C#`;
+  6|     let a = 1,
+  7|         b = 2,
+
+Original: 37 (4, 2)
+  2| `A
+  3| B
+  4| C`#;
+  5| let a=1,b=2,c=3;
+  6| test`A
+Formatted: 54 (5, 6)
+  3|     `A
+  4|     B
+  5|     C`#;
+  6|     let a = 1,
+  7|         b = 2,
+
+Original: 38 (4, 3)
+  2| `A
+  3| B
+  4| C`;#
+  5| let a=1,b=2,c=3;
+  6| test`A
+Formatted: 55 (5, 7)
+  3|     `A
+  4|     B
+  5|     C`;#
+  6|     let a = 1,
+  7|         b = 2,
+
+Original: 39 (5, 0)
+  3| B
+  4| C`;
+  5| #let a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 56 (6, 4)
+  4|     B
+  5|     C`;
+  6|     #let a = 1,
+  7|         b = 2,
+  8|         c = 3;
+
+Original: 40 (5, 1)
+  3| B
+  4| C`;
+  5| l#et a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 61 (6, 5)
+  4|     B
+  5|     C`;
+  6|     l#et a = 1,
+  7|         b = 2,
+  8|         c = 3;
+
+Original: 41 (5, 2)
+  3| B
+  4| C`;
+  5| le#t a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 62 (6, 6)
+  4|     B
+  5|     C`;
+  6|     le#t a = 1,
+  7|         b = 2,
+  8|         c = 3;
+
+Original: 42 (5, 3)
+  3| B
+  4| C`;
+  5| let# a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 63 (6, 7)
+  4|     B
+  5|     C`;
+  6|     let# a = 1,
+  7|         b = 2,
+  8|         c = 3;
+
+Original: 43 (5, 4)
+  3| B
+  4| C`;
+  5| let #a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 64 (6, 8)
+  4|     B
+  5|     C`;
+  6|     let #a = 1,
+  7|         b = 2,
+  8|         c = 3;
+
+Original: 44 (5, 5)
+  3| B
+  4| C`;
+  5| let a#=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 65 (6, 10)
+  4|     B
+  5|     C`;
+  6|     let a #= 1,
+  7|         b = 2,
+  8|         c = 3;
+
+Original: 45 (5, 6)
+  3| B
+  4| C`;
+  5| let a=#1,b=2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 67 (6, 12)
+  4|     B
+  5|     C`;
+  6|     let a = #1,
+  7|         b = 2,
+  8|         c = 3;
+
+Original: 46 (5, 7)
+  3| B
+  4| C`;
+  5| let a=1#,b=2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 69 (6, 13)
+  4|     B
+  5|     C`;
+  6|     let a = 1#,
+  7|         b = 2,
+  8|         c = 3;
+
+Original: 47 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 70 (7, 8)
+  5|     C`;
+  6|     let a = 1,
+  7|         #b = 2,
+  8|         c = 3;
+  9|     test`A
+
+Original: 48 (5, 9)
+  3| B
+  4| C`;
+  5| let a=1,b#=2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 80 (7, 10)
+  5|     C`;
+  6|     let a = 1,
+  7|         b #= 2,
+  8|         c = 3;
+  9|     test`A
+
+Original: 49 (5, 10)
+  3| B
+  4| C`;
+  5| let a=1,b=#2,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 82 (7, 12)
+  5|     C`;
+  6|     let a = 1,
+  7|         b = #2,
+  8|         c = 3;
+  9|     test`A
+
+Original: 50 (5, 11)
+  3| B
+  4| C`;
+  5| let a=1,b=2#,c=3;
+  6| test`A
+  7| ${a}
+Formatted: 84 (7, 13)
+  5|     C`;
+  6|     let a = 1,
+  7|         b = 2#,
+  8|         c = 3;
+  9|     test`A
+
+Original: 51 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+Formatted: 85 (8, 8)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         #c = 3;
+  9|     test`A
+ 10|     ${a}
+
+Original: 52 (5, 13)
+  3| B
+  4| C`;
+  5| let a=1,b=2,c#=3;
+  6| test`A
+  7| ${a}
+Formatted: 95 (8, 10)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         c #= 3;
+  9|     test`A
+ 10|     ${a}
+
+Original: 53 (5, 14)
+  3| B
+  4| C`;
+  5| let a=1,b=2,c=#3;
+  6| test`A
+  7| ${a}
+Formatted: 97 (8, 12)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         c = #3;
+  9|     test`A
+ 10|     ${a}
+
+Original: 54 (5, 15)
+  3| B
+  4| C`;
+  5| let a=1,b=2,c=3#;
+  6| test`A
+  7| ${a}
+Formatted: 99 (8, 13)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         c = 3#;
+  9|     test`A
+ 10|     ${a}
+
+Original: 55 (5, 16)
+  3| B
+  4| C`;
+  5| let a=1,b=2,c=3;#
+  6| test`A
+  7| ${a}
+Formatted: 100 (8, 14)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         c = 3;#
+  9|     test`A
+ 10|     ${a}
+
+Original: 56 (6, 0)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| #test`A
+  7| ${a}
+  8| B
+Formatted: 101 (9, 4)
+  7|         b = 2,
+  8|         c = 3;
+  9|     #test`A
+ 10|     ${a}
+ 11|     B
+
+Original: 57 (6, 1)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| t#est`A
+  7| ${a}
+  8| B
+Formatted: 106 (9, 5)
+  7|         b = 2,
+  8|         c = 3;
+  9|     t#est`A
+ 10|     ${a}
+ 11|     B
+
+Original: 58 (6, 2)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| te#st`A
+  7| ${a}
+  8| B
+Formatted: 107 (9, 6)
+  7|         b = 2,
+  8|         c = 3;
+  9|     te#st`A
+ 10|     ${a}
+ 11|     B
+
+Original: 59 (6, 3)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| tes#t`A
+  7| ${a}
+  8| B
+Formatted: 108 (9, 7)
+  7|         b = 2,
+  8|         c = 3;
+  9|     tes#t`A
+ 10|     ${a}
+ 11|     B
+
+Original: 60 (6, 4)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| test#`A
+  7| ${a}
+  8| B
+Formatted: 109 (9, 8)
+  7|         b = 2,
+  8|         c = 3;
+  9|     test#`A
+ 10|     ${a}
+ 11|     B
+
+Original: 61 (6, 5)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| test`#A
+  7| ${a}
+  8| B
+Formatted: 110 (9, 9)
+  7|         b = 2,
+  8|         c = 3;
+  9|     test`#A
+ 10|     ${a}
+ 11|     B
+
+Original: 62 (6, 6)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| test`A#
+  7| ${a}
+  8| B
+Formatted: 111 (9, 10)
+  7|         b = 2,
+  8|         c = 3;
+  9|     test`A#
+ 10|     ${a}
+ 11|     B
+
+Original: 63 (7, 0)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| #${a}
+  8| B
+  9| ${b}
+Formatted: 112 (10, 4)
+  8|         c = 3;
+  9|     test`A
+ 10|     #${a}
+ 11|     B
+ 12|     ${b}
+
+Original: 64 (7, 1)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| $#{a}
+  8| B
+  9| ${b}
+Formatted: 117 (10, 5)
+  8|         c = 3;
+  9|     test`A
+ 10|     $#{a}
+ 11|     B
+ 12|     ${b}
+
+Original: 65 (7, 2)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| ${#a}
+  8| B
+  9| ${b}
+Formatted: 118 (10, 6)
+  8|         c = 3;
+  9|     test`A
+ 10|     ${#a}
+ 11|     B
+ 12|     ${b}
+
+Original: 66 (7, 3)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| ${a#}
+  8| B
+  9| ${b}
+Formatted: 119 (10, 7)
+  8|         c = 3;
+  9|     test`A
+ 10|     ${a#}
+ 11|     B
+ 12|     ${b}
+
+Original: 67 (7, 4)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| ${a}#
+  8| B
+  9| ${b}
+Formatted: 120 (10, 8)
+  8|         c = 3;
+  9|     test`A
+ 10|     ${a}#
+ 11|     B
+ 12|     ${b}
+
+Original: 68 (8, 0)
+  6| test`A
+  7| ${a}
+  8| #B
+  9| ${b}
+ 10| C
+Formatted: 121 (11, 4)
+  9|     test`A
+ 10|     ${a}
+ 11|     #B
+ 12|     ${b}
+ 13|     C
+
+Original: 69 (8, 1)
+  6| test`A
+  7| ${a}
+  8| B#
+  9| ${b}
+ 10| C
+Formatted: 126 (11, 5)
+  9|     test`A
+ 10|     ${a}
+ 11|     B#
+ 12|     ${b}
+ 13|     C
+
+Original: 70 (9, 0)
+  7| ${a}
+  8| B
+  9| #${b}
+ 10| C
+ 11| ${c}`;
+Formatted: 127 (12, 4)
+ 10|     ${a}
+ 11|     B
+ 12|     #${b}
+ 13|     C
+ 14|     ${c}`;
+
+Original: 71 (9, 1)
+  7| ${a}
+  8| B
+  9| $#{b}
+ 10| C
+ 11| ${c}`;
+Formatted: 132 (12, 5)
+ 10|     ${a}
+ 11|     B
+ 12|     $#{b}
+ 13|     C
+ 14|     ${c}`;
+
+Original: 72 (9, 2)
+  7| ${a}
+  8| B
+  9| ${#b}
+ 10| C
+ 11| ${c}`;
+Formatted: 133 (12, 6)
+ 10|     ${a}
+ 11|     B
+ 12|     ${#b}
+ 13|     C
+ 14|     ${c}`;
+
+Original: 73 (9, 3)
+  7| ${a}
+  8| B
+  9| ${b#}
+ 10| C
+ 11| ${c}`;
+Formatted: 134 (12, 7)
+ 10|     ${a}
+ 11|     B
+ 12|     ${b#}
+ 13|     C
+ 14|     ${c}`;
+
+Original: 74 (9, 4)
+  7| ${a}
+  8| B
+  9| ${b}#
+ 10| C
+ 11| ${c}`;
+Formatted: 135 (12, 8)
+ 10|     ${a}
+ 11|     B
+ 12|     ${b}#
+ 13|     C
+ 14|     ${c}`;
+
+Original: 75 (10, 0)
+  8| B
+  9| ${b}
+ 10| #C
+ 11| ${c}`;
+ 12| `ABC`;
+Formatted: 136 (13, 4)
+ 11|     B
+ 12|     ${b}
+ 13|     #C
+ 14|     ${c}`;
+ 15|     `ABC`;
+
+Original: 76 (10, 1)
+  8| B
+  9| ${b}
+ 10| C#
+ 11| ${c}`;
+ 12| `ABC`;
+Formatted: 141 (13, 5)
+ 11|     B
+ 12|     ${b}
+ 13|     C#
+ 14|     ${c}`;
+ 15|     `ABC`;
+
+Original: 77 (11, 0)
+  9| ${b}
+ 10| C
+ 11| #${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+Formatted: 142 (14, 4)
+ 12|     ${b}
+ 13|     C
+ 14|     #${c}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+
+Original: 78 (11, 1)
+  9| ${b}
+ 10| C
+ 11| $#{c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+Formatted: 147 (14, 5)
+ 12|     ${b}
+ 13|     C
+ 14|     $#{c}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+
+Original: 79 (11, 2)
+  9| ${b}
+ 10| C
+ 11| ${#c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+Formatted: 148 (14, 6)
+ 12|     ${b}
+ 13|     C
+ 14|     ${#c}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+
+Original: 80 (11, 3)
+  9| ${b}
+ 10| C
+ 11| ${c#}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+Formatted: 149 (14, 7)
+ 12|     ${b}
+ 13|     C
+ 14|     ${c#}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+
+Original: 81 (11, 4)
+  9| ${b}
+ 10| C
+ 11| ${c}#`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+Formatted: 150 (14, 8)
+ 12|     ${b}
+ 13|     C
+ 14|     ${c}#`;
+ 15|     `ABC`;
+ 16|     a = 1,
+
+Original: 82 (11, 5)
+  9| ${b}
+ 10| C
+ 11| ${c}`#;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+Formatted: 151 (14, 9)
+ 12|     ${b}
+ 13|     C
+ 14|     ${c}`#;
+ 15|     `ABC`;
+ 16|     a = 1,
+
+Original: 83 (11, 6)
+  9| ${b}
+ 10| C
+ 11| ${c}`;#
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+Formatted: 152 (14, 10)
+ 12|     ${b}
+ 13|     C
+ 14|     ${c}`;#
+ 15|     `ABC`;
+ 16|     a = 1,
+
+Original: 84 (12, 0)
+ 10| C
+ 11| ${c}`;
+ 12| #`ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+Formatted: 153 (15, 4)
+ 13|     C
+ 14|     ${c}`;
+ 15|     #`ABC`;
+ 16|     a = 1,
+ 17|     b = 2,
+
+Original: 85 (12, 1)
+ 10| C
+ 11| ${c}`;
+ 12| `#ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+Formatted: 158 (15, 5)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `#ABC`;
+ 16|     a = 1,
+ 17|     b = 2,
+
+Original: 86 (12, 2)
+ 10| C
+ 11| ${c}`;
+ 12| `A#BC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+Formatted: 159 (15, 6)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `A#BC`;
+ 16|     a = 1,
+ 17|     b = 2,
+
+Original: 87 (12, 3)
+ 10| C
+ 11| ${c}`;
+ 12| `AB#C`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+Formatted: 160 (15, 7)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `AB#C`;
+ 16|     a = 1,
+ 17|     b = 2,
+
+Original: 88 (12, 4)
+ 10| C
+ 11| ${c}`;
+ 12| `ABC#`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+Formatted: 161 (15, 8)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `ABC#`;
+ 16|     a = 1,
+ 17|     b = 2,
+
+Original: 89 (12, 5)
+ 10| C
+ 11| ${c}`;
+ 12| `ABC`#;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+Formatted: 162 (15, 9)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `ABC`#;
+ 16|     a = 1,
+ 17|     b = 2,
+
+Original: 90 (12, 6)
+ 10| C
+ 11| ${c}`;
+ 12| `ABC`;#
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+Formatted: 163 (15, 10)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `ABC`;#
+ 16|     a = 1,
+ 17|     b = 2,
+
+Original: 91 (13, 0)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| #a=1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+Formatted: 164 (16, 4)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     #a = 1,
+ 17|     b = 2,
+ 18|     c = 3;
+
+Original: 92 (13, 1)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a#=1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+Formatted: 169 (16, 6)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     a #= 1,
+ 17|     b = 2,
+ 18|     c = 3;
+
+Original: 93 (13, 2)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=#1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+Formatted: 171 (16, 8)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     a = #1,
+ 17|     b = 2,
+ 18|     c = 3;
+
+Original: 94 (13, 3)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1#,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+Formatted: 173 (16, 9)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     a = 1#,
+ 17|     b = 2,
+ 18|     c = 3;
+
+Original: 95 (13, 4)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,#b=2,c=3;
+ 14| </script></body></html>
+ 15|
+Formatted: 174 (17, 4)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     #b = 2,
+ 18|     c = 3;
+ 19|     </script>
+
+Original: 96 (13, 5)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b#=2,c=3;
+ 14| </script></body></html>
+ 15|
+Formatted: 180 (17, 6)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     b #= 2,
+ 18|     c = 3;
+ 19|     </script>
+
+Original: 97 (13, 6)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=#2,c=3;
+ 14| </script></body></html>
+ 15|
+Formatted: 182 (17, 8)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     b = #2,
+ 18|     c = 3;
+ 19|     </script>
+
+Original: 98 (13, 7)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2#,c=3;
+ 14| </script></body></html>
+ 15|
+Formatted: 184 (17, 9)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     b = 2#,
+ 18|     c = 3;
+ 19|     </script>
+
+Original: 99 (13, 8)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,#c=3;
+ 14| </script></body></html>
+ 15|
+Formatted: 185 (18, 4)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     #c = 3;
+ 19|     </script>
+ 20| </body>
+
+Original: 100 (13, 9)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c#=3;
+ 14| </script></body></html>
+ 15|
+Formatted: 191 (18, 6)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     c #= 3;
+ 19|     </script>
+ 20| </body>
+
+Original: 101 (13, 10)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=#3;
+ 14| </script></body></html>
+ 15|
+Formatted: 193 (18, 8)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     c = #3;
+ 19|     </script>
+ 20| </body>
+
+Original: 102 (13, 11)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3#;
+ 14| </script></body></html>
+ 15|
+Formatted: 195 (18, 9)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     c = 3#;
+ 19|     </script>
+ 20| </body>
+
+Original: 103 (13, 12)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;#
+ 14| </script></body></html>
+ 15|
+Formatted: 196 (18, 10)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     c = 3;#
+ 19|     </script>
+ 20| </body>
+
+Original: 104 (14, 0)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| #</script></body></html>
+ 15|
+Formatted: 197 (19, 4)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     #</script>
+ 20| </body>
+ 21| </html>
+
+Original: 105 (14, 1)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| <#/script></body></html>
+ 15|
+Formatted: 202 (19, 5)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     <#/script>
+ 20| </body>
+ 21| </html>
+
+Original: 106 (14, 2)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </#script></body></html>
+ 15|
+Formatted: 203 (19, 6)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </#script>
+ 20| </body>
+ 21| </html>
+
+Original: 107 (14, 3)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </s#cript></body></html>
+ 15|
+Formatted: 204 (19, 7)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </s#cript>
+ 20| </body>
+ 21| </html>
+
+Original: 108 (14, 4)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </sc#ript></body></html>
+ 15|
+Formatted: 205 (19, 8)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </sc#ript>
+ 20| </body>
+ 21| </html>
+
+Original: 109 (14, 5)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </scr#ipt></body></html>
+ 15|
+Formatted: 206 (19, 9)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </scr#ipt>
+ 20| </body>
+ 21| </html>
+
+Original: 110 (14, 6)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </scri#pt></body></html>
+ 15|
+Formatted: 207 (19, 10)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </scri#pt>
+ 20| </body>
+ 21| </html>
+
+Original: 111 (14, 7)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </scrip#t></body></html>
+ 15|
+Formatted: 208 (19, 11)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </scrip#t>
+ 20| </body>
+ 21| </html>
+
+Original: 112 (14, 8)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script#></body></html>
+ 15|
+Formatted: 209 (19, 12)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </script#>
+ 20| </body>
+ 21| </html>
+
+Original: 113 (14, 9)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script>#</body></html>
+ 15|
+Formatted: 210 (20, 0)
+ 18|     c = 3;
+ 19|     </script>
+ 20| #</body>
+ 21| </html>
+ 22|
+
+Original: 114 (14, 10)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script><#/body></html>
+ 15|
+Formatted: 212 (20, 1)
+ 18|     c = 3;
+ 19|     </script>
+ 20| <#/body>
+ 21| </html>
+ 22|
+
+Original: 115 (14, 11)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></#body></html>
+ 15|
+Formatted: 213 (20, 2)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </#body>
+ 21| </html>
+ 22|
+
+Original: 116 (14, 12)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></b#ody></html>
+ 15|
+Formatted: 214 (20, 3)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </b#ody>
+ 21| </html>
+ 22|
+
+Original: 117 (14, 13)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></bo#dy></html>
+ 15|
+Formatted: 215 (20, 4)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </bo#dy>
+ 21| </html>
+ 22|
+
+Original: 118 (14, 14)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></bod#y></html>
+ 15|
+Formatted: 216 (20, 5)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </bod#y>
+ 21| </html>
+ 22|
+
+Original: 119 (14, 15)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body#></html>
+ 15|
+Formatted: 217 (20, 6)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </body#>
+ 21| </html>
+ 22|
+
+Original: 120 (14, 16)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body>#</html>
+ 15|
+Formatted: 218 (21, 0)
+ 19|     </script>
+ 20| </body>
+ 21| #</html>
+ 22|
+
+Original: 121 (14, 17)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body><#/html>
+ 15|
+Formatted: 220 (21, 1)
+ 19|     </script>
+ 20| </body>
+ 21| <#/html>
+ 22|
+
+Original: 122 (14, 18)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></#html>
+ 15|
+Formatted: 221 (21, 2)
+ 19|     </script>
+ 20| </body>
+ 21| </#html>
+ 22|
+
+Original: 123 (14, 19)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></h#tml>
+ 15|
+Formatted: 222 (21, 3)
+ 19|     </script>
+ 20| </body>
+ 21| </h#tml>
+ 22|
+
+Original: 124 (14, 20)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></ht#ml>
+ 15|
+Formatted: 223 (21, 4)
+ 19|     </script>
+ 20| </body>
+ 21| </ht#ml>
+ 22|
+
+Original: 125 (14, 21)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></htm#l>
+ 15|
+Formatted: 224 (21, 5)
+ 19|     </script>
+ 20| </body>
+ 21| </htm#l>
+ 22|
+
+Original: 126 (14, 22)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html#>
+ 15|
+Formatted: 225 (21, 6)
+ 19|     </script>
+ 20| </body>
+ 21| </html#>
+ 22|
+
+Original: 127 (14, 23)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>#
+ 15|
+Formatted: 226 (21, 7)
+ 19|     </script>
+ 20| </body>
+ 21| </html>#
+ 22|
+
+Original: 128 (15, 0)
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+ 15| #
+Formatted: 227 (22, 0)
+ 20| </body>
+ 21| </html>
+ 22| #
+
+
+---- Formatted to Original ----
+Formatted: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <body>
+  2|     <script>
+Original: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <body><script>
+  2| `A
+
+Formatted: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <body>
+  2|     <script>
+Original: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <body><script>
+  2| `A
+
+Formatted: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <body>
+  2|     <script>
+Original: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <body><script>
+  2| `A
+
+Formatted: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <body>
+  2|     <script>
+Original: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <body><script>
+  2| `A
+
+Formatted: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <body>
+  2|     <script>
+Original: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <body><script>
+  2| `A
+
+Formatted: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <body>
+  2|     <script>
+Original: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <body><script>
+  2| `A
+
+Formatted: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <body>
+  2|     <script>
+Original: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <body><script>
+  2| `A
+
+Formatted: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <body>
+  2|     <script>
+Original: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <body><script>
+  2| `A
+
+Formatted: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <body>
+  2|     <script>
+Original: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <body><script>
+  2| `A
+
+Formatted: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <body>
+  2|     <script>
+Original: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <body><script>
+  2| `A
+
+Formatted: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <body>
+  2|     <script>
+Original: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <body><script>
+  2| `A
+
+Formatted: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <body>
+  2|     <script>
+Original: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <body><script>
+  2| `A
+
+Formatted: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <body>
+  2|     <script>
+Original: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <body><script>
+  2| `A
+
+Formatted: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <body>
+  2|     <script>
+Original: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <body><script>
+  2| `A
+
+Formatted: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <body>
+  2|     <script>
+Original: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <body><script>
+  2| `A
+
+Formatted: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<body>
+  2|     <script>
+  3|     `A
+Original: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<body><script>
+  2| `A
+  3| B
+
+Formatted: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#body>
+  2|     <script>
+  3|     `A
+Original: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#body><script>
+  2| `A
+  3| B
+
+Formatted: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <b#ody>
+  2|     <script>
+  3|     `A
+Original: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <b#ody><script>
+  2| `A
+  3| B
+
+Formatted: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <bo#dy>
+  2|     <script>
+  3|     `A
+Original: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <bo#dy><script>
+  2| `A
+  3| B
+
+Formatted: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <bod#y>
+  2|     <script>
+  3|     `A
+Original: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <bod#y><script>
+  2| `A
+  3| B
+
+Formatted: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <body#>
+  2|     <script>
+  3|     `A
+Original: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <body#><script>
+  2| `A
+  3| B
+
+Formatted: 21 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#
+  2|     <script>
+  3|     `A
+Original: 21 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| `A
+  3| B
+
+Formatted: 22 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body>
+  2| #    <script>
+  3|     `A
+  4|     B
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| `A
+  3| B
+
+Formatted: 23 (2, 1)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|  #   <script>
+  3|     `A
+  4|     B
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| `A
+  3| B
+
+Formatted: 24 (2, 2)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|   #  <script>
+  3|     `A
+  4|     B
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| `A
+  3| B
+
+Formatted: 25 (2, 3)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|    # <script>
+  3|     `A
+  4|     B
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| `A
+  3| B
+
+Formatted: 26 (2, 4)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     #<script>
+  3|     `A
+  4|     B
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| `A
+  3| B
+
+Formatted: 27 (2, 5)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <#script>
+  3|     `A
+  4|     B
+Original: 22 (1, 7)
+  0| <!DOCTYPE html>
+  1| <body><#script>
+  2| `A
+  3| B
+
+Formatted: 28 (2, 6)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <s#cript>
+  3|     `A
+  4|     B
+Original: 23 (1, 8)
+  0| <!DOCTYPE html>
+  1| <body><s#cript>
+  2| `A
+  3| B
+
+Formatted: 29 (2, 7)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <sc#ript>
+  3|     `A
+  4|     B
+Original: 24 (1, 9)
+  0| <!DOCTYPE html>
+  1| <body><sc#ript>
+  2| `A
+  3| B
+
+Formatted: 30 (2, 8)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scr#ipt>
+  3|     `A
+  4|     B
+Original: 25 (1, 10)
+  0| <!DOCTYPE html>
+  1| <body><scr#ipt>
+  2| `A
+  3| B
+
+Formatted: 31 (2, 9)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scri#pt>
+  3|     `A
+  4|     B
+Original: 26 (1, 11)
+  0| <!DOCTYPE html>
+  1| <body><scri#pt>
+  2| `A
+  3| B
+
+Formatted: 32 (2, 10)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scrip#t>
+  3|     `A
+  4|     B
+Original: 27 (1, 12)
+  0| <!DOCTYPE html>
+  1| <body><scrip#t>
+  2| `A
+  3| B
+
+Formatted: 33 (2, 11)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <script#>
+  3|     `A
+  4|     B
+Original: 28 (1, 13)
+  0| <!DOCTYPE html>
+  1| <body><script#>
+  2| `A
+  3| B
+
+Formatted: 34 (2, 12)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <script>#
+  3|     `A
+  4|     B
+Original: 29 (1, 14)
+  0| <!DOCTYPE html>
+  1| <body><script>#
+  2| `A
+  3| B
+
+Formatted: 35 (3, 0)
+  1| <body>
+  2|     <script>
+  3| #    `A
+  4|     B
+  5|     C`;
+Original: 30 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #`A
+  3| B
+  4| C`;
+
+Formatted: 36 (3, 1)
+  1| <body>
+  2|     <script>
+  3|  #   `A
+  4|     B
+  5|     C`;
+Original: 31 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #`A
+  3| B
+  4| C`;
+
+Formatted: 37 (3, 2)
+  1| <body>
+  2|     <script>
+  3|   #  `A
+  4|     B
+  5|     C`;
+Original: 31 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #`A
+  3| B
+  4| C`;
+
+Formatted: 38 (3, 3)
+  1| <body>
+  2|     <script>
+  3|    # `A
+  4|     B
+  5|     C`;
+Original: 31 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #`A
+  3| B
+  4| C`;
+
+Formatted: 39 (3, 4)
+  1| <body>
+  2|     <script>
+  3|     #`A
+  4|     B
+  5|     C`;
+Original: 31 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #`A
+  3| B
+  4| C`;
+
+Formatted: 40 (3, 5)
+  1| <body>
+  2|     <script>
+  3|     `#A
+  4|     B
+  5|     C`;
+Original: 31 (2, 1)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| `#A
+  3| B
+  4| C`;
+
+Formatted: 41 (3, 6)
+  1| <body>
+  2|     <script>
+  3|     `A#
+  4|     B
+  5|     C`;
+Original: 32 (2, 2)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| `A#
+  3| B
+  4| C`;
+
+Formatted: 42 (4, 0)
+  2|     <script>
+  3|     `A
+  4| #    B
+  5|     C`;
+  6|     let a = 1,
+Original: 33 (3, 0)
+  1| <body><script>
+  2| `A
+  3| #B
+  4| C`;
+  5| let a=1,b=2,c=3;
+
+Formatted: 43 (4, 1)
+  2|     <script>
+  3|     `A
+  4|  #   B
+  5|     C`;
+  6|     let a = 1,
+Original: 34 (3, 0)
+  1| <body><script>
+  2| `A
+  3| #B
+  4| C`;
+  5| let a=1,b=2,c=3;
+
+Formatted: 44 (4, 2)
+  2|     <script>
+  3|     `A
+  4|   #  B
+  5|     C`;
+  6|     let a = 1,
+Original: 34 (3, 0)
+  1| <body><script>
+  2| `A
+  3| #B
+  4| C`;
+  5| let a=1,b=2,c=3;
+
+Formatted: 45 (4, 3)
+  2|     <script>
+  3|     `A
+  4|    # B
+  5|     C`;
+  6|     let a = 1,
+Original: 34 (3, 0)
+  1| <body><script>
+  2| `A
+  3| #B
+  4| C`;
+  5| let a=1,b=2,c=3;
+
+Formatted: 46 (4, 4)
+  2|     <script>
+  3|     `A
+  4|     #B
+  5|     C`;
+  6|     let a = 1,
+Original: 34 (3, 0)
+  1| <body><script>
+  2| `A
+  3| #B
+  4| C`;
+  5| let a=1,b=2,c=3;
+
+Formatted: 47 (4, 5)
+  2|     <script>
+  3|     `A
+  4|     B#
+  5|     C`;
+  6|     let a = 1,
+Original: 34 (3, 1)
+  1| <body><script>
+  2| `A
+  3| B#
+  4| C`;
+  5| let a=1,b=2,c=3;
+
+Formatted: 48 (5, 0)
+  3|     `A
+  4|     B
+  5| #    C`;
+  6|     let a = 1,
+  7|         b = 2,
+Original: 35 (4, 0)
+  2| `A
+  3| B
+  4| #C`;
+  5| let a=1,b=2,c=3;
+  6| test`A
+
+Formatted: 49 (5, 1)
+  3|     `A
+  4|     B
+  5|  #   C`;
+  6|     let a = 1,
+  7|         b = 2,
+Original: 36 (4, 0)
+  2| `A
+  3| B
+  4| #C`;
+  5| let a=1,b=2,c=3;
+  6| test`A
+
+Formatted: 50 (5, 2)
+  3|     `A
+  4|     B
+  5|   #  C`;
+  6|     let a = 1,
+  7|         b = 2,
+Original: 36 (4, 0)
+  2| `A
+  3| B
+  4| #C`;
+  5| let a=1,b=2,c=3;
+  6| test`A
+
+Formatted: 51 (5, 3)
+  3|     `A
+  4|     B
+  5|    # C`;
+  6|     let a = 1,
+  7|         b = 2,
+Original: 36 (4, 0)
+  2| `A
+  3| B
+  4| #C`;
+  5| let a=1,b=2,c=3;
+  6| test`A
+
+Formatted: 52 (5, 4)
+  3|     `A
+  4|     B
+  5|     #C`;
+  6|     let a = 1,
+  7|         b = 2,
+Original: 36 (4, 0)
+  2| `A
+  3| B
+  4| #C`;
+  5| let a=1,b=2,c=3;
+  6| test`A
+
+Formatted: 53 (5, 5)
+  3|     `A
+  4|     B
+  5|     C#`;
+  6|     let a = 1,
+  7|         b = 2,
+Original: 36 (4, 1)
+  2| `A
+  3| B
+  4| C#`;
+  5| let a=1,b=2,c=3;
+  6| test`A
+
+Formatted: 54 (5, 6)
+  3|     `A
+  4|     B
+  5|     C`#;
+  6|     let a = 1,
+  7|         b = 2,
+Original: 37 (4, 2)
+  2| `A
+  3| B
+  4| C`#;
+  5| let a=1,b=2,c=3;
+  6| test`A
+
+Formatted: 55 (5, 7)
+  3|     `A
+  4|     B
+  5|     C`;#
+  6|     let a = 1,
+  7|         b = 2,
+Original: 38 (4, 3)
+  2| `A
+  3| B
+  4| C`;#
+  5| let a=1,b=2,c=3;
+  6| test`A
+
+Formatted: 56 (6, 0)
+  4|     B
+  5|     C`;
+  6| #    let a = 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 39 (5, 0)
+  3| B
+  4| C`;
+  5| #let a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 57 (6, 1)
+  4|     B
+  5|     C`;
+  6|  #   let a = 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 40 (5, 0)
+  3| B
+  4| C`;
+  5| #let a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 58 (6, 2)
+  4|     B
+  5|     C`;
+  6|   #  let a = 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 40 (5, 0)
+  3| B
+  4| C`;
+  5| #let a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 59 (6, 3)
+  4|     B
+  5|     C`;
+  6|    # let a = 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 40 (5, 0)
+  3| B
+  4| C`;
+  5| #let a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 60 (6, 4)
+  4|     B
+  5|     C`;
+  6|     #let a = 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 40 (5, 0)
+  3| B
+  4| C`;
+  5| #let a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 61 (6, 5)
+  4|     B
+  5|     C`;
+  6|     l#et a = 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 40 (5, 1)
+  3| B
+  4| C`;
+  5| l#et a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 62 (6, 6)
+  4|     B
+  5|     C`;
+  6|     le#t a = 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 41 (5, 2)
+  3| B
+  4| C`;
+  5| le#t a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 63 (6, 7)
+  4|     B
+  5|     C`;
+  6|     let# a = 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 42 (5, 3)
+  3| B
+  4| C`;
+  5| let# a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 64 (6, 8)
+  4|     B
+  5|     C`;
+  6|     let #a = 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 43 (5, 4)
+  3| B
+  4| C`;
+  5| let #a=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 65 (6, 9)
+  4|     B
+  5|     C`;
+  6|     let a# = 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 44 (5, 5)
+  3| B
+  4| C`;
+  5| let a#=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 66 (6, 10)
+  4|     B
+  5|     C`;
+  6|     let a #= 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 45 (5, 5)
+  3| B
+  4| C`;
+  5| let a#=1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 67 (6, 11)
+  4|     B
+  5|     C`;
+  6|     let a =# 1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 45 (5, 6)
+  3| B
+  4| C`;
+  5| let a=#1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 68 (6, 12)
+  4|     B
+  5|     C`;
+  6|     let a = #1,
+  7|         b = 2,
+  8|         c = 3;
+Original: 46 (5, 6)
+  3| B
+  4| C`;
+  5| let a=#1,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 69 (6, 13)
+  4|     B
+  5|     C`;
+  6|     let a = 1#,
+  7|         b = 2,
+  8|         c = 3;
+Original: 46 (5, 7)
+  3| B
+  4| C`;
+  5| let a=1#,b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 70 (6, 14)
+  4|     B
+  5|     C`;
+  6|     let a = 1,#
+  7|         b = 2,
+  8|         c = 3;
+Original: 47 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 71 (7, 0)
+  5|     C`;
+  6|     let a = 1,
+  7| #        b = 2,
+  8|         c = 3;
+  9|     test`A
+Original: 48 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 72 (7, 1)
+  5|     C`;
+  6|     let a = 1,
+  7|  #       b = 2,
+  8|         c = 3;
+  9|     test`A
+Original: 48 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 73 (7, 2)
+  5|     C`;
+  6|     let a = 1,
+  7|   #      b = 2,
+  8|         c = 3;
+  9|     test`A
+Original: 48 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 74 (7, 3)
+  5|     C`;
+  6|     let a = 1,
+  7|    #     b = 2,
+  8|         c = 3;
+  9|     test`A
+Original: 48 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 75 (7, 4)
+  5|     C`;
+  6|     let a = 1,
+  7|     #    b = 2,
+  8|         c = 3;
+  9|     test`A
+Original: 48 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 76 (7, 5)
+  5|     C`;
+  6|     let a = 1,
+  7|      #   b = 2,
+  8|         c = 3;
+  9|     test`A
+Original: 48 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 77 (7, 6)
+  5|     C`;
+  6|     let a = 1,
+  7|       #  b = 2,
+  8|         c = 3;
+  9|     test`A
+Original: 48 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 78 (7, 7)
+  5|     C`;
+  6|     let a = 1,
+  7|        # b = 2,
+  8|         c = 3;
+  9|     test`A
+Original: 48 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 79 (7, 8)
+  5|     C`;
+  6|     let a = 1,
+  7|         #b = 2,
+  8|         c = 3;
+  9|     test`A
+Original: 48 (5, 8)
+  3| B
+  4| C`;
+  5| let a=1,#b=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 80 (7, 9)
+  5|     C`;
+  6|     let a = 1,
+  7|         b# = 2,
+  8|         c = 3;
+  9|     test`A
+Original: 48 (5, 9)
+  3| B
+  4| C`;
+  5| let a=1,b#=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 81 (7, 10)
+  5|     C`;
+  6|     let a = 1,
+  7|         b #= 2,
+  8|         c = 3;
+  9|     test`A
+Original: 49 (5, 9)
+  3| B
+  4| C`;
+  5| let a=1,b#=2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 82 (7, 11)
+  5|     C`;
+  6|     let a = 1,
+  7|         b =# 2,
+  8|         c = 3;
+  9|     test`A
+Original: 49 (5, 10)
+  3| B
+  4| C`;
+  5| let a=1,b=#2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 83 (7, 12)
+  5|     C`;
+  6|     let a = 1,
+  7|         b = #2,
+  8|         c = 3;
+  9|     test`A
+Original: 50 (5, 10)
+  3| B
+  4| C`;
+  5| let a=1,b=#2,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 84 (7, 13)
+  5|     C`;
+  6|     let a = 1,
+  7|         b = 2#,
+  8|         c = 3;
+  9|     test`A
+Original: 50 (5, 11)
+  3| B
+  4| C`;
+  5| let a=1,b=2#,c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 85 (7, 14)
+  5|     C`;
+  6|     let a = 1,
+  7|         b = 2,#
+  8|         c = 3;
+  9|     test`A
+Original: 51 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 86 (8, 0)
+  6|     let a = 1,
+  7|         b = 2,
+  8| #        c = 3;
+  9|     test`A
+ 10|     ${a}
+Original: 52 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 87 (8, 1)
+  6|     let a = 1,
+  7|         b = 2,
+  8|  #       c = 3;
+  9|     test`A
+ 10|     ${a}
+Original: 52 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 88 (8, 2)
+  6|     let a = 1,
+  7|         b = 2,
+  8|   #      c = 3;
+  9|     test`A
+ 10|     ${a}
+Original: 52 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 89 (8, 3)
+  6|     let a = 1,
+  7|         b = 2,
+  8|    #     c = 3;
+  9|     test`A
+ 10|     ${a}
+Original: 52 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 90 (8, 4)
+  6|     let a = 1,
+  7|         b = 2,
+  8|     #    c = 3;
+  9|     test`A
+ 10|     ${a}
+Original: 52 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 91 (8, 5)
+  6|     let a = 1,
+  7|         b = 2,
+  8|      #   c = 3;
+  9|     test`A
+ 10|     ${a}
+Original: 52 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 92 (8, 6)
+  6|     let a = 1,
+  7|         b = 2,
+  8|       #  c = 3;
+  9|     test`A
+ 10|     ${a}
+Original: 52 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 93 (8, 7)
+  6|     let a = 1,
+  7|         b = 2,
+  8|        # c = 3;
+  9|     test`A
+ 10|     ${a}
+Original: 52 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 94 (8, 8)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         #c = 3;
+  9|     test`A
+ 10|     ${a}
+Original: 52 (5, 12)
+  3| B
+  4| C`;
+  5| let a=1,b=2,#c=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 95 (8, 9)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         c# = 3;
+  9|     test`A
+ 10|     ${a}
+Original: 52 (5, 13)
+  3| B
+  4| C`;
+  5| let a=1,b=2,c#=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 96 (8, 10)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         c #= 3;
+  9|     test`A
+ 10|     ${a}
+Original: 53 (5, 13)
+  3| B
+  4| C`;
+  5| let a=1,b=2,c#=3;
+  6| test`A
+  7| ${a}
+
+Formatted: 97 (8, 11)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         c =# 3;
+  9|     test`A
+ 10|     ${a}
+Original: 53 (5, 14)
+  3| B
+  4| C`;
+  5| let a=1,b=2,c=#3;
+  6| test`A
+  7| ${a}
+
+Formatted: 98 (8, 12)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         c = #3;
+  9|     test`A
+ 10|     ${a}
+Original: 54 (5, 14)
+  3| B
+  4| C`;
+  5| let a=1,b=2,c=#3;
+  6| test`A
+  7| ${a}
+
+Formatted: 99 (8, 13)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         c = 3#;
+  9|     test`A
+ 10|     ${a}
+Original: 54 (5, 15)
+  3| B
+  4| C`;
+  5| let a=1,b=2,c=3#;
+  6| test`A
+  7| ${a}
+
+Formatted: 100 (8, 14)
+  6|     let a = 1,
+  7|         b = 2,
+  8|         c = 3;#
+  9|     test`A
+ 10|     ${a}
+Original: 55 (5, 16)
+  3| B
+  4| C`;
+  5| let a=1,b=2,c=3;#
+  6| test`A
+  7| ${a}
+
+Formatted: 101 (9, 0)
+  7|         b = 2,
+  8|         c = 3;
+  9| #    test`A
+ 10|     ${a}
+ 11|     B
+Original: 56 (6, 0)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| #test`A
+  7| ${a}
+  8| B
+
+Formatted: 102 (9, 1)
+  7|         b = 2,
+  8|         c = 3;
+  9|  #   test`A
+ 10|     ${a}
+ 11|     B
+Original: 57 (6, 0)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| #test`A
+  7| ${a}
+  8| B
+
+Formatted: 103 (9, 2)
+  7|         b = 2,
+  8|         c = 3;
+  9|   #  test`A
+ 10|     ${a}
+ 11|     B
+Original: 57 (6, 0)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| #test`A
+  7| ${a}
+  8| B
+
+Formatted: 104 (9, 3)
+  7|         b = 2,
+  8|         c = 3;
+  9|    # test`A
+ 10|     ${a}
+ 11|     B
+Original: 57 (6, 0)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| #test`A
+  7| ${a}
+  8| B
+
+Formatted: 105 (9, 4)
+  7|         b = 2,
+  8|         c = 3;
+  9|     #test`A
+ 10|     ${a}
+ 11|     B
+Original: 57 (6, 0)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| #test`A
+  7| ${a}
+  8| B
+
+Formatted: 106 (9, 5)
+  7|         b = 2,
+  8|         c = 3;
+  9|     t#est`A
+ 10|     ${a}
+ 11|     B
+Original: 57 (6, 1)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| t#est`A
+  7| ${a}
+  8| B
+
+Formatted: 107 (9, 6)
+  7|         b = 2,
+  8|         c = 3;
+  9|     te#st`A
+ 10|     ${a}
+ 11|     B
+Original: 58 (6, 2)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| te#st`A
+  7| ${a}
+  8| B
+
+Formatted: 108 (9, 7)
+  7|         b = 2,
+  8|         c = 3;
+  9|     tes#t`A
+ 10|     ${a}
+ 11|     B
+Original: 59 (6, 3)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| tes#t`A
+  7| ${a}
+  8| B
+
+Formatted: 109 (9, 8)
+  7|         b = 2,
+  8|         c = 3;
+  9|     test#`A
+ 10|     ${a}
+ 11|     B
+Original: 60 (6, 4)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| test#`A
+  7| ${a}
+  8| B
+
+Formatted: 110 (9, 9)
+  7|         b = 2,
+  8|         c = 3;
+  9|     test`#A
+ 10|     ${a}
+ 11|     B
+Original: 61 (6, 5)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| test`#A
+  7| ${a}
+  8| B
+
+Formatted: 111 (9, 10)
+  7|         b = 2,
+  8|         c = 3;
+  9|     test`A#
+ 10|     ${a}
+ 11|     B
+Original: 62 (6, 6)
+  4| C`;
+  5| let a=1,b=2,c=3;
+  6| test`A#
+  7| ${a}
+  8| B
+
+Formatted: 112 (10, 0)
+  8|         c = 3;
+  9|     test`A
+ 10| #    ${a}
+ 11|     B
+ 12|     ${b}
+Original: 63 (7, 0)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| #${a}
+  8| B
+  9| ${b}
+
+Formatted: 113 (10, 1)
+  8|         c = 3;
+  9|     test`A
+ 10|  #   ${a}
+ 11|     B
+ 12|     ${b}
+Original: 64 (7, 0)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| #${a}
+  8| B
+  9| ${b}
+
+Formatted: 114 (10, 2)
+  8|         c = 3;
+  9|     test`A
+ 10|   #  ${a}
+ 11|     B
+ 12|     ${b}
+Original: 64 (7, 0)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| #${a}
+  8| B
+  9| ${b}
+
+Formatted: 115 (10, 3)
+  8|         c = 3;
+  9|     test`A
+ 10|    # ${a}
+ 11|     B
+ 12|     ${b}
+Original: 64 (7, 0)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| #${a}
+  8| B
+  9| ${b}
+
+Formatted: 116 (10, 4)
+  8|         c = 3;
+  9|     test`A
+ 10|     #${a}
+ 11|     B
+ 12|     ${b}
+Original: 64 (7, 0)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| #${a}
+  8| B
+  9| ${b}
+
+Formatted: 117 (10, 5)
+  8|         c = 3;
+  9|     test`A
+ 10|     $#{a}
+ 11|     B
+ 12|     ${b}
+Original: 64 (7, 1)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| $#{a}
+  8| B
+  9| ${b}
+
+Formatted: 118 (10, 6)
+  8|         c = 3;
+  9|     test`A
+ 10|     ${#a}
+ 11|     B
+ 12|     ${b}
+Original: 65 (7, 2)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| ${#a}
+  8| B
+  9| ${b}
+
+Formatted: 119 (10, 7)
+  8|         c = 3;
+  9|     test`A
+ 10|     ${a#}
+ 11|     B
+ 12|     ${b}
+Original: 66 (7, 3)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| ${a#}
+  8| B
+  9| ${b}
+
+Formatted: 120 (10, 8)
+  8|         c = 3;
+  9|     test`A
+ 10|     ${a}#
+ 11|     B
+ 12|     ${b}
+Original: 67 (7, 4)
+  5| let a=1,b=2,c=3;
+  6| test`A
+  7| ${a}#
+  8| B
+  9| ${b}
+
+Formatted: 121 (11, 0)
+  9|     test`A
+ 10|     ${a}
+ 11| #    B
+ 12|     ${b}
+ 13|     C
+Original: 68 (8, 0)
+  6| test`A
+  7| ${a}
+  8| #B
+  9| ${b}
+ 10| C
+
+Formatted: 122 (11, 1)
+  9|     test`A
+ 10|     ${a}
+ 11|  #   B
+ 12|     ${b}
+ 13|     C
+Original: 69 (8, 0)
+  6| test`A
+  7| ${a}
+  8| #B
+  9| ${b}
+ 10| C
+
+Formatted: 123 (11, 2)
+  9|     test`A
+ 10|     ${a}
+ 11|   #  B
+ 12|     ${b}
+ 13|     C
+Original: 69 (8, 0)
+  6| test`A
+  7| ${a}
+  8| #B
+  9| ${b}
+ 10| C
+
+Formatted: 124 (11, 3)
+  9|     test`A
+ 10|     ${a}
+ 11|    # B
+ 12|     ${b}
+ 13|     C
+Original: 69 (8, 0)
+  6| test`A
+  7| ${a}
+  8| #B
+  9| ${b}
+ 10| C
+
+Formatted: 125 (11, 4)
+  9|     test`A
+ 10|     ${a}
+ 11|     #B
+ 12|     ${b}
+ 13|     C
+Original: 69 (8, 0)
+  6| test`A
+  7| ${a}
+  8| #B
+  9| ${b}
+ 10| C
+
+Formatted: 126 (11, 5)
+  9|     test`A
+ 10|     ${a}
+ 11|     B#
+ 12|     ${b}
+ 13|     C
+Original: 69 (8, 1)
+  6| test`A
+  7| ${a}
+  8| B#
+  9| ${b}
+ 10| C
+
+Formatted: 127 (12, 0)
+ 10|     ${a}
+ 11|     B
+ 12| #    ${b}
+ 13|     C
+ 14|     ${c}`;
+Original: 70 (9, 0)
+  7| ${a}
+  8| B
+  9| #${b}
+ 10| C
+ 11| ${c}`;
+
+Formatted: 128 (12, 1)
+ 10|     ${a}
+ 11|     B
+ 12|  #   ${b}
+ 13|     C
+ 14|     ${c}`;
+Original: 71 (9, 0)
+  7| ${a}
+  8| B
+  9| #${b}
+ 10| C
+ 11| ${c}`;
+
+Formatted: 129 (12, 2)
+ 10|     ${a}
+ 11|     B
+ 12|   #  ${b}
+ 13|     C
+ 14|     ${c}`;
+Original: 71 (9, 0)
+  7| ${a}
+  8| B
+  9| #${b}
+ 10| C
+ 11| ${c}`;
+
+Formatted: 130 (12, 3)
+ 10|     ${a}
+ 11|     B
+ 12|    # ${b}
+ 13|     C
+ 14|     ${c}`;
+Original: 71 (9, 0)
+  7| ${a}
+  8| B
+  9| #${b}
+ 10| C
+ 11| ${c}`;
+
+Formatted: 131 (12, 4)
+ 10|     ${a}
+ 11|     B
+ 12|     #${b}
+ 13|     C
+ 14|     ${c}`;
+Original: 71 (9, 0)
+  7| ${a}
+  8| B
+  9| #${b}
+ 10| C
+ 11| ${c}`;
+
+Formatted: 132 (12, 5)
+ 10|     ${a}
+ 11|     B
+ 12|     $#{b}
+ 13|     C
+ 14|     ${c}`;
+Original: 71 (9, 1)
+  7| ${a}
+  8| B
+  9| $#{b}
+ 10| C
+ 11| ${c}`;
+
+Formatted: 133 (12, 6)
+ 10|     ${a}
+ 11|     B
+ 12|     ${#b}
+ 13|     C
+ 14|     ${c}`;
+Original: 72 (9, 2)
+  7| ${a}
+  8| B
+  9| ${#b}
+ 10| C
+ 11| ${c}`;
+
+Formatted: 134 (12, 7)
+ 10|     ${a}
+ 11|     B
+ 12|     ${b#}
+ 13|     C
+ 14|     ${c}`;
+Original: 73 (9, 3)
+  7| ${a}
+  8| B
+  9| ${b#}
+ 10| C
+ 11| ${c}`;
+
+Formatted: 135 (12, 8)
+ 10|     ${a}
+ 11|     B
+ 12|     ${b}#
+ 13|     C
+ 14|     ${c}`;
+Original: 74 (9, 4)
+  7| ${a}
+  8| B
+  9| ${b}#
+ 10| C
+ 11| ${c}`;
+
+Formatted: 136 (13, 0)
+ 11|     B
+ 12|     ${b}
+ 13| #    C
+ 14|     ${c}`;
+ 15|     `ABC`;
+Original: 75 (10, 0)
+  8| B
+  9| ${b}
+ 10| #C
+ 11| ${c}`;
+ 12| `ABC`;
+
+Formatted: 137 (13, 1)
+ 11|     B
+ 12|     ${b}
+ 13|  #   C
+ 14|     ${c}`;
+ 15|     `ABC`;
+Original: 76 (10, 0)
+  8| B
+  9| ${b}
+ 10| #C
+ 11| ${c}`;
+ 12| `ABC`;
+
+Formatted: 138 (13, 2)
+ 11|     B
+ 12|     ${b}
+ 13|   #  C
+ 14|     ${c}`;
+ 15|     `ABC`;
+Original: 76 (10, 0)
+  8| B
+  9| ${b}
+ 10| #C
+ 11| ${c}`;
+ 12| `ABC`;
+
+Formatted: 139 (13, 3)
+ 11|     B
+ 12|     ${b}
+ 13|    # C
+ 14|     ${c}`;
+ 15|     `ABC`;
+Original: 76 (10, 0)
+  8| B
+  9| ${b}
+ 10| #C
+ 11| ${c}`;
+ 12| `ABC`;
+
+Formatted: 140 (13, 4)
+ 11|     B
+ 12|     ${b}
+ 13|     #C
+ 14|     ${c}`;
+ 15|     `ABC`;
+Original: 76 (10, 0)
+  8| B
+  9| ${b}
+ 10| #C
+ 11| ${c}`;
+ 12| `ABC`;
+
+Formatted: 141 (13, 5)
+ 11|     B
+ 12|     ${b}
+ 13|     C#
+ 14|     ${c}`;
+ 15|     `ABC`;
+Original: 76 (10, 1)
+  8| B
+  9| ${b}
+ 10| C#
+ 11| ${c}`;
+ 12| `ABC`;
+
+Formatted: 142 (14, 0)
+ 12|     ${b}
+ 13|     C
+ 14| #    ${c}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 77 (11, 0)
+  9| ${b}
+ 10| C
+ 11| #${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 143 (14, 1)
+ 12|     ${b}
+ 13|     C
+ 14|  #   ${c}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 78 (11, 0)
+  9| ${b}
+ 10| C
+ 11| #${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 144 (14, 2)
+ 12|     ${b}
+ 13|     C
+ 14|   #  ${c}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 78 (11, 0)
+  9| ${b}
+ 10| C
+ 11| #${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 145 (14, 3)
+ 12|     ${b}
+ 13|     C
+ 14|    # ${c}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 78 (11, 0)
+  9| ${b}
+ 10| C
+ 11| #${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 146 (14, 4)
+ 12|     ${b}
+ 13|     C
+ 14|     #${c}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 78 (11, 0)
+  9| ${b}
+ 10| C
+ 11| #${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 147 (14, 5)
+ 12|     ${b}
+ 13|     C
+ 14|     $#{c}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 78 (11, 1)
+  9| ${b}
+ 10| C
+ 11| $#{c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 148 (14, 6)
+ 12|     ${b}
+ 13|     C
+ 14|     ${#c}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 79 (11, 2)
+  9| ${b}
+ 10| C
+ 11| ${#c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 149 (14, 7)
+ 12|     ${b}
+ 13|     C
+ 14|     ${c#}`;
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 80 (11, 3)
+  9| ${b}
+ 10| C
+ 11| ${c#}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 150 (14, 8)
+ 12|     ${b}
+ 13|     C
+ 14|     ${c}#`;
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 81 (11, 4)
+  9| ${b}
+ 10| C
+ 11| ${c}#`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 151 (14, 9)
+ 12|     ${b}
+ 13|     C
+ 14|     ${c}`#;
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 82 (11, 5)
+  9| ${b}
+ 10| C
+ 11| ${c}`#;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 152 (14, 10)
+ 12|     ${b}
+ 13|     C
+ 14|     ${c}`;#
+ 15|     `ABC`;
+ 16|     a = 1,
+Original: 83 (11, 6)
+  9| ${b}
+ 10| C
+ 11| ${c}`;#
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+
+Formatted: 153 (15, 0)
+ 13|     C
+ 14|     ${c}`;
+ 15| #    `ABC`;
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 84 (12, 0)
+ 10| C
+ 11| ${c}`;
+ 12| #`ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 154 (15, 1)
+ 13|     C
+ 14|     ${c}`;
+ 15|  #   `ABC`;
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 85 (12, 0)
+ 10| C
+ 11| ${c}`;
+ 12| #`ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 155 (15, 2)
+ 13|     C
+ 14|     ${c}`;
+ 15|   #  `ABC`;
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 85 (12, 0)
+ 10| C
+ 11| ${c}`;
+ 12| #`ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 156 (15, 3)
+ 13|     C
+ 14|     ${c}`;
+ 15|    # `ABC`;
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 85 (12, 0)
+ 10| C
+ 11| ${c}`;
+ 12| #`ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 157 (15, 4)
+ 13|     C
+ 14|     ${c}`;
+ 15|     #`ABC`;
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 85 (12, 0)
+ 10| C
+ 11| ${c}`;
+ 12| #`ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 158 (15, 5)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `#ABC`;
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 85 (12, 1)
+ 10| C
+ 11| ${c}`;
+ 12| `#ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 159 (15, 6)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `A#BC`;
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 86 (12, 2)
+ 10| C
+ 11| ${c}`;
+ 12| `A#BC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 160 (15, 7)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `AB#C`;
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 87 (12, 3)
+ 10| C
+ 11| ${c}`;
+ 12| `AB#C`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 161 (15, 8)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `ABC#`;
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 88 (12, 4)
+ 10| C
+ 11| ${c}`;
+ 12| `ABC#`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 162 (15, 9)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `ABC`#;
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 89 (12, 5)
+ 10| C
+ 11| ${c}`;
+ 12| `ABC`#;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 163 (15, 10)
+ 13|     C
+ 14|     ${c}`;
+ 15|     `ABC`;#
+ 16|     a = 1,
+ 17|     b = 2,
+Original: 90 (12, 6)
+ 10| C
+ 11| ${c}`;
+ 12| `ABC`;#
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+
+Formatted: 164 (16, 0)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16| #    a = 1,
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 91 (13, 0)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| #a=1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 165 (16, 1)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|  #   a = 1,
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 92 (13, 0)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| #a=1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 166 (16, 2)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|   #  a = 1,
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 92 (13, 0)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| #a=1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 167 (16, 3)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|    # a = 1,
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 92 (13, 0)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| #a=1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 168 (16, 4)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     #a = 1,
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 92 (13, 0)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| #a=1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 169 (16, 5)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     a# = 1,
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 92 (13, 1)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a#=1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 170 (16, 6)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     a #= 1,
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 93 (13, 1)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a#=1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 171 (16, 7)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     a =# 1,
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 93 (13, 2)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=#1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 172 (16, 8)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     a = #1,
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 94 (13, 2)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=#1,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 173 (16, 9)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     a = 1#,
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 94 (13, 3)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1#,b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 174 (16, 10)
+ 14|     ${c}`;
+ 15|     `ABC`;
+ 16|     a = 1,#
+ 17|     b = 2,
+ 18|     c = 3;
+Original: 95 (13, 4)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,#b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 175 (17, 0)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17| #    b = 2,
+ 18|     c = 3;
+ 19|     </script>
+Original: 96 (13, 4)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,#b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 176 (17, 1)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|  #   b = 2,
+ 18|     c = 3;
+ 19|     </script>
+Original: 96 (13, 4)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,#b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 177 (17, 2)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|   #  b = 2,
+ 18|     c = 3;
+ 19|     </script>
+Original: 96 (13, 4)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,#b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 178 (17, 3)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|    # b = 2,
+ 18|     c = 3;
+ 19|     </script>
+Original: 96 (13, 4)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,#b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 179 (17, 4)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     #b = 2,
+ 18|     c = 3;
+ 19|     </script>
+Original: 96 (13, 4)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,#b=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 180 (17, 5)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     b# = 2,
+ 18|     c = 3;
+ 19|     </script>
+Original: 96 (13, 5)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b#=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 181 (17, 6)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     b #= 2,
+ 18|     c = 3;
+ 19|     </script>
+Original: 97 (13, 5)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b#=2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 182 (17, 7)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     b =# 2,
+ 18|     c = 3;
+ 19|     </script>
+Original: 97 (13, 6)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=#2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 183 (17, 8)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     b = #2,
+ 18|     c = 3;
+ 19|     </script>
+Original: 98 (13, 6)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=#2,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 184 (17, 9)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     b = 2#,
+ 18|     c = 3;
+ 19|     </script>
+Original: 98 (13, 7)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2#,c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 185 (17, 10)
+ 15|     `ABC`;
+ 16|     a = 1,
+ 17|     b = 2,#
+ 18|     c = 3;
+ 19|     </script>
+Original: 99 (13, 8)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,#c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 186 (18, 0)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18| #    c = 3;
+ 19|     </script>
+ 20| </body>
+Original: 100 (13, 8)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,#c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 187 (18, 1)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|  #   c = 3;
+ 19|     </script>
+ 20| </body>
+Original: 100 (13, 8)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,#c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 188 (18, 2)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|   #  c = 3;
+ 19|     </script>
+ 20| </body>
+Original: 100 (13, 8)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,#c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 189 (18, 3)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|    # c = 3;
+ 19|     </script>
+ 20| </body>
+Original: 100 (13, 8)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,#c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 190 (18, 4)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     #c = 3;
+ 19|     </script>
+ 20| </body>
+Original: 100 (13, 8)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,#c=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 191 (18, 5)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     c# = 3;
+ 19|     </script>
+ 20| </body>
+Original: 100 (13, 9)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c#=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 192 (18, 6)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     c #= 3;
+ 19|     </script>
+ 20| </body>
+Original: 101 (13, 9)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c#=3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 193 (18, 7)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     c =# 3;
+ 19|     </script>
+ 20| </body>
+Original: 101 (13, 10)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=#3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 194 (18, 8)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     c = #3;
+ 19|     </script>
+ 20| </body>
+Original: 102 (13, 10)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=#3;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 195 (18, 9)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     c = 3#;
+ 19|     </script>
+ 20| </body>
+Original: 102 (13, 11)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3#;
+ 14| </script></body></html>
+ 15|
+
+Formatted: 196 (18, 10)
+ 16|     a = 1,
+ 17|     b = 2,
+ 18|     c = 3;#
+ 19|     </script>
+ 20| </body>
+Original: 103 (13, 12)
+ 11| ${c}`;
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;#
+ 14| </script></body></html>
+ 15|
+
+Formatted: 197 (19, 0)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19| #    </script>
+ 20| </body>
+ 21| </html>
+Original: 104 (14, 0)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| #</script></body></html>
+ 15|
+
+Formatted: 198 (19, 1)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|  #   </script>
+ 20| </body>
+ 21| </html>
+Original: 105 (14, 0)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| #</script></body></html>
+ 15|
+
+Formatted: 199 (19, 2)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|   #  </script>
+ 20| </body>
+ 21| </html>
+Original: 105 (14, 0)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| #</script></body></html>
+ 15|
+
+Formatted: 200 (19, 3)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|    # </script>
+ 20| </body>
+ 21| </html>
+Original: 105 (14, 0)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| #</script></body></html>
+ 15|
+
+Formatted: 201 (19, 4)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     #</script>
+ 20| </body>
+ 21| </html>
+Original: 105 (14, 0)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| #</script></body></html>
+ 15|
+
+Formatted: 202 (19, 5)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     <#/script>
+ 20| </body>
+ 21| </html>
+Original: 105 (14, 1)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| <#/script></body></html>
+ 15|
+
+Formatted: 203 (19, 6)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </#script>
+ 20| </body>
+ 21| </html>
+Original: 106 (14, 2)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </#script></body></html>
+ 15|
+
+Formatted: 204 (19, 7)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </s#cript>
+ 20| </body>
+ 21| </html>
+Original: 107 (14, 3)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </s#cript></body></html>
+ 15|
+
+Formatted: 205 (19, 8)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </sc#ript>
+ 20| </body>
+ 21| </html>
+Original: 108 (14, 4)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </sc#ript></body></html>
+ 15|
+
+Formatted: 206 (19, 9)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </scr#ipt>
+ 20| </body>
+ 21| </html>
+Original: 109 (14, 5)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </scr#ipt></body></html>
+ 15|
+
+Formatted: 207 (19, 10)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </scri#pt>
+ 20| </body>
+ 21| </html>
+Original: 110 (14, 6)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </scri#pt></body></html>
+ 15|
+
+Formatted: 208 (19, 11)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </scrip#t>
+ 20| </body>
+ 21| </html>
+Original: 111 (14, 7)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </scrip#t></body></html>
+ 15|
+
+Formatted: 209 (19, 12)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </script#>
+ 20| </body>
+ 21| </html>
+Original: 112 (14, 8)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script#></body></html>
+ 15|
+
+Formatted: 210 (19, 13)
+ 17|     b = 2,
+ 18|     c = 3;
+ 19|     </script>#
+ 20| </body>
+ 21| </html>
+Original: 113 (14, 9)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script>#</body></html>
+ 15|
+
+Formatted: 211 (20, 0)
+ 18|     c = 3;
+ 19|     </script>
+ 20| #</body>
+ 21| </html>
+ 22|
+Original: 114 (14, 9)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script>#</body></html>
+ 15|
+
+Formatted: 212 (20, 1)
+ 18|     c = 3;
+ 19|     </script>
+ 20| <#/body>
+ 21| </html>
+ 22|
+Original: 114 (14, 10)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script><#/body></html>
+ 15|
+
+Formatted: 213 (20, 2)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </#body>
+ 21| </html>
+ 22|
+Original: 115 (14, 11)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></#body></html>
+ 15|
+
+Formatted: 214 (20, 3)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </b#ody>
+ 21| </html>
+ 22|
+Original: 116 (14, 12)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></b#ody></html>
+ 15|
+
+Formatted: 215 (20, 4)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </bo#dy>
+ 21| </html>
+ 22|
+Original: 117 (14, 13)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></bo#dy></html>
+ 15|
+
+Formatted: 216 (20, 5)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </bod#y>
+ 21| </html>
+ 22|
+Original: 118 (14, 14)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></bod#y></html>
+ 15|
+
+Formatted: 217 (20, 6)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </body#>
+ 21| </html>
+ 22|
+Original: 119 (14, 15)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body#></html>
+ 15|
+
+Formatted: 218 (20, 7)
+ 18|     c = 3;
+ 19|     </script>
+ 20| </body>#
+ 21| </html>
+ 22|
+Original: 120 (14, 16)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body>#</html>
+ 15|
+
+Formatted: 219 (21, 0)
+ 19|     </script>
+ 20| </body>
+ 21| #</html>
+ 22|
+Original: 121 (14, 16)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body>#</html>
+ 15|
+
+Formatted: 220 (21, 1)
+ 19|     </script>
+ 20| </body>
+ 21| <#/html>
+ 22|
+Original: 121 (14, 17)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body><#/html>
+ 15|
+
+Formatted: 221 (21, 2)
+ 19|     </script>
+ 20| </body>
+ 21| </#html>
+ 22|
+Original: 122 (14, 18)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></#html>
+ 15|
+
+Formatted: 222 (21, 3)
+ 19|     </script>
+ 20| </body>
+ 21| </h#tml>
+ 22|
+Original: 123 (14, 19)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></h#tml>
+ 15|
+
+Formatted: 223 (21, 4)
+ 19|     </script>
+ 20| </body>
+ 21| </ht#ml>
+ 22|
+Original: 124 (14, 20)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></ht#ml>
+ 15|
+
+Formatted: 224 (21, 5)
+ 19|     </script>
+ 20| </body>
+ 21| </htm#l>
+ 22|
+Original: 125 (14, 21)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></htm#l>
+ 15|
+
+Formatted: 225 (21, 6)
+ 19|     </script>
+ 20| </body>
+ 21| </html#>
+ 22|
+Original: 126 (14, 22)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html#>
+ 15|
+
+Formatted: 226 (21, 7)
+ 19|     </script>
+ 20| </body>
+ 21| </html>#
+ 22|
+Original: 127 (14, 23)
+ 12| `ABC`;
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>#
+ 15|
+
+Formatted: 227 (22, 0)
+ 20| </body>
+ 21| </html>
+ 22| #
+Original: 128 (15, 0)
+ 13| a=1,b=2,c=3;
+ 14| </script></body></html>
+ 15| #
+
+

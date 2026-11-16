@@ -1,0 +1,3 @@
+
+PASS The 'load' event on the style element should not fire for mutations while it's on the stack of open elements
+

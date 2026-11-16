@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-addsourcebuffer-after-canplaytype</title>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    window.addEventListener('load', async event => {
+        findMediaElement();
+        run(`video.canPlayType('audio/mp4; codecs="mp4a.40.2"')`)
+        
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run(`source.addSourceBuffer('audio/mp4; codecs="mp4a.40.2"')`);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+<video></video>
+</body>

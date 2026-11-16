@@ -1,0 +1,7 @@
+
+PASS position-anchor initial value is normal
+PASS position-anchor accepts an anchor name with an attachment point
+PASS an attachment point parses from a stylesheet
+PASS an attachment point is accepted in @position-try
+PASS a comment between the anchor name and the attachment point does not break adjacency
+

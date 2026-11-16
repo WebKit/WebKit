@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests parsing deeply nested entity references. WebKit should not hang or crash.</p>
+<div id="result">Running</div>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const blob = new Blob([`<?xml version="1.0" standalone="no"?>
+<!DOCTYPE html [
+  <!ENTITY j "&i;&i;&i;&i;&i;&i;&i;&i;&i;&i;">
+  <!ENTITY i "&h;&h;&h;&h;&h;&h;&h;&h;&h;&h;">
+  <!ENTITY h "&g;&g;&g;&g;&g;&g;&g;&g;&g;&g;">
+  <!ENTITY g "&f;&f;&f;&f;&f;&f;&f;&f;&f;&f;">
+  <!ENTITY f "&e;&e;&e;&e;&e;&e;&e;&e;&e;&e;">
+  <!ENTITY e "&d;&d;&d;&d;&d;&d;&d;&d;&d;&d;">
+  <!ENTITY d "&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;">
+  <!ENTITY c "&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;">
+  <!ENTITY b "&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;">
+  <!ENTITY a "aaaa ">
+]>
+<html xmlns="http://www.w3.org/1999/xhtml"><body>&j;</body></html>`], {type: "application/xml"});
+
+const iframe = document.createElement('iframe');
+iframe.onload = () => result.textContent = 'PASS';
+iframe.src = URL.createObjectURL(blob);
+document.body.appendChild(iframe);
+
+</script>
+</body>
+</html>

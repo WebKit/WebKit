@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+img {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+</style>
+</head>
+<body>
+<img src="../resources/green-400x400.png"></img>
+<pre id="console"></pre>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", () => {
+    image = document.querySelector("img");
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(0.9, 0),
+            bottomRight : new DOMPointReadOnly(0.9, 0.9),
+            bottomLeft : new DOMPointReadOnly(0, 0.9),
+            children: [
+                {
+                    text : "e",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(0.9, 0),
+                    bottomRight : new DOMPointReadOnly(0.9, 0.9),
+                    bottomLeft : new DOMPointReadOnly(0, 0.9),
+                }
+            ]
+        }
+    ]);
+
+    shouldBeUndefined(`internals.shadowRoot(image)?.getElementById("div#image-overlay")`);
+    finishJSTest();
+});
+</script>
+</body>
+</html>

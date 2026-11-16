@@ -1,0 +1,20 @@
+<style>
+div {
+  display: contents;
+}
+
+.flex_box {
+  display: flex;
+}
+</style>PASS if no crash.<div class=flex_box onfocusin="justify()" contenteditable="true" draggable="true"> <details id=details></details></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+details.outerText = "some content";
+document.defaultView.find("some");
+
+function justify() {
+  document.execCommand("justifyCenter", false, null);
+}
+</script>

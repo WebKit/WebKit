@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: DoesNotHaveBold;
+    src: local("Times");
+}
+</style>
+</head>
+<body>
+This test makes sure that the <code>ch</code> unit, which is supposed to be as wide as the <code>0</code> character, is in fact that wide, even if the font is using synthetic bold. The test passes if the width of the green box matches in both cases.
+<div style="font: bold 16px 'DoesNotHaveBold'; background: green; width: 10ch; color: transparent;">a</div>
+</body>
+</html>

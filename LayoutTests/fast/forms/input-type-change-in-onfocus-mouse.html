@@ -1,0 +1,35 @@
+<html>
+<head>
+    <script>
+    async function runTest() {
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        } else {
+            alert('This test does not work in Safari.');
+            return;
+        }
+            
+        onblurCalled = false;
+
+        // Simulate a mouse click.
+        await eventSender.asyncMouseMoveTo(15, 15);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        
+        if (onblurCalled) 
+            return;
+
+        document.getElementById('result').innerHTML = 'SUCCESS';
+        testRunner?.notifyDone();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <input id="input" type="text" onfocus="this.setAttribute('type', 'password')" onblur="onblurCalled = true;">
+    <p>
+    This tests that changing an input element's type in its onfocus handler does not cause its onblur handler to be called. If this test is successful, "SUCCESS" should be shown below.
+    </p>
+    <div id="result">FAILURE</div>
+</body>
+</html>

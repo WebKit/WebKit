@@ -1,0 +1,21 @@
+This tests that when a video inside a shadow tree is in Picture-in-Picture, a page can find it through its shadow root's pictureInPictureElement property instead of always getting null.
+RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(canplaythrough)
+* Nothing is in Picture-in-Picture yet, so every getter returns null.
+EXPECTED (document.pictureInPictureElement == 'null') OK
+EXPECTED (outerRoot.pictureInPictureElement == 'null') OK
+EXPECTED (innerRoot.pictureInPictureElement == 'null') OK
+EVENT(enterpictureinpicture)
+* The video inside the nested shadow roots is in Picture-in-Picture.
+EXPECTED (document.pictureInPictureElement.id == 'outerHost') OK
+EXPECTED (outerRoot.pictureInPictureElement.id == 'innerHost') OK
+EXPECTED (innerRoot.pictureInPictureElement.id == 'video') OK
+EVENT(leavepictureinpicture)
+* After exiting Picture-in-Picture, every getter returns null again.
+EXPECTED (document.pictureInPictureElement == 'null') OK
+EXPECTED (outerRoot.pictureInPictureElement == 'null') OK
+EXPECTED (innerRoot.pictureInPictureElement == 'null') OK
+END OF TEST
+

@@ -1,0 +1,24 @@
+
+Test audio track enabled attributes.
+
+EVENT(canplaythrough)
+EXPECTED (video.audioTracks.length == '2') OK
+RUN(track1 = video.audioTracks[0])
+RUN(track2 = video.audioTracks[1])
+
+** Checking initial state
+EXPECTED (track1.enabled == 'true') OK
+EXPECTED (track2.enabled == 'false') OK
+
+** Ensuring we can have two enabled tracks
+RUN(track2.enabled = true)
+EXPECTED (track1.enabled == 'true') OK
+EXPECTED (track2.enabled == 'true') OK
+
+** Ensuring we can have zero enabled tracks
+RUN(track1.enabled = false)
+RUN(track2.enabled = false)
+EXPECTED (track1.enabled == 'false') OK
+EXPECTED (track2.enabled == 'false') OK
+END OF TEST
+

@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<button id="button-1">
+    Foo
+    <p id="p" aria-hidden="true">bar</p>
+</button>
+
+<button id="button-2" aria-labelledby="button-1">Second</button>
+
+<script>
+var output = "This test ensures we expose the correct label for buttons after an aria-hidden descendant changes state.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var buttonOne = accessibilityController.accessibleElementById("button-1");
+    var buttonTwo = accessibilityController.accessibleElementById("button-2");
+
+    var initialButtonOneText = platformTextAlternatives(buttonOne);
+    var initialButtonTwoText = platformTextAlternatives(buttonTwo);
+    output += `${initialButtonOneText}\n\n`;
+    output += `${initialButtonTwoText}\n\n`;
+    output += "Dynamically changing aria-hidden.\n\n";
+
+    var newButtonOneText, newButtonTwoText;
+    setTimeout(async function() {
+        // Wait for the initial rendering to complete before making the key dynamic aria-hidden change.
+        // If we don't do this, we can sometimes pass the test even while the implementation is wrong because the button
+        // accessibility object gets updated by said initial rendering pass.
+        await UIHelper.renderingUpdate();
+
+        document.getElementById("p").setAttribute("aria-hidden", "false");
+        await waitFor(() => {
+            newButtonOneText = platformTextAlternatives(buttonOne);
+            newButtonTwoText = platformTextAlternatives(buttonTwo);
+            return newButtonOneText != initialButtonOneText && newButtonTwoText != initialButtonTwoText;
+        });
+        output += `${newButtonOneText}\n\n`;
+        output += `${newButtonTwoText}\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>PASS if this does not crash.</p>
+<svg width="200" height="200">
+    <polygon id="target" points="10,10 50,10 50,50" stroke="black" stroke-width="2" fill="none"
+             vector-effect="non-scaling-stroke" transform="rotate(10)" marker-end="url(#marker)"/>
+    <marker id="marker" markerWidth="10" markerHeight="10">
+        <rect width="10" height="10"/>
+    </marker>
+</svg>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const target = document.getElementById("target");
+
+// Lay out once, so the shape caches marker positions for the resolved <marker>.
+document.body.offsetHeight;
+
+// Repoint marker-end at an id that does not exist. The <marker> element itself is never
+// touched - it stays in the document and keeps its renderer. The shape's SVGResources are
+// rebuilt and come back empty, so the cache entry is dropped, but marker-end is still set
+// so the marker positions survive until the next layout.
+target.setAttribute("marker-end", "url(#nonexistent)");
+getComputedStyle(target).color;
+
+// The next style change repaints with the old style before layout gets a chance to refresh
+// the marker positions. vector-effect + transform make the repaint rect recompute from
+// scratch instead of reusing the cached one, which used to resolve the stale positions
+// against the missing SVGResources.
+target.style.fill = "red";
+getComputedStyle(target).color;
+</script>
+</body>
+</html>

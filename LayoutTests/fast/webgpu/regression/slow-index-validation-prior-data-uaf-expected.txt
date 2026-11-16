@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: PASS: index buffer restored to exactly the snapshotted contents
+CONSOLE MESSAGE: PASS: indirect buffer restored to exactly the snapshotted contents
+

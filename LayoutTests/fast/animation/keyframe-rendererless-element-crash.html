@@ -1,0 +1,14 @@
+<style id=STYLE>
+MARQUEE { -webkit-transition-duration: 1s; }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    onload = function fun() {
+        STYLE.appendChild(Q);
+        MARQUEE.style.setProperty("-webkit-perspective-origin-y", "0px");
+        MARQUEE.style.setProperty("-webkit-transform", "rotate(0deg)");
+        document.getAnimations()[0].effect = new KeyframeEffect(Q, [ ], 1);
+}
+</script>
+<body><pre id=PRE></pre><marquee id=MARQUEE><q id="Q"></q><span>Test keyframeEffect on an element that does not have a renderer. The test passes if WebKit doesn't crash or hit an assertion.</span>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            padding: 25px;
+            width: 500px;
+        }
+
+        .apple-pay-button {
+            -webkit-appearance: -apple-pay-button;
+        }
+
+        .square-corners {
+            border-radius: 0px;
+        }
+
+        .very-round-corners {
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <button class='apple-pay-button' style='border-bottom-left-radius: 0px'></button>
+        <button class='apple-pay-button' style='border-bottom-right-radius: 0px'></button>
+        <button class='apple-pay-button' style='border-top-left-radius: 0px'></button>
+        <button class='apple-pay-button' style='border-top-right-radius: 0px'></button>
+    </div>
+    <div class='container'>
+        <button class='apple-pay-button square-corners' style='border-bottom-left-radius: inherit'></button>
+        <button class='apple-pay-button square-corners' style='border-bottom-right-radius: inherit'></button>
+        <button class='apple-pay-button square-corners' style='border-top-left-radius: inherit'></button>
+        <button class='apple-pay-button square-corners' style='border-top-right-radius: inherit'></button>
+    </div>
+    <div class='container'>
+        <button class='apple-pay-button' style='border-bottom-left-radius: inherit'></button>
+        <button class='apple-pay-button' style='border-bottom-right-radius: inherit'></button>
+        <button class='apple-pay-button' style='border-top-left-radius: inherit'></button>
+        <button class='apple-pay-button' style='border-top-right-radius: inherit'></button>
+    </div>
+    <div class='container'>
+        <button class='apple-pay-button' style='border-bottom-left-radius: 15px'></button>
+        <button class='apple-pay-button' style='border-bottom-right-radius: 15px'></button>
+        <button class='apple-pay-button' style='border-top-left-radius: 15px'></button>
+        <button class='apple-pay-button' style='border-top-right-radius: 15px'></button>
+    </div>
+    <div class='container'>
+        <button class='apple-pay-button very-round-corners' style='border-bottom-left-radius: inherit'></button>
+        <button class='apple-pay-button very-round-corners' style='border-bottom-right-radius: inherit'></button>
+        <button class='apple-pay-button very-round-corners' style='border-top-left-radius: inherit'></button>
+        <button class='apple-pay-button very-round-corners' style='border-top-right-radius: inherit'></button>
+    </div>
+</body>
+</html>

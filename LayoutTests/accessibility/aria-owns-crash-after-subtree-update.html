@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<!-- Test 1: Three-element aria-owns cycle. -->
+<div role="group" id="t1-a" aria-owns="t1-b">a</div>
+<div role="group" id="t1-b" aria-owns="t1-c">b</div>
+<div role="group" id="t1-c" aria-owns="t1-a">c</div>
+
+<!-- Test 2: Mixed DOM + aria-owns: A's DOM child has aria-owns back to A. -->
+<div role="group" id="t2-a" aria-owns="t2-b">
+    <div role="group" id="t2-a-child" aria-owns="t2-a">child of t2-a</div>
+</div>
+<div role="group" id="t2-b" aria-owns="t2-a-child">b</div>
+
+<!-- Test 3: Self-owning element. -->
+<div role="group" id="t3-self" aria-owns="t3-self">self</div>
+
+<!-- Test 4: Live-region update scenario, matching a crash seen in the wild
+     (originating from _performLiveRegionUpdate). Mutate content after the
+     AX tree is built to set m_subtreeDirty across the ancestry, then re-query children. -->
+<div role="region" aria-live="polite" id="t4-region">
+    <div role="group" id="t4-a" aria-owns="t4-b">a</div>
+    <div role="group" id="t4-b" aria-owns="t4-c">b</div>
+    <div role="group" id="t4-c" aria-owns="t4-a">c</div>
+</div>
+
+<script>
+var output = "This tests that mixed DOM + aria-owns cycles do not cause stack-overflow recursion in updateOwnedChildrenIfNecessary().\n\n";
+
+if (window.accessibilityController) {
+    // Test 1: Three-element aria-owns cycle. Querying children must terminate.
+    var t1a = accessibilityController.accessibleElementById("t1-a");
+    output += expect("typeof t1a.childrenCount", "'number'");
+
+    // Test 2: Mixed DOM + aria-owns. Querying t2-a's children traverses both
+    // its DOM child and its aria-owns target.
+    var t2a = accessibilityController.accessibleElementById("t2-a");
+    output += expect("typeof t2a.childrenCount", "'number'");
+
+    // Test 3: Self-owning aria-owns.
+    var t3self = accessibilityController.accessibleElementById("t3-self");
+    output += expect("typeof t3self.childrenCount", "'number'");
+
+    // Test 4: Trigger live-region update by mutating content. This sets
+    // m_subtreeDirty across the ancestry.
+    document.getElementById("t4-a").textContent = "a-mutated";
+    var t4a = accessibilityController.accessibleElementById("t4-a");
+    output += expect("typeof t4a.childrenCount", "'number'");
+
+    output += "PASS: did not stack overflow.\n";
+    debug(output);
+}
+</script>
+</body>
+</html>

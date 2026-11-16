@@ -1,0 +1,7 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS window.performance is defined
+PASS window.performance.getEntriesByName is defined
+

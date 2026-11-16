@@ -1,0 +1,4 @@
+
+PASS Initial anchored position
+PASS Anchored position after moving
+

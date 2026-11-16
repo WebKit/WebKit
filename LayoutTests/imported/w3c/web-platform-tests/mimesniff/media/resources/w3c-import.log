@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mimesniff/media/resources/flac.flac
+/LayoutTests/imported/w3c/web-platform-tests/mimesniff/media/resources/make-vectors.sh
+/LayoutTests/imported/w3c/web-platform-tests/mimesniff/media/resources/mp3-raw.mp3
+/LayoutTests/imported/w3c/web-platform-tests/mimesniff/media/resources/mp3-with-id3.mp3
+/LayoutTests/imported/w3c/web-platform-tests/mimesniff/media/resources/mp4.mp4
+/LayoutTests/imported/w3c/web-platform-tests/mimesniff/media/resources/ogg.ogg
+/LayoutTests/imported/w3c/web-platform-tests/mimesniff/media/resources/wav.wav
+/LayoutTests/imported/w3c/web-platform-tests/mimesniff/media/resources/webm.webm

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<div style="height:10000px;"></div>
+<iframe id="testFrame" src="../dom/resources/dummy.html" loading="lazy"></iframe>
+<script>
+description("Tests that a lazy loaded iframe gets a contentWindow / contentDocument as soon as it gets inserted in the document.");
+jsTestIsAsync = true;
+
+let iframe = document.getElementById("testFrame");
+
+shouldBeEqualToString("iframe.contentDocument.URL", "about:blank");
+shouldBeEqualToString("iframe.contentWindow.location.href", "about:blank");
+
+onload = () => {
+    testPassed("The load event fired for the main frame");
+    finishJSTest();
+};
+</script>
+</body>
+</html>

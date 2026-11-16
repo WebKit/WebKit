@@ -1,0 +1,10 @@
+
+PASS Before: parent to child: messageerror event must occur
+PASS Before: parent to child: setting document.domain must not give sync access
+PASS before parent: originAgentCluster must equal false
+PASS before child: originAgentCluster must equal true
+PASS Navigation
+PASS After: parent to child: setting document.domain must give sync access
+PASS after parent: originAgentCluster must equal false
+PASS after child: originAgentCluster must equal false
+

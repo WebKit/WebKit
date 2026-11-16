@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+    body {
+        font-size: 5em;
+        -webkit-background-clip: text;
+        height: 2000px;
+        overflow: hidden;
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText(true);
+
+    function doTest()
+    {
+        window.scrollTo(0, 600);
+    }
+    window.addEventListener('load', doTest, false);
+</script>
+</head>
+<body>
+
+Text should remain legible when window is resized. No background artifacts should appear.
+
+</body>
+</html>

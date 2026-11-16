@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=100 ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    font-family: system-ui;
+    margin: 0;
+}
+
+.tall {
+    width: 100%;
+    height: 2000px;
+    background: white;
+}
+
+#description {
+    margin-top: 100px;
+}
+
+.modal {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: lightgray;
+    z-index: -1;
+    position: fixed;
+}
+
+.modal-child {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("To manually test, open this page in Safari and verify that bottom fixed color extensions don’t appear");
+
+    await UIHelper.ensurePresentationUpdate();
+    sampledColors = await UIHelper.fixedContainerEdgeColors();
+    shouldBeNull("sampledColors.bottom");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <header></header>
+    <p id="description"></p>
+    <div class="tall"></div>
+    <div class="modal">
+        <div class="modal-child"></div>
+    </div>
+</body>
+</html>

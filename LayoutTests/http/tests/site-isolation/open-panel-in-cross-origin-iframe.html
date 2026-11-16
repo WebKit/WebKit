@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+description("Tests that choosing a file in a cross-origin &lt;input type=file&gt; routes the open-panel reply to the iframe's WebContent process when site isolation is enabled.");
+jsTestIsAsync = true;
+
+window.addEventListener("message", async (event) => {
+    if (event.data.type === "fileChosen") {
+        window.chosenFile = event.data.name;
+        shouldBeEqualToString("chosenFile", "foo.txt");
+        finishJSTest();
+    }
+});
+
+async function runTest() {
+    // Force the iOS display-string-and-icon code path via
+    // testRunner.setOpenPanelFilesMediaIcon, which exercises
+    // WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon.
+    const iconResponse = await fetch("/resources/square20.jpg");
+    const iconBytes = new Uint8Array(await iconResponse.arrayBuffer());
+    testRunner.setOpenPanelFiles(["foo.txt"]);
+    testRunner.setOpenPanelFilesMediaIcon(iconBytes);
+
+    const iframe = document.getElementById("frame");
+    const iframeRect = iframe.getBoundingClientRect();
+
+    const inputCenter = await new Promise(resolve => {
+        window.addEventListener("message", (event) => {
+            if (event.data.type === "inputRect")
+                resolve(event.data);
+        }, { once: true });
+        iframe.contentWindow.postMessage({ type: "getInputRect" }, "*");
+    });
+
+    await UIHelper.activateAt(iframeRect.left + inputCenter.x, iframeRect.top + inputCenter.y);
+}
+</script>
+<iframe id="frame" width="300" height="100"
+    src="http://localhost:8000/site-isolation/resources/file-input-iframe.html"
+    onload="runTest()"></iframe>
+</body>
+</html>

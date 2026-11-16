@@ -1,0 +1,17 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ListMarkerPositionedPostLayoutEnabled=true ] -->
+<!-- Nested markers pile up at the same place, so the reference draws one per line instead of two or three. -->
+<meta name="fuzzy" content="maxDifference=0-122; totalPixels=0-117" />
+<style>
+ul {
+  list-style-type: circle;
+}
+.float {
+  float: right;
+  width: 200px;
+  height: 500px;
+}
+</style>
+<div class=float></div>
+<ul dir=rtl><li><ul><li>overlapping nested list markers</li></ul></li></ul>
+<ul dir=rtl><li><ul><li><ul><li>overlapping nested list markers</li></ul></li></ul></li></ul>
+<ul dir=rtl><li><ul><li><ul><li><ul><li>overlapping nested list markers</li></ul></li></ul></li></ul></li></ul>

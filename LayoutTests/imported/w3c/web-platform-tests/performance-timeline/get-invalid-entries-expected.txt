@@ -1,0 +1,3 @@
+
+PASS Get invalid entries from worker and window.
+

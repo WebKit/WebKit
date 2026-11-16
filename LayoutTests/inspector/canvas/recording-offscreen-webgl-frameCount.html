@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script src="resources/shaderProgram-utilities-webgl.js"></script>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 test;
+    uniform vec4 testUniform;
+    void main(void) {
+        gl_Position = test + testUniform;
+    }
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+</script>
+<script src="resources/recording-webgl.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingOffscreenWebGL");
+
+    suite.addTestCase({
+        name: "Canvas.recordingOffscreenWebGL.singleFrame",
+        description: "Check that the recording is stopped after a single frame.",
+        test(resolve, reject) {
+            startRecording(WI.Canvas.ContextType.OffscreenWebGL, resolve, reject, {frameCount: 1});
+        },
+        timeout: -1,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load({offscreen: true})">
+    <p>Test that CanvasManager is able to record actions made to offscreen WebGL canvas contexts.</p>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test for cuebackground attribute</title>
+        <link rel="help" href="https://github.com/whatwg/html/pull/9771" />
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <span id="element1"></span>
+        <span id="element2" cuebackground></span>
+        <span id="element3" cuebackground="custom value"></span>
+    </body>
+    <script>
+        const element1 = document.getElementById("element1");
+        const element2 = document.getElementById("element2");
+        const element3 = document.getElementById("element3");
+        test(() => {
+            assert_false(element1.cuebackground);
+        }, '"cuebackground" attribute in HTML defaults to false');
+
+        test(() => {
+            element1.setAttribute("CUEBACKGROUND", "");
+            assert_true(element1.cuebackground);
+        }, "Boolean attributes should be case-insensitive");
+
+        test(() => {
+            assert_true(element2.cuebackground);
+        }, 'Setting "cuebackground" attribute in HTML should set the property to true');
+
+        test(() => {
+            assert_true(element3.cuebackground);
+            assert_equals(element3.getAttribute("cuebackground"), "custom value");
+            element3.setAttribute("cuebackground", "new value")
+            assert_true(element3.cuebackground);
+            assert_equals(element3.getAttribute("cuebackground"), "new value");
+            element3.cuebackground = false;
+            assert_equals(element3.getAttribute("cuebackground"), null);
+        }, 'Getting a present "cuebackground" attribute should return the attribute value');
+
+        test(() => {
+            element1.setAttribute("cuebackground", "");
+            assert_true(element1.cuebackground);
+        }, 'Setting "cuebackground" attribute using setAttribute should set the property to true');
+
+        test(() => {
+            element1.cuebackground = true;
+            assert_equals(element1.getAttribute("cuebackground"), "");
+        }, "Setting the 'cuebackground' to true should set its value to empty string");
+
+        test(() => {
+            element1.cuebackground = true;
+            assert_true(element1.cuebackground);
+            element1.cuebackground = false;
+            assert_false(element1.cuebackground);
+            element1.cuebackground = true;
+            assert_true(element1.cuebackground);
+        }, 'Toggling "cuebackground" attribute should result in the correct value');
+
+        test(() => {
+            element1.cuebackground = true;
+            const clone = element1.cloneNode(true);
+            assert_true(clone.cuebackground);
+        }, "Cloning an element should preserve the boolean attribute");
+
+        test(() => {
+            const dynamicElement = document.createElement("example-element");
+            assert_false(dynamicElement.cuebackground);
+            dynamicElement.cuebackground = true;
+            assert_true(dynamicElement.cuebackground);
+        }, "Boolean attribute should work correctly on dynamically created elements");
+
+        test(() => {
+            element1.setAttribute("cuebackground", "");
+            assert_true(element1.cuebackground);
+            element1.removeAttribute("cuebackground");
+            assert_false(element1.cuebackground);
+        }, 'Removing "cuebackground" attribute using removeAttribute should set the property to false');
+
+        test(() => {
+            element1.cuebackground = true;
+            assert_true(element1.cuebackground);
+            element1.cuebackground = false;
+            assert_false(element1.cuebackground);
+        }, 'Setting "cuebackground" property via JavaScript should reflect the correct boolean value');
+
+        test(() => {
+            element1.cue = false;
+            assert_false(element1.hasAttribute("cue"));
+            element1.cue = true;
+            assert_true(element1.hasAttribute("cue"));
+        }, 'Setting "cue" property via JavaScript should reflect in the content attribute');
+
+        const truthyValues = [true, 1, "true", {}, [], "any-non-empty-string"];
+        truthyValues.forEach((value) => {
+            test(() => {
+                element1.cuebackground = value;
+                assert_true(element1.cuebackground);
+            }, `Setting "cuebackground" property in JavaScript with truthy value (${typeof value} ${value}) should set the property to true`);
+        });
+
+        const falsyValues = [false, 0, "", null, undefined];
+        falsyValues.forEach((value, index) => {
+            test(() => {
+                element1.cuebackground = value;
+                assert_false(element1.cuebackground);
+            }, `Setting "cuebackground" property in JavaScript with falsy value (${value}) should set the property to false`);
+        });
+    </script>
+</html>

@@ -1,0 +1,30 @@
+Tests that drawImage() of an HDR VideoFrame preserves its HDR values in a float16 canvas and clamps them in an SDR one, and that createImageBitmap() of the frame behaves the same way.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+canvas.dataset.colorSpace: srgb
+canvas.dataset.renderingMode: Accelerated
+hdrFrame.colorSpace.transfer: hlg
+
+- drawImage() of a VideoFrame
+PASS HDR VideoFrame -> float16: peaks within the expected HDR range
+PASS HDR VideoFrame -> unorm8: is within the SDR range
+PASS SDR VideoFrame -> float16: is within the SDR range
+PASS SDR VideoFrame -> unorm8: is within the SDR range
+
+- drawImage() of an ImageBitmap made from a VideoFrame
+PASS HDR ImageBitmap -> float16: peaks within the expected HDR range
+PASS HDR ImageBitmap -> unorm8: is within the SDR range
+PASS SDR ImageBitmap -> float16: is within the SDR range
+PASS SDR ImageBitmap -> unorm8: is within the SDR range
+
+- VideoFrame whose color space is incomplete
+PASS incomplete-color-space VideoFrame -> float16: is within the SDR range
+PASS incomplete-color-space VideoFrame -> unorm8: is within the SDR range
+PASS incomplete-color-space ImageBitmap -> float16: is within the SDR range
+PASS incomplete-color-space ImageBitmap -> unorm8: is within the SDR range
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

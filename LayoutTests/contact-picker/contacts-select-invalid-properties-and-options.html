@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContactPickerAPIEnabled=true ] -->
+<html>
+    <head>
+        <script src="../resources/js-test.js"></script>
+        <script src="../resources/ui-helper.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        finishedSubtest = false;
+
+        async function testContactsSelectWithPropertiesAndOptions(properties, options = {})
+        {
+            finishedSubtest = false;
+            debug("Calling navigator.contacts.select().");
+
+            const contactsButton = document.getElementById("contacts");
+            contactsButton.addEventListener("click", async () => {
+                try {
+                    await navigator.contacts.select(properties, options);
+                    testFailed("navigator.contacts.select succeeded with invalid properties and/or options.");
+                } catch (exception) {
+                    window.exception = exception;
+                    testPassed("Invalid properties and/or options specified.");
+                    shouldBeEqualToString("exception.name", "TypeError");
+                }
+
+                finishedSubtest = true;
+            }, { once: true });
+
+            await UIHelper.activateElement(contactsButton);
+            await new Promise(resolve => shouldBecomeEqual("finishedSubtest", "true", resolve));
+
+            debug("");
+        }
+
+        async function runTest()
+        {
+            description("This test verifies that navigator.contacts.select fails if invalid properties or options are specified.\n");
+
+            await testContactsSelectWithPropertiesAndOptions([]);
+            await testContactsSelectWithPropertiesAndOptions(["Invalid"]);
+            await testContactsSelectWithPropertiesAndOptions("String");
+            await testContactsSelectWithPropertiesAndOptions([23]);
+            await testContactsSelectWithPropertiesAndOptions(["name", "email"], 50);
+
+            finishJSTest();
+        }
+    </script>
+    <body onload=runTest()>
+        <button id="contacts">Show contacts</button>
+    </body>
+</html>

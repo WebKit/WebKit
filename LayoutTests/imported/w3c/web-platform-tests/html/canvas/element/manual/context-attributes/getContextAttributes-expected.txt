@@ -1,0 +1,7 @@
+
+FAIL Test default context creation attributes assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL Test context creation attributes alpha: true assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL Test context creation attributes alpha: false assert_equals: expected (boolean) false but got (undefined) undefined
+PASS Test context creation attributes desynchronized: false
+PASS Test context creation attributes willReadFrequently: true
+

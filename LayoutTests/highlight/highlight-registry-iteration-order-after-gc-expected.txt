@@ -1,0 +1,14 @@
+CSS.highlights must iterate in registration order after its wrapper and backing map have been garbage collected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS CSS.highlights.wrapperMarker is "original wrapper"
+The marker below must be gone, otherwise the backing map was never rebuilt and this test proves nothing:
+PASS CSS.highlights.wrapperMarker is undefined.
+PASS CSS.highlights.size is 32
+PASS Array.from(CSS.highlights.keys()).join(',') is "highlight-0,highlight-1,highlight-2,highlight-3,highlight-4,highlight-5,highlight-6,highlight-7,highlight-8,highlight-9,highlight-10,highlight-11,highlight-12,highlight-13,highlight-14,highlight-15,highlight-16,highlight-17,highlight-18,highlight-19,highlight-20,highlight-21,highlight-22,highlight-23,highlight-24,highlight-25,highlight-26,highlight-27,highlight-28,highlight-29,highlight-30,highlight-31"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

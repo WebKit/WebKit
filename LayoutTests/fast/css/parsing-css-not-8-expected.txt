@@ -1,0 +1,1198 @@
+Test the parsing of :not(selectorList) for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+3 :not(valid, valid, invalid) selectors
+selector ':not(foobar,foobar,::first-letter) { }' parsed: NO
+selector ':not(foobar,foobar,::first-line) { }' parsed: NO
+selector ':not(foobar,foobar,::before) { }' parsed: NO
+selector ':not(foobar,foobar,::after) { }' parsed: NO
+selector ':not(foobar,foobar,) { }' parsed: NO
+selector ':not(foobar,foobar,    ) { }' parsed: NO
+selector ':not(foobar,foobar,,) { }' parsed: NO
+selector ':not(foobar,foobar,.123class) { }' parsed: NO
+selector ':not(foobar,foobar,#123id) { }' parsed: NO
+selector ':not(foobar,foobar,[]) { }' parsed: NO
+selector ':not(foobar,foobar,()) { }' parsed: NO
+selector ':not(foobar,foobar,)) { }' parsed: NO
+selector ':not(foobar,foobar,{}) { }' parsed: NO
+selector ':not(foobar,foobar,}) { }' parsed: NO
+selector ':not(foobar,foobar,:not() { }' parsed: NO
+selector ':not(foobar,foobar,:is() { }' parsed: NO
+selector ':not(foobar,foobar,:matches() { }' parsed: NO
+selector ':not(foobar,foobar,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar,.class,::first-letter) { }' parsed: NO
+selector ':not(foobar,.class,::first-line) { }' parsed: NO
+selector ':not(foobar,.class,::before) { }' parsed: NO
+selector ':not(foobar,.class,::after) { }' parsed: NO
+selector ':not(foobar,.class,) { }' parsed: NO
+selector ':not(foobar,.class,    ) { }' parsed: NO
+selector ':not(foobar,.class,,) { }' parsed: NO
+selector ':not(foobar,.class,.123class) { }' parsed: NO
+selector ':not(foobar,.class,#123id) { }' parsed: NO
+selector ':not(foobar,.class,[]) { }' parsed: NO
+selector ':not(foobar,.class,()) { }' parsed: NO
+selector ':not(foobar,.class,)) { }' parsed: NO
+selector ':not(foobar,.class,{}) { }' parsed: NO
+selector ':not(foobar,.class,}) { }' parsed: NO
+selector ':not(foobar,.class,:not() { }' parsed: NO
+selector ':not(foobar,.class,:is() { }' parsed: NO
+selector ':not(foobar,.class,:matches() { }' parsed: NO
+selector ':not(foobar,.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar,:last-child,::first-letter) { }' parsed: NO
+selector ':not(foobar,:last-child,::first-line) { }' parsed: NO
+selector ':not(foobar,:last-child,::before) { }' parsed: NO
+selector ':not(foobar,:last-child,::after) { }' parsed: NO
+selector ':not(foobar,:last-child,) { }' parsed: NO
+selector ':not(foobar,:last-child,    ) { }' parsed: NO
+selector ':not(foobar,:last-child,,) { }' parsed: NO
+selector ':not(foobar,:last-child,.123class) { }' parsed: NO
+selector ':not(foobar,:last-child,#123id) { }' parsed: NO
+selector ':not(foobar,:last-child,[]) { }' parsed: NO
+selector ':not(foobar,:last-child,()) { }' parsed: NO
+selector ':not(foobar,:last-child,)) { }' parsed: NO
+selector ':not(foobar,:last-child,{}) { }' parsed: NO
+selector ':not(foobar,:last-child,}) { }' parsed: NO
+selector ':not(foobar,:last-child,:not() { }' parsed: NO
+selector ':not(foobar,:last-child,:is() { }' parsed: NO
+selector ':not(foobar,:last-child,:matches() { }' parsed: NO
+selector ':not(foobar,:last-child,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,::first-letter) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,::first-line) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,::before) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,::after) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,    ) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,,) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,.123class) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,#123id) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,[]) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,()) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,)) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,{}) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,}) { }' parsed: NO
+selector ':not(foobar,foobar#id.class,:not() { }' parsed: NO
+selector ':not(foobar,foobar#id.class,:is() { }' parsed: NO
+selector ':not(foobar,foobar#id.class,:matches() { }' parsed: NO
+selector ':not(foobar,foobar#id.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar,#id:empty,::first-letter) { }' parsed: NO
+selector ':not(foobar,#id:empty,::first-line) { }' parsed: NO
+selector ':not(foobar,#id:empty,::before) { }' parsed: NO
+selector ':not(foobar,#id:empty,::after) { }' parsed: NO
+selector ':not(foobar,#id:empty,) { }' parsed: NO
+selector ':not(foobar,#id:empty,    ) { }' parsed: NO
+selector ':not(foobar,#id:empty,,) { }' parsed: NO
+selector ':not(foobar,#id:empty,.123class) { }' parsed: NO
+selector ':not(foobar,#id:empty,#123id) { }' parsed: NO
+selector ':not(foobar,#id:empty,[]) { }' parsed: NO
+selector ':not(foobar,#id:empty,()) { }' parsed: NO
+selector ':not(foobar,#id:empty,)) { }' parsed: NO
+selector ':not(foobar,#id:empty,{}) { }' parsed: NO
+selector ':not(foobar,#id:empty,}) { }' parsed: NO
+selector ':not(foobar,#id:empty,:not() { }' parsed: NO
+selector ':not(foobar,#id:empty,:is() { }' parsed: NO
+selector ':not(foobar,#id:empty,:matches() { }' parsed: NO
+selector ':not(foobar,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar,a b,::first-letter) { }' parsed: NO
+selector ':not(foobar,a b,::first-line) { }' parsed: NO
+selector ':not(foobar,a b,::before) { }' parsed: NO
+selector ':not(foobar,a b,::after) { }' parsed: NO
+selector ':not(foobar,a b,) { }' parsed: NO
+selector ':not(foobar,a b,    ) { }' parsed: NO
+selector ':not(foobar,a b,,) { }' parsed: NO
+selector ':not(foobar,a b,.123class) { }' parsed: NO
+selector ':not(foobar,a b,#123id) { }' parsed: NO
+selector ':not(foobar,a b,[]) { }' parsed: NO
+selector ':not(foobar,a b,()) { }' parsed: NO
+selector ':not(foobar,a b,)) { }' parsed: NO
+selector ':not(foobar,a b,{}) { }' parsed: NO
+selector ':not(foobar,a b,}) { }' parsed: NO
+selector ':not(foobar,a b,:not() { }' parsed: NO
+selector ':not(foobar,a b,:is() { }' parsed: NO
+selector ':not(foobar,a b,:matches() { }' parsed: NO
+selector ':not(foobar,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar,a ~ b,::first-letter) { }' parsed: NO
+selector ':not(foobar,a ~ b,::first-line) { }' parsed: NO
+selector ':not(foobar,a ~ b,::before) { }' parsed: NO
+selector ':not(foobar,a ~ b,::after) { }' parsed: NO
+selector ':not(foobar,a ~ b,) { }' parsed: NO
+selector ':not(foobar,a ~ b,    ) { }' parsed: NO
+selector ':not(foobar,a ~ b,,) { }' parsed: NO
+selector ':not(foobar,a ~ b,.123class) { }' parsed: NO
+selector ':not(foobar,a ~ b,#123id) { }' parsed: NO
+selector ':not(foobar,a ~ b,[]) { }' parsed: NO
+selector ':not(foobar,a ~ b,()) { }' parsed: NO
+selector ':not(foobar,a ~ b,)) { }' parsed: NO
+selector ':not(foobar,a ~ b,{}) { }' parsed: NO
+selector ':not(foobar,a ~ b,}) { }' parsed: NO
+selector ':not(foobar,a ~ b,:not() { }' parsed: NO
+selector ':not(foobar,a ~ b,:is() { }' parsed: NO
+selector ':not(foobar,a ~ b,:matches() { }' parsed: NO
+selector ':not(foobar,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-letter) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-line) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::before) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::after) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches() { }' parsed: NO
+selector ':not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),::first-letter) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),::first-line) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),::before) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),::after) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),    ) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),,) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),.123class) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),#123id) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),[]) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),()) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),{}) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),}) { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),:matches() { }' parsed: NO
+selector ':not(foobar,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(foobar,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(foobar,:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(.class,.class,::first-letter) { }' parsed: NO
+selector ':not(.class,.class,::first-line) { }' parsed: NO
+selector ':not(.class,.class,::before) { }' parsed: NO
+selector ':not(.class,.class,::after) { }' parsed: NO
+selector ':not(.class,.class,) { }' parsed: NO
+selector ':not(.class,.class,    ) { }' parsed: NO
+selector ':not(.class,.class,,) { }' parsed: NO
+selector ':not(.class,.class,.123class) { }' parsed: NO
+selector ':not(.class,.class,#123id) { }' parsed: NO
+selector ':not(.class,.class,[]) { }' parsed: NO
+selector ':not(.class,.class,()) { }' parsed: NO
+selector ':not(.class,.class,)) { }' parsed: NO
+selector ':not(.class,.class,{}) { }' parsed: NO
+selector ':not(.class,.class,}) { }' parsed: NO
+selector ':not(.class,.class,:not() { }' parsed: NO
+selector ':not(.class,.class,:is() { }' parsed: NO
+selector ':not(.class,.class,:matches() { }' parsed: NO
+selector ':not(.class,.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(.class,:last-child,::first-letter) { }' parsed: NO
+selector ':not(.class,:last-child,::first-line) { }' parsed: NO
+selector ':not(.class,:last-child,::before) { }' parsed: NO
+selector ':not(.class,:last-child,::after) { }' parsed: NO
+selector ':not(.class,:last-child,) { }' parsed: NO
+selector ':not(.class,:last-child,    ) { }' parsed: NO
+selector ':not(.class,:last-child,,) { }' parsed: NO
+selector ':not(.class,:last-child,.123class) { }' parsed: NO
+selector ':not(.class,:last-child,#123id) { }' parsed: NO
+selector ':not(.class,:last-child,[]) { }' parsed: NO
+selector ':not(.class,:last-child,()) { }' parsed: NO
+selector ':not(.class,:last-child,)) { }' parsed: NO
+selector ':not(.class,:last-child,{}) { }' parsed: NO
+selector ':not(.class,:last-child,}) { }' parsed: NO
+selector ':not(.class,:last-child,:not() { }' parsed: NO
+selector ':not(.class,:last-child,:is() { }' parsed: NO
+selector ':not(.class,:last-child,:matches() { }' parsed: NO
+selector ':not(.class,:last-child,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(.class,foobar#id.class,::first-letter) { }' parsed: NO
+selector ':not(.class,foobar#id.class,::first-line) { }' parsed: NO
+selector ':not(.class,foobar#id.class,::before) { }' parsed: NO
+selector ':not(.class,foobar#id.class,::after) { }' parsed: NO
+selector ':not(.class,foobar#id.class,) { }' parsed: NO
+selector ':not(.class,foobar#id.class,    ) { }' parsed: NO
+selector ':not(.class,foobar#id.class,,) { }' parsed: NO
+selector ':not(.class,foobar#id.class,.123class) { }' parsed: NO
+selector ':not(.class,foobar#id.class,#123id) { }' parsed: NO
+selector ':not(.class,foobar#id.class,[]) { }' parsed: NO
+selector ':not(.class,foobar#id.class,()) { }' parsed: NO
+selector ':not(.class,foobar#id.class,)) { }' parsed: NO
+selector ':not(.class,foobar#id.class,{}) { }' parsed: NO
+selector ':not(.class,foobar#id.class,}) { }' parsed: NO
+selector ':not(.class,foobar#id.class,:not() { }' parsed: NO
+selector ':not(.class,foobar#id.class,:is() { }' parsed: NO
+selector ':not(.class,foobar#id.class,:matches() { }' parsed: NO
+selector ':not(.class,foobar#id.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(.class,#id:empty,::first-letter) { }' parsed: NO
+selector ':not(.class,#id:empty,::first-line) { }' parsed: NO
+selector ':not(.class,#id:empty,::before) { }' parsed: NO
+selector ':not(.class,#id:empty,::after) { }' parsed: NO
+selector ':not(.class,#id:empty,) { }' parsed: NO
+selector ':not(.class,#id:empty,    ) { }' parsed: NO
+selector ':not(.class,#id:empty,,) { }' parsed: NO
+selector ':not(.class,#id:empty,.123class) { }' parsed: NO
+selector ':not(.class,#id:empty,#123id) { }' parsed: NO
+selector ':not(.class,#id:empty,[]) { }' parsed: NO
+selector ':not(.class,#id:empty,()) { }' parsed: NO
+selector ':not(.class,#id:empty,)) { }' parsed: NO
+selector ':not(.class,#id:empty,{}) { }' parsed: NO
+selector ':not(.class,#id:empty,}) { }' parsed: NO
+selector ':not(.class,#id:empty,:not() { }' parsed: NO
+selector ':not(.class,#id:empty,:is() { }' parsed: NO
+selector ':not(.class,#id:empty,:matches() { }' parsed: NO
+selector ':not(.class,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(.class,a b,::first-letter) { }' parsed: NO
+selector ':not(.class,a b,::first-line) { }' parsed: NO
+selector ':not(.class,a b,::before) { }' parsed: NO
+selector ':not(.class,a b,::after) { }' parsed: NO
+selector ':not(.class,a b,) { }' parsed: NO
+selector ':not(.class,a b,    ) { }' parsed: NO
+selector ':not(.class,a b,,) { }' parsed: NO
+selector ':not(.class,a b,.123class) { }' parsed: NO
+selector ':not(.class,a b,#123id) { }' parsed: NO
+selector ':not(.class,a b,[]) { }' parsed: NO
+selector ':not(.class,a b,()) { }' parsed: NO
+selector ':not(.class,a b,)) { }' parsed: NO
+selector ':not(.class,a b,{}) { }' parsed: NO
+selector ':not(.class,a b,}) { }' parsed: NO
+selector ':not(.class,a b,:not() { }' parsed: NO
+selector ':not(.class,a b,:is() { }' parsed: NO
+selector ':not(.class,a b,:matches() { }' parsed: NO
+selector ':not(.class,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(.class,a ~ b,::first-letter) { }' parsed: NO
+selector ':not(.class,a ~ b,::first-line) { }' parsed: NO
+selector ':not(.class,a ~ b,::before) { }' parsed: NO
+selector ':not(.class,a ~ b,::after) { }' parsed: NO
+selector ':not(.class,a ~ b,) { }' parsed: NO
+selector ':not(.class,a ~ b,    ) { }' parsed: NO
+selector ':not(.class,a ~ b,,) { }' parsed: NO
+selector ':not(.class,a ~ b,.123class) { }' parsed: NO
+selector ':not(.class,a ~ b,#123id) { }' parsed: NO
+selector ':not(.class,a ~ b,[]) { }' parsed: NO
+selector ':not(.class,a ~ b,()) { }' parsed: NO
+selector ':not(.class,a ~ b,)) { }' parsed: NO
+selector ':not(.class,a ~ b,{}) { }' parsed: NO
+selector ':not(.class,a ~ b,}) { }' parsed: NO
+selector ':not(.class,a ~ b,:not() { }' parsed: NO
+selector ':not(.class,a ~ b,:is() { }' parsed: NO
+selector ':not(.class,a ~ b,:matches() { }' parsed: NO
+selector ':not(.class,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-letter) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-line) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::before) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::after) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches() { }' parsed: NO
+selector ':not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),::first-letter) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),::first-line) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),::before) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),::after) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),    ) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),,) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),.123class) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),#123id) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),[]) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),()) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),{}) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),}) { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),:matches() { }' parsed: NO
+selector ':not(.class,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(.class,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(.class,:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:last-child,:last-child,::first-letter) { }' parsed: NO
+selector ':not(:last-child,:last-child,::first-line) { }' parsed: NO
+selector ':not(:last-child,:last-child,::before) { }' parsed: NO
+selector ':not(:last-child,:last-child,::after) { }' parsed: NO
+selector ':not(:last-child,:last-child,) { }' parsed: NO
+selector ':not(:last-child,:last-child,    ) { }' parsed: NO
+selector ':not(:last-child,:last-child,,) { }' parsed: NO
+selector ':not(:last-child,:last-child,.123class) { }' parsed: NO
+selector ':not(:last-child,:last-child,#123id) { }' parsed: NO
+selector ':not(:last-child,:last-child,[]) { }' parsed: NO
+selector ':not(:last-child,:last-child,()) { }' parsed: NO
+selector ':not(:last-child,:last-child,)) { }' parsed: NO
+selector ':not(:last-child,:last-child,{}) { }' parsed: NO
+selector ':not(:last-child,:last-child,}) { }' parsed: NO
+selector ':not(:last-child,:last-child,:not() { }' parsed: NO
+selector ':not(:last-child,:last-child,:is() { }' parsed: NO
+selector ':not(:last-child,:last-child,:matches() { }' parsed: NO
+selector ':not(:last-child,:last-child,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,::first-letter) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,::first-line) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,::before) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,::after) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,    ) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,,) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,.123class) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,#123id) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,[]) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,()) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,)) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,{}) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,}) { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,:not() { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,:is() { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,:matches() { }' parsed: NO
+selector ':not(:last-child,foobar#id.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:last-child,#id:empty,::first-letter) { }' parsed: NO
+selector ':not(:last-child,#id:empty,::first-line) { }' parsed: NO
+selector ':not(:last-child,#id:empty,::before) { }' parsed: NO
+selector ':not(:last-child,#id:empty,::after) { }' parsed: NO
+selector ':not(:last-child,#id:empty,) { }' parsed: NO
+selector ':not(:last-child,#id:empty,    ) { }' parsed: NO
+selector ':not(:last-child,#id:empty,,) { }' parsed: NO
+selector ':not(:last-child,#id:empty,.123class) { }' parsed: NO
+selector ':not(:last-child,#id:empty,#123id) { }' parsed: NO
+selector ':not(:last-child,#id:empty,[]) { }' parsed: NO
+selector ':not(:last-child,#id:empty,()) { }' parsed: NO
+selector ':not(:last-child,#id:empty,)) { }' parsed: NO
+selector ':not(:last-child,#id:empty,{}) { }' parsed: NO
+selector ':not(:last-child,#id:empty,}) { }' parsed: NO
+selector ':not(:last-child,#id:empty,:not() { }' parsed: NO
+selector ':not(:last-child,#id:empty,:is() { }' parsed: NO
+selector ':not(:last-child,#id:empty,:matches() { }' parsed: NO
+selector ':not(:last-child,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:last-child,a b,::first-letter) { }' parsed: NO
+selector ':not(:last-child,a b,::first-line) { }' parsed: NO
+selector ':not(:last-child,a b,::before) { }' parsed: NO
+selector ':not(:last-child,a b,::after) { }' parsed: NO
+selector ':not(:last-child,a b,) { }' parsed: NO
+selector ':not(:last-child,a b,    ) { }' parsed: NO
+selector ':not(:last-child,a b,,) { }' parsed: NO
+selector ':not(:last-child,a b,.123class) { }' parsed: NO
+selector ':not(:last-child,a b,#123id) { }' parsed: NO
+selector ':not(:last-child,a b,[]) { }' parsed: NO
+selector ':not(:last-child,a b,()) { }' parsed: NO
+selector ':not(:last-child,a b,)) { }' parsed: NO
+selector ':not(:last-child,a b,{}) { }' parsed: NO
+selector ':not(:last-child,a b,}) { }' parsed: NO
+selector ':not(:last-child,a b,:not() { }' parsed: NO
+selector ':not(:last-child,a b,:is() { }' parsed: NO
+selector ':not(:last-child,a b,:matches() { }' parsed: NO
+selector ':not(:last-child,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:last-child,a ~ b,::first-letter) { }' parsed: NO
+selector ':not(:last-child,a ~ b,::first-line) { }' parsed: NO
+selector ':not(:last-child,a ~ b,::before) { }' parsed: NO
+selector ':not(:last-child,a ~ b,::after) { }' parsed: NO
+selector ':not(:last-child,a ~ b,) { }' parsed: NO
+selector ':not(:last-child,a ~ b,    ) { }' parsed: NO
+selector ':not(:last-child,a ~ b,,) { }' parsed: NO
+selector ':not(:last-child,a ~ b,.123class) { }' parsed: NO
+selector ':not(:last-child,a ~ b,#123id) { }' parsed: NO
+selector ':not(:last-child,a ~ b,[]) { }' parsed: NO
+selector ':not(:last-child,a ~ b,()) { }' parsed: NO
+selector ':not(:last-child,a ~ b,)) { }' parsed: NO
+selector ':not(:last-child,a ~ b,{}) { }' parsed: NO
+selector ':not(:last-child,a ~ b,}) { }' parsed: NO
+selector ':not(:last-child,a ~ b,:not() { }' parsed: NO
+selector ':not(:last-child,a ~ b,:is() { }' parsed: NO
+selector ':not(:last-child,a ~ b,:matches() { }' parsed: NO
+selector ':not(:last-child,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-letter) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-line) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::before) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::after) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches() { }' parsed: NO
+selector ':not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),::first-letter) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),::first-line) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),::before) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),::after) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),    ) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),,) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),.123class) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),#123id) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),[]) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),()) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),{}) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),}) { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),:matches() { }' parsed: NO
+selector ':not(:last-child,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(:last-child,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(:last-child,:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,::first-letter) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,::first-line) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,::before) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,::after) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,    ) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,,) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,.123class) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,#123id) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,[]) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,()) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,)) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,{}) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,}) { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,:not() { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,:is() { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,:matches() { }' parsed: NO
+selector ':not(foobar#id.class,foobar#id.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,::first-letter) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,::first-line) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,::before) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,::after) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,    ) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,,) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,.123class) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,#123id) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,[]) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,()) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,)) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,{}) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,}) { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,:not() { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,:is() { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,:matches() { }' parsed: NO
+selector ':not(foobar#id.class,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar#id.class,a b,::first-letter) { }' parsed: NO
+selector ':not(foobar#id.class,a b,::first-line) { }' parsed: NO
+selector ':not(foobar#id.class,a b,::before) { }' parsed: NO
+selector ':not(foobar#id.class,a b,::after) { }' parsed: NO
+selector ':not(foobar#id.class,a b,) { }' parsed: NO
+selector ':not(foobar#id.class,a b,    ) { }' parsed: NO
+selector ':not(foobar#id.class,a b,,) { }' parsed: NO
+selector ':not(foobar#id.class,a b,.123class) { }' parsed: NO
+selector ':not(foobar#id.class,a b,#123id) { }' parsed: NO
+selector ':not(foobar#id.class,a b,[]) { }' parsed: NO
+selector ':not(foobar#id.class,a b,()) { }' parsed: NO
+selector ':not(foobar#id.class,a b,)) { }' parsed: NO
+selector ':not(foobar#id.class,a b,{}) { }' parsed: NO
+selector ':not(foobar#id.class,a b,}) { }' parsed: NO
+selector ':not(foobar#id.class,a b,:not() { }' parsed: NO
+selector ':not(foobar#id.class,a b,:is() { }' parsed: NO
+selector ':not(foobar#id.class,a b,:matches() { }' parsed: NO
+selector ':not(foobar#id.class,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,::first-letter) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,::first-line) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,::before) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,::after) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,    ) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,,) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,.123class) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,#123id) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,[]) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,()) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,)) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,{}) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,}) { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,:not() { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,:is() { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,:matches() { }' parsed: NO
+selector ':not(foobar#id.class,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-letter) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-line) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::before) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::after) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches() { }' parsed: NO
+selector ':not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),::first-letter) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),::first-line) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),::before) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),::after) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),    ) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),,) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),.123class) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),#123id) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),[]) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),()) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),{}) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),}) { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),:matches() { }' parsed: NO
+selector ':not(foobar#id.class,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(foobar#id.class,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(foobar#id.class,:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,::first-letter) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,::first-line) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,::before) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,::after) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,    ) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,,) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,.123class) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,#123id) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,[]) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,()) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,)) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,{}) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,}) { }' parsed: NO
+selector ':not(#id:empty,#id:empty,:not() { }' parsed: NO
+selector ':not(#id:empty,#id:empty,:is() { }' parsed: NO
+selector ':not(#id:empty,#id:empty,:matches() { }' parsed: NO
+selector ':not(#id:empty,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(#id:empty,a b,::first-letter) { }' parsed: NO
+selector ':not(#id:empty,a b,::first-line) { }' parsed: NO
+selector ':not(#id:empty,a b,::before) { }' parsed: NO
+selector ':not(#id:empty,a b,::after) { }' parsed: NO
+selector ':not(#id:empty,a b,) { }' parsed: NO
+selector ':not(#id:empty,a b,    ) { }' parsed: NO
+selector ':not(#id:empty,a b,,) { }' parsed: NO
+selector ':not(#id:empty,a b,.123class) { }' parsed: NO
+selector ':not(#id:empty,a b,#123id) { }' parsed: NO
+selector ':not(#id:empty,a b,[]) { }' parsed: NO
+selector ':not(#id:empty,a b,()) { }' parsed: NO
+selector ':not(#id:empty,a b,)) { }' parsed: NO
+selector ':not(#id:empty,a b,{}) { }' parsed: NO
+selector ':not(#id:empty,a b,}) { }' parsed: NO
+selector ':not(#id:empty,a b,:not() { }' parsed: NO
+selector ':not(#id:empty,a b,:is() { }' parsed: NO
+selector ':not(#id:empty,a b,:matches() { }' parsed: NO
+selector ':not(#id:empty,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,::first-letter) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,::first-line) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,::before) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,::after) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,    ) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,,) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,.123class) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,#123id) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,[]) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,()) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,)) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,{}) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,}) { }' parsed: NO
+selector ':not(#id:empty,a ~ b,:not() { }' parsed: NO
+selector ':not(#id:empty,a ~ b,:is() { }' parsed: NO
+selector ':not(#id:empty,a ~ b,:matches() { }' parsed: NO
+selector ':not(#id:empty,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-letter) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-line) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::before) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::after) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches() { }' parsed: NO
+selector ':not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),::first-letter) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),::first-line) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),::before) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),::after) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),    ) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),,) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),.123class) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),#123id) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),[]) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),()) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),{}) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),}) { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),:matches() { }' parsed: NO
+selector ':not(#id:empty,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(#id:empty,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(#id:empty,:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a b,a b,::first-letter) { }' parsed: NO
+selector ':not(a b,a b,::first-line) { }' parsed: NO
+selector ':not(a b,a b,::before) { }' parsed: NO
+selector ':not(a b,a b,::after) { }' parsed: NO
+selector ':not(a b,a b,) { }' parsed: NO
+selector ':not(a b,a b,    ) { }' parsed: NO
+selector ':not(a b,a b,,) { }' parsed: NO
+selector ':not(a b,a b,.123class) { }' parsed: NO
+selector ':not(a b,a b,#123id) { }' parsed: NO
+selector ':not(a b,a b,[]) { }' parsed: NO
+selector ':not(a b,a b,()) { }' parsed: NO
+selector ':not(a b,a b,)) { }' parsed: NO
+selector ':not(a b,a b,{}) { }' parsed: NO
+selector ':not(a b,a b,}) { }' parsed: NO
+selector ':not(a b,a b,:not() { }' parsed: NO
+selector ':not(a b,a b,:is() { }' parsed: NO
+selector ':not(a b,a b,:matches() { }' parsed: NO
+selector ':not(a b,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a b,a ~ b,::first-letter) { }' parsed: NO
+selector ':not(a b,a ~ b,::first-line) { }' parsed: NO
+selector ':not(a b,a ~ b,::before) { }' parsed: NO
+selector ':not(a b,a ~ b,::after) { }' parsed: NO
+selector ':not(a b,a ~ b,) { }' parsed: NO
+selector ':not(a b,a ~ b,    ) { }' parsed: NO
+selector ':not(a b,a ~ b,,) { }' parsed: NO
+selector ':not(a b,a ~ b,.123class) { }' parsed: NO
+selector ':not(a b,a ~ b,#123id) { }' parsed: NO
+selector ':not(a b,a ~ b,[]) { }' parsed: NO
+selector ':not(a b,a ~ b,()) { }' parsed: NO
+selector ':not(a b,a ~ b,)) { }' parsed: NO
+selector ':not(a b,a ~ b,{}) { }' parsed: NO
+selector ':not(a b,a ~ b,}) { }' parsed: NO
+selector ':not(a b,a ~ b,:not() { }' parsed: NO
+selector ':not(a b,a ~ b,:is() { }' parsed: NO
+selector ':not(a b,a ~ b,:matches() { }' parsed: NO
+selector ':not(a b,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-letter) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-line) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::before) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::after) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches() { }' parsed: NO
+selector ':not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),::first-letter) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),::first-line) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),::before) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),::after) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),    ) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),,) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),.123class) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),#123id) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),[]) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),()) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),{}) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),}) { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),:matches() { }' parsed: NO
+selector ':not(a b,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(a b,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(a b,:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,::first-letter) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,::first-line) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,::before) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,::after) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,    ) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,,) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,.123class) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,#123id) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,[]) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,()) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,)) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,{}) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,}) { }' parsed: NO
+selector ':not(a ~ b,a ~ b,:not() { }' parsed: NO
+selector ':not(a ~ b,a ~ b,:is() { }' parsed: NO
+selector ':not(a ~ b,a ~ b,:matches() { }' parsed: NO
+selector ':not(a ~ b,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-letter) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-line) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::before) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),::after) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches() { }' parsed: NO
+selector ':not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),::first-letter) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),::first-line) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),::before) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),::after) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),    ) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),,) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),.123class) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),#123id) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),[]) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),()) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),{}) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),}) { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),:matches() { }' parsed: NO
+selector ':not(a ~ b,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(a ~ b,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(a ~ b,:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-letter) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),::first-line) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),::before) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),::after) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),::first-letter) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),::first-line) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),::before) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),::after) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),    ) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),,) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),.123class) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),#123id) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),[]) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),()) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),{}) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),}) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:matches() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),::first-letter) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),::first-line) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),::before) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),::after) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),    ) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),,) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),.123class) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),#123id) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),[]) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),()) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),{}) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),}) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:matches() { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::first-letter) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::first-line) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::before) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::after) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),    ) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),,) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),.123class) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),#123id) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),[]) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),()) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),{}) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),}) { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:matches() { }' parsed: NO
+selector ':not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

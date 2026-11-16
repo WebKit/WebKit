@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+  html {
+    counter-increment: x;
+  }
+  body {
+    counter-increment: x;
+    contain: strict;
+  }
+</style>
+<script>
+  onload = () => {
+    d.style = 'counter-increment: x';
+    if (window.testRunner)
+      testRunner.dumpAsText();
+  };
+</script>
+<div id="d">PASS if this doesn't crash</div>

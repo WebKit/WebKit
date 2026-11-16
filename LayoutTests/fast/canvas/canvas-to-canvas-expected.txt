@@ -1,0 +1,12 @@
+Test to ensure that canvas-to-canvas drawImage after a stroked rect works correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS imgdata[0] is 0
+PASS imgdata[1] is 128
+PASS imgdata[2] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,21 @@
+This test checks that fr tracks are properly sized whenever grid have intrinsic sizes.
+
+XXX XXX
+PASS
+XXX XXX
+PASS
+XXX XXX
+PASS
+XXX XXX
+PASS
+XXX XXX
+PASS
+XXX XXXX XX X XX XXX
+PASS
+XXX XXXX XX X XX XXX
+PASS
+XXXX
+XXXX XX XX
+XXX XX X
+XXXX XXX XXXX XXX XXXX
+PASS

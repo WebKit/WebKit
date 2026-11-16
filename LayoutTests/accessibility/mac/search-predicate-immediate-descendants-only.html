@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=false ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<title>Search Predicate Immediate Descendants Only</title>
+</head>
+<body>
+
+<div id="container">
+<h1>heading<img src="resources/cake.png" alt="Cake"></h1>
+<p>text <a href="#">link</a></p>
+<ul><li>item</li><li><ul><li>subitem</li></ul></li></ul>
+</div>
+
+<script>
+    // These counts are of the whole document, so anything printed while taking them would be counted
+    // by the checks that follow. Accumulate the results and print them once at the end instead.
+    var output = "This tests that search predicate immediate descendant only results are accurate.\n\n";
+
+    if (window.accessibilityController) {
+        document.getElementById("container").focus();
+        var containerElement = accessibilityController.focusedElement;
+
+        // All descendants.
+        var allDescendantsCount = containerElement.uiElementCountForSearchPredicate(null, true, "AXAnyTypeSearchKey", "", false, false);
+        output += expect("allDescendantsCount", "17");
+
+        // Immeditate descendants.
+        var immediateDescendantsCount = containerElement.uiElementCountForSearchPredicate(null, true, "AXAnyTypeSearchKey", "", false, true);
+        output += expect("immediateDescendantsCount", "3");
+
+        // The number of immediate descendants should be equal to the number of children (when using "AXAnyTypeSearchKey").
+        var childrenCount = containerElement.childrenCount;
+        output += expect("immediateDescendantsCount", "childrenCount");
+
+        // Hide superfluous text.
+        document.getElementById("container").style.display = "none";
+        debug(output);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+Test that canvases created in iframes are reported through the frame target's Canvas domain under site isolation.
+
+
+== Running test suite: SiteIsolation.Canvas.IFrame
+-- Running test case: SiteIsolation.Canvas.CrossOrigin.CanvasAdded
+PASS: Canvas target should have Frame type.
+PASS: Frame target should have the Canvas domain.
+PASS: Canvas context should be 2D.
+
+-- Running test case: SiteIsolation.Canvas.CrossOrigin.StackTrace
+PASS: Canvas should be reported by the same frame target.
+  0: getContext - [native code]
+  1: createCanvas - iframe-with-canvas.html
+  2: Global Code - [program code]
+
+-- Running test case: SiteIsolation.Canvas.CrossOrigin.RequestContent
+PASS: Content should be a PNG data URL.
+
+-- Running test case: SiteIsolation.Canvas.CrossOrigin.RemoveIFrame
+PASS: Frame target should have no canvases.
+
+-- Running test case: SiteIsolation.Canvas.SameOrigin.CanvasAdded
+PASS: Canvas target should have Frame type.
+PASS: Canvas target should not be the removed cross-origin frame target.
+PASS: Canvas context should be 2D.
+

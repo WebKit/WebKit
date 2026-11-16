@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<p>An APNG whose acTL declares more frames than PNGImageDecoder accepts must not report that count
+to its callers, which size per-frame containers from it.</p>
+<pre id="log">PASS</pre>
+<img id="image" src="resources/apng-acTL-frame-count-overflow.png">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("log").textContent += "\n" + message;
+}
+
+function imageSettled()
+{
+    var image = document.getElementById("image");
+    if (window.internals) {
+        var count = internals.imageFrameCount(image);
+        if (count != 1)
+            log("FAIL: expected a rejected acTL to leave 1 frame, got " + count);
+        internals.forceDecodeImageFrameAtIndex(image, 0);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var image = document.getElementById("image");
+image.onload = imageSettled;
+image.onerror = imageSettled;
+if (image.complete)
+    imageSettled();
+</script>

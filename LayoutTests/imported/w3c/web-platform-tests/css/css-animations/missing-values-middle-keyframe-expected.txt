@@ -1,0 +1,3 @@
+
+PASS Animation interpolates correctly when some keyframes don't declare all values
+

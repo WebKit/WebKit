@@ -1,0 +1,5 @@
+Before Invoker Inside Popover After Popover
+
+FAIL Popover focus navigation with an inert invoker assert_equals: Focus should move into the popover expected Element node <button id="inside">Inside Popover</button> but got Element node <body><button id="before">Before</button>
+<button id="inv...
+

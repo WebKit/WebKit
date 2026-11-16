@@ -1,0 +1,10 @@
+Tests that focusing a date input and pressing the return key submits a form.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Submitted form.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Enter birthday:

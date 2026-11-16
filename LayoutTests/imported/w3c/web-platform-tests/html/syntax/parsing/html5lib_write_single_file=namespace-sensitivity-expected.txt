@@ -1,0 +1,5 @@
+html5lib parser tests
+
+
+PASS <body><table><tr><td><svg><td><foreignObject><span></td>Foo
+

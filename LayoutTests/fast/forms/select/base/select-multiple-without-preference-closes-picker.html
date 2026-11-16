@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=false ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+/* js-test grows its console at the top of the body, which would push this out of reach. */
+#controls { position: fixed; top: 0; left: 0; }
+</style>
+</head>
+<body>
+<div id="controls">
+<select id="becomesMultiple" size="1"><option>one</option><option>two</option></select>
+</div>
+<script>
+description("Without the preference, a select with multiple has no base appearance picker even when its size is one, so setting multiple closes the picker. This needs its own file because the preference is on for other tests.");
+
+jsTestIsAsync = true;
+
+(async () => {
+    await UIHelper.activateElement(becomesMultiple);
+    await UIHelper.animationFrame();
+    shouldBeTrue("becomesMultiple.matches(':open')");
+
+    becomesMultiple.multiple = true;
+    shouldBeFalse("becomesMultiple.matches(':open')");
+    await UIHelper.renderingUpdate();
+
+    // Its picker should really have closed rather than only stop matching :open.
+    becomesMultiple.multiple = false;
+    shouldBeFalse("becomesMultiple.matches(':open')");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

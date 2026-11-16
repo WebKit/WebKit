@@ -1,0 +1,497 @@
+#!/usr/bin/env ruby
+#
+# Copyright (c) 2017-2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+require "fileutils"
+require 'erb'
+require 'optparse'
+require 'yaml'
+
+options = {
+  :frontend => nil,
+  :outputDirectory => Dir.getwd,
+  :templates => [],
+  :preferenceFiles => []
+}
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename($0)} --frontend <frontend> [--outputDir <output>] --template <file> [--template <file>...] <preferences> [<preferences>...]"
+
+  opts.separator ""
+
+  opts.on("--frontend input", "frontend to generate preferences for (WebKit, WebKitLegacy, WebCore, JavaScriptCore)") { |frontend| options[:frontend] = frontend }
+  opts.on("--template input", "template to use for generation (may be specified multiple times)") { |template| options[:templates] << template }
+  opts.on("--outputDir output", "directory to generate file in (default: cwd)") { |outputDir| options[:outputDirectory] = outputDir }
+  opts.on("-h", "--help", "show this help message") { puts opts; exit 1 }
+end
+
+optparse.parse!
+
+options[:preferenceFiles] = ARGV.shift(ARGV.size)
+if options[:preferenceFiles].empty?
+  puts optparse
+  exit 1
+end
+
+FileUtils.mkdir_p(options[:outputDirectory])
+
+# The frontends a preference can carry a default value for, in the order they
+# have to be listed in. A preference is in all of them unless "excludeFrom" says
+# otherwise.
+FRONTENDS = %w{ WebKitLegacy WebKit WebCore }
+
+def frontendsFor(opts)
+  FRONTENDS - (opts["excludeFrom"] || [])
+end
+
+KEYS = %w{
+  category comment condition defaultValue defaultsOverridable disableInLockdownMode
+  excludeFrom getter hidden humanReadableDescription humanReadableName
+  inspectorOverride jscOptionName mediaPlaybackRelated refinedType richJavaScript
+  sharedPreferenceForWebProcess status type webKitLegacyBinding webKitLegacyExposed
+  webKitLegacyPreferenceKey webcoreDeprecatedGlobalSettings
+  webcoreExcludeFromInternalSettings webcoreGetter webcoreImplementation webcoreName
+  webcoreOnChange
+}
+
+# "defaultValue" is the value shared by every frontend the preference is in,
+# either directly or as a map of build conditions ending in "default". A frontend
+# is listed under it only where its value differs.
+def defaultValueFor(opts, frontend)
+  # JSC feature-flag options carry no JavaScriptCore default of their own; their
+  # default is the WebKit default.
+  frontend = "WebKit" if frontend == "JavaScriptCore"
+
+  specification = opts["defaultValue"]
+  return { "default" => specification } if !specification.is_a?(Hash)
+
+  value = specification.fetch(frontend, specification.reject { |key, _| FRONTENDS.include?(key) })
+  value.is_a?(Hash) ? value : { "default" => value }
+end
+
+def validate(path, parsed)
+  failed = false
+  reject = Proc.new do |name, msg|
+    STDERR.puts "error: #{path}: #{name}: #{msg}"
+    failed = true
+  end
+
+  parsed.each do |name, opts|
+    (opts.keys - KEYS).each { |key| reject.call name, "\"#{key}\" is not a known key." }
+    reject.call name, "\"webcoreDeprecatedGlobalSettings\" is only ever true, so leave it out instead." if opts.key?("webcoreDeprecatedGlobalSettings") && opts["webcoreDeprecatedGlobalSettings"] != true
+
+    excluded = opts["excludeFrom"]
+    if excluded
+      if !excluded.is_a?(Array) || excluded.empty? || !(excluded - FRONTENDS).empty?
+        reject.call name, "\"excludeFrom\" must be a non-empty list of #{FRONTENDS.join(", ")}."
+        next
+      end
+      reject.call name, "\"excludeFrom\" must be listed in the order #{FRONTENDS.join(", ")}." if excluded != FRONTENDS & excluded
+      reject.call name, "\"excludeFrom\" excludes every frontend, so the preference would not exist anywhere." if excluded == FRONTENDS
+    end
+
+    reject.call name, "\"webKitLegacyExposed\" is only ever false, so leave it out instead." if opts.key?("webKitLegacyExposed") && opts["webKitLegacyExposed"] != false
+    reject.call name, "\"webKitLegacyExposed\" says nothing when WebKitLegacy is excluded." if opts["webKitLegacyExposed"] == false && !frontendsFor(opts).include?("WebKitLegacy")
+
+    specification = opts["defaultValue"]
+    if specification.nil?
+      reject.call name, "\"defaultValue\" is required and cannot be empty."
+      next
+    end
+    next if !specification.is_a?(Hash)
+
+    if !specification.key?("default")
+      reject.call name, "\"defaultValue\" needs a \"default\", the value the frontends share."
+      next
+    end
+
+    keys = specification.keys
+    conditions = keys[0...keys.index("default")]
+    overrides = keys[(keys.index("default") + 1)..-1]
+    if conditions.any? { |key| FRONTENDS.include?(key) } || !(overrides - FRONTENDS).empty?
+      reject.call name, "\"defaultValue\" must list build conditions before \"default\" and frontends after it."
+      next
+    end
+    reject.call name, "\"defaultValue\" must list frontends in the order #{FRONTENDS.join(", ")}." if overrides != FRONTENDS & overrides
+
+    base = specification.reject { |key, _| FRONTENDS.include?(key) }
+    # An empty value would generate an empty DEFAULT_VALUE_FOR_ macro rather than
+    # fail here, so the derived sources would be what complains.
+    empty = base.select { |_, value| value.nil? }
+    empty.each_key { |key| reject.call name, "\"defaultValue\" has no value for \"#{key}\"." }
+    reject.call name, "\"defaultValue\" is only a \"default\", so it should be written as \"defaultValue: #{base["default"]}\"." if base.size == 1 && overrides.empty? && empty.empty?
+
+    overrides.each do |frontend|
+      reject.call name, "#{frontend} is excluded, so it cannot have a default value of its own." if !frontendsFor(opts).include?(frontend)
+      value = specification[frontend]
+      if value.is_a?(Hash)
+        reject.call name, "#{frontend} must not list frontends under itself." if value.keys.any? { |key| FRONTENDS.include?(key) }
+        reject.call name, "#{frontend}'s build conditions must end in \"default\"." if value.keys.last != "default"
+        reject.call name, "#{frontend} is only a \"default\", so it should be written as \"#{frontend}: #{value["default"]}\"." if value.size == 1 && !value["default"].nil?
+      else
+        value = { "default" => value }
+      end
+      value.each { |key, leaf| reject.call name, "#{frontend} has no value for \"#{key}\"." if leaf.nil? }
+      reject.call name, "#{frontend}'s value is the shared default, so it should be left out." if value.to_a == base.to_a
+    end
+  end
+
+  exit 1 if failed
+end
+
+def load(path)
+  parsed = begin
+    YAML.load_file(path)
+  rescue ArgumentError => e
+    STDERR.puts "error: Could not parse input file: #{e.message}"
+    exit(1)
+  end
+  if parsed
+    previousName = nil
+    parsed.keys.each do |name|
+      if previousName != nil and previousName > name
+        STDERR.puts "error: Input file #{path} is not sorted. First out of order name found is '#{name}'."
+        exit(1)
+      end
+      previousName = name
+    end
+    validate(path, parsed)
+  end
+  parsed
+end
+
+class Preference
+  attr_accessor :name
+  attr_accessor :opts
+  attr_accessor :type
+  attr_accessor :refinedType
+  attr_accessor :status
+  attr_accessor :category
+  attr_accessor :defaultsOverridable
+  attr_accessor :humanReadableName
+  attr_accessor :humanReadableDescription
+  attr_accessor :webcoreDeprecatedGlobalSettings
+  attr_accessor :condition
+  attr_accessor :hidden
+  attr_accessor :defaultValues
+  attr_accessor :exposed
+  attr_accessor :sharedPreferenceForWebProcess
+  attr_accessor :richJavaScript
+  attr_accessor :mediaPlaybackRelated
+  attr_accessor :inspectorOverride
+  attr_accessor :jscOptionName
+
+  def initialize(name, opts, frontend)
+    @name = name
+    @opts = opts
+    @type = opts["type"]
+    @refinedType = opts["refinedType"]
+    @status = opts["status"]
+    @category = opts["category"] || "none"
+    @defaultsOverridable = opts["defaultsOverridable"] || false
+    @humanReadableName = (opts["humanReadableName"] || "")
+    if not humanReadableName.start_with? "WebKitAdditions"
+        @humanReadableName = '"' + humanReadableName + '"'
+    end
+    @humanReadableDescription = (opts["humanReadableDescription"] || "")
+    if not humanReadableDescription.start_with? "WebKitAdditions"
+        @humanReadableDescription = '"' + humanReadableDescription + '"'
+    end
+    @getter = opts["getter"]
+    @webcoreDeprecatedGlobalSettings = opts["webcoreDeprecatedGlobalSettings"] || false
+    @webcoreName = opts["webcoreName"]
+    @condition = opts["condition"]
+    @hidden = opts["hidden"] || false
+    @defaultValues = defaultValueFor(opts, frontend)
+    @exposed = !(frontend == "WebKitLegacy" && opts["webKitLegacyExposed"] == false)
+    @sharedPreferenceForWebProcess = opts["sharedPreferenceForWebProcess"] || false
+    @richJavaScript = opts["richJavaScript"] || false
+    @mediaPlaybackRelated = opts["mediaPlaybackRelated"] || false
+    @inspectorOverride = opts["inspectorOverride"]
+    @jscOptionName = opts["jscOptionName"]
+  end
+
+  def nameLower
+    if @getter
+      @getter
+    elsif @name.start_with?("VP")
+      @name[0..1].downcase + @name[2..@name.length]
+    elsif @name.start_with?("CSS", "DOM", "DNS", "FTP", "ICE", "IPC", "PDF", "SVG", "XSS")
+      @name[0..2].downcase + @name[3..@name.length]
+    elsif @name.start_with?("HTTP")
+      @name[0..3].downcase + @name[4..@name.length]
+    else
+      @name[0].downcase + @name[1..@name.length]
+    end
+  end
+
+  def webcoreNameUpper
+    if @webcoreName
+      @webcoreName[0].upcase + @webcoreName[1..@webcoreName.length]
+    else
+      @name
+    end
+  end
+
+  def typeUpper
+    if @type == "uint32_t"
+      "UInt32"
+    else
+      @type.capitalize
+    end
+  end
+
+  def webFeatureStatus
+    "WebFeatureStatus" + @status.capitalize
+  end
+
+  def webFeatureCategory
+    if %w{ css dom html }.include?(@category)
+      "WebFeatureCategory" + @category.upcase
+    else
+      "WebFeatureCategory" + @category.capitalize
+    end
+  end
+
+  def apiStatus
+    "API::FeatureConstant<API::FeatureStatus::#{@status.capitalize}>{}"
+  end
+
+  def apiCategory
+      if %w{ css dom html }.include?(@category)
+        "API::FeatureCategory::" + @category.upcase
+      else
+        "API::FeatureCategory::" + @category.capitalize
+      end
+  end
+
+  def hasInspectorOverride?
+    @inspectorOverride == true
+  end
+
+  # A preference in WebCore is a WebCore::Settings member unless it is one of the
+  # globals declared by hand in DeprecatedGlobalSettings.h.
+  def boundToWebCoreSettings?
+    frontendsFor(@opts).include?("WebCore") && !@webcoreDeprecatedGlobalSettings
+  end
+
+  # WebKitLegacy specific helpers.
+
+  def preferenceKey
+    if @opts["webKitLegacyPreferenceKey"]
+      @opts["webKitLegacyPreferenceKey"]
+    else
+      "WebKit#{@name}"
+    end
+  end
+
+  def preferenceAccessor
+    case @type
+    when "bool"
+      "_boolValueForKey"
+    when "uint32_t"
+      "_integerValueForKey"
+    when "double"
+     "_floatValueForKey"
+    when "String"
+      "_stringValueForKey"
+    else
+      raise "Unknown type: #{@type}"
+    end
+  end
+
+  def downcast
+    if @refinedType
+      "static_cast<#{@type}>("
+    end
+  end
+
+  def upcast
+    if @refinedType
+      "static_cast<#{@refinedType}>("
+    end
+  end
+
+  def ephemeral?
+    %w{ unstable internal testable }.include? @status
+  end
+
+  def defaultsOverridable?
+    @defaultsOverridable
+  end
+
+  # FIXME: These names correspond to the "experimental features" and "internal
+  # debug features" designations used before the feature status taxonomy was
+  # introduced. They should be renamed to better reflect their semantic meanings.
+
+  # Features which should appear in UI presented to end users.
+  def experimental?
+    %w{ developer testable preview stable }.include? @status
+  end
+
+  # Features which should only be presented in WebKit development contexts.
+  def internal?
+    %w{ unstable internal }.include? @status
+  end
+  
+  # Features which should be enabled while running tests
+  def testable?
+    %w{ testable preview stable mature }.include? @status
+  end
+end
+
+class Preferences
+  attr_accessor :preferences
+
+  def initialize(preferenceFiles, frontend)
+    @frontend = frontend
+
+    @preferences = []
+    definingFileByName = {}
+    preferenceFiles.each do |file|
+      parsed = load(file)
+      (parsed || {}).each_key do |name|
+        if definingFileByName.key?(name)
+          STDERR.puts "error: #{file}: #{name} is already defined in #{definingFileByName[name]}."
+          exit 1
+        end
+        definingFileByName[name] = file
+      end
+      initializeParsedPreferences(parsed)
+    end
+
+    @preferences.sort_by! { |p| p.humanReadableName.empty? ? p.name : p.humanReadableName }
+    @exposedPreferences = @preferences.select { |p| p.exposed }
+    @exposedFeatures = @exposedPreferences.select { |p| p.type == "bool" }
+    @sharedPreferencesForWebProcess = @exposedPreferences.select { |p| p.sharedPreferenceForWebProcess }
+    @inspectorOverridePreferences = @preferences.select { |p| p.hasInspectorOverride? }
+
+    @preferencesBoundToSetting = @preferences.select { |p| p.boundToWebCoreSettings? }
+    @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreDeprecatedGlobalSettings }
+
+    @jscOptions = @preferences.select { |p| p.jscOptionName }.sort_by { |p| p.jscOptionName }
+
+    @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
+  end
+
+  # Corresponds to WebFeatureCategory enum cases.
+  CATEGORIES = %w{ animation css dom extensions html javascript media networking privacy security }
+
+  def initializeParsedPreferences(parsedPreferences)
+    result = []
+    failed = false
+    reject = Proc.new do |msg|
+      STDERR.puts("error: " + msg)
+      failed = true
+    end
+
+    if parsedPreferences
+      parsedPreferences.each do |name, options|
+        webcoreSettingOnly = !options["webcoreDeprecatedGlobalSettings"] && frontendsFor(options) == ["WebCore"]
+        status = options["status"]
+
+        if options["jscOptionName"]
+          reject.call "Preference #{name} has jscOptionName, so it must set sharedPreferenceForWebProcess: true." if !options["sharedPreferenceForWebProcess"]
+          reject.call "Preference #{name} has jscOptionName, so it must not be excluded from WebKit." if !frontendsFor(options).include?("WebKit")
+          next if failed
+        end
+
+        if %w{ unstable internal developer testable preview stable }.include?(status)
+          reject.call "Preference #{name} has no humanReadableName, which is required." if !options["humanReadableName"]
+          reject.call "Preference #{name} is visible in client UI and has a default value bound to WebCore::Settings, so it must have default values for all frontends" if webcoreSettingOnly
+          next if failed
+        elsif webcoreSettingOnly and @frontend != "WebCore"
+          next
+        end
+
+        if %w{ developer testable preview stable }.include?(status)
+            reject.call "Preference #{name} has no category, which is required." if !options["category"]
+            next if failed
+            category = options["category"]
+            if !CATEGORIES.include?(category)
+              reject.call "Preference #{name}\'s category \"#{category}\" is not one of the known categories: #{CATEGORIES}"
+              next
+            end
+        end
+
+        # The JavaScriptCore "frontend" is the set of preferences that back a
+        # JSC::Options feature flag, identified by jscOptionName; every other frontend
+        # selects on not being excluded from itself.
+        includedInFrontend = @frontend == "JavaScriptCore" ? !options["jscOptionName"].nil? : frontendsFor(options).include?(@frontend)
+        if includedInFrontend
+          preference = Preference.new(name, options, @frontend)
+          @preferences << preference
+          result << preference
+        end
+      end
+    end
+    exit 1 if failed
+    result
+  end
+
+  def createTemplate(templateString)
+    # Newer versions of ruby deprecate and/or drop passing non-keyword
+    # arguments for trim_mode and friends, so we need to call the constructor
+    # differently depending on what it expects. This solution is suggested by
+    # rubocop's Lint/ErbNewArguments.
+    if ERB.instance_method(:initialize).parameters.assoc(:key) # Ruby 2.6+
+      ERB.new(templateString, trim_mode:"-")
+    else
+      ERB.new(templateString, nil, "-")
+    end
+  end
+  def renderTemplate(templateFile, outputDirectory)
+    resultFile = File.join(outputDirectory, File.basename(templateFile, ".erb"))
+    tempResultFile = resultFile + ".tmp"
+
+    erb = createTemplate(File.read(templateFile))
+    erb.filename = templateFile
+    output = erb.result(binding)
+    File.open(tempResultFile, "w+") do |f|
+      f.write(output)
+    end
+    if (!File.exist?(resultFile) || IO::read(resultFile) != IO::read(tempResultFile))
+      FileUtils.move(tempResultFile, resultFile)
+    else
+      FileUtils.remove_file(tempResultFile)
+      FileUtils.uptodate?(resultFile, [templateFile]) or FileUtils.touch(resultFile)
+    end
+  end
+  
+  def constantize(value)
+    case value
+    when true
+      "std::true_type{}"
+    when false
+      "std::false_type{}"
+    else
+      value
+    end
+  end
+end
+
+preferences = Preferences.new(options[:preferenceFiles], options[:frontend])
+
+options[:templates].each do |template|
+  preferences.renderTemplate(template, options[:outputDirectory])
+end

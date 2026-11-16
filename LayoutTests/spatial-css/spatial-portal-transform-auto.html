@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 40cm; height: 20cm; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+const flatRectangle = "flat-rectangle.usdz";
+
+promise_test(async t => {
+    const narrowPortal = createPortal(t);
+    const narrowModel = appendModel(narrowPortal, flatRectangle);
+
+    const widePortal = createPortal(t, { width: "80cm" }); // Twice as wide.
+    const wideModel = appendModel(widePortal, flatRectangle);
+
+    await narrowModel.ready;
+    await wideModel.ready;
+
+    const narrowTransform = await waitForPortalTransform(narrowPortal, portalTransformIsResolved, "narrow portal");
+    const wideTransform = await waitForPortalTransform(widePortal, portalTransformIsResolved, "wide portal");
+
+    assert_3d_matrix_approx_equals(narrowTransform.scale3d(2), wideTransform);
+}, `portal-transform: auto scales the portal's content to fit the portal box`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, flatRectangle);
+    await model.ready;
+
+    const fit = await waitForPortalTransform(portal, portalTransformIsResolved, "portal");
+
+    model.style.translate = "200px 0 0";
+    model.style.scale = "2 2 2";
+    const applied = await waitForEntityTransform(model, transform => !transform.isIdentity, "child transform");
+
+    assert_3d_matrix_approx_equals(applied, as3d(new DOMMatrixReadOnly().translate(200, 0, 0).scale3d(2)));
+    assert_3d_matrix_approx_equals(resolvedPortalTransform(portal), fit);
+}, `portal-transform: auto ignores a transform on a child model`);
+
+</script>
+</body>
+</html>

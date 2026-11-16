@@ -1,0 +1,4 @@
+playEventStream
+playEventStream
+completeSwipeGesture
+

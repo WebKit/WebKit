@@ -1,0 +1,30 @@
+<script>
+window.ticks = 0;
+setInterval(() => { window.ticks++; }, 50);
+
+window.testEventCount = 0;
+document.addEventListener("test-event", () => { window.testEventCount++; });
+
+function pauseHere()
+{
+    debugger;
+    return "resumed";
+}
+
+function runStatements()
+{
+    let value = 1;
+    value += 1;
+    return value;
+}
+
+function throwAndCatch()
+{
+    try {
+        throw new Error("thrown while another frame is paused");
+    } catch {
+        return "caught";
+    }
+}
+</script>
+<p>Same-origin frame for same-process debugger tests.</p>

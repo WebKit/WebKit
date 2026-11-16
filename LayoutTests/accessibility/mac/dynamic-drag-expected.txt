@@ -1,0 +1,14 @@
+This test ensures we properly report isGrabbed state to assistive technologies.
+
+PASS: accessibilityController.accessibleElementById('input1').isGrabbed === false
+PASS: accessibilityController.accessibleElementById('input2').isGrabbed === false
+PASS: accessibilityController.accessibleElementById('input1').isGrabbed === true
+PASS: accessibilityController.accessibleElementById('input1').isGrabbed === false
+PASS: accessibilityController.accessibleElementById('input2').isGrabbed === true
+PASS: accessibilityController.accessibleElementById('input2').isGrabbed === false
+PASS: accessibilityController.accessibleElementById('input1').isGrabbed === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

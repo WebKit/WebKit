@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+    internals.setTextZoomFactor(2.0);
+</script>
+<style>
+.container {
+    font-size: 16px;
+    border: 2px solid black;
+    margin: 2px;
+}
+.test-em {
+    margin: 2em;
+    background: lightblue;
+    border: 2px dashed blue;
+}
+.test-rem {
+    margin: 2rem;
+    background: lightblue;
+    border: 2px dashed blue;
+}
+.test-expected {
+    margin: 64px;
+    background: lightblue;
+    border: 2px dashed blue;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="test-em">Box with 2em margin</div>
+</div>
+<div class="container">
+    <div class="test-rem">Box with 2rem margin</div>
+</div>
+<div class="container">
+    <div class="test-rem">Box with 64px margin</div>
+</body>
+</html>

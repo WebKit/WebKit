@@ -1,0 +1,20 @@
+X
+X
+X
+
+X
+X
+X
+X
+
+X
+
+PASS float ancestor, item box
+PASS float ancestor, inner box
+PASS inline-block ancestor, item box
+PASS inline-block ancestor, inner box
+PASS table-cell ancestor, item box
+PASS table-cell ancestor, inner box
+PASS inline-grid ancestor, item box
+PASS inline-grid ancestor, inner box
+

@@ -1,0 +1,2 @@
+This test is to ensure that we do not crash when destroying counter nodes.
+TEST PASSED

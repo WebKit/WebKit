@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<title>Tests that anchor-positioned element is hidden when adding position-visibility: no-overflow</title>
+
+<style>
+  #container {
+    position: relative;
+    width: 400px;
+    height: 150px;
+  }
+
+  #anchor {
+    width: 100px;
+    height: 100px;
+    background: green;
+    anchor-name: --a1;
+  }
+
+  #target {
+    position: absolute;
+    position-anchor: --a1;
+    position-area: block-end;
+
+    width: 100px;
+    height: 100px;
+    background: red;
+    top: 0;
+    left: 0;
+  }
+</style>
+
+<script src="../../../resources/ui-helper.js"></script>
+
+This test passes if there is only one green square.
+
+<div id="container">
+  <div id="anchor"></div>
+  <!-- #target should not be visible because it overflows the containing block. -->
+  <div id="target"></div>
+</div>
+
+<script>
+  if (window.testRunner) {
+    testRunner.waitUntilDone()
+
+    // This bug is about a missed repaint, so the force repaint at the end will negate it.
+    // Disable force repaint to reproduce the bug.
+    if (testRunner.dontForceRepaint)
+      testRunner.dontForceRepaint();
+  }
+
+  async function doTest() {
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    target.style.positionVisibility = 'no-overflow';
+
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+  window.addEventListener('load', doTest, false);
+</script>

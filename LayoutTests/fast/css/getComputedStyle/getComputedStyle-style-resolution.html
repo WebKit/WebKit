@@ -1,0 +1,49 @@
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<container>
+<subcontainer>
+<target>Text</target>
+<target-sibling></target-sibling>
+</subcontainer>
+<subcontainer-sibling>
+</subcontainer-sibling>
+</container>
+<script>
+var target = document.querySelector("target");
+var container = document.querySelector("container");
+var subcontainer = document.querySelector("subcontainer");
+var subcontainerSibling = document.querySelector("subcontainer-sibling");
+var targetSibling = document.querySelector("target-sibling");
+test(() => {
+     target.offsetLeft;
+     internals.startTrackingStyleRecalcs();
+     assert_equals(getComputedStyle(target).backgroundColor, "rgba(0, 0, 0, 0)", "getComputedStyle color is correct");
+     assert_equals(internals.styleRecalcCount(), 0, "getComputedStyle didn't trigger style resolution");
+}, "No style resolution when style is valid.");
+
+test(() => {
+     target.offsetLeft;
+     internals.startTrackingStyleRecalcs();
+     targetSibling.style.backgroundColor = "blue";
+     assert_equals(getComputedStyle(target).backgroundColor, "rgba(0, 0, 0, 0)", "getComputedStyle color is correct");
+     assert_equals(internals.styleRecalcCount(), 0, "getComputedStyle didn't trigger style resolution");
+ }, "No style resolution when sibling style is invalid.");
+
+test(() => {
+     target.offsetLeft;
+     internals.startTrackingStyleRecalcs();
+     subcontainerSibling.style.backgroundColor = "blue";
+     assert_equals(getComputedStyle(target).backgroundColor, "rgba(0, 0, 0, 0)", "getComputedStyle color is correct");
+     assert_equals(internals.styleRecalcCount(), 0, "getComputedStyle didn't trigger style resolution");
+ }, "No style resolution when ancestor sibling style is invalid.");
+
+test(() => {
+     target.style.backgroundColor = "inherit";
+     subcontainer.style.backgroundColor = "inherit";
+     target.offsetLeft;
+     internals.startTrackingStyleRecalcs();
+     container.style.backgroundColor = "green";
+     assert_equals(getComputedStyle(target).backgroundColor, "rgb(0, 128, 0)", "getComputedStyle color is correct");
+     assert_equals(internals.styleRecalcCount(), 1, "getComputedStyle did trigger style resolution");
+}, "Explicit 'inherit' chain triggers style resolution");
+</script>

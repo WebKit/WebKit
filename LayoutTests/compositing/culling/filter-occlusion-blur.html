@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html><head>
+<title>CSS filter blur occlusion test.</title>
+<style type="text/css">
+  .composited {
+    -webkit-transform: translateZ(0);
+  }
+  .yellow-parent {
+    width: 600px;
+    height:  600px;
+    -webkit-filter: blur(10px);
+  }
+  .centered {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    left: 100px;
+    top: 100px;
+  }
+</style>
+<script type="text/javascript">
+  if (window.testRunner) {
+    testRunner.dumpAsText(true);
+  }
+</script>
+</head>
+<body>
+<!--
+   This test guards against over-culling of the "hidden" yellow box. Since the yellow box is blurred,
+   it becomes visible around the outside of the green box.
+  -->
+<div class="yellow-parent composited" style="position:absolute; left:0; top:0">
+  <div class="centered composited" style="background-color: yellow;">
+  </div>
+</div>
+<div class="composited centered" style="background-color: green;">
+</div>
+</body>
+</html>

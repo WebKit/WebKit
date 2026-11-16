@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <script src="../../../resources/js-test-pre.js"></script>
+  </head>
+  <body>
+    <script>
+      description("Test GeolocationPosition toJSON() method");
+
+      testRunner.setGeolocationPermission(true);
+
+      window.jsTestIsAsync = true;
+
+      const baseExpected = {
+        altitude: null,
+        altitudeAccuracy: null,
+        heading: null,
+        speed: null,
+        floorLevel: null,
+      };
+
+      const testData = [
+        [
+          {
+            latitude: 5,
+            longitude: 6,
+            accuracy: 7,
+            altitude: 8,
+            altitudeAccuracy: 9,
+            heading: 10,
+            speed: 11,
+          },
+          {
+            ...baseExpected,
+            latitude: 5,
+            longitude: 6,
+            accuracy: 7,
+            altitude: 8,
+            altitudeAccuracy: 9,
+            heading: 10,
+            speed: 11,
+          },
+        ],
+      ];
+
+      async function runNextTest() {
+        for (const [actualCoords, expectedCoords] of testData) {
+          window.expectedCoords = expectedCoords;
+          const {
+            latitude,
+            longitude,
+            accuracy,
+            altitude,
+            altitudeAccuracy,
+            heading,
+            speed,
+            floorLevel,
+          } = actualCoords;
+
+          testRunner.setMockGeolocationPosition(
+            latitude,
+            longitude,
+            accuracy,
+            altitude,
+            altitudeAccuracy,
+            heading,
+            speed,
+            floorLevel
+          );
+
+          const position = await new Promise((resolve, reject) =>
+            navigator.geolocation.getCurrentPosition(resolve, reject)
+          );
+
+          window.position = position;
+          window.positionJson = position.toJSON();
+
+          shouldBeTrue(`typeof window.positionJson === 'object'`);
+          shouldBeTrue(`typeof window.positionJson.coords === 'object'`);
+          shouldBe(`window.positionJson.timestamp`, `window.position.timestamp`);
+
+          // check coords got converted correctly
+          for (const key in actualCoords) {
+            shouldBe(`window.positionJson.coords.${key}`, `window.expectedCoords.${key}`);
+          }
+        }
+      }
+
+      runNextTest().finally(finishJSTest);
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+  </body>
+</html>

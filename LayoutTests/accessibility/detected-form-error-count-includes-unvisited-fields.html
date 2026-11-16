@@ -1,0 +1,65 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAriaLiveRegionManagementEnabled=false ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+#summary { color: #c62828; }
+</style>
+</head>
+<body>
+
+<p id="intro">Checkout</p>
+<div id="summary">All fields are required.</div>
+<form id="checkout">
+  <div role="group" aria-label="Contact">
+    <div><input id="name" type="text" placeholder="Name"></div>
+    <div><input id="email" type="text" placeholder="Email"></div>
+  </div>
+  <div role="group" aria-label="Shipping">
+    <div><input id="street" type="text" placeholder="Street"></div>
+    <div><input id="city" type="text" placeholder="City"></div>
+  </div>
+  <button id="submit" type="submit">Place order</button>
+</form>
+
+<script>
+var output = "This tests that the number of fields needing attention counts every field the page marked invalid, including fields no assistive technology has visited yet.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXPossibleFormValidationError")
+            payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    document.getElementById("checkout").addEventListener("submit", (event) => {
+        event.preventDefault();
+        for (const id of ["name", "email", "street", "city"])
+            document.getElementById(id).setAttribute("aria-invalid", "true");
+        document.getElementById("summary").textContent = "Please fix the 4 fields below.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Only read what comes before the form, so none of its fields has an accessibility object yet. Managing live
+        // regions would make every object up front, so the header turns it off.
+        output += expect("!!axElement('intro')", "true");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Please fix the 4 fields below.\\nAXFormValidationErrorFieldCount: 4\\n'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

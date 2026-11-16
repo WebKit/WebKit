@@ -1,0 +1,18 @@
+This tests that after activating a control that only may have been meant to submit the fields around it, a message in no error color counts when it appears right under a dropdown still on an option with no value, like a placeholder. A message under a dropdown with a choice made does not.
+
+PASS: axElement('state').stringAttributeValue('AXInvalid') === 'false'
+PASS: payload === 'AXFormValidationUnannouncedText: Choose a state.\nAXFormValidationErrorFieldCount: 1\n'
+PASS: axElement('state').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('state')) === 'Choose a state.'
+PASS: errorMessageText(axElement('country')) === 'no error messages'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Name
+Street
+State
+Choose a state.
+Country
+Shipping to the United States.
+Continue

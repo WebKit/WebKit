@@ -1,0 +1,408 @@
+/*
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#import "BindableResource.h"
+#import "HardwareCapabilities.h"
+#import "Queue.h"
+#import "WGSL.h"
+#import <CoreVideo/CVMetalTextureCache.h>
+#import <CoreVideo/CoreVideo.h>
+#import <IOSurface/IOSurfaceRef.h>
+#import <Metal/Metal.h>
+#import <WebGPU/WebGPU.h>
+#import <WebGPU/WebGPUCpp.h>
+#import <expected>
+#import <simd/matrix_types.h>
+#import <wtf/CompletionHandler.h>
+#import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
+#import <wtf/HashIterators.h>
+#import <wtf/HashMap.h>
+#import <wtf/HashTable.h>
+#import <wtf/KeyValuePair.h>
+#import <wtf/Ref.h>
+#import <wtf/SwiftBridging.h>
+#import <wtf/TZoneMalloc.h>
+#import <wtf/ThreadSafeWeakHashSet.h>
+#import <wtf/ThreadSafeWeakPtr.h>
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
+
+IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
+
+
+namespace WebGPU::Metal {
+
+class BindGroup;
+class BindGroupLayout;
+class Buffer;
+class CommandEncoder;
+class ComputePipeline;
+class ExternalTexture;
+class Instance;
+class PipelineLayout;
+class PresentationContext;
+class QuerySet;
+class RenderBundleEncoder;
+class RenderPipeline;
+class Sampler;
+class ShaderModule;
+class Texture;
+class XRBinding;
+class XRSubImage;
+class XRProjectionLayer;
+class XRView;
+
+struct LibraryCompileRequest;
+struct ResolvedBindGroupLayoutEntry;
+
+#if ENABLE(WEBGPU_BY_DEFAULT)
+using GPUShaderValidation = MTLShaderValidation;
+#else
+using GPUShaderValidation = uint32_t;
+#endif
+
+#define WEBKIT_DRAW_INDEXED_INDIRECT_STRUCT_TYPE \
+struct WebKitMTLDrawIndexedPrimitivesIndirectArguments { \
+    MTLDrawIndexedPrimitivesIndirectArguments args;         \
+    unsigned lostOrOOBRead;                                 \
+};
+WEBKIT_DRAW_INDEXED_INDIRECT_STRUCT_TYPE
+
+#define WEBKIT_DRAW_INDIRECT_STRUCT_TYPE \
+struct WebKitMTLDrawPrimitivesIndirectArguments { \
+    MTLDrawPrimitivesIndirectArguments args;                \
+    unsigned lostOrOOBRead;                                 \
+};
+WEBKIT_DRAW_INDIRECT_STRUCT_TYPE
+
+// https://gpuweb.github.io/gpuweb/#gpudevice
+class Device final : public WebGPU::Device {
+    WTF_MAKE_TZONE_ALLOCATED(Device);
+public:
+    static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, HardwareCapabilities&&, Adapter&);
+    static Ref<Device> createInvalid(Adapter& adapter)
+    {
+        return adoptRef(*new Device(adapter));
+    }
+
+    ~Device();
+
+    RefPtr<WebGPU::BindGroup> createBindGroup(const WebGPU::BindGroupDescriptor&) final;
+    RefPtr<WebGPU::BindGroupLayout> createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor&) final;
+    RefPtr<WebGPU::XRBinding> createXRBinding() final;
+    Ref<XRSubImage> createXRSubImage();
+    Ref<XRView> createXRView();
+    RefPtr<WebGPU::Buffer> createBuffer(const WebGPU::BufferDescriptor&) final;
+    RefPtr<WebGPU::CommandEncoder> createCommandEncoder(const WebGPU::CommandEncoderDescriptor&) final;
+    RefPtr<WebGPU::ComputePipeline> createComputePipeline(const WebGPU::ComputePipelineDescriptor&) final;
+    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(std::expected<Ref<WebGPU::ComputePipeline>, WebGPU::PipelineError>&&)>&&) final;
+    void createComputePipelineWithPipelineLayoutFromPipelineAsync(const WebGPU::ComputePipelineDescriptor&, const WebGPU::ComputePipeline&, CompletionHandler<void(std::expected<Ref<WebGPU::ComputePipeline>, WebGPU::PipelineError>&&)>&&) final;
+    RefPtr<WebGPU::ExternalTexture> importExternalTexture(const WebGPU::ExternalTextureDescriptor&) final;
+    void updateExternalTexture(ExternalTexture&) const;
+    RefPtr<WebGPU::PipelineLayout> createPipelineLayout(const WebGPU::PipelineLayoutDescriptor&) final;
+    Ref<PipelineLayout> createPipelineLayout(const WebGPU::PipelineLayoutDescriptor&, bool isAutogenerated);
+    RefPtr<WebGPU::QuerySet> createQuerySet(const WebGPU::QuerySetDescriptor&) final;
+    RefPtr<WebGPU::RenderBundleEncoder> createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor&) final;
+
+    RefPtr<WebGPU::RenderPipeline> createRenderPipeline(const WebGPU::RenderPipelineDescriptor&) final;
+    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&&) final;
+    void createRenderPipelineWithPipelineLayoutFromPipelineAsync(const WebGPU::RenderPipelineDescriptor&, const WebGPU::RenderPipeline&, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&&) final;
+    RefPtr<WebGPU::Sampler> createSampler(const WebGPU::SamplerDescriptor&) final;
+    RefPtr<WebGPU::ShaderModule> createShaderModule(const WebGPU::ShaderModuleDescriptor&) final;
+    RefPtr<WebGPU::Texture> createTexture(const WebGPU::TextureDescriptor&) final;
+    void destroy() final;
+    Vector<WebGPU::FeatureName> features() const final;
+    Ref<WebGPU::Queue> queue() final;
+    Queue& getQueueReference() const { return m_defaultQueue; }
+    Ref<Queue> getQueue() const { return m_defaultQueue; }
+    bool hasFeature(WebGPU::FeatureName) const;
+    void popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&) final;
+    void pushErrorScope(WebGPU::ErrorFilter) final;
+    void resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostReason, String&&)>&&) final;
+    void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&) final;
+    void pauseAllErrorReporting(bool pause) final;
+    NODELETE void setLabel(String&&) final;
+
+    NODELETE bool isValid() const final { return m_device; }
+    bool isLost() const { return m_isLost; }
+    NODELETE const Limits& limits() const LIFETIME_BOUND final { return m_capabilities.limits; }
+    const Limits limitsCopy() const { return m_capabilities.limits; }
+    const HardwareCapabilities::BaseCapabilities& baseCapabilities() const LIFETIME_BOUND { return m_capabilities.baseCapabilities; }
+
+    // Encoding an ICB into an argument buffer, and dereferencing that argument buffer from a shader
+    // in order to write render_command slots, both require argument buffers tier 2. Tier 1 devices
+    // (Apple4/Apple5, e.g. A12) must replay render bundle commands into the render pass instead.
+    bool supportsIndirectCommandBuffersInArgumentBuffers() const { return m_capabilities.baseCapabilities.argumentBuffersTier >= MTLArgumentBuffersTier2; }
+
+    id<MTLDevice> _Nullable device() const { return m_device; }
+    void generateAValidationError(NSString * message);
+    void generateAValidationError(String&& message);
+    void generateAnOutOfMemoryError(String&& message);
+    void generateAnInternalError(String&& message);
+
+    RefPtr<Instance> instance() const { return m_instance.get(); }
+    Adapter& adapter() const { return m_adapter; }
+#if CPU(X86_64)
+    bool hasUnifiedMemory() const { return false; }
+#else
+    bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
+#endif
+    bool isShaderValidationEnabled() const { return m_shaderValidationEnabled; }
+
+    uint32_t maxBuffersPlusVertexBuffersForVertexStage() const
+    {
+        ASSERT(m_capabilities.limits.maxBindGroupsPlusVertexBuffers > 0);
+        return m_capabilities.limits.maxBindGroupsPlusVertexBuffers;
+    }
+
+    uint32_t maxBuffersForFragmentStage() const { return m_capabilities.limits.maxBindGroups; }
+
+    uint32_t maxBuffersForComputeStage() const { return m_capabilities.limits.maxBindGroups; }
+    NODELETE uint32_t vertexBufferIndexForBindGroup(uint32_t groupIndex) const;
+
+    id<MTLBuffer> newBufferWithBytes(const void*, size_t, MTLResourceOptions, bool skipMemoryAttribution = false) const;
+    id<MTLBuffer> newBufferWithBytesNoCopy(void*, size_t, MTLResourceOptions, bool skipMemoryAttribution = false) const;
+    id<MTLTexture> newTextureWithDescriptor(MTLTextureDescriptor *, IOSurfaceRef = nullptr, NSUInteger plane = 0) const;
+
+    NODELETE static bool isStencilOnlyFormat(MTLPixelFormat);
+    NODELETE bool shouldStopCaptureAfterSubmit();
+    id<MTLBuffer> placeholderBuffer() const { return m_placeholderBuffer; }
+    uint64_t placeholderBufferUniqueId() const { return m_placeholderBuffer.gpuAddress; }
+
+    NODELETE id<MTLTexture> placeholderTexture(WebGPU::TextureFormat) const;
+    NODELETE bool isDestroyed() const;
+    NSString *errorValidatingTextureCreation(const WebGPU::TextureDescriptor&);
+    id<MTLBuffer> _Nullable dispatchCallBuffer();
+    id<MTLComputePipelineState> _Nullable dispatchCallPipelineState(id<MTLFunction>);
+    id<MTLRenderPipelineState> _Nullable indexBufferClampPipeline(MTLIndexType, NSUInteger rasterSampleCount);
+    id<MTLRenderPipelineState> _Nullable indexedIndirectBufferClampPipeline(NSUInteger rasterSampleCount);
+    id<MTLRenderPipelineState> _Nullable indirectBufferClampPipeline(NSUInteger rasterSampleCount);
+    id<MTLRenderPipelineState> _Nullable icbCommandClampPipeline(MTLIndexType, NSUInteger rasterSampleCount);
+    id<MTLFunction> icbCommandClampFunction(MTLIndexType);
+    id<MTLRenderPipelineState> _Nullable icbIndirectEncodePipeline(bool isIndexed, MTLIndexType, NSUInteger rasterSampleCount);
+    id<MTLFunction> icbIndirectEncodeFunction(bool isIndexed, MTLIndexType);
+    id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, bool skipMemoryAttribution = false, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
+    id<MTLBuffer> safeCreateBuffer(NSUInteger, bool skipMemoryAttribution = false) const;
+    template<typename T>
+    id<MTLBuffer> safeCreateBufferWithData(const T& data) const
+    {
+        id<MTLBuffer> buffer = [m_device newBufferWithBytes:static_cast<const void*>(&data) length:sizeof(data) options:MTLResourceStorageModeShared];
+        setOwnerWithIdentity(buffer);
+        return buffer;
+    }
+    void loseTheDevice(WebGPU::DeviceLostReason);
+    NODELETE int bufferIndexForICBContainer() const;
+    void setOwnerWithIdentity(id<MTLResource>) const;
+    struct ExternalTextureData {
+        id<MTLTexture> _Nullable texture0 { nil };
+        id<MTLTexture> _Nullable texture1 { nil };
+        simd::float3x2 uvRemappingMatrix;
+        simd::float4x3 colorSpaceConversionMatrix;
+        // The xyz of each column convert the frame's primaries to the color space the import asked
+        // for, applied to linear-light values. They are all zero, which no real conversion can be,
+        // when the frame's primaries already are that color space. The first column's w describes
+        // the frame's transfer function: 0 for SDR, which the shader treats as sRGB-encoded, 1 for
+        // PQ and 2 for HLG, both of which are decoded and tone mapped to SDR. A frame that is
+        // neither all zero nor HDR skips the transfer function round trip entirely. Three float4
+        // columns rather than a float3x3 and a column more, so that it is no larger than a float3x3.
+        simd::float3x4 primariesConversionMatrix { simd::float3x4(0.f) };
+    };
+    // A single-plane frame's color is premultiplied into a copy when it is imported for sampling,
+    // because textureSampleBaseClampToEdge() has to filter premultiplied color rather than
+    // premultiply what the sampler filtered. copyExternalImageToTexture() carries the frame's color
+    // through unchanged instead, and asks for the planes as they arrived.
+    enum class PremultiplyAlpha : bool { No, Yes };
+    ExternalTextureData createExternalTextureFromPixelBuffer(CVPixelBufferRef, WebGPU::PredefinedColorSpace, PremultiplyAlpha) const;
+    id<MTLTexture> _Nullable premultipliedAlphaTexture(id<MTLTexture>, MTLPixelFormat, std::optional<MTLTextureSwizzleChannels> sourceSwizzle) const;
+    id<MTLComputePipelineState> _Nullable premultiplyAlphaPipeline() const;
+    RefPtr<XRSubImage> getXRViewSubImage(XRProjectionLayer&);
+    NODELETE RefPtr<XRSubImage> getXRViewSubImage() const;
+    id<MTLTexture> _Nullable getXRViewSubImageDepthTexture() const;
+    const std::optional<const MachSendRight> webProcessID() const;
+#if CPU(X86_64)
+    bool isIntel() const { return [m_device.name localizedCaseInsensitiveContainsString:@"intel"]; }
+#else
+    constexpr bool isIntel() const { return false; }
+#endif
+    NODELETE bool pauseErrorReporting(bool pauseReporting);
+    bool enableEncoderTimestamps() const;
+    id<MTLCounterSampleBuffer> timestampsBuffer(id<MTLCommandBuffer>, size_t);
+    void resolveTimestampsForBuffer(id<MTLCommandBuffer>);
+    id<MTLSharedEvent> _Nonnull resolveTimestampsSharedEvent();
+    uint32_t maxVerticesPerDrawCall() const { return m_maxVerticesPerDrawCall; }
+    void trackTimestampsBuffer(id<MTLCommandBuffer>, id<MTLCounterSampleBuffer>);
+
+    const CommandEncoder* commandEncoderFromIdentifier(uint64_t identifier) const
+    {
+        return m_commandEncoderMap.get(identifier);
+    }
+    CommandEncoder* commandEncoderFromIdentifier(uint64_t identifier)
+    {
+        return m_commandEncoderMap.get(identifier);
+    }
+    void removeCommandEncoder(uint64_t identifier)
+    {
+        m_commandEncoderMap.remove(identifier);
+    }
+    // Invalid encoders take an identifier from here too, so that they never alias a live encoder. rdar://178679545
+    uint64_t generateCommandEncoderId() { return m_commandEncoderId++; }
+    bool supportsResidencySets() { return m_capabilities.baseCapabilities.supportsResidencySets; }
+    NODELETE bool isCachedCompatibile(const BindGroupLayout&, const BindGroupLayout&) const;
+    void setCachedCompatibile(const BindGroupLayout&, const BindGroupLayout&) const;
+    void removeCachedBindGroupLayout(const BindGroupLayout&) const;
+    static constexpr uint64_t maxPipelines = (1ull << (64 - 5));
+    static constexpr uint64_t maxBindGroups = (1ull << 5);
+    Buffer* lookupBuffer(uint64_t address)
+    {
+        if (auto it = m_bufferMap.find(address); it != m_bufferMap.end())
+            return it->value;
+        return nullptr;
+    }
+    void removeBufferFromCache(uint64_t address) { m_bufferMap.remove(address); }
+    void addTexture(const Texture&);
+    uint32_t appleGPUFamily() const { return m_appleGPUFamily; }
+    void setRasterizationMapsForTexture(MTLResourceID, id<MTLRasterizationRateMap> left, id<MTLRasterizationRateMap> right);
+    static id<MTLFunction> nopVertexFunction(id<MTLDevice>);
+    void makeSubmitInvalidClearingEncoders(TrackedResourceContainer&);
+
+private:
+    Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
+    Device(Adapter&);
+
+    struct ErrorScope;
+    NODELETE ErrorScope* currentErrorScope(WebGPU::ErrorFilter);
+    // Whether popping succeeds without a scope to pop: true for a lost device, false for an empty
+    // stack. std::nullopt when there is a scope to pop.
+    NODELETE std::optional<bool> validatePopErrorScope() const;
+
+    NODELETE bool validateRenderPipeline(const WebGPU::RenderPipelineDescriptor&);
+
+    enum class LibraryCompilation : bool { Synchronous, Asynchronous };
+    // Asynchronous, unless something process-wide requires compiling one pipeline at a time.
+    static LibraryCompilation asynchronousIfPossible();
+
+    void compileLibrary(const LibraryCompileRequest&, LibraryCompilation, CompletionHandler<void(id<MTLLibrary>, NSError *)>&&);
+    void createComputePipelineState(MTLComputePipelineDescriptor *, String&& shaderSource, LibraryCompilation, CompletionHandler<void(id<MTLComputePipelineState>)>&&);
+
+    void createComputePipeline(const WebGPU::ComputePipelineDescriptor&, bool isAsync, const ComputePipeline* pipelineToReplace, LibraryCompilation, CompletionHandler<void(std::pair<Ref<ComputePipeline>, NSString*>&&)>&&);
+    void createRenderPipeline(const WebGPU::RenderPipelineDescriptor&, bool isAsync, const RenderPipeline* pipelineToReplace, LibraryCompilation, CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)>&&);
+
+    void makeInvalid();
+    Ref<BindGroupLayout> createBindGroupLayout(const String& label, Vector<ResolvedBindGroupLayoutEntry>&&, bool isAutoGenerated);
+    NSString * _Nullable addPipelineLayouts(Vector<Vector<ResolvedBindGroupLayoutEntry>>&, const std::optional<WGSL::PipelineLayout>&);
+    Ref<PipelineLayout> generatePipelineLayout(const Vector<Vector<ResolvedBindGroupLayoutEntry>>& bindGroupEntries);
+
+    void captureFrameIfNeeded() const;
+    GPUShaderValidation shaderValidationState() const;
+
+    struct ErrorScope {
+        std::optional<WebGPU::Error> error;
+        const WebGPU::ErrorFilter filter;
+    };
+    id<MTLDevice> _Nullable m_device { nil };
+    const Ref<Queue> m_defaultQueue;
+
+    CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)> m_uncapturedErrorCallback;
+    Vector<ErrorScope> m_errorScopeStack;
+    RefPtr<XRSubImage> m_xrSubImage;
+
+    CompletionHandler<void(WebGPU::DeviceLostReason, String&&)> m_deviceLostCallback;
+    bool m_isLost { false };
+    bool m_destroyed { false };
+    id<NSObject> m_deviceObserver { nil };
+
+    HardwareCapabilities m_capabilities { };
+
+    id<MTLBuffer> m_placeholderBuffer { };
+    id<MTLTexture> m_placeholderTexture { nil };
+    id<MTLTexture> m_placeholderDepthStencilTexture { nil };
+    id<MTLBuffer> _Nullable m_dispatchCallBuffer { nil };
+    id<MTLComputePipelineState> _Nullable m_dispatchCallPipelineState { nil };
+    mutable id<MTLComputePipelineState> _Nullable m_premultiplyAlphaPipeline { nil };
+
+    id<MTLRenderPipelineState> _Nullable m_indexBufferClampUintPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_indexBufferClampUshortPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_indexBufferClampUintPSOMS { nil };
+    id<MTLRenderPipelineState> _Nullable m_indexBufferClampUshortPSOMS { nil };
+
+    id<MTLRenderPipelineState> _Nullable m_indexedIndirectBufferClampPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_indexedIndirectBufferClampPSOMS { nil };
+
+    id<MTLRenderPipelineState> _Nullable m_indirectBufferClampPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_indirectBufferClampPSOMS { nil };
+
+    id<MTLRenderPipelineState> _Nullable m_icbCommandClampUintPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbCommandClampUshortPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbCommandClampUintPSOMS { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbCommandClampUshortPSOMS { nil };
+
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeUintPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeUshortPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeUintPSOMS { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeUshortPSOMS { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeDrawPSO { nil };
+    id<MTLRenderPipelineState> _Nullable m_icbIndirectEncodeDrawPSOMS { nil };
+
+    const Ref<Adapter> m_adapter;
+    const ThreadSafeWeakPtr<Instance> m_instance;
+#if HAVE(COREVIDEO_METAL_SUPPORT)
+    RetainPtr<CVMetalTextureCacheRef> m_coreVideoTextureCache;
+#endif
+    NSMapTable<id<MTLCommandBuffer>, NSMutableArray<id<MTLCounterSampleBuffer>>*>* m_sampleCounterBuffers;
+    NSMapTable<id<MTLCommandBuffer>, NSMutableArray<id<MTLBuffer>>*>* m_resolvedSampleCounterBuffers;
+    id<MTLSharedEvent> _Nullable m_resolveTimestampsSharedEvent { nil };
+    HashMap<uint64_t, CommandEncoder*> m_commandEncoderMap;
+    HashMap<uint64_t, Buffer*> m_bufferMap;
+    ThreadSafeWeakHashSet<Texture> m_textures;
+    mutable HashSet<uint64_t> m_bindGroupCompatibilityCache;
+    uint64_t m_commandEncoderId { 0 };
+    uint64_t m_pipelineLayoutId { 0 };
+    uint64_t m_pipelineId { 0 };
+    uint32_t m_bindGroupLayoutId { 0 };
+    uint32_t m_bindGroupId { 0 };
+    uint32_t m_appleGPUFamily { 0 };
+    bool m_supressAllErrors { false };
+    const uint32_t m_maxVerticesPerDrawCall { 0 };
+    bool m_shaderValidationEnabled { true };
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refDevice, derefDevice);
+
+} // namespace WebGPU::Metal
+
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
+inline void refDevice(WebGPU::Metal::Device* obj)
+{
+    obj->ref();
+}
+
+inline void derefDevice(WebGPU::Metal::Device* obj)
+{
+    obj->deref();
+}
+#endif
+
+IGNORE_CLANG_WARNINGS_END

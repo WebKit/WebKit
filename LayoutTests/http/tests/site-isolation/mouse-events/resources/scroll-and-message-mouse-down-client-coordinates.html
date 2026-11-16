@@ -1,0 +1,31 @@
+<style>
+body { margin: 0; }
+#content { width: 3000px; height: 5000px; }
+</style>
+<div id="content"></div>
+<script>
+const scrollX = 120;
+const scrollY = 300;
+
+addEventListener("mousedown", (event) => {
+    window.parent.postMessage({
+        clientX: event.clientX,
+        clientY: event.clientY,
+        pageX: event.pageX,
+        pageY: event.pageY,
+    }, "*");
+});
+
+addEventListener("load", () => {
+    window.scrollTo(scrollX, scrollY);
+
+    function checkScrollPosition() {
+        if (window.scrollX === scrollX && window.scrollY === scrollY)
+            window.parent.postMessage("scrolled", "*");
+        else
+            requestAnimationFrame(checkScrollPosition);
+    }
+
+    requestAnimationFrame(checkScrollPosition);
+});
+</script>

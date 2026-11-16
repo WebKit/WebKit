@@ -1,0 +1,30 @@
+This tests array.splice behavior.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS arr is ['a','b','c','d']
+PASS arr.splice(2) is ['c','d']
+PASS arr is ['a','b']
+PASS arr.splice(0) is ['a','b']
+PASS arr is []
+PASS arr.splice() is []
+PASS arr is ['a','b','c','d']
+PASS arr.splice(undefined) is ['a','b','c','d']
+PASS arr is []
+PASS arr.splice(null) is ['a','b','c','d']
+PASS arr is []
+PASS arr.splice(100) is []
+PASS arr is ['a','b','c','d']
+PASS arr.splice(-1) is ['d']
+PASS arr is ['a','b','c']
+PASS arr.splice(2, undefined) is []
+PASS arr.splice(2, null) is []
+PASS arr.splice(2, -1) is []
+PASS arr is ['a','b','c']
+PASS arr.splice(2, 100) is ['c']
+PASS arr is ['a','b']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

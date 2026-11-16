@@ -1,0 +1,16 @@
+<script>
+onmessage = function(msg) {
+    let p = parent;
+	
+	if (Notification.permission != "default")
+		p.postMessage("Notification permission is not default! It is: " + Notification.permission);
+
+	internals.withUserGesture(() => {
+		testRunner.grantWebNotificationPermission(window.location.origin);
+
+	    Notification.requestPermission((result) => {
+		    p.postMessage("Subframe permission: " + result, "*");
+	    });
+	});
+}
+</script>

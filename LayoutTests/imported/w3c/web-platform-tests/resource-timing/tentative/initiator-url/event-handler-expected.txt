@@ -1,0 +1,9 @@
+Description
+
+This test verifies that, for a resource fetched via event handler, the initiator_url points to script that sets up the event handler.
+
+
+
+FAIL The initiator Url for /images/blue.png?initiator_url_eventhandler initiatorUrl from event handlers must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/event-handler.html' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/event-handler.html" but got (undefined) undefined
+FAIL The initiator Url for /images/red.png?initiator_url_eventhandler initiatorUrl from event handlers must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/event-handler.html' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/event-handler.html" but got (undefined) undefined
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="worker-src data:; script-src 'unsafe-inline'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This tests that a SharedWorker created from a data: URL inherits the creating document's CSP, and that importScripts() is blocked accordingly.</p>
+<pre id="result"></pre>
+<script>
+function reportResultAndNotifyDone(message)
+{
+    document.getElementById("result").textContent = message;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var script = [
+    'self.loadedSource1 = false;',
+    'var exception;',
+    'onconnect = function(e) {',
+    '    var port = e.ports[0];',
+    '    try {',
+    '        importScripts("http://localhost:8000/workers/resources/worker-importScripts-source1.js");',
+    '    } catch (e) {',
+    '        exception = e;',
+    '    }',
+    '    if (!exception)',
+    '        port.postMessage("FAIL should have thrown a NetworkError. But did not throw an exception.");',
+    '    else {',
+    '        if (self.loadedSource1)',
+    '            port.postMessage("FAIL should not have loaded and executed the script.");',
+    '        else if (exception.name === "NetworkError")',
+    '            port.postMessage("PASS threw exception " + exception + ".");',
+    '        else',
+    '            port.postMessage("FAIL should throw NetworkError. Threw exception " + exception + ".");',
+    '    }',
+    '};',
+].join("\n");
+
+var worker;
+try {
+    worker = new SharedWorker("data:text/javascript," + encodeURIComponent(script));
+    worker.port.onmessage = function (event) { reportResultAndNotifyDone(event.data); };
+    worker.port.start();
+} catch (exception) {
+    reportResultAndNotifyDone("FAIL should not have thrown an exception when creating worker. Threw exception " + exception + ".");
+}
+</script>
+</body>
+</html>

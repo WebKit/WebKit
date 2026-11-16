@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    p { font: 60px/1.2 monospace; }
+    ::highlight(test) { color: aqua; }
+</style>
+</head>
+<body>
+    <p id="target">PASS</p>
+    <script>
+        var range = new Range();
+        range.selectNodeContents(document.getElementById("target"));
+        CSS.highlights.set("test", new Highlight(range));
+    </script>
+</body>
+</html>

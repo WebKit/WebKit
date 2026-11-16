@@ -1,0 +1,5 @@
+
+PASS same-origin: in-band text tracks are exposed
+PASS cross-origin without crossorigin attribute: tracks hidden
+PASS cross-origin with crossorigin=anonymous and CORS: tracks exposed
+

@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: The Cross-Origin-Opener-Policy header value 'same-origin-allow-popup' is not recognized and is ignored (treated as 'unsafe-none').
+crossOriginIsolated: false

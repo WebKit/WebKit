@@ -1,0 +1,4 @@
+This test ensures WebKit executes StyleWithCSS properly even in an empty document.
+First negation:PASS
+Second negation:PASS
+

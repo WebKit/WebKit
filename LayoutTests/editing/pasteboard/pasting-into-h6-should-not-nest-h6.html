@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests inserting h6 inside h6 doesn't end up in a nested h6'es.
+All three lines should be of the same font size. Each line should be of the said color.</p>
+<div id="editor" style="border: 1px solid black;" contenteditable>
+<h6 id="target" style="color: blue">Blue Line 1<br><br>Blue Line 2</h6>
+</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description(document.getElementById('description').textContent);
+
+var target = document.getElementById('target');
+getSelection().collapse(target, 2);
+document.execCommand('InsertHTML', false, '<h6>Black Line</h6>');
+
+Markup.dump('editor', 'After paste');
+
+editor.innerHTML = editor.innerHTML;
+Markup.dump('editor', 'After innerHTML = innerHTML');
+
+</script>
+</body>
+</html>

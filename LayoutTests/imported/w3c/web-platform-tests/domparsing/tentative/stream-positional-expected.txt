@@ -1,0 +1,174 @@
+A
+A
+A
+
+A
+
+A
+A
+A
+
+A
+
+A
+A
+A
+
+A
+
+A
+A
+A
+
+A
+
+A
+A
+A
+
+A
+
+A
+A
+A
+
+A
+
+A
+A
+A
+
+A
+
+A
+A
+A
+
+A
+
+A
+A
+A
+
+A
+
+A
+A
+A
+
+A
+
+
+FAIL streamAppendHTML({}) with A and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTML({}) with A and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTML({}) with <p>A</p> and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTML({}) with <p>A</p> and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTML({}) with A and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTML({}) with A and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTML({}) with <p>A</p> and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTML({}) with <p>A</p> and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTML({}) with A and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTML({}) with A and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTML({}) with <p>A</p> and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTML({}) with <p>A</p> and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTML({}) with A and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTML({}) with A and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTML({}) with <p>A</p> and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTML({}) with <p>A</p> and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTML({}) with A and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTML({}) with A and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTML({}) with <p>A</p> and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTML({}) with <p>A</p> and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTML({"runScripts":true}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTML({"runScripts":true}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTML({"runScripts":true}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTML({"runScripts":true}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTML({"runScripts":true}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTML({"runScripts":false}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTML({"runScripts":false}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTML({"runScripts":false}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTML({"runScripts":false}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTML({"runScripts":false}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTML throw if parent is a Document assert_throws_dom: function "() => {
+            comment[method_name]();
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]()', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL streamAfterHTML throw if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]();
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]()', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+PASS streamAfterHTML is not exposed on DocumentType
+FAIL streamBeforeHTML throw if parent is a Document assert_throws_dom: function "() => {
+            comment[method_name]();
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]()', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL streamBeforeHTML throw if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]();
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]()', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+PASS streamBeforeHTML is not exposed on DocumentType
+FAIL streamReplaceWithHTML throw if parent is a Document assert_throws_dom: function "() => {
+            comment[method_name]();
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]()', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL streamReplaceWithHTML throw if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]();
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]()', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+PASS streamReplaceWithHTML is not exposed on DocumentType
+FAIL streamAppendHTMLUnsafe({}) with A and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe({}) with A and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe({}) with <p>A</p> and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe({}) with <p>A</p> and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe({}) with A and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe({}) with A and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe({}) with <p>A</p> and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe({}) with <p>A</p> and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTMLUnsafe({}) with A and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTMLUnsafe({}) with A and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTMLUnsafe({}) with <p>A</p> and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTMLUnsafe({}) with <p>A</p> and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTMLUnsafe({}) with A and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTMLUnsafe({}) with A and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTMLUnsafe({}) with <p>A</p> and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTMLUnsafe({}) with <p>A</p> and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTMLUnsafe({}) with A and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTMLUnsafe({}) with A and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTMLUnsafe({}) with <p>A</p> and B promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTMLUnsafe({}) with <p>A</p> and <p>B</p> promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTMLUnsafe({"runScripts":true}) should run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTMLUnsafe({"runScripts":true}) should run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTMLUnsafe({"runScripts":true}) should run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe({"runScripts":true}) should run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe({"runScripts":true}) should run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTMLUnsafe({"runScripts":false}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamBeforeHTMLUnsafe({"runScripts":false}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamReplaceWithHTMLUnsafe({"runScripts":false}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe({"runScripts":false}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe({"runScripts":false}) should not run scripts promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAfterHTMLUnsafe throw if parent is a Document assert_throws_dom: function "() => {
+            comment[method_name]();
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]()', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL streamAfterHTMLUnsafe throw if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]();
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]()', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+PASS streamAfterHTMLUnsafe is not exposed on DocumentType
+FAIL streamBeforeHTMLUnsafe throw if parent is a Document assert_throws_dom: function "() => {
+            comment[method_name]();
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]()', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL streamBeforeHTMLUnsafe throw if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]();
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]()', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+PASS streamBeforeHTMLUnsafe is not exposed on DocumentType
+FAIL streamReplaceWithHTMLUnsafe throw if parent is a Document assert_throws_dom: function "() => {
+            comment[method_name]();
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]()', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL streamReplaceWithHTMLUnsafe throw if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]();
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]()', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+PASS streamReplaceWithHTMLUnsafe is not exposed on DocumentType
+FAIL streamAppendHTML on HTMLTemplateElement appends to content promise_test: Unhandled rejection with value: object "TypeError: template[`streamAppendHTML${suffix}`] is not a function. (In 'template[`streamAppendHTML${suffix}`]()', 'template[`streamAppendHTML${suffix}`]' is undefined)"
+FAIL streamPrependHTML on HTMLTemplateElement prepends to content promise_test: Unhandled rejection with value: object "TypeError: template[`streamPrependHTML${suffix}`] is not a function. (In 'template[`streamPrependHTML${suffix}`]()', 'template[`streamPrependHTML${suffix}`]' is undefined)"
+FAIL streamBeforeHTML on child of HTMLTemplateElement content streams before child promise_test: Unhandled rejection with value: object "TypeError: child[`streamBeforeHTML${suffix}`] is not a function. (In 'child[`streamBeforeHTML${suffix}`]()', 'child[`streamBeforeHTML${suffix}`]' is undefined)"
+FAIL streamAfterHTML on child of HTMLTemplateElement content streams after child promise_test: Unhandled rejection with value: object "TypeError: child[`streamAfterHTML${suffix}`] is not a function. (In 'child[`streamAfterHTML${suffix}`]()', 'child[`streamAfterHTML${suffix}`]' is undefined)"
+FAIL streamReplaceWithHTML on child of HTMLTemplateElement content replaces child promise_test: Unhandled rejection with value: object "TypeError: child[`streamReplaceWithHTML${suffix}`] is not a function. (In 'child[`streamReplaceWithHTML${suffix}`]()', 'child[`streamReplaceWithHTML${suffix}`]' is undefined)"
+FAIL streamAppendHTMLUnsafe on HTMLTemplateElement appends to content promise_test: Unhandled rejection with value: object "TypeError: template[`streamAppendHTML${suffix}`] is not a function. (In 'template[`streamAppendHTML${suffix}`]()', 'template[`streamAppendHTML${suffix}`]' is undefined)"
+FAIL streamPrependHTMLUnsafe on HTMLTemplateElement prepends to content promise_test: Unhandled rejection with value: object "TypeError: template[`streamPrependHTML${suffix}`] is not a function. (In 'template[`streamPrependHTML${suffix}`]()', 'template[`streamPrependHTML${suffix}`]' is undefined)"
+FAIL streamBeforeHTMLUnsafe on child of HTMLTemplateElement content streams before child promise_test: Unhandled rejection with value: object "TypeError: child[`streamBeforeHTML${suffix}`] is not a function. (In 'child[`streamBeforeHTML${suffix}`]()', 'child[`streamBeforeHTML${suffix}`]' is undefined)"
+FAIL streamAfterHTMLUnsafe on child of HTMLTemplateElement content streams after child promise_test: Unhandled rejection with value: object "TypeError: child[`streamAfterHTML${suffix}`] is not a function. (In 'child[`streamAfterHTML${suffix}`]()', 'child[`streamAfterHTML${suffix}`]' is undefined)"
+FAIL streamReplaceWithHTMLUnsafe on child of HTMLTemplateElement content replaces child promise_test: Unhandled rejection with value: object "TypeError: child[`streamReplaceWithHTML${suffix}`] is not a function. (In 'child[`streamReplaceWithHTML${suffix}`]()', 'child[`streamReplaceWithHTML${suffix}`]' is undefined)"
+

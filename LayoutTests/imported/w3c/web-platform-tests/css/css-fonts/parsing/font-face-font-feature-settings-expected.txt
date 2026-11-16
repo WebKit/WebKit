@@ -1,0 +1,8 @@
+
+PASS Check that font-feature-settings: normal is valid
+PASS Check that font-feature-settings: "liga" is valid
+PASS Check that font-feature-settings: 'liga' is valid
+PASS Check that font-feature-settings: "liga" 0 is valid
+PASS Check that font-feature-settings: liga is invalid
+PASS Check that font-feature-settings: "ligatures" is invalid
+

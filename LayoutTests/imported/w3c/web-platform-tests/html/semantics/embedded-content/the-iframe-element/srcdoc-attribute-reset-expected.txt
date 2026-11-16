@@ -1,0 +1,4 @@
+
+
+PASS Verify that the frame reloads with empty body after we remove srcdoc.
+

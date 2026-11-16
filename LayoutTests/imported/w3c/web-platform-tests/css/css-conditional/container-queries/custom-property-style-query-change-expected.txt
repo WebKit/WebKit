@@ -1,0 +1,8 @@
+
+PASS Initially no queries match.
+PASS Target child
+PASS Target grandchild
+PASS Initially no queries for registered property match.
+PASS Registered property query child
+PASS Registered property query grandchild
+

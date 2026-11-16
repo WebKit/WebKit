@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-230; totalPixels=0-36000">
+    <link rel="stylesheet" href="resources/filter-helpers.css">
+    <style>
+        img {
+            will-change: transform;
+        }
+    </style>
+    <script src="resources/filter-helpers.js"></script>
+</head>
+<body>
+    <script>
+        const filters = [
+            'contrast(-0.5)',
+            'contrast(0)',
+            'contrast(0.5)',
+            'contrast(1.0)',
+            'contrast(2)',
+            'contrast(5)',
+            'contrast(10)',
+        ];
+
+        buildCSSFilteredBoxes(filters);
+    </script>
+</body>
+</html>

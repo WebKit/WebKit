@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<img id="testImage">
+<script>
+description("Destroying the decoded data of a progressively-loaded (still-incomplete) image must not corrupt the MemoryCache size when the NativeImage's backing platform image is replaced during drawing.");
+
+jsTestIsAsync = true;
+
+// mu.png is a 383x321 8-bit grayscale PNG (14793 bytes). Serving it partially and
+// stalling keeps its frame incomplete while it is drawn. A grayscale frame decodes to
+// one byte per pixel, while the platform image the GPU process substitutes for it is
+// several times larger, so drawing changes the frame's reported size. Unless that
+// change is folded into the decoded-size accounting only while the frame still owns
+// the NativeImage, drawing the incomplete frame leaves an orphaned over-count that
+// destroying the decoded data never reclaims.
+function partialGrayscalePng()
+{
+    // Unique URL per run: in stress mode this test repeats in one web process, and
+    // reusing the identical stalled URL leaves a later run's request unserviced.
+    return "http://127.0.0.1:8000/resources/load-and-stall.py"
+        + "?name=../../../fast/images/resources/mu.png&mimeType=image%2Fpng&stallAt=6000&stallFor=60"
+        + "&rand=" + Math.random();
+}
+
+var image = document.getElementById("testImage");
+
+function drawAndMeasure()
+{
+    // Accounting for the encoded data only; the image is loaded but has not been
+    // rendered, so no frame has been decoded or drawn yet.
+    encodedSize = internals.memoryCacheSize();
+    shouldBeTrue("encodedSize > 0");
+
+    // Render the still-incomplete image and force a paint through the GPU process,
+    // which replaces the NativeImage's platform image.
+    image.decoding = "sync";
+    testRunner.display();
+
+    internals.destroyDecodedDataForAllImages();
+
+    sizeAfterDestroyingDecodedData = internals.memoryCacheSize();
+
+    // With the decoded data destroyed, the accounting must fall back to the encoded
+    // size; an orphaned over-count would keep it larger.
+    shouldBeTrue("sizeAfterDestroyingDecodedData <= encodedSize");
+
+    finishJSTest();
+}
+
+function waitUntilIncompleteThenDraw()
+{
+    if (image.naturalWidth > 0 && !image.complete) {
+        drawAndMeasure();
+        return;
+    }
+    setTimeout(waitUntilIncompleteThenDraw, 10);
+}
+
+function startTest()
+{
+    internals.clearMemoryCache();
+    image.src = partialGrayscalePng();
+    waitUntilIncompleteThenDraw();
+}
+
+// Start the stalled load from a timer that runs after the document has finished
+// loading. Setting the src earlier -- during parse or inside the load event -- makes
+// the still-loading image part of the main frame's load, so the frame never finishes
+// loading and WebKitTestRunner defers notifyDone()'s dump until the test times out.
+// Once the frame is idle the stalled subresource does not re-block it, so drawing the
+// deliberately-incomplete image and then finishing dumps immediately.
+if (window.internals && window.testRunner)
+    window.addEventListener("load", function () { setTimeout(startTest, 0); });
+else {
+    testFailed("This test requires internals and testRunner.");
+    finishJSTest();
+}
+</script>
+</body>
+</html>

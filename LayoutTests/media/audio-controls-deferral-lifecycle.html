@@ -1,0 +1,190 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Deferred audio controls are built after insertion, removal, adoption and attribute changes</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="resources/media-controls-deferral.js"></script>
+<body>
+<iframe id="otherFrame" style="width: 300px; height: 200px"></iframe>
+<div id="spacer" style="height: 20000px"></div>
+<div id="container"></div>
+<script>
+buildFirstMediaControls();
+
+function hasBuiltControls(audio) {
+    // Unlike internals.shadowRoot(), this does not build deferred controls.
+    return !!internals.ensureUserAgentShadowRoot(audio).querySelector(".media-controls");
+}
+
+function animationFrames(count) {
+    return new Promise(resolve => {
+        const step = () => count-- > 0 ? requestAnimationFrame(step) : resolve();
+        step();
+    });
+}
+
+async function waitUntilBuilt(audio) {
+    while (!hasBuiltControls(audio))
+        await animationFrames(1);
+}
+
+// Long enough for the first intersection observation of a far-away element to have been delivered.
+const framesToSettle = 3;
+
+// On iOS the viewport comes from the UI process, which can still report an earlier subtest's scroll
+// position, so wait until an observer with the lazy-load margin sees the insertion point as far away.
+async function waitUntilFarFromViewport(target) {
+    await UIHelper.ensurePresentationUpdate();
+    await new Promise(resolve => {
+        const observer = new IntersectionObserver(entries => {
+            if (!entries.at(-1).isIntersecting) {
+                observer.disconnect();
+                resolve();
+            }
+        }, { scrollMargin: "100%" });
+        observer.observe(target);
+    });
+}
+
+async function createOffscreenAudio(t, withControls = true) {
+    scrollTo(0, 0);
+    await waitUntilFarFromViewport(container);
+
+    const audio = document.createElement("audio");
+    audio.controls = withControls;
+    container.appendChild(audio);
+    t.add_cleanup(() => { audio.remove(); scrollTo(0, 0); });
+    return audio;
+}
+
+promise_test(async t => {
+    const audio = await createOffscreenAudio(t);
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "deferred while offscreen");
+    audio.scrollIntoView();
+    await waitUntilBuilt(audio);
+}, "Controls are built when an offscreen audio element is scrolled into view");
+
+promise_test(async t => {
+    const audio = await createOffscreenAudio(t);
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "deferred while offscreen");
+    audio.focus();
+    assert_true(hasBuiltControls(audio), "built synchronously by focus");
+}, "Focusing an offscreen audio element builds its controls");
+
+promise_test(async t => {
+    const audio = await createOffscreenAudio(t);
+    await animationFrames(framesToSettle);
+    audio.addTextTrack("subtitles").mode = "showing";
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "still deferred after showing a text track");
+    audio.scrollIntoView();
+    await waitUntilBuilt(audio);
+}, "Showing a text track on an offscreen audio element keeps its controls deferred");
+
+promise_test(async t => {
+    const audio = await createOffscreenAudio(t);
+    await animationFrames(framesToSettle);
+    audio.remove();
+    container.appendChild(audio);
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "still deferred after being removed and inserted again offscreen");
+    audio.scrollIntoView();
+    await waitUntilBuilt(audio);
+}, "An offscreen audio element removed and inserted again still builds its controls when scrolled into view");
+
+promise_test(async t => {
+    const audio = await createOffscreenAudio(t);
+    await animationFrames(framesToSettle);
+    audio.remove();
+    scrollTo(0, 19700);
+    await animationFrames(framesToSettle);
+    container.appendChild(audio);
+    await waitUntilBuilt(audio);
+}, "A deferred audio element inserted again near the viewport builds its controls");
+
+promise_test(async t => {
+    const frameDocument = otherFrame.contentDocument;
+    const frameSpacer = frameDocument.body.appendChild(frameDocument.createElement("div"));
+    frameSpacer.style.height = "20000px";
+    buildFirstMediaControls(frameDocument);
+    t.add_cleanup(() => frameSpacer.remove());
+
+    const audio = await createOffscreenAudio(t);
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "deferred while offscreen");
+
+    frameDocument.body.appendChild(frameDocument.adoptNode(audio));
+    assert_equals(audio.ownerDocument, frameDocument, "adopted");
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "still deferred after moving to the other document");
+
+    otherFrame.contentWindow.scrollTo(0, 19900);
+    await waitUntilBuilt(audio);
+}, "An offscreen audio element adopted by another document builds its controls there");
+
+promise_test(async t => {
+    const frame = document.createElement("iframe");
+    document.body.appendChild(frame);
+    t.add_cleanup(() => frame.remove());
+    const frameDocument = frame.contentDocument;
+    buildFirstMediaControls(frameDocument);
+    frameDocument.body.innerHTML = "<div style='height: 20000px'></div><audio controls></audio>";
+    const audio = frameDocument.querySelector("audio");
+    t.add_cleanup(() => { audio.remove(); scrollTo(0, 0); });
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "deferred while offscreen");
+
+    // The queued build runs after the element has left its document and must not leave a later request ignored.
+    internals.scheduleDeferredMediaControlsBuild(audio);
+    document.adoptNode(audio);
+    frame.remove();
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "not built while disconnected");
+
+    container.appendChild(audio);
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "deferred again while offscreen in the new document");
+    internals.scheduleDeferredMediaControlsBuild(audio);
+    await waitUntilBuilt(audio);
+}, "A deferred audio element adopted while its build is scheduled can schedule the build again after insertion");
+
+promise_test(async t => {
+    const audio = await createOffscreenAudio(t, false);
+    await animationFrames(framesToSettle);
+    audio.setAttribute("controls", "");
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "deferred while offscreen");
+    audio.scrollIntoView();
+    await waitUntilBuilt(audio);
+}, "Adding the controls attribute to an offscreen audio element defers its controls");
+
+promise_test(async t => {
+    const audio = await createOffscreenAudio(t);
+    await animationFrames(framesToSettle);
+    audio.removeAttribute("controls");
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "no controls without the controls attribute");
+
+    audio.setAttribute("controls", "");
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "deferred again while offscreen");
+    audio.scrollIntoView();
+    await waitUntilBuilt(audio);
+}, "Removing and adding the controls attribute while the controls are deferred keeps them deferred until the element is near the viewport");
+
+promise_test(async t => {
+    const audio = await createOffscreenAudio(t);
+    await animationFrames(framesToSettle);
+    audio.removeAttribute("controls");
+    scrollTo(0, 19700);
+    await animationFrames(framesToSettle);
+    assert_false(hasBuiltControls(audio), "no controls without the controls attribute");
+
+    audio.setAttribute("controls", "");
+    await waitUntilBuilt(audio);
+}, "Adding the controls attribute near the viewport after removing it while the controls were deferred builds them");
+</script>
+</body>

@@ -1,0 +1,15 @@
+This test checks to see what happens when the same accesskey is set on multiple elements including cases where the elements are in the a shadow tree.
+
+1c 1w   3c   4w  5w  6c
+1: correct button focused, earlier in document
+1: correct button clicked, earlier in document
+2: correct button focused, in shadow
+2: correct button clicked, in shadow
+3: correct button focused, earlier in document
+3: correct button clicked, earlier in document
+4: correct button focused, earlier in document and in shadow
+4: correct button clicked, earlier in document and in shadow
+5: correct button focused, earlier in document and in shadow
+5: correct button clicked, earlier in document and in shadow
+6: correct button focused, earlier in document in slot
+6: correct button clicked, earlier in document in slot

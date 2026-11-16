@@ -1,0 +1,28 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=true ] -->
+<style>
+
+@keyframes anim {
+	0% { filter: grayscale(100%) }
+	50% { filter: grayscale(100%) }
+	100% { filter: grayscale(0%) }
+}
+
+div {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+	animation: anim 1000s;
+}
+
+</style>
+<div></div>
+<script src="threaded-animations-utils.js"></script>
+<script>
+
+(async function () {
+    window.testRunner?.waitUntilDone();
+    await threadedAnimationsCommit();
+    window.testRunner?.notifyDone();
+})();
+
+</script>

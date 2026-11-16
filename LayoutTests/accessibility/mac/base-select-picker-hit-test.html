@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select">
+    <option id="apple">Apple</option>
+    <option id="banana">Banana</option>
+    <option id="cherry">Cherry</option>
+</select>
+
+<script>
+var output = "This test ensures that hit testing finds the options of an open base appearance picker, which are outside the bounds of the select.\n\n";
+
+function hitTest(id)
+{
+    var rect = document.getElementById(id).getBoundingClientRect();
+    return accessibilityController.elementAtPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        (await waitForElementById("select"))?.press();
+        await waitFor(() => document.getElementById("select").matches(":open"));
+        await waitForFrameGeometryReady();
+        for (const id of ["apple", "banana", "cherry"])
+            output += await expectAsync(`hitTest('${id}')?.domIdentifier`, `'${id}'`);
+
+        document.getElementById("select").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

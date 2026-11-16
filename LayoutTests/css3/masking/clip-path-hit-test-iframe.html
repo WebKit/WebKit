@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hit testing of iframe with clip-path</title>
+<script src="../../resources/js-test.js"></script>
+<script type="text/javascript">
+
+function runTest() {
+    description('Test clip-path is accounted for during hit-testing with iframe.');
+    shouldBeEqualToString("document.elementFromPoint(50, 50).localName", "body");
+}
+
+</script>
+<style>
+
+p {
+    pointer-events: none;
+}
+
+iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: 300px;
+    border: 0;
+    clip-path: inset(100px 0 0 0);
+}
+
+</style>
+</head>
+<body>
+    <iframe srcdoc="<body style='margin: 0; background: white'></body>" onload="runTest()"></iframe>
+</body>
+</html>

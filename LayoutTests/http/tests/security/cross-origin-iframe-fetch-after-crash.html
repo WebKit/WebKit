@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cross-origin iframe works after network process crash</title>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message) {
+    document.getElementById("output").textContent += message + "\n";
+}
+
+window.addEventListener("message", async event => {
+    if (event.data === "pre-crash-ok") {
+        log("Cross-origin iframe fetch succeeded before network process crash.");
+        if (window.testRunner)
+            testRunner.terminateNetworkProcess();
+        await waitForNetworkProcessToRelaunch();
+        document.querySelector("iframe").contentWindow.postMessage("fetch-after-crash", "*");
+        return;
+    }
+    if (event.data === "post-crash-ok") {
+        log("PASS: Cross-origin iframe fetch succeeded after network process crash.");
+    } else {
+        log("FAIL: " + event.data);
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+let waitTime = 10;
+function waitForNetworkProcessToRelaunch() {
+    return fetch("cross-origin-iframe-fetch-after-crash.html").catch(() => {
+        return new Promise(resolve => {
+            waitTime *= 1.2;
+            setTimeout(() => waitForNetworkProcessToRelaunch().then(resolve), waitTime);
+        });
+    });
+}
+</script>
+</head>
+<body>
+<p>Tests that a cross-origin iframe can still perform fetches after the network process crashes and restarts.</p>
+<pre id="output"></pre>
+<iframe src="http://localhost:8000/security/resources/cross-origin-iframe-fetch-after-crash-iframe.html"></iframe>
+</body>
+</html>

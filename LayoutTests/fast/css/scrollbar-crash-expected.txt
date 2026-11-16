@@ -1,0 +1,3 @@
+When scrollbar related pseudo types are specified, ASSERT should not be triggered.
+
+PASS unless crash.

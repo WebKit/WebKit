@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test ensures WebKit does not execute the default event handler of keydown when the user presses TAB key while IME composition is taking place.<br>
+To test manually, type "kyo" using Japanese hiragana keyboard in the first text field, and press TAB key.<br>
+WebKit should not move the focus to the second text field.</p>
+<div id="container">
+<label>First text field:<input id="first" type="text"></label><br>
+<label>Second text field:<input id="second" type="text" onfocus="log('FAIL: the second text field got focused')"></label><br>
+</div>
+<pre id="result"></pre>
+<script>
+
+const first = document.getElementById('first');
+function runTest() {
+    first.focus();
+    first.selectionStart = 0;
+    first.selectionEnd = 0;
+    textInputController.setInputMethodHandler(function (event) {
+        if (event.characters[0] == '\t') {
+            textInputController.setMarkedText("\u4eca\u65e5", 0, 2);
+            return true;
+        }
+        return false;
+    })
+    textInputController.setMarkedText("kyo", 0, 3);
+    eventSender.keyDown('\t');
+
+    if (document.activeElement != first)
+        return log('FAIL: the focus did not remain in the fisrt text field');
+
+    log('PASS');
+
+    document.getElementById('container').style.display = 'none';
+}
+
+function log(text) {
+    document.getElementById('result').textContent += text + '\n';
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    runTest();
+}
+
+</script>
+</body>
+</html>

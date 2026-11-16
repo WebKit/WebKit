@@ -1,0 +1,5 @@
+The background of the document should be green
+
+
+PASS The background of the root element should be lime
+

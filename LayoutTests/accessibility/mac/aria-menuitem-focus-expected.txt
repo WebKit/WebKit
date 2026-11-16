@@ -1,0 +1,16 @@
+This tests that ARIA menuitems expose AXFocused correctly.
+
+PASS: item.isAttributeSupported('AXFocused') === true
+PASS: item.isAttributeSettable('AXFocused') === true
+PASS: item.boolAttributeValue('AXFocused') === false
+PASS: item.boolAttributeValue('AXFocused') === true
+PASS: item.isAttributeSupported('AXFocused') === true
+PASS: item.isAttributeSettable('AXFocused') === true
+PASS: item.boolAttributeValue('AXFocused') === false
+PASS: item.boolAttributeValue('AXFocused') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Item 0
+Item 1

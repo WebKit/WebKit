@@ -1,0 +1,28 @@
+This test ensures that aria-orientation works correctly and the implicit defaults are defined on different roles.
+
+PASS: slider.orientation === 'AXOrientation: AXHorizontalOrientation'
+PASS: combobox.orientation === 'AXOrientation: AXUnknownOrientation'
+PASS: listbox.orientation === 'AXOrientation: AXVerticalOrientation'
+PASS: menu.orientation === 'AXOrientation: AXVerticalOrientation'
+PASS: menubar.orientation === 'AXOrientation: AXHorizontalOrientation'
+PASS: radiogroup.orientation === 'AXOrientation: AXUnknownOrientation'
+PASS: separator.orientation === 'AXOrientation: AXHorizontalOrientation'
+PASS: tablist.orientation === 'AXOrientation: AXHorizontalOrientation'
+PASS: toolbar.orientation === 'AXOrientation: AXHorizontalOrientation'
+PASS: tree.orientation === 'AXOrientation: AXVerticalOrientation'
+PASS: treegrid.orientation === 'AXOrientation: AXUnknownOrientation'
+PASS: radiogroup2.orientation === 'AXOrientation: AXVerticalOrientation'
+PASS: treegrid2.orientation === 'AXOrientation: AXHorizontalOrientation'
+PASS: separator2.orientation === 'AXOrientation: AXUnknownOrientation'
+PASS: slider2.orientation === 'AXOrientation: AXUnknownOrientation'
+PASS: listbox2.orientation === 'AXOrientation: AXHorizontalOrientation'
+PASS: listboxDisplayContents.orientation === 'AXOrientation: AXVerticalOrientation'
+
+Updating #listbox-display-contents aria-orientation to horizontal.
+PASS: listboxDisplayContents.orientation === 'AXOrientation: AXHorizontalOrientation'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

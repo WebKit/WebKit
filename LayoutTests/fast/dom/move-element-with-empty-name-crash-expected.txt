@@ -1,0 +1,3 @@
+This test passes if WebKit does not hit any debug assertions.
+
+PASS

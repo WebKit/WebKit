@@ -1,0 +1,25 @@
+<style>
+#target { width:100px; height:100px; left:100px; top:100px; background-color:green }
+</style>
+<span id=target></span>
+<script>
+async function test() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    var positionAnimation = [
+        { position: 'static' },
+        { position: 'absolute' },
+    ];
+    var positionTiming = {
+        duration: 16,
+        fill: 'forwards'
+    };
+    const animation = target.animate(positionAnimation, positionTiming);
+    await animation.finished;
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+test();
+</script>

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")/../glib/dependencies/pacman"
+
+PACKAGES+=(
+    # These are dependencies necessary for building WebKitGTK.
+    atk
+    faad2
+    geoclue2
+    gettext
+    gtk3
+    gtk4
+    libffi
+    libpulse
+    librsvg
+    libsecret
+    libsoup3
+    libsrtp
+    libtheora
+    libvorbis
+    libvpx
+    mesa
+    mesa-libgl
+    mpg123
+    opus
+    pango
+    unifdef
+    util-linux
+
+    # These are dependencies necessary for running tests.
+    cups
+    hunspell
+    hunspell-en_us
+    hunspell-en_gb
+    weston
+    xorg-server-xvfb
+
+    # Icon themes needed by the MiniBrowser (generate-bundle needs this as well)
+    adwaita-icon-theme
+    hicolor-icon-theme
+
+    # These are dependencies necessary for building the jhbuild.
+    gnutls
+    libdrm
+    libepoxy
+    libinput
+    libpciaccess
+    libunwind
+)

@@ -1,0 +1,5 @@
+Scripts without a correct nonce should not run with `strict-dynamic` in the script-src directive.
+
+
+PASS All the expected CSP violation reports have been fired.
+

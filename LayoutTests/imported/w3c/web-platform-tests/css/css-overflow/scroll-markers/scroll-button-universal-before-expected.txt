@@ -1,0 +1,3 @@
+
+PASS ::before should not pick up style from ::scroll-button(*) rule
+

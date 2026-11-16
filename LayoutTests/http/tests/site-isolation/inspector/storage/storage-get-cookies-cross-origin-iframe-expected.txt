@@ -1,0 +1,10 @@
+Tests that Storage.getCookies sees a cookie set by script inside a cross-origin iframe under Site Isolation, which the in-process Page.getCookies cannot.
+
+
+== Running test suite: SiteIsolation.Storage.getCookies
+-- Running test case: SiteIsolation.Storage.getCookies.CrossOriginIframe
+PASS: Cross-origin iframe should be its own Frame Target (out-of-process).
+PASS: Storage.getCookies should see the cross-origin iframe's cookie.
+PASS: Cross-origin cookie value should be 'PASS'.
+PASS: Page.getCookies must NOT see the cross-origin iframe's cookie (it is out-of-process and the URL is unknown to the inspected page).
+

@@ -1,0 +1,3 @@
+
+PASS Changing inline style color does not change tree-scope for anchor-name
+

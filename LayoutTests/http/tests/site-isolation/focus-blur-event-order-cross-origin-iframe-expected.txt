@@ -1,0 +1,11 @@
+Tests that moving focus from the main frame into a cross-origin iframe fires the main frame's element blur and focusout before its window blur.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mainFrameEvents.join(', ') is "outerInput:blur, outerInput:focusout, window:blur"
+PASS iframeEvents.join(', ') is "window:focus, input:focus, input:focusin"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

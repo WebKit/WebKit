@@ -1,0 +1,74 @@
+
+PASS Serialization of consecutive foo and bar tokens.
+PASS Serialization of consecutive foo and bar() tokens.
+PASS Serialization of consecutive foo and url(bar) tokens.
+PASS Serialization of consecutive foo and - tokens.
+PASS Serialization of consecutive foo and 123 tokens.
+PASS Serialization of consecutive foo and 123% tokens.
+PASS Serialization of consecutive foo and 123em tokens.
+PASS Serialization of consecutive foo and --> tokens.
+PASS Serialization of consecutive foo and () tokens.
+PASS Serialization of consecutive @foo and bar tokens.
+PASS Serialization of consecutive @foo and bar() tokens.
+PASS Serialization of consecutive @foo and url(bar) tokens.
+PASS Serialization of consecutive @foo and - tokens.
+PASS Serialization of consecutive @foo and 123 tokens.
+PASS Serialization of consecutive @foo and 123% tokens.
+PASS Serialization of consecutive @foo and 123em tokens.
+PASS Serialization of consecutive @foo and --> tokens.
+PASS Serialization of consecutive #foo and bar tokens.
+PASS Serialization of consecutive #foo and bar() tokens.
+PASS Serialization of consecutive #foo and url(bar) tokens.
+PASS Serialization of consecutive #foo and - tokens.
+PASS Serialization of consecutive #foo and 123 tokens.
+PASS Serialization of consecutive #foo and 123% tokens.
+PASS Serialization of consecutive #foo and 123em tokens.
+PASS Serialization of consecutive #foo and --> tokens.
+PASS Serialization of consecutive 123foo and bar tokens.
+PASS Serialization of consecutive 123foo and bar() tokens.
+PASS Serialization of consecutive 123foo and url(bar) tokens.
+PASS Serialization of consecutive 123foo and - tokens.
+PASS Serialization of consecutive 123foo and 123 tokens.
+PASS Serialization of consecutive 123foo and 123% tokens.
+PASS Serialization of consecutive 123foo and 123em tokens.
+PASS Serialization of consecutive 123foo and --> tokens.
+PASS Serialization of consecutive # and bar tokens.
+PASS Serialization of consecutive # and bar() tokens.
+PASS Serialization of consecutive # and url(bar) tokens.
+PASS Serialization of consecutive # and - tokens.
+PASS Serialization of consecutive # and 123 tokens.
+PASS Serialization of consecutive # and 123% tokens.
+PASS Serialization of consecutive # and 123em tokens.
+PASS Serialization of consecutive - and bar tokens.
+PASS Serialization of consecutive - and bar() tokens.
+PASS Serialization of consecutive - and url(bar) tokens.
+PASS Serialization of consecutive - and - tokens.
+PASS Serialization of consecutive - and 123 tokens.
+PASS Serialization of consecutive - and 123% tokens.
+PASS Serialization of consecutive - and 123em tokens.
+PASS Serialization of consecutive 123 and bar tokens.
+PASS Serialization of consecutive 123 and bar() tokens.
+PASS Serialization of consecutive 123 and url(bar) tokens.
+PASS Serialization of consecutive 123 and 123 tokens.
+PASS Serialization of consecutive 123 and 123% tokens.
+PASS Serialization of consecutive 123 and 123em tokens.
+PASS Serialization of consecutive 123 and % tokens.
+PASS Serialization of consecutive @ and bar tokens.
+PASS Serialization of consecutive @ and bar() tokens.
+PASS Serialization of consecutive @ and url(bar) tokens.
+PASS Serialization of consecutive @ and - tokens.
+PASS Serialization of consecutive . and 123 tokens.
+PASS Serialization of consecutive . and 123% tokens.
+PASS Serialization of consecutive . and 123em tokens.
+PASS Serialization of consecutive + and 123 tokens.
+PASS Serialization of consecutive + and 123% tokens.
+PASS Serialization of consecutive + and 123em tokens.
+PASS Serialization of consecutive / and * tokens.
+FAIL Comments are handled correctly when computing a/* comment */b using t1:. assert_equals: expected "a/* comment */b" but got "a/**/b"
+PASS Comments are handled correctly when computing a/* comment */var(--t1) using t1:b.
+PASS Comments are handled correctly when computing var(--t1)b using t1:a/* comment */.
+FAIL Comments are handled correctly when computing var(--t1)b using t1:'a/* unfinished '. assert_equals: expected "'a/* unfinished 'b" but got "\"a/* unfinished \"b"
+PASS Comments are handled correctly when computing var(--t1)b using t1:"a/* unfinished ".
+FAIL Comments are handled correctly when computing var(--t1)b using t1:'a " '/* comment */. assert_equals: expected "'a \" 'b" but got "\"a \\\" \"b"
+PASS Empty fallback between tokens must not disturb comment insertion
+

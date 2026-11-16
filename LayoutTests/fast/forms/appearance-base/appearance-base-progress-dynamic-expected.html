@@ -1,0 +1,117 @@
+<style>
+    .auto {
+        font: 11px system-ui;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        font: 11px system-ui;
+        width: calc(100% - 1px);
+        height: 20%;
+        border-radius: 999em;
+        overflow: hidden;
+        background: rgb(230, 230, 230);
+    }
+
+    .auto > .slider-fill {
+        height: 100%; 
+        width: 100%; 
+        block-size: 100%;
+        box-sizing: border-box;
+        border-radius: 999em;
+        overflow: hidden;
+        background: rgb(0, 122, 255);
+    }
+
+    .none {
+        font: 11px system-ui;
+        width: 100%;
+        height: 100%; 
+        overflow: hidden;
+        background: gray;
+    }
+
+    .none > .slider-fill {
+        height: 100%; 
+        width: 100%; 
+        block-size: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+        background-color: green;
+    }
+
+    .base {
+        font: 11px system-ui;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        height: 50%;
+        border: darkgray 1px solid;
+        border-radius: 999em;
+        overflow: hidden;
+        background: linear-gradient(to bottom, #ddd, #eee 20%, #ccc 45%, #ccc 55%, #ddd);
+    }
+
+    .base > .slider-fill {
+        height: 100%; 
+        width: 100%; 
+        block-size: 100%;
+        box-sizing: border-box;
+        border-radius: 999em;
+        overflow: hidden;
+        background: linear-gradient(to bottom, #77f, #ccf 20%, #44d 45%, #44d 55%, #77f);
+    }
+
+    .progress {
+        width: 400px;
+        height: 40px;
+        margin-bottom: 10px;
+    }
+</style>
+<body>
+    <div class="progress">
+        <div class="base">
+            <div class="slider-fill" style="transform: translate(-100%, 0);"></div>
+        </div>
+    </div>
+    <div class="progress">
+        <div class="auto">
+            <div class="slider-fill" style="transform: translate(-100%, 0);"></div>
+        </div>
+    </div>
+    <div class="progress">
+        <div class="none">
+            <div class="slider-fill" style="transform: translate(-100%, 0);"></div>
+        </div>
+    </div>
+    <div class="progress">
+        <div class="base">
+            <div class="slider-fill" style="transform: translate(-60%, 0);"></div>
+        </div>
+    </div>
+    <div class="progress">
+        <div class="auto">
+            <div class="slider-fill" style="transform: translate(-60%, 0);"></div>
+        </div>
+    </div>
+    <div class="progress">
+        <div class="none">
+            <div class="slider-fill" style="transform: translate(-60%, 0);"></div>
+        </div>
+    </div>
+    <div class="progress">
+        <div class="base">
+            <div class="slider-fill"></div>
+        </div>
+    </div>
+    <div class="progress">
+        <div class="auto">
+            <div class="slider-fill"></div>
+        </div>
+    </div>
+    <div class="progress">
+        <div class="none">
+            <div class="slider-fill"></div>
+        </div>
+    </div>
+</body>

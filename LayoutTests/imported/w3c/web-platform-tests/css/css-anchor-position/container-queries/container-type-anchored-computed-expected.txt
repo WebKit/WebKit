@@ -1,0 +1,5 @@
+
+FAIL Property container-type value 'anchored' assert_true: 'anchored' is a supported value for container-type. expected true got false
+FAIL Property container-type value 'anchored size' assert_true: 'anchored size' is a supported value for container-type. expected true got false
+FAIL Property container-type value 'inline-size anchored' assert_true: 'inline-size anchored' is a supported value for container-type. expected true got false
+

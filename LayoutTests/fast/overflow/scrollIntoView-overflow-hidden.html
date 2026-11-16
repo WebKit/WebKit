@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Tests that scrollIntoView() works inside overflow:hidden</title>
+    <style>
+        .container {
+            height: 200px;
+            width: 200px;
+            overflow: hidden;
+            border: 1px solid black;
+            background-color: red;
+        }
+        
+        #box {
+            margin-top: 500px;
+            height: 200px;
+            width: 200px;
+            background-color: green;
+        }
+    </style>
+    <script>
+        function doTest()
+        {
+            var box = document.getElementById('box');
+            box.scrollIntoView();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="container">
+    <div id="box"></div>
+</div>
+</body>
+</html>

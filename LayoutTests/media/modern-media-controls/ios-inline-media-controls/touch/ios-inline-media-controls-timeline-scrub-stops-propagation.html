@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../video-test.js"></script>
+</head>
+<body>
+    <video id="video" src="../../../content/test.mp4" controls muted playsinline style="width: 400px;"></video>
+    <script>
+        window.jsTestIsAsync = true;
+
+        description("Test that touch events on the timeline scrubber do not propagate to parent elements, while touch events on the bare video surface do.");
+
+        window.video = document.getElementById('video');
+        var video = window.video;
+        let containerReceivedTouch = false;
+
+        function resetTouchFlag()
+        {
+            containerReceivedTouch = false;
+            video.addEventListener('touchstart', () => { containerReceivedTouch = true; }, { once: true });
+        }
+
+        function dispatchTouchStart(target)
+        {
+            target.dispatchEvent(new Event('touchstart', { bubbles: true, composed: true }));
+        }
+
+        video.addEventListener('loadedmetadata', async () => {
+            await testExpectedEventuallySilent("window.internals.shadowRoot(window.video)", null, "!=", 500);
+
+            const shadowRoot = window.internals.shadowRoot(video);
+            if (!shadowRoot) {
+                testFailed("Could not get shadow root");
+                finishJSTest();
+                return;
+            }
+
+            const controlsElement = shadowRoot.querySelector('.media-controls');
+            if (!controlsElement) {
+                testFailed("Could not find media controls element");
+                finishJSTest();
+                return;
+            }
+
+            await video.play();
+            await testExpectedEventuallySilent("window.internals.shadowRoot(window.video).querySelector('.time-control .scrubber')", null, "!=", 500);
+
+            const scrubber = shadowRoot.querySelector('.time-control .scrubber');
+            if (!scrubber) {
+                testFailed("Could not find timeline scrubber");
+                finishJSTest();
+                return;
+            }
+
+            debug("A touch on the timeline scrubber should not propagate to the video element:");
+            resetTouchFlag();
+            dispatchTouchStart(scrubber);
+            shouldBeFalse("containerReceivedTouch");
+
+            debug("A touch on the bare media controls surface should propagate to the video element:");
+            resetTouchFlag();
+            dispatchTouchStart(controlsElement);
+            shouldBeTrue("containerReceivedTouch");
+
+            video.remove();
+            finishJSTest();
+        });
+    </script>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Test that the toneMapping member of CanvasRenderingContext2DSettings is supported when CanvasColorTypeEnabled=true.");
+
+    function testToneMapping(settings, expectedMode) {
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d", settings);
+        window.testSettings = context.getContextAttributes();
+        shouldBeEqualToString("testSettings.toneMapping.mode", expectedMode);
+    }
+
+    // Test the default value of toneMapping.mode is "standard".
+    testToneMapping(undefined, "standard");
+    testToneMapping({ }, "standard");
+    testToneMapping({ toneMapping: { } }, "standard");
+
+    // Test setting toneMapping.mode to a valid value works.
+    testToneMapping({ toneMapping: { mode: "standard" } }, "standard");
+    testToneMapping({ toneMapping: { mode: "extended" } }, "extended");
+
+    // Test setting toneMapping.mode to an unsupported value.
+    shouldThrowErrorName(`document.createElement("canvas").getContext("2d", { toneMapping: { mode: "foo" } })`, "TypeError")
+</script>
+</body>
+</html>

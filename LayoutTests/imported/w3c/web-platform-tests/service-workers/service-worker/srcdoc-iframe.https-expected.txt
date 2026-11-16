@@ -1,0 +1,10 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS nested sandboxed srcdoc frame should not inherit controller
+PASS nested same origin sandboxed srcdoc frame should inherit controller
+PASS should be able to serve resource from controller for srcdoc frame
+FAIL getRegistration should work in srcdoc iframe assert_equals: expected "passed" but got "Unexpected Error SecurityError : Origin of clientURL is not client's origin"
+TIMEOUT controller.postMessage should work in srcdoc iframe Test timed out
+

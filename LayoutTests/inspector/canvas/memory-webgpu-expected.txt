@@ -1,0 +1,13 @@
+Test that CanvasManager includes WebGPU resources in device memory costs.
+
+
+== Running test suite: Canvas.MemoryWebGPU
+-- Running test case: Canvas.MemoryWebGPU.Buffer
+PASS: Allocating a GPUBuffer should increase the memory cost.
+
+-- Running test case: Canvas.MemoryWebGPU.Texture
+PASS: Allocating a GPUTexture should increase the memory cost.
+
+-- Running test case: Canvas.MemoryWebGPU.Destroy
+PASS: Destroying a GPUBuffer should decrease the memory cost.
+

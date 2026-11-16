@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that requestAnimationFrame and DOM timers are throttled in an out-of-process subframe clipped away by an overflow:hidden ancestor");
+
+var jsTestIsAsync = true;
+var throttlingState = "";
+var testFrame;
+
+// The subframe is cross-origin, so its internals object cannot be reached directly.
+window.addEventListener("message", function(event) {
+    throttlingState = event.data;
+}, false);
+
+function runTest()
+{
+    testFrame = document.getElementById("testFrame");
+
+    setInterval(function() {
+        testFrame.contentWindow.postMessage("report-throttling-reasons", "*");
+    }, 50);
+
+    debug("The frame is visible inside the clipping container, so it should not be throttled.");
+    shouldBecomeEqualToString("throttlingState", "requestAnimationFrame=false,timers=false", clipFrameAway);
+}
+
+function clipFrameAway()
+{
+    // The frame has a renderer, but the clip that hides it lives entirely in the parent frame process, so
+    // the frame cannot discover this itself. Unlike display:none, the frame does have a box here, so it
+    // must be throttled rather than exempted.
+    debug("Scrolling the frame out of the clipping container.");
+    document.getElementById("clipper").scrollTop = 800;
+    shouldBecomeEqualToString("throttlingState", "requestAnimationFrame=true,timers=true", unclipFrame);
+}
+
+function unclipFrame()
+{
+    debug("Scrolling the frame back into the clipping container.");
+    document.getElementById("clipper").scrollTop = 0;
+    shouldBecomeEqualToString("throttlingState", "requestAnimationFrame=false,timers=false", finishJSTest);
+}
+</script>
+<div id="clipper" style="width: 200px; height: 200px; overflow: hidden;">
+<iframe id="testFrame" src="http://localhost:8000/site-isolation/resources/request-animation-frame-throttling-frame.html" onload="runTest()"></iframe>
+<div style="width: 100px; height: 800px;"></div>
+</div>
+</body>
+</html>

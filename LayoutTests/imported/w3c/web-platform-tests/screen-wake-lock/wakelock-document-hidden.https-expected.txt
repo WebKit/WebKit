@@ -1,0 +1,4 @@
+
+PASS navigator.wakeLock.request('screen') fails when the document is hidden
+PASS Screen wake locks are released when the document the page is hidden
+

@@ -1,0 +1,124 @@
+/*
+ * Copyright (C) 2024 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitWebExtension_h
+#define WebKitWebExtension_h
+
+#if ENABLE(2022_GLIB_API)
+
+#include <glib-object.h>
+#include <gio/gio.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+#include "WebKitWebExtensionMatchPattern.h"
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_WEB_EXTENSION                            (webkit_web_extension_get_type ())
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebExtension, webkit_web_extension, WEBKIT, WEB_EXTENSION, GObject)
+
+WEBKIT_API WebKitWebExtension *
+webkit_web_extension_new                                     (const char  *extension_path,
+                                                              GError     **error);
+
+WEBKIT_API const char *
+webkit_web_extension_get_path                                (WebKitWebExtension* extension);
+
+WEBKIT_API gdouble
+webkit_web_extension_get_manifest_version                    (WebKitWebExtension *extension);
+
+WEBKIT_API gboolean
+webkit_web_extension_supports_manifest_version               (WebKitWebExtension *extension,
+                                                              gdouble             manifest_version);
+
+WEBKIT_API const gchar *
+webkit_web_extension_get_default_locale                      (WebKitWebExtension *extension);
+
+WEBKIT_API const gchar *
+webkit_web_extension_get_display_name                        (WebKitWebExtension *extension);
+
+WEBKIT_API const gchar *
+webkit_web_extension_get_display_short_name                  (WebKitWebExtension *extension);
+
+WEBKIT_API const gchar *
+webkit_web_extension_get_display_version                     (WebKitWebExtension *extension);
+
+WEBKIT_API const gchar *
+webkit_web_extension_get_display_description                 (WebKitWebExtension *extension);
+
+WEBKIT_API const gchar *
+webkit_web_extension_get_display_action_label                (WebKitWebExtension *extension);
+
+WEBKIT_API GIcon *
+webkit_web_extension_get_icon                                (WebKitWebExtension *extension,
+                                                              gdouble             width,
+                                                              gdouble             height);
+
+WEBKIT_API GIcon *
+webkit_web_extension_get_action_icon                         (WebKitWebExtension *extension,
+                                                              gdouble             width,
+                                                              gdouble             height);
+
+WEBKIT_API const gchar *
+webkit_web_extension_get_version                             (WebKitWebExtension *extension);
+
+WEBKIT_API const gchar * const *
+webkit_web_extension_get_requested_permissions               (WebKitWebExtension *extension);
+
+WEBKIT_API const gchar * const *
+webkit_web_extension_get_optional_permissions                (WebKitWebExtension *extension);
+
+WEBKIT_API WebKitWebExtensionMatchPattern **
+webkit_web_extension_get_requested_permission_match_patterns (WebKitWebExtension *extension);
+
+WEBKIT_API WebKitWebExtensionMatchPattern **
+webkit_web_extension_get_optional_permission_match_patterns  (WebKitWebExtension *extension);
+
+WEBKIT_API WebKitWebExtensionMatchPattern **
+webkit_web_extension_get_all_requested_match_patterns        (WebKitWebExtension *extension);
+
+WEBKIT_API gboolean
+webkit_web_extension_get_has_background_content              (WebKitWebExtension *extension);
+
+WEBKIT_API gboolean
+webkit_web_extension_get_has_persistent_background_content   (WebKitWebExtension *extension);
+
+WEBKIT_API gboolean
+webkit_web_extension_get_has_injected_content                (WebKitWebExtension *extension);
+
+WEBKIT_API gboolean
+webkit_web_extension_get_has_options_page                    (WebKitWebExtension *extension);
+
+WEBKIT_API gboolean
+webkit_web_extension_get_has_override_new_tab_page           (WebKitWebExtension *extension);
+
+WEBKIT_API gboolean
+webkit_web_extension_get_has_commands                        (WebKitWebExtension *extension);
+
+WEBKIT_API gboolean
+webkit_web_extension_get_has_content_modification_rules      (WebKitWebExtension *extension);
+
+G_END_DECLS
+
+#endif // ENABLE(2022_GLIB_API)
+
+#endif

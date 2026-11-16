@@ -1,0 +1,4 @@
+
+PASS e.style['border-collapse'] = "none" should not set the property value
+PASS e.style['border-collapse'] = "separate collapse" should not set the property value
+

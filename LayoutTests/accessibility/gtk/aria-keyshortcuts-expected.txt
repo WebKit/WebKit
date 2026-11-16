@@ -1,0 +1,13 @@
+This tests the exposure of the value of aria-keyshortcuts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXPlatformAttributes: computed-role:button, tag:div, xml-roles:button
+AXPlatformAttributes: computed-role:button, tag:div, xml-roles:button
+AXPlatformAttributes: computed-role:button, keyshortcuts:Shift+Space, tag:div, xml-roles:button
+AXPlatformAttributes: computed-role:button, keyshortcuts:Shift+Space Alt+Space, tag:div, xml-roles:button
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

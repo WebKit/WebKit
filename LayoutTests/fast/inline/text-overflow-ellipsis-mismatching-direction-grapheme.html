@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>text-overflow truncates text in the direction opposite to the line by whole characters</title>
+<style>
+div {
+    font: 20px/1.2 monospace;
+    border: 1px solid;
+    margin: 4px;
+    width: 3.5ch;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.clamp {
+    white-space: normal;
+    width: 4.5ch;
+    line-clamp: 1 "e\301 e\301 e\301 e\301 e\301 ";
+}
+</style>
+<!-- Each "é" is an "e" followed by a combining acute accent. -->
+<div dir="rtl">e&#x301;e&#x301;e&#x301;e&#x301;e&#x301;</div>
+<div dir="ltr"><bdo dir="rtl">e&#x301;e&#x301;e&#x301;e&#x301;e&#x301;</bdo></div>
+<div class="clamp" dir="rtl">x<br>x</div>

@@ -1,0 +1,4 @@
+Copying and pasting some part of the text should not set the event.data with the selected part for contenteditable
+
+FAIL Input event data for inputType insertFromPaste should not be set for contenteditable assert_equals: expected (object) null but got (undefined) undefined
+

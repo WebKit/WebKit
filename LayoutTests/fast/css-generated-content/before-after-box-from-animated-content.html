@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+@keyframes generate { from, to { content: ""; } }
+.box::before { display: block; height: 25px; }
+#cssAnimation::before { animation: generate 1000s; }
+#cssTransition::before { transition: content 1000s allow-discrete; }
+#cssTransition.content::before { content: ""; }
+</style>
+</head>
+<body>
+<div id="cssAnimation" class="box"></div>
+<div id="cssTransition" class="box content"></div>
+<div id="webAnimation" class="box"></div>
+<script>
+description("::before gets a box when 'content' comes from an animation or transition and no matching rule sets 'content'.");
+
+debug("CSS animation");
+shouldBe("cssAnimation.offsetHeight", "25");
+
+debug("");
+debug("CSS transition with allow-discrete");
+shouldBe("cssTransition.offsetHeight", "25");
+evalAndLog("cssTransition.classList.remove('content')");
+shouldBe("cssTransition.offsetHeight", "25");
+evalAndLog("cssTransition.getAnimations({ subtree: true })[0].finish()");
+shouldBe("cssTransition.offsetHeight", "0");
+
+debug("");
+debug("Web Animation");
+shouldBe("webAnimation.offsetHeight", "0");
+evalAndLog("animation = webAnimation.animate({ content: ['\"\"', '\"\"'] }, { pseudoElement: '::before', duration: 1000000 })");
+shouldBe("webAnimation.offsetHeight", "25");
+evalAndLog("animation.cancel()");
+shouldBe("webAnimation.offsetHeight", "0");
+</script>
+</body>
+</html>

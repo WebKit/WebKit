@@ -1,0 +1,15 @@
+blah
+This tests that progress bars show up in the AX hierarchy and that min, current and max values are reported correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS button1.description is 'AXLabel: Popularity'
+PASS button1.stringValue is 'AXValue: 5.00'
+PASS button1.isIgnored is false
+PASS button1.minValue is 1
+PASS button1.maxValue is 12
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

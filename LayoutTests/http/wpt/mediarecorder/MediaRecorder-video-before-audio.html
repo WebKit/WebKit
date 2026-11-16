@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder keeps video in sync with the audio priming when video is received first</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function* boxes(view, start, end)
+{
+    while (start + 8 <= end) {
+        let size = view.getUint32(start);
+        const type = String.fromCharCode(view.getUint8(start + 4), view.getUint8(start + 5), view.getUint8(start + 6), view.getUint8(start + 7));
+        let headerSize = 8;
+        if (size == 1) {
+            size = Number(view.getBigUint64(start + 8));
+            headerSize = 16;
+        } else if (!size)
+            size = end - start;
+        yield { type, start: start + headerSize, end: start + size };
+        start += size;
+    }
+}
+
+function child(view, box, type)
+{
+    for (const b of boxes(view, box.start, box.end)) {
+        if (b.type == type)
+            return b;
+    }
+    return null;
+}
+
+function readTracks(view)
+{
+    const tracks = new Map();
+    let movieTimescale;
+    for (const top of boxes(view, 0, view.byteLength)) {
+        if (top.type == 'moov') {
+            const mvhd = child(view, top, 'mvhd');
+            movieTimescale = view.getUint32(mvhd.start + (view.getUint8(mvhd.start) ? 20 : 12));
+            for (const trak of boxes(view, top.start, top.end)) {
+                if (trak.type != 'trak')
+                    continue;
+                const tkhd = child(view, trak, 'tkhd');
+                const trackID = view.getUint32(tkhd.start + (view.getUint8(tkhd.start) ? 20 : 12));
+                const mdia = child(view, trak, 'mdia');
+                const mdhd = child(view, mdia, 'mdhd');
+                const timescale = view.getUint32(mdhd.start + (view.getUint8(mdhd.start) ? 20 : 12));
+                const hdlr = child(view, mdia, 'hdlr');
+                const handler = String.fromCharCode(...new Uint8Array(view.buffer, hdlr.start + 8, 4));
+                // Offset, in track timescale, from media time to presentation time given by the edit list.
+                let editOffset = 0;
+                const edts = child(view, trak, 'edts');
+                if (edts) {
+                    const elst = child(view, edts, 'elst');
+                    const version = view.getUint8(elst.start);
+                    const count = view.getUint32(elst.start + 4);
+                    let offset = elst.start + 8;
+                    for (let i = 0; i < count; ++i) {
+                        const segmentDuration = version ? Number(view.getBigUint64(offset)) : view.getUint32(offset);
+                        const mediaTime = version ? Number(view.getBigInt64(offset + 8)) : view.getInt32(offset + 4);
+                        offset += version ? 20 : 12;
+                        if (mediaTime == -1) {
+                            editOffset += segmentDuration * timescale / movieTimescale;
+                            continue;
+                        }
+                        editOffset -= mediaTime;
+                        break;
+                    }
+                }
+                tracks.set(trackID, { handler, timescale, editOffset, startTime: undefined });
+            }
+        } else if (top.type == 'moof') {
+            for (const traf of boxes(view, top.start, top.end)) {
+                if (traf.type != 'traf')
+                    continue;
+                const tfhd = child(view, traf, 'tfhd');
+                const tfhdFlags = view.getUint32(tfhd.start) & 0xffffff;
+                const track = tracks.get(view.getUint32(tfhd.start + 4));
+                if (track.startTime !== undefined)
+                    continue;
+                let defaultDuration = 0;
+                if (tfhdFlags & 0x8)
+                    defaultDuration = view.getUint32(tfhd.start + 8 + (tfhdFlags & 0x1 ? 8 : 0) + (tfhdFlags & 0x2 ? 4 : 0));
+                const tfdt = child(view, traf, 'tfdt');
+                let decodeTime = view.getUint8(tfdt.start) ? Number(view.getBigUint64(tfdt.start + 4)) : view.getUint32(tfdt.start + 4);
+                let earliest = Infinity;
+                for (const trun of boxes(view, traf.start, traf.end)) {
+                    if (trun.type != 'trun')
+                        continue;
+                    const version = view.getUint8(trun.start);
+                    const flags = view.getUint32(trun.start) & 0xffffff;
+                    const count = view.getUint32(trun.start + 4);
+                    let offset = trun.start + 8 + (flags & 0x1 ? 4 : 0) + (flags & 0x4 ? 4 : 0);
+                    for (let i = 0; i < count; ++i) {
+                        let duration = defaultDuration;
+                        let compositionOffset = 0;
+                        if (flags & 0x100) {
+                            duration = view.getUint32(offset);
+                            offset += 4;
+                        }
+                        if (flags & 0x200)
+                            offset += 4;
+                        if (flags & 0x400)
+                            offset += 4;
+                        if (flags & 0x800) {
+                            compositionOffset = version ? view.getInt32(offset) : view.getUint32(offset);
+                            offset += 4;
+                        }
+                        earliest = Math.min(earliest, decodeTime + compositionOffset);
+                        decodeTime += duration;
+                    }
+                }
+                track.startTime = (earliest + track.editOffset) / track.timescale;
+            }
+        }
+    }
+    return [...tracks.values()];
+}
+
+promise_test(async (t) => {
+    const sampleRate = 48000;
+    const aacPrimingFrames = 2112;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 240;
+    const context = canvas.getContext('2d');
+    const stream = canvas.captureStream(30);
+
+    // The audio track delivers no samples until the context is resumed.
+    const audioContext = new AudioContext({ sampleRate });
+    await audioContext.suspend();
+    const destination = audioContext.createMediaStreamDestination();
+    const oscillator = audioContext.createOscillator();
+    oscillator.connect(destination);
+    oscillator.start(0);
+    stream.addTrack(destination.stream.getAudioTracks()[0]);
+
+    let frameCount = 0;
+    const interval = setInterval(() => {
+        context.fillStyle = (frameCount++ % 2) ? '#00ff00' : '#ff0000';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }, 33);
+    t.add_cleanup(() => {
+        clearInterval(interval);
+        audioContext.close();
+    });
+
+    const recorder = new MediaRecorder(stream, { mimeType: 'video/mp4' });
+    const chunks = [];
+    recorder.ondataavailable = event => chunks.push(event.data);
+    const stopped = new Promise(resolve => recorder.onstop = resolve);
+    recorder.start();
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+    await audioContext.resume();
+    await new Promise(resolve => setTimeout(resolve, 500));
+    recorder.stop();
+    await stopped;
+
+    const tracks = readTracks(new DataView(await new Blob(chunks).arrayBuffer()));
+    const video = tracks.find(track => track.handler == 'vide');
+    const audio = tracks.find(track => track.handler == 'soun');
+    assert_not_equals(video, undefined, 'recording has a video track');
+    assert_not_equals(audio, undefined, 'recording has an audio track');
+    assert_not_equals(video.startTime, undefined, 'recording has video samples');
+    assert_not_equals(audio.startTime, undefined, 'recording has audio samples');
+
+    // Video frames take their time from the audio clock, so they are presented after the same priming as the audio.
+    assert_approx_equals(video.startTime - audio.startTime, aacPrimingFrames / sampleRate, 0.002, 'video is offset by the audio priming');
+}, 'Video received before audio is offset by the AAC priming');
+</script>
+</body>
+</html>

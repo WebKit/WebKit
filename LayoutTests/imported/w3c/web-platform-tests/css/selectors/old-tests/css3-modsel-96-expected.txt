@@ -1,0 +1,10 @@
+This line should be unstyled.
+
+This line should be unstyled.
+This line should be unstyled.
+This line should have a green background
+This line should have a green background
+This line should have a green background
+
+PASS Universal selector without declared namespace
+

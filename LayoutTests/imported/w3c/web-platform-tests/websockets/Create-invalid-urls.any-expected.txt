@@ -1,0 +1,10 @@
+
+PASS new WebSocket("ws://foo bar.com/") should throw a "SyntaxError" DOMException
+PASS new WebSocket("wss://foo bar.com/") should throw a "SyntaxError" DOMException
+PASS new WebSocket("ftp://web-platform.test:8800/") should throw a "SyntaxError" DOMException
+PASS new WebSocket("mailto:example@example.org") should throw a "SyntaxError" DOMException
+PASS new WebSocket("about:blank") should throw a "SyntaxError" DOMException
+PASS new WebSocket("http://web-platform.test:8800/#") should throw a "SyntaxError" DOMException
+PASS new WebSocket("http://web-platform.test:8800/#test") should throw a "SyntaxError" DOMException
+PASS new WebSocket("#test") should throw a "SyntaxError" DOMException
+

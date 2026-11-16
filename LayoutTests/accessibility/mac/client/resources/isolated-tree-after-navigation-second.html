@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<h1>Second Page Heading</h1>
+<script>
+description("Checks that a new document's accessibility tree is served after a navigation, rather than the previous document's stale isolated tree. The first page builds an isolated tree, then navigates here.");
+
+var output = "";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        // Collects every heading the client can reach from the root. If the previous document's
+        // isolated tree is still being served, this finds "First Page Heading" instead, or nothing
+        // at all if that tree has been torn down but not replaced.
+        function collectHeadings(element, headings) {
+            if (!element || !element.role)
+                return headings;
+            if (element.role.endsWith("AXHeading"))
+                headings.push(element.title);
+            for (var i = 0; i < element.childrenCount; i++)
+                collectHeadings(element.childAtIndex(i), headings);
+            return headings;
+        }
+
+        var headings = [];
+        await waitFor(() => {
+            headings = collectHeadings(accessibilityController.rootElement, []);
+            return headings.length;
+        });
+
+        if (headings.length === 1 && headings[0].includes("Second Page Heading"))
+            output += "PASS: the accessibility tree serves the current document\n";
+        else
+            output += `FAIL: expected only the current document's heading, got [${headings}]\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

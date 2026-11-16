@@ -1,0 +1,28 @@
+# Configuration file used for `cargo deny check`, which checks for licensing
+# issues and security advisories.
+#
+# For a list of possible sections and their default values, see
+# https://github.com/EmbarkStudios/cargo-deny/blob/main/deny.template.toml
+#
+# For further documentation, see https://embarkstudios.github.io/cargo-deny/.
+
+# This section is considered when running `cargo deny check licenses`
+# More documentation for the licenses section can be found here:
+# https://embarkstudios.github.io/cargo-deny/checks/licenses/cfg.html
+[licenses]
+# List of explicitly allowed licenses
+# See https://spdx.org/licenses/ for list of possible licenses
+# [possible values: any SPDX 3.11 short identifier (+ optional exception)].
+allow = ["Apache-2.0"]
+
+# This section is considered when running `cargo deny check bans`.
+# More documentation about the 'bans' section can be found here:
+# https://embarkstudios.github.io/cargo-deny/checks/bans/cfg.html
+[bans]
+# Lint level for when multiple versions of the same crate are detected
+multiple-versions = "deny"
+# List of crates that are allowed. Use with care!
+# This is meant to control any external dependencies. This is effectively
+# a minimalist binding library and we try to have none, so you are strongly
+# encouraged not to add dependencies here.
+allow = []

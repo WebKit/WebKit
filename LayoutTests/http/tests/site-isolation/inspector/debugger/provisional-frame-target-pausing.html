@@ -1,0 +1,177 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+
+<script>
+    function addCrossOriginIframe() {
+        let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+        let iframe = document.createElement("iframe");
+        iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/debugger/resources/debugger-frame.html`;
+        document.body.appendChild(iframe);
+    }
+
+    function navigateCrossOrigin() {
+        location.hostname = location.hostname === "127.0.0.1" ? "localhost" : "127.0.0.1";
+    }
+
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.ProvisionalFrameTargetPausing");
+
+        // Case 1: Cross-origin iframe navigation.
+        suite.addTestCase({
+            name: "SiteIsolation.ProvisionalFrameTargetPausing.IframeNavigation",
+            description: "Provisional frame target for a cross-origin iframe should be paused on start.",
+            async test() {
+                // Prevent the provisional target from resuming, which halts its
+                // provisional loading and gives us time to verify it starts paused.
+                let originalResumeIfPaused = WI.Target.prototype._resumeIfPaused;
+                WI.Target.prototype._resumeIfPaused = function () { };
+
+                let provisionalTargetPromise = new Promise(function (resolve) {
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, function handle(event) {
+                        let { target } = event.data;
+                        if (target.type === WI.TargetType.Frame && target.isProvisional) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, handle);
+                            resolve(target);
+                        }
+                    });
+                });
+
+                let commitPromise = new Promise(function (resolve) {
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, function handle(event) {
+                        let { target } = event.data;
+                        if (target.type === WI.TargetType.Frame) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+                            resolve(target);
+                        }
+                    });
+                });
+
+                InspectorTest.evaluateInPage(`addCrossOriginIframe();`);
+
+                let provisionalTarget = await provisionalTargetPromise;
+                InspectorTest.pass("Provisional frame target was created.");
+                InspectorTest.expectTrue(provisionalTarget.isPaused, "Target should be paused on start.");
+
+                // Restore _resumeIfPaused so the navigation can commit normally.
+                WI.Target.prototype._resumeIfPaused = originalResumeIfPaused;
+                provisionalTarget._resumeIfPaused();
+
+                let committedTarget = await commitPromise;
+                InspectorTest.pass("Provisional frame target was committed.");
+
+                await waitForExpressionInTarget(committedTarget, "typeof triggerDebugger === 'function'");
+                InspectorTest.pass("Frame loaded successfully.");
+            }
+        });
+
+        // Case 2: Cross-origin page navigation (new WebFrameProxy).
+        suite.addTestCase({
+            name: "SiteIsolation.ProvisionalFrameTargetPausing.PageNavigation.NewMainFrame",
+            description: "Provisional main frame target should be paused during cross-origin page navigation (new WebFrameProxy).",
+            async test() {
+                // Prevent the provisional target from resuming, which halts its
+                // provisional loading and gives us time to verify it starts paused.
+                let originalResumeIfPaused = WI.Target.prototype._resumeIfPaused;
+                WI.Target.prototype._resumeIfPaused = function () { };
+
+                let provisionalTargetPromise = new Promise(function (resolve) {
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, function handle(event) {
+                        let { target } = event.data;
+                        if (target.type === WI.TargetType.Frame && target.isProvisional) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, handle);
+                            resolve(target);
+                        }
+                    });
+                });
+
+                let commitPromise = new Promise(function (resolve) {
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, function handle(event) {
+                        let { target } = event.data;
+                        if (target.type === WI.TargetType.Frame) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+                            resolve(target);
+                        }
+                    });
+                });
+
+                let pageLoadedPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+                InspectorTest.deferOutputUntilTestPageIsReloaded();
+                InspectorTest.evaluateInPage(`navigateCrossOrigin();`);
+
+                let provisionalTarget = await provisionalTargetPromise;
+                InspectorTest.pass("Provisional frame target was created.");
+                InspectorTest.expectTrue(provisionalTarget.isPaused, "Target should be paused on start.");
+
+                // Restore _resumeIfPaused so the navigation can commit normally.
+                WI.Target.prototype._resumeIfPaused = originalResumeIfPaused;
+                provisionalTarget._resumeIfPaused();
+
+                await commitPromise;
+                InspectorTest.pass("Provisional frame target was committed.");
+
+                await pageLoadedPromise;
+            }
+        });
+
+        // Case 3: Cross-origin page navigation (reused WebFrameProxy).
+        suite.addTestCase({
+            name: "SiteIsolation.ProvisionalFrameTargetPausing.PageNavigation.ReusedMainFrame",
+            description: "Provisional main frame target should be paused during cross-origin page navigation (reused WebFrameProxy via hasPageOpenedByMainFrame).",
+            async test() {
+                // Prevent the provisional target from resuming, which halts its
+                // provisional loading and gives us time to verify it starts paused.
+                let originalResumeIfPaused = WI.Target.prototype._resumeIfPaused;
+                WI.Target.prototype._resumeIfPaused = function () { };
+
+                let provisionalTargetPromise = new Promise(function (resolve) {
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, function handle(event) {
+                        let { target } = event.data;
+                        if (target.type === WI.TargetType.Frame && target.isProvisional) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, handle);
+                            resolve(target);
+                        }
+                    });
+                });
+
+                let commitPromise = new Promise(function (resolve) {
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, function handle(event) {
+                        let { target } = event.data;
+                        if (target.type === WI.TargetType.Frame) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+                            resolve(target);
+                        }
+                    });
+                });
+
+                let pageLoadedPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+                // Opening a page sets hasPageOpenedByMainFrame(), which causes
+                // m_shouldReuseMainFrame=true on the next cross-origin navigation.
+                InspectorTest.evaluateInPage(`window.open("about:blank");`);
+
+                InspectorTest.deferOutputUntilTestPageIsReloaded();
+                InspectorTest.evaluateInPage(`navigateCrossOrigin();`);
+
+                let provisionalTarget = await provisionalTargetPromise;
+                InspectorTest.pass("Provisional frame target was created.");
+                InspectorTest.expectTrue(provisionalTarget.isPaused, "Target should be paused on start.");
+
+                // Restore _resumeIfPaused so the navigation can commit normally.
+                WI.Target.prototype._resumeIfPaused = originalResumeIfPaused;
+                provisionalTarget._resumeIfPaused();
+
+                await commitPromise;
+                InspectorTest.pass("Provisional frame target was committed.");
+
+                await pageLoadedPromise;
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that provisional frame targets are paused on start across all navigation types: cross-origin iframe navigation (case 1), cross-origin page navigation with new main frame (case 2), and cross-origin page navigation with reused main frame (case 3).</p>
+</body>

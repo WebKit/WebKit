@@ -1,0 +1,5 @@
+name: basic-find
+test:
+  prompt: "Who authored 234567@main"
+validation:
+  prompt: "Jonathan Bedard authored 234567@main"

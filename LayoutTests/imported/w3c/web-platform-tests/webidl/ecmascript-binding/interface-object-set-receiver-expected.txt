@@ -1,0 +1,4 @@
+
+PASS Direct [[Set]] preserves [[Enumerable]]: false property attribute
+PASS Prototype chain [[Set]] creates property on receiver
+

@@ -1,0 +1,7 @@
+This test passes if there is no ASSERT in debug mode. This happens when:
+No one uses the CSS Font Loading API
+A font starts loading
+Someone uses the CSS Font Loading API, causing us to create Javascript wrappers for our internal objects
+The font finishes loading
+The bug occurs when the wrappers do not correctly understand that there are in-flight loads already happening.
+Hello

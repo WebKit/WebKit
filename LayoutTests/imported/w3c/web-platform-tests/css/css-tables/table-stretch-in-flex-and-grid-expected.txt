@@ -1,0 +1,20 @@
+A
+B
+A
+B
+A
+B
+A
+B
+A
+B
+A
+B
+
+PASS Flex: table with padding stretches correctly
+PASS Flex: table with border stretches correctly
+PASS Flex: table with border and padding stretches correctly
+PASS Grid: table with padding stretches correctly
+PASS Flex vertical: table with padding stretches correctly
+PASS Flex: table with collapsing borders stretches correctly
+

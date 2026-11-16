@@ -1,0 +1,4 @@
+
+PASS Setup service worker in a separate process
+FAIL Page-less service worker OffscreenCanvas is remoted to the GPU process assert_equals: page-less worker canvas is remoted to the GPU process expected "remote" but got "unaccelerated"
+

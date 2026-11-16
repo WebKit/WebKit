@@ -1,0 +1,1635 @@
+// This is auto-gen data for Capstone engine (www.capstone-engine.org)
+// By Nguyen Anh Quynh <aquynh@gmail.com>
+
+{
+	RISCV_ADD, RISCV_INS_ADD,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_ADDI, RISCV_INS_ADDI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_ADDIW, RISCV_INS_ADDIW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_ADDW, RISCV_INS_ADDW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOADD_D, RISCV_INS_AMOADD_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOADD_D_AQ, RISCV_INS_AMOADD_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOADD_D_AQ_RL, RISCV_INS_AMOADD_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOADD_D_RL, RISCV_INS_AMOADD_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOADD_W, RISCV_INS_AMOADD_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOADD_W_AQ, RISCV_INS_AMOADD_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOADD_W_AQ_RL, RISCV_INS_AMOADD_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOADD_W_RL, RISCV_INS_AMOADD_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOAND_D, RISCV_INS_AMOAND_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOAND_D_AQ, RISCV_INS_AMOAND_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOAND_D_AQ_RL, RISCV_INS_AMOAND_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOAND_D_RL, RISCV_INS_AMOAND_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOAND_W, RISCV_INS_AMOAND_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOAND_W_AQ, RISCV_INS_AMOAND_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOAND_W_AQ_RL, RISCV_INS_AMOAND_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOAND_W_RL, RISCV_INS_AMOAND_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAXU_D, RISCV_INS_AMOMAXU_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAXU_D_AQ, RISCV_INS_AMOMAXU_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAXU_D_AQ_RL, RISCV_INS_AMOMAXU_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAXU_D_RL, RISCV_INS_AMOMAXU_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAXU_W, RISCV_INS_AMOMAXU_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAXU_W_AQ, RISCV_INS_AMOMAXU_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAXU_W_AQ_RL, RISCV_INS_AMOMAXU_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAXU_W_RL, RISCV_INS_AMOMAXU_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAX_D, RISCV_INS_AMOMAX_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAX_D_AQ, RISCV_INS_AMOMAX_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAX_D_AQ_RL, RISCV_INS_AMOMAX_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAX_D_RL, RISCV_INS_AMOMAX_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAX_W, RISCV_INS_AMOMAX_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAX_W_AQ, RISCV_INS_AMOMAX_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAX_W_AQ_RL, RISCV_INS_AMOMAX_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMAX_W_RL, RISCV_INS_AMOMAX_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMINU_D, RISCV_INS_AMOMINU_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMINU_D_AQ, RISCV_INS_AMOMINU_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMINU_D_AQ_RL, RISCV_INS_AMOMINU_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMINU_D_RL, RISCV_INS_AMOMINU_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMINU_W, RISCV_INS_AMOMINU_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMINU_W_AQ, RISCV_INS_AMOMINU_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMINU_W_AQ_RL, RISCV_INS_AMOMINU_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMINU_W_RL, RISCV_INS_AMOMINU_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMIN_D, RISCV_INS_AMOMIN_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMIN_D_AQ, RISCV_INS_AMOMIN_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMIN_D_AQ_RL, RISCV_INS_AMOMIN_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMIN_D_RL, RISCV_INS_AMOMIN_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMIN_W, RISCV_INS_AMOMIN_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMIN_W_AQ, RISCV_INS_AMOMIN_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMIN_W_AQ_RL, RISCV_INS_AMOMIN_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOMIN_W_RL, RISCV_INS_AMOMIN_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOOR_D, RISCV_INS_AMOOR_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOOR_D_AQ, RISCV_INS_AMOOR_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOOR_D_AQ_RL, RISCV_INS_AMOOR_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOOR_D_RL, RISCV_INS_AMOOR_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOOR_W, RISCV_INS_AMOOR_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOOR_W_AQ, RISCV_INS_AMOOR_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOOR_W_AQ_RL, RISCV_INS_AMOOR_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOOR_W_RL, RISCV_INS_AMOOR_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOSWAP_D, RISCV_INS_AMOSWAP_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOSWAP_D_AQ, RISCV_INS_AMOSWAP_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOSWAP_D_AQ_RL, RISCV_INS_AMOSWAP_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOSWAP_D_RL, RISCV_INS_AMOSWAP_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOSWAP_W, RISCV_INS_AMOSWAP_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOSWAP_W_AQ, RISCV_INS_AMOSWAP_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOSWAP_W_AQ_RL, RISCV_INS_AMOSWAP_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOSWAP_W_RL, RISCV_INS_AMOSWAP_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOXOR_D, RISCV_INS_AMOXOR_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOXOR_D_AQ, RISCV_INS_AMOXOR_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOXOR_D_AQ_RL, RISCV_INS_AMOXOR_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOXOR_D_RL, RISCV_INS_AMOXOR_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOXOR_W, RISCV_INS_AMOXOR_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOXOR_W_AQ, RISCV_INS_AMOXOR_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOXOR_W_AQ_RL, RISCV_INS_AMOXOR_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AMOXOR_W_RL, RISCV_INS_AMOXOR_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AND, RISCV_INS_AND,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_ANDI, RISCV_INS_ANDI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_AUIPC, RISCV_INS_AUIPC,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_BEQ, RISCV_INS_BEQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_BRANCH_RELATIVE, 0 }, 1, 0
+#endif
+},
+{
+	RISCV_BGE, RISCV_INS_BGE,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_BRANCH_RELATIVE, 0 }, 1, 0
+#endif
+},
+{
+	RISCV_BGEU, RISCV_INS_BGEU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_BRANCH_RELATIVE, 0 }, 1, 0
+#endif
+},
+{
+	RISCV_BLT, RISCV_INS_BLT,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_BRANCH_RELATIVE, 0 }, 1, 0
+#endif
+},
+{
+	RISCV_BLTU, RISCV_INS_BLTU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_BRANCH_RELATIVE, 0 }, 1, 0
+#endif
+},
+{
+	RISCV_BNE, RISCV_INS_BNE,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_BRANCH_RELATIVE, 0 }, 1, 0
+#endif
+},
+{
+	RISCV_CSRRC, RISCV_INS_CSRRC,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_CSRRCI, RISCV_INS_CSRRCI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_CSRRS, RISCV_INS_CSRRS,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_CSRRSI, RISCV_INS_CSRRSI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_CSRRW, RISCV_INS_CSRRW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_CSRRWI, RISCV_INS_CSRRWI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_ADD, RISCV_INS_C_ADD,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_ADDI, RISCV_INS_C_ADDI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_ADDI16SP, RISCV_INS_C_ADDI16SP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_ADDI4SPN, RISCV_INS_C_ADDI4SPN,
+#ifndef CAPSTONE_DIET
+	{ RISCV_REG_X2, 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_ADDIW, RISCV_INS_C_ADDIW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_ADDW, RISCV_INS_C_ADDW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_AND, RISCV_INS_C_AND,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_ANDI, RISCV_INS_C_ANDI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_BEQZ, RISCV_INS_C_BEQZ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_BRANCH_RELATIVE, 0 }, 1, 0
+#endif
+},
+{
+	RISCV_C_BNEZ, RISCV_INS_C_BNEZ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_BRANCH_RELATIVE, 0 }, 1, 0
+#endif
+},
+{
+	RISCV_C_EBREAK, RISCV_INS_C_EBREAK,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_FLD, RISCV_INS_C_FLD,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_FLDSP, RISCV_INS_C_FLDSP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_FLW, RISCV_INS_C_FLW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_HASSTDEXTF, RISCV_GRP_ISRV32, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_FLWSP, RISCV_INS_C_FLWSP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_HASSTDEXTF, RISCV_GRP_ISRV32, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_FSD, RISCV_INS_C_FSD,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_FSDSP, RISCV_INS_C_FSDSP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_FSW, RISCV_INS_C_FSW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_HASSTDEXTF, RISCV_GRP_ISRV32, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_FSWSP, RISCV_INS_C_FSWSP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_HASSTDEXTF, RISCV_GRP_ISRV32, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_J, RISCV_INS_C_J,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 1, 0
+#endif
+},
+{
+	RISCV_C_JAL, RISCV_INS_C_JAL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { RISCV_REG_X1, 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_ISRV32, RISCV_GRP_CALL, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_JALR, RISCV_INS_C_JALR,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { RISCV_REG_X1, 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_CALL, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_JR, RISCV_INS_C_JR,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 1, 1
+#endif
+},
+{
+	RISCV_C_LD, RISCV_INS_C_LD,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_LDSP, RISCV_INS_C_LDSP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_LI, RISCV_INS_C_LI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_LUI, RISCV_INS_C_LUI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_LW, RISCV_INS_C_LW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_LWSP, RISCV_INS_C_LWSP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_MV, RISCV_INS_C_MV,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_NOP, RISCV_INS_C_NOP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_OR, RISCV_INS_C_OR,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_SD, RISCV_INS_C_SD,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_SDSP, RISCV_INS_C_SDSP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_SLLI, RISCV_INS_C_SLLI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_SRAI, RISCV_INS_C_SRAI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_SRLI, RISCV_INS_C_SRLI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_SUB, RISCV_INS_C_SUB,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_SUBW, RISCV_INS_C_SUBW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_SW, RISCV_INS_C_SW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_SWSP, RISCV_INS_C_SWSP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_UNIMP, RISCV_INS_C_UNIMP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_C_XOR, RISCV_INS_C_XOR,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTC, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_DIV, RISCV_INS_DIV,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_DIVU, RISCV_INS_DIVU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_DIVUW, RISCV_INS_DIVUW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_DIVW, RISCV_INS_DIVW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_EBREAK, RISCV_INS_EBREAK,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_ECALL, RISCV_INS_ECALL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_INT, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FADD_D, RISCV_INS_FADD_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FADD_S, RISCV_INS_FADD_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCLASS_D, RISCV_INS_FCLASS_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCLASS_S, RISCV_INS_FCLASS_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_D_L, RISCV_INS_FCVT_D_L,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_D_LU, RISCV_INS_FCVT_D_LU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_D_S, RISCV_INS_FCVT_D_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_D_W, RISCV_INS_FCVT_D_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_D_WU, RISCV_INS_FCVT_D_WU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_LU_D, RISCV_INS_FCVT_LU_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_LU_S, RISCV_INS_FCVT_LU_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_L_D, RISCV_INS_FCVT_L_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_L_S, RISCV_INS_FCVT_L_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_S_D, RISCV_INS_FCVT_S_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_S_L, RISCV_INS_FCVT_S_L,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_S_LU, RISCV_INS_FCVT_S_LU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_S_W, RISCV_INS_FCVT_S_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_S_WU, RISCV_INS_FCVT_S_WU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_WU_D, RISCV_INS_FCVT_WU_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_WU_S, RISCV_INS_FCVT_WU_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_W_D, RISCV_INS_FCVT_W_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FCVT_W_S, RISCV_INS_FCVT_W_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FDIV_D, RISCV_INS_FDIV_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FDIV_S, RISCV_INS_FDIV_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FENCE, RISCV_INS_FENCE,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FENCE_I, RISCV_INS_FENCE_I,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FENCE_TSO, RISCV_INS_FENCE_TSO,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FEQ_D, RISCV_INS_FEQ_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FEQ_S, RISCV_INS_FEQ_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FLD, RISCV_INS_FLD,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FLE_D, RISCV_INS_FLE_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FLE_S, RISCV_INS_FLE_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FLT_D, RISCV_INS_FLT_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FLT_S, RISCV_INS_FLT_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FLW, RISCV_INS_FLW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMADD_D, RISCV_INS_FMADD_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMADD_S, RISCV_INS_FMADD_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMAX_D, RISCV_INS_FMAX_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMAX_S, RISCV_INS_FMAX_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMIN_D, RISCV_INS_FMIN_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMIN_S, RISCV_INS_FMIN_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMSUB_D, RISCV_INS_FMSUB_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMSUB_S, RISCV_INS_FMSUB_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMUL_D, RISCV_INS_FMUL_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMUL_S, RISCV_INS_FMUL_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMV_D_X, RISCV_INS_FMV_D_X,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMV_W_X, RISCV_INS_FMV_W_X,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMV_X_D, RISCV_INS_FMV_X_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FMV_X_W, RISCV_INS_FMV_X_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FNMADD_D, RISCV_INS_FNMADD_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FNMADD_S, RISCV_INS_FNMADD_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FNMSUB_D, RISCV_INS_FNMSUB_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FNMSUB_S, RISCV_INS_FNMSUB_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSD, RISCV_INS_FSD,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSGNJN_D, RISCV_INS_FSGNJN_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSGNJN_S, RISCV_INS_FSGNJN_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSGNJX_D, RISCV_INS_FSGNJX_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSGNJX_S, RISCV_INS_FSGNJX_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSGNJ_D, RISCV_INS_FSGNJ_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSGNJ_S, RISCV_INS_FSGNJ_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSQRT_D, RISCV_INS_FSQRT_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSQRT_S, RISCV_INS_FSQRT_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSUB_D, RISCV_INS_FSUB_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTD, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSUB_S, RISCV_INS_FSUB_S,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_FSW, RISCV_INS_FSW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTF, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_JAL, RISCV_INS_JAL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_CALL, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_JALR, RISCV_INS_JALR,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_CALL, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LB, RISCV_INS_LB,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LBU, RISCV_INS_LBU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LD, RISCV_INS_LD,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LH, RISCV_INS_LH,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LHU, RISCV_INS_LHU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LR_D, RISCV_INS_LR_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LR_D_AQ, RISCV_INS_LR_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LR_D_AQ_RL, RISCV_INS_LR_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LR_D_RL, RISCV_INS_LR_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LR_W, RISCV_INS_LR_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LR_W_AQ, RISCV_INS_LR_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LR_W_AQ_RL, RISCV_INS_LR_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LR_W_RL, RISCV_INS_LR_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LUI, RISCV_INS_LUI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LW, RISCV_INS_LW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_LWU, RISCV_INS_LWU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_MRET, RISCV_INS_MRET,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_MUL, RISCV_INS_MUL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_MULH, RISCV_INS_MULH,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_MULHSU, RISCV_INS_MULHSU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_MULHU, RISCV_INS_MULHU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_MULW, RISCV_INS_MULW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_OR, RISCV_INS_OR,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_ORI, RISCV_INS_ORI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_REM, RISCV_INS_REM,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_REMU, RISCV_INS_REMU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_REMUW, RISCV_INS_REMUW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_REMW, RISCV_INS_REMW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTM, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SB, RISCV_INS_SB,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SC_D, RISCV_INS_SC_D,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SC_D_AQ, RISCV_INS_SC_D_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SC_D_AQ_RL, RISCV_INS_SC_D_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SC_D_RL, RISCV_INS_SC_D_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SC_W, RISCV_INS_SC_W,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SC_W_AQ, RISCV_INS_SC_W_AQ,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SC_W_AQ_RL, RISCV_INS_SC_W_AQ_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SC_W_RL, RISCV_INS_SC_W_RL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_HASSTDEXTA, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SD, RISCV_INS_SD,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SFENCE_VMA, RISCV_INS_SFENCE_VMA,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SH, RISCV_INS_SH,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SLL, RISCV_INS_SLL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SLLI, RISCV_INS_SLLI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SLLIW, RISCV_INS_SLLIW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SLLW, RISCV_INS_SLLW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SLT, RISCV_INS_SLT,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SLTI, RISCV_INS_SLTI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SLTIU, RISCV_INS_SLTIU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SLTU, RISCV_INS_SLTU,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SRA, RISCV_INS_SRA,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SRAI, RISCV_INS_SRAI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SRAIW, RISCV_INS_SRAIW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SRAW, RISCV_INS_SRAW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SRET, RISCV_INS_SRET,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SRL, RISCV_INS_SRL,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SRLI, RISCV_INS_SRLI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SRLIW, RISCV_INS_SRLIW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SRLW, RISCV_INS_SRLW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SUB, RISCV_INS_SUB,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SUBW, RISCV_INS_SUBW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { RISCV_GRP_ISRV64, 0 }, 0, 0
+#endif
+},
+{
+	RISCV_SW, RISCV_INS_SW,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_UNIMP, RISCV_INS_UNIMP,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_URET, RISCV_INS_URET,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_WFI, RISCV_INS_WFI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_XOR, RISCV_INS_XOR,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},
+{
+	RISCV_XORI, RISCV_INS_XORI,
+#ifndef CAPSTONE_DIET
+	{ 0 }, { 0 }, { 0 }, 0, 0
+#endif
+},

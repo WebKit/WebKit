@@ -1,0 +1,46 @@
+Some content
+Some content
+Some content
+Some content
+Some content
+Text1
+Text2
+Text3
+Text3
+Text3
+
+PASS SVG Geometry Properties: getComputedStyle().width, <rect> initial
+PASS SVG Geometry Properties: getComputedStyle().width, <rect> presentation attribute
+PASS SVG Geometry Properties: getComputedStyle().width, <rect> inline style (percentage)
+PASS SVG Geometry Properties: getComputedStyle().width, <rect> inline style (auto)
+PASS SVG Geometry Properties: getComputedStyle().width, <rect> inline style (pixels)
+PASS SVG Geometry Properties: getComputedStyle().width, <rect> inline style but "display: none"
+PASS SVG Geometry Properties: getComputedStyle().width, <image> initial
+PASS SVG Geometry Properties: getComputedStyle().width, <image> presentation attribute
+PASS SVG Geometry Properties: getComputedStyle().width, <image> inline style (percentage)
+PASS SVG Geometry Properties: getComputedStyle().width, <image> inline style (auto)
+PASS SVG Geometry Properties: getComputedStyle().width, <image> inline style (pixels)
+PASS SVG Geometry Properties: getComputedStyle().width, <image> inline style but "display: none"
+PASS SVG Geometry Properties: getComputedStyle().width, <foreignObject> initial
+PASS SVG Geometry Properties: getComputedStyle().width, <foreignObject> presentation attribute
+PASS SVG Geometry Properties: getComputedStyle().width, <foreignObject> inline style (percentage)
+PASS SVG Geometry Properties: getComputedStyle().width, <foreignObject> inline style (auto)
+PASS SVG Geometry Properties: getComputedStyle().width, <foreignObject> inline style (pixels)
+PASS SVG Geometry Properties: getComputedStyle().width, <foreignObject> inline style but "display: none"
+PASS SVG Geometry Properties: getComputedStyle().width, <svg> initial
+PASS SVG Geometry Properties: getComputedStyle().width, <svg> presentation attribute
+PASS SVG Geometry Properties: getComputedStyle().width, <svg> inline style (auto)
+PASS SVG Geometry Properties: getComputedStyle().width, <svg> inline style (pixels)
+PASS SVG Geometry Properties: getComputedStyle().width, <svg> inline style (percentage)
+PASS SVG Geometry Properties: getComputedStyle().width, <svg> inline style but "display: none"
+PASS SVG Geometry Properties: getComputedStyle().width, <g> initial
+PASS SVG Geometry Properties: getComputedStyle().width, <g> initial (with dummy attribute)
+PASS SVG Geometry Properties: getComputedStyle().width, <g> inline style (percentage)
+PASS SVG Geometry Properties: getComputedStyle().width, <g> inline style (auto)
+PASS SVG Geometry Properties: getComputedStyle().width, <g> inline style (pixels)
+PASS SVG Geometry Properties: getComputedStyle().width, <text> initial
+PASS SVG Geometry Properties: getComputedStyle().width, <text> initial (with dummy attribute)
+PASS SVG Geometry Properties: getComputedStyle().width, <text> inline style (percentage)
+PASS SVG Geometry Properties: getComputedStyle().width, <text> inline style (auto)
+PASS SVG Geometry Properties: getComputedStyle().width, <text> inline style (pixels)
+

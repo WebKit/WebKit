@@ -1,0 +1,44 @@
+Test that CSS stylesheet commands work correctly on frame targets under site isolation.
+
+
+
+== Running test suite: SiteIsolation.CSS.StyleSheetCommands.FrameTarget
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.Setup
+PASS: Should find a child frame target.
+PASS: Child frame target should have a CSSAgent.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetAllStyleSheets
+PASS: Should have at least one stylesheet.
+PASS: Stylesheet should have an id.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetStyleSheet
+PASS: Should get stylesheet body.
+PASS: Returned stylesheet id should match.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetStyleSheetText
+PASS: Stylesheet text should contain the .test-class rule.
+PASS: Stylesheet text should contain 'color: red'.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.SetStyleSheetText
+PASS: Stylesheet text should be updated.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.CreateStyleSheet
+PASS: Should get a new stylesheet id.
+PASS: New stylesheet id should differ from the existing one.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetSupportedCSSProperties
+PASS: Should return at least one CSS property.
+PASS: Should include the 'display' property.
+PASS: Should include the 'color' property.
+PASS: 'color' should be marked as inherited.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.StyleSheetChangedEvent
+PASS: styleSheetChanged event should fire with the correct stylesheet id.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.StyleSheetAddedEvent
+PASS: styleSheetAdded event should fire.
+PASS: Added stylesheet should have an id.
+
+-- Running test case: SiteIsolation.CSS.StyleSheetCommands.FrameTarget.StyleSheetRemovedEvent
+PASS: styleSheetRemoved event should fire with the removed stylesheet id.
+

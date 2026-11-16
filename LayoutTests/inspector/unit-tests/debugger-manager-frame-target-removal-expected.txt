@@ -1,0 +1,56 @@
+Tests that DebuggerManager forgets the scripts of a frame target when the target is removed, and only those of that target.
+
+
+== Running test suite: DebuggerManager.FrameTargetRemoval
+-- Running test case: DebuggerManager.FrameTargetRemoval.ForgetsScriptsOfRemovedTarget
+PASS: The extension script should be parsed.
+PASS: The injected script should be parsed.
+PASS: The anonymous script should be parsed.
+PASS: The WebAssembly module should be parsed.
+PASS: The WebAssembly module of a frame should be parsed.
+PASS: The WebAssembly module of a frame should belong to the frame.
+PASS: The extension script should be known while its frame target exists.
+PASS: The injected script should be known while its frame target exists.
+PASS: The anonymous script should be known while its frame target exists.
+PASS: The WebAssembly module should be known while its frame target exists.
+PASS: The WebAssembly module of a frame should be known while its frame target exists.
+PASS: The WebAssembly module of a frame should be an extra script of the frame while its frame target exists.
+PASS: The extension script should not be known after its frame target is removed.
+PASS: The injected script should not be known after its frame target is removed.
+PASS: The anonymous script should not be known after its frame target is removed.
+PASS: The WebAssembly module should not be known after its frame target is removed.
+PASS: The WebAssembly module of a frame should not be known after its frame target is removed.
+PASS: The WebAssembly module of a frame should not be an extra script of the frame after its frame target is removed.
+
+-- Running test case: DebuggerManager.FrameTargetRemoval.KeepsScriptsOfOtherTargets
+PASS: The extension script should be parsed.
+PASS: The injected script should be parsed.
+PASS: The anonymous script should be parsed.
+PASS: The WebAssembly module should be parsed.
+PASS: The WebAssembly module of a frame should be parsed.
+PASS: The WebAssembly module of a frame should belong to the frame.
+PASS: The extension script should be parsed.
+PASS: The injected script should be parsed.
+PASS: The anonymous script should be parsed.
+PASS: The WebAssembly module should be parsed.
+PASS: The WebAssembly module of a frame should be parsed.
+PASS: The WebAssembly module of a frame should belong to the frame.
+PASS: The extension script should not be known after its frame target is removed.
+PASS: The injected script should not be known after its frame target is removed.
+PASS: The anonymous script should not be known after its frame target is removed.
+PASS: The WebAssembly module should not be known after its frame target is removed.
+PASS: The WebAssembly module of a frame should not be known after its frame target is removed.
+PASS: The WebAssembly module of a frame should not be an extra script of the frame after its frame target is removed.
+PASS: The extension script should be known while its frame target exists.
+PASS: The injected script should be known while its frame target exists.
+PASS: The anonymous script should be known while its frame target exists.
+PASS: The WebAssembly module should be known while its frame target exists.
+PASS: The WebAssembly module of a frame should be known while its frame target exists.
+PASS: The WebAssembly module of a frame should be an extra script of the frame while its frame target exists.
+PASS: The extension script should not be known after its frame target is removed.
+PASS: The injected script should not be known after its frame target is removed.
+PASS: The anonymous script should not be known after its frame target is removed.
+PASS: The WebAssembly module should not be known after its frame target is removed.
+PASS: The WebAssembly module of a frame should not be known after its frame target is removed.
+PASS: The WebAssembly module of a frame should not be an extra script of the frame after its frame target is removed.
+

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function gc()
+{
+    if (window.GCController)
+        GCController.collect();
+}
+
+async function go()
+{
+    // The offline render thread runs renderQuantum() in a tight loop on a dedicated
+    // thread, calling handlePostRenderTasks() (and thus handleDeferredDerefs()) on
+    // every quantum.
+    let context = new OfflineAudioContext(1, 48000 * 120, 48000);
+
+    // |target| holds the AudioParam (target.gain) whose ref-count is raced.
+    let target = new GainNode(context);
+    target.connect(context.destination);
+
+    let lockHog = new GainNode(context);
+
+    let done = false;
+    context.startRendering().then(() => { done = true; }, () => { done = true; });
+
+    for (let iteration = 0; iteration < 200 && !done; ++iteration) {
+        // |sources| each connect their output to target.gain so that
+        // (a) their outputs hold a Ref<AudioParam> in m_params and
+        // (b) target.gain pulls each source on the render thread, taking a
+        //     transient RefPtr<AudioNode> via protect(node()) inside pull().
+        let sources = [];
+        for (let i = 0; i < 16; ++i) {
+            let source = new GainNode(context);
+            source.connect(target.gain);
+            sources.push(source);
+        }
+
+        // Let handlePreRenderTasks() promote the new outputs into m_renderingOutputs.
+        await new Promise(resolve => setTimeout(resolve, 0));
+
+        // Hold the graph lock from the main thread so the render thread's
+        // AudioNode::deref() (from the protect() above) tryLock-fails and is
+        // queued onto m_deferredDerefList.
+        for (let i = 0; i < 4000; ++i)
+            lockHog.channelCount = (i & 1) ? 1 : 2;
+
+        // Drop the wrappers; ~JSGainNode runs AudioNode::deref() on the main thread.
+        // Any deferred-deref entries from above keep m_normalRefCount > 0 here.
+        sources = null;
+        gc();
+
+        // Once we stop touching the graph lock, the next handlePostRenderTasks() ->
+        // handleDeferredDerefs() drives a source's m_normalRefCount to 0 on the
+        // render thread, reaching markNodeForDeletionIfNecessary() ->
+        // AudioNodeOutput::disconnectAllParams() and ref'ing / deref'ing target.gain
+        // there. Touch the wrapper concurrently from the main thread.
+        let until = performance.now() + 8;
+        while (performance.now() < until) {
+            target.gain;
+            gc();
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 0));
+    }
+
+    document.body.textContent = "PASS if no crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onload = go;
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS getUserMedia() in a discarded browsing context
+FAIL enumerateDevices() in a discarded browsing context assert_equals: Promise state expected "pending" but got "resolved"
+

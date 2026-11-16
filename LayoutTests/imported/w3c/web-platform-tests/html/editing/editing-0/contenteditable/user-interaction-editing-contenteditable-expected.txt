@@ -1,0 +1,11 @@
+
+PASS no contenteditable attribute
+PASS empty contentEditable attribute
+PASS set contentEditable = "true"
+PASS set contentEditable = "false"
+PASS set parent element contentEditable = "true"
+PASS set parent element contentEditable = "false"
+PASS set contentEditable = "true" and then remove contenteditable attribute
+PASS contentEditable=plaintext-only attribute
+PASS set parent element contentEditable = "plaintext-only"
+

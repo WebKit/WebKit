@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+async function setup()
+{
+    let response = await fetch('../../../media/content/test.mp4');
+    window.blob = await response.blob();
+    TestPage.dispatchEventToFrontend("SetupComplete");
+}
+
+function loadVideoSource() {
+    document.querySelector('video').src = window.URL.createObjectURL(blob);
+}
+
+async function test() {
+    let suite = InspectorTest.createAsyncSuite("Media.BlobRequest");
+
+    suite.addTestCase({
+        name: "Media.BlobRequest.RangeHeader",
+        description: "Ensure an Media Request for a Blob URL contains a Range: header.",
+        async test() {
+            InspectorTest.log("Running setup...");
+            InspectorTest.evaluateInPage(`setup()`);
+            await InspectorTest.awaitEvent("SetupComplete");
+
+            InspectorTest.log("Triggering load...");
+            InspectorTest.evaluateInPage('loadVideoSource()');
+            let resource = (await WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)).data.resource;
+
+            InspectorTest.log("Load finished...");
+            InspectorTest.expectNotEqual(resource.requestHeaders["Range"], undefined, "Range request header should not be undefined.");
+            InspectorTest.expectNotNull(resource.requestHeaders["Range"], "Range request header should not be null.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+	<video muted></video>
+</body>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+@keyframes opacity0to1 {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes opacity0to0 {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+div {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    transform: translateZ(0px);
+}
+.first {
+    opacity: 0;
+}
+.second {
+    opacity: 0;
+    will-change: opacity;
+}
+.third {
+    animation: opacity0to1 1000s linear infinite;
+}
+.fourth {
+    animation: opacity0to0 1000s linear infinite;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function() {
+    if (!window.testRunner)
+        return;
+
+    let out = document.getElementById('out');
+    out.textContent = internals.layerTreeAsText(document);
+    testRunner.notifyDone();
+};
+</script>
+</head>
+<body>
+<pre id="out"></pre>
+    <div class="first">First</div>
+    <div class="second">Second</div>
+    <div class="third">Third</div>
+    <div class="fourth">Fourth</div>
+</body>
+</html>

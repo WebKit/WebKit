@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!-- Regression test: when a depth-stencil attachment is used read-only with no
+     loadOp provided (undefined), the spec requires the contents to be loaded
+     (MTLLoadActionLoad), not discarded (MTLLoadActionDontCare).
+
+     Bug: loadAction(WGPULoadOp_Undefined) always returned MTLLoadActionDontCare,
+     ignoring readOnly. So a read-only stencil attachment with no loadOp would
+     discard whatever was written in a previous pass instead of preserving it.
+     The stencil comparison in the second pass then operated on undefined values.
+
+     Fix: loadAction(WGPULoadOp_Undefined, readOnly=true) now returns
+     MTLLoadActionLoad, preserving the stencil contents across passes. -->
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  globalThis.testRunner?.dumpAsText();
+</script>
+<script>
+  onload = async () => {
+    const adapter = await navigator.gpu?.requestAdapter();
+    const device = await adapter?.requestDevice();
+    if (!device) {
+      document.body.append('FAIL: WebGPU not supported');
+      globalThis.testRunner?.notifyDone();
+      return;
+    }
+
+    const size = 64;
+    const colorFormat = 'rgba8unorm';
+    const depthStencilFormat = 'depth24plus-stencil8';
+
+    const colorTexture = device.createTexture({
+      size: [size, size],
+      format: colorFormat,
+      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+    });
+    // Shared depth-stencil texture written in pass 1, read in pass 2.
+    const depthStencilTexture = device.createTexture({
+      size: [size, size],
+      format: depthStencilFormat,
+      usage: GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+
+    const shaderModule = device.createShaderModule({
+      code: `
+        @vertex fn vs(@builtin(vertex_index) i : u32) -> @builtin(position) vec4f {
+          var pos = array<vec2f,3>(vec2f(-1,-1), vec2f(3,-1), vec2f(-1,3));
+          return vec4f(pos[i], 0, 1);
+        }
+        @fragment fn fs() -> @location(0) vec4f { return vec4f(1, 0, 0, 1); }
+      `,
+    });
+
+    // Pass 1 pipeline: write reference (1) into stencil where compare=always passes.
+    const writePipeline = device.createRenderPipeline({
+      layout: 'auto',
+      vertex: { module: shaderModule, entryPoint: 'vs' },
+      fragment: {
+        module: shaderModule, entryPoint: 'fs',
+        targets: [{ format: colorFormat, writeMask: 0 }],
+      },
+      primitive: { topology: 'triangle-list' },
+      depthStencil: {
+        format: depthStencilFormat,
+        depthWriteEnabled: false,
+        depthCompare: 'always',
+        stencilFront: { compare: 'always', failOp: 'keep', depthFailOp: 'keep', passOp: 'replace' },
+        stencilBack:  { compare: 'always', failOp: 'keep', depthFailOp: 'keep', passOp: 'replace' },
+      },
+    });
+
+    // Pass 2 pipeline: only render where stencil == 1 (read-only, no stencil writes).
+    const readPipeline = device.createRenderPipeline({
+      layout: 'auto',
+      vertex: { module: shaderModule, entryPoint: 'vs' },
+      fragment: { module: shaderModule, entryPoint: 'fs', targets: [{ format: colorFormat }] },
+      primitive: { topology: 'triangle-list' },
+      depthStencil: {
+        format: depthStencilFormat,
+        depthWriteEnabled: false,
+        depthCompare: 'always',
+        stencilFront: { compare: 'equal', failOp: 'keep', depthFailOp: 'keep', passOp: 'keep' },
+        stencilBack:  { compare: 'equal', failOp: 'keep', depthFailOp: 'keep', passOp: 'keep' },
+      },
+    });
+
+    const depthStencilView = depthStencilTexture.createView();
+    const encoder = device.createCommandEncoder();
+
+    // Pass 1: clear stencil to 0, then write 1 everywhere via setStencilReference + passOp=replace.
+    // loadOp/storeOp are provided explicitly (required for writable attachments).
+    {
+      const pass = encoder.beginRenderPass({
+        colorAttachments: [{
+          view: colorTexture.createView(),
+          loadOp: 'clear', storeOp: 'store', clearValue: [0, 0, 0, 0],
+        }],
+        depthStencilAttachment: {
+          view: depthStencilView,
+          depthLoadOp: 'clear', depthStoreOp: 'store', depthClearValue: 1,
+          stencilLoadOp: 'clear', stencilStoreOp: 'store', stencilClearValue: 0,
+        },
+      });
+      pass.setPipeline(writePipeline);
+      pass.setStencilReference(1);
+      pass.draw(3);
+      pass.end();
+    }
+
+    // Pass 2: read-only stencil attachment with NO loadOp/storeOp specified.
+    // Per spec, undefined loadOp on a read-only attachment means "load".
+    // Bug: MTLLoadActionDontCare was used (discarding stencil) instead of MTLLoadActionLoad.
+    // Fix: MTLLoadActionLoad is used, preserving the stencil=1 written in pass 1.
+    // The equal compare with reference=1 should pass everywhere → all pixels red.
+    {
+      const pass = encoder.beginRenderPass({
+        colorAttachments: [{
+          view: colorTexture.createView(),
+          loadOp: 'load', storeOp: 'store',
+        }],
+        depthStencilAttachment: {
+          view: depthStencilView,
+          // depthLoadOp / depthStoreOp intentionally omitted — readOnly requires this.
+          depthReadOnly: true,
+          // stencilLoadOp / stencilStoreOp intentionally omitted — readOnly requires this.
+          stencilReadOnly: true,
+        },
+      });
+      pass.setPipeline(readPipeline);
+      pass.setStencilReference(1);
+      pass.draw(3);
+      pass.end();
+    }
+
+    // Read back and verify all pixels are red.
+    const bytesPerRow = Math.ceil(size * 4 / 256) * 256; // must be multiple of 256
+    const readBuffer = device.createBuffer({
+      size: bytesPerRow * size,
+      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+    });
+    encoder.copyTextureToBuffer({ texture: colorTexture }, { buffer: readBuffer, bytesPerRow }, [size, size]);
+    device.queue.submit([encoder.finish()]);
+
+    await readBuffer.mapAsync(GPUMapMode.READ);
+    const pixels = new Uint8Array(readBuffer.getMappedRange());
+
+    let ok = true;
+    for (let i = 0; i < size * size; i++) {
+      if (pixels[i*4] !== 255 || pixels[i*4+1] !== 0 || pixels[i*4+2] !== 0 || pixels[i*4+3] !== 255) {
+          document.body.append('pixels[' + i*4 + '] = ' + pixels[i*4+1] + ', pixels[' + (i*4 + 1) + '] = ' + pixels[i*4+2] + ', pixels[' + (i*4 + 2) + '] = ' + pixels[i*4+2] + ', pixels[' + (i*4 + 3) + '] = ' + pixels[i*4+3]);
+        ok = false;
+        break;
+      }
+    }
+
+    readBuffer.unmap();
+    colorTexture.destroy();
+    depthStencilTexture.destroy();
+    readBuffer.destroy();
+
+    document.body.append(ok
+      ? 'PASS'
+      : 'FAIL: read-only stencil attachment did not preserve stencil contents (MTLLoadActionDontCare was used instead of MTLLoadActionLoad)');
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

@@ -1,0 +1,4 @@
+Here is a text node you can't select while the dialog is open. I'm selectable.
+
+PASS Test that inert nodes cannot be selected. The test passes if the only text you can select is inside the dialog.
+

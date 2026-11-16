@@ -1,0 +1,12 @@
+Pass if no crash
+
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    window.onload = () => {
+        window.cookieStore.onchange = () => {};
+        let secondWindow = window.open("#secondWindow");
+        secondWindow.cookieStore.onchange = () => {};
+    }
+</script>

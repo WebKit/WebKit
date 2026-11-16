@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ThreadedTimeBasedAnimationsEnabled=false ] -->
+<body>
+<style>
+
+html {
+    height: 2000px;
+}
+
+</style>
+
+<script src="threaded-animations-utils.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+
+<script>
+
+promise_test(async t => { 
+    const target = createDiv(t);
+    
+    const timeline = new ScrollTimeline({ source : document.documentElement });
+    const threadedAnimation = target.animate({ scale: [0, 1] }, { timeline });
+    await animationAcceleration(threadedAnimation);
+    assert_equals(window.internals?.acceleratedAnimationsForElement(target).length, 1);
+
+    target.animate({ translate: '0 100px' }, 1000 * 1000);
+    await legacyAnimationCommit();
+    assert_equals(window.internals?.acceleratedAnimationsForElement(target).length, 0);
+}, "Adding a monotonic animation on an element that has an accelerated progress-based animation for the same underlying property makes both animations run without acceleration.");
+
+</script>
+</body>

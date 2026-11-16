@@ -1,0 +1,4 @@
+
+
+PASS Images with opacity: 0, visibility: hidden, or display: none are not observable by LargestContentfulPaint.
+

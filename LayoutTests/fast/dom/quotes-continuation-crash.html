@@ -1,0 +1,20 @@
+<script>
+onload = () => {
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+  let previous = document.body
+  function foo() {
+    let d0 = document.createElement('div');
+    previous.appendChild(d0);
+    let d1 = document.createElement('q');
+    previous = previous.appendChild(d1);
+  }
+
+  for (let i=0; i<202; i++) {
+    foo();
+  }
+  setTimeout(function() { document.write('This test should not crash.'); testRunner.notifyDone(); }, 0);
+}
+</script>

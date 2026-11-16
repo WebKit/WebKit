@@ -1,0 +1,23 @@
+
+PASS Loading data…
+PASS ToASCII("-󠉖ꡧ．󠊂񇆃🄉") P1; V6; V3 (ignored)
+PASS ToASCII("🄄．᳜⒈ß") P1; V5; V6
+PASS ToASCII("🄄．᳜⒈SS") P1; V5; V6
+PASS ToASCII("🄄．᳜⒈ss") P1; V5; V6
+PASS ToASCII("🄄．᳜⒈Ss") P1; V5; V6
+PASS ToASCII("ݖ。ㅤ‍ς") C2; P1; V6
+PASS ToASCII("ݖ。ᅠ‍ς") C2; P1; V6
+PASS ToASCII("ݖ。ᅠ‍Σ") C2; P1; V6
+PASS ToASCII("ݖ。ᅠ‍σ") C2; P1; V6
+PASS ToASCII("ݖ。ㅤ‍Σ") C2; P1; V6
+PASS ToASCII("ݖ。ㅤ‍σ") C2; P1; V6
+PASS ToASCII("🄇伐︒.𜙚꣄") P1; V6
+PASS ToASCII("𐨿.🄆—") P1; V5; V6
+PASS ToASCII("ᰲ🄈⾛֦．‍򯥤߽") C2; P1; V5; V6
+PASS ToASCII("🢟🄈‍ꡎ｡྄") C2; P1; V5; V6
+PASS ToASCII("򹚪｡🄂") P1; V6
+PASS ToASCII("ᡯ⚉姶🄉．۷‍🎪‍") C2; P1; V6
+PASS ToASCII("꙽‌霣🄆｡‌𑁂ᬁ") C1; P1; V5; V6
+PASS ToASCII("꙽‌霣🄆｡‌𑁂ᬁ") C1; P1; V5; V6
+PASS ToASCII("-ᢗ‌🄄.𑜢") C1; P1; V5; V6; V3 (ignored)
+

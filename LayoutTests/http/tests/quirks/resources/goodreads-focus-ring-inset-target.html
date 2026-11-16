@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+.container { overflow: hidden; }
+</style>
+</head>
+<body>
+<div class="container">
+    <div id="bio" class="TruncatedContent" tabindex="-1">
+        <div id="bioText" class="TruncatedContent__text" data-testid="contentContainer" tabindex="-1">Bio</div>
+    </div>
+    <div id="unrelated" tabindex="-1">Unrelated</div>
+</div>
+<pre id="output"></pre>
+<script>
+function describe(id)
+{
+    const element = document.getElementById(id);
+    element.focus();
+    const result = id + ": focus-visible " + element.matches(":focus-visible") + ", outline-offset " + getComputedStyle(element).outlineOffset;
+    element.blur();
+    return result;
+}
+
+const lines = [
+    "quirk active: " + (window.internals ? internals.activeQuirkNames().includes("NeedsStyleSheetInjectedQuirk") : "no internals"),
+    describe("bio"),
+    describe("bioText"),
+    describe("unrelated")
+];
+document.getElementById("output").textContent = lines.join("\n");
+if (window.testRunner)
+    testRunner.notifyDone();
+</script>
+</body>
+</html>

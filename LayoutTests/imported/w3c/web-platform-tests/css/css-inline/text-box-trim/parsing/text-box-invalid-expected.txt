@@ -1,0 +1,20 @@
+
+PASS e.style['text-box'] = "em" should not set the property value
+PASS e.style['text-box'] = "leading" should not set the property value
+PASS e.style['text-box'] = "trim-both leading" should not set the property value
+PASS e.style['text-box'] = "normal normal" should not set the property value
+PASS e.style['text-box'] = "normal none" should not set the property value
+PASS e.style['text-box'] = "auto normal" should not set the property value
+PASS e.style['text-box'] = "auto auto" should not set the property value
+PASS e.style['text-box'] = "none none" should not set the property value
+PASS e.style['text-box'] = "normal text" should not set the property value
+PASS e.style['text-box'] = "text normal" should not set the property value
+PASS e.style['text-box'] = "text cap" should not set the property value
+PASS e.style['text-box'] = "text ex" should not set the property value
+PASS e.style['text-box'] = "alphabetic text" should not set the property value
+PASS e.style['text-box'] = "alphabetic cap" should not set the property value
+PASS e.style['text-box'] = "cap none alphabetic" should not set the property value
+PASS e.style['text-box'] = "cap trim-both alphabetic" should not set the property value
+PASS e.style['text-box'] = "text none text" should not set the property value
+PASS e.style['text-box'] = "text trim-both text" should not set the property value
+

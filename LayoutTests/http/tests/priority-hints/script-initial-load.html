@@ -1,0 +1,91 @@
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=100"></script>
+<script src="http://127.0.0.1:8000/resources/checkResourcePriority.js"></script>
+
+<script>
+const priority_tests = [
+  {
+    url: new URL('../resources/dummy.js', location), expected_priority: "ResourceLoadPriorityVeryHigh",
+    description: 'high fetchpriority on <script> must translate to very high resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.js?1', location), expected_priority: "ResourceLoadPriorityMedium",
+    description: 'low fetchpriority on <script> must translate to medium resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.js?2', location), expected_priority: "ResourceLoadPriorityHigh",
+    description: 'auto fetchpriority on <script> must translate to high resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.js?3', location), expected_priority: "ResourceLoadPriorityHigh",
+    description: 'invalid fetchpriority on <script> must translate to high resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.js?4', location), expected_priority: "ResourceLoadPriorityHigh",
+    description: 'missing fetchpriority on <script> must translate to high resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.js?6', location), expected_priority: "ResourceLoadPriorityVeryHigh",
+    description: 'high fetchpriority on late-body <script> raises priority to very high'
+  },
+  {
+    url: new URL('../resources/dummy.js?7', location), expected_priority: "ResourceLoadPriorityMedium",
+    description: 'low fetchpriority on late-body <script> lowers priority to medium'
+  },
+  {
+    url: new URL('../resources/dummy.js?8', location), expected_priority: "ResourceLoadPriorityHigh",
+    description: 'auto fetchpriority on late-body <script> has no effect (high)'
+  },
+  {
+    url: new URL('../resources/dummy.js?9', location), expected_priority: "ResourceLoadPriorityHigh",
+    description: 'invalid fetchpriority on late-body <script> has no effect (high)'
+  },
+  {
+    url: new URL('../resources/dummy.js?10', location), expected_priority: "ResourceLoadPriorityHigh",
+    description: 'missing fetchpriority on late-body <script> has no effect (high)'
+  }
+];
+
+</script>
+
+<script id=script1 fetchpriority=high src=../resources/dummy.js></script>
+<script id=script2 fetchpriority=low src=../resources/dummy.js?1></script>
+<script id=script3 fetchpriority=auto src=../resources/dummy.js?2></script>
+<script id=script4 fetchpriority=xyz src=../resources/dummy.js?3></script>
+<script id=script5 src=../resources/dummy.js?4></script>
+
+<script>
+  promise_test(async (t) => {
+    await new Promise(resolve => {
+      addEventListener('DOMContentLoaded', resolve);
+    });
+
+    const base_msg = " was fetched by the preload scanner";
+    assert_true(internals.isPreloaded(script1.src), script1.src + base_msg);
+    assert_true(internals.isPreloaded(script2.src), script2.src + base_msg);
+    assert_true(internals.isPreloaded(script3.src), script3.src + base_msg);
+    assert_true(internals.isPreloaded(script4.src), script4.src + base_msg);
+    assert_true(internals.isPreloaded(script5.src), script5.src + base_msg);
+  }, 'all scripts must be fetched by the preload scanner');
+
+  // Setup the tests described by |priority_tests|.
+  for (const test of priority_tests) {
+    async_test(t => {
+      checkResourcePriority(test.url, test.expected_priority, test.description);
+      t.done();
+    });
+  }
+</script>
+
+<body>
+<!-- Dummy Image to delineate late-body -->
+<img src="../resources/square.png">
+
+<script id=script6 fetchpriority=high src=../resources/dummy.js?6></script>
+<script id=script7 fetchpriority=low src=../resources/dummy.js?7></script>
+<script id=script8 fetchpriority=auto src=../resources/dummy.js?8></script>
+<script id=script9 fetchpriority=xyz src=../resources/dummy.js?9></script>
+<script id=script10 src=../resources/dummy.js?10></script>
+
+</body>

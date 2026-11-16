@@ -1,0 +1,45 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useAsyncStackTrace=true,--forceCodeBlockToJettisonDueToOldAge=true ] -->
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test verifies that Error.captureStackTrace works correctly with async stack frames whose CodeBlock has been jettisoned. See https://bugs.webkit.org/show_bug.cgi?id=308997.");
+
+jsTestIsAsync = true;
+
+async function outer() {
+    await inner();
+}
+
+async function inner() {
+    // Suspend execution so both outer and inner are off the call stack.
+    // When inner resumes via microtask, outer's CodeBlock is no longer
+    // on any stack and can be jettisoned.
+    await Promise.resolve();
+
+    // Force GC to jettison outer's CodeBlock. With
+    // --forceCodeBlockToJettisonDueToOldAge=true, any CodeBlock not currently
+    // on the stack will be jettisoned.
+    if (window.GCController) {
+        GCController.collect();
+        GCController.collect();
+    }
+
+    // Error.captureStackTrace walks the async stack frames. The frame for
+    // outer() now has no CodeBlock (it was jettisoned). This previously
+    // crashed in WebCore::JSVMClientData::overrideSourceURL due to a
+    // RELEASE_ASSERT(codeBlock) that didn't account for async frames.
+    var obj = {};
+    Error.captureStackTrace(obj);
+
+    testPassed("Error.captureStackTrace did not crash with jettisoned async CodeBlock");
+    finishJSTest();
+}
+
+outer();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

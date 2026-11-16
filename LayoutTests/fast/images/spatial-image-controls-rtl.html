@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialImageControlsEnabled=true ] -->
+<script src="../../resources/ui-helper.js"></script>
+<script>
+    // Set RTL layout direction BEFORE creating any elements
+    if (window.internals) {
+        window.internals.setUserInterfaceLayoutDirection("RTL");
+    }
+</script>
+<style>
+    img {
+        width: 200px;
+        height: 200px;
+        position: absolute;
+        border-radius: inherit;
+    }
+    div.image-container {
+        width: 200px;
+        height: 200px;
+        position: relative;
+    }
+</style>
+<body>
+    <div class="image-container">
+        <img controls src="resources/spatial.heic">
+    </div>
+    <div class="image-container">
+        <img controls dir="ltr" src="resources/spatial.heic">
+    </div>
+
+    <script>
+        async function main(){
+            const images = document.querySelectorAll('img');
+            const promises = [];
+
+            images.forEach(image => {
+              promises.push(new Promise(resolve => {
+                image.onload = resolve;
+                image.onerror = resolve;
+              }));
+            });
+
+            await Promise.all(promises);
+
+            images.forEach(image => {
+                await UIHelper.renderingUpdate();
+            })
+            testRunner.notifyDone();
+        }
+
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            main();
+        }
+    </script>
+</body>

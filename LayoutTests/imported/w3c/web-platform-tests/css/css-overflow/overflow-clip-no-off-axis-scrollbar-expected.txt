@@ -1,0 +1,3 @@
+
+PASS overflow: clip on the off-axis does not display a scrollbar.
+

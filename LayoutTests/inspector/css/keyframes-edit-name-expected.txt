@@ -1,0 +1,21 @@
+
+== Running test suite: CSS.Keyframes.Rename
+-- Running test case: CSS.Keyframes.RenameRelinksAnimation
+PASS: @keyframes is named `fade`.
+PASS: @keyframes name is editable.
+PASS: Paused at `from`, opacity is 0.1.
+PASS: @keyframes renamed to `renamed`.
+PASS: Renaming `fade` unlinks the animation (opacity reverts to 1).
+PASS: A quoted name should set the parsed animation name.
+PASS: A quoted name should relink the paused animation.
+PASS: An escaped name should set the parsed animation name.
+PASS: An escaped name should relink the paused animation.
+PASS: A name with surrounding whitespace should set the parsed animation name.
+PASS: A name with surrounding whitespace should relink the paused animation.
+
+-- Running test case: CSS.Keyframes.RenameQuotedNameSupportsUndo
+PASS: The original header should retain the quotes around a name with spaces.
+PASS: Undo should restore the parsed name with spaces.
+PASS: Undo should restore the original quoted header.
+PASS: Undo should relink the paused animation.
+

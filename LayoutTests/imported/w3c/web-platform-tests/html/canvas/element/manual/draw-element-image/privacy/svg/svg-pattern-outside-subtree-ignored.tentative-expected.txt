@@ -1,0 +1,4 @@
+
+
+FAIL drawElementImage does not use SVG patterns outside the subtree assert_false: The canvas should not use the pattern. expected false got true
+

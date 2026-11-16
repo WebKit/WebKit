@@ -1,0 +1,3 @@
+
+FAIL Test wildcard host policy works as expected undefined is not an object (evaluating 'document.permissionsPolicy.getAllowlistForFeature')
+

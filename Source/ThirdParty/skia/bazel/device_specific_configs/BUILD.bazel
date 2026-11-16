@@ -1,0 +1,21 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+go_library(
+    name = "device_specific_configs",
+    srcs = ["device_specific_configs.go"],
+    importpath = "go.skia.org/skia/bazel/device_specific_configs",
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "device_specific_configs_test",
+    srcs = ["device_specific_configs_test.go"],
+    embed = [":device_specific_configs"],
+    deps = ["@com_github_stretchr_testify//assert"],
+)

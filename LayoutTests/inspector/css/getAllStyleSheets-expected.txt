@@ -1,0 +1,20 @@
+Test CSS.getAllStyleSheets returns expected information for different style sheet sources.
+
+PASS: There should be four stylesheets.
+
+URL: inspector/css/resources/external.css
+OFFSET: (0, 0)
+PASS: Stylesheet should have a frame.
+
+URL: <style> on inspector/css/getAllStyleSheets.html
+OFFSET: (5, 7)
+PASS: Stylesheet should have a frame.
+
+URL: <style> on inspector/css/getAllStyleSheets.html
+OFFSET: (6, 7)
+PASS: Stylesheet should have a frame.
+
+URL: inspector/css/getAllStyleSheets.html
+OFFSET: (0, 0)
+PASS: Stylesheet should have a frame.
+

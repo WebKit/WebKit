@@ -1,0 +1,6 @@
+
+PASS A script before frame and iframe elements observes post-connection order
+PASS A script after frame and iframe elements observes post-connection order
+PASS Both frames and iframes create a child window when connected inside a shadow tree
+PASS Neither frames nor iframes create a child window in a document without a browsing context
+

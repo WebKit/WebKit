@@ -1,0 +1,5 @@
+{
+  "name": "build-webkit",
+  "description": "Build WebKit on Apple platforms with xcodebuild, capturing results in an xcresult bundle so verbose build logs don't pollute the conversation",
+  "version": "1.0.0"
+}

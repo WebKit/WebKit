@@ -1,0 +1,6 @@
+This paragraph should have green background because CLASS contains "b"
+
+This address should also have green background because the selector in the last rule does not apply to the inner SPANs.
+
+PASS Attribute multivalue selector
+

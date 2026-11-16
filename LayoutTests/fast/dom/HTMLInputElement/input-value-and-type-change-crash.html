@@ -1,0 +1,16 @@
+<!-- webkit-test-runner [ MutationEventsEnabled=true ] --><input id=input>
+Pass if no crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+    
+function eventhandler() {
+    document.body.offsetHeight;
+}
+
+input.addEventListener("DOMSubtreeModified", eventhandler);
+document.execCommand("selectAll", true);
+
+input.value = "foobar";
+input.type = "button";
+</script>

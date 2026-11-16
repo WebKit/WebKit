@@ -1,0 +1,9 @@
+spec reference
+
+
+
+PASS audio events - durationchange, then loadedmetadata
+PASS setting src attribute on autoplay audio should trigger durationchange then loadedmetadata event
+PASS video events - durationchange, resize then loadeddata
+PASS setting src attribute on autoplay video should trigger durationchange, resize then loadedmetadata event
+

@@ -1,0 +1,49 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 4; i++)
+        moveSelectionForwardByCharacterCommand();
+    for (i = 0; i < 5; i++)
+        extendSelectionForwardByCharacterCommand();
+    for (i = 0; i < 5; i++)
+        deleteCommand();
+    undoCommand();
+    moveSelectionForwardByCharacterCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div class="explanation">
+Should see "foo bar baz" in the red box. Insertion point should be between the "b" and "a" of "baz".
+</div>
+
+<div id="root" contenteditable="true" style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;">
+<div id="test" class="editing">foo bar baz</div></div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=100 ] -->
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html {
+    height: 100%;
+    color: white;
+    font-family: system-ui;
+    text-align: center;
+    font-size: 20px;
+}
+
+body {
+    background-color: #1C1C1E;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.outer-wrapper {
+    margin: 100px 16px;
+    padding: 0 0 30px 0;
+}
+
+.wrapper {
+    margin: 24px 0 16px 0;
+}
+
+.sticky-container {
+    position: relative;
+    border-radius: 10px;
+    margin: 10px 0;
+    margin-top: -10px;
+    z-index: 0;
+    background-color: #2C2C2E;
+}
+
+.sticky {
+    height: 24px;
+    background: #1C1C1E;
+    position: sticky;
+    top: 0;
+    width: 100%;
+}
+
+.tall {
+    height: 4000px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    await UIHelper.ensurePresentationUpdate();
+
+    colorsBeforeScrolling = await UIHelper.fixedContainerEdgeColors();
+    await UIHelper.scrollDown();
+    await UIHelper.ensurePresentationUpdate();
+    colorsAfterScrolling = await UIHelper.fixedContainerEdgeColors();
+
+    shouldBeNull("colorsBeforeScrolling.top");
+    shouldBeNull("colorsBeforeScrolling.left");
+    shouldBeNull("colorsBeforeScrolling.right");
+    shouldBeNull("colorsBeforeScrolling.bottom");
+
+    shouldBeEqualToString("colorsAfterScrolling.top", "rgb(28, 28, 30)");
+    shouldBeNull("colorsAfterScrolling.left");
+    shouldBeNull("colorsAfterScrolling.right");
+    shouldBeNull("colorsAfterScrolling.bottom");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="outer-wrapper">
+        <h1 class="alerts-title">Scroll down</h1>
+        <div class="wrapper">
+            <div class="sticky-container">
+                <div class="sticky"></div>
+                <div class="tall">
+                    <pre id="description"></pre>
+                    <pre id="console"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

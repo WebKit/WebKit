@@ -1,0 +1,3 @@
+
+PASS test that unslotted link never matches document rule
+

@@ -1,0 +1,3 @@
+
+PASS SVGGraphicsElement.getScreenCTM subject to the 'zoom' property
+

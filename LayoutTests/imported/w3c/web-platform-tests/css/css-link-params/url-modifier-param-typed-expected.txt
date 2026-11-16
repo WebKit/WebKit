@@ -1,0 +1,5 @@
+
+PASS e.style['background-image'] = "url(\"icon.svg\" param(--c <color>, green))" should set the property value
+PASS e.style['background-image'] = "url(\"icon.svg\" param(--c type(<color>), green))" should set the property value
+PASS e.style['background-image'] = "url(\"icon.svg\" param(--c <notatype>, green))" should not set the property value
+

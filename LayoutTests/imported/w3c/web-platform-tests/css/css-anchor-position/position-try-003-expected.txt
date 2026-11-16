@@ -1,0 +1,5 @@
+
+PASS .anchored 1
+PASS .anchored 2
+PASS .anchored 3
+

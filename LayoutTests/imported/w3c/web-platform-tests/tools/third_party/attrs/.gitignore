@@ -1,0 +1,13 @@
+*.egg-info
+*.pyc
+.cache
+.coverage*
+.hypothesis
+.mypy_cache
+.pytest_cache
+.tox
+build
+dist
+docs/_build/
+htmlcov
+pip-wheel-metadata

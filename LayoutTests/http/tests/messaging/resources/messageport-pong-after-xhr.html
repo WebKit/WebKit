@@ -1,0 +1,11 @@
+<script>
+onmessage = (e) => {
+    let port = e.ports[0];
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "/incremental/resources/delayed-css.py?delay=300");
+    xhr.onload = () => {
+        port.postMessage("pong");
+    };
+    xhr.send();
+}
+</script>

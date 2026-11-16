@@ -1,0 +1,4 @@
+
+PASS composedPath() in a listener on the use element
+PASS composedPath() in a listener on an ancestor of the use element
+

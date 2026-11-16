@@ -1,0 +1,5 @@
+Target
+Source
+
+PASS Already in-view source triggers animation
+

@@ -1,0 +1,3 @@
+
+PASS AudioParam accepts an audio-rate signal from an AudioNode and scales a constant source exactly
+

@@ -1,0 +1,3 @@
+
+PASS manuals do not close popovers
+

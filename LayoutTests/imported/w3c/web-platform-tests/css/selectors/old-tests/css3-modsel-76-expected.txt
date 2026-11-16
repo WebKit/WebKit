@@ -1,0 +1,22 @@
+This paragraph should be unstyled.
+
+This address should be unstyled.
+This paragraph should have green background.
+
+This paragraph should have green background.
+
+First definition term that should have green background.
+First definition that should also have a green background.
+Second definition term that should have green background.
+Second definition that should have green background.
+Third definition term.
+Third definition.
+Fourth definition term that should have green background.
+Fourth definition that should have green background.
+Fifth definition term that should have green background.
+Fifth definition that should have green background.
+Sixth definition term.
+Sixth definition.
+
+PASS NEGATED :nth-last-of-type() pseudo-class
+

@@ -1,0 +1,30 @@
+
+PASS 1 attribute(s): aria-label: dataset["label"] is undefined
+PASS 1 attribute(s): aria-label: "label" in dataset is false
+PASS 2 attribute(s): aria-label: dataset["label"] is undefined
+PASS 2 attribute(s): aria-label: "label" in dataset is false
+PASS 1 attribute(s): title: dataset[""] is undefined
+PASS 1 attribute(s): title: "" in dataset is false
+PASS 2 attribute(s): title: dataset[""] is undefined
+PASS 2 attribute(s): title: "" in dataset is false
+PASS 1 attribute(s): class: dataset[""] is undefined
+PASS 1 attribute(s): class: "" in dataset is false
+PASS 2 attribute(s): class: dataset[""] is undefined
+PASS 2 attribute(s): class: "" in dataset is false
+PASS 1 attribute(s): dataxfoo: dataset["foo"] is undefined
+PASS 1 attribute(s): dataxfoo: "foo" in dataset is false
+PASS 2 attribute(s): dataxfoo: dataset["foo"] is undefined
+PASS 2 attribute(s): dataxfoo: "foo" in dataset is false
+PASS 1 attribute(s): data-Foo: dataset["Foo"] is undefined
+PASS 1 attribute(s): data-Foo: "Foo" in dataset is false
+PASS 2 attribute(s): data-Foo: dataset["Foo"] is undefined
+PASS 2 attribute(s): data-Foo: "Foo" in dataset is false
+PASS 1 attribute(s): data-foo-bar: dataset["foo-bar"] is undefined
+PASS 1 attribute(s): data-foo-bar: "foo-bar" in dataset is false
+PASS 2 attribute(s): data-foo-bar: dataset["foo-bar"] is undefined
+PASS 2 attribute(s): data-foo-bar: "foo-bar" in dataset is false
+PASS 1 attribute(s): data-foo-bar-baz: dataset["foo-barBaz"] is undefined
+PASS 1 attribute(s): data-foo-bar-baz: "foo-barBaz" in dataset is false
+PASS 2 attribute(s): data-foo-bar-baz: dataset["foo-barBaz"] is undefined
+PASS 2 attribute(s): data-foo-bar-baz: "foo-barBaz" in dataset is false
+

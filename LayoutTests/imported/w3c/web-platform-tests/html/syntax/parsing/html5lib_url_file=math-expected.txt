@@ -1,0 +1,12 @@
+html5lib parser tests
+
+
+PASS <math><tr><td><mo><tr> (innerHTML in td)
+PASS <math><tr><td><mo><tr> (innerHTML in tr)
+PASS <math><thead><mo><tbody> (innerHTML in thead)
+PASS <math><tfoot><mo><tbody> (innerHTML in tfoot)
+PASS <math><tbody><mo><tfoot> (innerHTML in tbody)
+PASS <math><tbody><mo></table> (innerHTML in tbody)
+PASS <math><thead><mo></table> (innerHTML in tbody)
+PASS <math><tfoot><mo></table> (innerHTML in tbody)
+

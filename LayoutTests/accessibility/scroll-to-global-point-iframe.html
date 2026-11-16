@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div style="border: 1px solid #000; height: 5000px;">5000-pixel box</div>
+
+<iframe id="frame" src="data:text/html,
+    <body>
+        <style>button { border: 0; }</style>
+        <div style='border: 1px solid %23000; height: 5000px;'>5000-pixel box</div>
+        <button id='target'>Target</button>
+        <div style='border: 1px solid %23000; height: 5000px;'>5000-pixel box</div>
+    </body>"></iframe>
+
+<div style="border: 1px solid #000; height: 5000px;">5000-pixel box</div>
+
+<script>
+var output = "Tests that scrolling to move an element to a specific point successfully scrolls an iframe.\n\n";
+window.jsTestIsAsync = true;
+
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    window.frame = document.getElementById("frame");
+    window.frameWindow = frame.contentWindow;
+    window.frameDoc = frameWindow.document;
+    window.target = frameDoc.getElementById("target");
+    frameDoc.getElementById("target").focus();
+
+    var targetAccessibleObject;
+    setTimeout(async function() {
+        await waitFor(() => {
+            targetAccessibleObject = accessibilityController.focusedElement;
+            return targetAccessibleObject && targetAccessibleObject.domIdentifier === "target";
+        });
+
+        // Reset the initial scroll position (since calling focus() can scroll the page too).
+        window.scrollTo(0, 0);
+        frameWindow.scrollTo(0, 0);
+        output += expect("window.pageYOffset", "0");
+        output += expect("frameWindow.pageYOffset", "0");
+
+        // Scroll to various locations and check.
+        targetAccessibleObject.scrollToGlobalPoint(0, 0);
+        output += await expectAsync("target.getBoundingClientRect().top", "0");
+
+        targetAccessibleObject.scrollToGlobalPoint(0, 300);
+        output += await expectAsync("target.getBoundingClientRect().top", "300");
+
+        targetAccessibleObject.scrollToGlobalPoint(0, 3000);
+        output += await expectAsync("target.getBoundingClientRect().top", "3000");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+
+window.addEventListener("load", function() {
+    setTimeout(runTest, 0);
+}, false);
+</script>
+</body>
+</html>
+

@@ -1,0 +1,998 @@
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+from __future__ import annotations
+
+import base64
+import calendar
+import mimetypes
+import re
+import sys
+import time
+import webkitcorepy
+from typing import Any, TYPE_CHECKING
+
+from .issue import Issue
+from .tracker import Tracker as GenericTracker
+from .radar import Tracker as RadarTracker
+
+from datetime import datetime
+from webkitbugspy import User, log
+
+from html.parser import HTMLParser
+from itertools import chain
+
+requests = webkitcorepy.CallByNeed(lambda: __import__('requests'))
+
+
+class Tracker(GenericTracker):
+    ROOT_RE = re.compile(r'\Ahttps?://(?P<domain>\S+)\Z')
+    RE_TEMPLATES = [
+        r'\A<?https?://{}/show_bug.cgi\?id=(?P<id>\d+)(?:#[^\s>]*)?>?\Z',
+        r'\A<?{}/show_bug.cgi\?id=(?P<id>\d+)(?:#[^\s>]*)?>?\Z',
+    ]
+    NAME = 'Bugzilla'
+    DEFAULT_TIMEOUT = 30
+    MAX_SUMMARY_LENGTH = 255
+    # Bugzilla's invalid_login_or_password and account_disabled; it also answers HTTP 401 for errors that are not a refused login.
+    FAILED_LOGIN_CODES = (300, 301)
+    # FIXME: We should make this class project agnostic by specifying this in trackers.json.
+    DEFAULT_VERSION = 'WebKit Nightly Build'
+    # Bugzilla only mails changes newer than the bug's whole-second lastdiffed, so a change made
+    # in the same second a bug was created is recorded but never mailed.
+    BUGMAIL_SECOND_DELAY = 1.1
+
+    # Security keywords to detect in title/description.
+    # These trigger a prompt to use Security product.
+    SECURITY_KEYWORDS = [
+        # Web platform security
+        r'\bXSS\b', r'cross[- ]?site[- ]?scripting',
+        r'\bCSRF\b', r'cross[- ]?site[- ]?request[- ]?forgery',
+        r'SQL[- ]?injection', r'command[- ]?injection', r'code[- ]?injection',
+        r'same[- ]?origin', r'\bCORS\b',
+        # Memory safety
+        r'use[- ]?after[- ]?free', r'\bUAF\b',
+        r'out[- ]?of[- ]?bounds', r'\bOOB\b', r'buffer[- ]?overflow', r'buffer[- ]?overrun',
+        r'double[- ]?free',
+        r'heap[- ]?overflow', r'stack[- ]?overflow',
+        r'null[- ]?pointer[- ]?dereference', r'nullptr[- ]?dereference',
+        r'type[- ]?confusion',
+        r'integer[- ]?overflow', r'integer[- ]?underflow',
+        r'\bTOCTOU\b', r'time[- ]?of[- ]?check', r'time[- ]?of[- ]?use', r'race[- ]?condition',
+        r'uninitialized[- ]?memory', r'uninitialized[- ]?variable',
+        r'memory[- ]?corruption',
+        # Other security terms
+        r'\bvulnerability\b', r'\bexploit\b', r'security[- ]?bug', r'security[- ]?issue',
+        r'arbitrary[- ]?code[- ]?execution', r'\bRCE\b', r'remote[- ]?code[- ]?execution',
+        r'privilege[- ]?escalation', r'sandbox[- ]?escape',
+        r'information[- ]?disclosure', r'information[- ]?leak',
+        r'denial[- ]?of[- ]?service', r'\bDoS\b',
+    ]
+
+    @classmethod
+    def check_security_keywords(cls, title: str | None, description: str | None) -> list[str]:
+        """Return list of matched security keyword patterns."""
+        text = '{} {}'.format(title or '', description or '')
+        return [p for p in cls.SECURITY_KEYWORDS if re.search(p, text, re.IGNORECASE)]
+
+    @classmethod
+    def prompt_security_classification(cls, matches: list[str], project: str | None, component: str | None) -> tuple[str | None, str | None]:
+        """
+        If security keywords found and project is not already 'Security',
+        prompt user to confirm.  Returns (project, component).
+        """
+        if not matches or project == 'Security':
+            return project, component
+        print("WARNING: The bug description contains security-related keywords:")
+        for match in matches[:5]:
+            readable = match.replace(r'\b', '').replace('[- ]?', '-').replace(r'\.', '.')
+            print("  - {}".format(readable))
+        response = webkitcorepy.Terminal.choose(
+            "This may be a security bug. Use Security product?",
+            options=['Yes, use Security', 'No, keep {}'.format(project or 'WebKit')],
+            default='Yes, use Security',
+        )
+        if response.startswith('Yes'):
+            return 'Security', 'Security'
+        return project, component
+
+    @classmethod
+    def classify_from_radar(cls, radar_issue: Issue | None, project: str | None, component: str | None) -> tuple[str | None, str | None, bool]:
+        """
+        If radar_issue is redacted (security-sensitive), override project and
+        component to 'Security'.  Always prints a notice when forcing Security.
+        Prints an additional warning if user-supplied values are being
+        overridden.  Returns (project, component, was_forced).
+        """
+        if not radar_issue or not radar_issue.redacted:
+            return project, component, False
+
+        print("Radar {} is security-sensitive, using Security product".format(radar_issue.link))
+        overrides = []
+        if project and project != 'Security':
+            overrides.append("--project '{}'".format(project))
+        if component and component != 'Security':
+            overrides.append("--component '{}'".format(component))
+        if overrides:
+            print("WARNING: Overriding {} with 'Security'".format(' and '.join(overrides)))
+
+        return 'Security', 'Security', True
+
+    class BugzillaPageParser(HTMLParser):
+        def __init__(self) -> None:
+            HTMLParser.__init__(self)
+            self.data: dict[str, list[str]] = {}
+            self.current_value: str | None = None
+
+        def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+            if tag == 'span' and ('id', 'duplicates') in attrs:
+                self.current_value = 'duplicates'
+                self.data[self.current_value] = []
+
+        def handle_data(self, data: str) -> None:
+            if not self.current_value:
+                return
+            data = data.rstrip().lstrip()
+            if not data:
+                return
+            self.data[self.current_value].append(data)
+
+        def handle_endtag(self, tag: str) -> None:
+            if tag == 'span':
+                self.current_value = None
+
+        @staticmethod
+        def parse(html_text: str) -> dict[str, list[str]]:
+            parser = Tracker.BugzillaPageParser()
+            parser.feed(html_text)
+            return parser.data
+
+    class Encoder(GenericTracker.Encoder):
+        @webkitcorepy.decorators.hybridmethod
+        def default(context: Any, obj: Any) -> Any:
+            if isinstance(obj, Tracker):
+                result: dict[str, Any] = dict(
+                    type='bugzilla',
+                    url=obj.url,
+                    hide_title=obj.hide_title,
+                )
+                if obj._res[len(Tracker.RE_TEMPLATES):]:
+                    result['res'] = [compiled.pattern for compiled in obj._res[len(Tracker.RE_TEMPLATES):]]
+                if obj.radar_importer:
+                    result['radar_importer'] = User.Encoder().default(obj.radar_importer)
+                return result
+            if isinstance(context, type):
+                raise TypeError('Cannot invoke parent class when classmethod')
+            return super(Tracker.Encoder, context).default(obj)
+
+    def __init__(
+        self, url: str, users: User.Mapping | None = None, res: list[re.Pattern[str]] | None = None, login_attempts: int = 3,
+        redact: dict[str, bool] | None = None, radar_importer: User | dict[str, Any] | None = None, hide_title: bool | None = None,
+        redact_exemption: dict[str, bool] | None = None, timeout: float | None = None,
+    ) -> None:
+        super(Tracker, self).__init__(users=users, redact=redact, redact_exemption=redact_exemption, hide_title=hide_title, timeout=timeout or self.DEFAULT_TIMEOUT)
+
+        self._logins_left = login_attempts + 1 if login_attempts else 1
+        self._projects: dict[str, dict[str, Any]] | None = None
+        self._created_at: dict[int, float] = {}
+        self.session = requests.Session()
+        match = self.ROOT_RE.match(url)
+        if not match:
+            raise TypeError("'{}' is not a valid bugzilla url".format(url))
+        self.url = url
+        self._res = [
+            re.compile(template.format(match.group('domain')))
+            for template in self.RE_TEMPLATES
+        ] + (res or [])
+
+        self.radar_importer: User | None
+        if radar_importer:
+            self.radar_importer = User(**radar_importer) if isinstance(radar_importer, dict) else radar_importer
+        else:
+            self.radar_importer = None
+
+    def user(self, name: str | None = None, username: int | str | None = None, email: str | None = None) -> User:
+        user = super(Tracker, self).user(name=name, username=username, email=email)
+        if user:
+            return user
+        if name and username and email:
+            return self.users.create(
+                name=name,
+                username=username,
+                emails=[email],
+            )
+
+        if not username and not email:
+            raise RuntimeError("Failed to find username for '{}'".format(name))
+        response = self.session.get('{url}/rest/user{query}'.format(
+            url=self.url,
+            query=self._login_arguments(
+                required=False,
+                query='names={name}'.format(name=username or email or name),
+            )), timeout=self.timeout,
+        )
+        self._count_failed_login(response)
+        response = response.json().get('users') if response.status_code // 100 == 2 else None
+        if not response:
+            return self.users.create(
+                name=name,
+                username=username,
+                emails=[email] if email else None,
+            )
+
+        return self.users.create(
+            name=response[0]['real_name'],
+            username=response[0]['name'],
+            emails=[response[0]['name']],
+        )
+
+    def from_string(self, string: str) -> Issue | None:
+        for regex in self._res:
+            match = regex.match(string)
+            if match:
+                return self.issue(int(match.group('id')))
+        return None
+
+    def credentials(self, required: bool = True, validate: bool = False) -> tuple[str | None, str | None]:
+        def validater(username: str, password: str) -> bool:
+            quoted_username = requests.utils.quote(username)
+            response = self.session.get(
+                '{}/rest/user/{}?login={}&password={}'.format(self.url, quoted_username, quoted_username, requests.utils.quote(password)),
+                timeout=self.timeout,
+            )
+            if response.status_code == 200:
+                return True
+            sys.stderr.write('Login to {} for {} failed\n'.format(self.url, username))
+            return False
+
+        return webkitcorepy.credentials(
+            url=self.url,
+            required=required,
+            prompt=self.url.split('//')[-1],
+            validater=validater,
+            validate_existing_credentials=validate
+        )
+
+    def _login_arguments(self, required: bool = False, query: str | None = None) -> str:
+        if not self._logins_left:
+            if required:
+                raise RuntimeError('Exhausted login attempts')
+            return '?{}'.format(query) if query else ''
+
+        username, password = self.credentials(required=required)
+        if not username or not password:
+            return '?{}'.format(query) if query else ''
+        return '?login={username}&password={password}{query}'.format(
+            username=requests.utils.quote(username),
+            password=requests.utils.quote(password),
+            query='&{}'.format(query) if query else '',
+        )
+
+    @staticmethod
+    def _error_code(response: Any) -> Any:
+        try:
+            body = response.json()
+        except ValueError:
+            return None
+        return body.get('code') if isinstance(body, dict) else None
+
+    def _count_failed_login(self, response: Any) -> None:
+        if response is None or response.status_code // 100 != 4 or not self._logins_left:
+            return
+        if self._error_code(response) in self.FAILED_LOGIN_CODES:
+            self._logins_left -= 1
+
+    @webkitcorepy.decorators.Memoize()
+    def me(self) -> User:
+        username, _ = self.credentials(required=True)
+        return self.user(username=username)
+
+    def issue(self, id: int | str) -> Issue:
+        return Issue(id=int(id), tracker=self)
+
+    def populate(self, issue: Issue, member: str | None = None) -> Issue | None:
+        issue._link = '{}/show_bug.cgi?id={}'.format(self.url, issue.id)
+        issue._labels = []
+        issue._classification = ''  # Bugzilla doesn't have a concept of "classification"
+        issue._source_changes = []  # We need to parse the bug to find any source changes
+
+        if member in ('title', 'timestamp', 'modified', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version', 'keywords', 'related'):
+            response = self.session.get(
+                '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)),
+                timeout=self.timeout,
+            )
+            self._count_failed_login(response)
+            if response.status_code // 100 == 4 and self._error_code(response) == 101:
+                sys.stderr.write("{}\n".format(response.json().get('message')))
+                return None
+            response = response.json().get('bugs', []) if response.status_code == 200 else None
+            if response:
+                response = response[0]
+                issue._title = response['summary']
+                issue._timestamp = int(calendar.timegm(datetime.strptime(response['creation_time'], '%Y-%m-%dT%H:%M:%SZ').timetuple()))
+                issue._modified = int(calendar.timegm(datetime.strptime(response['last_change_time'], '%Y-%m-%dT%H:%M:%SZ').timetuple()))
+                if response.get('creator_detail'):
+                    issue._creator = self.user(
+                        name=response['creator_detail'].get('real_name'),
+                        username=response['creator_detail'].get('name'),
+                        email=response['creator_detail'].get('email'),
+                    )
+                else:
+                    issue._creator = self.user(username=response['creator']) if response.get('creator') else None
+                issue._opened = response['status'] != 'RESOLVED'
+                dupe = response.get('dupe_of')
+                if dupe is not None:
+                    issue._original = self.issue(dupe)
+                if response.get('assigned_to_detail'):
+                    issue._assignee = self.user(
+                        name=response['assigned_to_detail'].get('real_name'),
+                        username=response['assigned_to_detail'].get('name'),
+                        email=response['assigned_to_detail'].get('email'),
+                    )
+                else:
+                    issue._assignee = self.user(username=response['assigned_to']) if response.get('assigned_to') else None
+                issue._watchers = []
+                for name in response.get('cc', []):
+                    issue._watchers.append(self.user(username=name))
+
+                issue._project = response.get('product', '')
+                issue._component = response.get('component', '')
+                issue._version = response.get('version', '')
+                issue._keywords = response.get('keywords', [])
+                issue._related = dict(
+                    depends_on=[self.issue(id) for id in response.get('depends_on') or []],
+                    blocks=[self.issue(id) for id in response.get('blocks') or []],
+                    regressions=[self.issue(id) for id in response.get('regressions') or []],
+                    regressed_by=[self.issue(id) for id in response.get('regressed_by') or []]
+                )
+            else:
+                sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
+
+        if member in ['description', 'comments']:
+            response = self.session.get(
+                '{}/rest/bug/{}/comment{}'.format(self.url, issue.id, self._login_arguments(required=False)),
+                timeout=self.timeout,
+            )
+            self._count_failed_login(response)
+            if response.status_code == 200:
+                response = response.json().get('bugs', {}).get(str(issue.id), {}).get('comments', None)
+            else:
+                response = None
+
+            if response:
+                issue._description = response[0].get('text')
+                issue._comments = [
+                    Issue.Comment(
+                        user=self.user(username=comment['creator']),
+                        timestamp=int(calendar.timegm(datetime.strptime(comment['creation_time'], '%Y-%m-%dT%H:%M:%SZ').timetuple())),
+                        content=comment['text'],
+                    ) for comment in response[1:]
+                ]
+            else:
+                sys.stderr.write("Failed to fetch comments for '{}'\n".format(issue.link))
+
+        if member in ('duplicates', 'references', 'see_also'):
+            issue._references = []
+            issue._related_links = []
+            refs: set[str] = set()
+
+            for text in chain(
+                (comment.content for comment in (reversed(issue.comments) or ()) if comment),
+                (issue.description,),
+            ):
+                if not text:
+                    continue
+                for match in self.REFERENCE_RE.findall(text):
+                    candidate = GenericTracker.from_string(match[0]) or self.from_string(match[0])
+                    if not candidate or candidate.link in refs or (isinstance(candidate.tracker, type(issue.tracker)) and candidate.id == issue.id):
+                        continue
+                    issue._references.append(candidate)
+                    refs.add(candidate.link)
+
+            response = self.session.get(
+                '{url}/rest/bug/{id}{query}'.format(
+                    url=self.url, id=issue.id,
+                    query=self._login_arguments(required=False, query='include_fields=see_also'),
+                ), timeout=self.timeout,
+            )
+            self._count_failed_login(response)
+            response = response.json().get('bugs', []) if response.status_code == 200 else None
+            if response:
+                for link in response[0].get('see_also', []):
+                    issue._related_links.append(link)
+                    candidate = GenericTracker.from_string(link) or self.from_string(link)
+                    if not candidate or candidate.link in refs or candidate.id == issue.id:
+                        continue
+                    issue._references.append(candidate)
+                    refs.add(candidate.link)
+            else:
+                sys.stderr.write("Failed to fetch related issues for '{}'\n".format(issue.link))
+
+            # API doesn't allow us to access duplicates, we need to parse HTML instead
+            response = self.session.get('{url}/show_bug.cgi{query}'.format(
+                url=self.url,
+                query=self._login_arguments(required=False, query='id={}'.format(issue.id)),
+            ), timeout=self.timeout)
+            self._count_failed_login(response)
+            issue._duplicates = []
+            data = self.BugzillaPageParser.parse(response.text) if response.status_code // 100 == 2 else {}
+            for dupe_id in data.get('duplicates') or []:
+                if not dupe_id.isnumeric():
+                    continue
+                dupe = self.issue(dupe_id)
+                issue._duplicates.append(dupe)
+                if issue.link not in refs:
+                    issue._references.append(dupe)
+
+        if member == 'attachments':
+            issue._attachments = []
+            response = self.session.get(
+                '{url}/rest/bug/{id}/attachment{query}'.format(
+                    url=self.url, id=issue.id,
+                    query=self._login_arguments(required=False, query='exclude_fields=data'),
+                ), timeout=self.timeout,
+            )
+            self._count_failed_login(response)
+            attachments = response.json().get('bugs', {}).get(str(issue.id)) if response.status_code == 200 else None
+            if attachments is None:
+                sys.stderr.write("Failed to fetch attachments for '{}'\n".format(issue.link))
+            else:
+                for attachment in attachments:
+                    if attachment.get('is_obsolete'):
+                        continue
+                    issue._attachments.append(Issue.Attachment(
+                        name=attachment.get('file_name'),
+                        content_type=attachment.get('content_type'),
+                        contents=lambda id=attachment.get('id'): self._attachment_contents(id),
+                    ))
+
+        return issue
+
+    def _attachment_contents(self, attachment_id: int) -> bytes | None:
+        '''Download a single attachment's bytes, or None. Fetched lazily so that listing an issue's
+        attachments does not download every attachment's content.'''
+        response = self.session.get(
+            '{url}/rest/bug/attachment/{id}{query}'.format(
+                url=self.url, id=attachment_id,
+                query=self._login_arguments(required=False, query='include_fields=data'),
+            ), timeout=self.timeout,
+        )
+        self._count_failed_login(response)
+        if response.status_code // 100 != 2:
+            sys.stderr.write('Failed to download attachment {}\n'.format(attachment_id))
+            return None
+        data = response.json().get('attachments', {}).get(str(attachment_id), {}).get('data')
+        return base64.b64decode(data) if data is not None else None
+
+    def set(
+        self, issue: Issue, assignee: User | None = None, opened: bool | None = None, why: str | None = None,
+        project: str | None = None, component: str | None = None, version: str | None = None, original: Issue | None = None,
+        keywords: list[str] | None = None, source_changes: list[str] | None = None, state: str | None = None, substate: str | None = None,
+        cc: list[str] | None = None, see_also: list[str] | None = None, **properties: Any,
+    ) -> Issue | None:
+        update_dict: dict[str, Any] = dict()
+
+        if properties:
+            raise TypeError("'{}' is an invalid property".format(list(properties.keys())[0]))
+
+        if assignee:
+            if not isinstance(assignee, User):
+                raise TypeError("Must assign to '{}', not '{}'".format(User, type(assignee)))
+            issue._assignee = self.user(name=assignee.name, username=assignee.username, email=assignee.email)
+            update_dict['assigned_to'] = issue._assignee.username
+
+        if opened is not None:
+            issue._opened = bool(opened)
+            if issue._opened:
+                update_dict['status'] = 'REOPENED'
+                why = why or 'Reopening bug'
+            else:
+                update_dict['status'] = 'RESOLVED'
+                if original:
+                    update_dict['resolution'] = 'DUPLICATE'
+                    update_dict['dupe_of'] = original.id
+                    issue._original = original
+                else:
+                    update_dict['resolution'] = 'FIXED'
+
+        if why is not None:
+            update_dict['comment'] = dict(body=why)
+
+        if project or component or version:
+            projects = self.projects
+            if not project and len(projects) == 1:
+                project = list(projects.keys())[0]
+            if not project:
+                raise ValueError('No project provided')
+            if not projects.get(project):
+                raise ValueError("'{}' is not a recognized project".format(project))
+
+            components = sorted(projects.get(project, {}).get('components', {}).keys())
+            if not component and len(components) == 1:
+                component = components[0]
+            if not component:
+                raise ValueError('No component provided')
+            if component and component not in components:
+                raise ValueError("'{}' is not a recognized component of '{}'".format(component, project))
+
+            versions: list[str] = []
+            if component:
+                versions = projects.get(project, {}).get('components', {}).get(component, {}).get('versions', [])
+            if not versions:
+                versions = projects.get(project, {}).get('versions', [])
+            if not version:
+                version = versions[0]
+            if version not in versions:
+                raise ValueError("'{}' is not a recognized version in '{} {}'".format(version, project, component))
+
+            update_dict['product'] = project
+            update_dict['component'] = component
+            update_dict['version'] = version
+
+        if keywords is not None:
+            update_dict['keywords'] = dict(set=keywords)
+
+        if see_also is not None:
+            update_dict['see_also'] = dict(add=see_also)
+
+        if cc is not None:
+            update_dict['cc'] = dict(add=cc)
+
+        if update_dict:
+            update_dict['ids'] = [issue.id]
+            response = None
+            try:
+                response = self.session.put(
+                    '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+                    json=update_dict,
+                    timeout=self.timeout,
+                )
+            except RuntimeError as e:
+                sys.stderr.write('{}\n'.format(e))
+            self._count_failed_login(response)
+            if response is None or response.status_code // 100 != 2:
+                if assignee:
+                    issue._assignee = None
+                if opened is not None:
+                    issue._opened = None
+                sys.stderr.write("Failed to modify '{}'\n".format(issue))
+                return None
+
+            if project and component and version:
+                issue._project = project
+                issue._component = component
+                issue._version = version
+            if keywords is not None:
+                issue._keywords = keywords
+
+        if source_changes:
+            sys.stderr.write('Bugzilla does not support source changes at this time\n')
+            return None
+
+        if state or substate:
+            sys.stderr.write('Bugzilla does not support state at this time\n')
+            return None
+
+        return issue
+
+    def add_comment(self, issue: Issue, text: str) -> Issue.Comment | None:
+        response = None
+        try:
+            response = self.session.post(
+                '{}/rest/bug/{}/comment{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+                json=dict(comment=text),
+                timeout=self.timeout,
+            )
+        except RuntimeError as e:
+            sys.stderr.write('{}\n'.format(e))
+
+        self._count_failed_login(response)
+        if response is None or response.status_code // 100 != 2:
+            sys.stderr.write("Failed to add comment to '{}'\n".format(issue))
+            return None
+
+        result = Issue.Comment(
+            user=self.me(),
+            timestamp=int(time.time()),
+            content=text,
+        )
+        if not issue._comments:
+            self.populate(issue, 'comments')
+        if issue._comments is not None:
+            issue._comments.append(result)
+
+        return result
+
+    def add_attachment(self, issue: Issue, name: str, data: bytes, content_type: str | None = None, summary: str | None = None) -> Issue.Attachment:
+        content_type = content_type or mimetypes.guess_type(name)[0] or 'application/octet-stream'
+        response = self.session.post(
+            '{}/rest/bug/{}/attachment{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+            json=dict(
+                ids=[issue.id],
+                data=base64.b64encode(data).decode('ascii'),
+                file_name=name,
+                summary=summary or name,
+                content_type=content_type,
+            ),
+            timeout=self.timeout,
+        )
+        self._count_failed_login(response)
+        if response.status_code // 100 != 2:
+            try:
+                message = response.json().get('message') or response.text
+            except (AttributeError, ValueError):
+                message = response.text
+            message = message or getattr(response, 'reason', None)
+            description = 'Bugzilla attachment POST returned {}'.format(response.status_code)
+            raise RuntimeError('{}: {}'.format(description, message) if message else description)
+
+        result = Issue.Attachment(name=name, content_type=content_type, contents=data)
+        if issue._attachments is not None:
+            issue._attachments.append(result)
+        return result
+
+    RELATIONS = ('depends_on', 'blocks', 'regressed_by', 'regressions')
+
+    def related_issue_id(self, issue: Issue) -> int:
+        if isinstance(issue.tracker, Tracker):
+            return issue.id
+        else:
+            raise TypeError('Cannot relate issues of different types.')
+
+    def _modify_relations(self, issue: Issue, action: str, relations: dict[str, Issue | None]) -> Issue | None:
+        if invalid := [relation for relation in relations if relation not in self.RELATIONS]:
+            raise TypeError(f"'{invalid[0]}' is an invalid relation")
+
+        update_dict: dict[str, Any] = {'ids': [issue.id]}
+        for relation, related in relations.items():
+            if related:
+                update_dict[relation] = {action: [self.related_issue_id(related)]}
+
+        response = None
+        try:
+            response = self.session.put(
+                f'{self.url}/rest/bug/{issue.id}{self._login_arguments(required=True)}',
+                json=update_dict,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.RequestException as e:
+            sys.stderr.write(f'Request Error: {e}\n')
+        self._count_failed_login(response)
+        if response is None or response.status_code // 100 != 2:
+            sys.stderr.write(f"Failed to modify '{issue}'\n")
+            return None
+
+        if not issue._related:
+            self.populate(issue, 'related')
+            return issue
+
+        for relation, related in relations.items():
+            if not related:
+                continue
+            existing = issue._related.setdefault(relation, [])
+            if action == 'add' and related not in existing:
+                existing.append(related)
+            elif action == 'remove' and related in existing:
+                existing.remove(related)
+        return issue
+
+    def relate(self, issue: Issue, **relations: Any) -> Issue | None:
+        return self._modify_relations(issue, 'add', relations)
+
+    def unrelate(self, issue: Issue, **relations: Any) -> Issue | None:
+        return self._modify_relations(issue, 'remove', relations)
+
+    @property
+    def projects(self) -> dict[str, dict[str, Any]]:
+        if self._projects is not None:
+            return self._projects
+        response = self.session.get(
+            '{}/rest/product_enterable{}'.format(self.url, self._login_arguments(required=False)),
+            timeout=self.timeout,
+        )
+        self._count_failed_login(response)
+        if response.status_code // 100 != 2:
+            sys.stderr.write("Failed to retrieve project list'\n")
+            return dict()
+
+        result: dict[str, dict[str, Any]] = dict()
+        complete = True
+        for id in response.json().get('ids', []):
+            id_response = self.session.get(
+                '{}/rest/product/{}{}'.format(self.url, id, self._login_arguments(required=False)),
+                timeout=self.timeout,
+            )
+            self._count_failed_login(id_response)
+            if id_response.status_code // 100 != 2:
+                sys.stderr.write("Failed to query bugzilla about prod '{}'\n".format(id))
+                complete = False
+                continue
+            for product in id_response.json()['products']:
+                if not product['is_active']:
+                    continue
+                result[product['name']] = dict(
+                    description=product['description'],
+                    versions=[version['name'] for version in product['versions'] if version['is_active']],
+                    components=dict(),
+                )
+                for component in product['components']:
+                    if not component['is_active']:
+                        continue
+                    result[product['name']]['components'][component['name']] = dict(description=component['description'])
+
+        # A failed or partial list is not kept, so the next access reads it again.
+        if complete:
+            self._projects = result
+        return result
+
+    def valid_keywords(self) -> dict[str, str]:
+        response = self.session.get(
+            '{}/rest/field/bug/{}{}'.format(self.url, 'keywords', self._login_arguments(required=False)),
+            timeout=self.timeout,
+        )
+        self._count_failed_login(response)
+        if response.status_code // 100 != 2:
+            sys.stderr.write("Failed to retrieve keywords list'\n")
+            return {}
+        return {value.get('name', ''): value.get('description', '') for value in response.json().get('fields')[0].get('values', [])}
+
+    def create(
+        self, title: str, description: str,
+        project: str | None = None, component: str | None = None, version: str | None = None, assign: bool = True, keywords: list[str] | None = None
+    ) -> Issue | None:
+        if not title:
+            raise ValueError('Must define title to create bug')
+        if not description:
+            raise ValueError('Must define description to create bug')
+
+        projects = self.projects
+        if not project and len(projects.keys()) == 1:
+            project = list(projects.keys())[0]
+        elif not project:
+            project = webkitcorepy.Terminal.choose(
+                'What project should the bug be associated with?',
+                options=sorted(projects.keys()), numbered=True,
+            )
+        if project not in projects:
+            raise ValueError("'{}' is not a recognized product on {}".format(project, self.url))
+
+        if not component and len(projects[project]['components'].keys()) == 1:
+            component = list(projects[project]['components'].keys())[0]
+        elif not component:
+            component = webkitcorepy.Terminal.choose(
+                "What component in '{}' should the bug be associated with?".format(project),
+                options=sorted(projects[project]['components'].keys()), numbered=True,
+            )
+        if component not in projects[project]['components']:
+            raise ValueError("'{}' is not a recognized component in '{}'".format(component, project))
+
+        versions = projects[project]['versions']
+        if not versions:
+            raise ValueError("'{}' has no active versions on {}".format(project, self.url))
+        if version not in versions:
+            fallback = self.DEFAULT_VERSION if self.DEFAULT_VERSION in versions else versions[-1]
+            # A caller may inherit a version from an existing bug (git-webkit revert does), and that
+            # version may since have been retired. Bugzilla rejects inactive versions, so fall back
+            # to the default instead of failing to file the bug.
+            if version:
+                sys.stderr.write("'{}' is not an active version for '{}', using '{}' instead\n".format(
+                    version, project, fallback,
+                ))
+            version = fallback
+
+        keywords = keywords or []
+        for keyword in keywords:
+            if keyword not in self.valid_keywords():
+                raise ValueError(f"'{keyword}' is not a valid keyword for '{project}'")
+
+        if len(title) > self.MAX_SUMMARY_LENGTH:
+            title = title[:self.MAX_SUMMARY_LENGTH - 3] + '...'
+
+        params: dict[str, Any] = dict(
+            summary=title,
+            description=description,
+            product=project,
+            component=component,
+            version=version,
+        )
+        if assign:
+            params['assigned_to'] = self.me().username
+        if keywords:
+            params['keywords'] = keywords
+
+        response = None
+        try:
+            response = self.session.post(
+                '{}/rest/bug{}'.format(self.url, self._login_arguments(required=True)),
+                json=params,
+                timeout=self.timeout,
+            )
+        except RuntimeError as e:
+            sys.stderr.write('{}\n'.format(e))
+        self._count_failed_login(response)
+        if response is None or response.status_code // 100 != 2:
+            sys.stderr.write("Failed to create bug: {}\n".format(
+                response.json().get('message', '?') if response is not None else 'Login attempts exhausted'),
+            )
+            return None
+        issue_id = response.json()['id']
+        self._created_at[issue_id] = time.time()
+        return self.issue(issue_id)
+
+    def _wait_for_bugmail_after_create(self, issue: Issue) -> None:
+        created_at = self._created_at.get(issue.id)
+        if created_at is None:
+            return
+        remaining = created_at + self.BUGMAIL_SECOND_DELAY - time.time()
+        if remaining > 0:
+            time.sleep(remaining)
+
+    def cc_radar(self, issue: Issue, block: bool = False, timeout: float | None = None, radar: Issue | None = None) -> Issue | None:
+        if not self.radar_importer:
+            sys.stderr.write('No radar importer specified\n')
+            return None
+
+        for tracker in Tracker._trackers:
+            if isinstance(tracker, RadarTracker):
+                break
+        else:
+            sys.stderr.write('Project does not define radar tracker\n')
+            return None
+
+        keyword_to_add = None
+        comment_to_make = None
+        user_to_cc: str | bool | None = self.radar_importer.name if self.radar_importer not in (issue.watchers or []) else None
+        if radar and isinstance(radar.tracker, RadarTracker):
+            if radar not in (issue.references or []):
+                comment_to_make = '<rdar://problem/{}>'.format(radar.id)
+            keyword_to_add = 'InRadar'
+            if not user_to_cc and comment_to_make:
+                tracked_bug = None
+                for ref in (issue.references or []):
+                    if isinstance(ref.tracker, RadarTracker):
+                        tracked_bug = ref
+                        break
+                if tracked_bug:
+                    sys.stderr.write("{} already CCed '{}' and tracking a different bug\n".format(
+                        self.radar_importer.name,
+                        tracked_bug,
+                    ))
+                    choice = webkitcorepy.Terminal.choose(
+                        f'Double-check you have the correct bug ({issue.link}).\nWould you like to overwrite {tracked_bug.link} with {radar.link}?',
+                        options=('Yes', 'Skip CC', 'Exit'), default='Exit',
+                    )
+                    if choice == 'Skip CC':
+                        print(f'Skipping CC for {issue.link}')
+                        return None
+                    if choice == 'Exit':
+                        raise ValueError('Radar is tracking a different bug')
+                    user_to_cc = True
+                elif 'InRadar' not in (issue.keywords or []):
+                    sys.stderr.write("{} already CCed but no Radar was imported\n".format(
+                        self.radar_importer.name,
+                    ))
+                    choice = webkitcorepy.Terminal.choose(
+                        f'Would you like to CC {radar.link}?',
+                        options=('Yes', 'Skip CC', 'Exit'), default='Exit',
+                    )
+                    if choice == 'Skip CC':
+                        print(f'Skipping CC for {issue.link}')
+                        return None
+                    if choice == 'Exit':
+                        raise ValueError("Radar Importer is already CC'd")
+                    user_to_cc = True
+
+        expecting_import = False
+        if user_to_cc or keyword_to_add:
+            log.info('CCing {}'.format(self.radar_importer.name))
+            response = None
+            try:
+                data: dict[str, Any] = dict(ids=[issue.id])
+                if user_to_cc:
+                    data['cc'] = dict(add=[self.radar_importer.username])
+                if comment_to_make:
+                    data['comment'] = dict(body=comment_to_make)
+                if keyword_to_add:
+                    data['keywords'] = dict(add=[keyword_to_add])
+                self._wait_for_bugmail_after_create(issue)
+                response = self.session.put(
+                    '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+                    json=data,
+                    timeout=self.timeout,
+                )
+            except RuntimeError as e:
+                sys.stderr.write('{}\n'.format(e))
+            self._count_failed_login(response)
+            if response is None or response.status_code // 100 != 2:
+                sys.stderr.write("Failed to cc {} on '{}'\n".format(self.radar_importer.name, issue))
+            elif radar and isinstance(radar.tracker, RadarTracker):
+                if comment_to_make:
+                    issue._references = None
+                    if issue._comments is not None:
+                        issue._comments.append(Issue.Comment(
+                            user=self.me(),
+                            timestamp=int(time.time()),
+                            content=comment_to_make,
+                        ))
+                return radar
+            else:
+                expecting_import = True
+                issue._comments = None
+                issue._references = None
+        else:
+            # Some components CC the importer by default
+            expecting_import = 'InRadar' not in (issue.keywords or [])
+
+        start = time.time()
+        while start + (timeout or 60) > time.time():
+            for reference in (issue.references or []):
+                if isinstance(reference.tracker, RadarTracker):
+                    return reference
+            if not block or not expecting_import:
+                break
+            print('Waiting until {} imports bug...'.format(self.radar_importer.name))
+            time.sleep(10)
+            issue._comments = None
+            issue._references = None
+
+        return None
+
+    def group_members(self, group_name: str) -> list[tuple[str, str | None]] | None:
+        query_params = 'names={}&membership=1'.format(requests.utils.quote(group_name))
+        response = self.session.get(
+            '{}/rest/group{}'.format(
+                self.url,
+                self._login_arguments(required=True, query=query_params)
+            ),
+            timeout=self.timeout,
+        )
+
+        self._count_failed_login(response)
+
+        if response.status_code != 200:
+            sys.stderr.write("Failed to fetch group '{}': HTTP {}\n".format(group_name, response.status_code))
+            if response.text:
+                try:
+                    error_data = response.json()
+                    if 'message' in error_data:
+                        sys.stderr.write("  Error: {}\n".format(error_data['message']))
+                except requests.exceptions.JSONDecodeError:
+                    sys.stderr.write("  Response: {}\n".format(response.text[:200]))
+            return None
+
+        data = response.json()
+        if 'groups' not in data or not data['groups']:
+            sys.stderr.write("Group '{}' not found in response\n".format(group_name))
+            return None
+
+        group = data['groups'][0]
+        members = []
+
+        if 'membership' in group:
+            for member in group['membership']:
+                # Member objects have 'name' field (email) and optionally 'real_name'.
+                email = member.get('name') or member.get('email')
+                real_name = member.get('real_name')
+                if email:
+                    members.append((email, real_name))
+
+        return members

@@ -1,0 +1,4 @@
+hover me
+
+FAIL eager eagerness list rule prefetches after hovering the link assert_equals: eager candidate must not be prefetched before hover expected 0 but got 1
+

@@ -1,0 +1,270 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <style>
+    body {
+        font-family: -apple-system, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+    }
+    header {
+        background: #333;
+        color: white;
+        padding: 15px;
+        margin: -20px -20px 20px -20px;
+    }
+    .main-product {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        gap: 30px;
+    }
+    .main-product-image {
+        width: 300px;
+        height: 300px;
+        background: #e0e0e0;
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+    .main-product-details h2 {
+        margin: 0 0 10px 0;
+    }
+    .sale-badge {
+        display: inline-block;
+        background: #c41e3a;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    .price-block {
+        margin: 15px 0;
+    }
+    .current-price {
+        color: #c41e3a;
+        font-weight: bold;
+        font-size: 28px;
+    }
+    .original-price {
+        color: #888;
+        font-size: 18px;
+        margin-left: 10px;
+    }
+    .savings {
+        color: #2a7d2a;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .stock-status {
+        color: #2a7d2a;
+        font-weight: 500;
+        margin: 15px 0;
+    }
+    .product-description {
+        color: #555;
+        line-height: 1.5;
+    }
+    .related-section {
+        margin-top: 30px;
+    }
+    .related-section h3 {
+        margin-bottom: 15px;
+    }
+    .related-items {
+        display: flex;
+        gap: 15px;
+    }
+    .related-item {
+        background: white;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex: 1;
+    }
+    .related-item-image {
+        width: 100%;
+        height: 80px;
+        background: #e0e0e0;
+        border-radius: 4px;
+    }
+    .related-item h4 {
+        margin: 10px 0 5px 0;
+        font-size: 14px;
+    }
+    .related-item .price {
+        color: #c41e3a;
+        font-weight: bold;
+    }
+    .reviews-section {
+        margin-top: 30px;
+    }
+    .reviews-section h3 {
+        margin-bottom: 15px;
+    }
+    .review {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+    .reviewer-name {
+        font-weight: 600;
+    }
+    .review-date {
+        color: #888;
+        font-size: 14px;
+    }
+    .stars {
+        color: #f5a623;
+        margin-bottom: 8px;
+    }
+    .review-text {
+        color: #444;
+        line-height: 1.5;
+    }
+    @media (max-width: 600px) {
+        .main-product {
+            flex-direction: column;
+        }
+        .main-product-image {
+            width: 100%;
+            height: 200px;
+        }
+        .related-items {
+            flex-direction: column;
+        }
+        .review-header {
+            flex-direction: column;
+            gap: 4px;
+        }
+    }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    addEventListener("load", async () => {
+        if (!window.testRunner)
+            return;
+
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        let outputText = await UIHelper.requestDebugText({
+            dataDetectorTypes: ["money"],
+            outputFormat: "markdown",
+            includeRects: false,
+            includeURLs: true,
+            shortenURLs: true
+        });
+
+        document.body.textContent = outputText;
+        document.body.style.whiteSpace = "pre";
+
+        testRunner.notifyDone();
+    });
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Sample Shop</h1>
+    </header>
+
+    <section class="main-product">
+        <div class="main-product-image"></div>
+        <div class="main-product-details">
+            <span class="sale-badge">Sale - 20% Off</span>
+            <h2>Premium Wireless Headphones</h2>
+            <p class="product-description">High-fidelity audio with active noise cancellation. Features 30-hour battery life, comfortable over-ear design, and seamless Bluetooth connectivity.</p>
+            <div class="price-block">
+                <span class="current-price">$79.99</span>
+                <span class="original-price"><s>$99.99</s></span>
+                <p class="savings">You save $20.00</p>
+            </div>
+            <p class="stock-status">In Stock - Ships within 24 hours</p>
+        </div>
+    </section>
+
+    <section class="related-section">
+        <h3>Customers Also Bought</h3>
+        <div class="related-items">
+            <article class="related-item">
+                <div class="related-item-image"></div>
+                <h4>Carrying Case</h4>
+                <span class="price">$19.99</span>
+            </article>
+            <article class="related-item">
+                <div class="related-item-image"></div>
+                <h4>Replacement Ear Pads</h4>
+                <span class="price">$14.50</span>
+            </article>
+            <article class="related-item">
+                <div class="related-item-image"></div>
+                <h4>Audio Cable (3.5mm)</h4>
+                <span class="price">$8.99</span>
+            </article>
+        </div>
+    </section>
+
+    <section class="reviews-section">
+        <h3>Customer Reviews</h3>
+
+        <article class="review">
+            <div class="review-header">
+                <span class="reviewer-name">Sarah M.</span>
+                <span class="review-date">January 12, 2025</span>
+            </div>
+            <div class="stars">★★★★★</div>
+            <p class="review-text">Best headphones I've ever owned! The noise cancellation is incredible and the battery lasts forever. Worth every penny.</p>
+        </article>
+
+        <article class="review">
+            <div class="review-header">
+                <span class="reviewer-name">James T.</span>
+                <span class="review-date">January 8, 2025</span>
+            </div>
+            <div class="stars">★★★★☆</div>
+            <p class="review-text">Great sound quality and very comfortable for long listening sessions. Took off one star because the case feels a bit cheap.</p>
+        </article>
+
+        <article class="review">
+            <div class="review-header">
+                <span class="reviewer-name">Emily R.</span>
+                <span class="review-date">December 29, 2024</span>
+            </div>
+            <div class="stars">★★★★★</div>
+            <p class="review-text">Bought these as a gift for my husband and he loves them. The Bluetooth connection is rock solid and pairs instantly.</p>
+        </article>
+
+        <article class="review">
+            <div class="review-header">
+                <span class="reviewer-name">Michael K.</span>
+                <span class="review-date">December 15, 2024</span>
+            </div>
+            <div class="stars">★★★★☆</div>
+            <p class="review-text">Excellent for working from home. Blocks out all the background noise. Wish the ear cups were slightly larger though.</p>
+        </article>
+
+        <article class="review">
+            <div class="review-header">
+                <span class="reviewer-name">Lisa P.</span>
+                <span class="review-date">December 3, 2024</span>
+            </div>
+            <div class="stars">★★★★★</div>
+            <p class="review-text">Amazing deal at this price! I compared these to much more expensive brands and honestly can't tell the difference. Highly recommend.</p>
+        </article>
+    </section>
+</body>
+</html>

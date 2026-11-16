@@ -1,0 +1,81 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # default: hash. Defaults for category, subcategory, name etc.
+  # button_name: string. What the button will say. 
+  # category: hash (keyed by category) of hashes (keyed by subcategory) of
+  #           hashes (keyed by name), with value being the series_id of the
+  #           series. Contains details of all series the user can see.
+  #%]
+
+[% PROCESS "reports/series-common.html.tmpl"
+   newtext = "New (name below)" 
+ %]
+
+<table id="edit_series">
+    <tr>
+      <th>Category</th>
+      <th></th>
+      <th>Sub-category</th>
+      <th>Name</th>
+      <th></th>
+    </tr>
+    <tr>
+      [% PROCESS series_select sel = { name => 'category',
+                                       size => 5,
+                                       onchange => "catSelected()" } %]
+        <td>
+          <noscript>
+            <input type="submit" name="action-edit" value="Update --&gt;"
+                   id="action-edit">
+          </noscript>
+        </td>
+
+      [% PROCESS series_select sel = { name => 'subcategory', 
+                                       size => 5,
+                                       onchange => "checkNewState()" } %]
+
+      <td>
+        <input type="text" name="name" maxlength="64" 
+               value="[% default.name.0 FILTER html %]" size="25">
+      </td>
+
+      <td>
+        Run every
+        <input type="text" size="2" id="frequency" name="frequency"
+               value="[% (default.frequency.0 OR 7) FILTER html %]">
+        day(s)<br>
+        [%# Change 'admin' here and in Series.pm, or remove the check
+            completely, if you want to change who can make series public. %]
+        [% IF user.in_group('admin') %]
+          <input type="checkbox" name="public"
+                 [%+ "checked='checked'" IF default.public.0 %]>
+          Visible to all<br>
+          (within group restrictions)
+        [% END %]
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input type="text" name="newcategory" maxlength="64"
+               value="[% default.newcategory.0 FILTER html %]">
+      </td>
+      <td></td>
+      <td>
+        <input type="text" name="newsubcategory" maxlength="64"
+               value="[% default.newsubcategory.0 FILTER html %]">
+      </td>
+      <td></td>
+      <td>
+        <input type="submit" name="submit-button" id="submit-button"
+               value="[% button_name FILTER html %]">
+      </td>
+    </tr>
+</table>

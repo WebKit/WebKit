@@ -1,0 +1,5 @@
+
+PASS A resource from a cross-origin service worker must not expose workerStart when there is a TAO failure
+FAIL A resource from a cross-origin service worker must expose workerStart when there is a TAO match assert_greater_than: workerStart must be greater than zero expected a number greater than 0 but got 0
+PASS Not a test - needed to unregister the SW and close its embedder
+

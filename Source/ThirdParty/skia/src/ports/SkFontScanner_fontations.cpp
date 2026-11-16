@@ -1,0 +1,216 @@
+/*
+ * Copyright 2024 The Android Open Source Project
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+#include "include/ports/SkFontScanner_Fontations.h"
+#include "src/ports/SkFontScanner_fontations_priv.h"
+#include "src/ports/SkTypeface_fontations_priv.h"
+#include "src/ports/fontations/src/skpath_bridge.h"
+#include "src/sfnt/SkOTUtils.h"
+
+using namespace skia_private;
+
+namespace {
+rust::Box<::fontations_ffi::BridgeFontRef> make_bridge_font_ref(const SkData* fontData,
+                                                                uint32_t index) {
+    rust::Slice<const uint8_t> slice{fontData->bytes(), fontData->size()};
+    return fontations_ffi::make_font_ref(slice, index);
+}
+  // TODO(drott): Remove this once SkData::MakeFromStream is able to do this itself.
+sk_sp<const SkData> make_data_avoiding_copy(SkStreamAsset* stream) {
+    if (!stream) {
+        return SkData::MakeEmpty();
+    }
+    if (stream->getData()) {
+        return stream->getData();
+    }
+    if (stream->getMemoryBase() && stream->getLength()) {
+        return SkData::MakeWithoutCopy(stream->getMemoryBase(), stream->getLength());
+    }
+
+    return SkData::MakeFromStream(stream, stream->getLength());
+}
+}  // namespace
+
+SkFontScanner_Fontations::SkFontScanner_Fontations() {}
+
+SkFontScanner_Fontations::~SkFontScanner_Fontations() {}
+
+bool SkFontScanner_Fontations::scanFile(SkStreamAsset* stream, int* numFaces) const {
+    sk_sp<const SkData> fontData = make_data_avoiding_copy(stream);
+    stream->rewind();
+    rust::Slice<const uint8_t> slice{fontData->bytes(), fontData->size()};
+    ::std::uint32_t num_fonts;
+    if (!fontations_ffi::font_or_collection(slice, num_fonts)) {
+        return false;
+    }
+    if (numFaces) {
+        *numFaces = num_fonts == 0 ? 1 : num_fonts;
+    }
+    return true;
+}
+
+bool SkFontScanner_Fontations::scanFace(SkStreamAsset* stream,
+                                        int faceIndex,
+                                        int* numInstances) const {
+    sk_sp<const SkData> fontData = make_data_avoiding_copy(stream);
+    rust::Box<fontations_ffi::BridgeFontRef> fontRef =
+            make_bridge_font_ref(fontData.get(), faceIndex);
+    stream->rewind();
+    if (!fontations_ffi::font_ref_is_valid(*fontRef)) {
+        return false;
+    }
+
+    if (numInstances) {
+        *numInstances = fontations_ffi::num_named_instances(*fontRef);
+    }
+    return true;
+}
+
+rust::Box<fontations_ffi::BridgeNormalizedCoords> make_normalized_coords(
+        fontations_ffi::BridgeFontRef const& bridgeFontRef,
+        const SkFontArguments::VariationPosition& variationPosition) {
+    // Cast is safe because of static_assert matching the structs above.
+    rust::Slice<const fontations_ffi::SkiaDesignCoordinate> coordinates(
+            reinterpret_cast<const fontations_ffi::SkiaDesignCoordinate*>(
+                    variationPosition.coordinates),
+            variationPosition.coordinateCount);
+    return resolve_into_normalized_coords(bridgeFontRef, coordinates);
+}
+
+bool SkFontScanner_Fontations::scanInstance(SkStreamAsset* stream,
+                                            int faceIndex,
+                                            int instanceIndex,
+                                            SkString* name,
+                                            SkFontStyle* style,
+                                            bool* isFixedPitch,
+                                            AxisDefinitions* axes,
+                                            VariationPosition* position) const {
+    sk_sp<const SkData> fontData = make_data_avoiding_copy(stream);
+    rust::Box<fontations_ffi::BridgeFontRef> bridgeFontRef =
+            make_bridge_font_ref(fontData.get(), faceIndex + (instanceIndex << 16));
+    stream->rewind();
+    if (!fontations_ffi::font_ref_is_valid(*bridgeFontRef)) {
+        return false;
+    }
+
+    if (name != nullptr) {
+        rust::String readFamilyName = fontations_ffi::family_name(*bridgeFontRef);
+        *name = SkString(readFamilyName.data(), readFamilyName.size());
+    }
+
+    if (isFixedPitch != nullptr) {
+        *isFixedPitch = false;  // TODO
+    }
+
+    using VariationPosition = SkFontArguments::VariationPosition;
+
+    auto getInstancePosition = [&,
+        cached = false,
+        cachedResult = std::optional<const VariationPosition>(),
+        extractedCoords = std::unique_ptr<VariationPosition::Coordinate[]>()
+    ]() mutable -> const std::optional<const VariationPosition>& {
+        if (cached) {
+            return cachedResult;
+        }
+        cached = true;
+        size_t numNamedInstanceCoords =
+                fontations_ffi::coordinates_for_shifted_named_instance_index(
+                        *bridgeFontRef,
+                        instanceIndex << 16,
+                        rust::cxxbridge1::Slice<fontations_ffi::SkiaDesignCoordinate>());
+        extractedCoords.reset(new VariationPosition::Coordinate[numNamedInstanceCoords]);
+
+        rust::cxxbridge1::Slice<fontations_ffi::SkiaDesignCoordinate> targetSlice(
+                reinterpret_cast<fontations_ffi::SkiaDesignCoordinate*>(extractedCoords.get()),
+                numNamedInstanceCoords);
+        size_t retrievedNamedInstanceCoords =
+                fontations_ffi::coordinates_for_shifted_named_instance_index(
+                        *bridgeFontRef, instanceIndex << 16, targetSlice);
+        if (numNamedInstanceCoords != retrievedNamedInstanceCoords) {
+            return cachedResult;
+        }
+
+        VariationPosition variationPosition;
+        variationPosition.coordinateCount = numNamedInstanceCoords;
+        variationPosition.coordinates = extractedCoords.get();
+        cachedResult.emplace(variationPosition);
+        return cachedResult;
+    };
+
+    if (style != nullptr) {
+        *style = SkFontStyle::Normal();
+        auto num = SkToInt(fontations_ffi::num_named_instances(*bridgeFontRef));
+        if (instanceIndex > num) {
+            return false;
+        } else if (instanceIndex == 0) {
+            // This is the default instance
+            rust::Slice<const fontations_ffi::SkiaDesignCoordinate> coordinates;
+            rust::Box<fontations_ffi::BridgeNormalizedCoords> normalizedCoords =
+                    resolve_into_normalized_coords(*bridgeFontRef, coordinates);
+            fontations_ffi::BridgeFontStyle fontStyle;
+            if (fontations_ffi::get_font_style(*bridgeFontRef, *normalizedCoords, fontStyle)) {
+                *style = SkFontStyle(fontStyle.weight,
+                                     fontStyle.width,
+                                     static_cast<SkFontStyle::Slant>(fontStyle.slant));
+            }
+        } else {
+            const std::optional<const VariationPosition>& variationPosition = getInstancePosition();
+            if (variationPosition) {
+                rust::Box<fontations_ffi::BridgeNormalizedCoords> normalizedCoords =
+                        make_normalized_coords(*bridgeFontRef, *variationPosition);
+
+                fontations_ffi::BridgeFontStyle fontStyle;
+                if (fontations_ffi::get_font_style(*bridgeFontRef, *normalizedCoords, fontStyle)) {
+                    *style = SkFontStyle(fontStyle.weight,
+                                         fontStyle.width,
+                                         static_cast<SkFontStyle::Slant>(fontStyle.slant));
+                }
+            }
+        }
+    }
+
+    if (axes != nullptr) {
+        auto size = SkToInt(fontations_ffi::num_axes(*bridgeFontRef));
+        axes->reset(size);
+        auto variationAxes = std::make_unique<SkFontParameters::Variation::Axis[]>(size);
+        sk_fontations::AxisWrapper axisWrapper(variationAxes.get(), size);
+        SkASSERT(size == fontations_ffi::populate_axes(*bridgeFontRef, axisWrapper));
+        for (auto i = 0; i < size; ++i) {
+            const auto var = variationAxes[i];
+            (*axes)[i].tag = var.tag;
+            (*axes)[i].min = var.min;
+            (*axes)[i].def = var.def;
+            (*axes)[i].max = var.max;
+        }
+    }
+
+    if (position != nullptr) {
+        const std::optional<const VariationPosition>& variationPosition = getInstancePosition();
+        if (variationPosition) {
+            position->reset(variationPosition->coordinateCount);
+            for (int i = 0; i < variationPosition->coordinateCount; ++i) {
+                (*position)[i] = variationPosition->coordinates[i];
+            }
+        } else {
+            position->reset(0);
+        }
+    }
+
+    return true;
+}
+
+sk_sp<SkTypeface> SkFontScanner_Fontations::MakeFromStream(std::unique_ptr<SkStreamAsset> stream,
+                                                           const SkFontArguments& args) const {
+    return SkTypeface_Fontations::MakeFromStream(std::move(stream), args);
+}
+
+SkTypeface::FactoryId SkFontScanner_Fontations::getFactoryId() const {
+    return SkTypeface_Fontations::FactoryId;
+}
+
+std::unique_ptr<SkFontScanner> SkFontScanner_Make_Fontations() {
+    return std::make_unique<SkFontScanner_Fontations>();
+}

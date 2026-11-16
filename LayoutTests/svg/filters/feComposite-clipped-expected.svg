@@ -1,0 +1,8 @@
+<svg width="480px" height="600px" xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <filter id="filter" filterUnits="objectBoundingBox" x="0" y="0" width="100%" height="100%">
+    	<feFlood x="0" y="0" width="300" height="300" flood-color="rgb(120, 0, 54)" result="flood1" />
+    </filter> 
+</defs>
+<rect x="0" y="0" width="400" height="400" filter="url(#filter)"/>
+</svg>

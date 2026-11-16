@@ -1,0 +1,26 @@
+
+Tests that NowPlaying reports duration and elapsed time when a site-specific quirk disables seeking support.
+
+* Adopt a domain whose site-specific quirks disable seeking support.
+RUN(internals.setTopDocumentURLForQuirks("https://www.netflix.com/"))
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+
+* Seeking support should be disabled by the quirk.
+RUN(controlsHost = internals.controlsHostForMediaElement(video))
+EXPECTED (controlsHost.supportsSeeking == 'false') OK
+
+* Start to play, NowPlaying should become active.
+RUN(video.play())
+EVENT(playing)
+RUN(video.pause())
+
+* Duration and elapsed time should be reported anyway.
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'true') OK
+EXPECTED (isNaN(nowPlayingState.duration) == 'false') OK
+EXPECTED (nowPlayingState.duration > '0') OK
+EXPECTED (isNaN(nowPlayingState.elapsedTime) == 'false') OK
+
+END OF TEST
+

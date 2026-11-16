@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="threaded-animations/threaded-animations-utils.js"></script>
+<style>
+
+@keyframes slide {
+    to { transform: translateX(600px) }
+}
+
+#target {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+.animated {
+    animation: slide 1000s 30ms;
+}
+
+</style>
+<div id="target"></div>
+<script>
+
+promise_test(async t => {
+    // Start an accelerated "transform" animation with a delay longer than a single animation frame.
+    const target = document.getElementById("target");
+    target.classList.add("animated");
+
+    // Wait for it to enter its active phase, at which point the "animationstart" event will trigger.
+    await new Promise(resolve => target.addEventListener("animationstart", resolve));
+
+    await threadedAnimationsCommit();
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1, "There should be an accelerated animation.");
+}, "A transform animation with a delay should run accelerated once the delay has elapsed.");
+
+</script>
+</body>

@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="target" value="anything">
+
+<script>
+var output = "This test ensures a validity message set with setCustomValidity makes a control report AXInvalid true, and that clearing the message restores AXInvalid false.\n\n";
+
+function invalidStatus()
+{
+    return accessibilityController.accessibleElementById("target").stringAttributeValue("AXInvalid");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var target = document.getElementById("target");
+
+    output += "A control with no constraint is valid.\n";
+    output += expect("target.checkValidity()", "true");
+    output += expect("invalidStatus()", "'false'");
+
+    setTimeout(async function() {
+        target.setCustomValidity("Pick a different value");
+
+        output += "\nA custom validity message makes it invalid to accessibility too.\n";
+        output += expect("target.checkValidity()", "false");
+        output += expect("target.validationMessage", "'Pick a different value'");
+        output += await expectAsync("invalidStatus()", "'true'");
+
+        target.setCustomValidity("");
+
+        output += "\nClearing the message restores it.\n";
+        output += expect("target.checkValidity()", "true");
+        output += await expectAsync("invalidStatus()", "'false'");
+
+        document.getElementById("target").style.display = "none";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

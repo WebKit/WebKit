@@ -1,0 +1,85 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(ENCRYPTED_MEDIA)
+
+#include <WebCore/CDMTypesForward.h>
+#include <wtf/Function.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RobinHoodHashMap.h>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+class ISOProtectionSystemSpecificHeaderBox;
+class SharedBuffer;
+
+class InitDataRegistry {
+public:
+    WEBCORE_EXPORT static InitDataRegistry& singleton();
+    friend class NeverDestroyed<InitDataRegistry>;
+
+    RefPtr<SharedBuffer> sanitizeInitData(const String& initDataType, const SharedBuffer&);
+    WEBCORE_EXPORT std::optional<CDMKeyIDs> extractKeyIDs(const String& initDataType, const SharedBuffer&);
+
+    struct InitDataTypeCallbacks {
+        using SanitizeInitDataCallback = Function<RefPtr<SharedBuffer>(const SharedBuffer&)>;
+        using ExtractKeyIDsCallback = Function<std::optional<CDMKeyIDs>(const SharedBuffer&)>;
+
+        SanitizeInitDataCallback sanitizeInitData;
+        ExtractKeyIDsCallback extractKeyIDs;
+    };
+    void registerInitDataType(const String& initDataType, InitDataTypeCallbacks&&);
+
+    static const String& cencName();
+    static const String& keyidsName();
+    static const String& webmName();
+
+    static std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> extractPsshBoxesFromCenc(const SharedBuffer&);
+    static std::optional<CDMKeyIDs> extractKeyIDsCenc(const SharedBuffer&);
+    static RefPtr<SharedBuffer> sanitizeCenc(const SharedBuffer&);
+
+#if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
+    // Walks the PSSH atoms in a cenc init data buffer and returns the bytes of the first
+    // PSSH whose SystemID matches FairPlay's, or std::nullopt if none is present.
+    // AVFoundation's PSSH parser only inspects the first PSSH atom in the supplied data
+    // and rejects the entire blob if its SystemID isn't FairPlay's, so callers must
+    // filter to a FairPlay-only buffer before forwarding to AVContentKeySession.
+    static RefPtr<SharedBuffer> extractFairPlayPsshFromCenc(const SharedBuffer&);
+#endif
+
+private:
+    InitDataRegistry();
+    ~InitDataRegistry();
+
+    MemoryCompactRobinHoodHashMap<String, InitDataTypeCallbacks> m_types;
+};
+
+}
+
+#endif // ENABLE(ENCRYPTED_MEDIA)

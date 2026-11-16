@@ -1,0 +1,43 @@
+# DEPS file for unit tests.
+
+vars = {
+  'chromium_git': 'https://chromium.googlesource.com',
+
+  # This is updated compared to the DEPS file.
+  'depot_tools_revision': '1206a353e40abb70d8454eb9af53db0ad10b713c',
+  'fuchsia_version': 'version:11.20230207.1.1',
+}
+
+deps = {
+  'src/third_party/depot_tools':
+    Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' +  Var('depot_tools_revision'),
+
+  'src/buildtools/linux64': {
+    'packages': [
+      {
+        'package': 'gn/gn/linux-amd64',
+        'version': 'git_revision:new-revision',
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'checkout_linux',
+  },
+
+  # Script expects to find these markers.
+  # === ANDROID_DEPS Generated Code Start ===
+  # === ANDROID_DEPS Generated Code End ===
+
+  # Entry that uses GCS
+  'src/third_party/js_code_coverage': {
+    'dep_type': 'gcs',
+    'bucket': 'chromium-nodejs',
+    'objects': [
+      {
+        'object_name': 'js_code_coverage/d538975c93eefc7bafd599b50f867e90c1ef17f4',
+        'sha256sum': '646bb00ced0a930b2eb1e4dbcfac18ebbb8f889bb80599e0254d9d6505427915',
+        'size_bytes': 1469186,
+        'generation': 1657780123604339,
+      },
+    ],
+  },
+}

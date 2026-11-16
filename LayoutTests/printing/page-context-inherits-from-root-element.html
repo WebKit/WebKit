@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests that the @page context inherits from the root element. https://drafts.csswg.org/css-page-3/#page-properties");
+
+    let pageStyle = null;
+
+    function setUp(rootStyle, pageRule)
+    {
+        document.documentElement.setAttribute("style", rootStyle);
+        if (pageStyle)
+            pageStyle.remove();
+        pageStyle = document.createElement("style");
+        pageStyle.textContent = pageRule;
+        document.head.appendChild(pageStyle);
+    }
+
+    function pageSizeAndMargins()
+    {
+        return internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4);
+    }
+
+    function pxMargins(top, right, bottom, left)
+    {
+        return "(100, 200) " + top + " " + right + " " + bottom + " " + left;
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+
+        debug("em and rem resolve against the root element's font-size (20px)");
+        setUp("font-size: 20px", "@page { font-size: 2em; margin: 1em 3rem; }");
+        shouldBe("pageSizeAndMargins()", "pxMargins(40, 60, 40, 60)");
+        shouldBeEqualToString("internals.pageProperty('font-size', 0)", "40");
+
+        debug("margin: inherit and custom properties come from the root element, but a registered property that doesn't inherit uses its initial value");
+        setUp("margin: 10px 20px 30px 40px; --page-margin: 25px; --non-inherited-margin: 50px", "@property --non-inherited-margin { syntax: '<length>'; inherits: false; initial-value: 5px; } @page { margin: inherit; margin-bottom: var(--non-inherited-margin); margin-left: var(--page-margin); }");
+        shouldBe("pageSizeAndMargins()", "pxMargins(10, 20, 5, 25)");
+
+        debug("zoom on the root element scales em and rem margins and the used font-size");
+        setUp("zoom: 2; font-size: 20px", "@page { margin: 1em 2rem; }");
+        shouldBe("pageSizeAndMargins()", "pxMargins(40, 80, 40, 80)");
+        shouldBeEqualToString("internals.pageProperty('font-size', 0)", "40");
+
+        setUp("", "");
+        debug("");
+    } else
+        testFailed("This test can be run only with window.testRunner");
+</script>
+</body>
+</html>

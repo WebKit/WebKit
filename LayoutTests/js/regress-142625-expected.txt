@@ -1,0 +1,10 @@
+Regression test for https://webkit.org/b/142625. This test should not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Eval of DFG compiled function didn't crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

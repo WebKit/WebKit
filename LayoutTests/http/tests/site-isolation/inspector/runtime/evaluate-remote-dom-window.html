@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.Runtime.RemoteDOMWindow");
+
+        suite.addTestCase({
+            name: "SiteIsolation.Runtime.RemoteDOMWindow.EvaluateWithPreview",
+            description: "Evaluating a cross-origin iframe's contentWindow with a preview should not crash.",
+            async test() {
+                let response = await WI.pageTarget.RuntimeAgent.evaluate.invoke({ expression: "document.querySelector('iframe').contentWindow", objectGroup: "test", generatePreview: true });
+                InspectorTest.expectFalse(response.wasThrown, "Evaluating contentWindow should not throw.");
+                InspectorTest.expectEqual(response.result.type, "object", "Result should be an object.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that describing a RemoteDOMWindow in Web Inspector does not crash under site isolation.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/runtime/resources/frame-with-passphrase.html"></iframe>
+</body>

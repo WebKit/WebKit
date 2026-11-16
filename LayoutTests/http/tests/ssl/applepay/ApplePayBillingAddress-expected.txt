@@ -1,0 +1,28 @@
+Test that billingAddress member of ApplePayPaymentMethod is populated in paymentmethodchange callback
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing that PaymentMethodChangeEvent fires with populated billing address field.
+PASS event.methodName is 'https://apple.com/apple-pay'
+PASS event.methodDetails.type is 'credit'
+PASS event.methodDetails.billingContact.phoneNumber is expectedPhoneNumber
+PASS event.methodDetails.billingContact.emailAddress is expectedEmailAddress
+PASS event.methodDetails.billingContact.givenName is expectedGivenName
+PASS event.methodDetails.billingContact.familyName is expectedFamilyName
+PASS event.methodDetails.billingContact.phoneticGivenName is expectedGivenName
+PASS event.methodDetails.billingContact.phoneticFamilyName is expectedFamilyName
+PASS event.methodDetails.billingContact.addressLines is expectedAddressLines
+PASS event.methodDetails.billingContact.subLocality is expectedSubLocality
+PASS event.methodDetails.billingContact.locality is expectedLocality
+PASS event.methodDetails.billingContact.postalCode is expectedPostalCode
+PASS event.methodDetails.billingContact.subAdministrativeArea is expectedSubAdministrativeArea
+PASS event.methodDetails.billingContact.country is expectedCountry
+PASS event.methodDetails.billingContact.countryCode is expectedCountryCode
+PASS event.methodDetails.network is 'visa'
+PASS event.methodDetails.type is 'credit'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

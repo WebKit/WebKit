@@ -1,0 +1,69 @@
+/*
+ *  Copyright 2020 The WebRTC Project Authors. All rights reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "video/adaptation/balanced_constraint.h"
+
+#include <cstdint>
+#include <optional>
+#include <utility>
+
+#include "api/field_trials_view.h"
+#include "api/rtp_parameters.h"
+#include "api/sequence_checker.h"
+#include "call/adaptation/degradation_preference_provider.h"
+#include "call/adaptation/video_source_restrictions.h"
+#include "call/adaptation/video_stream_input_state.h"
+#include "rtc_base/checks.h"
+
+namespace webrtc {
+
+BalancedConstraint::BalancedConstraint(
+    DegradationPreferenceProvider* degradation_preference_provider,
+    const FieldTrialsView& field_trials)
+    : encoder_target_bitrate_bps_(std::nullopt),
+      balanced_settings_(field_trials),
+      degradation_preference_provider_(degradation_preference_provider) {
+  RTC_DCHECK(degradation_preference_provider_);
+  sequence_checker_.Detach();
+}
+
+void BalancedConstraint::OnEncoderTargetBitrateUpdated(
+    std::optional<uint32_t> encoder_target_bitrate_bps) {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  encoder_target_bitrate_bps_ = std::move(encoder_target_bitrate_bps);
+}
+
+bool BalancedConstraint::IsAdaptationUpAllowed(
+    const VideoStreamInputState& input_state,
+    const VideoSourceRestrictions& restrictions_before,
+    const VideoSourceRestrictions& restrictions_after) const {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  // Don't adapt if BalancedDegradationSettings applies and determines this will
+  // exceed bitrate constraints.
+  if (degradation_preference_provider_->degradation_preference() ==
+      DegradationPreference::BALANCED) {
+    int frame_size_pixels = input_state.single_active_stream_pixels().value_or(
+        input_state.frame_size_pixels().value());
+    if (!balanced_settings_.CanAdaptUp(
+            input_state.video_codec_type(), frame_size_pixels,
+            encoder_target_bitrate_bps_.value_or(0))) {
+      return false;
+    }
+    if (DidIncreaseResolution(restrictions_before, restrictions_after) &&
+        !balanced_settings_.CanAdaptUpResolution(
+            input_state.video_codec_type(), frame_size_pixels,
+            encoder_target_bitrate_bps_.value_or(0))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+}  // namespace webrtc

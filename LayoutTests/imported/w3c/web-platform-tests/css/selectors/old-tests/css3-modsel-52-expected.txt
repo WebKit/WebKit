@@ -1,0 +1,9 @@
+This text should be in green characters
+This text should be in green characters
+This text should be in green characters
+This text should be in green characters
+
+This text should be in green characters
+
+PASS NEGATED attribute space-separated value selector
+

@@ -1,0 +1,13 @@
+Test that when images are moved to a new document, a new load fires.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Load event fired for IMG in both documents.
+PASS Load event fired for INPUT in both documents.
+PASS Load event fired for OBJECT in both documents.
+PASS Load event fired for EMBED in both documents.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-isplayingtoautomotiveheadunit</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    function start()
+    {
+        findMediaElement();
+
+        waitForEventOnce('canplaythrough', canplaythrough);
+        run('video.src = findMediaFile("video", "content/test")');
+        run("video.loop = true");
+    }
+
+    function canplaythrough()
+    {
+        waitForEventOnce('playing', playing);
+        runWithKeyDown('video.play()');
+    }
+
+    function playing()
+    {
+        waitForEventOnce('pause', pause);
+        run('internals.setMediaSessionRestrictions("videoaudio", "suspendedunderlockplaybackrestricted")')
+        run('internals.applicationDidEnterBackground(true)');
+    }
+
+    function pause()
+    {
+        waitForEventOnce('playing', playing2);
+        run('internals.applicationWillEnterForeground(true)');
+    }
+
+    function playing2()
+    {
+        run('internals.setIsPlayingToAutomotiveHeadUnit(true)');
+        run('internals.applicationDidEnterBackground(true)');
+        testExpected('video.paused', false);
+
+        // restore the internals to avoid interferences with other tests
+        run('internals.setIsPlayingToAutomotiveHeadUnit(false)');
+        run('internals.applicationWillEnterForeground(true)');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="start()">
+    <video controls></video>
+</body>
+</html>

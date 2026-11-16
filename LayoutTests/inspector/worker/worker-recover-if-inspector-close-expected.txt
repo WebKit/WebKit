@@ -1,0 +1,10 @@
+Tests that a Worker recovers and resumes if Web Inspector closes before sending Worker.initialized.
+
+
+== Running test suite: Worker.CreateAndTerminate
+-- Running test case: Worker.enable
+PAGE: Creating the worker.
+PASS: Worker.workerCreated
+PAGE: Closing the inspector.
+PASS: Worker recovered.
+

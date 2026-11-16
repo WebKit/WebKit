@@ -1,0 +1,14 @@
+hello
+spacer
+
+PASS Verifies that fragment navigation reveals hidden=until-found elements.
+PASS Verifies that fragment navigation reveals all parent hidden=until-found elements.
+PASS Verifies that the beforematch event is fired synchronously and bubbles after fragment navigation.
+PASS Verifies that when a beforematch event handler moves a matching element, we scroll to its final location.
+PASS Verifies that the beforematch event is fired on the right element when there are multiple hidden=until-found elements.
+PASS Verifies that no scrolling occurs when an element selected by the fragment identifier is detached by the beforematch event handler.
+PASS No scrolling should occur when the beforematch event handler sets the target element's style to display: none.
+PASS Scrolling should still occur when beforematch sets visiblity:hidden on the target element.
+PASS Verifies that the beforematch event is not fired on elements without hidden=until-found.
+PASS The hidden attribute should still be set inside the beforematch event handler.
+

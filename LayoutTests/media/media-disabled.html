@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-disabled</title>
+    <script src=video-test.js></script>
+    <script>
+        
+        window.addEventListener('load', event => {
+            run("internals.settings.setMediaEnabled(false)");
+            run('video = document.createElement("video")');
+            testExpected('video instanceof HTMLVideoElement', false);
+            testExpected('video instanceof HTMLUnknownElement', true);
+
+            run('audio = document.createElement("audio")');
+            testExpected('audio instanceof HTMLAudioElement', false);
+            testExpected('audio instanceof HTMLUnknownElement', true);
+
+            consoleWrite("");
+            run("internals.settings.setMediaEnabled(true)");
+            run('video = document.createElement("video")');
+            testExpected('video instanceof HTMLVideoElement', true);
+
+            run('audio = document.createElement("audio")');
+            testExpected('audio instanceof HTMLAudioElement', true);
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
+
+

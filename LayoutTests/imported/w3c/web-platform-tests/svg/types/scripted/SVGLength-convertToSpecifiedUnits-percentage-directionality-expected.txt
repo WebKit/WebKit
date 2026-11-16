@@ -1,0 +1,9 @@
+
+PASS SVGLength, percentage conversion with different directionalities, horizontal (x)
+PASS SVGLength, percentage conversion with different directionalities, vertical (y)
+PASS SVGLength, percentage conversion with different directionalities, horizontal (width)
+PASS SVGLength, percentage conversion with different directionalities, vertical (height)
+PASS SVGLength, percentage conversion with different directionalities, unspecified directionality (circle r)
+PASS SVGLength, percentage conversion with different directionalities, horizontal vs vertical produce different percentages
+PASS SVGLength, percentage conversion with different directionalities, vertical percentage round-trip
+

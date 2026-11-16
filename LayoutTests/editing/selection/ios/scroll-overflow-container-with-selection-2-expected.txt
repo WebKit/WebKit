@@ -1,0 +1,12 @@
+Verifies that a text selection on text outside of an overflow scrolling container does not prevent the user from scrolling the container
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Scrolled overflow container
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Start selection here
+
+End selection here

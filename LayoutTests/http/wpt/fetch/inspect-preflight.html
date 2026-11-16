@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Storing network load information</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.reject("Internals API required");
+
+    internals.setCaptureExtraNetworkLoadMetricsEnabled(true);
+
+    const host = get_host_info();
+    await fetch(host.HTTP_REMOTE_ORIGIN + "/WebKit/fetch/resources/preflight.py", { headers : [["header", "value"]] });
+
+    let descriptions = internals.ongoingLoadsDescriptions();
+    internals.setCaptureExtraNetworkLoadMetricsEnabled(false);
+
+    let result = JSON.parse(descriptions)[0][0];
+
+    assert_equals(result[0], 1, "type");
+    assert_equals(result[2], "OPTIONS", "method");
+    assert_equals(result[3], 200, "status");
+
+}, "Get preflight information");
+</script>
+</body>
+</html>

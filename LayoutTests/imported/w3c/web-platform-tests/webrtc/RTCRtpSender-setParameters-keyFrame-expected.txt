@@ -1,0 +1,4 @@
+
+FAIL setParameters() second argument can be used to trigger keyFrame generation assert_true: expected true got false
+FAIL setParameters() second argument can be used to trigger keyFrame generation (simulcast) assert_true: expected true got false
+

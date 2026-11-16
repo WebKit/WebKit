@@ -1,0 +1,22 @@
+Tests the proper sequence of AXSelectedTextChanged notifications in textarea elements
+
+Select the word 'defg':
+Received AXSelectedTextChanged notification for '', AXRole: AXWebArea
+Selected text: 'defg'
+Received AXSelectedTextChanged notification for 'textarea', AXRole: AXTextArea
+Selected text: 'defg'
+Received AXSelectedTextChanged notification for 'textarea', AXRole: AXTextArea
+Selected text: 'defg'
+
+Move the insertion point to before 'o':
+Received AXSelectedTextChanged notification for '', AXRole: AXWebArea
+Insertion point before 'o'
+Received AXSelectedTextChanged notification for 'textarea', AXRole: AXTextArea
+Insertion point before 'o'
+Received AXSelectedTextChanged notification for 'textarea', AXRole: AXTextArea
+Insertion point before 'o'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a textarea:

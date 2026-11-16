@@ -1,0 +1,9 @@
+
+FAIL fetchLater() request quota are shared by same-origin iframes and root. assert_throws_quotaexceedederror: function "() => fetchLater(requestUrl, {
+        method: 'POST',
+        body: generatePayload(
+            getRemainingQuota(QUOTA_PER_ORIGIN, requestUrl, headers), dataType),
+        // Required, as the size of referrer also take up quota.
+        referrer: '',
+      })" threw object "QuotaExceededError: fetchLater() exceeded per-origin quota" that is not a correct QuotaExceededError: property "requested" is equal to 65536, expected null
+

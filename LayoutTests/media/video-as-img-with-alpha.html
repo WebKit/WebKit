@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-as-img-with-alpha</title>
+    <style>
+        body {
+            background: white;
+        }
+
+        #img {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        #spacer {
+            position: absolute;
+            left: 200px;
+            top: 0px;
+            background-color: red;
+        }
+        #canvas {
+            position: absolute;
+            left: 400px;
+            top: 0px;
+        }
+    </style>
+    <script>
+    // Put a img element to the left, a spacer in the middle and a canvas to the right. The video element will
+    // play a transparent video, and a video frame will be copied into the canvas.
+    // As the img and the canvas are invisible, to visually check that the img element is really playing something,
+    // set the size of the spacer to the size of the video frames (200x200).
+
+    var requirePixelDump = true;
+
+    window.addEventListener('load', async event => {
+        let img = document.getElementById('img');
+        await img.decode();
+
+        let spacer = document.getElementById("spacer");
+        spacer.style.width = img.naturalWidth + "px";
+        spacer.style.height = img.naturalHeight + "px";
+
+        let canvas = document.getElementById("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        context = canvas.getContext("2d");
+        context.drawImage(img, 0, 0);
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone()", 0);
+    });
+    </script>
+    <script src="video-test.js"></script>
+</head>
+
+<body>
+    <picture>
+        <source srcset="content/video-with-alpha.mov" type="video/quicktime; codecs=hvc1.1.6.L60.B0">
+        <source srcset="content/video-with-alpha.webm" type="video/webm; codecs=vp09">
+        <img id="img"></video>
+    </picture>
+    <div id="spacer"></div>
+    <canvas id="canvas"></canvas>
+</body>
+</html>

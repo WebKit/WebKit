@@ -1,0 +1,42 @@
+This test verifies that the increment/decrement actions post keyboard events that appear identical to real keyboard events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Sending AT event
+Received AT event
+Sending real event
+Received real event
+PASS realKeyEvent.altGraphKey is atKeyEvent.altGraphKey
+PASS realKeyEvent.altKey is atKeyEvent.altKey
+PASS realKeyEvent.bubbles is atKeyEvent.bubbles
+PASS realKeyEvent.cancelBubble is atKeyEvent.cancelBubble
+PASS realKeyEvent.cancelable is atKeyEvent.cancelable
+PASS realKeyEvent.charCode is atKeyEvent.charCode
+PASS realKeyEvent.code is atKeyEvent.code
+PASS realKeyEvent.composed is atKeyEvent.composed
+PASS realKeyEvent.ctrlKey is atKeyEvent.ctrlKey
+PASS realKeyEvent.detail is atKeyEvent.detail
+PASS realKeyEvent.isComposing is atKeyEvent.isComposing
+PASS realKeyEvent.isTrusted is atKeyEvent.isTrusted
+PASS realKeyEvent.key is atKeyEvent.key
+PASS realKeyEvent.keyCode is atKeyEvent.keyCode
+PASS realKeyEvent.keyIdentifier is atKeyEvent.keyIdentifier
+PASS realKeyEvent.layerX is atKeyEvent.layerX
+PASS realKeyEvent.layerY is atKeyEvent.layerY
+PASS realKeyEvent.location is atKeyEvent.location
+PASS realKeyEvent.metaKey is atKeyEvent.metaKey
+PASS realKeyEvent.pageX is atKeyEvent.pageX
+PASS realKeyEvent.pageY is atKeyEvent.pageY
+PASS realKeyEvent.repeat is atKeyEvent.repeat
+PASS realKeyEvent.returnValue is atKeyEvent.returnValue
+PASS realKeyEvent.shiftKey is atKeyEvent.shiftKey
+PASS realKeyEvent.srcElement is atKeyEvent.srcElement
+PASS realKeyEvent.target is atKeyEvent.target
+PASS realKeyEvent.type is atKeyEvent.type
+PASS realKeyEvent.which is atKeyEvent.which
+PASS realKeyEvent.windowProxy is atKeyEvent.windowProxy
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

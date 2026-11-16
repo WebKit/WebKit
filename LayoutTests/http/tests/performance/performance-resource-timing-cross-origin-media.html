@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+    if (window.internals)
+        internals.settings.setEnableOpaqueLoadingForMedia(true);
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<video id=video src="http://localhost:8000/media/resources/hls/playlist-with-cookie.m3u8">
+<script>
+    var entries = new Set();
+    let gotMetadata = false;
+
+    let runTest = function() {
+        for (let entry of performance.getEntriesByType('resource')) {
+            if (entries.has(entry.name))
+                continue;
+            entries.add(entry.name);
+            if (entry.initiatorType == "video" && entry.name != video.src)
+                testFailed("Unexpected entry: " + entry.name);
+            else
+                debug(entry.name);
+        }
+
+        if (window.testRunner && gotMetadata && entries.size)
+            testRunner.notifyDone();
+    };
+    setInterval(runTest, 100);
+
+    video.addEventListener("loadedmetadata", (e) => {
+        gotMetadata = true;
+        if (window.testRunner && gotMetadata && entries.size)
+            testRunner.notifyDone();
+    });
+</script>
+</body>
+</html>

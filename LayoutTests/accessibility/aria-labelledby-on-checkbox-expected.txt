@@ -1,0 +1,11 @@
+This test verifies that when a button has aria-labelledby referencing a checkbox or radio, the button gets the checkbox/radio accessible name (from its label), not its value attribute.
+
+PASS: platformValueForW3CName(buttonReferencingCheckbox) === 'Checkbox Label Text'
+PASS: platformValueForW3CName(buttonReferencingCheckboxAriaLabel) === 'Checkbox ARIA Label'
+PASS: platformValueForW3CName(buttonReferencingRadio) === 'Radio Label Text'
+PASS: platformValueForW3CName(buttonReferencingCheckbox) === 'Updated Checkbox Label'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Toggle   Toggle  Label for checkbox with aria-label  Toggle  Radio Label Text Updated Checkbox Label

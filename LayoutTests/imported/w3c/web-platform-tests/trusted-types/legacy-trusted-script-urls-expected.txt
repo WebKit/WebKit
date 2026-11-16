@@ -1,0 +1,6 @@
+
+PASS getPropertyType() with legacy TrustedScriptURLs properties return null.
+PASS getAttributeType() with legacy TrustedScriptURLs attributes return null.
+PASS Legacy TrustedScriptURLs properties accept arbitrary strings.
+PASS Legacy TrustedScriptURLs attributes accept arbitrary strings.
+

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests for range requests on a Blob URL.");
+jsTestIsAsync = true;
+
+const payload1 = "Suffix range";
+const payload2 = " ";
+const payload3 = "test";
+const blob = new Blob([payload1, payload2, payload3]);
+const blobURL = URL.createObjectURL(blob);
+const emptyBlob = new Blob();
+const emptyBlobURL = URL.createObjectURL(emptyBlob);
+
+function finish() {
+    URL.revokeObjectURL(blobURL);
+    URL.revokeObjectURL(emptyBlobURL);
+    finishJSTest();
+}
+
+async function runFetchTest(url, rangeHeaderValue, expectedText, _expectedStatusCode, expectError = false)
+{
+    expectedStatusCode = _expectedStatusCode;
+    return fetch(url, { headers: { "Range":rangeHeaderValue } }).then((_response) => {
+        if (expectError) {
+            testFailed("Load should have failed but did not");
+            return;
+        }
+        response = _response;
+        shouldBeTrue("response.ok");
+        shouldBe("response.status", "" + expectedStatusCode);
+        return response.text().then((_text) => {
+            text = _text;
+            shouldBeEqualToString("text", "" + expectedText);
+        });
+    }).catch((error) => {
+        if (expectError)
+            testPassed("Fetch rejected with " + error);
+        else
+            testFailed("Fetch rejected with " + error);
+    })
+}
+
+async function runTests()
+{
+    debug ("* Valid range: [0-3]");
+    await runFetchTest(blobURL, "bytes=0-3", "Suff", 206);
+    debug ("* Valid range: [2-13]");
+    await runFetchTest(blobURL, "bytes=2-13", "ffix range t", 206);
+    debug ("* Valid range: [-3]"); // Last 3 bytes
+    await runFetchTest(blobURL, "bytes=-3", "est", 206);
+    debug ("* Valid range: [-7]"); // Last 7 bytes
+    await runFetchTest(blobURL, "bytes=-7", "ge test", 206);
+    debug ("* Valid range: [3-]");
+    await runFetchTest(blobURL, "bytes=3-", "fix range test", 206);
+    debug("* Invalid range (last x bytes, too large): [-1000000]");
+    await runFetchTest(blobURL, "bytes=-1000000", "Suffix range test", 206); // We return all content but still 206 status code (so does Chrome).
+    debug("* Invalid range (end too large): [2-1000000]");
+    await runFetchTest(blobURL, "bytes=2-1000000", "ffix range test", 206); // We clamp the end in this case (so does Chrome).
+    debug("* Invalid range (start too large): [1000-]");
+    let expectError = true;
+    await runFetchTest(blobURL, "bytes=1000-", "", 0, expectError);
+    debug("* Empty Blob: [0-]");
+    await runFetchTest(emptyBlobURL, "bytes=0-", "", 0, expectError);
+    debug("* Empty Blob: [-1]");
+    await runFetchTest(emptyBlobURL, "bytes=-1", "", 206);
+    debug("* Empty Blob: [-100]");
+    await runFetchTest(emptyBlobURL, "bytes=-100", "", 206);
+    debug("* Empty Blob: [100-]");
+    await runFetchTest(emptyBlobURL, "bytes=0-", "", 0, expectError);
+    finishJSTest();
+}
+
+onload = () => {
+    runTests();
+};
+</script>
+</body>
+</html>

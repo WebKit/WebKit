@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsHighBitDepthEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const width = 4;
+const height = 2;
+
+const formats = [
+    { format: "I420P10", chromaSamples: 2 },
+    { format: "I420P12", chromaSamples: 2 },
+    { format: "I422P10", chromaSamples: 4 },
+    { format: "I422P12", chromaSamples: 4 },
+    { format: "I444P10", chromaSamples: 8 },
+    { format: "I444P12", chromaSamples: 8 },
+];
+
+for (const { format, chromaSamples } of formats) {
+    test(() => {
+        const data = new Uint16Array(width * height + 2 * chromaSamples);
+        assert_throws_dom("NotSupportedError", () => new VideoFrame(data, { format, timestamp: 0, codedWidth: width, codedHeight: height }));
+    }, `${format} is a known format that cannot be constructed yet`);
+}
+
+test(() => {
+    const data = new Uint16Array(2 * width * height + 2 * 2);
+    assert_throws_js(TypeError, () => new VideoFrame(data, { format: "I420AP10", timestamp: 0, codedWidth: width, codedHeight: height }));
+}, "I420AP10 is not a known format");
+</script>

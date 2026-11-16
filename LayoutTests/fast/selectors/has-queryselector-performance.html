@@ -1,0 +1,19 @@
+<body>This test passes if it doesn't time out.
+<script>
+window.testRunner?.dumpAsText();
+
+function buildTree(parent, width, depth)
+{
+    if (!depth)
+        return;
+
+    for (let i = 0; i < width; ++i) {
+        const div = document.createElement("div");
+        buildTree(div, width, depth - 1);
+        parent.appendChild(div);
+    }
+}
+
+buildTree(document.body, 5, 5);
+document.querySelectorAll(":has(foo) div")
+</script>

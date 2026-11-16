@@ -1,0 +1,9 @@
+
+div
+x-foo
+
+PASS <input> has a form owner
+PASS <img> has a form owner
+PASS <div> doesn't have a form owner
+PASS form-associated <x-foo> has a form owner
+

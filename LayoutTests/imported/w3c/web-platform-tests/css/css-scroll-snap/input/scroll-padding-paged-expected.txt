@@ -1,0 +1,11 @@
+This tests what happens when you perform a paging scroll (e.g. space bar or page down key) with a scroll padding.
+
+Just a page
+
+Just another page
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT After page down, the scroll padding is also taken into account Test timed out
+

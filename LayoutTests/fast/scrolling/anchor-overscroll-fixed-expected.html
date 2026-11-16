@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<title>Test anchor positioning vs overscroll</title>
+
+<style>
+* { box-sizing: border-box; }
+html {
+  border: solid black;
+  width: 200vw;
+  height: 200vh;
+  scrollbar-width: none;
+  position: relative;
+}
+body {
+  margin: 0;
+}
+
+#anchor {
+  width: 40vw;
+  height: 40vh;
+  margin-inline-start: 80vw;
+  margin-block-start: 80vh;
+  background: orange;
+}
+
+.anchored {
+  position: absolute;
+  top: 120vh;
+  left: 40vw;
+  width: 40vw;
+  height: 40vh;
+  border: solid aqua 4px;
+  background: teal;
+}
+</style>
+
+<div id="anchor"></div>
+<div class="anchored"></div>
+
+<script src="../../resources/ui-helper.js"></script>
+<script>
+async function run()
+{
+  // Scroll to end.
+  var scrollHeight = document.documentElement.offsetHeight / 2;
+  document.documentElement.scrollTop = scrollHeight - 10;
+  await new Promise(resolve => requestAnimationFrame(resolve));
+
+  // Scroll down into overscroll area.
+  await UIHelper.startMonitoringWheelEvents();
+  eventSender.mouseMoveTo(10, 10);
+  eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -53, "began", "none");
+  eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -53, "changed", "none");
+  await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+  await new Promise(resolve => requestAnimationFrame(resolve));
+
+  document.documentElement.classList.remove('reftest-wait');
+}
+
+run();
+</script>

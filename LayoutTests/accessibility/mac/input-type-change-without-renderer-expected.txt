@@ -1,0 +1,9 @@
+This tests that changing the type attribute of a non-rendered input updates its role description.
+
+PASS: roleDescriptionIncludes('telephone') === true
+PASS: roleDescriptionIncludes('email') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

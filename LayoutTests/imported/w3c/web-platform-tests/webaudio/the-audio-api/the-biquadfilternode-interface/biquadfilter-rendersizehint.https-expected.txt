@@ -1,0 +1,7 @@
+
+PASS BiquadFilter robustness at 3000Hz & hint 1
+PASS BiquadFilter robustness at 48000Hz & hint 256
+PASS BiquadFilter robustness at 48000Hz & hint 100
+PASS BiquadFilter robustness at 192000Hz & hint 4096
+PASS BiquadFilter robustness at 11000Hz & hint 66000
+

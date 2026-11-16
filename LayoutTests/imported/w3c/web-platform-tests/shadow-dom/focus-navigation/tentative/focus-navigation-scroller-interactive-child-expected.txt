@@ -1,0 +1,7 @@
+START
+submit
+END
+
+FAIL While focusing a keyboard-focusable scroller, adding interactive content should not cancel focusability assert_equals: scroller should be keyboard focusable expected Element node <div id="scroller" style="overflow:scroll; width:50px; he... but got Element node <body><button id="start">START</button>
+<div id="scroller...
+

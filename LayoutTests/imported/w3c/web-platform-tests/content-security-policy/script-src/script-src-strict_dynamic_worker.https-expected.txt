@@ -1,0 +1,5 @@
+
+PASS Dedicated worker is allowed via 'strict-dynamic'
+PASS Shared worker is allowed via 'strict-dynamic'
+PASS Service worker is allowed via 'strict-dynamic'
+

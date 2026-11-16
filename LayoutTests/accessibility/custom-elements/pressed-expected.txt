@@ -1,0 +1,17 @@
+This tests that aria fallback roles work correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById("button-1").role is "AXRole: AXCheckBox"
+PASS accessibilityController.accessibleElementById("button-1").stringValue is "AXValue: 1"
+PASS accessibilityController.accessibleElementById("button-1").isRequired is true
+PASS accessibilityController.accessibleElementById("button-1").isSelected is true
+PASS accessibilityController.accessibleElementById("button-2").role is "AXRole: AXCheckBox"
+PASS accessibilityController.accessibleElementById("button-2").stringValue is "AXValue: 0"
+PASS accessibilityController.accessibleElementById("button-2").isRequired is false
+PASS accessibilityController.accessibleElementById("button-2").isSelected is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

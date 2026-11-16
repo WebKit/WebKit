@@ -1,0 +1,5 @@
+
+
+PASS In top-level contexts, partitioned cookies default to the same SameSite attribute as unpartitioned cookies.
+FAIL In top-level contexts, partitioned cookies can be set with all SameSite attributes. assert_equals: expected "Strict" but got "None"
+

@@ -1,0 +1,88 @@
+<html>
+<head>
+<style>
+div { font-weight: bold; }
+</style>
+
+</head>
+
+<body>
+This will test that radio buttons can be moved in and out of forms while maintaining only one checked button per group, per form.
+<br>
+Test 1: Transfer radio buttons from &lt;body&gt; to &lt;form&gt;:
+<input type="radio" name="group1" id="radio1" checked="checked">
+<input type="radio" name="group1" id="radio2">
+<form id="test1">
+</form>
+<div id="result1">Test 1 Failed</div>
+<br>
+Test 2: Transfer radio buttons from &lt;form&gt; to &lt;body&gt;:
+<form>
+<input type="radio" name="group2" id="radio3" checked="checked">
+<input type="radio" name="group2" id="radio4">
+</form>
+<div id="result2">Test 2 Failed</div>
+<br>
+Test 3: Transfer radio buttons from &lt;form&gt; to &lt;body&gt; with a dormant state in the middle:
+<form>
+<input type="radio" name="group3" id="radio5" checked="checked">
+<input type="radio" name="group3" id="radio6">
+</form>
+<div id="result3">Test 3 Failed</div>
+<br>
+Test 4: Transfer from &lt;form&gt; to &lt;form&gt;
+<form>
+<input type="radio" name="group4" id="radio7" checked="checked" style="outline:1px solid red">
+<input type="radio" name="group4" id="radio8" style="outline:1px solid blue">
+</form>
+<form id="test4">
+<input type="radio" name="group4" id="radio9" checked="checked" style="outline:1px solid green">
+</form>
+<div id="result4">Test 4 Failed</div>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var radio1 = document.getElementById("radio1");
+var radio2 = document.getElementById("radio2");
+var form = document.getElementById("test1");
+var result1 = document.getElementById("result1");
+form.appendChild(radio1);
+form.appendChild(radio2);
+radio2.checked = true;
+    
+var radio3 = document.getElementById("radio3");
+var radio4 = document.getElementById("radio4");
+document.body.appendChild(radio3);
+document.body.appendChild(radio4);
+radio4.checked = true;
+    
+var radio5 = document.getElementById("radio5");
+var radio6 = document.getElementById("radio6");
+radio5.parentNode.removeChild(radio5);
+radio6.parentNode.removeChild(radio6);
+document.body.appendChild(radio5);
+document.body.appendChild(radio6);
+radio6.checked = true;
+    
+var radio7 = document.getElementById("radio7");
+var radio8 = document.getElementById("radio8");
+var radio9wasChecked = true;
+var form4 = document.getElementById("test4");
+form4.appendChild(radio7);
+form4.appendChild(radio8);
+radio9wasChecked = radio9.checked;
+radio8.checked = true;
+    
+if (!radio1.checked && radio2.checked)
+    result1.innerHTML = "Test 1 Passed";        
+if (!radio3.checked && radio4.checked)
+    result2.innerHTML = "Test 2 Passed";
+if (!radio5.checked && radio6.checked)
+    result3.innerHTML = "Test 3 Passed";
+if (!radio7.checked && radio8.checked && !radio9.checked && !radio9wasChecked)
+    result4.innerHTML = "Test 4 Passed";
+</script>
+</body>
+</html>

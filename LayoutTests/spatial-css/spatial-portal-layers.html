@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+<script src="../resources/ui-helper.js"></script>
+<style>
+    #portal {
+        spatial: portal;
+        width: 300px;
+        height: 150px;
+        padding: 24px 8px 10px 12px;
+        margin: 28px 10px 12px 14px;
+        border: 8px black solid;
+        box-shadow: 10px -5px 5px red;
+    }
+</style>
+</head>
+<body>
+<div id="portal">
+    <model id="model" src="../model-element/resources/cube.usdz"></model>
+    <span id="content">Hello!</span>
+</div>
+<pre id="results"></pre>
+<script>
+window.onload = async function () {
+    window.internals?.disableModelLoadDelaysForTesting();
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
+    await document.getElementById("model").ready;
+
+    await UIHelper.ensureStablePresentationUpdate();
+    results.textContent = await UIHelper.getCALayerTreeForCompositedElement(document.getElementById("portal"));
+
+    document.getElementById("portal").remove();
+
+    window.testRunner?.notifyDone();
+};
+</script>
+</body>
+</html>

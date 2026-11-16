@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="clip-path-shape-inset-in-group-expected.html">
+</head>
+<body style="margin: 0">
+<!-- inset() basic-shape clip on a positioned shape nested inside a plain (non-layer) group. The
+     remaining green area should be the inset rect, aligned with the shape. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+<g>
+    <rect x="50" y="50" width="200" height="200" fill="green" style="-webkit-clip-path: inset(50px)"/>
+</g>
+</svg>
+</body>
+</html>

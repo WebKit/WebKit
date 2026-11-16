@@ -1,0 +1,3 @@
+
+PASS Iframes should not report resource timing for non-handled mime-types (downloads)
+

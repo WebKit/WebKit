@@ -1,0 +1,8 @@
+
+PASS e.style['text-fit'] = "larger" should not set the property value
+PASS e.style['text-fit'] = "smaller" should not set the property value
+PASS e.style['text-fit'] = "stretch per-line" should not set the property value
+PASS e.style['text-fit'] = "grow 150% consistent" should not set the property value
+PASS e.style['text-fit'] = "consistent 100%" should not set the property value
+PASS e.style['text-fit'] = "grow consistent 1.0" should not set the property value
+

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+table, tr, td, th {
+  display: inline-block;
+}
+</style>
+</head>
+<body role="group" id="body">
+
+<table id="table">
+<caption>This is a table caption</caption>
+<thead>
+    <tr id="r0">
+        <th id="r0c0">Author</th>
+        <th id="r0c1">Title</th>
+        <th id="r0c2">Year</th>
+    </tr>
+</thead>
+<tbody>
+    <tr id="r1">
+        <td id="r1c0">Stephen Hawking</td>
+        <td id="r1c1">A Brief History of Time</td>
+        <td id="r1c2">1988</td>
+    </tr>
+    <tr id="r2">
+        <td id="r2c0">Carl Sagan</td>
+        <td id="r2c1">Cosmos</td>
+        <td id="r2c2">1980</td>
+    </tr>
+    <tr id="r3">
+        <td id="r3c0">Will Gater</td>
+        <td id="r3c1">The Mysteries of the Universe</td>
+        <td id="r3c2">2020</td>
+    </tr>
+</tbody>
+</table>
+
+<script>
+var output = "This test ensures that a table with display:inline-block components is accessible.\n\n";
+
+if (window.accessibilityController) {
+    var table = accessibilityController.accessibleElementById("table");
+    output += expect("table.rowCount", "4");
+    output += expect("table.columnCount", "3");
+
+    for (let row = 0; row < 4; row++) {
+        for (let column = 0; column < 3; column++)
+            output += expect(`table.cellForColumnAndRow(${column}, ${row}).domIdentifier`, `"r${row}c${column}"`);
+    }
+
+    output += `\nPerforming search traversal of body.\n`;
+    function elementDescription(axElement) {
+        if (!axElement)
+            return "null";
+
+        const role = axElement.role;
+        const id = axElement.domIdentifier;
+        let result = `${id ? `#${id} ` : ""}${role}`;
+        if (role.includes("StaticText"))
+            result += ` ${accessibilityController.platformName === "ios" ? axElement.description : axElement.stringValue}`;
+        return result;
+    }
+
+    const container = accessibilityController.accessibleElementById("body");
+    let searchResult = null;
+    while (true) {
+        searchResult = container.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+        const parentOutput = accessibilityController.platformName === "ios" ? "" : ` (parent: {${elementDescription(searchResult.parentElement())}})`;
+        output += `\n{${elementDescription(searchResult)}}${parentOutput}\n`;
+    }
+    debug(output);
+}
+</script>
+</body>
+</html>
+

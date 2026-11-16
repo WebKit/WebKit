@@ -1,0 +1,6 @@
+
+PASS ManagedMediaSource construction
+PASS ManagedMediaSource streaming attribute is initially false
+PASS ManagedMediaSource event handlers are initially null
+PASS ManagedMediaSource.addSourceBuffer() returns a ManagedSourceBuffer
+

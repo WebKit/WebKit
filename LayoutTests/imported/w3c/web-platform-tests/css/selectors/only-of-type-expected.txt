@@ -1,0 +1,12 @@
+Whitespace nodes should be ignored.
+A comment node should be ignored.
+Non-whitespace text node should be ignored.
+.
+There is another child element of a different type.
+
+PASS Whitespace nodes should be ignored.
+PASS A comment node should be ignored.
+PASS Non-whitespace text node should be ignored.
+PASS There is another child element of a different type.
+PASS Dynamic addition and removal
+

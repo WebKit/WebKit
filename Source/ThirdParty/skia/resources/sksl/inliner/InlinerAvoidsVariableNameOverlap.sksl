@@ -1,0 +1,16 @@
+inline half2 InlineB(half2 tmp)
+{
+    half2 reusedName = tmp - 1;
+    return reusedName;
+}
+
+inline half2 InlineA()
+{
+    half2 reusedName = half2(1, 2);
+    return InlineB(reusedName);
+}
+
+half4 main(float2 coords)
+{
+    return InlineA().xy01;
+}

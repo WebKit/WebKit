@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="editor" oncopy="copy(event)" onpaste="paste(event)" contenteditable>some text</div>
+<script>
+
+var HTMLToCopy = null;
+var didCopy = false;
+var didPaste = false;
+
+function copy(event) {
+    if (HTMLToCopy) {
+        event.clipboardData.setData('text/html', HTMLToCopy);
+        event.preventDefault();
+    }
+    didCopy = true;
+}
+
+function paste(event) {
+    pastedHTML = event.clipboardData.getData('text/html');
+    didPaste = true;
+}
+
+editor.focus();
+</script>
+</body>
+</html>

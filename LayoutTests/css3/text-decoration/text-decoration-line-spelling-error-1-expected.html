@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html lang="en">
+<meta charset="UTF-8">
+<style>
+div {
+  font-size: 300%;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner)
+  testRunner.waitUntilDone();
+
+if (window.internals)
+  internals.setContinuousSpellCheckingEnabled(true);
+
+function runTest()
+{
+  const target = document.getElementById("target");
+  const misspelledText = "A txet sample";
+  target.focus();
+  document.execCommand("insertText", false, misspelledText);
+  // Add a word separator so that both spelling and grammar markers will appear.
+  document.execCommand("InsertText", false, " ");
+  document.execCommand("Delete", false);
+  target.blur();
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+</script>
+<body>
+<div contenteditable="true" id="target"></div>
+<script>
+UIHelper.setSpellCheckerResults({
+  "A txet sample" : [
+    { type: "spelling", from: 2, to : 6}
+  ]
+}).then(runTest);
+</script>
+</body>

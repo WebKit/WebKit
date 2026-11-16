@@ -1,0 +1,25 @@
+
+PASS horizontal-tb: tall viewport, default-sizes: true
+PASS horizontal-tb: tall viewport, default-sizes: false
+PASS horizontal-tb: wide viewport, default-sizes: true
+PASS horizontal-tb: wide viewport, default-sizes: false
+PASS horizontal-tb: square viewport, default-sizes: true
+PASS horizontal-tb: square viewport, default-sizes: false
+PASS horizontal-tb: dialog and viewport match, default-sizes: false
+PASS vertical-rl: tall viewport, default-sizes: true
+PASS vertical-rl: tall viewport, default-sizes: false
+PASS vertical-lr: tall viewport, default-sizes: true
+PASS vertical-lr: tall viewport, default-sizes: false
+PASS vertical-rl (dialog horizontal-tb): tall viewport, default-sizes: true
+PASS vertical-rl (dialog horizontal-tb): tall viewport, default-sizes: false
+PASS vertical-lr (dialog horizontal-tb): tall viewport, default-sizes: true
+PASS vertical-lr (dialog horizontal-tb): tall viewport, default-sizes: false
+PASS horizontal-tb (container vertical-rl): tall viewport, default-sizes: true
+PASS horizontal-tb (container vertical-rl): tall viewport, default-sizes: false
+PASS vertical-rl (container horizontal-tb): tall viewport, default-sizes: true
+PASS vertical-rl (container horizontal-tb): tall viewport, default-sizes: false
+PASS horizontal-tb (container vertical-rl) (dialog horizontal-tb): tall viewport, default-sizes: true
+PASS horizontal-tb (container vertical-rl) (dialog horizontal-tb): tall viewport, default-sizes: false
+PASS vertical-rl (container horizontal-tb) (dialog vertical-rl): tall viewport, default-sizes: true
+PASS vertical-rl (container horizontal-tb) (dialog vertical-rl): tall viewport, default-sizes: false
+

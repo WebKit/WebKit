@@ -1,0 +1,7 @@
+Description
+
+This test validates that resources requested by dedicated workers don't appear in the main document.
+
+
+PASS Verify that resources requested by dedicated workers don't appear in the main document
+

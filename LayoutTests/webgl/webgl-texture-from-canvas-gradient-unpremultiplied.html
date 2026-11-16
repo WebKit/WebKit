@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-65536">
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+<style>
+    canvas {
+        background-color: black;
+    }
+</style>
+<body>
+    <p>Ensure a color-to-transparent canvas gradient uploaded to a WebGL texture and drawn to an unpremultiplied WebGL canvas has no black pixels.</p>
+    <canvas id="webgl" width="256" height="256"></canvas>
+    <script>
+        const source = document.createElement("canvas");
+        source.width = 256;
+        source.height = 256;
+        const ctx = source.getContext("2d");
+        const gradient = ctx.createRadialGradient(128, 128, 0, 128, 128, 120);
+        gradient.addColorStop(0, "#ff0000");
+        gradient.addColorStop(1, "#ff000000");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, source.width, source.height);
+
+        const wtu = WebGLTestUtils;
+        const gl = wtu.create3DContext("webgl", { premultipliedAlpha: false });
+        // Flip the texture coordinates so that the canvas top row is drawn at the top.
+        wtu.setupTexturedQuadWithTexCoords(gl, [0, 1], [1, 0]);
+
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+
+        wtu.drawUnitQuad(gl);
+    </script>
+</body>

@@ -1,0 +1,226 @@
+/*
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "SetupVarargsFrame.h"
+
+#if ENABLE(JIT)
+
+#include "Interpreter.h"
+#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "StackAlignment.h"
+
+namespace JSC {
+
+void emitSetVarargsFrame(CCallHelpers& jit, GPRReg lengthGPR, bool lengthIncludesThis, GPRReg numUsedSlotsGPR, GPRReg resultGPR)
+{
+    // We really want to make sure the size of the new call frame is a multiple of
+    // stackAlignmentRegisters(), however it is easier to accomplish this by
+    // rounding numUsedSlotsGPR to the next multiple of stackAlignmentRegisters().
+    // Together with the rounding below, we will assure that the new call frame is
+    // located on a stackAlignmentRegisters() boundary and a multiple of
+    // stackAlignmentRegisters() in size.
+    jit.addPtr(CCallHelpers::TrustedImm32(stackAlignmentRegisters() - 1), numUsedSlotsGPR, resultGPR);
+    jit.andPtr(CCallHelpers::TrustedImm32(~(stackAlignmentRegisters() - 1)), resultGPR);
+
+    // resultGPR now has the required frame size in Register units
+    // Round resultGPR to next multiple of stackAlignmentRegisters()
+    jit.addPtr(lengthGPR, resultGPR);
+    jit.addPtr(CCallHelpers::TrustedImm32(CallFrame::headerSizeInRegisters + (lengthIncludesThis ? 0 : 1) + (stackAlignmentRegisters() - 1)), resultGPR);
+    jit.andPtr(CCallHelpers::TrustedImm32(~(stackAlignmentRegisters() - 1)), resultGPR);
+    
+    // Now resultGPR has the right stack frame offset in Register units.
+    jit.negPtr(resultGPR);
+    jit.getEffectiveAddress(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, resultGPR, CCallHelpers::TimesEight), resultGPR);
+}
+
+static void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, ValueRecovery argCountRecovery, VirtualRegister firstArgumentReg, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+{
+    CCallHelpers::JumpList end;
+    
+    if (argCountRecovery.isConstant()) {
+        // FIXME: We could constant-fold a lot of the computation below in this case.
+        // https://bugs.webkit.org/show_bug.cgi?id=141486
+        jit.move(CCallHelpers::TrustedImm32(argCountRecovery.constant().asInt32()), scratchGPR1);
+    } else
+        jit.load32(CCallHelpers::lowWordFor(argCountRecovery.virtualRegister()), scratchGPR1);
+    if (firstVarArgOffset) {
+        CCallHelpers::Jump sufficientArguments = jit.branch32(CCallHelpers::GreaterThan, scratchGPR1, CCallHelpers::TrustedImm32(firstVarArgOffset + 1));
+        jit.move(CCallHelpers::TrustedImm32(1), scratchGPR1);
+        CCallHelpers::Jump endVarArgs = jit.jump();
+        sufficientArguments.link(&jit);
+        jit.sub32(CCallHelpers::TrustedImm32(firstVarArgOffset), scratchGPR1);
+        endVarArgs.link(&jit);
+    }
+    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(JSC::maxArguments + 1)));
+    
+    emitSetVarargsFrame(jit, scratchGPR1, true, numUsedSlotsGPR, scratchGPR2);
+
+    slowCase.append(jit.branchPtr(CCallHelpers::GreaterThan, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR2));
+
+    // Before touching stack values, we should update the stack pointer to protect them from signal stack.
+    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), scratchGPR2, CCallHelpers::stackPointerRegister);
+
+    // Initialize ArgumentCount.
+    jit.store32(scratchGPR1, CCallHelpers::Address(scratchGPR2, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset));
+
+    // Copy arguments.
+    jit.signExtend32ToPtr(scratchGPR1, scratchGPR1);
+    CCallHelpers::Jump done = jit.branchSubPtr(CCallHelpers::Zero, CCallHelpers::TrustedImm32(1), scratchGPR1);
+    // scratchGPR1: argumentCount
+
+    CCallHelpers::Label copyLoop = jit.label();
+    int argOffset = (firstArgumentReg.offset() - 1 + firstVarArgOffset) * static_cast<int>(sizeof(Register));
+    jit.load64(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, argOffset), scratchGPR3);
+    jit.store64(scratchGPR3, CCallHelpers::BaseIndex(scratchGPR2, scratchGPR1, CCallHelpers::TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
+    jit.branchSubPtr(CCallHelpers::NonZero, CCallHelpers::TrustedImm32(1), scratchGPR1).linkTo(copyLoop, &jit);
+    
+    done.link(&jit);
+}
+
+void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, InlineCallFrame* inlineCallFrame, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+{
+    ValueRecovery argumentCountRecovery;
+    VirtualRegister firstArgumentReg;
+    if (inlineCallFrame) {
+        if (inlineCallFrame->isVarargs()) {
+            argumentCountRecovery = ValueRecovery::displacedInJSStack(
+                inlineCallFrame->argumentCountRegister, DataFormatInt32);
+        } else {
+            argumentCountRecovery = ValueRecovery::constant(jsNumber(inlineCallFrame->argumentCountIncludingThis));
+        }
+        if (inlineCallFrame->m_argumentsWithFixup.size() > 1)
+            firstArgumentReg = inlineCallFrame->m_argumentsWithFixup[1].virtualRegister();
+        else
+            firstArgumentReg = VirtualRegister(0);
+    } else {
+        argumentCountRecovery = ValueRecovery::displacedInJSStack(
+            CallFrameSlot::argumentCountIncludingThis, DataFormatInt32);
+        firstArgumentReg = VirtualRegister(CallFrame::argumentOffset(0));
+    }
+    emitSetupVarargsFrameFastCase(vm, jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, scratchGPR3, argumentCountRecovery, firstArgumentReg, firstVarArgOffset, slowCase);
+}
+
+void emitInlineVarargsFrameForContiguousArray(VM& vm, CCallHelpers& jit, GPRReg arrayGPR, GPRReg numUsedSlotsGPR, GPRReg resultFrameGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, CCallHelpers::JumpList& slowCase, unsigned numPrefix)
+{
+    constexpr unsigned maxInlineLength = 8;
+    constexpr int elementSize = static_cast<int>(sizeof(EncodedJSValue));
+
+    slowCase.append(jit.branchIfNotCell(arrayGPR));
+    jit.load8(CCallHelpers::Address(arrayGPR, JSCell::typeInfoTypeOffset()), scratchGPR1);
+    CCallHelpers::Jump isSpreadButterfly = jit.branch32(CCallHelpers::Equal, scratchGPR1, CCallHelpers::TrustedImm32(JSCellButterflyType));
+    slowCase.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR1, CCallHelpers::TrustedImm32(ArrayType)));
+    jit.load8(CCallHelpers::Address(arrayGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR1);
+    jit.and32(CCallHelpers::TrustedImm32(IndexingTypeMask), scratchGPR1);
+    CCallHelpers::Jump shapeOK = jit.branch32(CCallHelpers::Equal, scratchGPR1, CCallHelpers::TrustedImm32(ArrayWithContiguous));
+    slowCase.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR1, CCallHelpers::TrustedImm32(ArrayWithInt32)));
+    shapeOK.link(&jit);
+    jit.loadPtr(CCallHelpers::Address(arrayGPR, JSObject::butterflyOffset()), arrayGPR);
+    jit.load32(CCallHelpers::Address(arrayGPR, Butterfly::offsetOfPublicLength()), scratchGPR1);
+    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(maxInlineLength)));
+
+    // Pre-scan for holes; bail to the C++ path otherwise.
+    CCallHelpers::Jump scanDone = jit.branchTest32(CCallHelpers::Zero, scratchGPR1);
+    jit.move(scratchGPR1, scratchGPR2);
+    CCallHelpers::Label scanLoop = jit.label();
+    jit.load64(CCallHelpers::BaseIndex(arrayGPR, scratchGPR2, CCallHelpers::TimesEight, -elementSize), scratchGPR3);
+    slowCase.append(jit.branchTest64(CCallHelpers::Zero, scratchGPR3));
+    jit.branchSubPtr(CCallHelpers::NonZero, CCallHelpers::TrustedImm32(1), scratchGPR2).linkTo(scanLoop, &jit);
+    scanDone.link(&jit);
+    CCallHelpers::Jump haveElements = jit.jump();
+
+    // The operand of f(...x). A spread butterfly has no holes, but a constant one may hold unboxed doubles.
+    isSpreadButterfly.link(&jit);
+    jit.load8(CCallHelpers::Address(arrayGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR1);
+    jit.and32(CCallHelpers::TrustedImm32(IndexingShapeMask), scratchGPR1);
+    slowCase.append(jit.branch32(CCallHelpers::Equal, scratchGPR1, CCallHelpers::TrustedImm32(DoubleShape)));
+    jit.load32(CCallHelpers::Address(arrayGPR, JSCellButterfly::offsetOfPublicLength()), scratchGPR1);
+    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(maxInlineLength)));
+    jit.addPtr(CCallHelpers::TrustedImm32(JSCellButterfly::offsetOfData()), arrayGPR);
+
+    haveElements.link(&jit);
+    // argumentCountIncludingThis = length + numPrefix + 1 ('this' and the prefix are stored by the caller).
+    jit.add32(CCallHelpers::TrustedImm32(1 + numPrefix), scratchGPR1, scratchGPR2);
+    emitSetVarargsFrame(jit, scratchGPR2, true, numUsedSlotsGPR, resultFrameGPR);
+    slowCase.append(jit.branchPtr(CCallHelpers::GreaterThan, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), resultFrameGPR));
+    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), resultFrameGPR, CCallHelpers::stackPointerRegister);
+    jit.store32(scratchGPR2, CCallHelpers::Address(resultFrameGPR, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset));
+
+    int copyBaseOffset = static_cast<int>((CallFrame::thisArgumentOffset() + static_cast<int>(numPrefix)) * static_cast<int>(sizeof(Register)));
+    CCallHelpers::Jump copyDone = jit.branchTest32(CCallHelpers::Zero, scratchGPR1);
+    CCallHelpers::Label copyLoop = jit.label();
+    jit.load64(CCallHelpers::BaseIndex(arrayGPR, scratchGPR1, CCallHelpers::TimesEight, -elementSize), scratchGPR3);
+    jit.store64(scratchGPR3, CCallHelpers::BaseIndex(resultFrameGPR, scratchGPR1, CCallHelpers::TimesEight, copyBaseOffset));
+    jit.branchSubPtr(CCallHelpers::NonZero, CCallHelpers::TrustedImm32(1), scratchGPR1).linkTo(copyLoop, &jit);
+    copyDone.link(&jit);
+}
+
+void emitInlineVarargsFrameForSpreadButterfly(VM& vm, CCallHelpers& jit, GPRReg spreadButterflyGPR, GPRReg numUsedSlotsGPR, GPRReg resultFrameGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, CCallHelpers::JumpList& slowCase, unsigned numPrefix)
+{
+    constexpr unsigned maxInlineLength = 8;
+    constexpr int elementSize = static_cast<int>(sizeof(EncodedJSValue));
+
+    if (ASSERT_ENABLED) {
+        // The copy below moves butterfly slots into JSValue-typed argument slots verbatim, so the operand
+        // must be a JSCellButterfly whose shape holds boxed values. A double-shaped buffer holds unboxed
+        // doubles, which the callee would read back as JSValues. Materialized spreads are always
+        // contiguous; a constant buffer from an eliminated PhantomNewArrayBuffer may be double-shaped, and
+        // the caller is responsible for keeping those off this path.
+        CCallHelpers::Jump isButterfly = jit.branch8(CCallHelpers::Equal, CCallHelpers::Address(spreadButterflyGPR, JSCell::typeInfoTypeOffset()), CCallHelpers::TrustedImm32(JSCellButterflyType));
+        jit.abortWithReason(AHTypeInfoIsValid);
+        isButterfly.link(&jit);
+
+        jit.load8(CCallHelpers::Address(spreadButterflyGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR1);
+        jit.and32(CCallHelpers::TrustedImm32(IndexingShapeMask), scratchGPR1);
+        CCallHelpers::Jump isNotDouble = jit.branch32(CCallHelpers::NotEqual, scratchGPR1, CCallHelpers::TrustedImm32(DoubleShape));
+        jit.abortWithReason(AHIndexingTypeIsValid);
+        isNotDouble.link(&jit);
+    }
+
+    jit.load32(CCallHelpers::Address(spreadButterflyGPR, JSCellButterfly::offsetOfPublicLength()), scratchGPR1);
+    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(maxInlineLength)));
+
+    jit.add32(CCallHelpers::TrustedImm32(1 + numPrefix), scratchGPR1, scratchGPR2);
+    emitSetVarargsFrame(jit, scratchGPR2, true, numUsedSlotsGPR, resultFrameGPR);
+    slowCase.append(jit.branchPtr(CCallHelpers::GreaterThan, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), resultFrameGPR));
+    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), resultFrameGPR, CCallHelpers::stackPointerRegister);
+    jit.store32(scratchGPR2, CCallHelpers::Address(resultFrameGPR, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset));
+
+    // The spread is dense, so no hole check.
+    int copyBaseOffset = static_cast<int>((CallFrame::thisArgumentOffset() + static_cast<int>(numPrefix)) * static_cast<int>(sizeof(Register)));
+    int loadBaseOffset = static_cast<int>(JSCellButterfly::offsetOfData()) - elementSize;
+    CCallHelpers::Jump copyDone = jit.branchTest32(CCallHelpers::Zero, scratchGPR1);
+    CCallHelpers::Label copyLoop = jit.label();
+    jit.load64(CCallHelpers::BaseIndex(spreadButterflyGPR, scratchGPR1, CCallHelpers::TimesEight, loadBaseOffset), scratchGPR2);
+    jit.store64(scratchGPR2, CCallHelpers::BaseIndex(resultFrameGPR, scratchGPR1, CCallHelpers::TimesEight, copyBaseOffset));
+    jit.branchSubPtr(CCallHelpers::NonZero, CCallHelpers::TrustedImm32(1), scratchGPR1).linkTo(copyLoop, &jit);
+    copyDone.link(&jit);
+}
+
+} // namespace JSC
+
+#endif // ENABLE(JIT)
+

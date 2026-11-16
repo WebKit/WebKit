@@ -1,0 +1,51 @@
+Tests that with captions off, Find searches the caption track for the highest-priority preferred language, shows it while searching, and restores it to off when Find is cleared.
+
+
+** English preferred: Find searches the English track, shows it, and restores it when cleared.
+RUN(englishMatches = internals.findCueMatches('banana', []).length)
+EXPECTED (englishMatches == '2') OK
+EXPECTED (englishTrack.mode == 'showing') OK
+EXPECTED (englishTrack.mode == 'disabled') OK
+
+** Spanish preferred: Find searches the Spanish track, shows it, and restores it when cleared.
+RUN(spanishMatches = internals.findCueMatches('banana', []).length)
+EXPECTED (spanishMatches == '4') OK
+EXPECTED (spanishTrack.mode == 'showing') OK
+EXPECTED (spanishTrack.mode == 'disabled') OK
+
+** French most preferred of the three: Find searches the highest-priority track, shows it, and restores it when cleared.
+RUN(frenchMatches = internals.findCueMatches('banana', []).length)
+EXPECTED (frenchMatches == '6') OK
+EXPECTED (frenchTrack.mode == 'showing') OK
+EXPECTED (frenchTrack.mode == 'disabled') OK
+
+** Upgrading the preferred language between searches swaps to the better track and restores the previous one.
+RUN(upgradeEnglishMatches = internals.findCueMatches('banana', []).length)
+EXPECTED (upgradeEnglishMatches == '2') OK
+EXPECTED (englishTrack.mode == 'showing') OK
+RUN(upgradeFrenchMatches = internals.findCueMatches('banana', []).length)
+EXPECTED (upgradeFrenchMatches == '6') OK
+EXPECTED (frenchTrack.mode == 'showing') OK
+EXPECTED (englishTrack.mode == 'disabled') OK
+EXPECTED (frenchTrack.mode == 'disabled') OK
+
+** With no preferred language present and no default track, Find promotes nothing and reports no matches.
+RUN(noPreferredMatches = internals.findCueMatches('banana', []).length)
+EXPECTED (noPreferredMatches == '0') OK
+EXPECTED (englishTrack.mode == 'disabled') OK
+EXPECTED (spanishTrack.mode == 'disabled') OK
+EXPECTED (frenchTrack.mode == 'disabled') OK
+
+** A captions-kind track is searchable, not just subtitles.
+RUN(germanCaptionsMatches = internals.findCueMatches('banana', []).length)
+EXPECTED (germanCaptionsMatches == '3') OK
+EXPECTED (germanCaptionsTrack.mode == 'showing') OK
+EXPECTED (germanCaptionsTrack.mode == 'disabled') OK
+
+** A track the user turned on is searched as-is, even when another language is preferred.
+RUN(userShownMatches = internals.findCueMatches('banana', []).length)
+EXPECTED (userShownMatches == '4') OK
+EXPECTED (englishTrack.mode == 'disabled') OK
+EXPECTED (spanishTrack.mode == 'showing') OK
+END OF TEST
+

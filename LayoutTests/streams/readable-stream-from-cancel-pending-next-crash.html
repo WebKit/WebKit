@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+test(() => {
+    const video = document.createElement("video");
+    const readableStream = ReadableStream.from(video.audioTracks);
+    const transformStream = new TransformStream();
+    const piped = readableStream.pipeThrough(transformStream);
+    piped.cancel();
+}, "Cancelling a pipe with a pending next call on the source DOM async iterator should not crash");
+</script>

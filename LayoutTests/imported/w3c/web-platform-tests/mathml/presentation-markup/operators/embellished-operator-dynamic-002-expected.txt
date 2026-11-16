@@ -1,0 +1,17 @@
+
+FAIL container1: Initially an embellished operator assert_approx_equals: lspace expected 25 +/- 1 but got 0
+PASS container2: Initially not an embellished operator
+PASS  container1: No longer an embellished operator
+FAIL container2: Became an embellished operator assert_approx_equals: lspace expected 25 +/- 1 but got 0
+FAIL container3: Initially an embellished operator (testing space-like) assert_approx_equals: lspace expected 25 +/- 1 but got 0
+PASS container4/space-like: Initially not an embellished operator (testing space-like)
+PASS  container3: No longer an embellished operator (testing space-like)
+FAIL container4: Became an embellished operator (testing space-like) assert_approx_equals: lspace expected 25 +/- 1 but got 0
+1
+2
+3
+4
+5
+6
+7
+8

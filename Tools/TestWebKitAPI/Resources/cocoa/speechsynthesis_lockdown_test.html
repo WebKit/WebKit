@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SpeechSynthesis Lockdown Mode Test with CoreIPC Helper</title>
+    <script src="coreipc.js"></script>
+</head>
+<body>
+    <h1>SpeechSynthesis EnabledBy Lockdown Mode Test</h1>
+    <div id="status">Loading...</div>
+    
+    <script>
+        console.log('SpeechSynthesis lockdown mode test starting...');
+        
+        function runSpeechSynthesisLockdownTest() {
+            try {
+                if (typeof CoreIPC === 'undefined') {
+                    alert('coreipc_framework_not_available');
+                    return;
+                }
+                
+                // Check if the SpeechSynthesisVoiceList message exists
+                const messageExists = CoreIPC.messages.WebPageProxy_SpeechSynthesisVoiceList;
+                if (!messageExists) {
+                    alert('speechsynthesis_message_not_found');
+                    return;
+                }
+                
+                // Use CoreIPC helper to send the message
+                const result = CoreIPC.UI.WebPageProxy.SpeechSynthesisVoiceList(
+                    IPC.webPageProxyID, // connection identifier
+                    {} // no arguments needed
+                );
+                
+                // Check if we got a valid result
+                if (result !== null && result !== undefined) {
+                    alert('speechsynthesis_lockdown_unexpected_success');
+                } else {
+                    alert('speechsynthesis_lockdown_unexpected_success_no_result');
+                }
+                
+            } catch (error) {
+                console.error('SpeechSynthesis lockdown test error:', error);
+                
+                // Check if this is the specific EnabledBy validation error
+                if (error.message && error.message.includes('Receiver cancelled the reply due to invalid destination or deserialization error')) {
+                    // This is the expected behavior in lockdown mode
+                    console.log('SUCCESS: EnabledBy correctly blocked SpeechSynthesis message in lockdown mode');
+                    alert('speechsynthesis_lockdown_correctly_blocked: ' + error.message);
+                } else {
+                    alert('speechsynthesis_lockdown_test_error: ' + error.message);
+                }
+            }
+        }
+        
+        // Auto-run the test when page loads
+        window.addEventListener('load', function() {
+            console.log('Page loaded, starting SpeechSynthesis lockdown test...');
+            setTimeout(runSpeechSynthesisLockdownTest, 100);
+        });
+        
+        // Also run immediately in case load event already fired
+        if (document.readyState === 'complete') {
+            console.log('Document already complete, running SpeechSynthesis lockdown test immediately');
+            setTimeout(runSpeechSynthesisLockdownTest, 100);
+        }
+    </script>
+</body>
+</html>

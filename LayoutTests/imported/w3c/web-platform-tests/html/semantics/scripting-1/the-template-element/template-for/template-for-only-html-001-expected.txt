@@ -1,0 +1,4 @@
+
+
+FAIL HTML partial updates: template with contentmethod does not work in XHTML assert_not_equals: got disallowed value null
+

@@ -1,0 +1,20 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/AppSupport.framework/AppSupport
+current-version: 29
+reexported-libraries:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        libraries: [/System/Library/PrivateFrameworks/CorePhoneNumbers.framework/CorePhoneNumbers]
+exports:
+-       targets: [x86_64-xros-simulator, arm64-xros-simulator]
+        symbols: [_CPCopyBundleIdentifierAndTeamFromAuditToken]
+        objc-classes: [CPNetworkObserver]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/CorePhoneNumbers.framework/CorePhoneNumbers
+swift-abi-version: 7
+exports: []
+...

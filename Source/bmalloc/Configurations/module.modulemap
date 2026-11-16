@@ -1,0 +1,27 @@
+module bmalloc [system] {
+    config_macros OS_UNFAIR_LOCK_INLINE
+
+    explicit module pas_simple_free_heap_declarations_def {
+        private textual header "pas_simple_free_heap_declarations.def"
+    }
+
+    explicit module pas_segregated_page_config_kind_def {
+        private textual header "pas_segregated_page_config_kind.def"
+    }
+
+    explicit module pas_bitfit_page_config_kind_def {
+        private textual header "pas_bitfit_page_config_kind.def"
+    }
+
+    explicit module pas_heap_config_kind_def {
+        private textual header "pas_heap_config_kind.def"
+    }
+
+    explicit module Core {
+        umbrella "."
+
+        explicit module * {
+            export *
+        }
+    }
+}

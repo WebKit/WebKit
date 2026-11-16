@@ -1,0 +1,3 @@
+
+PASS frame in data: frame: originAgentCluster must equal true
+

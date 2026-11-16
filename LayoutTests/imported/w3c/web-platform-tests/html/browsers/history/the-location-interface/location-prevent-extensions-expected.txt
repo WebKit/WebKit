@@ -1,0 +1,4 @@
+
+PASS Object.preventExtensions throws a TypeError
+PASS Reflect.preventExtensions returns false
+

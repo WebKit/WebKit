@@ -1,0 +1,3 @@
+
+PASS SMIL: a restarting animation must not flash its previous interval's end value
+

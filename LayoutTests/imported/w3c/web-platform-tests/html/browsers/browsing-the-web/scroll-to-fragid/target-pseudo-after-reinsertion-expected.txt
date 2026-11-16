@@ -1,0 +1,4 @@
+target
+
+PASS :target should match the target element even after it is removed and reinserted.
+

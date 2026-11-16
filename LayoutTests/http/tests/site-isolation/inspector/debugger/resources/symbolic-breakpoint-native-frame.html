@@ -1,0 +1,11 @@
+<script>
+// Mirrors the main frame's script; see symbolic-breakpoint-native-across-frame-targets.html.
+function triggerNativeCall() {
+    [1, 2, 3].reverse();
+}
+
+function triggerNativeConstruct() {
+    new EventTarget;
+}
+</script>
+<p>Same-origin subframe for symbolic breakpoint tests.</p>

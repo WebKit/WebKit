@@ -1,0 +1,7 @@
+2d.path.roundrect.1.radius.dompoint
+
+Verify that when one radius is given to roundRect(), specified as a DOMPoint, it applies to all corners.
+
+
+PASS Verify that when one radius is given to roundRect(), specified as a DOMPoint, it applies to all corners.
+

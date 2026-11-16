@@ -1,0 +1,105 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+
+<button>Before</button>
+<iframe id="remote-iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-headings.html"></iframe>
+<button>Between</button>
+<iframe id="local-iframe" srcdoc="<h1>Local Heading</h1>"></iframe>
+<button>After</button>
+
+<script>
+var output = "Tests searches that use the element hosting an out-of-process frame as the start element.\n";
+output += "A client that can't pass an element inside the frame as the start (such as older VoiceOver)\n";
+output += "passes the host instead. When the host is also the search's receiver, returning the frame\n";
+output += "would leave the client stuck on it, so the search should return nothing.\n\n";
+
+window.jsTestIsAsync = true;
+accessibilityController.setClientAccessibilityMode(true);
+
+function describe(elements) {
+    if (!elements)
+        return "null";
+    return "[" + elements.map((element) => {
+        var title = element.title.replace(/^AXTitle: ?/, "");
+        return element.role.replace(/^AXRole: /, "") + (title ? ` "${title}"` : "");
+    }).join(", ") + "]";
+}
+
+function childWithRawRole(parent, rawRole) {
+    for (var i = 0; i < parent.childrenCount; i++) {
+        var child = parent.childAtIndex(i);
+        if (child.rawRoleForTesting.includes(rawRole))
+            return child;
+    }
+    return null;
+}
+
+var webArea, frameHost, localFrameScrollArea;
+var anyType = "AXAnyTypeSearchKey";
+var keyboardFocusable = "AXKeyboardFocusableSearchKey";
+
+function search(receiver, start, isNext, key, immediateDescendantsOnly, limit) {
+    return describe(receiver.uiElementsForSearchPredicate(start, isNext, key, "", false, immediateDescendantsOnly, limit));
+}
+
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    // A search that reaches a remote frame waits on the main thread for IPC, which deadlocks
+    // with the test runner. Instead, the anchor is returned as a stand-in for the frame's results.
+    if (window.internals)
+        internals.setShouldMockChildFrameSearchResultsForTesting(true);
+
+    await waitForElements([
+        (element) => element.role.includes("Heading") && element.title.includes("Iframe Heading 1"),
+        (element) => element.role.includes("Heading") && element.title.includes("Local Heading"),
+    ]);
+
+    webArea = accessibilityController.rootElement.childAtIndex(0);
+    frameHost = childWithRawRole(webArea, "FrameHost");
+    localFrameScrollArea = childWithRawRole(webArea, "ScrollArea");
+    output += expect("frameHost !== null", "true");
+    output += expect("localFrameScrollArea !== null", "true");
+    if (!frameHost || !localFrameScrollArea) {
+        debug(output);
+        finishJSTest();
+        return;
+    }
+
+    output += "\nReceiver and start are both the host, so there is nothing to return:\n";
+    // The search older VoiceOver sends for VO-Right after interacting out of the frame, then its retry with a larger limit.
+    output += expect("search(frameHost, frameHost, true, anyType, true, 1)", "'[]'");
+    output += expect("search(frameHost, frameHost, true, anyType, true, 20)", "'[]'");
+    output += expect("search(frameHost, frameHost, false, anyType, true, 1)", "'[]'");
+    output += expect("search(frameHost, frameHost, false, anyType, true, 20)", "'[]'");
+    // VoiceOver's "navigate interactive elements only" mode.
+    output += expect("search(frameHost, frameHost, true, keyboardFocusable, false, 1)", "'[]'");
+    output += expect("search(frameHost, frameHost, false, keyboardFocusable, false, 1)", "'[]'");
+
+    output += "\nWith no start element, the host still searches the frame, so interacting into it works:\n";
+    output += expect("search(frameHost, null, true, anyType, true, 1)", "'[AXGroup]'");
+
+    output += "\nWith the host's container as the receiver, the search moves past the frame:\n";
+    output += expect("search(webArea, frameHost, true, anyType, true, 1)", "'[AXButton \"Between\"]'");
+    output += expect("search(webArea, frameHost, false, anyType, true, 1)", "'[AXButton \"Before\"]'");
+    output += expect("search(webArea, frameHost, true, keyboardFocusable, false, 1)", "'[AXButton \"Between\"]'");
+    output += expect("search(webArea, frameHost, false, keyboardFocusable, false, 1)", "'[AXButton \"Before\"]'");
+
+    output += "\nAn element whose start is itself, but that doesn't host an out-of-process frame, still returns its contents:\n";
+    output += expect("search(localFrameScrollArea, localFrameScrollArea, true, anyType, true, 1)", "'[AXWebArea]'");
+    output += expect("search(webArea, webArea, true, anyType, true, 1)", "'[AXButton \"Before\"]'");
+
+    debug(output);
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

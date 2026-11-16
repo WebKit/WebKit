@@ -1,0 +1,4 @@
+A A
+
+FAIL drawElementImage does not use cross-origin mask images assert_array_equals: Cross origin should not draw expected property 1 to be 128 but got 0 (expected array [0, 128, 0, 255] got object "0,0,255,255")
+

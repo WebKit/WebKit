@@ -1,0 +1,18 @@
+<style>
+    dialog::backdrop {
+        content: "";
+        display: inline-block;
+        appearance: slider-vertical;
+        width: 16px;
+        height: 100px;
+    }
+</style>
+<body>
+    <dialog id="dialog"></dialog>
+    <p>This test passes if it does not crash.</p>
+    <script>
+        dialog.showModal();
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</body>

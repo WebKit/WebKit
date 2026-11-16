@@ -1,0 +1,18 @@
+This test verifies that rotating to landscape and back with shouldIgnoreMetaViewport enabled does not cause the initial scale to deviate from its original value. To test manually, load the test page on an appropriately configured device and rotate to landscape and back. The initial scale after rotation should be the same as it was prior to rotation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Before rotation
+PASS visualViewport.scale is 1
+
+After the first rotation
+PASS visualViewport.scale is 1
+
+After the second rotation
+PASS visualViewport.scale is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

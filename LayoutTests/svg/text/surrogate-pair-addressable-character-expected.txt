@@ -1,0 +1,7 @@
+𑀏𑀏
+𑀏𑀏
+
+PASS A surrogate pair consumes one x list position (flat layout)
+PASS A surrogate pair consumes one x list position (tspan layout)
+PASS Wrapping the second code point in a tspan does not change its position
+

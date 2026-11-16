@@ -1,0 +1,23 @@
+Tests that failed image and script loads in a cross-origin iframe fail in the Network model instead of staying pending, under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrameFailedSubresourceLoads
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.FailedImageLoad
+PASS: Failed Image should be added.
+PASS: Failed Image should have the resource-type-image type.
+PASS: Failed Image should belong to the iframe's frame.
+PASS: Failed Image should fail instead of staying pending.
+PASS: Failed Image should not be canceled.
+PASS: Failed Image should have a failure reason.
+PASS: Failed Image should be listed once.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.FailedScriptLoad
+PASS: Failed Script should be added.
+PASS: Failed Script should have the resource-type-script type.
+PASS: Failed Script should belong to the iframe's frame.
+PASS: Failed Script should fail instead of staying pending.
+PASS: Failed Script should not be canceled.
+PASS: Failed Script should have a failure reason.
+PASS: Failed Script should be listed once.
+

@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="password" id="empty-password">
+<input type="password" id="filled-password" value="abc">
+<input type="text" id="empty-text">
+<textarea id="empty-textarea"></textarea>
+
+<script>
+var output = "This test ensures that boundsForRange returns a valid caret rect for the (0, 0) range on empty text controls, so that ATs (e.g. VoiceOver's VO-Shift-M context menu) can position UI next to the caret rather than at a fallback location like the middle of the page.\n\n";
+
+// Format from makeBoundsDescription: "{{x, y}, {w, h}}". Position is masked to -1, -1 because it's
+// platform dependent, so we can only assert on size here.
+function caretSizeIsNonEmpty(boundsString) {
+    var match = boundsString.match(/\{\{[^}]+\}, \{(-?\d+\.\d+), (-?\d+\.\d+)\}\}/);
+    if (!match)
+        return false;
+    return parseFloat(match[1]) > 0 && parseFloat(match[2]) > 0;
+}
+
+if (window.accessibilityController) {
+    var emptyPassword = accessibilityController.accessibleElementById("empty-password");
+    output += expect("caretSizeIsNonEmpty(emptyPassword.boundsForRange(0, 0))", "true");
+
+    var filledPassword = accessibilityController.accessibleElementById("filled-password");
+    output += expect("caretSizeIsNonEmpty(filledPassword.boundsForRange(0, 0))", "true");
+
+    var emptyText = accessibilityController.accessibleElementById("empty-text");
+    output += expect("caretSizeIsNonEmpty(emptyText.boundsForRange(0, 0))", "true");
+
+    var emptyTextarea = accessibilityController.accessibleElementById("empty-textarea");
+    output += expect("caretSizeIsNonEmpty(emptyTextarea.boundsForRange(0, 0))", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

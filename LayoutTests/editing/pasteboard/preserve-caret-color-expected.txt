@@ -1,0 +1,8 @@
+This test that CSS property caret-color is preserved when copying and pasting.
+| <span>
+|   style="caret-color: rgb(0, 0, 255);"
+|   "caret-color: blue, "
+| <span>
+|   style="caret-color: magenta;"
+|   "caret-color: magenta<#selection-caret>"
+| <br>

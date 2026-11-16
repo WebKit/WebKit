@@ -1,0 +1,10 @@
+Tests implicitly submitting with a hidden button.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS submitter.id is "hiddenButton"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,8 @@
+startSwipeGesture
+didBeginSwipe
+completeSwipeGesture
+willEndSwipe
+hasUAVisualTransition true
+didEndSwipe
+didRemoveSwipeSnapshot
+

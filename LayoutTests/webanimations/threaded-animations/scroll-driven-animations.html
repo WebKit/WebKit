@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+body {
+    height: 2000px;
+}
+
+@keyframes slide {
+    to { translate: 100px }
+}
+
+.target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const make_target = t => {
+    const target = createDiv(t);
+    target.className = "target";
+    return target;
+};
+
+promise_test(async t => {
+    const target = make_target(t);
+    target.style.animation = "slide auto linear";
+    target.style.animationTimeline = "scroll()";
+    const animation = document.getAnimations()[0];
+    await animationAcceleration(animation);
+    assert_equals(window.internals?.acceleratedAnimationsForElement(target).length, 1);
+}, "A scroll-driven CSS animation can be accelerated.");
+
+promise_test(async t => {
+    const target = make_target(t);
+    const timeline = new ScrollTimeline({ source: document.documentElement });
+    const animation = target.animate({ translate: '100px' }, { timeline });
+    await animationAcceleration(animation);
+    assert_equals(window.internals?.acceleratedAnimationsForElement(target).length, 1);
+}, "A scroll-driven JS-originated animation can be accelerated.");
+
+promise_test(async t => {
+    const target = make_target(t);
+    const timeline = new ScrollTimeline({ source: document.documentElement });
+    const animation = target.animate({ translate: '100px' }, { timeline });
+
+    await animationAcceleration(animation);
+
+    const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(target);
+
+    assert_equals(remoteAnimationStack.baseValues.translate, null);
+
+    const remoteAnimations = remoteAnimationStack.animations;
+    assert_equals(remoteAnimations.length, 1);
+
+    const remoteAnimation = remoteAnimations[0];
+    assert_equals(remoteAnimation.paused, false);
+    assert_equals(remoteAnimation.composite, "replace");
+    assert_equals(remoteAnimation.playbackRate, 1);
+    assert_equals(remoteAnimation.startTime, "0.00%");
+    assert_equals(remoteAnimation.holdTime, null);
+
+    const remoteTimeline = remoteAnimation.timeline;
+    assert_equals(remoteTimeline.currentTime, "0.00%");
+    assert_equals(remoteTimeline.duration, "100.00%");
+
+    const properties = remoteAnimation.properties;
+    assert_equals(properties.length, 1);
+    assert_equals(properties[0], "translate");
+
+    const timing = remoteAnimation.timing;
+    assert_equals(timing.direction, "normal");
+    assert_equals(timing.easing, "linear");
+    assert_equals(timing.fill, "auto");
+    assert_equals(timing.iterationStart, 0);
+    assert_equals(timing.iterations, 1);
+    assert_equals(timing.startDelay, "0.00%");
+    assert_equals(timing.endDelay, "0.00%");
+    assert_equals(timing.iterationDuration, "100.00%");
+    assert_equals(timing.activeDuration, "100.00%");
+    assert_equals(timing.endTime, "100.00%");
+
+    const keyframes = remoteAnimation.keyframes;
+    assert_equals(keyframes.length, 1);
+
+    const keyframe = keyframes[0];
+    assert_equals(keyframe.offset, 1);
+    assert_equals(keyframe.composite, null);
+    assert_equals(keyframe.easing, "linear");
+    assert_equals(keyframe.translate.x, 100);
+}, "A scroll-driven JS-originated animation yields a remote animation with a progress-based timeline.");
+
+</script>
+</body>

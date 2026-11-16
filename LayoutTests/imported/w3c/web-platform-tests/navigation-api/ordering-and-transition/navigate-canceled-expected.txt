@@ -1,0 +1,3 @@
+
+PASS event and promise ordering for navigation.navigate() where the navigate event is canceled
+

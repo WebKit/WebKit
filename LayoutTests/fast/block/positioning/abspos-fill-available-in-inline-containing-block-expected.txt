@@ -1,0 +1,3 @@
+
+PASS 'width: -webkit-fill-available' fills the padding box of the inline box
+

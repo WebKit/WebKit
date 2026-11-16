@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        div {
+            width: 200px;
+            height: 200px;
+            background-color: green;
+            filter: url(#testFilter);
+        }
+    </style>
+</head>
+<body>
+    <svg style="position: absolute">
+        <filter id="testFilter">
+            <feColorMatrix type="hueRotate" values="180"/>
+        </filter>
+    </svg>
+    <div></div>
+</body>
+</html>

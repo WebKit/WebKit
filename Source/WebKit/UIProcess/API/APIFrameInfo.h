@@ -1,0 +1,90 @@
+/*
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "APIObject.h"
+#include "FrameInfoData.h"
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOriginData.h>
+#include <wtf/WeakPtr.h>
+
+namespace WebCore {
+class SecurityOriginData;
+}
+
+namespace WebKit {
+class WebFrameProxy;
+class WebPageProxy;
+struct FrameInfoData;
+}
+
+namespace API {
+
+class FrameHandle;
+class SecurityOrigin;
+
+class FrameInfo final : public ObjectImpl<Object::Type::FrameInfo> {
+public:
+    static Ref<FrameInfo> create(WebKit::FrameInfoData&&);
+    virtual ~FrameInfo();
+
+    bool isMainFrame() const { return m_stateSnapshot.isMainFrame; }
+    const WebCore::ResourceRequest& request() const LIFETIME_BOUND { return m_data.request; }
+    const WebCore::SecurityOriginData& securityOrigin() const LIFETIME_BOUND { return m_stateSnapshot.securityOrigin; }
+    Ref<FrameHandle> handle() const;
+    WebKit::WebPageProxy* page();
+    const WebKit::WebPageProxy* page() const;
+    RefPtr<FrameHandle> parentFrameHandle() const;
+    Markable<WebCore::ScriptExecutionContextIdentifier> documentID() const { return m_data.documentID; }
+    ProcessID processID() const { return m_stateSnapshot.processID; }
+    bool isFocused() const { return m_data.isFocused; }
+    bool errorOccurred() const { return m_data.errorOccurred; }
+    WTF::String title() const { return m_stateSnapshot.title; }
+    const WebCore::CertificateInfo& certificateInfo() const { return m_stateSnapshot.certificateInfo; }
+
+    const WebKit::FrameInfoData& frameInfoData() const LIFETIME_BOUND { return m_data; }
+
+private:
+    FrameInfo(WebKit::FrameInfoData&&);
+
+    struct StateSnapshot {
+        const WebCore::CertificateInfo certificateInfo;
+        const WebCore::SecurityOriginData securityOrigin;
+        const Markable<WebCore::FrameIdentifier> parentFrameID;
+        const WTF::String title;
+        const bool isMainFrame { true };
+        const ProcessID processID { 0 };
+        const WeakPtr<WebKit::WebPageProxy> page;
+    };
+    static StateSnapshot stateSnapshot(WebCore::FrameIdentifier);
+
+    const WebKit::FrameInfoData m_data;
+    const StateSnapshot m_stateSnapshot;
+};
+
+} // namespace API
+
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(FrameInfo);

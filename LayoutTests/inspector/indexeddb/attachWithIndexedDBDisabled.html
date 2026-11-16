@@ -1,0 +1,28 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ IndexedDBAPIEnabled=false ] -->
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("IndexedDB.requestDatabase");
+
+    suite.addTestCase({
+        name: "DatabaseNames",
+        description: "Try to request database names",
+        test(resolve, reject) {
+            IndexedDBAgent.requestDatabaseNames(WI.networkManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.log(`PASS: Did not crash`);
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

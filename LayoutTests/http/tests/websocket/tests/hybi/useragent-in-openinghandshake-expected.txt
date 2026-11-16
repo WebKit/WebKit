@@ -1,0 +1,9 @@
+Web Socket test to check if opening handshake contains User-Agent header
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS event.data is navigator.userAgent
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,5 @@
+:invalid { background: rgb(255, 0, 0); }
+:valid { background: rgb(0, 0, 255); }
+:disabled { background: black; }
+input { background: white; }
+textarea { background: white; }

@@ -1,0 +1,16 @@
+
+PASS Property offset-anchor value 'auto'
+PASS Property offset-anchor value 'left bottom'
+PASS Property offset-anchor value 'center center'
+PASS Property offset-anchor value 'right center'
+PASS Property offset-anchor value 'center top'
+PASS Property offset-anchor value 'center bottom'
+PASS Property offset-anchor value 'calc(20% - 5em) center'
+PASS Property offset-anchor value 'right 4em'
+PASS Property offset-anchor value '10px 20%'
+PASS Property offset-anchor value 'left -10px top -20%'
+PASS Property offset-anchor value 'right 10% bottom 20em'
+PASS Property offset-anchor value 'top 10px right -20%'
+PASS Property offset-anchor value 'left 10% bottom 20em'
+PASS Property offset-anchor value 'calc(10px - 0.5em) calc(10px + 0.5em)'
+

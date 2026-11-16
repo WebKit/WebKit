@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContactPickerAPIEnabled=true ] -->
+<html>
+    <head>
+        <script src="../resources/js-test.js"></script>
+        <script src="../resources/ui-helper.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        finishedContactSelection = false;
+
+        const addressBook = [
+            {
+                "name": ["Person A"],
+                "email": ["person.a@webkit.org"],
+                "tel": ["555-5555"]
+            },
+            {
+                "name": ["Person B"],
+                "email": ["person.b@webkit.org", "person.b.alt@webkit.org"],
+            },
+            {
+                "name": ["Person C"],
+                "tel": ["777-7777"],
+            }
+        ];
+
+        async function runTest()
+        {
+            description("This test verifies that navigator.contacts.select succeeds after another call to navigator.contacts.select was completed.\n");
+
+            const contactsButton = document.getElementById("contacts");
+            contactsButton.addEventListener("click", async () => {
+                if (finishedContactSelection) {
+                    debug("\nPerforming second contacts request.")
+                } else {
+                    debug("Performing first contacts request.")
+                }
+
+                const request = navigator.contacts.select(["name", "email", "tel"]);
+
+                await UIHelper.waitForContactPickerToShow();
+                UIHelper.dismissContactPickerWithContacts(addressBook);
+                await UIHelper.waitForContactPickerToHide();
+
+                [contact1, contact2, contact3] = await request;
+
+                shouldBeTrue("areArraysEqual(contact1.name, addressBook[0].name)");
+                shouldBeTrue("areArraysEqual(contact1.email, addressBook[0].email)");
+                shouldBeTrue("areArraysEqual(contact1.tel, addressBook[0].tel)");
+
+                shouldBeTrue("areArraysEqual(contact2.name, addressBook[1].name)");
+                shouldBeTrue("areArraysEqual(contact2.email, addressBook[1].email)");
+                shouldBeEqualToNumber("contact2.tel.length", 0);
+
+                shouldBeTrue("areArraysEqual(contact3.name, addressBook[2].name)");
+                shouldBeEqualToNumber("contact3.email.length", 0);
+                shouldBeTrue("areArraysEqual(contact3.tel, addressBook[2].tel)");
+
+                if (finishedContactSelection) {
+                    finishJSTest();
+                } else {
+                    finishedContactSelection = true;
+                }
+            });
+
+            await UIHelper.activateElement(contactsButton);
+            await new Promise(resolve => shouldBecomeEqual("finishedContactSelection", "true", resolve));
+            await UIHelper.activateElement(contactsButton);
+        }
+    </script>
+    <body onload=runTest()>
+        <button id="contacts">Show contacts</button>
+    </body>
+</html>

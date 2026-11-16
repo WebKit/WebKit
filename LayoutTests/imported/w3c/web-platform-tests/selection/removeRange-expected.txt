@@ -1,0 +1,35 @@
+Äb̈c̈d̈ëf̈g̈ḧ
+
+Qrstuvwx
+
+
+PASS removeRange() with Range 0
+PASS removeRange() with Range 1
+PASS removeRange() with Range 2
+PASS removeRange() with Range 3
+PASS removeRange() with Range 4
+PASS removeRange() with Range 5
+PASS removeRange() with Range 6
+PASS removeRange() with Range 7
+PASS removeRange() with Range 14
+PASS removeRange() with Range 15
+PASS removeRange() with Range 16
+PASS removeRange() with Range 17
+PASS removeRange() with Range 18
+PASS removeRange() with Range 22
+PASS removeRange() with Range 23
+PASS removeRange() with Range 26
+PASS removeRange() with Range 27
+PASS removeRange() with Range 28
+PASS removeRange() with Range 29
+PASS removeRange() with Range 30
+PASS removeRange() with Range 31
+PASS removeRange() with Range 32
+PASS removeRange() with Range 34
+PASS removeRange() with Range 35
+PASS removeRange() with Range 36
+PASS removeRange() with Range 37
+PASS removeRange() with Range 38
+PASS removeRange() with Range 39
+PASS removeRange() argument is non-optional Range
+

@@ -1,0 +1,9 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS: Has Selection
+PASS: Selection Changed
+
+

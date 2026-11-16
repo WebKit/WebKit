@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ isAppInitiated=false ] -->
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>Test that a cross-origin redirect to a server that responds is indistinguishable from one that does not. Should say PASS:</p>
+<pre id='console'></pre>
+<script type="text/javascript">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function log(message)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+    }
+
+    if (window.testRunner)
+        testRunner.setAllowsAnySSLCertificate(true);
+
+    window.jsTestIsAsync = true;
+
+    function log(message)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+    }
+
+    function askForAttribution() {
+        var didLoadAppBoundRequest = testRunner.didLoadAppInitiatedRequest();
+        var didLoadNonAppBoundRequest = testRunner.didLoadNonAppInitiatedRequest();
+
+        if (didLoadAppBoundRequest) {
+            log("FAIL did load app initiated request");
+            finishJSTest();
+            return;
+        }
+
+        if (!didLoadNonAppBoundRequest) {
+            log("FAIL did not load non app initiated request");
+            finishJSTest();
+            return;
+        }
+
+        log("PASS successfully loaded only non app initiated requests");
+
+        finishJSTest();
+    }
+
+    var xhr = new XMLHttpRequest;
+    xhr.onerror = function() { setTimeout(askForAttribution, 0); }
+    xhr.open("GET", "/resources/redirect.py?url=http://localhost:8000/app-privacy-report/resources/redirect.js", true);
+    xhr.send();
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+The background color of this paragraph should turn to green when the mouse pointer hovers over any of the following:
+This text.
+
+This text.
+
+This text.
+This text.
+This text.
+This text.
+
+...and anything else between the top of the first paragraph and the bottom of this paragraph.
+
+
+PASS div:hover > p:first-child
+

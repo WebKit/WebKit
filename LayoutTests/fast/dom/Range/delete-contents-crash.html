@@ -1,0 +1,29 @@
+<script id='s0' src='data:'>
+</script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+onload = async () => {
+    let head = document.head;
+    head.isAlive = true;
+    let div0 = document.createElement('div');
+    s0.appendChild(div0);
+    let div1 = document.createElement('div');
+    document.head.appendChild(div1);
+    let div2 = document.createElement('div');
+    div1.appendChild(div2);
+    document.head.remove();
+    let range = new Range();
+    range.setStartAfter(div2);
+    range.setStartBefore(div0);
+    await Promise.resolve();
+    GCController.collect();
+    range.deleteContents();
+    if (!head.isAlive)
+        document.write('FAIL: !head.isAlive');
+    else if (range.commonAncestorContainer != head)
+        document.write('FAIL: range.commonAncestorContainer != head');
+    else
+        document.write('PASS: Test did not crash.');
+};
+</script>

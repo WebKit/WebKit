@@ -1,0 +1,33 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+onload = function () {
+    // Start a same-site navigation that never completes, so the UI process records a provisional
+    // URL for this frame.
+    location.href = "resources/slow-same-site-load.py";
+
+    // Abandon it for a cross-site navigation. With site isolation the UI process runs that load in
+    // another process and does not report the abandoned load as having failed, so the provisional
+    // URL it recorded above is replaced by the cross-site one and then left behind.
+    setTimeout(function () {
+        location.href = "http://localhost:8000/site-isolation/resources/slow-cross-site-load.py";
+    }, 200);
+
+    // Before the cross-site load commits, navigate same-site again. The UI process ignores this
+    // process's DidStartProvisionalLoadForFrame because the frame's provisional load process is
+    // the cross-site one, so the stale cross-site provisional URL is what it has when this load
+    // commits. The document that commits then calls history.pushState().
+    setTimeout(function () {
+        location.href = "resources/pushstate-same-site.html";
+    }, 600);
+};
+</script>
+</body>
+</html>

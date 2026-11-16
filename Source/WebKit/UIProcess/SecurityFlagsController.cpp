@@ -1,0 +1,234 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "SecurityFlagsController.h"
+
+#include "GPUProcessProxy.h"
+#include "Logging.h"
+#include "ModelProcessProxy.h"
+#include "NetworkProcessProxy.h"
+#include <array>
+#include <wtf/Borrow.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
+#include <wtf/Vector.h>
+
+namespace WebKit {
+
+static constexpr Seconds remoteListReplyTimeout { 30_s };
+static constexpr std::array<Seconds, 3> remoteListRetryDelays { 1_s, 5_s, 30_s };
+
+SecurityFlagsController& SecurityFlagsController::singleton()
+{
+    static NeverDestroyed<SecurityFlagsController> controller;
+    return controller.get();
+}
+
+void SecurityFlagsController::initialize()
+{
+    singleton();
+}
+
+// No propagation: this runs while the UIProcess initializes, so no privileged child process can have launched yet.
+SecurityFlagsController::SecurityFlagsController()
+    : m_persistentlyDisabledNames(platformPersistentlyDisabledFlagNames())
+{
+    SecurityFlags::Storage::update(flagsWithNamesDisabled({ }, IncludePersistentNames::Yes));
+
+    for (auto& name : borrow(m_persistentlyDisabledNames)) {
+        UNUSED_VARIABLE(name);
+        RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled by a user default and cannot be enforced again at runtime", name.utf8());
+    }
+
+    // Deferred because singleton() is still under construction here. A privileged child process launched before the
+    // reply lands learns the value over SecurityFlagsDidChange.
+    RunLoop::mainSingleton().dispatch([] {
+        singleton().platformObserveRemoteListChanges();
+        singleton().requestRemoteList();
+    });
+}
+
+SecurityFlags::Storage SecurityFlagsController::flagsWithNamesDisabled(const Vector<String>& names, IncludePersistentNames includePersistentNames) const
+{
+    SecurityFlags::Storage flags;
+    size_t unknownNameCount = 0;
+
+    for (auto& name : borrow(names)) {
+        if (!flags.disableFlagNamed(name))
+            ++unknownNameCount;
+    }
+
+    // Logged before the caller's early return, because a disablement that does not take effect is the case to diagnose.
+    if (unknownNameCount)
+        RELEASE_LOG(Process, "SecurityFlagsController: ignoring %zu of %zu names, which no flag in this build has", unknownNameCount, names.size());
+
+    if (includePersistentNames == IncludePersistentNames::Yes) {
+        for (auto& name : borrow(m_persistentlyDisabledNames))
+            flags.disableFlagNamed(name);
+    }
+
+    return flags;
+}
+
+void SecurityFlagsController::setDisabledFlagsNamed(const Vector<String>& names)
+{
+    apply(flagsWithNamesDisabled(names, IncludePersistentNames::Yes));
+}
+
+void SecurityFlagsController::setDisabledFlagsNamedForTesting(const Vector<String>& names)
+{
+    m_remoteListSuppressedForTesting = true;
+    m_remoteListState = RemoteListState::Idle;
+    ++m_remoteListRequestGeneration;
+    apply(flagsWithNamesDisabled(names, IncludePersistentNames::No));
+}
+
+void SecurityFlagsController::requestRemoteListForTesting()
+{
+    m_remoteListSuppressedForTesting = false;
+    m_remoteListFailureCount = 0;
+    requestRemoteList();
+}
+
+void SecurityFlagsController::requestRemoteList()
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_remoteListSuppressedForTesting)
+        return;
+
+    // Remembered rather than dropped: the request in flight may already have been answered with the value this
+    // change replaced, and nothing else would come along to ask again.
+    if (m_remoteListState != RemoteListState::Idle) {
+        m_remoteListState = RemoteListState::RequestedAndStale;
+        return;
+    }
+
+    m_remoteListState = RemoteListState::Requested;
+    auto generation = ++m_remoteListRequestGeneration;
+
+    if (!platformRequestRemoteList(generation)) {
+        m_remoteListState = RemoteListState::Idle;
+        return;
+    }
+
+    // A reply that never lands would otherwise coalesce every later change into a request that is over.
+    RunLoop::mainSingleton().dispatchAfter(remoteListReplyTimeout, [generation] {
+        singleton().remoteListRequestTimedOut(generation);
+    });
+}
+
+void SecurityFlagsController::remoteListRequestTimedOut(uint64_t generation)
+{
+    if (m_remoteListState == RemoteListState::Idle || generation != m_remoteListRequestGeneration)
+        return;
+
+    RELEASE_LOG_ERROR(Process, "SecurityFlagsController: no answer with the disabled security flags after %.0f seconds", remoteListReplyTimeout.seconds());
+    didReceiveRemoteList(generation, std::nullopt);
+}
+
+void SecurityFlagsController::didReceiveRemoteList(uint64_t generation, std::optional<Vector<String>>&& names)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+
+    // A reply the watchdog already gave up on, or one belonging to a request that a later one replaced.
+    if (m_remoteListState == RemoteListState::Idle || generation != m_remoteListRequestGeneration)
+        return;
+
+    bool changeWasAnnounced = m_remoteListState == RemoteListState::RequestedAndStale;
+    m_remoteListState = RemoteListState::Idle;
+
+    if (names) {
+        m_remoteListFailureCount = 0;
+        setDisabledFlagsNamed(*names);
+    }
+
+    if (changeWasAnnounced) {
+        requestRemoteList();
+        return;
+    }
+
+    if (!names)
+        scheduleRemoteListRetry();
+}
+
+// A failure to reach the list service can also mean it never armed its change notification, so without a retry
+// nothing would ask again.
+void SecurityFlagsController::scheduleRemoteListRetry()
+{
+    if (m_remoteListFailureCount >= remoteListRetryDelays.size()) {
+        RELEASE_LOG_ERROR(Process, "SecurityFlagsController: giving up on the disabled security flags until a change is announced");
+        return;
+    }
+
+    auto delay = remoteListRetryDelays[m_remoteListFailureCount++];
+    RunLoop::mainSingleton().dispatchAfter(delay, [] {
+        singleton().requestRemoteList();
+    });
+}
+
+void SecurityFlagsController::apply(SecurityFlags::Storage&& newFlags)
+{
+    if (SecurityFlags::Storage::update(WTF::move(newFlags)))
+        propagateToChildProcesses();
+}
+
+#if !PLATFORM(COCOA)
+Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
+{
+    return { };
+}
+
+bool SecurityFlagsController::platformRequestRemoteList(uint64_t)
+{
+    return false;
+}
+
+void SecurityFlagsController::platformObserveRemoteListChanges()
+{
+}
+#endif
+
+void SecurityFlagsController::propagateToChildProcesses()
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+
+    // Processes launched after this point pick the new value up through their creation parameters instead.
+    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->securityFlagsDidChange(securityFlags());
+
+#if ENABLE(GPU_PROCESS)
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->securityFlagsDidChange(securityFlags());
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    if (RefPtr modelProcess = ModelProcessProxy::singletonIfCreated())
+        modelProcess->securityFlagsDidChange(securityFlags());
+#endif
+}
+
+} // namespace WebKit

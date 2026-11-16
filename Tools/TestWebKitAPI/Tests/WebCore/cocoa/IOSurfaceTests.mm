@@ -1,0 +1,206 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#import "Helpers/Test.h"
+#import <WebCore/IOSurface.h>
+#import <WebCore/IOSurfacePool.h>
+#import <WebCore/ImageBufferBackend.h>
+#import <WebCore/RenderingMode.h>
+#import <wtf/MachSendRight.h>
+#import <wtf/Threading.h>
+
+namespace TestWebKitAPI {
+
+TEST(IOSurfaceTest, IsInUse)
+{
+    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB());
+    EXPECT_FALSE(s1->isInUse());
+    auto sendRight1 = s1->createSendRight();
+    EXPECT_TRUE(s1->isInUse());
+    auto sendRight2 = s1->createSendRight();
+    sendRight1 = { };
+    EXPECT_TRUE(s1->isInUse());
+    sendRight2 = { };
+    EXPECT_FALSE(s1->isInUse());
+}
+
+TEST(IOSurfaceTest, CreatePlatformContext)
+{
+    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB());
+    EXPECT_FALSE(s1->isInUse());
+    auto c1 = s1->createPlatformContext();
+    auto c2 = s1->createPlatformContext();
+    EXPECT_NE(c1, c2);
+    EXPECT_FALSE(s1->isInUse());
+    c1 = nullptr;
+    EXPECT_FALSE(s1->isInUse());
+    c2 = nullptr;
+    EXPECT_FALSE(s1->isInUse());
+}
+
+TEST(IOSurfaceTest, Volatility)
+{
+    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB());
+    EXPECT_FALSE(s1->isVolatile());
+    EXPECT_EQ(WebCore::SetNonVolatileResult::Valid, s1->setVolatile(false));
+    EXPECT_FALSE(s1->isVolatile());
+    s1->setVolatile(true);
+    EXPECT_TRUE(s1->isVolatile());
+    EXPECT_EQ(WebCore::SetNonVolatileResult::Valid, s1->setVolatile(false));
+    EXPECT_FALSE(s1->isVolatile());
+}
+
+TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightSRGB)
+{
+    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB());
+    ASSERT_NE(original, nullptr);
+
+    auto roundTripped = WebCore::IOSurface::createFromUntrustedUncompressedWebKitSendRight(original->createSendRight());
+    ASSERT_NE(roundTripped, nullptr);
+    EXPECT_EQ(roundTripped->size(), original->size());
+    EXPECT_EQ(roundTripped->colorSpace(), original->colorSpace());
+}
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightRGBA16F)
+{
+    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::ExtendedDisplayP3(), WebCore::IOSurface::Name::Default, WebCore::IOSurface::Format::RGBA16F);
+    ASSERT_NE(original, nullptr);
+
+    auto roundTripped = WebCore::IOSurface::createFromUntrustedUncompressedWebKitSendRight(original->createSendRight());
+    ASSERT_NE(roundTripped, nullptr);
+    EXPECT_EQ(roundTripped->size(), original->size());
+    EXPECT_EQ(roundTripped->colorSpace(), original->colorSpace());
+}
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F)
+
+TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightYUV422)
+{
+    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::ExtendedRec2020(), WebCore::IOSurface::Name::Default, WebCore::IOSurface::Format::YUV422);
+    ASSERT_NE(original, nullptr);
+
+    auto roundTripped = WebCore::IOSurface::createFromUntrustedUncompressedWebKitSendRight(original->createSendRight());
+    ASSERT_EQ(roundTripped, nullptr);
+}
+
+TEST(IOSurfaceTest, IOSurfaceNames)
+{
+    {
+        auto purpose = WebCore::RenderingPurpose::DOM;
+        auto s = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
+        NSString *expected = @"WebKit DOM";
+
+        EXPECT_EQ(WebCore::IOSurface::Name::DOM, s->name());
+        EXPECT_STREQ([expected UTF8String], [(NSString *)IOSurfaceCopyValue(s->surface(), kIOSurfaceName) UTF8String]);
+    }
+    {
+
+        auto purpose = WebCore::RenderingPurpose::Snapshot;
+        auto s = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
+        NSString *expected = @"WKWebView Snapshot";
+
+        EXPECT_EQ(WebCore::IOSurface::Name::Snapshot, s->name());
+        EXPECT_STREQ([expected UTF8String], [(NSString *)IOSurfaceCopyValue(s->surface(), kIOSurfaceName) UTF8String]);
+    }
+}
+
+TEST(IOSurfacePoolTest, IOSurfacePoolNames)
+{
+    auto initialPurpose = WebCore::RenderingPurpose::Unspecified;
+    auto purpose = WebCore::RenderingPurpose::Canvas;
+    auto* pool = &WebCore::IOSurfacePool::sharedPoolSingleton();
+
+    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(initialPurpose));
+    EXPECT_EQ(WebCore::IOSurface::Name::ImageBufferShareableMapped, s1->name());
+
+    pool->addSurface(WTF::move(s1));
+
+    auto s2 = WebCore::IOSurface::create(pool, { 5, 5 }, WebCore::ColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
+    EXPECT_EQ(WebCore::IOSurface::Name::Canvas, s2->name());
+}
+
+static std::unique_ptr<WebCore::IOSurface> createSurface(WebCore::IOSurfacePool* pool, int width, int height)
+{
+    return WebCore::IOSurface::create(pool, { width, height }, WebCore::ColorSpace::SRGB());
+}
+
+// Exercises IOSurfacePool::tryEvictOldestCachedSurface() with many distinct sizes so the
+// HashMap<IntSize, Deque<...>> backing store rehashes while m_sizesInPruneOrder is being
+// maintained.
+TEST(IOSurfacePoolTest, EvictionWithManyDistinctSizes)
+{
+    auto pool = WebCore::IOSurfacePool::create();
+
+    auto sample = createSurface(nullptr, 64, 64);
+    ASSERT_TRUE(sample);
+    pool->setPoolSize(sample->totalBytes() * 4);
+    pool->addSurface(WTF::move(sample));
+
+    for (int i = 0; i < 64; ++i)
+        pool->addSurface(createSurface(nullptr, 64 + i, 64));
+
+    for (int i = 0; i < 64; ++i) {
+        pool->addSurface(createSurface(nullptr, 64 + (i % 8), 64));
+        if (auto recycled = createSurface(pool.ptr(), 64 + (i % 8), 64))
+            pool->addSurface(WTF::move(recycled));
+    }
+
+    pool->setPoolSize(0);
+}
+
+// Reproduces the GPU-process pattern of two RemoteRenderingBackend work queues sharing one pool.
+TEST(IOSurfacePoolTest, ConcurrentAddAndEvict)
+{
+    auto pool = WebCore::IOSurfacePool::create();
+
+    auto sample = createSurface(nullptr, 32, 32);
+    ASSERT_TRUE(sample);
+    pool->setPoolSize(sample->totalBytes() * 4);
+    pool->addSurface(WTF::move(sample));
+
+    static constexpr int iterations = 200;
+    auto worker = [&pool](int base) {
+        for (int i = 0; i < iterations; ++i) {
+            pool->addSurface(createSurface(nullptr, 32 + ((base + i) % 16), 32));
+            if (auto surface = createSurface(pool.ptr(), 32 + ((base + i) % 16), 32))
+                pool->addSurface(WTF::move(surface));
+        }
+    };
+
+    auto thread1 = Thread::create("IOSurfacePoolTest worker 1"_s, [&] {
+        worker(0);
+    });
+    auto thread2 = Thread::create("IOSurfacePoolTest worker 2"_s, [&] {
+        worker(7);
+    });
+    thread1->waitForCompletion();
+    thread2->waitForCompletion();
+
+    pool->discardAllSurfaces();
+}
+
+}

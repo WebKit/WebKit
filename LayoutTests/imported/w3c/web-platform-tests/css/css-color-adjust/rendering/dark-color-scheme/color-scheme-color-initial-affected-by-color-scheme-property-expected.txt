@@ -1,0 +1,4 @@
+
+PASS Check that color:initial resolves to the intial color for the dark color-scheme.
+PASS Check that color:initial resolves to the intial color for the light color-scheme.
+

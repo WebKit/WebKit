@@ -1,0 +1,14 @@
+selectable
+selectable
+selectable
+selectable
+selectable
+selectable
+
+PASS Range sub-range geometry matches glyph positions (scaleX-0_5)
+PASS Range sub-range geometry matches glyph positions (scaleX-1)
+FAIL Range sub-range geometry matches glyph positions (scaleX-1_7) assert_approx_equals: right edge of Range[0..1] expected 31.80000114440918 +/- 1.5900000572204591 but got 33.5
+FAIL Range sub-range geometry matches glyph positions (scaleX-3) assert_approx_equals: left edge of Range[1..2] expected 50 +/- 2.5 but got 47
+PASS Range sub-range geometry matches glyph positions (scale-uniform-2)
+FAIL Range sub-range geometry matches glyph positions (viewbox-scaled) assert_approx_equals: left edge of Range[1..2] expected 36 +/- 1.8 but got 34
+

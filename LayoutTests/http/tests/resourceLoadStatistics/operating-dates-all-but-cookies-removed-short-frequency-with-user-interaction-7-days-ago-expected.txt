@@ -1,0 +1,14 @@
+
+Before statistics processing: cookie 'http-only-cookie' does exist.
+Before statistics processing: cookie 'server-side-cookie' does exist.
+Before statistics processing: cookie 'client-side-cookie' does exist.
+Before statistics processing: LocalStorage entry does exist.
+Before statistics processing: IDB entry does exist.
+After statistics processing: cookie 'http-only-cookie' does exist.
+After statistics processing: cookie 'server-side-cookie' does exist.
+After statistics processing: cookie 'client-side-cookie' does not exist.
+After statistics processing: LocalStorage entry does not exist.
+After statistics processing: IDB entry does not exist.
+After statistics processing: user interaction still exists.
+
+

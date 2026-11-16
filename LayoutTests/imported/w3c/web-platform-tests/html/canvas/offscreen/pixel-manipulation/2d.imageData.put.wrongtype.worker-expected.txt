@@ -1,0 +1,3 @@
+
+PASS putImageData() does not accept non-ImageData objects
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<script>
+function runAfterLayoutAndPaint(callback, autoNotifyDone) {
+    if (!window.testRunner) {
+        // For manual test. Delay 500ms to allow us to see the visual change
+        // caused by the callback.
+        setTimeout(callback, 500);
+        return;
+    }
+
+    if (autoNotifyDone)
+        testRunner.waitUntilDone();
+
+    // We do requestAnimationFrame and setTimeout to ensure a frame has started
+    // and layout and paint have run. The requestAnimationFrame fires after the
+    // frame has started but before layout and paint. The setTimeout fires
+    // at the beginning of the next frame, meaning that the previous frame has
+    // completed layout and paint.
+    // See http://crrev.com/c/1395193/10/third_party/blink/web_tests/http/tests/resources/run-after-layout-and-paint.js
+    // for more discussions.
+    requestAnimationFrame(function() {
+        setTimeout(function() {
+            callback();
+            if (autoNotifyDone)
+                testRunner.notifyDone();
+        }, 1);
+    });
+}
+</script>
+<svg>
+  <animateTransform id="a" attributeName="transform" values="1 2; 3 4; 5 6"/>
+</svg>
+<p>PASS if no crash</p>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+onload = function() {
+  setTimeout(function() {
+    var element = document.getElementById("a");
+    element.setAttribute("dur", "0.1s");
+    element.setAttribute("end", "NotARealEvent");
+    runAfterLayoutAndPaint(function() {}, true);
+  });
+};
+</script>

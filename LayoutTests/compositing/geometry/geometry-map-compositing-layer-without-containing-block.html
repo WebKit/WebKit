@@ -1,0 +1,22 @@
+<!doctype HTML>
+<html style="opacity:0.5; will-change:opacity">
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+requestAnimationFrame(function() {
+  document.getElementById('inner').style.width = "200px";
+  if (window.testRunner)
+    testRunner.notifyDone();
+});
+
+</script>
+</head>
+<body>
+ <div style="position: absolute; opacity: 0.5">
+ <div style="contain:strict; position: absolute; width: 400px; height: 400px"><div id="inner" style="width:100px; height: 100px; background: blue"></div></div>
+ </div>
+
+</body>
+</html>

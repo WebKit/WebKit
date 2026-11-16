@@ -1,0 +1,353 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+#if HAVE_APPKIT_GESTURES_SUPPORT
+
+import Foundation
+import struct Foundation.URL
+@_spi(Testing) import WebKit
+import SwiftUI
+import struct Swift.String
+import Testing
+@_spi(WebKitAdditions_Testing) private import TestWebKitAPILibrary
+private import Recap
+
+private let manipulationSurfaceDragInset: CGFloat = 60
+
+extension MacTouchSupportTests {
+    // Site-specific quirks match on the URL of the page or of an embedded document, which a test cannot
+    // choose for content it loads locally. `internals` is the only way to override it, so unlike the other
+    // Mac Touch Support suites this one needs the injected bundle that installs `internals`.
+    @MainActor
+    @Suite(.serialized, .timeLimit(.minutes(1)))
+    final class Quirks: MacTouchSupportTestSuite {
+        static let text = "Here's to the crazy ones."
+
+        let recap = Recap.shared
+
+        let page: WebPage = {
+            var configuration = WebPage.Configuration.withInternals()
+            configuration.requiresUserActionForEditingControlsManager = true
+            return WebPage(configuration: configuration)
+        }()
+
+        let windowHost: TestWindowHost
+
+        init() async throws {
+            let contentSize = NSSize(width: 800, height: 600)
+
+            self.windowHost = TestWindowHost(size: contentSize) { [page] in
+                WebView(page)
+                    .webViewBackForwardNavigationGestures(.enabled)
+            }
+
+            await NSApp.waitForActivation()
+        }
+    }
+}
+
+extension MacTouchSupportTests.Quirks {
+    @Test(arguments: [
+        ("none", true),
+        ("pan-x pan-y", true),
+        ("auto", false),
+        ("pan-y", false),
+        ("pan-x pan-y pinch-zoom", false),
+    ])
+    func verticalDragOverManipulationSurface(styleValue: String, reachesContent: Bool) async throws {
+        let surface = try await loadManipulationSurface(styleValue: styleValue)
+
+        let start = CGPoint(x: surface.bounds.midX, y: surface.bounds.maxY - manipulationSurfaceDragInset)
+        let end = CGPoint(x: surface.bounds.midX, y: surface.bounds.minY + manipulationSurfaceDragInset)
+
+        await recap.play { composer in
+            composer.drag(withStart: start, end: end, duration: .seconds(1))
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        try await expectDrag(from: start, to: end, over: surface, reachesContent: reachesContent)
+    }
+
+    @Test
+    func horizontalDragOverManipulationSurface() async throws {
+        let surface = try await loadManipulationSurface(styleValue: "pan-x pan-y")
+
+        let start = CGPoint(x: surface.bounds.minX + manipulationSurfaceDragInset, y: surface.bounds.midY)
+        let end = CGPoint(x: surface.bounds.maxX - manipulationSurfaceDragInset, y: surface.bounds.midY)
+
+        await recap.play { composer in
+            composer.drag(withStart: start, end: end, duration: .seconds(1))
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        try await expectDrag(from: start, to: end, over: surface, reachesContent: true)
+    }
+
+    @Test(arguments: [
+        (topDocumentURL: "https://outlook.live.com/mail/", rowID: "outlook-row"),
+        (topDocumentURL: "https://www.icloud.com/mail/", rowID: "icloud-row"),
+    ])
+    func touchAndHoldOnUnselectableMailListItemFiresContextMenuEvent(topDocumentURL: String, rowID: String) async throws {
+        let url = try #require(Bundle.testResources.url(forResource: "unselectable-mail-list-item", withExtension: "html"))
+        try await page.load(url).wait()
+
+        try await page.callJavaScript(arguments: ["url": topDocumentURL]) {
+            "internals.setTopDocumentURLForQuirks(url);"
+        }
+
+        let activeQuirks = try await page.callJavaScript(returning: [String].self) {
+            "return internals.activeQuirkNames();"
+        }
+        try #require(activeQuirks.contains("ShouldTreatLongClickAsSecondaryClickQuirk"))
+
+        await page.waitForNextPresentationUpdate()
+
+        let rowBounds = try await screenBounds(ofElementWithID: rowID)
+
+        await recap.play { composer in
+            composer.humanTap(at: rowBounds.center, for: .seconds(1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let events = try await page.callJavaScript(returning: [String].self) {
+            "return window.events;"
+        }
+        #expect(events.contains("contextmenu"))
+        #expect(events.contains("click") == false)
+    }
+}
+
+extension MacTouchSupportTests.Quirks {
+    struct ManipulationSurface {
+        let bounds: CGRect
+
+        let initialScrollY: Double
+    }
+
+    private func loadManipulationSurface(styleValue: String) async throws -> ManipulationSurface {
+        let url = try #require(Bundle.testResources.url(forResource: "manipulation-surface", withExtension: "html"))
+        try await page.load(url).wait()
+        await page.waitForNextPresentationUpdate()
+
+        // Installed before the frame exists, so the frame's document picks the quirk up as it is created.
+        try await page.callJavaScript(arguments: ["url": "https://www.google.com/maps/embed/v1/place?q=Cupertino"]) {
+            "internals.setSubframeURLForQuirks(url);"
+        }
+
+        try await page.callJavaScript(arguments: ["styleValue": styleValue]) {
+            """
+            return window.loadSurface(`touch-action: ${styleValue}`);
+            """
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let manipulationSurfaceFrameID = "surfaceFrame"
+
+        let subframeQuirks = try await page.callJavaScript(
+            returning: [String].self,
+            arguments: ["frameID": manipulationSurfaceFrameID]
+        ) {
+            "return document.getElementById(frameID).contentWindow.internals.activeQuirkNames();"
+        }
+        try #require(subframeQuirks.contains("NeedsGoogleMapsEmbedManipulationSurfaceQuirk"))
+
+        try await page.callJavaScript(arguments: ["frameID": manipulationSurfaceFrameID]) {
+            #"document.getElementById(frameID).scrollIntoView({ block: "center" });"#
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let scrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+        try #require(scrollPosition.y > 0)
+
+        return ManipulationSurface(
+            bounds: try await screenBounds(ofElementWithID: manipulationSurfaceFrameID),
+            initialScrollY: scrollPosition.y
+        )
+    }
+
+    private func manipulationSurfaceEvents() async throws -> (down: Int, move: Int, up: Int, wheel: Int, translation: CGSize) {
+        let values = try await page.callJavaScript(returning: [Double].self) {
+            """
+            const events = window.surfaceEvents;
+            return [events.down, events.move, events.up, events.wheel, events.dx, events.dy];
+            """
+        }
+
+        try #require(values.count == 6)
+
+        return (
+            down: Int(values[0]),
+            move: Int(values[1]),
+            up: Int(values[2]),
+            wheel: Int(values[3]),
+            translation: CGSize(width: values[4], height: values[5])
+        )
+    }
+
+    private func expectDrag(
+        from start: CGPoint,
+        to end: CGPoint,
+        over surface: ManipulationSurface,
+        reachesContent: Bool
+    ) async throws {
+        let events = try await manipulationSurfaceEvents()
+        let scrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+
+        guard reachesContent else {
+            #expect(events.down == 0)
+            #expect(events.up == 0)
+            #expect(events.wheel > 0)
+
+            #expect(scrollPosition.y > surface.initialScrollY)
+            return
+        }
+
+        #expect(events.down == 1)
+        #expect(events.up == 1)
+        #expect(events.move > 0)
+        #expect(events.wheel == 0)
+
+        #expect(abs(events.translation.width - (end.x - start.x)) < manipulationSurfaceDragInset)
+        #expect(abs(events.translation.height - (end.y - start.y)) < manipulationSurfaceDragInset)
+
+        #expect(scrollPosition.y == surface.initialScrollY)
+    }
+}
+
+private struct PinchEventCounts {
+    var down = 0
+    var up = 0
+    var move = 0
+    var wheel = 0
+    var wheelWhileButtonIsDown = 0
+    var gestureChange = 0
+    var gestureChangeWhileButtonIsDown = 0
+}
+
+extension MacTouchSupportTests.Quirks {
+    private func installPinchEventCounters(preventingGestureEvents: Bool) async throws {
+        try await page.callJavaScript(arguments: ["frameID": "surfaceFrame", "preventingGestureEvents": preventingGestureEvents]) {
+            """
+            const surfaceDocument = document.getElementById(frameID).contentDocument;
+            window.pinchEvents = { down: 0, up: 0, move: 0, wheel: 0, heldWheel: 0, gchange: 0, heldGchange: 0 };
+            let buttonIsDown = false;
+            surfaceDocument.addEventListener("mousedown", () => { buttonIsDown = true; window.pinchEvents.down++; }, true);
+            surfaceDocument.addEventListener("mouseup", () => { buttonIsDown = false; window.pinchEvents.up++; }, true);
+            surfaceDocument.addEventListener("mousemove", () => { window.pinchEvents.move++; }, true);
+            surfaceDocument.addEventListener("wheel", () => {
+                window.pinchEvents.wheel++;
+                if (buttonIsDown)
+                    window.pinchEvents.heldWheel++;
+            }, true);
+            surfaceDocument.addEventListener("gesturechange", () => {
+                window.pinchEvents.gchange++;
+                if (buttonIsDown)
+                    window.pinchEvents.heldGchange++;
+            }, true);
+            for (const type of ["gesturestart", "gesturechange", "gestureend"]) {
+                surfaceDocument.addEventListener(type, event => {
+                    if (preventingGestureEvents)
+                        event.preventDefault();
+                }, true);
+            }
+            """
+        }
+    }
+
+    private func pinchEventCounts() async throws -> PinchEventCounts {
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let values = try await page.callJavaScript(returning: [Double].self) {
+            """
+            const e = window.pinchEvents;
+            return [e.down, e.up, e.move, e.wheel, e.heldWheel, e.gchange, e.heldGchange];
+            """
+        }
+
+        try #require(values.count == 7)
+
+        return PinchEventCounts(
+            down: Int(values[0]),
+            up: Int(values[1]),
+            move: Int(values[2]),
+            wheel: Int(values[3]),
+            wheelWhileButtonIsDown: Int(values[4]),
+            gestureChange: Int(values[5]),
+            gestureChangeWhileButtonIsDown: Int(values[6])
+        )
+    }
+
+    private func pinchAfterMouseTracking(over surface: ManipulationSurface) async throws {
+        let center = CGPoint(x: surface.bounds.midX, y: surface.bounds.midY)
+
+        await recap.play { composer in
+            composer.pinchOpen(
+                withStart: CGPoint(x: center.x - 30, y: center.y),
+                end: CGPoint(x: center.x + 30, y: center.y),
+                spreadBy: 100,
+                duration: .seconds(0.5),
+                precededByDragOf: CGSize(width: 0, height: 40)
+            )
+            composer.liftUpAtAllActivePoints()
+        }
+    }
+
+    @Test
+    func pinchAfterMouseTrackingReleasesTheMouseButtonForContentThatDoesNotHandleIt() async throws {
+        let surface = try await loadManipulationSurface(styleValue: "none")
+        try await installPinchEventCounters(preventingGestureEvents: false)
+
+        try await pinchAfterMouseTracking(over: surface)
+
+        let counts = try await pinchEventCounts()
+
+        try #require(counts.down > 0, "\(counts)")
+        try #require(counts.wheel > 0, "\(counts)")
+        #expect(counts.wheelWhileButtonIsDown * 2 < counts.wheel)
+        #expect(counts.down == counts.up)
+    }
+
+    @Test
+    func pinchAfterMouseTrackingKeepsTheMouseButtonDownForContentThatHandlesIt() async throws {
+        let surface = try await loadManipulationSurface(styleValue: "none")
+        try await installPinchEventCounters(preventingGestureEvents: true)
+
+        try await pinchAfterMouseTracking(over: surface)
+
+        let counts = try await pinchEventCounts()
+
+        try #require(counts.gestureChange > 0, "\(counts)")
+        #expect(counts.gestureChangeWhileButtonIsDown * 2 > counts.gestureChange)
+        #expect(counts.wheel == 0)
+        #expect(counts.down == 1)
+        #expect(counts.up == 1)
+    }
+}
+
+#endif // HAVE_APPKIT_GESTURES_SUPPORT

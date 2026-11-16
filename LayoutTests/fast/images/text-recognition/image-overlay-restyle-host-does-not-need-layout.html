@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<img src="../resources/green-400x400.png"></img>
+<script>
+jsTestIsAsync = true;
+description("Restyling the host of an image overlay without changing its size should not need layout, and should keep the size of the overlay.");
+
+let image = document.querySelector("img");
+
+function overlayRect()
+{
+    return internals.shadowRoot(image).getElementById("image-overlay").getBoundingClientRect();
+}
+
+function layoutCountAfterRestyle(color)
+{
+    let before = internals.layoutUpdateCount();
+    image.style.color = color;
+    document.body.offsetHeight;
+    return internals.layoutUpdateCount() - before;
+}
+
+addEventListener("load", () => {
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0.5, 0.5),
+            topRight : new DOMPointReadOnly(1, 0.5),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0.5, 1),
+            children: [
+                {
+                    text : "Hello",
+                    topLeft : new DOMPointReadOnly(0.5, 0.5),
+                    topRight : new DOMPointReadOnly(1, 0.5),
+                    bottomRight : new DOMPointReadOnly(1, 1),
+                    bottomLeft : new DOMPointReadOnly(0.5, 1),
+                }
+            ],
+        }
+    ]);
+
+    document.body.offsetHeight;
+    shouldBe("overlayRect().width", "400");
+    shouldBe("overlayRect().height", "400");
+
+    // Let the image overlay finish its initial setup.
+    layoutCountAfterRestyle("red");
+
+    // Every restyle used to dirty layout, because the image overlay was resolved with its CSS width and height again.
+    restyleCount = 10;
+    layoutCount = 0;
+    for (let i = 0; i < restyleCount; ++i)
+        layoutCount += layoutCountAfterRestyle(i % 2 ? "green" : "blue");
+    shouldBe("layoutCount", "0");
+    shouldBe("overlayRect().width", "400");
+    shouldBe("overlayRect().height", "400");
+
+    image.style.width = "200px";
+    document.body.offsetHeight;
+    shouldBe("overlayRect().width", "200");
+    shouldBe("overlayRect().height", "200");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

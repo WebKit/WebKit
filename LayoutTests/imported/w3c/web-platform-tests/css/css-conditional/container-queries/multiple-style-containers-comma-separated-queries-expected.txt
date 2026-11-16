@@ -1,0 +1,4 @@
+
+PASS Should match the named outer container for --foo:bar
+PASS Match the #combined container for --foo:qux which is also a size container
+

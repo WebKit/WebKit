@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+        function go() {
+            var video1 = document.createElement('video');
+            document.body.appendChild(video1);
+            video1.setAttribute('webkit-playsinline', '');
+            video1.src = 'video-with-audio.mp4';
+            video1.play().then(() => {
+                video1.pause();
+                var video2 = document.createElement('video');
+                document.body.appendChild(video2);
+                video2.setAttribute('webkit-playsinline', '');
+                video2.muted = true;
+                video2.src = 'video-with-audio.mp4';
+                video2.play().then(playing, notPlaying);
+            });
+        }
+
+        function playing() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage('playing');
+            } catch(e) {
+                window.location = 'callback:playing';
+            }
+        }
+
+        function notPlaying() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage('not playing');
+            } catch(e) { }
+        }
+        </script>
+    </head>
+    <body onload="go()">
+    </body>
+</html>

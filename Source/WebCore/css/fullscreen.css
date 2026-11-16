@@ -1,0 +1,98 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+
+/* https://fullscreen.spec.whatwg.org/#user-agent-level-style-sheet-defaults */
+
+@namespace "http://www.w3.org/1999/xhtml";
+
+*|*:not(:root):fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+
+  /* intentionally not !important */
+  object-fit: contain;
+}
+
+*|*:root:-internal-fullscreen-document:not(:fullscreen) {
+    overflow: hidden !important;
+}
+
+*|*:fullscreen video,
+video:fullscreen {
+    -webkit-cursor-visibility: auto-hide;
+}
+
+#if defined(WTF_PLATFORM_APPLETV) && WTF_PLATFORM_APPLETV
+video:fullscreen {
+    /*
+     * FIXME: Adding !important improves compatibility when placing video elements in element
+     * fullscreen on tvOS, but we should add an -internal pseudo-class to contain styles that are
+     * specific to video using element fullscreen.
+     */
+    object-fit: contain !important;
+}
+#endif
+
+img:fullscreen {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+}
+
+iframe:fullscreen {
+    border: none !important;
+    padding: 0 !important;
+}
+
+*|*:not(:root):fullscreen::backdrop {
+    background: black;
+}
+
+*|*:not(:root):-internal-in-window-fullscreen {
+    margin: auto !important;
+    width: auto !important;
+    height: 80vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 20px !important;
+    pointer-events: auto !important;
+    cursor: auto !important;
+}
+
+*|*:not(:root):-internal-in-window-fullscreen::backdrop {
+    background: rgba(0,0,0,0.85);
+}
+
+#endif

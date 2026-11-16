@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+PASS Event Timing: entries should only be observable by its own frame.
+

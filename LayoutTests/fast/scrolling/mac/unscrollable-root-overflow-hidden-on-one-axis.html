@@ -1,0 +1,94 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        overflow-y: hidden;
+        height: 100%;
+    }
+    
+    .filler {
+        background: gray;
+        width: 100px;
+        height: 5000px;
+    }
+    </style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    var windowScrollEventCount = 0;
+
+    function checkForScroll()
+    {
+        shouldBe('windowScrollEventCount', '0');
+        finishJSTest();
+    }
+
+    async function scrollTest()
+    {
+        const events = [
+            {
+                type : "wheel",
+                viewX : 100,
+                viewY : 100,
+                deltaY : -10,
+                phase : "began"
+            },
+            {
+                type : "wheel",
+                deltaY : -100,
+                phase : "changed"
+            },
+            {
+                type : "wheel",
+                phase : "ended"
+            },
+            {
+                type : "wheel",
+                deltaY : -100,
+                momentumPhase : "began"
+            },
+            {
+                type : "wheel",
+                deltaY : -100,
+                momentumPhase : "changed"
+            },
+            {
+                type : "wheel",
+                momentumPhase : "ended"
+            }
+        ];
+
+        await UIHelper.mouseWheelSequence({ events });
+        checkForScroll();
+    }
+
+    function setupTopLevel()
+    {
+        description("Tests that a 100% height root with hidden on one axis does not scroll.");
+
+        window.addEventListener('scroll', () => {
+            ++windowScrollEventCount;
+        }, false);
+
+        if (window.eventSender) {
+            setTimeout(scrollTest, 0);
+            return;
+        }
+
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        setupTopLevel();
+    }, false);
+</script>
+</head>
+<body>
+    <div class="filler"></div>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

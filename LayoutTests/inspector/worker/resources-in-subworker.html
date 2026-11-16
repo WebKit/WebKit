@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/resource-utilities.js"></script>
+<script src="resources/worker-utilities.js"></script>
+<script>
+let worker = new Worker("resources/subworker-manager.js");
+worker.addEventListener("message", (event) => {
+    let {url, data} = event.data;
+
+    switch (data) {
+    case "ready":
+        TestPage.dispatchEventToFrontend("TestPage-SubworkerIsReady", {url});
+        break;
+    }
+});
+
+function triggerSubworkerStart() {
+    worker.postMessage({url: "worker-resources.js", data: null});
+}
+
+function triggerMainResourceLoadXHR() {
+    loadResourceXHR("resources/dataXHR.json?main");
+}
+
+function triggerSubworkerResourceLoadXHR() {
+    worker.postMessage({url: "worker-resources.js", data: "loadResourceXHR"});
+}
+
+function triggerMainResourceLoadFetch() {
+    loadResourceFetch("resources/dataFetch.json?main");
+}
+
+function triggerSubworkerResourceLoadFetch() {
+    worker.postMessage({url: "worker-resources.js", data: "loadResourceFetch"});
+}
+
+function triggerSubworkerImportScript() {
+    worker.postMessage({url: "worker-resources.js", data: "importScript"});
+}
+
+function test()
+{
+    let subworkerTarget = null;
+    let mainTarget = WI.mainTarget;
+
+    function dumpWorkerResources() {
+        InspectorTest.log("RESOURCES:");
+        for (let resource of subworkerTarget.resourceCollection)
+            InspectorTest.log(sanitizeURL(resource.url));
+        if (!subworkerTarget.resourceCollection.size)
+            InspectorTest.log("-- No Resources --");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Subworker.Resources");
+
+    suite.addTestCase({
+        name: "Subworker.Resource.Start",
+        description: "Start the subworker.",
+        async test() {
+            let [targetAddedEvent, subworkerIsReadyEvent] = await Promise.all([
+                WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded),
+                InspectorTest.awaitEvent("TestPage-SubworkerIsReady"),
+                InspectorTest.evaluateInPage("triggerSubworkerStart()"),
+            ]);
+
+            subworkerTarget = targetAddedEvent.data.target;
+            InspectorTest.assert(subworkerTarget instanceof WI.Target);
+            InspectorTest.expectEqual(subworkerTarget.type, WI.TargetType.Worker, "Added Target should have Worker type.");
+
+            await awaitTargetMainResource(subworkerTarget);
+            InspectorTest.assert(subworkerTarget.mainResource instanceof WI.Script, "Added Target should have a main script.");
+            InspectorTest.assert(subworkerTarget.mainResource.url.endsWith("worker-resources.js"), "Added Target main script should have the right URL.");
+            InspectorTest.assert(subworkerTarget.mainResource.resource, "Added Target should have a main resource.");
+            InspectorTest.assert(subworkerTarget.mainResource.resource.url.endsWith("worker-resources.js"), "Added Target main resource should have the right URL.");
+            dumpWorkerResources();
+
+            InspectorTest.assert(subworkerIsReadyEvent.data.url === "worker-resources.js", "Should match the subworker URL.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Subworker.Resource.XHR",
+        description: "Subworker XHRs are tied to the Subworker Target.",
+        async test() {
+            let [resourceAddedEvent] = await Promise.all([
+                subworkerTarget.awaitEvent(WI.Target.Event.ResourceAdded),
+                InspectorTest.evaluateInPage("triggerSubworkerResourceLoadXHR()"),
+            ]);
+
+            let {resource} = resourceAddedEvent.data;
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Subworker Target should dispatch ResourceAdded event.");
+            InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR.");
+            InspectorTest.expectEqual(resource.target, subworkerTarget, "Resource should be tied to the Subworker Target.");
+            InspectorTest.expectNull(resource.parentFrame, "Resource has no parent frame.");
+            dumpWorkerResources();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Main.Resource.XHR",
+        description: "Main XHRs are tied to the Main Target and do not affect the Subworker Target",
+        async test() {
+            let [resourceWasAddedEvent] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                InspectorTest.evaluateInPage("triggerMainResourceLoadXHR()"),
+            ]);
+
+            let {resource} = resourceWasAddedEvent.data;
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Frame should dispatch ResourceWasAdded event.");
+            InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR.");
+            InspectorTest.expectEqual(resource.target, mainTarget, "Resource should be tied to the Main Target.");
+            InspectorTest.expectEqual(resource.parentFrame, WI.networkManager.mainFrame, "Resource parentFrame is the main frame.");
+            dumpWorkerResources();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Subworker.Resource.Fetch",
+        description: "Subworker fetch requests are tied to the Subworker Target.",
+        async test() {
+            let [resourceAddedEvent] = await Promise.all([
+                subworkerTarget.awaitEvent(WI.Target.Event.ResourceAdded),
+                InspectorTest.evaluateInPage("triggerSubworkerResourceLoadFetch()"),
+            ]);
+
+            let {resource} = resourceAddedEvent.data;
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Subworker Target should dispatch ResourceAdded event.");
+            // FIXME: Add resource type for Fetch that is not XHR?
+            InspectorTest.expectEqual(resource.target, subworkerTarget, "Resource should be tied to the Subworker Target.");
+            InspectorTest.expectNull(resource.parentFrame, "Resource has no parent frame.");
+            dumpWorkerResources();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Main.Resource.Fetch",
+        description: "Main fetch requests are tied to the Main Target and do not affect the Subworker Target",
+        async test() {
+            let [resourceWasAddedEvent] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                InspectorTest.evaluateInPage("triggerMainResourceLoadFetch()"),
+            ]);
+
+            let {resource} = resourceWasAddedEvent.data;
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Frame should dispatch ResourceWasAdded event.");
+            // FIXME: Add resource type for Fetch that is not XHR?
+            InspectorTest.expectEqual(resource.target, mainTarget, "Resource should be tied to the Main Target.");
+            InspectorTest.expectEqual(resource.parentFrame, WI.networkManager.mainFrame, "Resource parentFrame is the main frame.");
+            dumpWorkerResources();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Subworker.Resource.ImportScript",
+        description: "Subworker imported scripts are Resources tied to the Subworker Target.",
+        async test() {
+            let [resourceAddedEvent] = await Promise.all([
+                subworkerTarget.awaitEvent(WI.Target.Event.ResourceAdded),
+                InspectorTest.evaluateInPage("triggerSubworkerImportScript()"),
+            ]);
+
+            let {resource} = resourceAddedEvent.data;
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Subworker Target should dispatch ResourceAdded event.");
+            // FIXME: <https://webkit.org/b/164425> Worker Script Loads (new Worker(...), importScripts(...)) should be classified as Scripts not Raw requests
+            InspectorTest.expectEqual(resource.target, subworkerTarget, "Resource should be tied to the Subworker Target.");
+            InspectorTest.expectNull(resource.parentFrame, "Resource has no parent frame.");
+            dumpWorkerResources();
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for Resources in a Subworker.</p>
+</body>
+</html>

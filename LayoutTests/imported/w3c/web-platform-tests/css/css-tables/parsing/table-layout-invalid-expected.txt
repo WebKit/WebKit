@@ -1,0 +1,4 @@
+
+PASS e.style['table-layout'] = "none" should not set the property value
+PASS e.style['table-layout'] = "auto fixed" should not set the property value
+

@@ -1,0 +1,20 @@
+This tests the ability to search for summary elements.
+
+
+AXRole: AXDisclosureTriangle AXTitle: Custom summary text
+PASS: searchResult.isPressActionSupported() === false
+
+AXRole: AXDisclosureTriangle AXTitle: Details
+PASS: searchResult.isPressActionSupported() === false
+
+AXRole: AXDisclosureTriangle AXTitle: display:contents custom summary text
+PASS: searchResult.isPressActionSupported() === false
+
+AXRole: AXDisclosureTriangle AXTitle: Details
+PASS: searchResult.isPressActionSupported() === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Custom summary text
+display:contents custom summary text

@@ -1,0 +1,4 @@
+
+
+FAIL drawElementImage should ignore sandboxed same-origin iframes assert_array_equals: Same origin should draw expected property 1 to be 0 but got 128 (expected array [0, 0, 255, 255] got object "0,128,0,255")
+

@@ -1,0 +1,12 @@
+This test ensures we support the press action for elements that gain cursor:pointer on hover.
+
+PASS: text.role === 'AXRole: AXStaticText'
+PASS: text.isPressActionSupported() === false
+PASS: text.isPressActionSupported() === true
+PASS: text.isPressActionSupported() === false
+PASS: text.isPressActionSupported() === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+4:00pm

@@ -1,0 +1,31 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Target.PageTargetThreadRow");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Target.PageTargetThreadRow.HiddenUnderSiteIsolation",
+        description: "The page target is not a debugger thread target when frame targets exist, so the call stack sidebar should not show a thread row for it.",
+        timeout: 30000,
+        async test() {
+            let frameTarget = await waitForFrameTargetForURLContaining("frame-with-name.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-site frame's target.");
+            if (!frameTarget)
+                return;
+
+            InspectorTest.expectFalse(WI.targetManager.isDebuggerThreadTarget(WI.pageTarget), "The page target should not be a debugger thread target.");
+            InspectorTest.expectThat(WI.targetManager.isDebuggerThreadTarget(InspectorTest.mainFrameTarget), "The main frame's frame target should be a debugger thread target.");
+            InspectorTest.expectThat(WI.targetManager.isDebuggerThreadTarget(frameTarget), "The cross-site frame's target should be a debugger thread target.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that the page target is not a debugger thread target under site isolation, so the call stack sidebar omits its thread row.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/target/resources/frame-with-name.html"></iframe>
+</body>

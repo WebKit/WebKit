@@ -1,0 +1,29 @@
+@media (max-width: 768px) {
+    body {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .main-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+
+    .preview-col {
+        display: contents;
+    }
+
+    .event-card    { order: -1; }
+    .section-label { order:  1; }
+    .purchase-bar  { order:  2; }
+
+    .venue-col {
+        min-height: 50vh;
+    }
+
+    .preview-popup {
+        width: calc(100vw - 32px);
+        max-width: none;
+        max-height: calc(100vh - 32px);
+    }
+}

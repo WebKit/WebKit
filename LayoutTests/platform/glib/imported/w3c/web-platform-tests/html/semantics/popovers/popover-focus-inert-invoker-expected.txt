@@ -1,0 +1,5 @@
+Before Invoker Inside Popover After Popover
+
+FAIL Popover focus navigation with an inert invoker assert_equals: Focus should leave the invoker when it becomes inert expected Element node <body><button id="before">Before</button>
+<button id="inv... but got Element node <button id="invoker" popovertarget="popover" inert="">Inv...
+

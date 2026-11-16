@@ -1,0 +1,15 @@
+
+FAIL Rectangle count assert_equals: expected 3 but got 2
+FAIL #0 left assert_equals: expected 0 but got 75
+FAIL #0 top assert_equals: expected 150 but got 300
+FAIL #0 width assert_equals: expected 40 but got 15
+PASS #0 height
+FAIL #1 left assert_equals: expected 0 but got -5
+PASS #1 top
+FAIL #1 width assert_equals: expected 100 but got 155
+PASS #1 height
+FAIL #2 left undefined is not an object (evaluating 'rects[2].left')
+FAIL #2 top undefined is not an object (evaluating 'rects[2].top')
+FAIL #2 width undefined is not an object (evaluating 'rects[2].width')
+FAIL #2 height undefined is not an object (evaluating 'rects[2].height')
+

@@ -1,0 +1,17 @@
+This test verifies that when an aria-actions custom action's handler moves focus to some other element, that focus change is respected (not bounced back to the origin) and is surfaced to assistive technology.
+
+Invoking the custom action runs the handler, which moves focus elsewhere:
+PASS: source.invokeCustomActionAtIndex(0) === true
+PASS: actionClicked === true
+
+Focus lands on the element the handler chose, not the origin or the action target:
+PASS: document.activeElement.id === 'elsewhere'
+PASS: accessibilityController.focusedElement.domIdentifier === 'elsewhere'
+
+That focus change is surfaced to assistive technology:
+PASS: focusNotificationCount > 0 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Source Delete Elsewhere

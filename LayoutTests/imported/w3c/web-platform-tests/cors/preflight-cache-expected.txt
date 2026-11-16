@@ -1,0 +1,10 @@
+Preflight cache
+
+
+PASS Test preflight
+PASS preflight for x-print should be cached
+PASS age = blank, should be cached
+PASS age = 0, should not be cached
+PASS age = -1, should not be cached
+PASS preflight first request, second from cache, wait, third should preflight again
+

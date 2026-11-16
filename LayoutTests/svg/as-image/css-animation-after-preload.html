@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<style>
+  img { display: block; width: 100px; height: 100px; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function waitForRenderingUpdates() {
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+// The preload must be the image's first client, which a memory cache hit would prevent.
+if (window.internals)
+    internals.clearMemoryCache();
+
+const url = "resources/css-animation-turns-green.svg";
+
+// The preload is the image's only client when its data arrives, and it passes on no request for a rendering update.
+const link = document.createElement("link");
+link.rel = "preload";
+link.as = "image";
+link.href = url;
+link.onload = async () => {
+    const image = document.createElement("img");
+    image.src = url;
+    document.body.appendChild(image);
+    await image.decode();
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+    await waitForRenderingUpdates();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+document.head.appendChild(link);
+</script>
+<body></body>

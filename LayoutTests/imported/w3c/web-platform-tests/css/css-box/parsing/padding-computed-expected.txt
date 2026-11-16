@@ -1,0 +1,15 @@
+
+PASS Property padding value '10px'
+PASS Property padding value '10px 20px 30px 40px'
+PASS Property padding-top value '10px'
+PASS Property padding-right value '20px'
+PASS Property padding-bottom value '30px'
+PASS Property padding-left value '40px'
+PASS Property padding value '20%'
+PASS Property padding value '10px 20% 30% 40px'
+PASS Property padding-right value '20%'
+PASS Property padding-top value 'calc(10% - 40px)'
+PASS Property padding-right value 'calc(10% + 40px)'
+PASS Property padding-bottom value 'calc(10px - 0.5em)'
+PASS Property padding-left value 'calc(10px + 0.5em)'
+

@@ -1,0 +1,30 @@
+HTML5 Table Formatting algorithm (row/column grid computation)
+
+Verifies how browser define and act on empty tables
+
+This should be a 50px by 50px blue square:
+The table grid is 0x0, so the table is empty and follows step 3B of the table layout algorithm
+
+This should be a 50px by 50px blue square:
+The table grid is 2x0, so the table is empty and follows step 3B of the table layout algorithm
+
+This should be a 50px by 50px blue square:
+The table grid is 0x1, so the table is empty and follows step 3B of the table layout algorithm
+
+This should be a 200px by 100px blue rectangle:
+The table grid is 2x1, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+This should be a 200px by 100px half-blue half-orange rectangle:
+The table grid is 2x1, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+This should be a 200px by 100px orange rectangle:
+The table grid is 2x1, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+
+PASS Empty tables can still get a lsyout
+PASS Empty tables do not take table-columns into account
+FAIL Empty tables do not take table-rows into account assert_equals: expected 50 but got 100
+FAIL Table-columns are taken into account after missing cells are generated (empty line) assert_equals: expected 200 but got 100
+FAIL Table-columns are taken into account after missing cells are generated (partially empty line) assert_equals: expected 200 but got 100
+PASS Table-columns are taken into account after missing cells are generated (non-empty line)
+

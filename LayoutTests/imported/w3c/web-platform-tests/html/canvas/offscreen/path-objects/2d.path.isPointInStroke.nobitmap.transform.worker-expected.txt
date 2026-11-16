@@ -1,0 +1,3 @@
+
+PASS isPointInStroke() honours the transformation matrix on a canvas with no bitmap
+

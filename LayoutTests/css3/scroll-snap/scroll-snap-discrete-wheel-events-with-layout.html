@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body, html {
+    margin: 0;
+}
+
+.container {
+    height: 300px;
+    width: 300px;
+    overflow: auto;
+    scroll-snap-type: y mandatory;
+}
+
+.block {
+    height: 100%;
+    width: 300px;
+    scroll-snap-align: start;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+let frameCount = 0;
+function runWidthAnimation() {
+    frameCount++;
+    const blocks = Array.from(document.querySelectorAll(".block"));
+    for (let i = 0; i < blocks.length; ++i) {
+        let frameWidth = 10 * Math.sin(frameCount * 2 * Math.PI / 100) + 50;
+        blocks[i].style.width = frameWidth + "%";
+    }
+    requestAnimationFrame(runWidthAnimation);
+}
+
+addEventListener("load", async () => {
+    description(`This test verifies that discrete wheel events trigger scroll snapping in overflow
+        areas, even if layout occurs during scrolling. To manually run the test, scroll using a
+        physical mouse wheel and verify that a single scroll tick animates to the next snap point,
+        such that only the green box is visible.`);
+
+    runWidthAnimation();
+
+    if (window.testRunner)
+       await UIHelper.statelessMouseWheelScrollAt(150, 150, 0, -1);
+
+    container = document.querySelector(".container");
+    await shouldBecomeEqual("container.scrollTop", "300");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="container">
+        <div class="block" style="background: red;"></div>
+        <div class="block" style="background: green;"></div>
+        <div class="block" style="background: red;"></div>
+    </div>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+</html>

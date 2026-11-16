@@ -1,0 +1,7 @@
+wrapper wrapper-child element
+fullscreen child
+
+FAIL Inner nodes with 'inert' attribute become inert anyways assert_false: expected false got true
+FAIL If the fullscreen element has the 'inert' attribute, everything becomes inert assert_false: expected false got true
+FAIL If an ancestor of the fullscreen element has the 'inert' attribute, the fullscreen element escapes inertness assert_false: expected false got true
+

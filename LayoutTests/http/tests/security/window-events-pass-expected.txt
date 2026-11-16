@@ -1,0 +1,4 @@
+main frame - has 1 onunload handler(s)
+Test that window event handlers set for initial document are kept if security check passes. There will be 2 'PASS' messages below if the test passes:
+PASS: unload fired.
+PASS: load fired.

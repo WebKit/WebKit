@@ -1,0 +1,119 @@
+/*
+ * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include "FEComposite.h"
+#include "SVGAnimatedPropertyImpl.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+template<>
+struct SVGPropertyTraits<CompositeOperationType> {
+    static unsigned highestEnumValue() { return std::to_underlying(CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER); }
+
+    static String toString(CompositeOperationType type)
+    {
+        switch (type) {
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_UNKNOWN:
+            return emptyString();
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_OVER:
+            return "over"_s;
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_IN:
+            return "in"_s;
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_OUT:
+            return "out"_s;
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_ATOP:
+            return "atop"_s;
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_XOR:
+            return "xor"_s;
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC:
+            return "arithmetic"_s;
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER:
+            return "lighter"_s;
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static CompositeOperationType fromString(SVGElement&, const String& value)
+    {
+        static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, CompositeOperationType>>({
+            { "arithmetic"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC },
+            { "atop"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_ATOP },
+            { "in"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_IN },
+            { "lighter"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER },
+            { "out"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_OUT },
+            { "over"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_OVER },
+            { "xor"_s, CompositeOperationType::FECOMPOSITE_OPERATOR_XOR },
+        }) };
+        return map.get(value, CompositeOperationType::FECOMPOSITE_OPERATOR_UNKNOWN);
+    }
+};
+
+class SVGFECompositeElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_TZONE_ALLOCATED(SVGFECompositeElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFECompositeElement);
+public:
+    static Ref<SVGFECompositeElement> create(const QualifiedName&, Document&);
+
+    String in1() const { return m_in1->currentValue(); }
+    String in2() const { return m_in2->currentValue(); }
+    CompositeOperationType svgOperator() const { return m_svgOperator->currentValue<CompositeOperationType>(); }
+    float k1() const { return m_k1->currentValue(); }
+    float k2() const { return m_k2->currentValue(); }
+    float k3() const { return m_k3->currentValue(); }
+    float k4() const { return m_k4->currentValue(); }
+
+    SVGAnimatedString& in1Animated() { return m_in1; }
+    SVGAnimatedString& in2Animated() { return m_in2; }
+    SVGAnimatedEnumeration& svgOperatorAnimated() { return m_svgOperator; }
+    SVGAnimatedNumber& k1Animated() { return m_k1; }
+    SVGAnimatedNumber& k2Animated() { return m_k2; }
+    SVGAnimatedNumber& k3Animated() { return m_k3; }
+    SVGAnimatedNumber& k4Animated() { return m_k4; }
+
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFECompositeElement, SVGFilterPrimitiveStandardAttributes>;
+
+private:
+    SVGFECompositeElement(const QualifiedName&, Document&);
+
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+
+    bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) override;
+    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() }, AtomString { in2() } }; }
+    RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
+
+    const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
+    const Ref<SVGAnimatedString> m_in2 { SVGAnimatedString::create(this) };
+    const Ref<SVGAnimatedEnumeration> m_svgOperator { SVGAnimatedEnumeration::create(this, CompositeOperationType::FECOMPOSITE_OPERATOR_OVER) };
+    const Ref<SVGAnimatedNumber> m_k1 { SVGAnimatedNumber::create(this) };
+    const Ref<SVGAnimatedNumber> m_k2 { SVGAnimatedNumber::create(this) };
+    const Ref<SVGAnimatedNumber> m_k3 { SVGAnimatedNumber::create(this) };
+    const Ref<SVGAnimatedNumber> m_k4 { SVGAnimatedNumber::create(this) };
+};
+
+} // namespace WebCore

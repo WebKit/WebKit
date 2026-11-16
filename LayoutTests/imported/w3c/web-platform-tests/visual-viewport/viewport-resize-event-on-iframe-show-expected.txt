@@ -1,0 +1,8 @@
+Viewport: Resize Event On Iframe Size Change
+
+Test Description: This test ensures that we fire a resize event when an iframe is shown.
+
+
+
+PASS Resize event fired when an iframe is shown.
+

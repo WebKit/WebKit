@@ -1,0 +1,17 @@
+Tests that navigation.navigate() is rate-limited after exceeding the configured window threshold
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Successful navigations: 200
+Failed navigations: 10
+QuotaExceededError count: 10
+PASS successfulNavigations >= 195 && successfulNavigations <= 200 is true
+PASS failedNavigations >= 5 && failedNavigations <= 15 is true
+PASS quotaExceededErrors is failedNavigations
+PASS lastError.name is 'QuotaExceededError'
+PASS lastError.message is 'Navigation rate limit exceeded'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

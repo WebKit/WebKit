@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/Ahem-multi-code-unit.ttf") format("truetype");
+}
+</style>
+</head>
+<body style="-webkit-font-smoothing: none;">
+<div style="position: absolute; top: 120px;">This test makes sure that upright vertical text is rendered the same as horizontal text. The test passes if you see a horizontal line above.</div>
+<div style="font: 100px 'WebFont'; -webkit-writing-mode: vertical-rl; -webkit-text-orientation: upright;">&#x2000b;</div>
+</body>
+</html>

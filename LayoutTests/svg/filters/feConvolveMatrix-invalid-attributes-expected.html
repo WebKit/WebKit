@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.target {
+    width: 60px;
+    height: 60px;
+    margin: 10px;
+    display: inline-block;
+    background-color: green;
+    border: 10px solid black;
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position: absolute">
+    <filter id="sum-kernel">
+        <feConvolveMatrix order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="zero-sum-kernel">
+        <feConvolveMatrix order="3" kernelMatrix="1 0 0 0 1 0 0 0 -2"/>
+    </filter>
+    <filter id="sum-kernel-unit-length">
+        <feConvolveMatrix order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" kernelUnitLength="1"/>
+    </filter>
+</svg>
+
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#zero-sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#zero-sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#zero-sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel)"></div>
+
+<div class="target" style="filter: url(#sum-kernel)"></div>
+<div class="target" style="filter: url(#sum-kernel-unit-length)"></div>
+</body>
+</html>

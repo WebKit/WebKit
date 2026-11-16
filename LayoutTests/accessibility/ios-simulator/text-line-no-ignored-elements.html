@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="content"><a href="#">text line</a><img alt="" src=""><a href="#">text line</a></div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This test ensures that when asking for a line of text, we do not include objects that should be ignored. The image in this example should not appear.");
+
+    if (window.accessibilityController) {
+        let content = accessibilityController.accessibleElementById("content");
+        content.lineRectsAndText.split("|").forEach((line) => {
+            let text = line.match(/text = \".*\";/);
+            debug(text[0]);
+        });
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

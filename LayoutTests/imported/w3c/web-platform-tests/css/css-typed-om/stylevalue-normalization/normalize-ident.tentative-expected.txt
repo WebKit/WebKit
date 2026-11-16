@@ -1,0 +1,4 @@
+
+PASS CSS identifiers are normalized from String to CSSKeywordValues
+PASS CSS identifiers are normalized from CSSOM to CSSKeywordValues
+

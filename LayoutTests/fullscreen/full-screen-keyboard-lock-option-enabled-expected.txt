@@ -1,0 +1,8 @@
+Test passes if ESC key received by the test case after enter to fullscreen.
+
+EVENT(fullscreenchange)
+EXPECTED (document.fullscreenElement !== null == 'true') OK
+EVENT(keypress)
+EXPECTED (event.keyCode == '27') OK
+END OF TEST
+

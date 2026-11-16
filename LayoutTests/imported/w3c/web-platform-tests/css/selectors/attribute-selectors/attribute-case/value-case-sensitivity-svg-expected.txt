@@ -1,0 +1,5 @@
+
+PASS HTML element matches legacy attribute value case-insensitively.
+PASS SVG element matches legacy attribute value case-sensitively (no match).
+PASS Empty-namespace element matches legacy attribute value case-sensitively.
+

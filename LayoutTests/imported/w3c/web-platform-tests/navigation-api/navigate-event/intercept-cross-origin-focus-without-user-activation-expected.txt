@@ -1,0 +1,5 @@
+
+
+PASS Navigation API intercept() focus reset shouldn't bypass focus-without-user-activation permissions policy
+FAIL Navigation API intercept() focus reset should work if navigation was user-initiated assert_equals: expected Element node <iframe allow="focus-without-user-activation 'none'" src=... but got Element node <input type="text" id="input"></input>
+

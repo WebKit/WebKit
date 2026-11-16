@@ -1,0 +1,3 @@
+
+PASS getComputedStyle gets up-to-date style
+

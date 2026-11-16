@@ -1,0 +1,2 @@
+O tempora, o mores! senatus haec intellegit, consul videt; hic tamen vivit. vivit? immo vero etiam in senatum venit, fit publici consili particeps, notat et designat oculis ad caedem unum quemque nostrum. nos autem fortes viri satis facere rei publicae videmur, si istius furorem ac tela vitamus. ad mortem te, Catilina, duci iussu consulis iam pridem oportebat, in te conferri pestem quam tu in nos omnis iam diu machinaris.
+(repaint rects (rect 8 48 760 80) )

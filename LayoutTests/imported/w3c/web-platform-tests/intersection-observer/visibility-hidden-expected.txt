@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver observing a visibility:hidden element.
+PASS First rAF.
+PASS document.scrollingElement.scrollTop = 300
+

@@ -1,0 +1,23 @@
+<!-- webkit-test-runner [ AllowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/video-formats/video-formats-manifest.js"></script>
+<script src="../../resources/video-formats/video-formats-test-utils.js"></script>
+<script src="resources/webgl-video-sink.js"></script>
+<script src="resources/webgl-upload-path-test.js"></script>
+</head>
+<body>
+<script>
+"use strict";
+description("Each condition of the hardware upload path, with the default path, in WebGL 1 and WebGL 2: every (internalformat, format, type) the hardware path accepts, a combination it does not accept, texSubImage2D, texImage3D, a source sub-rectangle, level 1, a cube map face, and NV12 against RGBA VideoFrames. The sources are a video the hardware path uses directly (h264-420-bt709-videorange.mp4), a video it converts first (hevc-420-10bit-bt709-videorange.mp4), and JS-built NV12 and RGBA VideoFrames. Each line gives the path and the reason; the texture is checked against the frame's own R'G'B' values, or against its previous contents where the upload is an error.");
+
+UploadPathTest.run(() => UploadPathTest.runApiTest({
+    videos: ["h264-420-bt709-videorange.mp4", "hevc-420-10bit-bt709-videorange.mp4"],
+    frames: ["NV12", "RGBA"],
+}));
+</script>
+</body>
+</html>

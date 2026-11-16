@@ -1,0 +1,12 @@
+Test that the Layers tab accounts for a cross-origin frame's scroll position under site isolation.
+
+
+
+== Running test suite: SiteIsolation.LayerTree.LayersIncludingScrolledFrame
+-- Running test case: SiteIsolation.LayerTree.LayersIncludingScrolledFrame.Placement
+PASS: Should find the child frame target.
+PASS: Layer hosting the iframe should report the frame's content box.
+PASS: Should include the child frame's composited element.
+PASS: Child layer should be offset horizontally by the frame's content box.
+PASS: Child layer should be offset vertically by the frame's content box, less the frame's scroll position.
+

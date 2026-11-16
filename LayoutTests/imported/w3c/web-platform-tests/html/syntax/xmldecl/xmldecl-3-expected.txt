@@ -1,0 +1,3 @@
+
+PASS Check encoding windows-1251, trickle.py
+

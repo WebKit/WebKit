@@ -1,0 +1,7 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT it must give a "SecurityError" DOMException if the pages are different-origin domain Test timed out
+NOTRUN it must return the iframe element if the pages are same-origin domain
+

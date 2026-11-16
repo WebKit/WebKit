@@ -1,0 +1,8 @@
+foo az
+
+
+PASS Setting outerHTML on an Element without a parent should have no effect
+PASS Setting outerHTML on an Element with a DocumentFragment parent should create a temporary <body>
+PASS Setting outerHTML on an Element with a parent should replace it but leave the element unchanged
+PASS Setting outerHTML on a <body> element should replace it but leave the element unchanged
+

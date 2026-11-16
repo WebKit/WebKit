@@ -1,0 +1,12 @@
+
+PASS e.style['color'] = "#" should not set the property value
+PASS e.style['color'] = "#f" should not set the property value
+PASS e.style['color'] = "#ff" should not set the property value
+PASS e.style['color'] = "#ffg" should not set the property value
+PASS e.style['color'] = "#fffg" should not set the property value
+PASS e.style['color'] = "#fffff" should not set the property value
+PASS e.style['color'] = "#fffffg" should not set the property value
+PASS e.style['color'] = "#fffffff" should not set the property value
+PASS e.style['color'] = "#fffffffg" should not set the property value
+PASS e.style['color'] = "#fffffffff" should not set the property value
+

@@ -1,0 +1,16 @@
+
+PASS Property container value 'initial'
+PASS Property container value 'inherit'
+PASS Property container value 'unset'
+PASS Property container value 'none / inline-size'
+PASS Property container value 'none / size'
+PASS Property container value 'inline-size / inline-size'
+PASS Property container value 'block-size / size'
+PASS Property container value 'foo / inline-size'
+PASS Property container value 'foo /inline-size'
+PASS Property container value 'foo/ inline-size'
+PASS Property container value 'foo/inline-size'
+PASS Property container value 'FoO / size'
+PASS Property container value 'foo bar / size'
+PASS Property container value 'foo / normal'
+

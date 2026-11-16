@@ -1,0 +1,9 @@
+
+PASS Fetching a resource with bad zstd content should still resolve
+PASS Consuming the body of a resource with bad zstd content with arrayBuffer() should reject
+PASS Consuming the body of a resource with bad zstd content with blob() should reject
+PASS Consuming the body of a resource with bad zstd content with bytes() should reject
+PASS Consuming the body of a resource with bad zstd content with formData() should reject
+PASS Consuming the body of a resource with bad zstd content with json() should reject
+PASS Consuming the body of a resource with bad zstd content with text() should reject
+

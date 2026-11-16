@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>getClientRects should return correct rects for first-letter styled text</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<style>
+div.test {
+    font: 20px/1 Ahem;
+    margin: 10px;
+}
+div.test::first-letter {
+    color: red;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<div class="test" id="single">A</div>
+<div class="test" id="two">AB</div>
+<div class="test" id="multi">ABCDE</div>
+<pre id="result"></pre>
+<script>
+var results = [];
+
+function rectStr(r) {
+    return r ? "x:" + r.x + " w:" + r.width : "null";
+}
+
+function getRects(textNode, start, end) {
+    var range = document.createRange();
+    range.setStart(textNode, start);
+    range.setEnd(textNode, end);
+    return Array.from(range.getClientRects());
+}
+
+function totalWidth(rects) {
+    return rects.reduce(function(sum, r) { return sum + r.width; }, 0);
+}
+
+function check(label, actual, expected) {
+    var pass = actual === expected;
+    results.push((pass ? "PASS" : "FAIL") + ": " + label + " = " + actual + (pass ? "" : " (expected " + expected + ")"));
+}
+
+// Single character with first-letter: the one character should have a rect.
+var singleText = document.getElementById("single").firstChild;
+var singleRects = getRects(singleText, 0, 1);
+check("single char (0-1) rect count", singleRects.length, 1);
+check("single char (0-1) has nonzero width", singleRects[0].width > 0, true);
+
+// Two characters: range 0-1 should be first char, 1-2 should be second char.
+var twoText = document.getElementById("two").firstChild;
+var charWidth = 20; // Ahem 20px
+
+var r01 = getRects(twoText, 0, 1);
+var r12 = getRects(twoText, 1, 2);
+var r02 = getRects(twoText, 0, 2);
+
+check("two chars (0-1) total width", totalWidth(r01), charWidth);
+check("two chars (1-2) total width", totalWidth(r12), charWidth);
+check("two chars (0-2) total width", totalWidth(r02), charWidth * 2);
+check("two chars (0-1) x < (1-2) x", r01[0].x < r12[0].x, true);
+
+// Multi characters: various sub-ranges.
+var multiText = document.getElementById("multi").firstChild;
+
+var m01 = getRects(multiText, 0, 1);
+var m15 = getRects(multiText, 1, 5);
+var m05 = getRects(multiText, 0, 5);
+var m23 = getRects(multiText, 2, 3);
+
+check("multi (0-1) total width", totalWidth(m01), charWidth);
+check("multi (1-5) total width", totalWidth(m15), charWidth * 4);
+check("multi (0-5) total width", totalWidth(m05), charWidth * 5);
+check("multi (2-3) total width", totalWidth(m23), charWidth);
+check("multi (0-1) x < (1-5) first x", m01[0].x < m15[0].x, true);
+
+document.getElementById("result").textContent = results.join("\n") + "\n";
+</script>
+</body>
+</html>

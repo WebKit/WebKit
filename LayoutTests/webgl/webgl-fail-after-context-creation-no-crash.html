@@ -1,0 +1,86 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForWebGLEnabled=true runSingly=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebKit test for creating WebGL context when the context is lost during initialization</title>
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvasWorks"></canvas>
+<script>
+"use strict";
+description("This test tests that WebGL context creation can lose context and it doesn't crash.");
+// At the time of writing, the GPU process would crash if remote process would time out during 
+// context creation would fail.
+
+debug("");
+var glWorks;
+var canvasFails;
+var glFails;
+
+var subtests = [];
+for (let contextType of ["webgl", "webgl2"]) {
+    for (let failType of ["IPCBufferOOM", "CreationTimeout"])
+        subtests.push({contextType, failType});
+}
+
+async function runTest() {
+    glWorks = canvasWorks.getContext("webgl2");
+    shouldBeNonNull("glWorks");
+    shouldBeGreaterThanOrEqual("glWorks.getParameter(glWorks.MAX_COMBINED_TEXTURE_IMAGE_UNITS)", "8");
+    shouldBeTrue('"failContextCreationForTesting" in glWorks.getContextAttributes()'); // Expects support for "DOM Testing APIs Enabled internal setting"
+    canvasWorks.addEventListener('webglcontextcreationerror', () => {
+        testFailed("Received context creation error for glWorks");
+    }, false);
+    canvasWorks.addEventListener('webglcontextlost', () => {
+        testFailed("Received context lost error for glWorks");
+    }, false);
+
+    for (let subtest of subtests) {
+        debug(`Subtest contextType: ${subtest.contextType}, failType: ${subtest.failType}`);
+        canvasFails = document.createElement("canvas");
+        await testBody(subtest);
+    }
+
+    shouldBe("glWorks.NO_ERROR", "glWorks.getError()" );
+    finishTest();
+}
+
+function testBody(subtest) {
+    return new Promise((resolve, reject) => {
+        let timeout;
+        canvasFails.addEventListener('webglcontextcreationerror', () => {
+            testPassed("Received context creation error for canvasFails");
+            if (timeout)
+                clearTimeout(timeout);
+            resolve();
+        }, false);
+        canvasFails.addEventListener('webglcontextlost', () => {
+            testPassed("Received context lost error for canvasFails");
+            clearTimeout(timeout);
+            resolve();
+        }, false);
+        glFails = canvasFails.getContext(subtest.contextType, {failContextCreationForTesting: subtest.failType});
+        if (!glFails) {
+            testPassed("Failed to create context glFails");
+            resolve();
+            return;
+        }
+        timeout = setTimeout(() => {
+            testFailed("Timeout while waiting for canvas creation error.");
+            resolve();
+        }, 2000);
+        shouldBe("glFails.getParameter(glFails.MAX_COMBINED_TEXTURE_IMAGE_UNITS)", "null");
+        canvasFails.width = 700;
+    });
+}
+window.onload = runTest;
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

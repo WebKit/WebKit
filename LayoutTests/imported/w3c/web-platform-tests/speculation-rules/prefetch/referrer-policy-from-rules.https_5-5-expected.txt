@@ -1,0 +1,3 @@
+
+PASS unrecognized policies in link referrerpolicy attribute are ignored
+

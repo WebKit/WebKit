@@ -1,0 +1,4 @@
+Box 1 Box 2 Box 3
+
+PASS scroller prefers nested area over area aligned in both axes.
+

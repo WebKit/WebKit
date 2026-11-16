@@ -1,0 +1,3 @@
+
+PASS Removing iframe from document via innerHTML removes it from history
+

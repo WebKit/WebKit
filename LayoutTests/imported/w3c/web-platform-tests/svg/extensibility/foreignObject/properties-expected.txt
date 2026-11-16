@@ -1,0 +1,6 @@
+
+PASS width and height default to auto (which computes to "0px")
+PASS style rules are applied
+PASS attributes set properties
+PASS style rules override attributes
+

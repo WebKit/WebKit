@@ -1,0 +1,127 @@
+html5lib parser tests
+
+
+PASS <body><?something>
+PASS <body><?something><span>
+PASS <body><?something good>
+PASS <body><?something else is good>
+PASS <body><?one><?two>
+PASS <body><?a$><?b$><?good?>
+PASS <body><?hey there?>
+PASS <body><?hey   there?>
+PASS <body><?hey?there>
+PASS <body><?hey\tthere=1?>
+PASS <body><?hey\nthere=1?>
+PASS <body><?hey\rthere=1?>
+PASS <body><?hey\x0cthere=1?>
+PASS <body><?something ? >
+PASS <body><?something x >
+PASS <body><?something ?\t   ??>
+PASS <body><?t d > ?>
+PASS <body><?module-handler>
+PASS <body><?module-handler data>
+PASS <body><?view-port>
+PASS <body><?view-port data>
+PASS <body><?config-v2>
+PASS <body><?config-v2 data>
+PASS <body><?x>
+PASS <body><?x data>
+PASS <body><?zz2op>
+PASS <body><?zz2op data>
+PASS <body><?xla->
+PASS <body><?xla- data>
+PASS <body><?a-b-c>
+PASS <body><?a-b-c data>
+PASS <body><?v-123>
+PASS <body><?v-123 data>
+PASS <body><?a0-b1-c2>
+PASS <body><?a0-b1-c2 data>
+PASS <body><?page-404>
+PASS <body><?page-404 data>
+PASS <body><?r2-d2>
+PASS <body><?r2-d2 data>
+PASS <body><?level-99>
+PASS <body><?level-99 data>
+PASS <body><?UPPERCASE>
+PASS <body><?UPPERCASE data>
+PASS <body><?all-KINDS-of-CaSeS>
+PASS <body><?all-KINDS-of-CaSeS data>
+PASS <body><?user_name>
+PASS <body><?user_name data>
+PASS <body><?S_S-S_S>
+PASS <body><?S_S-S_S data>
+PASS <body><?b_>
+PASS <body><?b_ data>
+PASS <body><?_prefix>
+PASS <body><?_prefix data>
+PASS <body><?_x132>
+PASS <body><?_x132 data>
+PASS <body><?_-_>
+PASS <body><?_-_ data>
+PASS <body><?_>
+PASS <body><?_ data>
+PASS <body><?A---------------->
+PASS <body><?A---------------- data>
+PASS <body><?z0123456789>
+PASS <body><?z0123456789 data>
+PASS <body><?m-0>
+PASS <body><?m-0 data>
+PASS <body><?xml>
+PASS <body><?xml-stylesheet>
+PASS <body><?XML>
+PASS <body><?XML-stylesheet>
+PASS <body><?xML>
+PASS <body><?xml-STYLesheet>
+PASS <body><?1st-place>
+PASS <body><?2-factor>
+PASS <body><?99-problems>
+PASS <body><?٥-star>
+PASS <body><?-prefix>
+PASS <body><?--internal>
+PASS <body><?-data->
+PASS <body><?-100>
+PASS <body><?·middle-dot>
+PASS <body><?͵greek-numeral>
+PASS <body><?́accent-start>
+PASS <body><?price$value>
+PASS <body><?user@domain>
+PASS <body><?tag#id>
+PASS <body><?a+b>
+PASS <body><?100%>
+PASS <body><?data.v1>
+PASS <body><?namespace:tag>
+PASS <body><?error!code>
+PASS <body><?x=y>
+PASS <body><?a<b>
+PASS <body><?true&false>
+PASS <body><?not|or>
+PASS <body><?lit$123456789>
+PASS <body><?lit$$4x>
+PASS <body><?🚀-launch>
+PASS <body><?error-⚠️>
+PASS <body><?fire-🔥>
+PASS <body><?v1-✅>
+PASS <body><?start
+PASS <body><?start?
+PASS <body><?start
+PASS <body><?start data
+PASS <body><?start ? ?
+PASS <body><?
+PASS <body><?
+PASS <div><?something></div>
+PASS <div><?something good></div>
+PASS <table><?something></table>
+PASS <table><tr><?something></tr></table>
+PASS <script><?something></script>
+PASS <style><?something></style>
+PASS <?something>
+PASS <head><?something>
+PASS <html><?something><head>
+PASS <html><head></head><?something><body>
+PASS <html><body></body><?something>
+PASS <html><body></body></html><?something>
+PASS <body><template><?something></template>
+PASS <body><textarea><?something></textarea>
+PASS <body><title><?something></title>
+PASS <template><?pi>
+

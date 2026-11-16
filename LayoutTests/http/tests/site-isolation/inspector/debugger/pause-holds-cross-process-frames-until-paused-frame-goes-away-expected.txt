@@ -1,0 +1,25 @@
+Test that the frames held for a paused cross-site frame run again when the paused frame leaves its process, is removed, or its process exits, since its process then never reports that it continued.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesUntilPausedFrameGoesAway
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesUntilPausedFrameGoesAway.PausedFrameNavigatesIntoMainFrameProcess
+PASS: Should find the frame target of the cross-site frame.
+PASS: The cross-site frame's interval should be running.
+PASS: The main frame's interval should not advance while the cross-site frame is paused.
+PASS: Should find the frame target of the frame's new document.
+PASS: The frame's new document should be in the main frame's process.
+PASS: The main frame's interval should advance after the paused frame leaves its process.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesUntilPausedFrameGoesAway.PausedFrameRemoved
+PASS: Should find the frame target of the cross-site frame.
+PASS: The cross-site frame's interval should be running.
+PASS: The main frame's interval should not advance while the cross-site frame is paused.
+PASS: The main frame's interval should advance after the paused frame is removed.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesUntilPausedFrameGoesAway.PausingProcessTerminated
+PASS: Should find the frame target of the cross-site frame.
+PASS: The cross-site frame's interval should be running.
+PASS: The main frame's interval should not advance while the cross-site frame is paused.
+PASS: The main frame's interval should advance after the paused frame's process exits.
+

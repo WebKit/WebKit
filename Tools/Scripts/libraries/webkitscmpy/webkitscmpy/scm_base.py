@@ -1,0 +1,199 @@
+# Copyright (C) 2020-2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+from __future__ import annotations
+
+import logging
+import re
+import sys
+import time
+from typing import Any, Iterator, Sequence
+
+from logging import NullHandler
+from webkitscmpy import Commit, Contributor, CommitClassifier, log
+from webkitcorepy import string_utils
+
+
+class ScmBase(object):
+    class Exception(RuntimeError):
+        pass
+
+    # Projects can define for themselves what constitutes a development vs a production branch,
+    # the following idioms seem common enough to be shared.
+    DEV_BRANCHES = re.compile(r'^(.+/)?((eng)|(dev)|(bug)|(integration)|(clone))/.+')
+    PROD_BRANCHES = re.compile(r'^(rapid/)?([^-/]+-[\d+\.]+-branch|webkitglib/\d+\.\d+)')
+    GIT_SVN_REVISION = re.compile(r'^git-svn-id: \S+:\/\/.+@(?P<revision>\d+) .+-.+-.+-.+', flags=re.MULTILINE)
+    DEFAULT_BRANCHES = ['main', 'master', 'trunk']
+
+    @classmethod
+    def gmtoffset(cls) -> int:
+        return int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+
+    def __init__(self, dev_branches: re.Pattern[str] | None = None, prod_branches: re.Pattern[str] | None = None, contributors: Contributor.Mapping | None = None, id: str | None = None, classifier: CommitClassifier | None = None) -> None:
+        self.dev_branches = dev_branches or self.DEV_BRANCHES
+        self.prod_branches = prod_branches or self.PROD_BRANCHES
+        self.path: str | None = getattr(self, 'path', None)
+        self.contributors = Contributor.Mapping() if contributors is None else contributors
+        self.classifier = CommitClassifier() if classifier is None else classifier
+
+        if id and not isinstance(id, string_utils.basestring):
+            raise ValueError("Expected 'id' to be a string type, not '{}'".format(type(id)))
+        self.id = id
+
+    @property
+    def is_svn(self) -> bool:
+        return False
+
+    @property
+    def is_git(self) -> bool:
+        return False
+
+    @property
+    def default_branch(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def branches(self) -> list[str]:
+        raise NotImplementedError()
+
+    def tags(self) -> list[str]:
+        raise NotImplementedError()
+
+    def commit(
+        self, hash: str | None = None, revision: int | str | None = None, identifier: int | str | None = None,
+        branch: str | None = None, tag: str | None = None, include_log: bool = True, include_identifier: bool = True,
+    ) -> Commit:
+        raise NotImplementedError()
+
+    # `begin` and `end` are keyword arguments to commit(), or a single 'argument' to find().
+    def _commit_range(self, begin: dict[str, Any] | None = None, end: dict[str, Any] | None = None, include_log: bool = False, include_identifier: bool = True) -> tuple[Commit, Commit]:
+        begin_args = begin or dict()
+        end_args = end or dict()
+
+        if not begin_args:
+            raise TypeError("_commit_range() missing required 'begin' arguments")
+        if not end_args:
+            raise TypeError("_commit_range() missing required 'end' arguments")
+
+        if list(begin_args.keys()) == ['argument']:
+            begin_result = self.find(include_log=include_log, include_identifier=False, **begin_args)
+        else:
+            begin_result = self.commit(include_log=include_log, include_identifier=False, **begin_args)
+
+        if list(end_args.keys()) == ['argument']:
+            end_result = self.find(include_log=include_log, include_identifier=include_identifier, **end_args)
+        else:
+            end_result = self.commit(include_log=include_log, include_identifier=include_identifier, **end_args)
+
+        if not begin_result:
+            raise TypeError("'{}' failed to define begin in _commit_range()".format(begin_args))
+        if not end_result:
+            raise TypeError("'{}' failed to define begin in _commit_range()".format(end_args))
+        if (begin_result.timestamp or 0) > (end_result.timestamp or 0):
+            raise TypeError("'{}' pre-dates '{}' in _commit_range()".format(begin_result, end_result))
+        if end_result.branch == self.default_branch and begin_result.branch != self.default_branch:
+            raise TypeError("'{}' and '{}' do not share linear history".format(begin_result, end_result))
+        return begin_result, end_result
+
+    def commits(self, begin: dict[str, Any] | None = None, end: dict[str, Any] | None = None, include_log: bool = True, include_identifier: bool = True) -> Iterator[Commit]:
+        raise NotImplementedError()
+
+    def branch_priority(self, branch: str, preferred_branch: str | None = None) -> tuple[int, str]:
+        if branch == self.default_branch:
+            return 0, branch
+        if self.prod_branches.match(branch):
+            return 1, branch
+        if not self.dev_branches.match(branch):
+            return 2, branch
+        if branch == preferred_branch:
+            return 3, branch
+        return 4, branch
+
+    def prioritize_branches(self, branches: Sequence[str], preferred_branch: str | None = None) -> str | None:
+        if not branches:
+            return None
+        if len(branches) == 1:
+            return branches[0]
+        return min(branches, key=lambda branch: self.branch_priority(branch, preferred_branch))
+
+    def find(self, argument: str, include_log: bool = True, include_identifier: bool = True) -> Commit:
+        if not isinstance(argument, string_utils.basestring):
+            raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
+
+        offset = 0
+        if '~' in argument:
+            for s in argument.split('~')[1:]:
+                if s and not s.isdigit():
+                    raise ValueError("'{}' is not a valid argument to Scm.find()".format(argument))
+                offset += int(s) if s else 1
+            argument = argument.split('~')[0]
+
+        if argument in self.DEFAULT_BRANCHES:
+            argument = self.default_branch
+
+        if argument == 'HEAD':
+            result = self.commit(include_log=include_log, include_identifier=include_identifier)
+
+        elif argument in self.branches:
+            result = self.commit(branch=argument, include_log=include_log, include_identifier=include_identifier)
+
+        elif argument in self.tags():
+            result = self.commit(tag=argument, include_log=include_log, include_identifier=include_identifier)
+
+        else:
+            if offset:
+                raise ValueError("'~' offsets are not supported for revisions and identifiers")
+
+            parsed_commit = Commit.parse(argument)
+            if parsed_commit.branch in self.DEFAULT_BRANCHES:
+                parsed_commit.branch = self.default_branch
+
+            return self.commit(
+                hash=parsed_commit.hash,
+                revision=parsed_commit.revision,
+                identifier=parsed_commit.identifier,
+                branch=parsed_commit.branch,
+                include_log=include_log,
+                include_identifier=include_identifier,
+            )
+
+        if not offset:
+            return result
+        if result.identifier is None:
+            raise ValueError("'{}' has no identifier to offset".format(result))
+
+        return self.commit(
+            identifier=result.identifier - offset,
+            branch=result.branch,
+            include_log=include_log,
+            include_identifier=include_identifier,
+        )
+
+    @classmethod
+    def log(cls, message: str, level: int = logging.WARNING) -> None:
+        if not log.handlers or all([isinstance(handle, NullHandler) for handle in log.handlers]):
+            sys.stderr.write(message + '\n')
+        else:
+            log.log(level, message)
+
+    def files_changed(self, argument: str | None = None) -> list[str]:
+        raise NotImplementedError()

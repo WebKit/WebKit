@@ -1,0 +1,23 @@
+
+Tests that MediaMetadata selects the highest-scored artwork by parsing non-square "sizes" correctly.
+
+* Load a media file so a NowPlaying session can register.
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+
+* Provide artwork with both square and non-square sizes.
+RUN(navigator.mediaSession.metadata = new MediaMetadata({title: "title", artwork: [{src: "content/abe.png", sizes: "130x130"}, {src: "content/greenbox.png", sizes: "1280x720"}]}))
+RUN(navigator.mediaSession.playbackState = "paused")
+RUN(navigator.mediaSession.positionState = {duration: video.duration, position: video.currentTime})
+
+* Start to play so NowPlaying becomes active.
+RUN(video.play())
+EVENT(playing)
+
+* The 1280x720 image has the higher score and must be the selected artwork.
+EXPECTED (internals.nowPlayingMetadata.artwork != 'null') OK
+EXPECTED (internals.nowPlayingMetadata.artwork.src.endsWith("greenbox.png") == 'true') OK
+EXPECTED (internals.nowPlayingMetadata.artwork.src.endsWith("abe.png") == 'false') OK
+
+END OF TEST
+

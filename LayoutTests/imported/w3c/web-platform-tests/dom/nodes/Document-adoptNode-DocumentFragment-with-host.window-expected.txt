@@ -1,0 +1,9 @@
+
+PASS adoptNode() plain DocumentFragment (no host): adopts and returns it
+PASS adoptNode() template.content: adopts fragment + children, returns it
+PASS adoptNode() template.content into browsing-context document
+PASS adoptNode() shadow root: throws HierarchyRequestError
+PASS adoptNode() <template> element: content follows via template adopting steps
+PASS adoptNode() nested <template> elements: all owner documents update
+PASS appendChild() template.content: moves children, fragment ownerDocument stays
+

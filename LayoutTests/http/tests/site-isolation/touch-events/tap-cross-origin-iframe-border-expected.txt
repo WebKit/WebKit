@@ -1,0 +1,10 @@
+Tapping on the border of a cross-origin iframe must dispatch a click to the iframe element in the parent document, not to the iframe's content.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target is "iframe"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,14 @@
+
+PASS e.style['scroll-margin-block'] = "10px 20px" should set scroll-margin-block-end
+PASS e.style['scroll-margin-block'] = "10px 20px" should set scroll-margin-block-start
+PASS e.style['scroll-margin-block'] = "10px 20px" should not set unrelated longhands
+PASS e.style['scroll-margin-block'] = "30px" should set scroll-margin-block-end
+PASS e.style['scroll-margin-block'] = "30px" should set scroll-margin-block-start
+PASS e.style['scroll-margin-block'] = "30px" should not set unrelated longhands
+PASS e.style['scroll-margin-inline'] = "50px 60px" should set scroll-margin-inline-end
+PASS e.style['scroll-margin-inline'] = "50px 60px" should set scroll-margin-inline-start
+PASS e.style['scroll-margin-inline'] = "50px 60px" should not set unrelated longhands
+PASS e.style['scroll-margin-inline'] = "-40px" should set scroll-margin-inline-end
+PASS e.style['scroll-margin-inline'] = "-40px" should set scroll-margin-inline-start
+PASS e.style['scroll-margin-inline'] = "-40px" should not set unrelated longhands
+

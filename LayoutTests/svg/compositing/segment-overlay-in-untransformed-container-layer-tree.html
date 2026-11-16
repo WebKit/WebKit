@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 240px; height: 240px; }
+    .anchor { transform: translateZ(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => {
+            document.body.offsetTop;
+            for (const id of ['a', 'b'])
+                document.getElementById(id).setAttribute('class', 'anchor');
+            if (window.internals)
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+</script>
+</head>
+<body>
+<!-- Untransformed opacity <g>: the in-between rect's "(svg segment N)" overlay backing is cropped to the rect. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+    <g style="opacity: 0.8">
+        <g id="a"><rect x="10" y="10" width="60" height="60" fill="red"/></g>
+        <rect x="90" y="90" width="60" height="60" fill="orange"/>
+        <g id="b"><rect x="170" y="170" width="60" height="60" fill="blue"/></g>
+    </g>
+</svg>
+<pre id="layers"></pre>
+</body>
+</html>

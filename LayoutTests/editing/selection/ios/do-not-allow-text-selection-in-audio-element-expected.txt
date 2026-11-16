@@ -1,0 +1,10 @@
+This test verifies that long pressing the timestamp in an audio element does not start a text selection. To manually run the test, long press the audio element below and verify that no text is selected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rects.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

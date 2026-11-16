@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("MemoryTimelineRecord");
+
+    // The category types every memory timeline record must have, in order.
+    let fixedCategoryOrder = [
+        WI.MemoryCategory.Type.JavaScript,
+        WI.MemoryCategory.Type.Images,
+        WI.MemoryCategory.Type.Layers,
+        WI.MemoryCategory.Type.Page,
+    ];
+
+    function expectFixedCategories(categories, expectedSizes)
+    {
+        if (categories.length !== fixedCategoryOrder.length) {
+            InspectorTest.assert(false, "Should have every category: " + categories.map((category) => category.type).join(", "));
+            return;
+        }
+        for (let i = 0; i < fixedCategoryOrder.length; ++i) {
+            InspectorTest.assert(categories[i].type === fixedCategoryOrder[i], "Should keep the fixed category order");
+            InspectorTest.assert(categories[i].size === expectedSizes[i], "Should have the expected size");
+        }
+        InspectorTest.log(categories.map((category) => category.type + ":" + category.size).join(", "));
+    }
+
+    suite.addTestCase({
+        name: "MemoryTimelineRecord.MemoryCategoriesFromProtocol.AllCategoryDataTypes",
+        test() {
+            let categories = WI.MemoryTimelineRecord.memoryCategoriesFromProtocol([
+                {type: "javascript", size: 100},
+                {type: "jit", size: 32},
+                {type: "images", size: 500},
+                {type: "layers", size: 64},
+                {type: "page", size: 200},
+                {type: "other", size: 48},
+            ]);
+            expectFixedCategories(categories, [132, 500, 64, 248]);
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "MemoryTimelineRecord.MemoryCategoriesFromProtocol.ZeroSizeCategories",
+        test() {
+            let categories = WI.MemoryTimelineRecord.memoryCategoriesFromProtocol([
+                {type: "javascript", size: 100},
+                {type: "jit", size: 0},
+                {type: "images", size: 0},
+                {type: "layers", size: 0},
+                {type: "page", size: 200},
+                {type: "other", size: 0},
+            ]);
+            expectFixedCategories(categories, [100, 0, 0, 200]);
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "MemoryTimelineRecord.CategoriesFirstAppearingInLaterRecords",
+        test() {
+            // The first sample has no JIT code, images, or layers yet.
+            let firstRecord = new WI.MemoryTimelineRecord(1000, [
+                {type: "javascript", size: 100},
+                {type: "jit", size: 0},
+                {type: "images", size: 0},
+                {type: "layers", size: 0},
+                {type: "page", size: 200},
+                {type: "other", size: 0},
+            ]);
+            expectFixedCategories(firstRecord.categories, [100, 0, 0, 200]);
+            InspectorTest.assert(firstRecord.totalSize === 300, "Should have the expected total size");
+
+            // Later samples grow new categories.
+            let secondRecord = new WI.MemoryTimelineRecord(1500, [
+                {type: "javascript", size: 150},
+                {type: "jit", size: 64},
+                {type: "images", size: 300},
+                {type: "layers", size: 128},
+                {type: "page", size: 250},
+                {type: "other", size: 10},
+            ]);
+            expectFixedCategories(secondRecord.categories, [214, 300, 128, 260]);
+            InspectorTest.assert(secondRecord.totalSize === 902, "Should have the expected total size");
+
+            // Imported data may omit categories entirely.
+            let thirdRecord = new WI.MemoryTimelineRecord(2000, [
+                {type: "javascript", size: 120},
+                {type: "page", size: 220},
+            ]);
+            expectFixedCategories(thirdRecord.categories, [120, 0, 0, 220]);
+            InspectorTest.assert(thirdRecord.totalSize === 340, "Should have the expected total size");
+
+            // Every record must have the same categories in the same order as the first record.
+            for (let record of [secondRecord, thirdRecord]) {
+                InspectorTest.assert(record.categories.length === firstRecord.categories.length, "Should have the same categories as the first record");
+                for (let i = 0; i < record.categories.length; ++i)
+                    InspectorTest.assert(record.categories[i].type === firstRecord.categories[i].type, "Should have the same category order as the first record");
+            }
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that every WI.MemoryTimelineRecord has the same memory categories in the same order.</p>
+</body>
+</html>

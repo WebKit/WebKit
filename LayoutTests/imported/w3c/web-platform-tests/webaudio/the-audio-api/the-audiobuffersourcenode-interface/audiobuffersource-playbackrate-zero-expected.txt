@@ -1,0 +1,4 @@
+
+PASS Synthesize and verify sample-and-hold behavior when playbackRate is set to zero halfway
+PASS Subsample start with playbackRate 0 should produce sample-and-hold from exact start frame
+

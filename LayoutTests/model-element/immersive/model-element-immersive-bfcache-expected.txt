@@ -1,0 +1,15 @@
+A page whose <model> is immersive should reset its immersive state when restored from the back/forward cache, so its UI is not stuck active and re-entry works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.immersiveElement is model
+Navigating away to place the page in the back/forward cache.
+Restored from the back/forward cache.
+PASS document.immersiveElement is null
+PASS document.immersiveElement is model
+PASS Re-entered the immersive environment after restoring from the back/forward cache.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

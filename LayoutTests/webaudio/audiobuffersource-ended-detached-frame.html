@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head>
+    <script src="../resources/js-test.js"></script>
+    <script>
+        function runTest()
+        {
+            description("Test that we do not crash when trying to fire an 'ended' event at a audiobuffersource node in a detached frame.");
+            jsTestIsAsync = true;
+
+            frame = document.createElement("iframe");
+            frame.src = "resources/audiobuffersource-ended-detached-frame-iframe.html";
+            frame.onload = function() {
+                frame.contentWindow.runTest();
+                frame.remove();
+                setTimeout(function() {
+                    finishJSTest();
+                }, 10);
+            };
+            document.body.appendChild(frame);
+        }
+    </script>
+</head>
+<body onload="runTest()">
+</body>

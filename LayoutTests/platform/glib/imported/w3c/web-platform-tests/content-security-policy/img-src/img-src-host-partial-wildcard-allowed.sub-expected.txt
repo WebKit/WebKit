@@ -1,0 +1,3 @@
+
+PASS img src matches correctly partial wildcard host csp directive
+

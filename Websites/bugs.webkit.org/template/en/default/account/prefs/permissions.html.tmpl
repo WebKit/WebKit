@@ -1,0 +1,79 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # has_bits: array of hashes. May be empty.
+  #           name => Names of the permissions the user has.
+  #           desc => Descriptions of the permissions the user has.
+  # set_bits: array of hashes. May be empty.
+  #           name => Names of the permissions the user can set for
+  #           other people.
+  #           desc => Descriptions of the permissions the user can set for
+  #           other people.
+  #%]
+
+    <div id="permissions">
+      [% IF has_bits.size %]
+        <p>You have the following permission bits set on your account:</p>
+
+        <table>
+          [% FOREACH bit_description = has_bits %]
+            <tr>
+              <td>[% bit_description.name FILTER html %]</td>
+              <td>[% bit_description.desc FILTER html_light %]</td>
+            </tr>
+          [% END %]
+        </table>
+
+        [% FOREACH privs = ["editcomponents", "canconfirm", "editbugs"] %]
+          [% SET products = ${"local_$privs"} %]
+          [% IF products && products.size %]
+            <p>
+              You also have local '[% privs FILTER html %]' privileges
+              for the following products:
+            </p>
+            <ul>
+              [% FOREACH product = products %]
+                <li>[% product.name FILTER html %]</li>
+              [% END %]
+            </ul>
+          [% END %]
+        [% END %]
+
+      [% ELSE %]
+        <p>There are no permission bits set on your account.</p>
+      [% END %]
+
+      [% IF user.in_group('editusers') %]
+        <p>
+          You have editusers privileges. You can turn on and off all
+          permissions for all users.
+        </p>
+      [% ELSIF set_bits.size %]
+        <p>
+          And you can turn on or off the following bits for
+          <a href="editusers.cgi">other users</a>:
+        </p>
+
+        <table>
+          [% FOREACH bit_description = set_bits %]
+            <tr>
+              <td>[% bit_description.name FILTER html %]</td>
+              <td>[% bit_description.desc FILTER html_light %]</td>
+            </tr>
+          [% END %]
+        </table>
+      [% END %]
+
+      [% IF user.in_group('bz_sudoers') %]
+        <p>
+          You are a member of the <b>bz_sudoers</b> group, so you can
+          <a href="relogin.cgi?action=prepare-sudo">impersonate someone else</a>.
+        </p>
+      [% END %]
+    </div>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we reposition the image when transform is present.</title>
+<style>
+img {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	width: 100px;
+	height: 100px;
+	transform: translateX(0px);
+}
+
+div {
+	position: relative;
+	width: 100px;
+	height: 100px;
+	overflow: hidden;
+}
+</style>
+</head>
+<body>
+PASS if the image disappears completely.
+<div><img id=moveOut src="foobar-broken.jpg"></div>
+<script>
+	document.body.offsetHeight;
+	moveOut.style.transform = "translateX(1px)";
+	moveOut.style.left = "200px";
+</script>
+</body>
+</html>

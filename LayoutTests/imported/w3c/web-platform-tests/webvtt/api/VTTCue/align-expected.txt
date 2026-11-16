@@ -1,0 +1,4 @@
+
+PASS VTTCue.align, script-created cue
+PASS VTTCue.align, parsed cue
+

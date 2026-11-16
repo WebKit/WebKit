@@ -1,0 +1,40 @@
+<!doctype html>
+<title>Tests that SharedArrayBuffer can actually be shared with an AudioWorklet</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+var context;
+promise_setup(async (t) => {
+  context = new AudioContext();
+  const filePath = 'processors/shared-array-buffer-processor.js';
+  await context.audioWorklet.addModule(filePath);
+});
+
+const get_sab_value_in_worklet = async (node) => {
+  const event = await new Promise((resolve) => {
+    node.port.onmessage = resolve;
+  });
+  return event.data.sab_value;
+};
+
+promise_test(async (t) => {
+  let sab = new SharedArrayBuffer(1024);
+  let array = new Int32Array(sab);
+  array[0] = 1;
+  const options = {
+    numberOfInputs: 0,
+    numberOfOutputs: 1,
+    processorOptions: { buffer: sab }
+  };
+
+  const node = new AudioWorkletNode(context, 'shared-array-buffer-test', options);
+
+  let sab_value = await get_sab_value_in_worklet(node);
+  assert_equals(sab_value, 1, "SharedArrayBuffer initial value");
+  array[0] = 2;
+  node.port.postMessage("foo");
+  
+  sab_value = await get_sab_value_in_worklet(node);
+  assert_equals(sab_value, 2, "SharedArrayBuffer value after update");
+}, 'SharedArrayBuffer sharing with AudioWorklet');
+</script>

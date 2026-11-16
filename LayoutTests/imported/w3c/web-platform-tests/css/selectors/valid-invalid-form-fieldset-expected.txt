@@ -1,0 +1,4 @@
+
+
+FAIL form and fieldset elements should match :valid/:invalid but not :user-valid/:user-invalid. assert_false: form should not match :invalid after valid text was entered. expected false got true
+

@@ -1,0 +1,7 @@
+Hg
+(repaint rects
+  (rect 0 48 218 252)
+  (rect 0 24 109 126)
+  (rect 0 48 218 252)
+)
+

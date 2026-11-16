@@ -1,0 +1,9 @@
+This test ensures that requesting a line range for a text marker inside a display:table span within a flex container does not hang.
+
+PASS: did not hang.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FOOO Inc
+FOOO:NYSE

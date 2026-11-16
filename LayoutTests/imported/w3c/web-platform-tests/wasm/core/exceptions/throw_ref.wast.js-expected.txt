@@ -1,0 +1,23 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (throw_ref.wast:3)
+PASS #3 Test that WebAssembly compilation fails (throw_ref.wast:117)
+PASS #4 Test that WebAssembly compilation fails (throw_ref.wast:118)
+PASS #5 Reinitialize the default imports
+PASS #6 Test that WebAssembly compilation succeeds (throw_ref.wast:3)
+PASS #7 Test that WebAssembly instantiation succeeds (throw_ref.wast:3)
+PASS #8 Test that a WebAssembly code throws an exception (throw_ref.wast:99)
+PASS #9 Test that a WebAssembly code throws an exception (throw_ref.wast:101)
+PASS #10 Test that a WebAssembly code returns a specific result (throw_ref.wast:102)
+PASS #11 Test that a WebAssembly code throws an exception (throw_ref.wast:104)
+PASS #12 Test that a WebAssembly code throws an exception (throw_ref.wast:106)
+PASS #13 Test that a WebAssembly code returns a specific result (throw_ref.wast:107)
+PASS #14 Test that a WebAssembly code throws an exception (throw_ref.wast:108)
+PASS #15 Test that a WebAssembly code throws an exception (throw_ref.wast:109)
+PASS #16 Test that a WebAssembly code returns a specific result (throw_ref.wast:110)
+PASS #17 Test that a WebAssembly code returns a specific result (throw_ref.wast:112)
+PASS #18 Test that a WebAssembly code returns a specific result (throw_ref.wast:113)
+PASS #19 Test that a WebAssembly code throws an exception (throw_ref.wast:115)
+PASS #20 Test that WebAssembly compilation fails (throw_ref.wast:117)
+PASS #21 Test that WebAssembly compilation fails (throw_ref.wast:118)
+

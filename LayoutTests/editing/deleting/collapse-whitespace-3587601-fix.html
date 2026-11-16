@@ -1,0 +1,38 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 9; i++)
+        moveSelectionForwardByCharacterCommand();
+    for (i = 0; i < 9; i++)
+        deleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test">
+test <map name=m><area coords="0,0,0,0" href=''></map> test
+</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

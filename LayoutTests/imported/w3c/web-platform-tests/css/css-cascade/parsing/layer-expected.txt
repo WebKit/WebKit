@@ -1,0 +1,18 @@
+
+PASS @layer A; should be a valid rule
+PASS @layer A, B, C; should be a valid rule
+PASS @layer A.A; should be a valid rule
+PASS @layer A, B.C.D, C; should be a valid rule
+PASS @layer; should be an invalid rule
+PASS @layer A . A; should be an invalid rule
+PASS @layer {
+} should be a valid rule
+PASS @layer A {
+} should be a valid rule
+PASS @layer A.B {
+} should be a valid rule
+PASS @layer A . B {
+} should be an invalid rule
+PASS @layer A, B, C {
+} should be an invalid rule
+

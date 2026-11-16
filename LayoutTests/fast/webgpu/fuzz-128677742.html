@@ -1,0 +1,66 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+  globalThis.testRunner?.waitUntilDone();
+
+  onload = async () => {
+    let adapter0 = await navigator.gpu.requestAdapter();
+    let device = await adapter0.requestDevice();
+    try {
+      device.pushErrorScope('validation');
+      let code = `
+@group(0) @binding(0)
+var<storage, read_write> fixedSizeArray: array<array<u32, (1<<30)>, 1>;
+
+@compute @workgroup_size(1)
+fn compute0() {
+  fixedSizeArray[0][0x40] = 1234567890;
+}
+`;
+      let shaderModule = device.createShaderModule({code});
+      let bindGroupLayout0 = device.createBindGroupLayout({
+        entries: [{binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: {type: 'storage'}}],
+      });
+      let pipelineLayout = device.createPipelineLayout({
+        bindGroupLayouts: [bindGroupLayout0],
+      });
+      let computePipeline = device.createComputePipeline({
+        layout: pipelineLayout,
+        compute: {module: shaderModule, entryPoint: 'compute0'},
+      });
+      let compilationInfo = await shaderModule.getCompilationInfo();
+      for (let message of compilationInfo.messages) {
+        debug(message);
+      }
+      let buffer0 = device.createBuffer({size: 4, usage: GPUBufferUsage.STORAGE});
+      let bufferToDump = device.createBuffer({size: 4, usage: GPUBufferUsage.MAP_READ});
+      let bindGroup0 = device.createBindGroup({
+        layout: bindGroupLayout0,
+        entries: [{binding: 0, resource: {buffer: buffer0}}],
+      });
+      let commandEncoder = device.createCommandEncoder();
+      let computePassEncoder = commandEncoder.beginComputePass();
+      computePassEncoder.setBindGroup(0, bindGroup0);
+      computePassEncoder.setPipeline(computePipeline);
+      computePassEncoder.dispatchWorkgroups(1);
+      computePassEncoder.end();
+      let commandBuffer = commandEncoder.finish();
+      device.queue.submit([commandBuffer]);
+      await device.queue.onSubmittedWorkDone();
+      await bufferToDump.mapAsync(GPUMapMode.READ);
+      debug(new Uint32Array(bufferToDump.getMappedRange()));
+    } catch (e) {
+      debug('error');
+      debug(e);
+    } finally {
+      let validationError = await device.popErrorScope();
+      if (validationError) {
+        debug('validation error:');
+        debug(validationError.message);
+      } else {
+        debug('no validation error');
+      }
+    }
+    debug('done');
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

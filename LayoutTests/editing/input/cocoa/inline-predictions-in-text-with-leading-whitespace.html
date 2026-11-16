@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+[contenteditable] {
+    width: 300px;
+    outline: none;
+}
+</style>
+</head>
+<body>
+<div contenteditable>    To whom it ma</div>
+<script>
+testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    const editor = document.querySelector("[contenteditable]");
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+
+    const text = editor.childNodes[0];
+    getSelection().setPosition(text, text.length);
+
+    await UIHelper.setInlinePrediction("may concern", 2);
+    await UIHelper.ensurePresentationUpdate();
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

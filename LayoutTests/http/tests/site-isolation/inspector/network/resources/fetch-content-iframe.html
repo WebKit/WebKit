@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<p>Cross-origin iframe that fetches echo.py with a content string taken from its own URL query, on request.</p>
+
+<script>
+window.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "Fetch")
+        triggerFetch();
+});
+
+function triggerFetch() {
+    let content = new URLSearchParams(location.search).get("content") || "default";
+    // The content string is echoed into the URL so the inspector-side test can pick out
+    // the "before-navigation" vs "after-navigation" fetch by URL substring.
+    fetch("http://localhost:8000/inspector/network/resources/echo.py?mimetype=text/plain&content=" + encodeURIComponent(content));
+}
+</script>

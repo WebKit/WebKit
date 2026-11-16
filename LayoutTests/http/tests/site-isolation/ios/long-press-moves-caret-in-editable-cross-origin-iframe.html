@@ -1,0 +1,70 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Long-pressing inside an editable element in a cross-origin iframe should move the caret within that element, without moving focus or selection out of the iframe.");
+jsTestIsAsync = true;
+
+let editorIsFocused = false;
+let caretMoved = false;
+window.lastReportedSelection = "";
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (event.data === "focused")
+        editorIsFocused = true;
+    else if (typeof event.data === "string" && event.data.startsWith("selection:")) {
+        window.lastReportedSelection = event.data.substring("selection:".length);
+        const [isInEditor, isCollapsed, offset, editorIsActive] = window.lastReportedSelection.split(":");
+        if (isInEditor === "true" && isCollapsed === "true" && editorIsActive === "true" && parseInt(offset) > 10)
+            caretMoved = true;
+    }
+});
+
+async function waitForFrames(count, condition)
+{
+    for (let frame = 0; frame < count && !condition(); ++frame)
+        await UIHelper.animationFrame();
+    return condition();
+}
+
+async function runTest() {
+    await UIHelper.ensurePresentationUpdate();
+
+    // Gestures are occasionally delivered before the subframe is ready to process them, so retry each step
+    // instead of waiting on a callback that would never fire.
+
+    // The iframe is at (0, 0). Focus the editor by tapping at the start of the text.
+    let isShowingKeyboard = false;
+    for (let attempt = 0; attempt < 20 && !isShowingKeyboard; ++attempt) {
+        await UIHelper.activateAt(2, 12);
+        // Keep a retried tap, or the long press below, from being recognized as part of a multi-tap gesture
+        // (a double tap selects a word; a tap followed by a long press extends the selection).
+        await UIHelper.waitForDoubleTapDelay();
+        if (await waitForFrames(10, () => editorIsFocused))
+            isShowingKeyboard = await UIHelper.isShowingKeyboard();
+    }
+    for (let frame = 0; frame < 60 && editorIsFocused && !isShowingKeyboard; ++frame) {
+        await UIHelper.animationFrame();
+        isShowingKeyboard = await UIHelper.isShowingKeyboard();
+    }
+    if (!isShowingKeyboard) {
+        testFailed(`Could not focus the editable element inside the cross-origin iframe (focused: ${editorIsFocused}).`);
+        finishJSTest();
+        return;
+    }
+
+    // Long press over "this".
+    for (let attempt = 0; attempt < 10 && !caretMoved; ++attempt) {
+        await UIHelper.longPressAtPoint(210, 12);
+        await waitForFrames(30, () => caretMoved);
+        await UIHelper.waitForDoubleTapDelay();
+    }
+    if (caretMoved)
+        testPassed("The caret moved within the editable element inside the cross-origin iframe.");
+    else
+        testFailed("Long press did not move the caret inside the cross-origin iframe (last reported selection: '" + window.lastReportedSelection + "').");
+    finishJSTest();
+}
+</script>
+<iframe style="position: absolute; left: 0; top: 0; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/editable-text-frame.html"></iframe>

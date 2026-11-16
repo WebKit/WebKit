@@ -1,0 +1,6 @@
+2d.text.fontVariantCaps2
+Testing small caps setting in fontVariant
+Actual output:
+
+PASS Testing small caps setting in fontVariant
+

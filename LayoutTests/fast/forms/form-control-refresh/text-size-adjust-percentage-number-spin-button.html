@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ FormControlRefreshEnabled=true ] -->
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.settings.setTextAutosizingEnabled(true);
+    internals.settings.setTextAutosizingUsesIdempotentMode(false);
+}
+</script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.adjust { -webkit-text-size-adjust: 130%; }
+.adjust input { font-size: 20px; }
+.control { -webkit-text-size-adjust: none; }
+.control input { font-size: 26px; }
+</style>
+</head>
+<body>
+<div class="adjust"><input id="numberAdjusted" type="number"></div>
+<div class="control"><input id="numberControl" type="number"></div>
+<script>
+description("Tests that the em-sized number input spin button includes a percentage -webkit-text-size-adjust.");
+
+function part(id, name) {
+    const queue = [...internals.shadowRoot(document.getElementById(id)).children];
+    while (queue.length) {
+        const element = queue.shift();
+        if (internals.userAgentPart(element) == name)
+            return element.getBoundingClientRect();
+        queue.push(...element.children);
+    }
+    return null;
+}
+
+shouldBe("part('numberAdjusted', '-webkit-inner-spin-button').width", "part('numberControl', '-webkit-inner-spin-button').width");
+shouldBe("part('numberControl', '-webkit-inner-spin-button').width", "26");
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS checking serialized value of font-variant
+

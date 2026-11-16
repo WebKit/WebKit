@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Backward search: the start sits between Button 2 and Button 3; a backward search should resume at
+     Button 2 (the previous direct child), not jump to the last child. -->
+<div role="main" id="main">
+    <div id="wrapper" role="presentation">
+        <button id="b1">Button 1</button>
+        <button id="b2">Button 2</button>
+        <img id="start" alt="Start" src="resources/cake.png">
+        <button id="b3">Button 3</button>
+        <button id="b4">Button 4</button>
+    </div>
+</div>
+
+<!-- Front edge: the start is the first positional child, so a backward search has nothing before it and
+     should return nothing -- not fall through to the last child. -->
+<div role="group" aria-label="Front container" id="frontMain">
+    <div id="frontWrapper" role="presentation">
+        <img id="frontStart" alt="Front Start" src="resources/cake.png">
+        <button id="fb1">Front Button 1</button>
+        <button id="fb2">Front Button 2</button>
+    </div>
+</div>
+
+<script>
+var output = "This test ensures that a backward AnyType immediate-descendants search whose start element has become ignored resumes from the correct direct child of the container, instead of jumping to the container's last child.\n\n";
+
+var main, startElement, prev, prevDOMId;
+var frontMain, frontStartElement, frontPrev, frontPrevDOMId;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    main = accessibilityController.accessibleElementById("main");
+    startElement = accessibilityController.accessibleElementById("start");
+    frontMain = accessibilityController.accessibleElementById("frontMain");
+    frontStartElement = accessibilityController.accessibleElementById("frontStart");
+
+    document.getElementById("start").setAttribute("aria-hidden", "true");
+    document.getElementById("frontStart").setAttribute("aria-hidden", "true");
+
+    setTimeout(async () => {
+        await waitFor(() => main.childrenCount === 4 && frontMain.childrenCount === 2);
+
+        // Backward (isDirectionNext = false): the start sits between b2 and b3, so the previous immediate
+        // descendant is b2.
+        prev = main.uiElementForSearchPredicate(startElement, false, "AXAnyTypeSearchKey", "", false, true);
+        prevDOMId = prev ? prev.domIdentifier : "null";
+        output += "\nBackward (start between two direct children): ";
+        output += expect("prevDOMId", "'b2'");
+
+        // Backward from the first positional child: there is nothing before it, so the search returns
+        // nothing -- it must not fall through to the last child.
+        frontPrev = frontMain.uiElementForSearchPredicate(frontStartElement, false, "AXAnyTypeSearchKey", "", false, true);
+        frontPrevDOMId = frontPrev ? frontPrev.domIdentifier : "null";
+        output += "\nBackward from the first child (nothing precedes the start): ";
+        output += expect("frontPrevDOMId", "'null'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

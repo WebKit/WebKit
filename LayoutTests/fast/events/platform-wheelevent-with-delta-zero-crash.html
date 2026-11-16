@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+async function runTest()
+{
+    if (!window.eventSender)
+        return;
+
+    testRunner.waitUntilDone();
+    var area = document.getElementById('area');
+    var x = area.offsetLeft + area.offsetWidth / 2;
+    var y = area.offsetTop + area.offsetHeight / 2;
+    
+    // Can't use UIHelper.statelessMouseWheelScrollAt() because the zero deltas don't trigger any scrolling.
+    await UIHelper.ensurePresentationUpdate();
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseScrollBy(0, 0);
+    await UIHelper.delayFor(0);
+    testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p id="description">Ensures that a mouse scrolling with (deltaX=0, deltaY=0) doesn't crash the browser.
+    <p>Passes if doesn't crash.
+    <div id="area" style="width:100px;height:100px">
+    </div>
+</body>
+</html>

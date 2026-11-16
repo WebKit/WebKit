@@ -1,0 +1,4 @@
+
+
+PASS resizing of RTL textarea in RTL context
+

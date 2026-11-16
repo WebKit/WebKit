@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true ] -->
+<html>
+<style>
+    body { margin: 0; }
+
+    img {
+        position: absolute;
+        top: 20px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background-color: #f5f5f7;
+        cursor: pointer;
+    }
+    img.large {
+        top: 68px;
+        width: 250px;
+        height: 250px;
+    }
+    #grayscale-small { left: 20px; }
+    #rgb-small { left: 68px; }
+    #grayscale-large { left: 20px; }
+    #rgb-large { left: 290px; }
+
+    #repaint-trigger {
+        position: absolute;
+        top: 338px;
+        left: 20px;
+        width: 10px;
+        height: 10px;
+        background-color: white;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<!--
+    With GPU Process DOM rendering, the first paint of an image replaces its platform image with a copy in a
+    shareable bitmap. A grayscale image is copied by drawing it into a new bitmap, and that copy has to stay
+    opaque. If the copy has alpha, the interaction regions computed after that paint treat the small grayscale
+    image as an icon with transparency. Its region then gets a clip path covering its whole square box instead
+    of the 50% border-radius, and the large grayscale image loses its photo content hint. The RGB images are
+    copied pixel for pixel, and act as the control.
+-->
+<section id="test">
+    <img id="grayscale-small" src="resources/opaque-grayscale.jpg">
+    <img id="rgb-small" src="resources/opaque-rgb.jpg">
+    <img id="grayscale-large" class="large" src="resources/opaque-grayscale.jpg">
+    <img id="rgb-large" class="large" src="resources/opaque-rgb.jpg">
+    <div id="repaint-trigger"></div>
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    // Paint the images at least once, so that their platform images get replaced.
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+
+    // Repaint another element in the same layer. This makes the layer compute all of its interaction regions
+    // again, from the images as they are after their first paint.
+    document.getElementById("repaint-trigger").style.backgroundColor = "rgb(254, 254, 254)";
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById("test").remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

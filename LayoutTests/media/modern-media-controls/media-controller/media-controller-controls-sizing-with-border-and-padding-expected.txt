@@ -1,0 +1,11 @@
+Testing media controls are sized correctly when borders and padding are set on the media element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.style.width became "320px"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

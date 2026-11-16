@@ -1,0 +1,17 @@
+<style>
+#target {
+    background-color: green;
+}
+</style>
+<div id=container></div>
+<div id=target>target</div>
+This document should show nothing except this text.
+<body onload="test()">
+<script>
+target.animate([{ color: "red" }, { color: "green" }], { duration: 1000, iterations: Infinity });
+
+function test() {
+    target.style.display = "none";
+    container.appendChild(target);
+}
+</script>

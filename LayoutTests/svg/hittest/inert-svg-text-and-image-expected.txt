@@ -1,0 +1,7 @@
+XXXX
+
+PASS Non-inert SVG text is hit
+PASS Inert SVG text is not hit
+PASS Non-inert SVG image is hit
+PASS Inert SVG image is not hit
+

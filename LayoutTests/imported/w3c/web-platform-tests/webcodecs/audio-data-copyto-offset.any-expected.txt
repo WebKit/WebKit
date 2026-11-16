@@ -1,0 +1,8 @@
+
+PASS copyTo interleaved-to-interleaved with non-zero frameOffset
+PASS copyTo interleaved-to-interleaved s16 with non-zero frameOffset
+PASS copyTo interleaved-to-interleaved f32 with 3 channels and frameOffset
+FAIL copyTo planar-to-interleaved with non-zero frameOffset assert_approx_equals: frame 5 channel 1 expected 1.2000000000000002 +/- 0.00001 but got 1
+PASS copyTo planar-to-interleaved s16 with 3 channels and frameOffset
+FAIL copyTo planar-to-interleaved baseline with frameOffset=0 assert_array_equals: planar-to-interleaved with frameOffset=0 expected property 1 to be 5 but got 1 (expected array object "1,5,2,6,3,7,4,8" got object "1,1,1,1,1,1,1,1")
+

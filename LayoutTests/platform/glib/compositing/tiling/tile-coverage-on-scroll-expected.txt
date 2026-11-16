@@ -1,0 +1,41 @@
+Before
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 5016.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 5016.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 100.00 5000.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+
+
+After
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 5016.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 5016.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 100.00 5000.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+Tall tiled layer

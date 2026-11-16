@@ -1,0 +1,12 @@
+ALERT: Going back.
+Tests that an iframe restored from history does not report resource timing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS resources.length is 1
+PASS resources[0].name is "http://127.0.0.1:8000/js-test-resources/js-test.js"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

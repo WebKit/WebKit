@@ -1,0 +1,20 @@
+
+RUN(source = new ManagedMediaSource())
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(2)))
+EVENT(update)
+RUN(video.play())
+EVENT(playing)
+EVENT(waiting)
+EXPECTED (video.currentTime == '1') OK
+RUN(video.pause())
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EXPECTED (video.currentTime == currentTimeWhenStalling == 'true') OK
+END OF TEST
+

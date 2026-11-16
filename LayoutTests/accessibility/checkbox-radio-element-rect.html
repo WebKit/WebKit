@@ -1,0 +1,53 @@
+<!doctype html>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+
+<style>
+label { display:block }
+</style>
+
+<input id=test-checkbox-without-label type=checkbox>
+
+<input id=test-radio-without-label type=radio>
+
+<input id=test-switch-without-label type=checkbox switch>
+
+<label id=test-checkbox>
+  <input type=checkbox>
+</label>
+
+<label id=test-checkbox>
+  <input type=radio>
+</label>
+
+<label id=test-checkbox-switch>
+  <input type=checkbox switch>
+</label>
+
+<label id=test-role-checkbox>
+  <span role=checkbox>Fake control.</span>
+</label>
+
+<label id=test-role-radio>
+  <span role=radio>Fake control.</span>
+</label>
+
+<label id=test-role-switch>
+  <span role=switch>Fake control.</span>
+</label>
+
+<script>
+let output = "This test ensures we calculate the frame correctly for checkboxes (inclusive of switches) and radio buttons.\n\n";
+
+function logSize(id) {
+    const axElement = accessibilityController.accessibleElementById(id);
+    output += `#${id}: {width: ${axElement.width}, height: ${axElement.height}}\n`;
+}
+
+if (window.accessibilityController) {
+    document.querySelectorAll("[id^=test-]").forEach(({ id }) => {
+        logSize(id);
+    });
+    debug(output);
+}
+</script>

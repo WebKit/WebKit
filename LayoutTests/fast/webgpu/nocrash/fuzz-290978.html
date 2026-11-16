@@ -1,0 +1,221 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let promise0 = navigator.gpu.requestAdapter({powerPreference: 'high-performance'});
+let device0 = await adapter0.requestDevice({
+  requiredFeatures: [
+    'depth-clip-control',
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'shader-f16',
+    'float32-blendable',
+    'float16-renderable',
+    'float32-renderable',
+    'core-features-and-limits',
+    'timestamp-query',
+  ],
+  requiredLimits: {maxStorageBufferBindingSize: 180034778, maxUniformBufferBindingSize: 8344971, maxVertexBuffers: 8},
+});
+// START
+texture0 = device0.createTexture({
+  size : {width : 2801, },
+  format : 'depth24plus-stencil8',
+  usage : GPUTextureUsage.TEXTURE_BINDING,
+  });
+textureView0 = texture0.createView();
+buffer2 = device0.createBuffer(
+    {size : 168, usage : GPUBufferUsage.INDEX});
+texture7 = device0.createTexture({
+  size : {width : 2801, },
+  format : 'rgba16uint',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT |
+              GPUTextureUsage});
+try {
+} catch {
+}
+commandEncoder1 = device0.createCommandEncoder();
+textureView5 = texture7.createView();
+renderPassEncoder0 = commandEncoder1.beginRenderPass({
+  colorAttachments : [ {
+    view : textureView5,
+    clearValue : {
+      r : 172.1,
+      g : 21.78,
+      b : 876.6,
+      a : 353.7},
+    loadOp : 'load',
+    storeOp : 'discard'} ]});
+{
+}
+shaderModule1 = device0.createShaderModule({
+  code : ` ;
+              struct VertexInput16 {
+             @location(2) location_2: vec4f}
+              override override9: bool;
+              struct VertexInput12 {
+             @location(6) location_6: vec2h,   @location(9) location_9: vec2u}
+              struct VertexInput17 {
+             @location(8) location_8: f32}
+              struct VertexInput15 {
+             @location(13) @interpolate(flat) location_13: vec3f,   @location(14) @interpolate(flat) location_14: vec3i}
+              fn unconst_i32(v: i32) -> i32 {
+           return v;
+           }
+              struct VertexInput14 {
+             @builtin(instance_index) instance_index: u32,   @location(3) @interpolate(flat) location_3: vec2i}
+              @id(22591) override override10: i32;
+              @group(1) @binding(33) var tex4: texture_depth_2d;
+              struct VertexInput13 {
+             @location(5) location_5: i32,   @location(12) @interpolate(flat) location_12: vec2h,   @location(7) location_7: vec3h,   @location(15) @interpolate(flat) location_15: u32,   @location(4) @interpolate(flat) location_4: vec4u,   @location(0) @interpolate(flat) location_0: f16}
+              struct VertexInput18 {
+             @location(11) @interpolate(flat) location_11: vec3f}
+              fn fn0(a0: array<VertexInput17, 1>) -> VertexInput15 {
+             var out: VertexInput15;
+             out.location_13 *= bitcast<vec3f>(textureDimensions(tex4).yxx);
+             return out;
+             _ = override10;
+             _ = override9;
+           }
+              @vertex fn vertex3(a0a1a2: VertexInput14, @location(10) location_10: vec3f, @location(1) @interpolate(flat) location_1: vec4u, a7: VertexInput17, ) -> @builtin(position) vec4f {
+             var out: vec4f;
+             fn0(array(VertexInput17(bitcast<f32>((vec2h())))));
+             out = vec4f(a7.location_8);
+             return out;
+           }
+              @fragment fn fragment1() -> @location(200) vec4u {
+             var out: vec4u;
+             return out;
+           }
+             `});
+try {
+  renderPassEncoder0.setIndexBuffer(buffer2, 'uint32', )} catch {
+}
+pipeline2 = await device0.createRenderPipelineAsync({
+  layout : 'auto',
+  fragment : {
+    module : shaderModule1,
+    entryPoint : 'fragment1',
+    targets : [ {format : 'rgba16uint'} ]
+  },
+  vertex : {
+    module : shaderModule1,
+    constants : {22_591 : 1, override9 : 1},
+    buffers : [
+      {
+        arrayStride : 1588,
+        attributes : [
+          {format : 'unorm16x4', offset : 508, shaderLocation : 12},
+          {format : 'snorm8x2', offset : 70, shaderLocation : 13},
+          {format : 'uint16x2', offset : 176, shaderLocation : 15},
+          {format : 'sint8x4', offset : 144, shaderLocation : 3},
+          {format : 'sint16x4', offset : 188, shaderLocation : 5},
+          {format : 'snorm16x4', offset : 8, shaderLocation : 2},
+          {format : 'uint32x4', offset : 184, shaderLocation : 4},
+          {format : 'float32x3', offset : 252, shaderLocation : 10},
+          {format : 'snorm16x4', offset : 212, shaderLocation : 6},
+          {format : 'uint8x4', offset : 748, shaderLocation : 9},
+          {format : 'sint8x2', offset : 190, shaderLocation : 14},
+          {format : 'float32x3', offset : 208, shaderLocation : 7},
+          {format : 'float32x2', offset : 60, shaderLocation : 11},
+          {format : 'float32', offset : 572, shaderLocation : 0},
+          {format : 'float16x2', offset : 8, shaderLocation : 8},
+          {format : 'uint32x4', offset : 124, shaderLocation : 1}]}]}});
+autogeneratedBindGroupLayout0 = pipeline2.getBindGroupLayout(1);
+try {
+  renderPassEncoder0.setPipeline(pipeline2)} catch {
+}
+buffer13 = device0.createBuffer(
+    {size : 4220, usage : GPUBufferUsage.VERTEX});
+try {
+} catch {
+}
+try {
+  renderPassEncoder0.setVertexBuffer(0, buffer13)} catch {
+}
+autogeneratedBindGroupLayout1 = pipeline2.getBindGroupLayout(0);
+bindGroup0 = device0.createBindGroup(
+    {layout : autogeneratedBindGroupLayout1, entries : []});
+try {
+  renderPassEncoder0.setBindGroup(0, bindGroup0)} catch {
+}
+bindGroup5 = device0.createBindGroup({
+  layout : autogeneratedBindGroupLayout0,
+  entries : [ {binding : 33, resource : textureView0} ]});
+({});
+try {
+  renderPassEncoder0.setBindGroup(1, bindGroup5, new Uint32Array(727), 67, 0)} catch {
+}
+try {
+  renderPassEncoder0.drawIndexed(3, 12, 0, 9)} catch {
+}
+try {
+  renderPassEncoder0.end()} catch {
+}
+commandBuffer0 = commandEncoder1.finish();
+try {
+  device0.queue.submit([ commandBuffer0 ])} catch {
+}
+// END
+await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  debug('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  debug('Pass');
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.notifyDone();
+};
+</script>

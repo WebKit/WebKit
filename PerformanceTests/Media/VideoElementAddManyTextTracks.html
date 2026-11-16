@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<script>
+    window.addEventListener('load', event => {
+        const numberOfIterations = 20;
+        const numberOfItems = 100;
+
+        const subtitles = [
+            {kind:"captions",label:"Zulu (CC)",language:"zu"},
+            {kind:"captions",label:"Chinese (Traditional) (CC)",language:"zh-TW"},
+            {kind:"captions",label:"Chinese (Traditional - Hong Kong) (CC)",language:"zh-HK"},
+            {kind:"captions",label:"Chinese (Simplified) (CC)",language:"zh"},
+            {kind:"captions",label:"Xhosa (CC)",language:"xh"},
+            {kind:"captions",label:"Vietnamese (CC)",language:"vi"},
+            {kind:"captions",label:"Ukranian (CC)",language:"uk"},
+            {kind:"captions",label:"Turkish (CC)",language:"tr"},
+            {kind:"captions",label:"Tagalog (CC)",language:"fil"},
+            {kind:"captions",label:"Thai (CC)",language:"th"},
+            {kind:"captions",label:"Swahili (CC)",language:"sw"},
+            {kind:"captions",label:"Swedish (CC)",language:"sv"},
+            {kind:"captions",label:"Montenegrin (CC)",language:"sr-ME"},
+            {kind:"captions",label:"Serbian (CC)",language:"sr"},
+            {kind:"captions",label:"Albanian (CC)",language:"sq"},
+            {kind:"captions",label:"Slovenian (CC)",language:"sl"},
+            {kind:"captions",label:"Slovakian (CC)",language:"sk"},
+            {kind:"captions",label:"Russian (CC)",language:"ru"},
+            {kind:"captions",label:"Romanian (CC)",language:"ro"},
+            {kind:"captions",label:"Portuguese (Portugal) (CC)",language:"pt-PT"},
+            {kind:"captions",label:"Portuguese (CC)",language:"pt"},
+            {kind:"captions",label:"Polish (CC)",language:"pl"},
+            {kind:"captions",label:"Norwegian (CC)",language:"no"},
+            {kind:"captions",label:"Dutch (CC)",language:"nl"},
+            {kind:"captions",label:"Maltese (CC)",language:"mt"},
+            {kind:"captions",label:"Malay (CC)",language:"ms"},
+            {kind:"captions",label:"Macedonian (CC)",language:"mk"},
+            {kind:"captions",label:"Latvian (CC)",language:"lv"},
+            {kind:"captions",label:"Lithuanian (CC)",language:"lt"},
+            {kind:"captions",label:"Korean (CC)",language:"ko"},
+            {kind:"captions",label:"Georgian (CC)",language:"ka"},
+            {kind:"captions",label:"Japanese (CC)",language:"ja"},
+            {kind:"captions",label:"Italian (CC)",language:"it"},
+            {kind:"captions",label:"Icelandic (CC)",language:"is"},
+            {kind:"captions",label:"Indonesian (CC)",language:"id"},
+            {kind:"captions",label:"Armenian (CC)",language:"hy"},
+            {kind:"captions",label:"Hungarian (CC)",language:"hu"},
+            {kind:"captions",label:"Croatian (CC)",language:"hr"},
+            {kind:"captions",label:"Hebrew (CC)",language:"he"},
+            {kind:"captions",label:"Irish (CC)",language:"ga"},
+            {kind:"captions",label:"French (Canada) (CC)",language:"fr-CA"},
+            {kind:"captions",label:"French (CC)",language:"fr"},
+            {kind:"captions",label:"Finnish (CC)",language:"fi"},
+            {kind:"captions",label:"Estonian (CC)",language:"et"},
+            {kind:"captions",label:"Spanish (Latin America) (CC)",language:"es-XL"},
+            {kind:"captions",label:"Spanish (Mexican Speaking) (CC)",language:"es-MX"},
+            {kind:"captions",label:"Spanish (CC)",language:"es"},
+            {kind:"captions",label:"Spanish (Argentina) (CC)",language:"es-AR"},
+            {kind:"captions",label:"English (CC)",language:"en"},
+            {kind:"captions",label:"English (United Kingdom) (CC)",language:"en-GB"},
+            {kind:"captions",label:"English (Canada) (CC)",language:"en-CA"},
+            {kind:"captions",label:"English (Australia) (CC)",language:"en-AU"},
+            {kind:"captions",label:"Greek (CC)",language:"el"},
+            {kind:"captions",label:"German (CC)",language:"de"},
+            {kind:"captions",label:"Danish (CC)",language:"da"},
+            {kind:"captions",label:"Czech (CC)",language:"cs"},
+            {kind:"captions",label:"Catalan (CC)",language:"ca"},
+            {kind:"captions",label:"Bosnian (CC)",language:"bs"},
+            {kind:"captions",label:"Bulgarian (CC)",language:"bg"},
+            {kind:"captions",label:"Azerbaijani (CC)",language:"az"},
+            {kind:"captions",label:"Arabic (CC)",language:"ar"}
+        ];
+
+        function waitFor(object, event) {
+            return new Promise(resolve => {
+                object.addEventListener(event, resolve, {once: true});
+            })
+        }
+
+        PerfTestRunner.prepareToMeasureValuesAsync({
+            customIterationCount: numberOfIterations,
+            unit: 'ms',
+            done: function () {
+                PerfTestRunner.gc();
+            }
+        });
+
+        function startIteration()
+        {
+            testGenerator = runIteration();
+            testGenerator.next();
+        }
+
+        async function *runIteration()
+        {
+            let target = document.createElement('div');
+            document.body.appendChild(target);
+
+            var startTime = PerfTestRunner.now();
+
+            let video = document.createElement('video');
+            video.controls = true;
+            target.appendChild(video);
+            for (subtitle of subtitles) {
+                let track = video.addTextTrack(subtitle.kind, subtitle.label, subtitle.language);
+                track.mode = 'disabled';
+            };
+
+            for (subtitle of subtitles)
+                await waitFor(video.textTracks, 'change');
+
+            if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime)) {
+                document.body.removeChild(target);
+                return;
+            }
+
+            document.body.removeChild(target);
+            PerfTestRunner.gc();
+            setTimeout(startIteration, 0);
+        }
+
+        startIteration();
+    })
+</script>
+</head>
+<body>
+</body>
+</html>

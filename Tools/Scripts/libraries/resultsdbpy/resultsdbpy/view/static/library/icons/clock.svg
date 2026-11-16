@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-1147 -663 228 228" width="228" height="228">
+    <g fill="none" stroke="none" stroke-dasharray="none" stroke-opacity="1" fill-opacity="1">
+        <g id="clock_base">
+            <circle cx="-1033.25" cy="-549.25" r="98.7501577928122" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="30"/>
+        </g>
+        <g id="clock_hand">
+            <line x1="-1033.25" y1="-549.25" x2="-1033.5" y2="-612" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="21"/>
+            <line x1="-1033.25" y1="-549.25" x2="-1061.5" y2="-517" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="21"/>
+        </g>
+    </g>
+</svg>

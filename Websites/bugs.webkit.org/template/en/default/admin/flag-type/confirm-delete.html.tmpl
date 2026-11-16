@@ -1,0 +1,40 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% title = BLOCK %]Confirm Deletion of Flag Type '[% flag_type.name FILTER html %]'[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "administering/flags.html#deleting-a-flag"
+%]
+
+<p>
+  [% IF flag_type.flag_count %]
+    There are [% flag_type.flag_count %] flags of type [% flag_type.name FILTER html %].
+    If you delete this type, those flags will also be deleted.
+  [% END %]
+
+  Note that instead of deleting the type you can
+   <a href="editflagtypes.cgi?action=deactivate&amp;id=[% flag_type.id %]&amp;token=
+           [%- token FILTER html %]">deactivate it</a>,
+   in which case the type [% IF flag_type.flag_count %] and its flags [% END %] will remain
+   in the database but will not appear in the Bugzilla UI.
+</p>
+
+<p class="confirmation">
+  Do you really want to delete this type?
+</p>
+
+<p>
+  <a href="editflagtypes.cgi?action=delete&amp;id=[% flag_type.id %]&amp;token=
+           [%- token FILTER html %]">Yes, delete</a> -
+  <a href="editflagtypes.cgi">No, don't delete</a>
+</p>
+
+[% PROCESS global/footer.html.tmpl %]

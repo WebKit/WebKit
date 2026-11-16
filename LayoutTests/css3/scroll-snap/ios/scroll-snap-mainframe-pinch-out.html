@@ -1,0 +1,98 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body {
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+:root {
+    scroll-snap-type: y mandatory;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+}
+
+.child {
+    height: 100vh;
+    width: 50%;
+    scroll-snap-align: start;
+    font-family: system-ui;
+    font-size: 50px;
+    line-height: 100vh;
+    color: white;
+    text-align: center;
+}
+
+.fixed-output {
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+let frameCount = 0;
+jsTestIsAsync = true;
+
+function oscillateBarWidth() {
+    frameCount++;
+    const snapChildren = [...document.getElementsByClassName("child")];
+    for (var i = 0; i < snapChildren.length; ++i) {
+        var framewidth = 10 * Math.sin(frameCount * 2 * Math.PI / 100) + 50;
+        snapChildren[i].style.width = framewidth + "%";
+    }
+    requestAnimationFrame(oscillateBarWidth);
+}
+
+addEventListener("load", async () => {
+    description(`This test verifies that pinching out below the minimum scale in a root scroll
+        snapping container while triggering layout passes does not cause us to snap to an incorrect
+        position upon finishing the zoom animation. To manually test, pinch out to zoom on this page
+        and verify that the final scroll position is the same as the initial position (marked 4),
+        and the scroll position does not flicker in the process.`);
+
+    await UIHelper.renderingUpdate();
+
+    const childHeight = document.querySelector(".child").offsetHeight;
+    scrollTo(0, 4 * childHeight);
+    oscillateBarWidth();
+
+    originalOffsetY = (await UIHelper.contentOffset()).y;
+    await UIHelper.pinch(
+        250, pageYOffset + 100,
+        50, pageYOffset + 400,
+        150, pageYOffset + 250,
+        150,  pageYOffset + 300
+    );
+    await UIHelper.ensureStablePresentationUpdate();
+
+    finalOffsetY = (await UIHelper.contentOffset()).y;
+    shouldBe("finalOffsetY", "originalOffsetY");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="child" style="background-color: black;"></div>
+    <div class="child" style="background-color: darkred;"></div>
+    <div class="child" style="background-color: red;"></div>
+    <div class="child" style="background-color: darkorange;"></div>
+    <div class="child" style="background-color: darkgreen;"></div>
+    <div class="child" style="background-color: darkorange;"></div>
+    <div class="child" style="background-color: red;"></div>
+    <div class="child" style="background-color: darkred;"></div>
+    <div class="child" style="background-color: black;"></div>
+    <div class="fixed-output">
+        <pre id="description"></pre>
+        <pre id="console"></pre>
+    </div>
+</body>
+</html>
+

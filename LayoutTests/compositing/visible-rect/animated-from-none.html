@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            height: 200px;
+            width: 500px;
+            border: 1px solid black;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .box {
+            position: absolute;
+            left: -100px;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+            -webkit-animation: move 20000000s linear;
+        }
+        
+        @-webkit-keyframes move {
+            from { -webkit-transform: none; }
+            to   { -webkit-transform: translateX(400px); }
+        }
+    </style>
+    <script src="../../webanimations/threaded-animations/threaded-animations-utils.js"></script>
+    <script>
+        window.testRunner?.dumpAsText();
+        window.testRunner?.waitUntilDone();
+
+        async function doTest()
+        {
+            const animated = document.getElementById('animated');
+            animated.classList.add('animating');
+
+            // Wait for the animation to be committed to the remote layer tree and then for its first frame to apply.
+            await animationAcceleration(animated.getAnimations()[0]);
+            await new Promise(requestAnimationFrame);
+
+            document.getElementById('layers').innerText = internals.layerTreeAsText(document, window.internals?.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+            window.testRunner?.notifyDone();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <div id="animated" class="box"></div>
+    </div>
+
+<pre id="layers">Layer tree goes here when testing</pre>
+</body>
+</html>

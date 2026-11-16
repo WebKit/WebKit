@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function startTest() {
+    iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    iframe.onload = continueTest;
+    iframe.src = 'custom-element-reaction-within-disallowed-scope.html';
+}
+
+function continueTest() {
+    iframe.src = 'custom-element-reaction-within-disallowed-scope.html#target';
+    document.getElementById('result').textContent = didChange
+        ? 'PASS - WebKit did not hit an assertion'
+        : 'FAIL - The code to trigger a custom element reaction never ran';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (top == self) {
+    document.write('<p>This tests enqueuing a custom element reaction inside an API with CEReaction=NotNeeded. WebKit should not hit a debug assertion.</p>');
+    window.onload = startTest;
+} else {
+    document.write('<p><a id="target" href="#">child target</a></p>');
+
+    class SomeElement extends HTMLElement { };
+    customElements.define('some-element', SomeElement);
+
+    document.getElementById('target').addEventListener('focus', () => {
+        document.body.appendChild(new SomeElement);
+        top.didChange = true;
+    });
+}
+
+</script>
+<pre id="result"></pre>
+</body>
+</html>

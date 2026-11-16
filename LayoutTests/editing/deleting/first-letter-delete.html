@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.first-letter::first-letter {
+    color: red;
+}
+</style>
+</head>
+<body>
+<p>Test that deleting characters in a contenteditable element with ::first-letter updates the first letter correctly.</p>
+
+<div contenteditable id="test1" class="first-letter">01</div>
+<div contenteditable id="test2" class="first-letter">012</div>
+<div contenteditable id="test3" class="first-letter">0</div>
+<pre id="log"></pre>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg) {
+    document.getElementById("log").textContent += msg + "\n";
+}
+
+function setCaretAndDelete(element, offset) {
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.collapse(element.firstChild, offset);
+    document.execCommand("delete");
+}
+
+// Test 1: Delete first letter from "01" — should leave "1" as new first letter.
+setCaretAndDelete(test1, 1);
+log("test1: " + (test1.textContent === "1" ? "PASS" : "FAIL (textContent='" + test1.textContent + "')"));
+
+// Test 2: Delete first letter from "012" — should leave "12" with "1" as first letter.
+setCaretAndDelete(test2, 1);
+log("test2: " + (test2.textContent === "12" ? "PASS" : "FAIL (textContent='" + test2.textContent + "')"));
+
+// Test 3: Delete only character "0" — should leave empty div.
+setCaretAndDelete(test3, 1);
+log("test3: " + (test3.textContent === "" ? "PASS" : "FAIL (textContent='" + test3.textContent + "')"));
+
+// Test 4: Delete second character from "012" (after test2 is now "12") — "1" stays as first letter.
+setCaretAndDelete(test2, 2);
+log("test4: " + (test2.textContent === "1" ? "PASS" : "FAIL (textContent='" + test2.textContent + "')"));
+</script>
+</body>
+</html>

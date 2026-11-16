@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<style>
+.target {
+    transition: display 0.3s allow-discrete;
+}
+#regular {
+    display: block;
+    width: 50px;
+    height: 50px;
+}
+#regular.hidden {
+    display: none;
+}
+</style>
+
+<div id="popover" popover class="target">Popover</div>
+<dialog id="dialog" class="target">Dialog</dialog>
+<div id="regular" class="target">Regular</div>
+<pre id="results"></pre>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function hasDisplayTransition(element) {
+    return element.getAnimations().some(a => a instanceof CSSTransition && a.transitionProperty === "display");
+}
+
+async function runTests() {
+    const results = [];
+
+    const popover = document.getElementById("popover");
+    const dialog = document.getElementById("dialog");
+    const regular = document.getElementById("regular");
+
+    // Test 1: Popover should NOT get display transition when hidden.
+    popover.showPopover();
+    popover.offsetTop;
+    popover.hidePopover();
+    popover.offsetTop;
+    results.push((hasDisplayTransition(popover) ? "FAIL" : "PASS") + ": popover hide does not create display transition");
+
+    // Test 2: Dialog should NOT get display transition when closed.
+    dialog.showModal();
+    dialog.offsetTop;
+    dialog.close();
+    dialog.offsetTop;
+    results.push((hasDisplayTransition(dialog) ? "FAIL" : "PASS") + ": dialog close does not create display transition");
+
+    // Test 3: Regular element SHOULD get display transition.
+    regular.offsetTop;
+    regular.classList.add("hidden");
+    regular.offsetTop;
+    results.push((hasDisplayTransition(regular) ? "PASS" : "FAIL") + ": regular element gets display transition");
+
+    document.getElementById("results").textContent = results.join("\n");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runTests();
+</script>

@@ -1,0 +1,92 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+}
+
+#scroller {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    overscroll-behavior: none;
+    width: 300px;
+    height: 400px;
+}
+
+#first {
+    height: 400px;
+    background: red;
+}
+
+#snap {
+    position: absolute;
+    top: 200px;
+    width: 50px;
+    height: 50px;
+    background: green;
+    scroll-snap-align: start;
+}
+
+#last {
+    height: 300px;
+    background: blue;
+}
+</style>
+</head>
+<body onload="runTest()">
+    <div id="scroller">
+        <div id="first"></div>
+        <div id="snap"></div>
+        <div id="last"></div>
+    </div>
+</body>
+<script>
+jsTestIsAsync = true;
+
+async function flickAndCheck(fromY, toY)
+{
+    scrollendCount = 0;
+    const scrollEnded = new Promise(resolve => scroller.addEventListener("scrollend", resolve, { once: true }));
+    await UIHelper.dragFromPointToPoint(150, fromY, 150, toY, 0.05);
+    const start = performance.now();
+    await Promise.race([scrollEnded, new Promise(resolve => setTimeout(resolve, 3000))]);
+    elapsed = performance.now() - start;
+    await UIHelper.waitForTargetScrollAnimationToSettle(scroller);
+
+    shouldBe("scroller.scrollTop", "200");
+    shouldBeTrue("elapsed < 1000");
+    shouldBe("scrollendCount", "1");
+}
+
+async function runTest()
+{
+    description("Verifies that flicking vertically past the first or last snap position settles back onto it quickly.");
+
+    if (!window.testRunner)
+        return;
+
+    scroller.scrollTop = 200;
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("scroller.scrollTop", "200");
+
+    scroller.addEventListener("scrollend", () => scrollendCount++);
+
+    debug("");
+    debug("Flick down past the last snap position");
+    await flickAndCheck(380, 20);
+
+    debug("");
+    debug("Flick up past the first snap position");
+    await flickAndCheck(20, 380);
+
+    finishJSTest();
+}
+</script>
+</html>

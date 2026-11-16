@@ -1,0 +1,4 @@
+
+PASS Check cues from resources/settings.vtt
+PASS Check cues from resources/settings-bad-separation.vtt
+

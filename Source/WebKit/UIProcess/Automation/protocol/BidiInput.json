@@ -1,0 +1,57 @@
+{
+    "domain": "BidiInput",
+    "exposedAs": "input",
+    "condition": "ENABLE(WEBDRIVER_BIDI)",
+    "description": "The input module contains functionality for simulated user input.",
+    "spec": "https://w3c.github.io/webdriver-bidi/#module-input",
+    "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/input",
+    "commands": [
+        {
+            "name": "performActions",
+            "description": "Performs a specified sequence of user input actions.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-input-performActions",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/input/perform_actions",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The navigable in which to perform the actions." },
+                { "name": "actions", "type": "array", "items": { "type": "object" }, "description": "A list of input.SourceActions, validated by the agent." }
+            ]
+        },
+        {
+            "name": "releaseActions",
+            "description": "Resets the input state associated with the current session.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-input-releaseActions",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/input/release_actions",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "A navigable whose top-level traversable's input state is reset." }
+            ]
+        },
+        {
+            "name": "setFiles",
+            "description": "Sets the files property of a given input element with type file to a set of file paths.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-input-setFiles",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/input/set_files",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The navigable containing the element." },
+                { "name": "element", "type": "object", "description": "A script.SharedReference to an input element." },
+                { "name": "files", "type": "array", "items": { "type": "string" }, "description": "Absolute file paths." }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "fileDialogOpened",
+            "description": "Fired when a file dialog is opened.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-input-fileDialogOpened",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/input/file_dialog_opened",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The navigable in which the dialog opened." },
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "optional": true, "description": "The user context of the navigable." },
+                { "name": "element", "type": "object", "optional": true, "description": "A script.SharedReference to the file input element." },
+                { "name": "multiple", "type": "boolean", "description": "Whether the dialog allows selecting multiple files." }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+This tests object replacements are present in strings when the replaced element is at the beginning of the document and there are rendered children
+
+Webarea text: [ATTACHMENT]inside
+b
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+inside
+b

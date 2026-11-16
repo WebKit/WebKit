@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<link rel="help" href="https://svgwg.org/svg2-draft/styling.html#InterfaceSVGStyleElement">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg">
+    <style type="text/css">
+        g { color: green; }
+    </style>
+</svg>
+<script>
+
+test(() => {
+    const style = document.querySelector('svg style');
+    assert_not_equals(style.sheet, undefined);
+    assert_true(style.sheet instanceof StyleSheet);
+}, "SVGStyleElement interface should include LinkStyle");
+
+</script>
+</body>
+</html>

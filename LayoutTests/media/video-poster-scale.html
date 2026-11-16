@@ -1,0 +1,46 @@
+<!DOCTYPE HTML5>
+
+<html>
+    <head>
+        <title>'poster' aspect ratio test</title>
+        <script src=video-test.js></script>
+        <style> 
+            video { 
+                border: 3px solid red; 
+                background-color: #ee00ee;
+            } 
+            #wide { width: 320px; height: 150px; }
+            #tall { width: 150px; height: 320px; }
+            #big { width: 320px; height: 240px; }
+            #skinny { width: 50px; height: 320px; }
+            #short { width: 320px; height: 50px; }
+            #just_right { width: 76px; height: 103px; }
+        </style>
+        <script>
+            var videos;
+            function start()
+            {
+                videos = document.getElementsByTagName('video');
+                for (var ndx = 0; ndx < videos.length; ndx++ ) {
+                    testExpected("videos[" + ndx + "].getAttribute('poster')", "content/abe.png");
+                    testExpected("relativeURL(videos[" + ndx + "].poster)", "content/abe.png");
+                }
+
+                endTest();
+            }
+        </script>
+    </head>
+
+
+    <body onload="start()">
+        <video poster="content/abe.png" id=wide></video>
+        <br>
+        <video poster="content/abe.png" id=just_right></video>
+        <video poster="content/abe.png" id=no-style></video>
+        <br>
+        <video poster="content/abe.png" id=skinny></video>
+        <video poster="content/abe.png" id=big></video>
+        <video poster="content/abe.png" id=short></video>
+        <br>
+    </body>
+</html>

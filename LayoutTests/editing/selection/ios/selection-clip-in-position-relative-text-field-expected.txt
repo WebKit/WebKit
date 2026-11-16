@@ -1,0 +1,12 @@
+
+Verifies that the selection is clipped inside of a horizontally scrollable text field, that's inside an overflow: scroll; container. To manually test, select all the text inside of the text field below and scroll down in the subscrollable container.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS scroller.getBoundingClientRect().width is >= selectionRectBeforeScrolling.width
+PASS selectionRectAfterScrolling?.width || 0 is 0
+PASS selectionRectAfterScrolling?.height || 0 is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function gc() {
+    if (globalThis.GCController)
+        globalThis.GCController.collect();
+    else if (globalThis.$vm)
+        globalThis.$vm.gc();
+}
+
+// createCommandEncoder() on a destroyed device takes CommandEncoder::createInvalid(), whose
+// constructor used to leave m_uniqueId uninitialized. ~CommandEncoder() then read it, passing garbage
+// to Device::removeCommandEncoder() and to the resource tracking sets. Invalid encoders now take an
+// id from the same per-Device counter as valid ones, so the id is always defined and never aliases a
+// live encoder. rdar://178679545
+//
+// The uninitialized read is silent (HashMap::remove on a missing key is a no-op), so this is a
+// no-crash test: it is meaningful under ASAN, MSan, or TZone slot reuse, where the stale bytes are
+// observable. It does not exercise the second-order live-encoder eviction, which needs
+// createInvalid() to be taken on a still-valid device and is not reachable from this API.
+async function run() {
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+
+    // Create and drop a valid encoder first, so the allocator slot a later invalid encoder lands in
+    // holds a stale, plausible-looking m_uniqueId rather than zeroed fresh pages.
+    device.createCommandEncoder({ label: 'warm' });
+    gc();
+
+    device.destroy();
+
+    // Every encoder from here on takes the createInvalid() path. Drop each one so ~CommandEncoder()
+    // runs and reads m_uniqueId.
+    for (let i = 0; i < 64; ++i) {
+        device.createCommandEncoder({ label: 'invalid-' + i });
+        gc();
+    }
+
+    // Creating an encoder on a destroyed device must not be fatal, and the encoder it hands back must
+    // still be usable as an object.
+    globalThis.encoder = device.createCommandEncoder({ label: 'invalid-final' });
+    shouldBeTrue('encoder instanceof GPUCommandEncoder');
+    encoder.finish();
+    globalThis.encoder = null;
+    gc();
+
+    debug('Pass');
+}
+
+run().catch(e => debug('Error: ' + e)).finally(finishJSTest);
+</script>

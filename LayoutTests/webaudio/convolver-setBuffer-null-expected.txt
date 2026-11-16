@@ -1,0 +1,7 @@
+
+PASS Setting the buffer to null on a new ConvolverNode leaves it null
+PASS Setting the buffer to a non-AudioBuffer throws and leaves it null
+PASS Setting the buffer to null after a response was set clears the attribute
+PASS A ConvolverNode with a response renders a non-silent signal
+PASS Setting the buffer to null after a response was set stops the convolution
+

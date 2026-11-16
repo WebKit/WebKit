@@ -1,0 +1,28 @@
+Testing that setting TimeLabel.value to an unchanged value does not re-commit (and therefore does not re-format) the label.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial value and number of digits are committed once.
+PASS numberOfValueCommits is 1
+PASS timeLabel.element.textContent is "00:10"
+
+Setting the same value again does not mark the label dirty...
+PASS timeLabel.needsLayout is false
+PASS numberOfValueCommits is 1
+
+...but setting a different value does.
+PASS timeLabel.needsLayout is true
+PASS numberOfValueCommits is 2
+PASS timeLabel.element.textContent is "00:11"
+
+Transitioning to NaN re-commits, then a second NaN is deduped.
+PASS numberOfValueCommits is 3
+PASS timeLabel.element.textContent is "--:--"
+PASS timeLabel.needsLayout is false
+PASS numberOfValueCommits is 3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

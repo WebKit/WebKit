@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Protocol.AsyncCommandErrors");
+
+    suite.addTestCase({
+        name: "ErrorWhileDispatchingAnotherCommand",
+        description: "The error of an async command that fails while another command is being dispatched should be sent with the id of the async command.",
+        async test() {
+            let {result} = await InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression: "new Promise((resolve) => { window.resolvePromise = resolve; })"}});
+
+            // An object that refers to itself cannot be returned by value, so awaitPromise fails when the promise resolves.
+            let awaitPromise = InspectorProtocol.awaitCommand({method: "Runtime.awaitPromise", params: {promiseObjectId: result.objectId, returnByValue: true}});
+
+            // The promise resolves at the microtask checkpoint of this evaluation, while Runtime.evaluate is being dispatched.
+            try {
+                await InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression: "let object = {}; object.self = object; resolvePromise(object);"}});
+                ProtocolTest.pass("Runtime.evaluate should get its own response.");
+            } catch (error) {
+                ProtocolTest.fail("Runtime.evaluate should get its own response, got error: " + error.message);
+                return;
+            }
+
+            try {
+                await awaitPromise;
+                ProtocolTest.fail("Runtime.awaitPromise should fail.");
+            } catch (error) {
+                ProtocolTest.pass("Runtime.awaitPromise should get its error.");
+                ProtocolTest.log("Error message: " + error.message);
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing that the error of an async command is sent with the id of that command.</p>
+</body>
+</html>

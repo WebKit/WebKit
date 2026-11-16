@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>viewer-restore-scroll-position</title>
+        <script src="../media/video-test.js"></script>
+        <script src="../media/media-file.js"></script>
+        <style>
+            html, body, .spacer {
+                height: 100%;
+            }
+            video {
+                width: 600px;
+                height: 400px;
+            }
+        </style>
+        <script>
+
+        let originalScroll = 0;
+
+        waitFor(window, 'load').then(async event => {
+        video = document.getElementsByTagName('video')[0];
+        video.src = findMediaFile('video', '../media/content/test');
+        waitFor(video, 'canplaythrough', true);
+            
+        await runWithKeyDown(() => video.play());
+        await waitFor(video, 'play', true);
+
+        originalScroll = document.body.clientHeight;
+        document.scrollingElement.scrollTop = originalScroll;
+        originalScroll = document.scrollingElement.scrollTop;
+
+        runWithKeyDown(() => window.internals.enterViewerMode(video));
+        await  waitFor(document, 'fullscreenchange');
+        await sleepFor(100);
+        document.webkitCancelFullScreen();
+        
+        await waitFor(document, 'fullscreenchange');
+        await testExpectedEventually("(document.scrollingElement.scrollTop === originalScroll)", true);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+        });
+        
+
+        </script>
+    </head>
+    <body>
+    <p>This tests that page scroll is restored after viewer mode.</p>
+    <div class="spacer"></div>
+    <div id="parent">
+        <video id="video" controls><video>
+    </div>
+    <div class="spacer"></div>
+    </body>
+</html>
+

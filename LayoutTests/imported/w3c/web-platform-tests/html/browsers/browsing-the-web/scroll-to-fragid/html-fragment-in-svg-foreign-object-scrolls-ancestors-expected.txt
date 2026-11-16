@@ -1,0 +1,4 @@
+
+
+PASS Scrolling to the fragment of an HTML document in a foreignObject of an SVG document in an <iframe> scrolls every ancestor document
+

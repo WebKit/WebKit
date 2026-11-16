@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<title>An SVG image document can be parsed for a page with other settings while that page paints</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/svg-image-per-page.js"></script>
+<body>
+<script>
+promise_test(async test => {
+    assert_own_property(window, "internals");
+
+    // Opening a page reapplies the shared preferences to every page, so change the setting after.
+    const secondPage = openSecondPage(test);
+    await new Promise(requestAnimationFrame);
+    assert_own_property(secondPage, "internals");
+    internals.settings.setCSSDPropertyEnabled(true);
+    secondPage.internals.settings.setCSSDPropertyEnabled(false);
+
+    const imageURL = new URL("resources/css-animation-turns-green.svg", location.href).href;
+    const shownImage = await loadImage(document, imageURL);
+    document.body.appendChild(shownImage);
+    test.add_cleanup(() => shownImage.remove());
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(requestAnimationFrame);
+
+    // Show the image before it loads, so that the second page's first draw of it is a paint.
+    const otherImage = secondPage.document.createElement("img");
+    const loaded = new Promise(resolve => otherImage.onload = resolve);
+    otherImage.src = imageURL;
+    secondPage.document.body.appendChild(otherImage);
+    await loaded;
+    await new Promise(resolve => secondPage.requestAnimationFrame(resolve));
+    await new Promise(resolve => secondPage.requestAnimationFrame(resolve));
+    assert_array_equals(pixelOfDraw(otherImage, 50, 50), [0, 128, 0, 255], "page with another CSS d property setting");
+}, "CSS animation");
+</script>

@@ -1,0 +1,27 @@
+This test ensures that we include dynamically added content in the AX tree when said content is added as a subtree of a display:contents element.
+
+Traversing page based on initial state.
+
+AXRole: AXWebArea
+
+AXRole: AXGroup
+
+Adding list elements to #div-to-insert-into and performing another page traversal.
+
+AXRole: AXWebArea
+
+AXRole: AXGroup
+
+AXRole: AXList
+
+AXRole: AXGroup
+
+AXRole: AXListMarker
+
+AXRole: AXStaticText
+AXValue: List item one
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+List item one

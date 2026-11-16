@@ -1,0 +1,6 @@
+Initial
+Target
+
+PASS Initial element focused via click does NOT match :focus-visible
+PASS Target element focused via accesskey matches :focus-visible
+

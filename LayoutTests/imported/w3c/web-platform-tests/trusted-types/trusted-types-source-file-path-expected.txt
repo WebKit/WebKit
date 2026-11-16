@@ -1,0 +1,5 @@
+
+PASS same-document script
+PASS same-origin script
+PASS cross-origin script
+

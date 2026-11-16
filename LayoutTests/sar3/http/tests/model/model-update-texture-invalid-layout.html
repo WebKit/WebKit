@@ -1,0 +1,251 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true WebGPUEnabled=true ModelElementEnabled=true ] -->
+<html>
+<body>
+<script>
+// RemoteMesh::UpdateTexture takes a Vector<WebModel::UpdateTextureDescriptor> whose
+// `layout` (a Vector<WebModel::TextureLevelInfo> of dataOffset / byteCountPerRow /
+// byteCountPerImage triples) is entirely WebContent-controlled. USDModel.swift's
+// makeMTLTextureFromImageAsset() used to forward those straight into
+//
+//     mtlTexture.replace(region:, mipmapLevel:, slice:,
+//                        withBytes: baseAddress.advanced(by: bytesOffset),
+//                        bytesPerRow:, bytesPerImage:)
+//
+// without relating them to the size of the shared-memory asset, so a compromised
+// WebContent process could make the GPU process read far outside the mapping -- or trap
+// while computing `info.dataOffset + face * info.byteCountPerImage` with Swift's
+// overflow-checked arithmetic.
+//
+// This test plays the part of that compromised WebContent process. It stands up a
+// RemoteGPU stream by hand, creates a model backing (which is what registers a RemoteMesh
+// message receiver in the GPU process), then sends UpdateTexture messages whose layouts
+// escape the asset in several different ways. It passes as long as the GPU process rejects
+// each one instead of crashing or reading out of bounds.
+//
+// The last two cases cover the other side of the same mismatch: textureCubeDescriptor()
+// takes a single `size`, so a .typeCube asset whose height differs from its width produces
+// an upload region larger than the texture it is written into -- a destination overflow
+// that no amount of source-side bounds checking catches.
+//
+// GPU-process <model> support is compiled out in most configurations
+// (ENABLE(GPU_PROCESS_MODEL)); when the messages are absent the test skips with the same
+// output.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish() {
+    document.body.innerHTML = '<p>This test passes if WebKit does not hit assertions or crash under ASAN</p>PASS';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+// Fail safe: never hang the harness if the GPU process stops answering.
+setTimeout(finish, 30000);
+
+function withTimeout(promise, ms) {
+    return Promise.race([promise, new Promise(resolve => setTimeout(resolve, ms))]);
+}
+
+(async () => {
+    if (!window.IPC) {
+        finish();
+        return;
+    }
+
+    // ENABLE(GPU_PROCESS_MODEL) is off in this configuration.
+    if (!IPC.messages.RemoteGPU_CreateModelBacking || !IPC.messages.RemoteMesh_UpdateTexture) {
+        finish();
+        return;
+    }
+
+    const { CoreIPC } = await import('/ipc/coreipc.js');
+
+    // Look enum values up by name rather than hard-coding wire values.
+    function enumValue(enumType, name) {
+        const value = IPC.serializedEnumInfo[enumType]?.valueMap?.find(entry => entry.name === name)?.value;
+        if (value === undefined)
+            throw new Error(`no ${enumType} named ${name}`);
+        return value;
+    }
+    const dimensionCube = enumValue('WebCore::WebGPU::TextureViewDimension', 'Cube');
+    const dimension2D = enumValue('WebCore::WebGPU::TextureViewDimension', '_2d');
+    const formatR16Float = enumValue('WebCore::WebGPU::TextureFormat', 'R16float');
+    const formatR8Unorm = enumValue('WebCore::WebGPU::TextureFormat', 'R8unorm');
+    const usageTextureBinding = enumValue('WebCore::WebGPU::TextureUsage', 'TextureBinding');
+
+    // Well clear of any identifier the page itself might have allocated.
+    let nextIdentifier = 987654000;
+    const newIdentifier = () => ++nextIdentifier;
+
+    function imageAsset(properties) {
+        return {
+            dataHandle: { optionalValue: { protection: 'ReadOnly', handle: IPC.createSharedMemory(properties.dataSize) } },
+            width: properties.width,
+            height: properties.height,
+            depth: 1,
+            textureType: properties.textureType,
+            pixelFormat: properties.pixelFormat,
+            mipmapLevelCount: properties.mipmapLevelCount,
+            arrayLength: properties.arrayLength,
+            textureUsage: { alias: usageTextureBinding },
+            // MTLTextureSwizzle raw values: Red = 2, Green = 3, Blue = 4, Alpha = 5.
+            swizzle: { red: 2, green: 3, blue: 4, alpha: 5 },
+        };
+    }
+
+    // 1. RemoteRenderingBackend: RemoteGPU is created relative to one.
+    const backendIdentifier = newIdentifier();
+    const backendConnection = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: backendIdentifier,
+        connectionHandle: backendConnection,
+    });
+    const didInitialize = backendConnection.connection.waitForMessage(backendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 5);
+    if (!didInitialize) {
+        finish();
+        return;
+    }
+    backendConnection.connection.setSemaphores(didInitialize[0].value, didInitialize[1].value);
+
+    // 2. RemoteGPU.
+    const gpuIdentifier = newIdentifier();
+    const gpuConnection = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateGPU(0, {
+        identifier: gpuIdentifier,
+        renderingBackendIdentifier: backendIdentifier,
+        serverConnection: gpuConnection,
+    });
+    const wasCreated = gpuConnection.connection.waitForMessage(gpuIdentifier, IPC.messages.RemoteGPUProxy_WasCreated.name, 5);
+    if (!wasCreated || !wasCreated[0].value) {
+        finish();
+        return;
+    }
+    gpuConnection.connection.setSemaphores(wasCreated[1].value, wasCreated[2].value);
+    const remoteGPU = gpuConnection.newInterface('RemoteGPU', gpuIdentifier);
+
+    // 3. RemoteMesh. RemoteGPU::createModelBacking MESSAGE_CHECKs that the two bootstrap
+    //    assets match Mesh.h's WEBMODEL_WEB_MODEL_PLAYER_DECLARE_DIFFUSE_AND_SPECULAR_TEXTURES
+    //    field for field, including the exact handle size, so reproduce them precisely:
+    //    64x64 R16Float cube = 64 * 64 * 2 * 6 = 49152 bytes, and a 9-mip 256x256 R16Float
+    //    cube = 2 * (256^2 + 128^2 + ... + 1^2) * 6 = 1048572 bytes. Getting any of this
+    //    wrong kills the connection instead of exercising the code under test.
+    const meshIdentifier = newIdentifier();
+    remoteGPU.CreateModelBacking({
+        width: 64,
+        height: 64,
+        diffuseAsset: imageAsset({
+            dataSize: 49152, width: 64, height: 64, textureType: dimensionCube,
+            pixelFormat: formatR16Float, mipmapLevelCount: 1, arrayLength: 6,
+        }),
+        specularAsset: imageAsset({
+            dataSize: 1048572, width: 256, height: 256, textureType: dimensionCube,
+            pixelFormat: formatR16Float, mipmapLevelCount: 9, arrayLength: 6,
+        }),
+        identifier: meshIdentifier,
+        standardDynamicRange: true,
+    });
+    const remoteMesh = gpuConnection.newInterface('RemoteMesh', meshIdentifier);
+
+    // A 64x64 R8Unorm 2D asset backed by exactly one level's worth of bytes, and the cube
+    // equivalent (six faces) for the cases that need sliceCount > 1.
+    const asset2DBytes = 64 * 64;
+    const newAsset2D = () => imageAsset({
+        dataSize: asset2DBytes, width: 64, height: 64, textureType: dimension2D,
+        pixelFormat: formatR8Unorm, mipmapLevelCount: 1, arrayLength: 1,
+    });
+    const newAssetCube = () => imageAsset({
+        dataSize: asset2DBytes * 6, width: 64, height: 64, textureType: dimensionCube,
+        pixelFormat: formatR8Unorm, mipmapLevelCount: 1, arrayLength: 6,
+    });
+    // A cube whose height dwarfs its width. textureCubeDescriptor() only takes a `size`, so
+    // the GPU-side texture is 8x8 per face while the upload region derived from the asset is
+    // 8x4096 -- a destination overflow rather than a source one, and one every source-side
+    // bound is happy with: 4095 rows of stride 8 plus a final 8-byte row is 32768 bytes,
+    // which is exactly one of the six faces below.
+    const nonSquareCubeRowBytes = 8;
+    const nonSquareCubeFaceBytes = nonSquareCubeRowBytes * 4096;
+    const newAssetNonSquareCube = () => imageAsset({
+        dataSize: nonSquareCubeFaceBytes * 6, width: 8, height: 4096, textureType: dimensionCube,
+        pixelFormat: formatR8Unorm, mipmapLevelCount: 1, arrayLength: 6,
+    });
+    const nonSquareCubeLayout = () => [
+        { dataOffset: 0, byteCountPerRow: nonSquareCubeRowBytes, byteCountPerImage: nonSquareCubeFaceBytes },
+    ];
+
+    let caseNumber = 0;
+    function newDescriptor(asset, layout) {
+        ++caseNumber;
+        // WebKitMesh.mm turns TypedResourceId::value into an NSUUID and hands it to a
+        // non-optional Swift UUID, so it has to parse; a distinct one per case keeps the
+        // cases from sharing a cached texture.
+        const identifier = {
+            value: `4e1b2c3d-0000-4000-8000-0000000000${String(caseNumber).padStart(2, '0')}`,
+            path: `/invalid-layout-${caseNumber}.png`,
+            hashValue: caseNumber,
+        };
+        return { imageAsset: asset, identifier, hashString: `invalid-layout-${caseNumber}`, layout };
+    }
+
+    function updateTexture(asset, layout) {
+        // The reply is unconditionally true, so it is a barrier rather than a result: once
+        // it arrives the GPU process has processed this descriptor and is still alive.
+        return withTimeout(new Promise(resolve => {
+            remoteMesh.UpdateTexture({ descriptor: [newDescriptor(asset, layout)] }, resolve);
+        }), 5000);
+    }
+
+    // dataOffset alone lands 1GB past a 4KB mapping.
+    await updateTexture(newAsset2D(), [
+        { dataOffset: 0x40000000, byteCountPerRow: 64, byteCountPerImage: asset2DBytes },
+    ]);
+
+    // In bounds at dataOffset, but a 1MB row stride walks 63 rows (~64MB) past the end.
+    await updateTexture(newAsset2D(), [
+        { dataOffset: 0, byteCountPerRow: 0x100000, byteCountPerImage: asset2DBytes },
+    ]);
+
+    // Negative dataOffset reads before the start of the mapping.
+    await updateTexture(newAsset2D(), [
+        { dataOffset: -4096, byteCountPerRow: 64, byteCountPerImage: asset2DBytes },
+    ]);
+
+    // A row stride narrower than the mip's own row: Metal reads mipWidth bytes per row
+    // regardless, so the last row runs off the end of the asset.
+    await updateTexture(newAsset2D(), [
+        { dataOffset: 0, byteCountPerRow: 32, byteCountPerImage: asset2DBytes },
+    ]);
+
+    // Six cube faces times a huge byteCountPerImage: `face * info.byteCountPerImage`
+    // overflows Int64 partway through the face loop.
+    await updateTexture(newAssetCube(), [
+        { dataOffset: 0, byteCountPerRow: 64, byteCountPerImage: 0x4000000000000000 },
+    ]);
+
+    // Same loop, but the overflow is in `info.dataOffset + faceOffset` on the first face.
+    await updateTexture(newAssetCube(), [
+        { dataOffset: 0x4000000000000000, byteCountPerRow: 64, byteCountPerImage: 0x4000000000000000 },
+    ]);
+
+    // Non-square cube: the source window fits the asset, but the 8x4096 region overruns the
+    // 8x8 destination face. Every bound on the source side passes, so only a check against
+    // the destination extent (or rejecting the non-square cube outright) stops this.
+    await updateTexture(newAssetNonSquareCube(), nonSquareCubeLayout());
+
+    // The same asset through SetEnvironmentMap, which reaches makeMTLTextureFromImageAsset
+    // by a different path. It has no reply, so the following UpdateTexture is the barrier.
+    remoteMesh.SetEnvironmentMap({ imageAsset: newDescriptor(newAssetNonSquareCube(), nonSquareCubeLayout()) });
+
+    // Positive control: a layout that exactly describes the asset must still upload, so
+    // the rejection path above is not passing by refusing everything.
+    await updateTexture(newAsset2D(), [
+        { dataOffset: 0, byteCountPerRow: 64, byteCountPerImage: asset2DBytes },
+    ]);
+
+    finish();
+})().catch(() => finish());
+</script>
+</body>
+</html>

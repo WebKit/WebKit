@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<select id="select" size="8">
+    <option id="apple">Apple</option>
+    <optgroup id="group" label="More">
+        <option>Banana</option>
+    </optgroup>
+    <div id="wrapper">
+        <option>Fig</option>
+    </div>
+</select>
+
+<script>
+var output = "This test ensures that a list box exposes options that are added to it or removed from it, also inside an optgroup or a div.\n\n";
+
+function addOption(parent, id)
+{
+    var option = new Option(id);
+    option.id = id;
+    parent.appendChild(option);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        var select = document.getElementById("select");
+        window.axSelect = await waitForElementById("select");
+        output += await expectAsync("axSelect.childrenCount", "4");
+
+        addOption(select, "cherry");
+        output += await expectAsync("axSelect.childrenCount", "5");
+        output += await expectAsync("axSelect.childAtIndex(4)?.domIdentifier", "'cherry'");
+
+        addOption(document.getElementById("group"), "date");
+        output += await expectAsync("axSelect.childrenCount", "6");
+        output += await expectAsync("axSelect.childAtIndex(3)?.domIdentifier", "'date'");
+
+        addOption(document.getElementById("wrapper"), "elderberry");
+        output += await expectAsync("axSelect.childrenCount", "7");
+        output += await expectAsync("axSelect.childAtIndex(5)?.domIdentifier", "'elderberry'");
+
+        document.getElementById("apple").remove();
+        output += await expectAsync("axSelect.childrenCount", "6");
+        output += await expectAsync("axSelect.childAtIndex(0)?.domIdentifier", "'group'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

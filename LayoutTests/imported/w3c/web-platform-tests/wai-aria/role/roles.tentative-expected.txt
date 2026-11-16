@@ -1,0 +1,8 @@
+Tests new ARIA role definitions. See comments for more info.
+
+x
+x
+
+PASS role: sectionheader
+PASS role: sectionfooter
+

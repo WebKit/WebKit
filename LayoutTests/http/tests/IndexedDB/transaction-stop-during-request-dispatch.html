@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="/resources/gc.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+promise_test(async (test) => {
+    assert_true(!!window.internals, "Test requires internals API");
+
+    const gcCount = 100;
+
+    gc();
+    await new Promise(r => setTimeout(r, 50));
+    const baseline = internals.numberOfIDBTransactions();
+
+    let frame = await new Promise((resolve, reject) => {
+        function onMessage() {
+            window.removeEventListener("message", onMessage);
+            resolve(f);
+        }
+        window.addEventListener("message", onMessage);
+        let f = document.createElement('iframe');
+        f.src = "resources/stop-during-request-dispatch-frame.html";
+        document.body.appendChild(f);
+    });
+
+    frame.remove();
+    frame = null;
+
+    for (let i = 0; i < gcCount; i++) {
+        gc();
+        await new Promise(r => setTimeout(r, 50));
+        if (internals.numberOfIDBTransactions() <= baseline)
+            return;
+    }
+
+    let residual = internals.numberOfIDBTransactions() - baseline;
+    assert_equals(residual, 0,
+        "IDBTransaction objects not destroyed (" + residual + " still alive after GC)");
+
+}, "IDBTransaction should not leak when stopped while a request's event dispatch is in flight");
+
+</script>

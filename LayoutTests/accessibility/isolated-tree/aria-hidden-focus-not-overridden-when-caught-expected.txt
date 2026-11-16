@@ -1,0 +1,11 @@
+This tests that aria-hidden is NOT overridden when a focus handler moves focus out before the next animation frame.
+
+PASS: !button1 || !button1.isValid === true
+PASS: accessibilityController.focusedElement.domIdentifier === 'outside'
+PASS: !button1 || !button1.isValid === true
+PASS: !button2 || !button2.isValid === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

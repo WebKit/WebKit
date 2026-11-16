@@ -1,0 +1,3 @@
+
+FAIL Making a container filtered, and then removing an abspos child assert_equals: expected 50 but got 100
+

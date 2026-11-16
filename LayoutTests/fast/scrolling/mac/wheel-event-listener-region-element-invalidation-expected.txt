@@ -1,0 +1,43 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+      (wheel event listener region
+        (rect (8,8) width=250 height=50)
+        (rect (8,58) width=200 height=150)
+        (non-passive
+          (rect (8,8) width=250 height=50)
+          (rect (8,58) width=200 height=150)
+        )
+      )
+      )
+    )
+  )
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+      (wheel event listener region
+        (rect (208,208) width=250 height=50)
+        (rect (208,258) width=200 height=150)
+      )
+      )
+    )
+  )
+)
+

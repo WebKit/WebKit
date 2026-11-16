@@ -1,0 +1,10 @@
+PASS colors.top is "rgb(255, 99, 71)"
+PASS colors.left is null
+PASS colors.right is null
+PASS colors.bottom is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world
+
+

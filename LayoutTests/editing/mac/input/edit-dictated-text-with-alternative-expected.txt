@@ -1,0 +1,8 @@
+Editing text that has DictationAlternatives marker whould cause the marker to be removed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+this is a tex
+PASS markedText is ""
+
+TEST COMPLETE

@@ -1,0 +1,4 @@
+
+
+PASS option elements should inherit color from their parent select element.
+

@@ -1,0 +1,3 @@
+
+PASS A CSP violation report body is a plain object with every CSPViolationReportBody member
+

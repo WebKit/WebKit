@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that Attr.value is not nullable");
+
+evalAndLog("attr = document.createAttribute('test')");
+shouldBeEmptyString("attr.value");
+shouldNotThrow("attr.value = null");
+shouldBeEqualToString("attr.value", "null");
+shouldNotThrow("attr.value = undefined");
+shouldBeEqualToString("attr.value", "undefined");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

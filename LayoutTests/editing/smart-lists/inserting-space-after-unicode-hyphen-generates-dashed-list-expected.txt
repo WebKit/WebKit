@@ -1,0 +1,9 @@
+Typing the Unicode hyphen character (U+2010) followed by a space at the start of two consecutive lines should auto-convert them into an unordered dashed list, with the hyphen character in the custom list-style-type marker.
+| <ul>
+|   class="Apple-dash-list"
+|   style="list-style-type: "‐  ";"
+|   <li>
+|     "Hello"
+|     <br>
+|   <li>
+|     "World<#selection-caret>"

@@ -1,0 +1,9 @@
+
+PASS The selectedIndex setter of a select sets the dirtiness of the option it selects
+PASS The selectedIndex setter of HTMLOptionsCollection sets the dirtiness of the option it selects
+PASS The value setter of a select sets the dirtiness of the option it selects
+PASS The selected setter of an option in a select sets its dirtiness
+PASS The selectedIndex setter of a select sets the dirtiness of the option it selects when that option is already selected
+PASS The value setter of a select sets the dirtiness of the option it selects when that option is already selected
+FAIL The selected setter of an option in a select sets its dirtiness when the option is already selected assert_equals: expected "banana" but got "apple"
+

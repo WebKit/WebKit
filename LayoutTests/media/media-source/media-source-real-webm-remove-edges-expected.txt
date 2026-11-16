@@ -1,0 +1,24 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '6') OK
+Test 1: remove(0, 2) at sync frame boundary
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '2') OK
+Test 2: remove(4, 6) at end of buffer
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '2') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '4') OK
+Test 3: remove(0, Infinity) removes all
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+Test 4: remove(0, Infinity) on empty buffer
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+EXPECTED (source.readyState == 'open') OK
+END OF TEST
+

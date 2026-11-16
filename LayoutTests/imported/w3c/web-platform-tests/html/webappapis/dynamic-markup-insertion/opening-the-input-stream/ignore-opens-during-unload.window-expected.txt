@@ -1,0 +1,14 @@
+
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during beforeunload event (in top-level browsing context)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during beforeunload event (open(parent) while unloading parent and child)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during beforeunload event (open(parent) while unloading child only)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during pagehide event (in top-level browsing context)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during pagehide event (open(parent) while unloading parent and child)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during pagehide event (open(parent) while unloading child only)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during unload event (in top-level browsing context)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during unload event (open(parent) while unloading parent and child)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during unload event (open(parent) while unloading child only)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during visibilitychange event (in top-level browsing context)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during visibilitychange event (open(parent) while unloading parent and child)
+PASS document.open should bail out when ignore-opens-during-unload is greater than 0 during visibilitychange event (open(parent) while unloading child only)
+

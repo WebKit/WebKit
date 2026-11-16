@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<body>
+    <script>
+        function decodeParallel(image, count) {
+            var promises = [];
+            for (index = 0; index < count; ++index)
+                promises.push(image.decode());
+            return promises;
+        }
+
+        async function decodeImage(image, count) {
+            await Promise.all(decodeParallel(image, count));
+
+            for (let index = 0; index < count; ++index)
+                await image.decode();
+        }
+
+        description('Test HTMLImageElement::decode() does not leak the pending promises after resolving or rejecting them.');
+        jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.clearMemoryCache();
+
+        (async () => {
+            image = new Image;
+
+            debug("Decoding a bitmap image - promises will be resolved:");            
+            image.src = "resources/red-400x400.png";
+
+            await decodeImage(image, 10);
+            if (window.internals)
+                shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
+
+            debug("Decoding a SVG image - promises will be resolved:");
+            image.src = "resources/green-100x100.svg";
+
+            await decodeImage(image, 10);
+            if (window.internals)
+                shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
+
+            debug("Decoding a broken image - promises will be rejected:");
+            image.src = "";
+
+            await decodeImage(image, 10).catch(reason => {
+                if (window.internals)
+                    shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
+            });
+
+            finishJSTest();
+        })();
+    </script>
+</body>

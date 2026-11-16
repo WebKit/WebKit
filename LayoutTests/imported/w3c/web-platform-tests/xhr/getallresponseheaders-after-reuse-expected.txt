@@ -1,0 +1,3 @@
+
+PASS getAllResponseHeaders() must not return the previous response's headers
+

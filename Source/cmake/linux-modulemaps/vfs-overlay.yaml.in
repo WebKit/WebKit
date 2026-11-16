@@ -1,0 +1,21 @@
+{
+  "version": 0,
+  "roots": [
+    {
+      "name": "@GLib_INCLUDE_DIR@",
+      "type": "directory",
+      "contents": [
+        { "name": "module.modulemap", "type": "file",
+          "external-contents": "@_vfs_glib_modulemap@" }
+      ]
+    },
+    {
+      "name": "@Soup3_INCLUDE_DIR@",
+      "type": "directory",
+      "contents": [
+        { "name": "module.modulemap", "type": "file",
+          "external-contents": "@_vfs_libsoup_modulemap@" }
+      ]
+    }
+  ]
+}

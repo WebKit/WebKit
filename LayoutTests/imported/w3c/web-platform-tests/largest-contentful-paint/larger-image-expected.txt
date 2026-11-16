@@ -1,0 +1,8 @@
+This is some text! :)
+
+
+More text!
+
+
+PASS Largest Contentful Paint: largest image is reported.
+

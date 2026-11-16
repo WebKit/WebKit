@@ -1,0 +1,109 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script>
+// CoreIPCSecTrust::createSecTrust() turns the decoded CoreIPCSecTrustData back into the
+// property list that SecTrustCreateFromPropertyListRepresentation() expects. A CoreIPCData
+// decoded from a disengaged std::optional<std::span<const uint8_t>> has no bytes, so its
+// toID() is nil, and inserting nil into an NSMutableDictionary raises an uncaught
+// NSInvalidArgumentException. Every field below is attacker controlled, so the receiving
+// process has to reject such a trust object instead of crashing.
+
+const nullData = { dataReference: { } };
+
+function secTrustData(overrides)
+{
+    return Object.assign({
+        result: 0,
+        anchorsOnly: false,
+        keychainsAllowed: false,
+        certificates: [],
+        chain: [],
+        details: [],
+        policies: [],
+        info: { },
+        verifyDate: { },
+        responses: { },
+        scts: { },
+        anchors: { },
+        trustedLogs: { },
+        exceptions: { },
+    }, overrides);
+}
+
+// Each entry puts a null CoreIPCData at a different spot in the trust data.
+const cases = [
+    { certificates: [nullData] },
+
+    { chain: [nullData] },
+
+    { policies: [{ alias: [
+        [{ m_string: 'policy' }, { alias: { variantType: 'WebKit::CoreIPCSecTrustData::PolicyOption', variant: { alias: [
+            [{ m_string: 'data' }, { alias: { variantType: 'WebKit::CoreIPCSecTrustData::PolicyArrayOfData', variant: { alias: [nullData] } } }],
+        ] } } }],
+    ] }] },
+
+    { info: { optionalValue: { alias: [
+        [{ m_string: 'revocation' }, { alias: { variantType: 'WebKit::CoreIPCSecTrustData::RevocationInfoArray', variant: { alias: [
+            { alias: [
+                [{ m_string: 'entry' }, { alias: [
+                    [{ m_string: 'value' }, { alias: { variantType: 'WebKit::CoreIPCData', variant: nullData } }],
+                ] }],
+            ] },
+        ] } } }],
+    ] } } },
+
+    { responses: { optionalValue: [nullData] } },
+
+    { scts: { optionalValue: [nullData] } },
+
+    { anchors: { optionalValue: [nullData] } },
+
+    { trustedLogs: { optionalValue: [nullData] } },
+
+    { exceptions: { optionalValue: [{ alias: [
+        [{ m_string: 'exception' }, { variantType: 'WebKit::CoreIPCData', variant: nullData }],
+    ] }] } },
+];
+
+async function runTest()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (!window.IPC) {
+        result.textContent = window.testRunner ? 'PASS' : 'This test requires IPC testing API';
+        return;
+    }
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    const { CoreIPC, IPCWireTap } = await import('../coreipc.js');
+
+    // Registering an outgoing message listener makes WebKit decode each message we send
+    // with the real argument coders, so CoreIPCSecTrust::createSecTrust() runs over this
+    // attacker controlled data exactly as it would in the receiving process.
+    const uiOutgoingTap = new IPCWireTap('UI', 'Outgoing');
+
+    for (const overrides of cases) {
+        CoreIPC.UI.WebInspectorUIProxy.ShowCertificate(IPC.pageID, { certificateInfo: { trust: { optionalValue: {
+            m_data: { optionalValue: secTrustData(overrides) },
+        } } } });
+    }
+
+    // The decoding above happens on a later run loop turn, so give it a chance to run
+    // before declaring the test finished.
+    setTimeout(() => {
+        result.textContent = 'PASS';
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 500);
+}
+</script>
+</head>
+<body onload="runTest()">
+This test passes if WebKit does not crash.
+<div id="result"></div>
+</body>
+</html>

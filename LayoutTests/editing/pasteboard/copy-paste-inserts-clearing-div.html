@@ -1,0 +1,31 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+Before
+<div style="position: absolute; top: 0px; right: 0px; width: 100px; height: 100px; background: yellow;"></div>
+<div style="float: right; width: 200px; height: 200px; background: blue;"></div>
+After
+
+<script>
+
+Markup.description('This tests to see if floating elements cause a clearing element to be inserted upon copy/paste');
+
+document.designMode = 'on';
+
+if (window.internals)
+    window.internals.settings.setShouldConvertPositionStyleOnCopy(true);
+
+var s = window.getSelection();
+
+Markup.dump('test1', 'first test - before');
+document.execCommand("SelectAll");
+document.execCommand("Cut");
+document.execCommand("Paste");
+Markup.dump('test1', 'first test - after');
+
+</script>
+</body>
+</html>

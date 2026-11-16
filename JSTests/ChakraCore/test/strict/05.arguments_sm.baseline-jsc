@@ -1,0 +1,13 @@
+arguments.callee:configurable : false
+arguments.callee:enumerable   : false
+arguments.callee:writable     : undefined
+arguments.callee:getter       : function () {
+    [native code]
+}
+arguments.callee:setter       : function () {
+    [native code]
+}
+arguments.callee:value        : undefined
+arguments.caller :propDesc undefined
+Exception: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+Exception: 'arguments', 'callee', and 'caller' cannot be accessed in this context.

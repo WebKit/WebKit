@@ -1,0 +1,7 @@
+
+PASS load event does not fire on window.open()
+PASS load event does not fire on window.open('')
+PASS load event does not fire on window.open('about:blank')
+PASS load event does not fire on window.open('about:blank#foo')
+PASS load event does not fire on window.open('about:blank?foo')
+

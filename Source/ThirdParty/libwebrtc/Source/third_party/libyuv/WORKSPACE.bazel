@@ -1,0 +1,14 @@
+workspace(name = "libyuv")
+
+android_sdk_repository(
+    name = "androidsdk",
+    # Bazel will automatically use the ANDROID_HOME environment variable.
+)
+
+android_ndk_repository(
+    name = "androidndk",
+    # Bazel will automatically use the ANDROID_NDK_HOME environment variable.
+)
+
+# Optional: If you need to fetch specific dependencies (e.g., GoogleTest, libjpeg-turbo)
+# you can define them here using http_archive.

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+#container {
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+}
+
+#target {
+    width: 20000px;
+    height: 200px;
+    background-image: repeating-linear-gradient(to right, black 0 100px, gray 100px 200px);
+}
+
+</style>
+<div id="container"><div id="target"></div></div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="threaded-animations-utils.js"></script>
+<script>
+
+const rectsForLayerWithBounds = (layerTree, bounds) => {
+    const number = "(-?[\\d.]+)";
+    const rect = `${number}, ${number} ${number} x ${number}`;
+    const match = layerTree.match(new RegExp(`\\(bounds ${bounds}\\)[\\s\\S]*?\\(visible rect ${rect}\\)[\\s\\S]*?\\(coverage rect ${rect}\\)`));
+    assert_not_equals(match, null, `There is a layer with bounds ${bounds}.`);
+    const [x, y, width, height] = match.slice(1, 5).map(parseFloat);
+    const [coverageX, coverageY, coverageWidth, coverageHeight] = match.slice(5, 9).map(parseFloat);
+    return {
+        visibleRect: { x, y, width, height },
+        coverageRect: { x: coverageX, y: coverageY, width: coverageWidth, height: coverageHeight }
+    };
+};
+
+promise_test(async test => {
+    const target = document.getElementById("target");
+
+    // Each step moves the target by exactly the width of its container, so the area revealed by a step
+    // never overlaps the area visible before it. Steps are short enough that one always occurs within
+    // the next few frames, which a tiled layer must have tiles for since the UI process applies the
+    // animation without waiting for a commit from the web process.
+    const containerWidth = 200;
+    const stepCount = 99;
+    const stepDuration = 40;
+    const animation = target.animate({ translate: ["0px", `${-containerWidth * stepCount}px`] }, {
+        duration: stepCount * stepDuration,
+        easing: `steps(${stepCount})`,
+        fill: "forwards"
+    });
+    test.add_cleanup(() => animation.cancel());
+
+    await animationAcceleration(animation);
+    await threadedAnimationsCommit();
+    await threadedAnimationsCommit();
+
+    const layerTree = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS);
+    assert_true(layerTree.includes("(usingTiledLayer 1)"), "The target uses a tiled layer.");
+    const { visibleRect, coverageRect } = rectsForLayerWithBounds(layerTree, "20000.00 200.00");
+    assert_equals(visibleRect.width, containerWidth, "The visible rect has the width of the container.");
+    assert_less_than_equal(coverageRect.x, visibleRect.x, "The coverage rect includes the visible rect.");
+    assert_greater_than_equal(coverageRect.x + coverageRect.width, visibleRect.x + visibleRect.width + containerWidth, "The coverage rect includes the area revealed by the next step.");
+}, "The coverage rect of a tiled layer with a threaded steps() transform animation includes the area revealed by upcoming steps.");
+
+</script>
+</body>

@@ -1,0 +1,12 @@
+ first choice
+This tests that if a label element contains text children it's AXValue will be their concatenated AXValues.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS label.role is 'AXRole: AXStaticText'
+PASS label.stringValue is 'AXValue: first choice'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

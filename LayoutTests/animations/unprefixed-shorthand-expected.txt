@@ -1,0 +1,81 @@
+Test the unprefixed animation shorthand.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Setting animation: waldo
+PASS animationStyle.getPropertyValue('animation-name') is "waldo"
+PASS animationStyle.getPropertyValue('animation-duration') is "0s"
+PASS animationStyle.getPropertyValue('animation-delay') is "0s"
+PASS animationStyle.getPropertyValue('animation-timing-function') is "ease"
+PASS animationStyle.getPropertyValue('animation-iteration-count') is "1"
+PASS animationStyle.getPropertyValue('animation-direction') is "normal"
+PASS animationStyle.getPropertyValue('animation-fill-mode') is "none"
+
+Setting animation: waldo 2s
+PASS animationStyle.getPropertyValue('animation-name') is "waldo"
+PASS animationStyle.getPropertyValue('animation-duration') is "2s"
+PASS animationStyle.getPropertyValue('animation-delay') is "0s"
+PASS animationStyle.getPropertyValue('animation-timing-function') is "ease"
+PASS animationStyle.getPropertyValue('animation-iteration-count') is "1"
+PASS animationStyle.getPropertyValue('animation-direction') is "normal"
+PASS animationStyle.getPropertyValue('animation-fill-mode') is "none"
+
+Setting animation: 3s banana 500ms
+PASS animationStyle.getPropertyValue('animation-name') is "banana"
+PASS animationStyle.getPropertyValue('animation-duration') is "3s"
+PASS animationStyle.getPropertyValue('animation-delay') is "0.5s"
+PASS animationStyle.getPropertyValue('animation-timing-function') is "ease"
+PASS animationStyle.getPropertyValue('animation-iteration-count') is "1"
+PASS animationStyle.getPropertyValue('animation-direction') is "normal"
+PASS animationStyle.getPropertyValue('animation-fill-mode') is "none"
+
+Setting animation: infinite alternate eggs 5s
+PASS animationStyle.getPropertyValue('animation-name') is "eggs"
+PASS animationStyle.getPropertyValue('animation-duration') is "5s"
+PASS animationStyle.getPropertyValue('animation-delay') is "0s"
+PASS animationStyle.getPropertyValue('animation-timing-function') is "ease"
+PASS animationStyle.getPropertyValue('animation-iteration-count') is "infinite"
+PASS animationStyle.getPropertyValue('animation-direction') is "alternate"
+PASS animationStyle.getPropertyValue('animation-fill-mode') is "none"
+
+Setting animation: forwards normal ease-in-out bacon 1s 2s
+PASS animationStyle.getPropertyValue('animation-name') is "bacon"
+PASS animationStyle.getPropertyValue('animation-duration') is "1s"
+PASS animationStyle.getPropertyValue('animation-delay') is "2s"
+PASS animationStyle.getPropertyValue('animation-timing-function') is "ease-in-out"
+PASS animationStyle.getPropertyValue('animation-iteration-count') is "1"
+PASS animationStyle.getPropertyValue('animation-direction') is "normal"
+PASS animationStyle.getPropertyValue('animation-fill-mode') is "forwards"
+
+Setting animation: pastrami 100ms cubic-bezier(0, 0, 1, 1) alternate-reverse
+PASS animationStyle.getPropertyValue('animation-name') is "pastrami"
+PASS animationStyle.getPropertyValue('animation-duration') is "0.1s"
+PASS animationStyle.getPropertyValue('animation-delay') is "0s"
+PASS animationStyle.getPropertyValue('animation-timing-function') is "cubic-bezier(0, 0, 1, 1)"
+PASS animationStyle.getPropertyValue('animation-iteration-count') is "1"
+PASS animationStyle.getPropertyValue('animation-direction') is "alternate-reverse"
+PASS animationStyle.getPropertyValue('animation-fill-mode') is "none"
+
+Setting animation: slightly-invalid 2s a
+PASS animationStyle.getPropertyValue('animation-name') is "none"
+PASS animationStyle.getPropertyValue('animation-duration') is "0s"
+PASS animationStyle.getPropertyValue('animation-delay') is "0s"
+PASS animationStyle.getPropertyValue('animation-timing-function') is "ease"
+PASS animationStyle.getPropertyValue('animation-iteration-count') is "1"
+PASS animationStyle.getPropertyValue('animation-direction') is "normal"
+PASS animationStyle.getPropertyValue('animation-fill-mode') is "none"
+
+Setting animation: completely invalid
+PASS animationStyle.getPropertyValue('animation-name') is "none"
+PASS animationStyle.getPropertyValue('animation-duration') is "0s"
+PASS animationStyle.getPropertyValue('animation-delay') is "0s"
+PASS animationStyle.getPropertyValue('animation-timing-function') is "ease"
+PASS animationStyle.getPropertyValue('animation-iteration-count') is "1"
+PASS animationStyle.getPropertyValue('animation-direction') is "normal"
+PASS animationStyle.getPropertyValue('animation-fill-mode') is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

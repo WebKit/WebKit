@@ -1,0 +1,26 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<style>
+div {
+    border: 1px solid blue;
+    margin: 4px;
+}
+</style>
+
+<div id="test" contenteditable="true"><div>foo</div>bar<br></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+
+s.modify("move", "forward", "character");
+s.modify("extend", "forward", "line");
+s.modify("extend", "forward", "line");
+
+document.execCommand("InsertHTML", false, "<div>foo</div><br class='Apple-interchange-newline'>");
+
+</script>

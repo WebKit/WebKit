@@ -1,0 +1,19 @@
+Mouse press should update sequential focus navigation starting point.
+PASS container.innerHTML = '<input id=prev><div style="height:200px;"><span>text</span></div><input id=next>'; focusSpan(); moveFocus('forward'); document.activeElement.id is 'next'
+PASS container.innerHTML = '<input id=prev><div style="height:200px;"><span>text</span></div><input id=next>'; focusSpan(); moveFocus('backward'); document.activeElement.id is 'prev'
+PASS container.innerHTML = '<span style="font-size:60px;"><input id=prev>Text Text<input id=next></span>'; focusSpan(); moveFocus('forward'); document.activeElement.id is 'next'
+PASS container.innerHTML = '<span style="font-size:60px;"><input id=prev>Text Text<input id=next></span>'; focusSpan(); moveFocus('backward'); document.activeElement.id is 'prev'
+
+Fragment navigation should update sequential focus navigation starting point.
+PASS container.innerHTML = '<a href="#fragment"></a><input id=prev><a name="fragment"></a><input id=next>'; clickLink(); moveFocus('forward'); document.activeElement.id is 'next'
+
+Focusing an element should update sequential focus navigation starting point.
+PASS container.innerHTML = '<input id=prev><input id=start><input id=next>'; focusStart(); moveFocus('forward'); document.activeElement.id is 'next'
+
+After removing a focused element from the document tree, sequential focus navigation should start at a place where the focused element was.
+PASS container.innerHTML = '<input id=prev><input id=start><input id=next>'; focusStart(); removeStart(); moveFocus('forward'); document.activeElement.id is 'next'
+PASS container.innerHTML = '<input id=prev><input id=start><input id=next>'; focusStart(); removeStart(); moveFocus('backward'); document.activeElement.id is 'prev'
+PASS container.innerHTML = '<input id=prev><div><input id=start></div><input id=next>'; focusStart(); removeDiv(); moveFocus('forward'); document.activeElement.id is 'next'
+PASS container.innerHTML = '<div><input id=start><input id=prev></div><input id=next>'; focusStart(); removeStart(); moveFocus('forward'); document.activeElement.id is 'prev'
+
+

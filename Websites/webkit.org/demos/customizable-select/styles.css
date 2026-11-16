@@ -1,0 +1,155 @@
+
+:root {
+    --bg: #f5f5f7;
+    --surface: #fff;
+    --border: #ddd;
+    --text: #111;
+    --text-secondary: #444;
+    --accent: #00857e;
+    --radius-card: 10px;
+    --dropdown-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    view-transition-name: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #111;
+        --surface: #1c1c1c;
+        --border: #2a2a2a;
+        --text: #f5f5f5;
+        --text-secondary: #a3a3a3;
+    }
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+:focus-visible {
+    outline: 4px solid color-mix(var(--accent) 50%, transparent);
+    outline-offset: -1px;
+}
+
+body {
+    font-family: Gill Sans, sans-serif;
+    font-size: 18px;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+/* ── Header ───────────────────────────────────────── */
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: .5em;
+    font-size: 2em;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.header-brand img {
+    width: 1.25em;
+}
+
+/* ── Toolbar ──────────────────────────────────── */
+
+header,
+aside {
+    display: flex;
+    align-items: center;
+    gap: 3.75em;
+    background-color: color-mix(var(--accent) 10%, var(--bg));
+    z-index: 90;
+    padding: 2em 0;
+}
+
+header {
+    padding-bottom: 1em;
+}
+
+aside {
+    position: sticky;
+    top: 0;
+    view-transition-name: toolbar;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: .75em;
+}
+
+.select-label {
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.spacer {
+    flex: 1;
+}
+
+/* ── Grid ────────────────────────────────────────── */
+
+figure {
+    margin: 0;
+}
+
+main {
+    padding: 20px;
+    display: grid;
+    display: grid-lanes;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 20px;
+}
+
+/* ── Cards ───────────────────────────────────────── */
+
+.card {
+    cursor: pointer;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    position: relative;
+    background: var(--surface);
+    view-transition-name: match-element;
+}
+
+main img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card:hover img {
+    transform: scale(1.04);
+}
+
+/* Dialog */
+
+dialog {
+    background-color: transparent;
+    border: none;
+    justify-content: start;
+    gap: .5em;
+}
+
+dialog:open {
+    display: flex;
+    outline: none;
+}
+
+dialog::backdrop {
+    background-color: rgba(0,0,0,0.5);
+}
+
+dialog img {
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+}

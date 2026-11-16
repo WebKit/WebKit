@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Iframe with List (Mock Parent Search)</title>
+</head>
+<body>
+<h2>Dog Breeds</h2>
+<ul>
+    <li>Golden Retriever</li>
+    <li>Labrador</li>
+    <li>Poodle</li>
+</ul>
+<script>
+if (window.internals)
+    internals.setShouldMockParentSearchResultsForTesting(true);
+</script>
+</body>
+</html>

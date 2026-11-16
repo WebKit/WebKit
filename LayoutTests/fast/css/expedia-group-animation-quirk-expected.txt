@@ -1,0 +1,17 @@
+
+PASS Expedia Group animation quirk applies on https://www.carrentals.com
+PASS Expedia Group animation quirk applies on https://www.cheaptickets.com
+PASS Expedia Group animation quirk applies on https://www.ebookers.de
+PASS Expedia Group animation quirk applies on https://www.expedia.com
+PASS Expedia Group animation quirk applies on https://www.expedia.fr
+PASS Expedia Group animation quirk applies on https://www.hoteis.com
+PASS Expedia Group animation quirk applies on https://www.hoteles.com
+PASS Expedia Group animation quirk applies on https://www.hotels.com
+PASS Expedia Group animation quirk applies on https://www.mrjet.se
+PASS Expedia Group animation quirk applies on https://www.orbitz.com
+PASS Expedia Group animation quirk applies on https://www.travelocity.ca
+PASS Expedia Group animation quirk applies on https://www.travelocity.com
+PASS Expedia Group animation quirk applies on https://www.wotif.co.nz
+PASS Expedia Group animation quirk applies on https://www.wotif.com
+PASS Expedia Group animation quirk does not apply on unrelated hosts
+

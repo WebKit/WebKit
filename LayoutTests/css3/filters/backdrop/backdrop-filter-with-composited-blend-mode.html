@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Issue with mix-blend-mode</title>
+    <style type="text/css" media="screen">
+        
+        html {
+            height: 100%;
+            background: red;
+        }
+
+        #panel {
+            position: absolute;
+
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            background-color: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter: blur(10px) saturate(2);
+            backdrop-filter: blur(10px) saturate(2);
+        }
+
+        #tint {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            background-color: green;
+            mix-blend-mode: darken;
+            transform: translateZ(0);
+        }
+        
+
+    </style>
+</head>
+<body>
+    <div id="panel"><div id="tint"></div></div>
+</body>
+</html>

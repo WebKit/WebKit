@@ -1,0 +1,16 @@
+
+PASS Matching `integrity` attribute + No header: loads.
+PASS Matching `integrity` attribute + Good sha-256 header: loads.
+PASS Matching `integrity` attribute + Repeated sha-256 header: loads.
+PASS Matching `integrity` attribute + Multiple good headers (previous += sha-256): loads.
+FAIL Matching `integrity` attribute + Bad sha-256 header: blocked. assert_unreached: Script should not execute. Reached unreachable code
+FAIL Matching `integrity` attribute + Repeated sha-256 header: blocked. assert_unreached: Script should not execute. Reached unreachable code
+FAIL Matching `integrity` attribute + Multiple bad headers (previous += sha-256): blocked. assert_unreached: Script should not execute. Reached unreachable code
+PASS Matching `integrity` attribute + Good sha-512 header: loads.
+PASS Matching `integrity` attribute + Repeated sha-512 header: loads.
+PASS Matching `integrity` attribute + Multiple good headers (previous += sha-512): loads.
+FAIL Matching `integrity` attribute + Bad sha-512 header: blocked. assert_unreached: Script should not execute. Reached unreachable code
+FAIL Matching `integrity` attribute + Repeated sha-512 header: blocked. assert_unreached: Script should not execute. Reached unreachable code
+FAIL Matching `integrity` attribute + Multiple bad headers (previous += sha-512): blocked. assert_unreached: Script should not execute. Reached unreachable code
+FAIL Matching `integrity` attribute + Mixed good and bad headers: blocked. assert_unreached: Script should not execute. Reached unreachable code
+

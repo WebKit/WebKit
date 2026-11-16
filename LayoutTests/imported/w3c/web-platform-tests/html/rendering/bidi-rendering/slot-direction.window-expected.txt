@@ -1,0 +1,8 @@
+
+PASS <slot> element sets CSS direction property: <slot> inherits direction from parent
+PASS <slot> element sets CSS direction property: <slot> inherits CSS direction from parent
+PASS <slot> element sets CSS direction property: <slot dir=ltr>
+PASS <slot> element sets CSS direction property: <slot dir=rtl>
+PASS <slot> element sets CSS direction property: <slot dir=auto> resolving to LTR
+PASS <slot> element sets CSS direction property: <slot dir=auto> resolving to RTL
+

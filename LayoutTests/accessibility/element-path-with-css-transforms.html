@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+/* Minimal repro: elements share the same static position (top:50%, left:50%)
+   and are distinguished only by CSS transforms. Without using transforms in the
+   path origin computation (localToAbsolute), all elements get identical
+   accessibility paths pinned to the untransformed center. */
+.container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+}
+.item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    margin: -40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Three items at 120-degree intervals around a circle. */
+#item1 { transform: rotate(0deg) translateX(-120px) rotate(0deg); }
+#item2 { transform: rotate(120deg) translateX(-120px) rotate(-120deg); }
+#item3 { transform: rotate(240deg) translateX(-120px) rotate(-240deg); }
+</style>
+</head>
+<body>
+
+<div id="content">
+<div class="container">
+    <div class="item" id="item1" role="button">A</div>
+    <div class="item" id="item2" role="button">B</div>
+    <div class="item" id="item3" role="button">C</div>
+</div>
+</div>
+
+<script>
+var output = "This test verifies that accessibility paths for border-radius elements with CSS transforms are correctly positioned. The three items share the same static position and are placed in a circle purely via CSS transforms. Their path bounds must reflect the transformed positions, not the shared untransformed origin.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    (async () => {
+        // Wait for paths to be cached (they require a paint).
+        await waitUntilIDHasPathWith("item1", 1, "Curve to");
+
+        output += "--- All items should have curve paths (border-radius: 50%) ---\n";
+        output += expect("pathSegmentCountOfID('item1', 'Curve to') > 0", "true");
+        output += expect("pathSegmentCountOfID('item2', 'Curve to') > 0", "true");
+        output += expect("pathSegmentCountOfID('item3', 'Curve to') > 0", "true");
+
+        window.bounds1 = pathAsBoundsOfID("item1");
+        window.bounds2 = pathAsBoundsOfID("item2");
+        window.bounds3 = pathAsBoundsOfID("item3");
+
+        // All items are 80x80 circles, so their path sizes should be similar.
+        // But their origins must differ because they're at different transformed
+        // positions. Before the fix, all three had identical path bounds.
+        output += "\n--- Path bounds should have similar sizes (all are 80x80 circles) ---\n";
+        output += expect("Math.abs(bounds1.width - bounds2.width) < 2", "true");
+        output += expect("Math.abs(bounds1.height - bounds2.height) < 2", "true");
+
+        output += "\n--- Path bounds must have different positions (CSS transforms applied) ---\n";
+        // Item1 is translated straight up, item2 is at 120deg, item3 is at 240deg.
+        // No two should share the same (x, y) origin.
+        window.tolerance = 5;
+        output += expect("Math.abs(bounds1.x - bounds2.x) > tolerance || Math.abs(bounds1.y - bounds2.y) > tolerance", "true");
+        output += expect("Math.abs(bounds1.x - bounds3.x) > tolerance || Math.abs(bounds1.y - bounds3.y) > tolerance", "true");
+        output += expect("Math.abs(bounds2.x - bounds3.x) > tolerance || Math.abs(bounds2.y - bounds3.y) > tolerance", "true");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>

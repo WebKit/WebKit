@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content1" role="group">
+    <abbr title="World Wide Web">WWW</abbr>
+</div>
+
+<div id="content2" role="group">
+<acronym title="WebKit2">WK2</acronym>
+</div>
+
+<table border=1>
+<tr><th id="cell" abbr="Test">Longer Test</th></tr>
+<tr><td>test</td></tr>
+</table>
+
+<script>
+var output = "This tests that 'alternate text' for certain tags works correctly, including abbr tag, acronym tag and abbr attribute.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var content = accessibilityController.accessibleElementById("content1");
+    var abbr = content.childAtIndex(0);
+    output += expect("abbr.stringAttributeValue('AXExpandedTextValue')", "'World Wide Web'");
+    var markerRange = content.textMarkerRangeForElement(content);
+    output += expect("content.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange)", "true");
+
+    content = accessibilityController.accessibleElementById("content2");
+    var acronym = content.childAtIndex(0);
+    output += expect("acronym.stringAttributeValue('AXExpandedTextValue')", "'WebKit2'");
+    markerRange = content.textMarkerRangeForElement(content);
+    output += expect("content.attributedStringForTextMarkerRangeContainsAttribute('AXExpandedTextValue', markerRange)", "true");
+
+    var headerCell = accessibilityController.accessibleElementById("cell");
+    output += expect("headerCell.stringAttributeValue('AXExpandedTextValue')", "'Test'");
+
+    document.getElementById("cell").setAttribute("abbr", "foo");
+    setTimeout(async function() {
+        output += await expectAsync("headerCell.stringAttributeValue('AXExpandedTextValue')", "'foo'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

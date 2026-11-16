@@ -1,0 +1,5 @@
+
+Scheduled navigation with delay 0
+Cleared scheduled navigation
+Started loading
+

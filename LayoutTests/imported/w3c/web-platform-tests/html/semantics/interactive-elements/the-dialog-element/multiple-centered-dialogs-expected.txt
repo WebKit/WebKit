@@ -1,0 +1,3 @@
+
+PASS Test that multiple dialogs are centered properly.
+

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+
+<h1 id="heading1">Hello world</h1>
+<h1 id="heading2"></h1>
+<h1 id="heading3" aria-label="Good morning"></h1>
+
+<script>
+var output = "This tests that empty headings aren't exposed when appropriate.\n\n";
+
+var heading1, heading1Text, heading2, heading3;
+if (window.accessibilityController) {
+    heading1 = accessibilityController.accessibleElementById("heading1");
+    heading1Text = heading1.childAtIndex(0);
+    heading2 = accessibilityController.accessibleElementById("heading2");
+    heading3 = accessibilityController.accessibleElementById("heading3");
+    
+    output += expect("heading1.isIgnored", "true");
+    output += expect("heading1Text.isIgnored", "false");
+    output += expect("heading2.isIgnored", "true");
+    output += expect("heading3.isIgnored", "false");
+    
+    debug(output);
+}
+</script>
+
+</body>
+</html>
+

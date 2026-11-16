@@ -1,0 +1,14 @@
+
+PASS Same-host images are strictly same-site
+PASS Subdomain images are strictly same-site
+PASS Cross-site images are cross-site
+PASS Same-host redirecting to same-host images are strictly same-site
+PASS Subdomain redirecting to same-host images are strictly same-site
+PASS Cross-site redirecting to same-host images are cross-site
+PASS Same-host redirecting to subdomain images are strictly same-site
+PASS Subdomain redirecting to subdomain images are strictly same-site
+PASS Cross-site redirecting to subdomain images are cross-site
+PASS Same-host redirecting to cross-site images are cross-site
+PASS Subdomain redirecting to cross-site images are cross-site
+PASS Cross-site redirecting to cross-site images are cross-site
+

@@ -1,0 +1,20 @@
+<style>
+.columns {
+  height: 60px;
+  width: 300px;
+  column-width: 300px;
+  widows: 2;
+  orphans: 1;
+  font-family: Monospace;
+  font-size: 15px;
+}
+
+</style>
+<div class=columns>
+  <div>
+    first div first line (not red).
+  </div>
+  <div class=child>
+    <span style="color: red">second div first line (red).</span><br>PASS if this line is NOT red when it appears in the second column.
+  </div>
+</div>

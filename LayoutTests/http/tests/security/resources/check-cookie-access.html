@@ -1,0 +1,43 @@
+<script>
+    function expectedCookiesForMethod(method) {
+        if (method == "javascript")
+            return 'origin=' + window.origin; // Only the cookie set by this page: the one set by the opened window must not be stored.
+        if (method == "websocket")
+            return ''; // The echo-cookie WebSocket handler echoes an empty Cookie header.
+        return 'Cookies are:\n'; // The response of echo-cookies.py when no cookies are sent.
+    }
+    async function payload(method, blockthirdpartycookies) {
+        if (blockthirdpartycookies) {
+            await new Promise((resolve, reject) => { if (window.testRunner) { testRunner.setStatisticsShouldBlockThirdPartyCookies(true, resolve) } else resolve() });
+            return payload(method, false);
+        }
+        if (method == "fetch")
+            return 'fetch("http://127.0.0.1:8000/cookies/resources/echo-cookies.py", { credentials: "include" }).then((data)=>{data.text().then((text)=>{echoedCookie(text)})})';
+        if (method == "redirect")
+            return 'fetch("http://127.0.0.1:8000/resources/redirect.py?allowCrossOrigin=1&url=http://127.0.0.1:8000/cookies/resources/echo-cookies.py", { credentials: "include" }).then((data)=>{data.text().then((text)=>{echoedCookie(text)})})';
+        if (method == "websocket")
+            return 'var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo-cookie");ws.onmessage = (e)=>{ echoedCookie(e.data) }'
+        if (method == "syncxhr")
+            return 'const r = new XMLHttpRequest(); r.open("GET", "http://127.0.0.1:8000/cookies/resources/echo-cookies.py", false); r.withCredentials = true; r.send(null); echoedCookie(r.responseText)'
+        if (method == "javascript")
+            return 'echoedCookie(document.cookie)'
+    }
+    async function tryUsingCookies() {
+        document.cookie = 'origin=' + window.origin + ';path=/';
+        w = window.open('about:blank');
+        w.opener = null;
+        let params = new URLSearchParams(window.location.search);
+        w.location.href = 'javascript:' + JSON.stringify('<script> const expectedOrigin = ' + JSON.stringify(window.origin) + '; '
+            + 'const expectedCookies = ' + JSON.stringify(expectedCookiesForMethod(params.get('method'))) + '; '
+            + 'function echoedCookie(c) { '
+            + 'if (window.origin !== expectedOrigin) alert("FAIL: expected origin " + expectedOrigin + " but got " + window.origin); '
+            + 'else if (c !== expectedCookies) alert("FAIL: expected cookies " + JSON.stringify(expectedCookies) + " but got " + JSON.stringify(c)); '
+            + 'else alert("PASS"); '
+            + 'testRunner.notifyDone() } '
+            + 'document.cookie = "shouldalso=notbeused;path=/"; '
+            + await payload(params.get('method'), params.get('blockthirdpartycookies') == 'true') + '<' + '/script>');
+    }
+    if (window.internals)
+        internals.withUserGesture(tryUsingCookies)
+</script>
+<button onclick='tryUsingCookies()'>click to run test outside of WebKitTestRunner</button>

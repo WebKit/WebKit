@@ -1,0 +1,5 @@
+
+PASS e.style['hyphenate-limit-lines'] = "no-limit" should set the property value
+PASS e.style['hyphenate-limit-lines'] = "0" should set the property value
+PASS e.style['hyphenate-limit-lines'] = "4" should set the property value
+

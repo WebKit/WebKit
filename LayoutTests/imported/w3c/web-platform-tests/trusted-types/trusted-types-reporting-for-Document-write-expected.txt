@@ -1,0 +1,6 @@
+
+PASS No violation reported for write() with TrustedHTML arguments.
+PASS Violation report for plain string for write() with at least one plain string argument.
+PASS No violation reported for writeln() with TrustedHTML arguments.
+PASS Violation report for plain string for writeln() with at least one plain string argument.
+

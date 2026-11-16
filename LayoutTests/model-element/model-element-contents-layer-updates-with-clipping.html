@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<body>
+<model id="model" style="border-radius: 5px">
+    <source>
+</model>
+<pre id="layers"></pre>
+<script>
+    internals.disableModelLoadDelaysForTesting();
+
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
+
+    const layers = document.getElementById("layers");
+    const source = document.querySelector("source");
+    const model = document.getElementById("model");
+
+    source.src = "resources/heart.usdz";
+
+    model.ready.then((resolve) => {
+        layers.textContent = "Before Changing Source:\n";
+        layers.textContent += window.internals?.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_MODELS) ?? "This test requires testRunner.";
+
+        source.src = "resources/cube.usdz";
+
+        model.ready.then((resolve) => {
+            layers.textContent += "After Changing Source:\n";
+            layers.textContent += window.internals?.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_MODELS) ?? "This test requires testRunner.";
+            window.testRunner?.notifyDone();
+        }, (reason) => {
+            layers.textContent = "Failed. Second model did not load: " + reason;
+            window.testRunner?.notifyDone();
+        });
+    }, (reason) => {
+        layers.textContent = "Failed. First model did not load: " + reason;
+        window.testRunner?.notifyDone();
+    });
+</script>
+</body>
+</html>

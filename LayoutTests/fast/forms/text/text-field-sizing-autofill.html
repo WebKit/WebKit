@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<style>
+input {
+  border: none;
+  padding: 0px;
+  field-sizing: content;
+}
+.fixed {
+    field-sizing: fixed;
+}
+input::-webkit-search-cancel-button {
+  display: none;
+}
+input::-webkit-inner-spin-button {
+  display: none;
+}
+</style>
+<input id="text">
+<input id="search" type="search">
+<input id="number" type="number">
+<input id="fixed" class="fixed">
+<script>
+const fixedWidth = getComputedStyle(fixed).width;
+
+test(() => {
+  assert_equals(getComputedStyle(text).fieldSizing, 'content');
+  internals.setAutofilled(text, true);
+  assert_equals(getComputedStyle(text).fieldSizing, 'fixed');
+  assert_equals(getComputedStyle(text).width, fixedWidth);
+}, 'An autofilled text input should have fixed field sizing');
+test(() => {
+  assert_equals(getComputedStyle(search).fieldSizing, 'content');
+  internals.setAutofilled(search, true);
+  assert_equals(getComputedStyle(search).fieldSizing, 'fixed');
+  assert_equals(getComputedStyle(search).width, fixedWidth);
+}, 'An autofilled search input should have fixed field sizing');
+test(() => {
+  assert_equals(getComputedStyle(number).fieldSizing, 'content');
+  internals.setAutofilled(number, true);
+  assert_equals(getComputedStyle(number).fieldSizing, 'fixed');
+  assert_equals(getComputedStyle(number).width, fixedWidth);
+}, 'An autofilled number input should have fixed field sizing');
+</script>

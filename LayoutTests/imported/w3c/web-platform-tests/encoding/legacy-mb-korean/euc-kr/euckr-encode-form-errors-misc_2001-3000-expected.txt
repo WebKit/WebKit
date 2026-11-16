@@ -1,0 +1,1002 @@
+
+PASS enclosed chars and boxes U+255B ╛ %26%239563%3B
+PASS enclosed chars and boxes U+255C ╜ %26%239564%3B
+PASS enclosed chars and boxes U+255D ╝ %26%239565%3B
+PASS enclosed chars and boxes U+255E ╞ %26%239566%3B
+PASS enclosed chars and boxes U+255F ╟ %26%239567%3B
+PASS enclosed chars and boxes U+2560 ╠ %26%239568%3B
+PASS enclosed chars and boxes U+2561 ╡ %26%239569%3B
+PASS enclosed chars and boxes U+2562 ╢ %26%239570%3B
+PASS enclosed chars and boxes U+2563 ╣ %26%239571%3B
+PASS enclosed chars and boxes U+2564 ╤ %26%239572%3B
+PASS enclosed chars and boxes U+2565 ╥ %26%239573%3B
+PASS enclosed chars and boxes U+2566 ╦ %26%239574%3B
+PASS enclosed chars and boxes U+2567 ╧ %26%239575%3B
+PASS enclosed chars and boxes U+2568 ╨ %26%239576%3B
+PASS enclosed chars and boxes U+2569 ╩ %26%239577%3B
+PASS enclosed chars and boxes U+256A ╪ %26%239578%3B
+PASS enclosed chars and boxes U+256B ╫ %26%239579%3B
+PASS enclosed chars and boxes U+256C ╬ %26%239580%3B
+PASS enclosed chars and boxes U+256D ╭ %26%239581%3B
+PASS enclosed chars and boxes U+256E ╮ %26%239582%3B
+PASS enclosed chars and boxes U+256F ╯ %26%239583%3B
+PASS enclosed chars and boxes U+2570 ╰ %26%239584%3B
+PASS enclosed chars and boxes U+2571 ╱ %26%239585%3B
+PASS enclosed chars and boxes U+2572 ╲ %26%239586%3B
+PASS enclosed chars and boxes U+2573 ╳ %26%239587%3B
+PASS enclosed chars and boxes U+2574 ╴ %26%239588%3B
+PASS enclosed chars and boxes U+2575 ╵ %26%239589%3B
+PASS enclosed chars and boxes U+2576 ╶ %26%239590%3B
+PASS enclosed chars and boxes U+2577 ╷ %26%239591%3B
+PASS enclosed chars and boxes U+2578 ╸ %26%239592%3B
+PASS enclosed chars and boxes U+2579 ╹ %26%239593%3B
+PASS enclosed chars and boxes U+257A ╺ %26%239594%3B
+PASS enclosed chars and boxes U+257B ╻ %26%239595%3B
+PASS enclosed chars and boxes U+257C ╼ %26%239596%3B
+PASS enclosed chars and boxes U+257D ╽ %26%239597%3B
+PASS enclosed chars and boxes U+257E ╾ %26%239598%3B
+PASS enclosed chars and boxes U+257F ╿ %26%239599%3B
+PASS enclosed chars and boxes U+2580 ▀ %26%239600%3B
+PASS enclosed chars and boxes U+2581 ▁ %26%239601%3B
+PASS enclosed chars and boxes U+2582 ▂ %26%239602%3B
+PASS enclosed chars and boxes U+2583 ▃ %26%239603%3B
+PASS enclosed chars and boxes U+2584 ▄ %26%239604%3B
+PASS enclosed chars and boxes U+2585 ▅ %26%239605%3B
+PASS enclosed chars and boxes U+2586 ▆ %26%239606%3B
+PASS enclosed chars and boxes U+2587 ▇ %26%239607%3B
+PASS enclosed chars and boxes U+2588 █ %26%239608%3B
+PASS enclosed chars and boxes U+2589 ▉ %26%239609%3B
+PASS enclosed chars and boxes U+258A ▊ %26%239610%3B
+PASS enclosed chars and boxes U+258B ▋ %26%239611%3B
+PASS enclosed chars and boxes U+258C ▌ %26%239612%3B
+PASS enclosed chars and boxes U+258D ▍ %26%239613%3B
+PASS enclosed chars and boxes U+258E ▎ %26%239614%3B
+PASS enclosed chars and boxes U+258F ▏ %26%239615%3B
+PASS enclosed chars and boxes U+2590 ▐ %26%239616%3B
+PASS enclosed chars and boxes U+2591 ░ %26%239617%3B
+PASS enclosed chars and boxes U+2593 ▓ %26%239619%3B
+PASS enclosed chars and boxes U+2594 ▔ %26%239620%3B
+PASS enclosed chars and boxes U+2595 ▕ %26%239621%3B
+PASS enclosed chars and boxes U+2596 ▖ %26%239622%3B
+PASS enclosed chars and boxes U+2597 ▗ %26%239623%3B
+PASS enclosed chars and boxes U+2598 ▘ %26%239624%3B
+PASS enclosed chars and boxes U+2599 ▙ %26%239625%3B
+PASS enclosed chars and boxes U+259A ▚ %26%239626%3B
+PASS enclosed chars and boxes U+259B ▛ %26%239627%3B
+PASS enclosed chars and boxes U+259C ▜ %26%239628%3B
+PASS enclosed chars and boxes U+259D ▝ %26%239629%3B
+PASS enclosed chars and boxes U+259E ▞ %26%239630%3B
+PASS enclosed chars and boxes U+259F ▟ %26%239631%3B
+PASS enclosed chars and boxes U+25A2 ▢ %26%239634%3B
+PASS enclosed chars and boxes U+25AA ▪ %26%239642%3B
+PASS enclosed chars and boxes U+25AB ▫ %26%239643%3B
+PASS enclosed chars and boxes U+25AC ▬ %26%239644%3B
+PASS enclosed chars and boxes U+25AD ▭ %26%239645%3B
+PASS enclosed chars and boxes U+25AE ▮ %26%239646%3B
+PASS enclosed chars and boxes U+25AF ▯ %26%239647%3B
+PASS enclosed chars and boxes U+25B0 ▰ %26%239648%3B
+PASS enclosed chars and boxes U+25B1 ▱ %26%239649%3B
+PASS enclosed chars and boxes U+25B4 ▴ %26%239652%3B
+PASS enclosed chars and boxes U+25B5 ▵ %26%239653%3B
+PASS enclosed chars and boxes U+25B8 ▸ %26%239656%3B
+PASS enclosed chars and boxes U+25B9 ▹ %26%239657%3B
+PASS enclosed chars and boxes U+25BA ► %26%239658%3B
+PASS enclosed chars and boxes U+25BB ▻ %26%239659%3B
+PASS enclosed chars and boxes U+25BE ▾ %26%239662%3B
+PASS enclosed chars and boxes U+25BF ▿ %26%239663%3B
+PASS enclosed chars and boxes U+25C2 ◂ %26%239666%3B
+PASS enclosed chars and boxes U+25C3 ◃ %26%239667%3B
+PASS enclosed chars and boxes U+25C4 ◄ %26%239668%3B
+PASS enclosed chars and boxes U+25C5 ◅ %26%239669%3B
+PASS enclosed chars and boxes U+25C9 ◉ %26%239673%3B
+PASS enclosed chars and boxes U+25CA ◊ %26%239674%3B
+PASS enclosed chars and boxes U+25CC ◌ %26%239676%3B
+PASS enclosed chars and boxes U+25CD ◍ %26%239677%3B
+PASS enclosed chars and boxes U+25D2 ◒ %26%239682%3B
+PASS enclosed chars and boxes U+25D3 ◓ %26%239683%3B
+PASS enclosed chars and boxes U+25D4 ◔ %26%239684%3B
+PASS enclosed chars and boxes U+25D5 ◕ %26%239685%3B
+PASS enclosed chars and boxes U+25D6 ◖ %26%239686%3B
+PASS enclosed chars and boxes U+25D7 ◗ %26%239687%3B
+PASS enclosed chars and boxes U+25D8 ◘ %26%239688%3B
+PASS enclosed chars and boxes U+25D9 ◙ %26%239689%3B
+PASS enclosed chars and boxes U+25DA ◚ %26%239690%3B
+PASS enclosed chars and boxes U+25DB ◛ %26%239691%3B
+PASS enclosed chars and boxes U+25DC ◜ %26%239692%3B
+PASS enclosed chars and boxes U+25DD ◝ %26%239693%3B
+PASS enclosed chars and boxes U+25DE ◞ %26%239694%3B
+PASS enclosed chars and boxes U+25DF ◟ %26%239695%3B
+PASS enclosed chars and boxes U+25E0 ◠ %26%239696%3B
+PASS enclosed chars and boxes U+25E1 ◡ %26%239697%3B
+PASS enclosed chars and boxes U+25E2 ◢ %26%239698%3B
+PASS enclosed chars and boxes U+25E3 ◣ %26%239699%3B
+PASS enclosed chars and boxes U+25E4 ◤ %26%239700%3B
+PASS enclosed chars and boxes U+25E5 ◥ %26%239701%3B
+PASS enclosed chars and boxes U+25E6 ◦ %26%239702%3B
+PASS enclosed chars and boxes U+25E7 ◧ %26%239703%3B
+PASS enclosed chars and boxes U+25E8 ◨ %26%239704%3B
+PASS enclosed chars and boxes U+25E9 ◩ %26%239705%3B
+PASS enclosed chars and boxes U+25EA ◪ %26%239706%3B
+PASS enclosed chars and boxes U+25EB ◫ %26%239707%3B
+PASS enclosed chars and boxes U+25EC ◬ %26%239708%3B
+PASS enclosed chars and boxes U+25ED ◭ %26%239709%3B
+PASS enclosed chars and boxes U+25EE ◮ %26%239710%3B
+PASS enclosed chars and boxes U+25EF ◯ %26%239711%3B
+PASS enclosed chars and boxes U+25F0 ◰ %26%239712%3B
+PASS enclosed chars and boxes U+25F1 ◱ %26%239713%3B
+PASS enclosed chars and boxes U+25F2 ◲ %26%239714%3B
+PASS enclosed chars and boxes U+25F3 ◳ %26%239715%3B
+PASS enclosed chars and boxes U+25F4 ◴ %26%239716%3B
+PASS enclosed chars and boxes U+25F5 ◵ %26%239717%3B
+PASS enclosed chars and boxes U+25F6 ◶ %26%239718%3B
+PASS enclosed chars and boxes U+25F7 ◷ %26%239719%3B
+PASS enclosed chars and boxes U+25F8 ◸ %26%239720%3B
+PASS enclosed chars and boxes U+25F9 ◹ %26%239721%3B
+PASS enclosed chars and boxes U+25FA ◺ %26%239722%3B
+PASS enclosed chars and boxes U+25FB ◻ %26%239723%3B
+PASS enclosed chars and boxes U+25FC ◼ %26%239724%3B
+PASS enclosed chars and boxes U+25FD ◽ %26%239725%3B
+PASS enclosed chars and boxes U+25FE ◾ %26%239726%3B
+PASS enclosed chars and boxes U+25FF ◿ %26%239727%3B
+PASS enclosed chars and boxes U+2600 ☀ %26%239728%3B
+PASS enclosed chars and boxes U+2601 ☁ %26%239729%3B
+PASS enclosed chars and boxes U+2602 ☂ %26%239730%3B
+PASS enclosed chars and boxes U+2603 ☃ %26%239731%3B
+PASS enclosed chars and boxes U+2604 ☄ %26%239732%3B
+PASS enclosed chars and boxes U+2607 ☇ %26%239735%3B
+PASS enclosed chars and boxes U+2608 ☈ %26%239736%3B
+PASS enclosed chars and boxes U+2609 ☉ %26%239737%3B
+PASS enclosed chars and boxes U+260A ☊ %26%239738%3B
+PASS enclosed chars and boxes U+260B ☋ %26%239739%3B
+PASS enclosed chars and boxes U+260C ☌ %26%239740%3B
+PASS enclosed chars and boxes U+260D ☍ %26%239741%3B
+PASS enclosed chars and boxes U+2610 ☐ %26%239744%3B
+PASS enclosed chars and boxes U+2611 ☑ %26%239745%3B
+PASS enclosed chars and boxes U+2612 ☒ %26%239746%3B
+PASS enclosed chars and boxes U+2613 ☓ %26%239747%3B
+PASS enclosed chars and boxes U+2614 ☔ %26%239748%3B
+PASS enclosed chars and boxes U+2615 ☕ %26%239749%3B
+PASS enclosed chars and boxes U+2616 ☖ %26%239750%3B
+PASS enclosed chars and boxes U+2617 ☗ %26%239751%3B
+PASS enclosed chars and boxes U+2618 ☘ %26%239752%3B
+PASS enclosed chars and boxes U+2619 ☙ %26%239753%3B
+PASS enclosed chars and boxes U+261A ☚ %26%239754%3B
+PASS enclosed chars and boxes U+261B ☛ %26%239755%3B
+PASS enclosed chars and boxes U+261D ☝ %26%239757%3B
+PASS enclosed chars and boxes U+261F ☟ %26%239759%3B
+PASS enclosed chars and boxes U+2620 ☠ %26%239760%3B
+PASS enclosed chars and boxes U+2621 ☡ %26%239761%3B
+PASS enclosed chars and boxes U+2622 ☢ %26%239762%3B
+PASS enclosed chars and boxes U+2623 ☣ %26%239763%3B
+PASS enclosed chars and boxes U+2624 ☤ %26%239764%3B
+PASS enclosed chars and boxes U+2625 ☥ %26%239765%3B
+PASS enclosed chars and boxes U+2626 ☦ %26%239766%3B
+PASS enclosed chars and boxes U+2627 ☧ %26%239767%3B
+PASS enclosed chars and boxes U+2628 ☨ %26%239768%3B
+PASS enclosed chars and boxes U+2629 ☩ %26%239769%3B
+PASS enclosed chars and boxes U+262A ☪ %26%239770%3B
+PASS enclosed chars and boxes U+262B ☫ %26%239771%3B
+PASS enclosed chars and boxes U+262C ☬ %26%239772%3B
+PASS enclosed chars and boxes U+262D ☭ %26%239773%3B
+PASS enclosed chars and boxes U+262E ☮ %26%239774%3B
+PASS enclosed chars and boxes U+262F ☯ %26%239775%3B
+PASS enclosed chars and boxes U+2630 ☰ %26%239776%3B
+PASS enclosed chars and boxes U+2631 ☱ %26%239777%3B
+PASS enclosed chars and boxes U+2632 ☲ %26%239778%3B
+PASS enclosed chars and boxes U+2633 ☳ %26%239779%3B
+PASS enclosed chars and boxes U+2634 ☴ %26%239780%3B
+PASS enclosed chars and boxes U+2635 ☵ %26%239781%3B
+PASS enclosed chars and boxes U+2636 ☶ %26%239782%3B
+PASS enclosed chars and boxes U+2637 ☷ %26%239783%3B
+PASS enclosed chars and boxes U+2638 ☸ %26%239784%3B
+PASS enclosed chars and boxes U+2639 ☹ %26%239785%3B
+PASS enclosed chars and boxes U+263A ☺ %26%239786%3B
+PASS enclosed chars and boxes U+263B ☻ %26%239787%3B
+PASS enclosed chars and boxes U+263C ☼ %26%239788%3B
+PASS enclosed chars and boxes U+263D ☽ %26%239789%3B
+PASS enclosed chars and boxes U+263E ☾ %26%239790%3B
+PASS enclosed chars and boxes U+263F ☿ %26%239791%3B
+PASS enclosed chars and boxes U+2641 ♁ %26%239793%3B
+PASS enclosed chars and boxes U+2643 ♃ %26%239795%3B
+PASS enclosed chars and boxes U+2644 ♄ %26%239796%3B
+PASS enclosed chars and boxes U+2645 ♅ %26%239797%3B
+PASS enclosed chars and boxes U+2646 ♆ %26%239798%3B
+PASS enclosed chars and boxes U+2647 ♇ %26%239799%3B
+PASS enclosed chars and boxes U+2648 ♈ %26%239800%3B
+PASS enclosed chars and boxes U+2649 ♉ %26%239801%3B
+PASS enclosed chars and boxes U+264A ♊ %26%239802%3B
+PASS enclosed chars and boxes U+264B ♋ %26%239803%3B
+PASS enclosed chars and boxes U+264C ♌ %26%239804%3B
+PASS enclosed chars and boxes U+264D ♍ %26%239805%3B
+PASS enclosed chars and boxes U+264E ♎ %26%239806%3B
+PASS enclosed chars and boxes U+264F ♏ %26%239807%3B
+PASS enclosed chars and boxes U+2650 ♐ %26%239808%3B
+PASS enclosed chars and boxes U+2651 ♑ %26%239809%3B
+PASS enclosed chars and boxes U+2652 ♒ %26%239810%3B
+PASS enclosed chars and boxes U+2653 ♓ %26%239811%3B
+PASS enclosed chars and boxes U+2654 ♔ %26%239812%3B
+PASS enclosed chars and boxes U+2655 ♕ %26%239813%3B
+PASS enclosed chars and boxes U+2656 ♖ %26%239814%3B
+PASS enclosed chars and boxes U+2657 ♗ %26%239815%3B
+PASS enclosed chars and boxes U+2658 ♘ %26%239816%3B
+PASS enclosed chars and boxes U+2659 ♙ %26%239817%3B
+PASS enclosed chars and boxes U+265A ♚ %26%239818%3B
+PASS enclosed chars and boxes U+265B ♛ %26%239819%3B
+PASS enclosed chars and boxes U+265C ♜ %26%239820%3B
+PASS enclosed chars and boxes U+265D ♝ %26%239821%3B
+PASS enclosed chars and boxes U+265E ♞ %26%239822%3B
+PASS enclosed chars and boxes U+265F ♟ %26%239823%3B
+PASS enclosed chars and boxes U+2662 ♢ %26%239826%3B
+PASS enclosed chars and boxes U+2666 ♦ %26%239830%3B
+PASS enclosed chars and boxes U+266B ♫ %26%239835%3B
+PASS enclosed chars and boxes U+266E ♮ %26%239838%3B
+PASS enclosed chars and boxes U+266F ♯ %26%239839%3B
+PASS enclosed chars and boxes U+2670 ♰ %26%239840%3B
+PASS enclosed chars and boxes U+2671 ♱ %26%239841%3B
+PASS enclosed chars and boxes U+2672 ♲ %26%239842%3B
+PASS enclosed chars and boxes U+2673 ♳ %26%239843%3B
+PASS enclosed chars and boxes U+2674 ♴ %26%239844%3B
+PASS enclosed chars and boxes U+2675 ♵ %26%239845%3B
+PASS enclosed chars and boxes U+2676 ♶ %26%239846%3B
+PASS enclosed chars and boxes U+2677 ♷ %26%239847%3B
+PASS enclosed chars and boxes U+2678 ♸ %26%239848%3B
+PASS enclosed chars and boxes U+2679 ♹ %26%239849%3B
+PASS enclosed chars and boxes U+267A ♺ %26%239850%3B
+PASS enclosed chars and boxes U+267B ♻ %26%239851%3B
+PASS enclosed chars and boxes U+267C ♼ %26%239852%3B
+PASS enclosed chars and boxes U+267D ♽ %26%239853%3B
+PASS enclosed chars and boxes U+267E ♾ %26%239854%3B
+PASS enclosed chars and boxes U+267F ♿ %26%239855%3B
+PASS enclosed chars and boxes U+2680 ⚀ %26%239856%3B
+PASS enclosed chars and boxes U+2681 ⚁ %26%239857%3B
+PASS enclosed chars and boxes U+2682 ⚂ %26%239858%3B
+PASS enclosed chars and boxes U+2683 ⚃ %26%239859%3B
+PASS enclosed chars and boxes U+2684 ⚄ %26%239860%3B
+PASS enclosed chars and boxes U+2685 ⚅ %26%239861%3B
+PASS enclosed chars and boxes U+2686 ⚆ %26%239862%3B
+PASS enclosed chars and boxes U+2687 ⚇ %26%239863%3B
+PASS enclosed chars and boxes U+2688 ⚈ %26%239864%3B
+PASS enclosed chars and boxes U+2689 ⚉ %26%239865%3B
+PASS enclosed chars and boxes U+268A ⚊ %26%239866%3B
+PASS enclosed chars and boxes U+268B ⚋ %26%239867%3B
+PASS enclosed chars and boxes U+268C ⚌ %26%239868%3B
+PASS enclosed chars and boxes U+268D ⚍ %26%239869%3B
+PASS enclosed chars and boxes U+268E ⚎ %26%239870%3B
+PASS enclosed chars and boxes U+268F ⚏ %26%239871%3B
+PASS enclosed chars and boxes U+2690 ⚐ %26%239872%3B
+PASS enclosed chars and boxes U+2691 ⚑ %26%239873%3B
+PASS enclosed chars and boxes U+2692 ⚒ %26%239874%3B
+PASS enclosed chars and boxes U+2693 ⚓ %26%239875%3B
+PASS enclosed chars and boxes U+2694 ⚔ %26%239876%3B
+PASS enclosed chars and boxes U+2695 ⚕ %26%239877%3B
+PASS enclosed chars and boxes U+2696 ⚖ %26%239878%3B
+PASS enclosed chars and boxes U+2697 ⚗ %26%239879%3B
+PASS enclosed chars and boxes U+2698 ⚘ %26%239880%3B
+PASS enclosed chars and boxes U+2699 ⚙ %26%239881%3B
+PASS enclosed chars and boxes U+269A ⚚ %26%239882%3B
+PASS enclosed chars and boxes U+269B ⚛ %26%239883%3B
+PASS enclosed chars and boxes U+269C ⚜ %26%239884%3B
+PASS enclosed chars and boxes U+269D ⚝ %26%239885%3B
+PASS enclosed chars and boxes U+269E ⚞ %26%239886%3B
+PASS enclosed chars and boxes U+269F ⚟ %26%239887%3B
+PASS enclosed chars and boxes U+26A0 ⚠ %26%239888%3B
+PASS enclosed chars and boxes U+26A1 ⚡ %26%239889%3B
+PASS enclosed chars and boxes U+26A2 ⚢ %26%239890%3B
+PASS enclosed chars and boxes U+26A3 ⚣ %26%239891%3B
+PASS enclosed chars and boxes U+26A4 ⚤ %26%239892%3B
+PASS enclosed chars and boxes U+26A5 ⚥ %26%239893%3B
+PASS enclosed chars and boxes U+26A6 ⚦ %26%239894%3B
+PASS enclosed chars and boxes U+26A7 ⚧ %26%239895%3B
+PASS enclosed chars and boxes U+26A8 ⚨ %26%239896%3B
+PASS enclosed chars and boxes U+26A9 ⚩ %26%239897%3B
+PASS enclosed chars and boxes U+26AA ⚪ %26%239898%3B
+PASS enclosed chars and boxes U+26AB ⚫ %26%239899%3B
+PASS enclosed chars and boxes U+26AC ⚬ %26%239900%3B
+PASS enclosed chars and boxes U+26AD ⚭ %26%239901%3B
+PASS enclosed chars and boxes U+26AE ⚮ %26%239902%3B
+PASS enclosed chars and boxes U+26AF ⚯ %26%239903%3B
+PASS enclosed chars and boxes U+26B0 ⚰ %26%239904%3B
+PASS enclosed chars and boxes U+26B1 ⚱ %26%239905%3B
+PASS enclosed chars and boxes U+26B2 ⚲ %26%239906%3B
+PASS enclosed chars and boxes U+26B3 ⚳ %26%239907%3B
+PASS enclosed chars and boxes U+26B4 ⚴ %26%239908%3B
+PASS enclosed chars and boxes U+26B5 ⚵ %26%239909%3B
+PASS enclosed chars and boxes U+26B6 ⚶ %26%239910%3B
+PASS enclosed chars and boxes U+26B7 ⚷ %26%239911%3B
+PASS enclosed chars and boxes U+26B8 ⚸ %26%239912%3B
+PASS enclosed chars and boxes U+26B9 ⚹ %26%239913%3B
+PASS enclosed chars and boxes U+26BA ⚺ %26%239914%3B
+PASS enclosed chars and boxes U+26BB ⚻ %26%239915%3B
+PASS enclosed chars and boxes U+26BC ⚼ %26%239916%3B
+PASS enclosed chars and boxes U+26BD ⚽ %26%239917%3B
+PASS enclosed chars and boxes U+26BE ⚾ %26%239918%3B
+PASS enclosed chars and boxes U+26BF ⚿ %26%239919%3B
+PASS enclosed chars and boxes U+26C0 ⛀ %26%239920%3B
+PASS enclosed chars and boxes U+26C1 ⛁ %26%239921%3B
+PASS enclosed chars and boxes U+26C2 ⛂ %26%239922%3B
+PASS enclosed chars and boxes U+26C3 ⛃ %26%239923%3B
+PASS enclosed chars and boxes U+26C4 ⛄ %26%239924%3B
+PASS enclosed chars and boxes U+26C5 ⛅ %26%239925%3B
+PASS enclosed chars and boxes U+26C6 ⛆ %26%239926%3B
+PASS enclosed chars and boxes U+26C7 ⛇ %26%239927%3B
+PASS enclosed chars and boxes U+26C8 ⛈ %26%239928%3B
+PASS enclosed chars and boxes U+26C9 ⛉ %26%239929%3B
+PASS enclosed chars and boxes U+26CA ⛊ %26%239930%3B
+PASS enclosed chars and boxes U+26CB ⛋ %26%239931%3B
+PASS enclosed chars and boxes U+26CC ⛌ %26%239932%3B
+PASS enclosed chars and boxes U+26CD ⛍ %26%239933%3B
+PASS enclosed chars and boxes U+26CE ⛎ %26%239934%3B
+PASS enclosed chars and boxes U+26CF ⛏ %26%239935%3B
+PASS enclosed chars and boxes U+26D0 ⛐ %26%239936%3B
+PASS enclosed chars and boxes U+26D1 ⛑ %26%239937%3B
+PASS enclosed chars and boxes U+26D2 ⛒ %26%239938%3B
+PASS enclosed chars and boxes U+26D3 ⛓ %26%239939%3B
+PASS enclosed chars and boxes U+26D4 ⛔ %26%239940%3B
+PASS enclosed chars and boxes U+26D5 ⛕ %26%239941%3B
+PASS enclosed chars and boxes U+26D6 ⛖ %26%239942%3B
+PASS enclosed chars and boxes U+26D7 ⛗ %26%239943%3B
+PASS enclosed chars and boxes U+26D8 ⛘ %26%239944%3B
+PASS enclosed chars and boxes U+26D9 ⛙ %26%239945%3B
+PASS enclosed chars and boxes U+26DA ⛚ %26%239946%3B
+PASS enclosed chars and boxes U+26DB ⛛ %26%239947%3B
+PASS enclosed chars and boxes U+26DC ⛜ %26%239948%3B
+PASS enclosed chars and boxes U+26DD ⛝ %26%239949%3B
+PASS enclosed chars and boxes U+26DE ⛞ %26%239950%3B
+PASS enclosed chars and boxes U+26DF ⛟ %26%239951%3B
+PASS enclosed chars and boxes U+26E0 ⛠ %26%239952%3B
+PASS enclosed chars and boxes U+26E1 ⛡ %26%239953%3B
+PASS enclosed chars and boxes U+26E2 ⛢ %26%239954%3B
+PASS enclosed chars and boxes U+26E3 ⛣ %26%239955%3B
+PASS enclosed chars and boxes U+26E4 ⛤ %26%239956%3B
+PASS enclosed chars and boxes U+26E5 ⛥ %26%239957%3B
+PASS enclosed chars and boxes U+26E6 ⛦ %26%239958%3B
+PASS enclosed chars and boxes U+26E7 ⛧ %26%239959%3B
+PASS enclosed chars and boxes U+26E8 ⛨ %26%239960%3B
+PASS enclosed chars and boxes U+26E9 ⛩ %26%239961%3B
+PASS enclosed chars and boxes U+26EA ⛪ %26%239962%3B
+PASS enclosed chars and boxes U+26EB ⛫ %26%239963%3B
+PASS enclosed chars and boxes U+26EC ⛬ %26%239964%3B
+PASS enclosed chars and boxes U+26ED ⛭ %26%239965%3B
+PASS enclosed chars and boxes U+26EE ⛮ %26%239966%3B
+PASS enclosed chars and boxes U+26EF ⛯ %26%239967%3B
+PASS enclosed chars and boxes U+26F0 ⛰ %26%239968%3B
+PASS enclosed chars and boxes U+26F1 ⛱ %26%239969%3B
+PASS enclosed chars and boxes U+26F2 ⛲ %26%239970%3B
+PASS enclosed chars and boxes U+26F3 ⛳ %26%239971%3B
+PASS enclosed chars and boxes U+26F4 ⛴ %26%239972%3B
+PASS enclosed chars and boxes U+26F5 ⛵ %26%239973%3B
+PASS enclosed chars and boxes U+26F6 ⛶ %26%239974%3B
+PASS enclosed chars and boxes U+26F7 ⛷ %26%239975%3B
+PASS enclosed chars and boxes U+26F8 ⛸ %26%239976%3B
+PASS enclosed chars and boxes U+26F9 ⛹ %26%239977%3B
+PASS enclosed chars and boxes U+26FA ⛺ %26%239978%3B
+PASS enclosed chars and boxes U+26FB ⛻ %26%239979%3B
+PASS enclosed chars and boxes U+26FC ⛼ %26%239980%3B
+PASS enclosed chars and boxes U+26FD ⛽ %26%239981%3B
+PASS enclosed chars and boxes U+26FE ⛾ %26%239982%3B
+PASS various asian U+3004 〄 %26%2312292%3B
+PASS various asian U+3005 々 %26%2312293%3B
+PASS various asian U+3006 〆 %26%2312294%3B
+PASS various asian U+3007 〇 %26%2312295%3B
+PASS various asian U+3012 〒 %26%2312306%3B
+PASS various asian U+3016 〖 %26%2312310%3B
+PASS various asian U+3017 〗 %26%2312311%3B
+PASS various asian U+3018 〘 %26%2312312%3B
+PASS various asian U+3019 〙 %26%2312313%3B
+PASS various asian U+301A 〚 %26%2312314%3B
+PASS various asian U+301B 〛 %26%2312315%3B
+PASS various asian U+301C 〜 %26%2312316%3B
+PASS various asian U+301D 〝 %26%2312317%3B
+PASS various asian U+301E 〞 %26%2312318%3B
+PASS various asian U+301F 〟 %26%2312319%3B
+PASS various asian U+3020 〠 %26%2312320%3B
+PASS various asian U+3021 〡 %26%2312321%3B
+PASS various asian U+3022 〢 %26%2312322%3B
+PASS various asian U+3023 〣 %26%2312323%3B
+PASS various asian U+3024 〤 %26%2312324%3B
+PASS various asian U+3025 〥 %26%2312325%3B
+PASS various asian U+3026 〦 %26%2312326%3B
+PASS various asian U+3027 〧 %26%2312327%3B
+PASS various asian U+3028 〨 %26%2312328%3B
+PASS various asian U+3029 〩 %26%2312329%3B
+PASS various asian U+302A 〪 %26%2312330%3B
+PASS various asian U+302B 〫 %26%2312331%3B
+PASS various asian U+302C 〬 %26%2312332%3B
+PASS various asian U+302D 〭 %26%2312333%3B
+PASS various asian U+302E 〮 %26%2312334%3B
+PASS various asian U+302F 〯 %26%2312335%3B
+PASS various asian U+3030 〰 %26%2312336%3B
+PASS various asian U+3031 〱 %26%2312337%3B
+PASS various asian U+3032 〲 %26%2312338%3B
+PASS various asian U+3033 〳 %26%2312339%3B
+PASS various asian U+3034 〴 %26%2312340%3B
+PASS various asian U+3035 〵 %26%2312341%3B
+PASS various asian U+3036 〶 %26%2312342%3B
+PASS various asian U+3037 〷 %26%2312343%3B
+PASS various asian U+3038 〸 %26%2312344%3B
+PASS various asian U+3039 〹 %26%2312345%3B
+PASS various asian U+303A 〺 %26%2312346%3B
+PASS various asian U+303B 〻 %26%2312347%3B
+PASS various asian U+303C 〼 %26%2312348%3B
+PASS various asian U+303D 〽 %26%2312349%3B
+PASS various asian U+303E 〾 %26%2312350%3B
+PASS various asian U+303F 〿 %26%2312351%3B
+PASS various asian U+3040 ぀ %26%2312352%3B
+PASS various asian U+3094 ゔ %26%2312436%3B
+PASS various asian U+3095 ゕ %26%2312437%3B
+PASS various asian U+3096 ゖ %26%2312438%3B
+PASS various asian U+3097 ゗ %26%2312439%3B
+PASS various asian U+3098 ゘ %26%2312440%3B
+PASS various asian U+3099 ゙ %26%2312441%3B
+PASS various asian U+309A ゚ %26%2312442%3B
+PASS various asian U+309B ゛ %26%2312443%3B
+PASS various asian U+309C ゜ %26%2312444%3B
+PASS various asian U+309D ゝ %26%2312445%3B
+PASS various asian U+309E ゞ %26%2312446%3B
+PASS various asian U+309F ゟ %26%2312447%3B
+PASS various asian U+30A0 ゠ %26%2312448%3B
+PASS various asian U+30F7 ヷ %26%2312535%3B
+PASS various asian U+30F8 ヸ %26%2312536%3B
+PASS various asian U+30F9 ヹ %26%2312537%3B
+PASS various asian U+30FA ヺ %26%2312538%3B
+PASS various asian U+30FB ・ %26%2312539%3B
+PASS various asian U+30FC ー %26%2312540%3B
+PASS various asian U+30FD ヽ %26%2312541%3B
+PASS various asian U+30FE ヾ %26%2312542%3B
+PASS various asian U+30FF ヿ %26%2312543%3B
+PASS various asian U+3100 ㄀ %26%2312544%3B
+PASS various asian U+3101 ㄁ %26%2312545%3B
+PASS various asian U+3102 ㄂ %26%2312546%3B
+PASS various asian U+3103 ㄃ %26%2312547%3B
+PASS various asian U+3104 ㄄ %26%2312548%3B
+PASS various asian U+3105 ㄅ %26%2312549%3B
+PASS various asian U+3106 ㄆ %26%2312550%3B
+PASS various asian U+3107 ㄇ %26%2312551%3B
+PASS various asian U+3108 ㄈ %26%2312552%3B
+PASS various asian U+3109 ㄉ %26%2312553%3B
+PASS various asian U+310A ㄊ %26%2312554%3B
+PASS various asian U+310B ㄋ %26%2312555%3B
+PASS various asian U+310C ㄌ %26%2312556%3B
+PASS various asian U+310D ㄍ %26%2312557%3B
+PASS various asian U+310E ㄎ %26%2312558%3B
+PASS various asian U+310F ㄏ %26%2312559%3B
+PASS various asian U+3110 ㄐ %26%2312560%3B
+PASS various asian U+3111 ㄑ %26%2312561%3B
+PASS various asian U+3112 ㄒ %26%2312562%3B
+PASS various asian U+3113 ㄓ %26%2312563%3B
+PASS various asian U+3114 ㄔ %26%2312564%3B
+PASS various asian U+3115 ㄕ %26%2312565%3B
+PASS various asian U+3116 ㄖ %26%2312566%3B
+PASS various asian U+3117 ㄗ %26%2312567%3B
+PASS various asian U+3118 ㄘ %26%2312568%3B
+PASS various asian U+3119 ㄙ %26%2312569%3B
+PASS various asian U+311A ㄚ %26%2312570%3B
+PASS various asian U+311B ㄛ %26%2312571%3B
+PASS various asian U+311C ㄜ %26%2312572%3B
+PASS various asian U+311D ㄝ %26%2312573%3B
+PASS various asian U+311E ㄞ %26%2312574%3B
+PASS various asian U+311F ㄟ %26%2312575%3B
+PASS various asian U+3120 ㄠ %26%2312576%3B
+PASS various asian U+3121 ㄡ %26%2312577%3B
+PASS various asian U+3122 ㄢ %26%2312578%3B
+PASS various asian U+3123 ㄣ %26%2312579%3B
+PASS various asian U+3124 ㄤ %26%2312580%3B
+PASS various asian U+3125 ㄥ %26%2312581%3B
+PASS various asian U+3126 ㄦ %26%2312582%3B
+PASS various asian U+3127 ㄧ %26%2312583%3B
+PASS various asian U+3128 ㄨ %26%2312584%3B
+PASS various asian U+3129 ㄩ %26%2312585%3B
+PASS various asian U+312A ㄪ %26%2312586%3B
+PASS various asian U+312B ㄫ %26%2312587%3B
+PASS various asian U+312C ㄬ %26%2312588%3B
+PASS various asian U+312D ㄭ %26%2312589%3B
+PASS various asian U+312E ㄮ %26%2312590%3B
+PASS various asian U+312F ㄯ %26%2312591%3B
+PASS various asian U+3130 ㄰ %26%2312592%3B
+PASS various asian U+318F ㆏ %26%2312687%3B
+PASS various asian U+3190 ㆐ %26%2312688%3B
+PASS various asian U+3191 ㆑ %26%2312689%3B
+PASS various asian U+3192 ㆒ %26%2312690%3B
+PASS various asian U+3193 ㆓ %26%2312691%3B
+PASS various asian U+3194 ㆔ %26%2312692%3B
+PASS various asian U+3195 ㆕ %26%2312693%3B
+PASS various asian U+3196 ㆖ %26%2312694%3B
+PASS various asian U+3197 ㆗ %26%2312695%3B
+PASS various asian U+3198 ㆘ %26%2312696%3B
+PASS various asian U+3199 ㆙ %26%2312697%3B
+PASS various asian U+319A ㆚ %26%2312698%3B
+PASS various asian U+319B ㆛ %26%2312699%3B
+PASS various asian U+319C ㆜ %26%2312700%3B
+PASS various asian U+319D ㆝ %26%2312701%3B
+PASS various asian U+319E ㆞ %26%2312702%3B
+PASS various asian U+319F ㆟ %26%2312703%3B
+PASS various asian U+31A0 ㆠ %26%2312704%3B
+PASS various asian U+31A1 ㆡ %26%2312705%3B
+PASS various asian U+31A2 ㆢ %26%2312706%3B
+PASS various asian U+31A3 ㆣ %26%2312707%3B
+PASS various asian U+31A4 ㆤ %26%2312708%3B
+PASS various asian U+31A5 ㆥ %26%2312709%3B
+PASS various asian U+31A6 ㆦ %26%2312710%3B
+PASS various asian U+31A7 ㆧ %26%2312711%3B
+PASS various asian U+31A8 ㆨ %26%2312712%3B
+PASS various asian U+31A9 ㆩ %26%2312713%3B
+PASS various asian U+31AA ㆪ %26%2312714%3B
+PASS various asian U+31AB ㆫ %26%2312715%3B
+PASS various asian U+31AC ㆬ %26%2312716%3B
+PASS various asian U+31AD ㆭ %26%2312717%3B
+PASS various asian U+31AE ㆮ %26%2312718%3B
+PASS various asian U+31AF ㆯ %26%2312719%3B
+PASS various asian U+31B0 ㆰ %26%2312720%3B
+PASS various asian U+31B1 ㆱ %26%2312721%3B
+PASS various asian U+31B2 ㆲ %26%2312722%3B
+PASS various asian U+31B3 ㆳ %26%2312723%3B
+PASS various asian U+31B4 ㆴ %26%2312724%3B
+PASS various asian U+31B5 ㆵ %26%2312725%3B
+PASS various asian U+31B6 ㆶ %26%2312726%3B
+PASS various asian U+31B7 ㆷ %26%2312727%3B
+PASS various asian U+31B8 ㆸ %26%2312728%3B
+PASS various asian U+31B9 ㆹ %26%2312729%3B
+PASS various asian U+31BA ㆺ %26%2312730%3B
+PASS various asian U+31BB ㆻ %26%2312731%3B
+PASS various asian U+31BC ㆼ %26%2312732%3B
+PASS various asian U+31BD ㆽ %26%2312733%3B
+PASS various asian U+31BE ㆾ %26%2312734%3B
+PASS various asian U+31BF ㆿ %26%2312735%3B
+PASS various asian U+31C0 ㇀ %26%2312736%3B
+PASS various asian U+31C1 ㇁ %26%2312737%3B
+PASS various asian U+31C2 ㇂ %26%2312738%3B
+PASS various asian U+31C3 ㇃ %26%2312739%3B
+PASS various asian U+31C4 ㇄ %26%2312740%3B
+PASS various asian U+31C5 ㇅ %26%2312741%3B
+PASS various asian U+31C6 ㇆ %26%2312742%3B
+PASS various asian U+31C7 ㇇ %26%2312743%3B
+PASS various asian U+31C8 ㇈ %26%2312744%3B
+PASS various asian U+31C9 ㇉ %26%2312745%3B
+PASS various asian U+31CA ㇊ %26%2312746%3B
+PASS various asian U+31CB ㇋ %26%2312747%3B
+PASS various asian U+31CC ㇌ %26%2312748%3B
+PASS various asian U+31CD ㇍ %26%2312749%3B
+PASS various asian U+31CE ㇎ %26%2312750%3B
+PASS various asian U+31CF ㇏ %26%2312751%3B
+PASS various asian U+31D0 ㇐ %26%2312752%3B
+PASS various asian U+31D1 ㇑ %26%2312753%3B
+PASS various asian U+31D2 ㇒ %26%2312754%3B
+PASS various asian U+31D3 ㇓ %26%2312755%3B
+PASS various asian U+31D4 ㇔ %26%2312756%3B
+PASS various asian U+31D5 ㇕ %26%2312757%3B
+PASS various asian U+31D6 ㇖ %26%2312758%3B
+PASS various asian U+31D7 ㇗ %26%2312759%3B
+PASS various asian U+31D8 ㇘ %26%2312760%3B
+PASS various asian U+31D9 ㇙ %26%2312761%3B
+PASS various asian U+31DA ㇚ %26%2312762%3B
+PASS various asian U+31DB ㇛ %26%2312763%3B
+PASS various asian U+31DC ㇜ %26%2312764%3B
+PASS various asian U+31DD ㇝ %26%2312765%3B
+PASS various asian U+31DE ㇞ %26%2312766%3B
+PASS various asian U+31DF ㇟ %26%2312767%3B
+PASS various asian U+31E0 ㇠ %26%2312768%3B
+PASS various asian U+31E1 ㇡ %26%2312769%3B
+PASS various asian U+31E2 ㇢ %26%2312770%3B
+PASS various asian U+31E3 ㇣ %26%2312771%3B
+PASS various asian U+31E4 ㇤ %26%2312772%3B
+PASS various asian U+31E5 ㇥ %26%2312773%3B
+PASS various asian U+31E6 ㇦ %26%2312774%3B
+PASS various asian U+31E7 ㇧ %26%2312775%3B
+PASS various asian U+31E8 ㇨ %26%2312776%3B
+PASS various asian U+31E9 ㇩ %26%2312777%3B
+PASS various asian U+31EA ㇪ %26%2312778%3B
+PASS various asian U+31EB ㇫ %26%2312779%3B
+PASS various asian U+31EC ㇬ %26%2312780%3B
+PASS various asian U+31ED ㇭ %26%2312781%3B
+PASS various asian U+31EE ㇮ %26%2312782%3B
+PASS various asian U+31EF ㇯ %26%2312783%3B
+PASS various asian U+31F0 ㇰ %26%2312784%3B
+PASS various asian U+31F1 ㇱ %26%2312785%3B
+PASS various asian U+31F2 ㇲ %26%2312786%3B
+PASS various asian U+31F3 ㇳ %26%2312787%3B
+PASS various asian U+31F4 ㇴ %26%2312788%3B
+PASS various asian U+31F5 ㇵ %26%2312789%3B
+PASS various asian U+31F6 ㇶ %26%2312790%3B
+PASS various asian U+31F7 ㇷ %26%2312791%3B
+PASS various asian U+31F8 ㇸ %26%2312792%3B
+PASS various asian U+31F9 ㇹ %26%2312793%3B
+PASS various asian U+31FA ㇺ %26%2312794%3B
+PASS various asian U+31FB ㇻ %26%2312795%3B
+PASS various asian U+31FC ㇼ %26%2312796%3B
+PASS various asian U+31FD ㇽ %26%2312797%3B
+PASS various asian U+31FE ㇾ %26%2312798%3B
+PASS various asian U+31FF ㇿ %26%2312799%3B
+PASS various asian U+321D ㈝ %26%2312829%3B
+PASS various asian U+321E ㈞ %26%2312830%3B
+PASS various asian U+321F ㈟ %26%2312831%3B
+PASS various asian U+3220 ㈠ %26%2312832%3B
+PASS various asian U+3221 ㈡ %26%2312833%3B
+PASS various asian U+3222 ㈢ %26%2312834%3B
+PASS various asian U+3223 ㈣ %26%2312835%3B
+PASS various asian U+3224 ㈤ %26%2312836%3B
+PASS various asian U+3225 ㈥ %26%2312837%3B
+PASS various asian U+3226 ㈦ %26%2312838%3B
+PASS various asian U+3227 ㈧ %26%2312839%3B
+PASS various asian U+3228 ㈨ %26%2312840%3B
+PASS various asian U+3229 ㈩ %26%2312841%3B
+PASS various asian U+322A ㈪ %26%2312842%3B
+PASS various asian U+322B ㈫ %26%2312843%3B
+PASS various asian U+322C ㈬ %26%2312844%3B
+PASS various asian U+322D ㈭ %26%2312845%3B
+PASS various asian U+322E ㈮ %26%2312846%3B
+PASS various asian U+322F ㈯ %26%2312847%3B
+PASS various asian U+3230 ㈰ %26%2312848%3B
+PASS various asian U+3231 ㈱ %26%2312849%3B
+PASS various asian U+3232 ㈲ %26%2312850%3B
+PASS various asian U+3233 ㈳ %26%2312851%3B
+PASS various asian U+3234 ㈴ %26%2312852%3B
+PASS various asian U+3235 ㈵ %26%2312853%3B
+PASS various asian U+3236 ㈶ %26%2312854%3B
+PASS various asian U+3237 ㈷ %26%2312855%3B
+PASS various asian U+3238 ㈸ %26%2312856%3B
+PASS various asian U+3239 ㈹ %26%2312857%3B
+PASS various asian U+323A ㈺ %26%2312858%3B
+PASS various asian U+323B ㈻ %26%2312859%3B
+PASS various asian U+323C ㈼ %26%2312860%3B
+PASS various asian U+323D ㈽ %26%2312861%3B
+PASS various asian U+323E ㈾ %26%2312862%3B
+PASS various asian U+323F ㈿ %26%2312863%3B
+PASS various asian U+3240 ㉀ %26%2312864%3B
+PASS various asian U+3241 ㉁ %26%2312865%3B
+PASS various asian U+3242 ㉂ %26%2312866%3B
+PASS various asian U+3243 ㉃ %26%2312867%3B
+PASS various asian U+3244 ㉄ %26%2312868%3B
+PASS various asian U+3245 ㉅ %26%2312869%3B
+PASS various asian U+3246 ㉆ %26%2312870%3B
+PASS various asian U+3247 ㉇ %26%2312871%3B
+PASS various asian U+3248 ㉈ %26%2312872%3B
+PASS various asian U+3249 ㉉ %26%2312873%3B
+PASS various asian U+324A ㉊ %26%2312874%3B
+PASS various asian U+324B ㉋ %26%2312875%3B
+PASS various asian U+324C ㉌ %26%2312876%3B
+PASS various asian U+324D ㉍ %26%2312877%3B
+PASS various asian U+324E ㉎ %26%2312878%3B
+PASS various asian U+324F ㉏ %26%2312879%3B
+PASS various asian U+3250 ㉐ %26%2312880%3B
+PASS various asian U+3251 ㉑ %26%2312881%3B
+PASS various asian U+3252 ㉒ %26%2312882%3B
+PASS various asian U+3253 ㉓ %26%2312883%3B
+PASS various asian U+3254 ㉔ %26%2312884%3B
+PASS various asian U+3255 ㉕ %26%2312885%3B
+PASS various asian U+3256 ㉖ %26%2312886%3B
+PASS various asian U+3257 ㉗ %26%2312887%3B
+PASS various asian U+3258 ㉘ %26%2312888%3B
+PASS various asian U+3259 ㉙ %26%2312889%3B
+PASS various asian U+325A ㉚ %26%2312890%3B
+PASS various asian U+325B ㉛ %26%2312891%3B
+PASS various asian U+325C ㉜ %26%2312892%3B
+PASS various asian U+325D ㉝ %26%2312893%3B
+PASS various asian U+325E ㉞ %26%2312894%3B
+PASS various asian U+325F ㉟ %26%2312895%3B
+PASS various asian U+327C ㉼ %26%2312924%3B
+PASS various asian U+327D ㉽ %26%2312925%3B
+PASS various asian U+327E ㉾ %26%2312926%3B
+PASS various asian U+3280 ㊀ %26%2312928%3B
+PASS various asian U+3281 ㊁ %26%2312929%3B
+PASS various asian U+3282 ㊂ %26%2312930%3B
+PASS various asian U+3283 ㊃ %26%2312931%3B
+PASS various asian U+3284 ㊄ %26%2312932%3B
+PASS various asian U+3285 ㊅ %26%2312933%3B
+PASS various asian U+3286 ㊆ %26%2312934%3B
+PASS various asian U+3287 ㊇ %26%2312935%3B
+PASS various asian U+3288 ㊈ %26%2312936%3B
+PASS various asian U+3289 ㊉ %26%2312937%3B
+PASS various asian U+328A ㊊ %26%2312938%3B
+PASS various asian U+328B ㊋ %26%2312939%3B
+PASS various asian U+328C ㊌ %26%2312940%3B
+PASS various asian U+328D ㊍ %26%2312941%3B
+PASS various asian U+328E ㊎ %26%2312942%3B
+PASS various asian U+328F ㊏ %26%2312943%3B
+PASS various asian U+3290 ㊐ %26%2312944%3B
+PASS various asian U+3291 ㊑ %26%2312945%3B
+PASS various asian U+3292 ㊒ %26%2312946%3B
+PASS various asian U+3293 ㊓ %26%2312947%3B
+PASS various asian U+3294 ㊔ %26%2312948%3B
+PASS various asian U+3295 ㊕ %26%2312949%3B
+PASS various asian U+3296 ㊖ %26%2312950%3B
+PASS various asian U+3297 ㊗ %26%2312951%3B
+PASS various asian U+3298 ㊘ %26%2312952%3B
+PASS various asian U+3299 ㊙ %26%2312953%3B
+PASS various asian U+329A ㊚ %26%2312954%3B
+PASS various asian U+329B ㊛ %26%2312955%3B
+PASS various asian U+329C ㊜ %26%2312956%3B
+PASS various asian U+329D ㊝ %26%2312957%3B
+PASS various asian U+329E ㊞ %26%2312958%3B
+PASS various asian U+329F ㊟ %26%2312959%3B
+PASS various asian U+32A0 ㊠ %26%2312960%3B
+PASS various asian U+32A1 ㊡ %26%2312961%3B
+PASS various asian U+32A2 ㊢ %26%2312962%3B
+PASS various asian U+32A3 ㊣ %26%2312963%3B
+PASS various asian U+32A4 ㊤ %26%2312964%3B
+PASS various asian U+32A5 ㊥ %26%2312965%3B
+PASS various asian U+32A6 ㊦ %26%2312966%3B
+PASS various asian U+32A7 ㊧ %26%2312967%3B
+PASS various asian U+32A8 ㊨ %26%2312968%3B
+PASS various asian U+32A9 ㊩ %26%2312969%3B
+PASS various asian U+32AA ㊪ %26%2312970%3B
+PASS various asian U+32AB ㊫ %26%2312971%3B
+PASS various asian U+32AC ㊬ %26%2312972%3B
+PASS various asian U+32AD ㊭ %26%2312973%3B
+PASS various asian U+32AE ㊮ %26%2312974%3B
+PASS various asian U+32AF ㊯ %26%2312975%3B
+PASS various asian U+32B0 ㊰ %26%2312976%3B
+PASS various asian U+32B1 ㊱ %26%2312977%3B
+PASS various asian U+32B2 ㊲ %26%2312978%3B
+PASS various asian U+32B3 ㊳ %26%2312979%3B
+PASS various asian U+32B4 ㊴ %26%2312980%3B
+PASS various asian U+32B5 ㊵ %26%2312981%3B
+PASS various asian U+32B6 ㊶ %26%2312982%3B
+PASS various asian U+32B7 ㊷ %26%2312983%3B
+PASS various asian U+32B8 ㊸ %26%2312984%3B
+PASS various asian U+32B9 ㊹ %26%2312985%3B
+PASS various asian U+32BA ㊺ %26%2312986%3B
+PASS various asian U+32BB ㊻ %26%2312987%3B
+PASS various asian U+32BC ㊼ %26%2312988%3B
+PASS various asian U+32BD ㊽ %26%2312989%3B
+PASS various asian U+32BE ㊾ %26%2312990%3B
+PASS various asian U+32BF ㊿ %26%2312991%3B
+PASS various asian U+32C0 ㋀ %26%2312992%3B
+PASS various asian U+32C1 ㋁ %26%2312993%3B
+PASS various asian U+32C2 ㋂ %26%2312994%3B
+PASS various asian U+32C3 ㋃ %26%2312995%3B
+PASS various asian U+32C4 ㋄ %26%2312996%3B
+PASS various asian U+32C5 ㋅ %26%2312997%3B
+PASS various asian U+32C6 ㋆ %26%2312998%3B
+PASS various asian U+32C7 ㋇ %26%2312999%3B
+PASS various asian U+32C8 ㋈ %26%2313000%3B
+PASS various asian U+32C9 ㋉ %26%2313001%3B
+PASS various asian U+32CA ㋊ %26%2313002%3B
+PASS various asian U+32CB ㋋ %26%2313003%3B
+PASS various asian U+32CC ㋌ %26%2313004%3B
+PASS various asian U+32CD ㋍ %26%2313005%3B
+PASS various asian U+32CE ㋎ %26%2313006%3B
+PASS various asian U+32CF ㋏ %26%2313007%3B
+PASS various asian U+32D0 ㋐ %26%2313008%3B
+PASS various asian U+32D1 ㋑ %26%2313009%3B
+PASS various asian U+32D2 ㋒ %26%2313010%3B
+PASS various asian U+32D3 ㋓ %26%2313011%3B
+PASS various asian U+32D4 ㋔ %26%2313012%3B
+PASS various asian U+32D5 ㋕ %26%2313013%3B
+PASS various asian U+32D6 ㋖ %26%2313014%3B
+PASS various asian U+32D7 ㋗ %26%2313015%3B
+PASS various asian U+32D8 ㋘ %26%2313016%3B
+PASS various asian U+32D9 ㋙ %26%2313017%3B
+PASS various asian U+32DA ㋚ %26%2313018%3B
+PASS various asian U+32DB ㋛ %26%2313019%3B
+PASS various asian U+32DC ㋜ %26%2313020%3B
+PASS various asian U+32DD ㋝ %26%2313021%3B
+PASS various asian U+32DE ㋞ %26%2313022%3B
+PASS various asian U+32DF ㋟ %26%2313023%3B
+PASS various asian U+32E0 ㋠ %26%2313024%3B
+PASS various asian U+32E1 ㋡ %26%2313025%3B
+PASS various asian U+32E2 ㋢ %26%2313026%3B
+PASS various asian U+32E3 ㋣ %26%2313027%3B
+PASS various asian U+32E4 ㋤ %26%2313028%3B
+PASS various asian U+32E5 ㋥ %26%2313029%3B
+PASS various asian U+32E6 ㋦ %26%2313030%3B
+PASS various asian U+32E7 ㋧ %26%2313031%3B
+PASS various asian U+32E8 ㋨ %26%2313032%3B
+PASS various asian U+32E9 ㋩ %26%2313033%3B
+PASS various asian U+32EA ㋪ %26%2313034%3B
+PASS various asian U+32EB ㋫ %26%2313035%3B
+PASS various asian U+32EC ㋬ %26%2313036%3B
+PASS various asian U+32ED ㋭ %26%2313037%3B
+PASS various asian U+32EE ㋮ %26%2313038%3B
+PASS various asian U+32EF ㋯ %26%2313039%3B
+PASS various asian U+32F0 ㋰ %26%2313040%3B
+PASS various asian U+32F1 ㋱ %26%2313041%3B
+PASS various asian U+32F2 ㋲ %26%2313042%3B
+PASS various asian U+32F3 ㋳ %26%2313043%3B
+PASS various asian U+32F4 ㋴ %26%2313044%3B
+PASS various asian U+32F5 ㋵ %26%2313045%3B
+PASS various asian U+32F6 ㋶ %26%2313046%3B
+PASS various asian U+32F7 ㋷ %26%2313047%3B
+PASS various asian U+32F8 ㋸ %26%2313048%3B
+PASS various asian U+32F9 ㋹ %26%2313049%3B
+PASS various asian U+32FA ㋺ %26%2313050%3B
+PASS various asian U+32FB ㋻ %26%2313051%3B
+PASS various asian U+32FC ㋼ %26%2313052%3B
+PASS various asian U+32FD ㋽ %26%2313053%3B
+PASS various asian U+32FE ㋾ %26%2313054%3B
+PASS various asian U+32FF ㋿ %26%2313055%3B
+PASS various asian U+3300 ㌀ %26%2313056%3B
+PASS various asian U+3301 ㌁ %26%2313057%3B
+PASS various asian U+3302 ㌂ %26%2313058%3B
+PASS various asian U+3303 ㌃ %26%2313059%3B
+PASS various asian U+3304 ㌄ %26%2313060%3B
+PASS various asian U+3305 ㌅ %26%2313061%3B
+PASS various asian U+3306 ㌆ %26%2313062%3B
+PASS various asian U+3307 ㌇ %26%2313063%3B
+PASS various asian U+3308 ㌈ %26%2313064%3B
+PASS various asian U+3309 ㌉ %26%2313065%3B
+PASS various asian U+330A ㌊ %26%2313066%3B
+PASS various asian U+330B ㌋ %26%2313067%3B
+PASS various asian U+330C ㌌ %26%2313068%3B
+PASS various asian U+330D ㌍ %26%2313069%3B
+PASS various asian U+330E ㌎ %26%2313070%3B
+PASS various asian U+330F ㌏ %26%2313071%3B
+PASS various asian U+3310 ㌐ %26%2313072%3B
+PASS various asian U+3311 ㌑ %26%2313073%3B
+PASS various asian U+3312 ㌒ %26%2313074%3B
+PASS various asian U+3313 ㌓ %26%2313075%3B
+PASS various asian U+3314 ㌔ %26%2313076%3B
+PASS various asian U+3315 ㌕ %26%2313077%3B
+PASS various asian U+3316 ㌖ %26%2313078%3B
+PASS various asian U+3317 ㌗ %26%2313079%3B
+PASS various asian U+3318 ㌘ %26%2313080%3B
+PASS various asian U+3319 ㌙ %26%2313081%3B
+PASS various asian U+331A ㌚ %26%2313082%3B
+PASS various asian U+331B ㌛ %26%2313083%3B
+PASS various asian U+331C ㌜ %26%2313084%3B
+PASS various asian U+331D ㌝ %26%2313085%3B
+PASS various asian U+331E ㌞ %26%2313086%3B
+PASS various asian U+331F ㌟ %26%2313087%3B
+PASS various asian U+3320 ㌠ %26%2313088%3B
+PASS various asian U+3321 ㌡ %26%2313089%3B
+PASS various asian U+3322 ㌢ %26%2313090%3B
+PASS various asian U+3323 ㌣ %26%2313091%3B
+PASS various asian U+3324 ㌤ %26%2313092%3B
+PASS various asian U+3325 ㌥ %26%2313093%3B
+PASS various asian U+3326 ㌦ %26%2313094%3B
+PASS various asian U+3327 ㌧ %26%2313095%3B
+PASS various asian U+3328 ㌨ %26%2313096%3B
+PASS various asian U+3329 ㌩ %26%2313097%3B
+PASS various asian U+332A ㌪ %26%2313098%3B
+PASS various asian U+332B ㌫ %26%2313099%3B
+PASS various asian U+332C ㌬ %26%2313100%3B
+PASS various asian U+332D ㌭ %26%2313101%3B
+PASS various asian U+332E ㌮ %26%2313102%3B
+PASS various asian U+332F ㌯ %26%2313103%3B
+PASS various asian U+3330 ㌰ %26%2313104%3B
+PASS various asian U+3331 ㌱ %26%2313105%3B
+PASS various asian U+3332 ㌲ %26%2313106%3B
+PASS various asian U+3333 ㌳ %26%2313107%3B
+PASS various asian U+3334 ㌴ %26%2313108%3B
+PASS various asian U+3335 ㌵ %26%2313109%3B
+PASS various asian U+3336 ㌶ %26%2313110%3B
+PASS various asian U+3337 ㌷ %26%2313111%3B
+PASS various asian U+3338 ㌸ %26%2313112%3B
+PASS various asian U+3339 ㌹ %26%2313113%3B
+PASS various asian U+333A ㌺ %26%2313114%3B
+PASS various asian U+333B ㌻ %26%2313115%3B
+PASS various asian U+333C ㌼ %26%2313116%3B
+PASS various asian U+333D ㌽ %26%2313117%3B
+PASS various asian U+333E ㌾ %26%2313118%3B
+PASS various asian U+333F ㌿ %26%2313119%3B
+PASS various asian U+3340 ㍀ %26%2313120%3B
+PASS various asian U+3341 ㍁ %26%2313121%3B
+PASS various asian U+3342 ㍂ %26%2313122%3B
+PASS various asian U+3343 ㍃ %26%2313123%3B
+PASS various asian U+3344 ㍄ %26%2313124%3B
+PASS various asian U+3345 ㍅ %26%2313125%3B
+PASS various asian U+3346 ㍆ %26%2313126%3B
+PASS various asian U+3347 ㍇ %26%2313127%3B
+PASS various asian U+3348 ㍈ %26%2313128%3B
+PASS various asian U+3349 ㍉ %26%2313129%3B
+PASS various asian U+334A ㍊ %26%2313130%3B
+PASS various asian U+334B ㍋ %26%2313131%3B
+PASS various asian U+334C ㍌ %26%2313132%3B
+PASS various asian U+334D ㍍ %26%2313133%3B
+PASS various asian U+334E ㍎ %26%2313134%3B
+PASS various asian U+334F ㍏ %26%2313135%3B
+PASS various asian U+3350 ㍐ %26%2313136%3B
+PASS various asian U+3351 ㍑ %26%2313137%3B
+PASS various asian U+3352 ㍒ %26%2313138%3B
+PASS various asian U+3353 ㍓ %26%2313139%3B
+PASS various asian U+3354 ㍔ %26%2313140%3B
+PASS various asian U+3355 ㍕ %26%2313141%3B
+PASS various asian U+3356 ㍖ %26%2313142%3B
+PASS various asian U+3357 ㍗ %26%2313143%3B
+PASS various asian U+3358 ㍘ %26%2313144%3B
+PASS various asian U+3359 ㍙ %26%2313145%3B
+PASS various asian U+335A ㍚ %26%2313146%3B
+PASS various asian U+335B ㍛ %26%2313147%3B
+PASS various asian U+335C ㍜ %26%2313148%3B
+PASS various asian U+335D ㍝ %26%2313149%3B
+PASS various asian U+335E ㍞ %26%2313150%3B
+PASS various asian U+335F ㍟ %26%2313151%3B
+PASS various asian U+3360 ㍠ %26%2313152%3B
+PASS various asian U+3361 ㍡ %26%2313153%3B
+PASS various asian U+3362 ㍢ %26%2313154%3B
+PASS various asian U+3363 ㍣ %26%2313155%3B
+PASS various asian U+3364 ㍤ %26%2313156%3B
+PASS various asian U+3365 ㍥ %26%2313157%3B
+PASS various asian U+3366 ㍦ %26%2313158%3B
+PASS various asian U+3367 ㍧ %26%2313159%3B
+PASS various asian U+3368 ㍨ %26%2313160%3B
+PASS various asian U+3369 ㍩ %26%2313161%3B
+PASS various asian U+336A ㍪ %26%2313162%3B
+PASS various asian U+336B ㍫ %26%2313163%3B
+PASS various asian U+336C ㍬ %26%2313164%3B
+PASS various asian U+336D ㍭ %26%2313165%3B
+PASS various asian U+336E ㍮ %26%2313166%3B
+PASS various asian U+336F ㍯ %26%2313167%3B
+PASS various asian U+3370 ㍰ %26%2313168%3B
+PASS various asian U+3371 ㍱ %26%2313169%3B
+PASS various asian U+3372 ㍲ %26%2313170%3B
+PASS various asian U+3373 ㍳ %26%2313171%3B
+PASS various asian U+3374 ㍴ %26%2313172%3B
+PASS various asian U+3375 ㍵ %26%2313173%3B
+PASS various asian U+3376 ㍶ %26%2313174%3B
+PASS various asian U+3377 ㍷ %26%2313175%3B
+PASS various asian U+3378 ㍸ %26%2313176%3B
+PASS various asian U+3379 ㍹ %26%2313177%3B
+PASS various asian U+337A ㍺ %26%2313178%3B
+PASS various asian U+337B ㍻ %26%2313179%3B
+PASS various asian U+337C ㍼ %26%2313180%3B
+PASS various asian U+337D ㍽ %26%2313181%3B
+PASS various asian U+337E ㍾ %26%2313182%3B
+PASS various asian U+337F ㍿ %26%2313183%3B
+PASS various asian U+3385 ㎅ %26%2313189%3B
+PASS various asian U+3386 ㎆ %26%2313190%3B
+PASS various asian U+3387 ㎇ %26%2313191%3B
+PASS various asian U+33CB ㏋ %26%2313259%3B
+PASS various asian U+33CC ㏌ %26%2313260%3B
+PASS various asian U+33CD ㏍ %26%2313261%3B
+PASS various asian U+33CE ㏎ %26%2313262%3B
+PASS various asian U+33D1 ㏑ %26%2313265%3B
+PASS various asian U+33D2 ㏒ %26%2313266%3B
+PASS various asian U+33D4 ㏔ %26%2313268%3B
+PASS various asian U+33D5 ㏕ %26%2313269%3B
+PASS various asian U+33D7 ㏗ %26%2313271%3B
+PASS various asian U+33D9 ㏙ %26%2313273%3B
+PASS various asian U+33DA ㏚ %26%2313274%3B
+PASS various asian U+33DE ㏞ %26%2313278%3B
+PASS various asian U+33DF ㏟ %26%2313279%3B
+PASS various asian U+33E0 ㏠ %26%2313280%3B
+PASS various asian U+33E1 ㏡ %26%2313281%3B
+PASS various asian U+33E2 ㏢ %26%2313282%3B
+PASS various asian U+33E3 ㏣ %26%2313283%3B
+PASS various asian U+33E4 ㏤ %26%2313284%3B
+PASS various asian U+33E5 ㏥ %26%2313285%3B
+PASS various asian U+33E6 ㏦ %26%2313286%3B
+PASS various asian U+33E7 ㏧ %26%2313287%3B
+PASS various asian U+33E8 ㏨ %26%2313288%3B
+PASS various asian U+33E9 ㏩ %26%2313289%3B
+PASS various asian U+33EA ㏪ %26%2313290%3B
+PASS various asian U+33EB ㏫ %26%2313291%3B
+PASS various asian U+33EC ㏬ %26%2313292%3B
+PASS various asian U+33ED ㏭ %26%2313293%3B
+PASS various asian U+33EE ㏮ %26%2313294%3B
+PASS various asian U+33EF ㏯ %26%2313295%3B
+PASS various asian U+33F0 ㏰ %26%2313296%3B
+PASS various asian U+33F1 ㏱ %26%2313297%3B
+PASS various asian U+33F2 ㏲ %26%2313298%3B
+PASS various asian U+33F3 ㏳ %26%2313299%3B
+PASS various asian U+33F4 ㏴ %26%2313300%3B
+PASS various asian U+33F5 ㏵ %26%2313301%3B
+PASS various asian U+33F6 ㏶ %26%2313302%3B
+PASS various asian U+33F7 ㏷ %26%2313303%3B
+PASS various asian U+33F8 ㏸ %26%2313304%3B
+PASS various asian U+33F9 ㏹ %26%2313305%3B
+PASS various asian U+33FA ㏺ %26%2313306%3B
+PASS various asian U+33FB ㏻ %26%2313307%3B
+PASS various asian U+33FC ㏼ %26%2313308%3B
+PASS various asian U+33FD ㏽ %26%2313309%3B
+PASS various asian U+33FE ㏾ %26%2313310%3B
+PASS half/full width U+FF00 ＀ %26%2365280%3B
+PASS half/full width U+FF5F ｟ %26%2365375%3B
+PASS half/full width U+FF60 ｠ %26%2365376%3B
+PASS half/full width U+FF61 ｡ %26%2365377%3B
+PASS half/full width U+FF62 ｢ %26%2365378%3B
+PASS half/full width U+FF63 ｣ %26%2365379%3B
+PASS half/full width U+FF64 ､ %26%2365380%3B
+PASS half/full width U+FF65 ･ %26%2365381%3B
+PASS half/full width U+FF66 ｦ %26%2365382%3B
+PASS half/full width U+FF67 ｧ %26%2365383%3B
+PASS half/full width U+FF68 ｨ %26%2365384%3B
+PASS half/full width U+FF69 ｩ %26%2365385%3B
+PASS half/full width U+FF6A ｪ %26%2365386%3B
+PASS half/full width U+FF6B ｫ %26%2365387%3B
+PASS half/full width U+FF6C ｬ %26%2365388%3B
+PASS half/full width U+FF6D ｭ %26%2365389%3B
+PASS half/full width U+FF6E ｮ %26%2365390%3B
+PASS half/full width U+FF6F ｯ %26%2365391%3B
+PASS half/full width U+FF70 ｰ %26%2365392%3B
+PASS half/full width U+FF71 ｱ %26%2365393%3B
+

@@ -1,0 +1,7 @@
+
+PASS Parsing coop as a structured header 'integer or decimal' item
+PASS Parsing coop as an unrecognized structured header type
+PASS Parsing coop with duplicate value
+PASS Parsing coop with duplicate value, separated by a comma
+PASS Parsing coop with preceding asterisk character
+

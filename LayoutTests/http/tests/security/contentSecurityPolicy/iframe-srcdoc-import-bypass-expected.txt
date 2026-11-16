@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' appears in neither the style-src directive nor the default-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://localhost:8443/security/contentSecurityPolicy/resources/module-pass.py because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://localhost:8443/security/contentSecurityPolicy/resources/module-pass.py because it does not appear in the script-src directive of the Content Security Policy.
+This test checks if iframes without an initial srcdoc attribute incorrectly bypass CSP when srcdoc is set later.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS iframe1Loaded is false
+PASS iframe2Loaded is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

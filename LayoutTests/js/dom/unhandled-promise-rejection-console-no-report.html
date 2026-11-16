@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test unhandled promise rejection event handler returning false does not produce console messages.');
+
+window.jsTestIsAsync = true;
+
+window.promise = [];
+for (let i = 0; i < 3; ++i)
+    window.promise[i] = Promise.reject(i);
+
+window.count = 0;
+window.onunhandledrejection = function (e) {
+    count++;
+    if (count === 3)
+        finishJSTest();
+    return false;
+};
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

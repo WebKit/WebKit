@@ -1,0 +1,4 @@
+This tests adopting a video elements to a disconnected iframe's content document. WebKit should not hit any assertions.
+
+PASS
+

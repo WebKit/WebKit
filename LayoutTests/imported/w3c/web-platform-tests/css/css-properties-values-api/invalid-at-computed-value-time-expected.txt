@@ -1,0 +1,7 @@
+
+PASS Universal syntax: Undefined reference results in guaranteed-invalid value.
+PASS Undefined reference results in unsetting the property.
+PASS Syntax-incompatible reference results in unsetting the property.
+PASS Syntax-incompatible fallback results in unsetting the property.
+PASS Unsetting inherited properties on the root results in initial value.
+

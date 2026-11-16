@@ -1,0 +1,71 @@
+<html>
+<head>
+<link rel="stylesheet" href="resources/modify-with-cssom.css">
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test() {
+    let suite = ProtocolTest.createAsyncSuite("ModifyWithCSSOM");
+
+    const dumpAuthorStylesForBodyElement = async () => {
+        // Due to https://webkit.org/b/270864, CSSOM modifications aren't reflected until the CSS agent is re-enabled.
+        // (After re-enabling, the styles must still be in the latest state, matching the CSSOM modifications.)
+        await InspectorProtocol.awaitCommand({ method: "CSS.disable" });
+        await InspectorProtocol.awaitCommand({ method: "CSS.enable" });
+
+        let { root } = await InspectorProtocol.awaitCommand({ method: "DOM.getDocument" });
+        let body = await InspectorProtocol.awaitCommand({
+            method: "DOM.querySelector",
+            params: { nodeId: root.nodeId, selector: "body" },
+        });
+
+        const getAuthorRulesForElement = async (element) => {
+            let { matchedCSSRules } = await InspectorProtocol.awaitCommand({
+                method: "CSS.getMatchedStylesForNode",
+                params: { nodeId: element.nodeId },
+            });
+            return matchedCSSRules
+                .map(({ rule }) => rule)
+                .filter((rule) => rule.origin === "author");
+        };
+
+        const filteredValueReplacer = (key, value) => {
+            if (["ruleId", "styleId", "sourceURL"].includes(key))
+                return "<filtered>";
+            return value;
+        };
+
+        ProtocolTest.json(await getAuthorRulesForElement(body), filteredValueReplacer);
+    };
+
+    suite.addTestCase({
+        name: "CSS.getMatchedStylesForNode with CSSOM modifications",
+        description: "Test that CSS.getMatchedStylesForNode works after CSSOM modifies an existing style sheet, by editing, adding, or removing a style rule",
+        test: async () => {
+            await InspectorProtocol.awaitCommand({ method: "Page.enable" });
+
+            await ProtocolTest.evaluateInPage(`document.styleSheets[0].cssRules[0].style.color = "blue";`);
+            ProtocolTest.log("After modifying a style rule in place:")
+            await dumpAuthorStylesForBodyElement();
+
+            ProtocolTest.log("");
+            await ProtocolTest.evaluateInPage(`document.styleSheets[0].insertRule("body { font-size: 17px; }", 0)`);
+            ProtocolTest.log("After adding a style rule:");
+            await dumpAuthorStylesForBodyElement();
+
+            ProtocolTest.log("");
+            await ProtocolTest.evaluateInPage(`document.styleSheets[0].deleteRule(1);`);
+            ProtocolTest.log("After removing a style rule:");
+            await dumpAuthorStylesForBodyElement();
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+
+<body onload="runTest()">
+    <p>Test that the CSS.getMatchedStylesForNode command works with CSSOM modified styles.</p>
+</body>
+
+</html>

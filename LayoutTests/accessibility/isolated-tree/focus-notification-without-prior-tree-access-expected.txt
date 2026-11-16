@@ -1,0 +1,9 @@
+This test verifies that a focus notification is delivered even when nothing has queried the accessibility tree before the focus change (e.g. accessibleElementById, rootElement or focusedElement). This matters because some platform implementations only create the AXObjectCache lazily, and a naive implementation may only do so as a side effect of an earlier tree query rather than in response to the focus change itself.
+
+PASS: sawFocusNotification === true
+PASS: accessibilityController.focusedElement.domIdentifier === 'item'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

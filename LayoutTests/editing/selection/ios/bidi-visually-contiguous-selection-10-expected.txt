@@ -1,0 +1,19 @@
+Verifies that the selection remains visually stable when extending a selection handle into an inline-block container after a soft line break.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS visuallyContiguousBeforeEndingSelection is true
+PASS visuallyContiguousAfterEndingSelection is true
+PASS boundsBeforeEndingSelection.top is boundsAfterEndingSelection.top
+PASS boundsBeforeEndingSelection.left is boundsAfterEndingSelection.left
+PASS boundsBeforeEndingSelection.width is boundsAfterEndingSelection.width
+PASS boundsBeforeEndingSelection.height is boundsAfterEndingSelection.height
+PASS rectsBeforeEndingSelection.length is 3
+PASS rectsAfterEndingSelection.length is 3
+PASS selectionHighlightMaxXExtents[0] is selectionHighlightMaxXExtents[1]
+PASS selectionHighlightMaxXExtents[1] is selectionHighlightMaxXExtents[2]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

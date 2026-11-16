@@ -1,0 +1,6 @@
+
+
+PASS VideoFrameMetadata.receiveTime is a DOMHighResTimeStamp relative to Performance.timeOrigin
+PASS VideoFrameMetadata.rtpTimestamp is an unsigned long (32-bit unsigned integer)
+FAIL VideoFrameMetadata.captureTime is a DOMHighResTimeStamp relative to Performance.timeOrigin assert_true: captureTime is reliably populated and is a DOMHighResTimeStamp relative to Performance.timeOrigin (small number close to performance.now(); not an NTP-epoch wall-clock value) expected true got false
+

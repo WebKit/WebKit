@@ -1,0 +1,6 @@
+
+PASS Property user-select value 'auto'
+PASS Property user-select value 'text'
+PASS Property user-select value 'none'
+PASS Property user-select value 'all'
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      :root {
+        --prop1: red;
+        --prop2: var(--prop1) var(--prop1);
+        --prop3: var(--prop2) var(--prop2);
+        --prop4: var(--prop3) var(--prop3);
+        --prop5: var(--prop4) var(--prop4);
+        --prop6: var(--prop5) var(--prop5);
+        --prop7: var(--prop6) var(--prop6);
+        --prop8: var(--prop7) var(--prop7);
+        --prop9: var(--prop8) var(--prop8);
+        --prop10: var(--prop9) var(--prop9);
+        --prop11: var(--prop10) var(--prop10);
+        --prop12: var(--prop11) var(--prop11);
+        --prop13: var(--prop12) var(--prop12);
+        --prop14: var(--prop13) var(--prop13);
+        --prop15: var(--prop14) var(--prop14);
+        --prop16: var(--prop15) var(--prop15);
+        --prop17: var(--prop16) var(--prop16);
+        --prop18: var(--prop17) var(--prop17);
+        --prop19: var(--prop18) var(--prop18);
+      }
+
+      #foo {
+        width: 400px;
+        height: 400px;
+        background-color: var(--prop19, green);
+      }
+   </style>
+  </head>
+  <body>
+    <div id="foo"></div>
+  </body>
+</html>
+

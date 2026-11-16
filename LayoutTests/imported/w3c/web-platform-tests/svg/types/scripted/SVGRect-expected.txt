@@ -1,0 +1,5 @@
+
+PASS SVGRect interface, initial values
+PASS SVGRect interface, assignment, numeric values
+PASS SVGRect interface, assignment, invalid values
+

@@ -1,0 +1,34 @@
+Tests for the CSS.getMatchedStylesForNode command and very large selectors.
+
+
+== Running test suite: CSS.getMatchedStylesForNode.LargeSelectors
+-- Running test case: CSS.getMatchedStylesForNode.LargeSelectors.StylePreceedingLargeSelector
+PASS: Should have one matching authored rule.
+PASS: Should have `1` parsed selector.
+PASS: First parsed selector should be `#test1`.
+PASS: Raw selector should be `#test1`.
+PASS: Rule should have a source code line number of `97`.
+PASS: Should have one CSS property.
+PASS: Parsed property and raw style text should be the same.
+PASS: Property value should be `rebeccapurple`.
+
+-- Running test case: CSS.getMatchedStylesForNode.LargeSelectors.StyleWithLargeSelector
+PASS: Should have one matching authored rule.
+PASS: Should have `165` parsed selectors.
+PASS: First parsed selector should be `#test2`.
+PASS: Raw selector should start with `#test2`.
+PASS: Rule should have a source code line number of `101`.
+PASS: Should have one CSS property.
+PASS: Parsed property and raw style text should be the same.
+PASS: Property value should be `aliceblue`.
+
+-- Running test case: CSS.getMatchedStylesForNode.LargeSelectors.StyleFollowingLargeSelector
+PASS: Should have one matching authored rule.
+PASS: Should have `1` parsed selector.
+PASS: First parsed selector should be `#test3`.
+PASS: Raw selector should be `#test3`.
+PASS: Rule should have a source code line number of `437`.
+PASS: Should have one CSS property.
+PASS: Parsed property and raw style text should be the same.
+PASS: Property value should be `papayawhip`.
+

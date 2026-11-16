@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="editable" contenteditable="true">x<br/><br/>y</div>
+
+<script>
+var output = "This test ensures we can create valid text marker ranges from positions adjacent to br elements.\n\n";
+// The bug that inspired this fix was that for text selection changes adjacent to <br> elements, we would post an
+// AXSelectedTextChanged notification but fail to include a valid text marker range. This happened due to a bug in how
+// we create text marker ranges when |shouldCreateAXThreadCompatibleMarkers()| is true. This meant VoiceOver wasn't
+// announcing "newline" as you moved between <br>s.
+
+var range;
+var webarea;
+var editable = document.getElementById("editable");
+async function select(domNode, startIndex, endIndex, expectedCharacter, searchBackwards) {
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+
+    await waitFor(() => {
+        const selectedRange = webarea.selectedTextMarkerRange();
+        return !webarea.isTextMarkerRangeValid(selectedRange);
+    });
+
+    const domRange = document.createRange();
+    domRange.setStart(domNode, startIndex);
+    domRange.setEnd(domNode, endIndex);
+    selection.addRange(domRange);
+
+    let selectedRange;
+    await waitFor(() => {
+        selectedRange = webarea.selectedTextMarkerRange();
+        return webarea.isTextMarkerRangeValid(selectedRange);
+    });
+
+    let start, end;
+    if (searchBackwards) {
+        end = webarea.endTextMarkerForTextMarkerRange(selectedRange);
+        start = webarea.previousTextMarker(end);
+    } else {
+        start = webarea.startTextMarkerForTextMarkerRange(selectedRange);
+        end = webarea.nextTextMarker(start);
+    }
+
+    range = webarea.textMarkerRangeForMarkers(start, end);
+    output += expect("webarea.stringForTextMarkerRange(range)", `'${expectedCharacter}'`)
+    output += expect("webarea.attributedStringForTextMarkerRange(range).slice(-1)", `'${expectedCharacter}'`)
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    webarea = accessibilityController.rootElement.childAtIndex(0);
+    setTimeout(async function() {
+        // |x<br/><br/>y
+        await select(editable, 0, 0, "x");
+        // x|<br/><br/>y
+        await select(editable, 1, 1, "\\n");
+        // x<br/>|<br/>|y
+        await select(editable, 2, 2, "\\n");
+        // x<br/><br/>|y
+        await select(editable, 3, 3, "y");
+        // x<br/><br/>|y
+        await select(editable, 3, 3, "\\n", /* searchBackwards */ true);
+        // x<br/>|<br/>y
+        await select(editable, 2, 2, "\\n", /* searchBackwards */ true);
+        // x|<br/><br/>y
+        await select(editable, 1, 1, "x", /* searchBackwards */ true);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

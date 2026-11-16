@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PhoneNumberPossessionEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/phone-number-possession-ipc.js"></script>
+<script>
+const invalidRequests = [
+    ["an empty challenge", { challenge: { span: [] } }],
+    ["a challenge longer than 1024 bytes", { challenge: { span: new Array(1025).fill(1) } }],
+    ["a phone number suffix hint that isn't digits", { phoneNumberSuffixHint: "12a4" }],
+    ["a PNPI suffix hint longer than 32 bytes", { pnpiSuffixHint: { optionalValue: { span: new Array(33).fill(1) } } }],
+    ["an empty RP ID", { relyingPartyIdentifier: "" }],
+];
+
+for (const [description, overrides] of invalidRequests) {
+    phoneNumberPossessionIPCTest(async () => {
+        takeInvalidMessageString();
+        const result = await requestPhoneNumberPossession(IPC.frameID[0], makeRequest(overrides));
+        assert_false(result.hasValue);
+        assert_equals(result.message, "The request is invalid.");
+        assert_true(takeInvalidMessageString().includes("Message check failed"));
+    }, `RequestPhoneNumberPossession with ${description} fails a message check`);
+}
+</script>

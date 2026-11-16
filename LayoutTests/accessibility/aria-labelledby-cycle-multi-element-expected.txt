@@ -1,0 +1,11 @@
+This tests that multi-element aria-labelledby cycles do not cause infinite recursion or a crash.
+
+PASS: typeof platformValueForW3CName(a1) === 'string'
+PASS: typeof platformValueForW3CName(a2) === 'string'
+PASS: typeof platformValueForW3CName(a3) === 'string'
+PASS: typeof platformValueForW3CName(a4) === 'string'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+A content E content A content E content A content E content A content E content

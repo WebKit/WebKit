@@ -1,0 +1,3 @@
+
+PASS v128 global exports should cause TDZ errors
+

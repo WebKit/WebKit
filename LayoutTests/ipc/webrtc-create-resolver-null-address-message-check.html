@@ -1,0 +1,60 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PeerConnectionEnabled=true ] -->
+<body>
+<pre id="log"></pre>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+const out = s => document.getElementById("log").textContent += s + "\n";
+
+function takeError(CoreIPC) {
+    return new Promise(resolve => {
+        CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, reply => resolve(reply.error));
+    });
+}
+
+// createResolver runs on the Networking process RTC network thread while the error string is read
+// on its main run loop, so there is no ordering between the two. Poll instead of racing.
+async function waitForError(CoreIPC, substring) {
+    for (let i = 0; i < 100; ++i) {
+        const error = await takeError(CoreIPC);
+        if (error.includes(substring))
+            return error;
+        await new Promise(resolve => setTimeout(resolve, 20));
+    }
+    return "";
+}
+
+(async () => {
+    if (!window.IPC) { out("PASS: CreateResolver with a null address was rejected"); return testRunner?.notifyDone(); }
+    const { CoreIPC } = await import('./coreipc.js');
+
+    // NetworkRTCProvider::createResolver must reject a null address. It reaches
+    // NetworkMDNSRegister::hasRegisteredName(), which looks the address up in a HashSet<String>,
+    // and StringHash::hash() dereferences the null StringImpl with no null check.
+    await takeError(CoreIPC);
+
+    // HashTable::lookup() returns before hashing when the table has never been allocated, so the
+    // null key only faults once a name has been registered. registerMDNSName() adds the name to the
+    // set before it validates the address, and 'A' is not a valid IPv4 address, so this populates
+    // the set and fails fast without registering anything with mDNSResponder.
+    await new Promise(resolve => CoreIPC.Networking.NetworkMDNSRegister.RegisterMDNSName(0, {
+        documentIdentifier: { object: { high: 1, low: 1 }, processIdentifier: 1 },
+        ipAddress: 'A'
+    }, resolve));
+
+    // CreateRTCProvider has an empty async reply, so waiting for it guarantees the
+    // NetworkRTCProvider message receiver is registered before CreateResolver is sent.
+    await new Promise(resolve => CoreIPC.Networking.NetworkConnectionToWebProcess.CreateRTCProvider(0, {}, resolve));
+
+    CoreIPC.Networking.NetworkRTCProvider.CreateResolver(0, { identifier: 393216, address: null });
+    const error = await waitForError(CoreIPC, "address.isNull");
+    out(error ? "PASS: CreateResolver with a null address was rejected"
+              : "FAIL: CreateResolver with a null address was accepted");
+
+    // An empty address is not null, so it must still be resolved rather than message checked.
+    CoreIPC.Networking.NetworkRTCProvider.CreateResolver(0, { identifier: 393217, address: '' });
+
+    testRunner?.notifyDone();
+})().catch(e => { out("FAIL: " + e + "\n" + e.stack); testRunner?.notifyDone(); });
+</script>
+</body>

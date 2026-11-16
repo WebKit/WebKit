@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let testWorker = null;
+
+function createWorker() {
+    testWorker = new Worker("resources/worker-echo.js");
+    testWorker.addEventListener("message", (event) => {
+        let {echo, data} = event.data;
+        console.assert(echo, data);
+        TestPage.dispatchEventToFrontend(data);
+    });
+    testWorker.postMessage("WorkerCreated");
+}
+
+function terminateWorker() {
+    testWorker.postMessage("WorkerTerminated");
+    testWorker.terminate();
+    testWorker = null;
+}
+
+function test()
+{
+    InspectorTest.addEventListener("WorkerTerminated", (event) => {
+        InspectorTest.fail("Should not dispatch any events after a Worker is terminated.");
+    });
+
+    Promise.resolve()
+    .then(() => {
+        InspectorTest.log("Creating worker...");
+        return Promise.all([
+            InspectorTest.awaitEvent("WorkerCreated"),
+            InspectorTest.evaluateInPage(`createWorker()`),
+        ]);
+    })
+    .then(() => {
+        InspectorTest.log("Terminating worker...");
+        return InspectorTest.evaluateInPage(`terminateWorker()`);
+    })
+    .then(() => {
+        InspectorTest.log("Creating worker...");
+        return Promise.all([
+            InspectorTest.awaitEvent("WorkerCreated"),
+            InspectorTest.evaluateInPage(`createWorker()`),
+        ]);
+    })
+    .then(() => {
+        InspectorTest.log("Terminating worker...");
+        return InspectorTest.evaluateInPage(`terminateWorker()`);
+    })
+    .then(() => {
+        InspectorTest.pass("Should not crash.");
+    })
+    .finally(() => {
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test to ensure that any queued messages are not dispatched after terminate is called, which would cause a crash due to the InjectedScript throwing a TerminatedExecutionError when it's evaluated.</p>
+</body>
+</html>

@@ -1,0 +1,3 @@
+This tests for a crash when doing selection operations next to empty inline blocks. You should see HelloWorld below, and the 'W' should be inside the inline-block.
+
+Test Passed (there was no crash)

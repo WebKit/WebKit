@@ -1,0 +1,10 @@
+A
+B
+C
+
+FAIL Scoped view transition with name auto on the scoped element promise_test: Unhandled rejection with value: object "TypeError: element.startViewTransition is not a function. (In 'element.startViewTransition(() => {
+      element.querySelectorAll('.item').forEach(el => {
+        el.classList.toggle('active');
+      });
+    })', 'element.startViewTransition' is undefined)"
+

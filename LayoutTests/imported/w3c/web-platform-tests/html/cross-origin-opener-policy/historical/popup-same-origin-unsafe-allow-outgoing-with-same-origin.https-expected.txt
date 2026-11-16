@@ -1,0 +1,10 @@
+
+PASS Same-origin popup with empty coop
+PASS Same-origin popup with coop unsafe-none
+PASS Same-origin popup with jibberish coop
+PASS Same-origin popup with obsolete coop
+PASS Same-origin popup with obsolete coop 2
+PASS Same-origin popup with obsolete coop 3
+PASS Same-origin popup with coop same-origin
+PASS Same-origin popup with coop same-origin-allow-popups
+

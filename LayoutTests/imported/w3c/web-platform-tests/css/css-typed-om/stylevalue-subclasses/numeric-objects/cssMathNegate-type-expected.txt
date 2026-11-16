@@ -1,0 +1,4 @@
+
+PASS Negating a type with empty map returns the empty map
+PASS Negating a type returns the same type
+

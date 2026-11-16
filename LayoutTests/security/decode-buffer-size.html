@@ -1,0 +1,29 @@
+<html>
+<body>
+<script>
+if (window.testRunner) { testRunner.dumpAsText() }
+const decoder = new TextDecoder('utf-8', { fatal: true });
+decoder.decode(new Uint8Array([0xf0]), {stream: true});
+try { decoder.decode(new Uint8Array(0xffffffff)) } catch (e) { alert('successfully caught exception ' + e); }
+try { decoder.decode(new Uint8Array(0x7fffffff)) } catch (e) { alert('successfully caught exception ' + e); }
+
+var array = new Uint8Array(0x80000000);
+const U2118 = new Uint8Array([0xe2, 0x84, 0x98]); // UTF-8 encoding of U+2118
+for (var i = 0; i < 0x80000000 - 3; i = i + 3) {
+    array.set(U2118, i)
+}
+try { decoder.decode(array) } catch (e) { alert('unexpected error ' + e) }
+alert('decoded string from array with length 0x80000000 populated with UTF-8 encoding of U+2118');
+
+try {
+    const d = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true });
+    for (var i = 0; i < 3; i++) {
+        let s = d.decode(new Uint8Array(0x6fffffff));
+    }
+    alert('successfully decoded many buffers');
+} catch (e) {
+    alert('caught unexpected exception ' + e);
+}
+</script>
+</body>
+</html>

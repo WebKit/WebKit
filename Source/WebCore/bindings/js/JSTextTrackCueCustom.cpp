@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+
+#if ENABLE(VIDEO)
+
+#include "JSTextTrackCue.h"
+
+#include "JSDataCue.h"
+#include "JSTrackCustom.h"
+#include "JSVTTCue.h"
+#include "TextTrack.h"
+#include "WebCoreOpaqueRootInlines.h"
+
+
+namespace WebCore {
+using namespace JSC;
+
+bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
+{
+    JSTextTrackCue* jsTextTrackCue = downcast<JSTextTrackCue>(handle.slot()->asCell());
+    // Cannot ref on the GC thread.
+    SUPPRESS_UNCOUNTED_LOCAL TextTrackCue& textTrackCue = jsTextTrackCue->wrapped();
+
+    if (!textTrackCue.isContextStopped() && textTrackCue.hasPendingActivity()) {
+        if (reason) [[unlikely]]
+            *reason = "TextTrackCue with pending activity"_s;
+        return true;
+    }
+
+    // If the cue is not associated with a track, it is not reachable. This runs on the parallel GC
+    // marking threads, so the test is done by TextTrackCue under m_trackLockForGC rather than
+    // through track(), which is only for the owner thread.
+    if (!textTrackCue.containsTrackAsOpaqueRootInGCThread(visitor))
+        return false;
+
+    if (reason) [[unlikely]]
+        *reason = "TextTrack is an opaque root"_s;
+
+    return true;
+}
+
+template<typename Visitor>
+void JSTextTrackCue::visitAdditionalChildrenInGCThread(Visitor& visitor)
+{
+    // Do not ref `wrapped()` here since this function may get called on a GC thread.
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildrenInGCThread(visitor);
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSTextTrackCue);
+
+} // namespace WebCore
+
+#endif

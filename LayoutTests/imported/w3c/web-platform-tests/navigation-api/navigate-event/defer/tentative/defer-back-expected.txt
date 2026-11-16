@@ -1,0 +1,6 @@
+
+PASS
+  navigateEvent.deferPageSwap: deferring is not allowed for cross-document traverse
+  navigations
+
+

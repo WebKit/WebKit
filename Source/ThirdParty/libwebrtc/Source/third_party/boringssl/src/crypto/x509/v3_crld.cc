@@ -1,0 +1,464 @@
+// Copyright 1999-2016 The OpenSSL Project Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include <stdio.h>
+#include <string.h>
+
+#include <algorithm>
+#include <iterator>
+
+#include <openssl/asn1.h>
+#include <openssl/asn1t.h>
+#include <openssl/conf.h>
+#include <openssl/err.h>
+#include <openssl/mem.h>
+#include <openssl/obj.h>
+#include <openssl/x509.h>
+
+#include "../asn1/internal.h"
+#include "../internal.h"
+#include "internal.h"
+
+
+using namespace bssl;
+
+ASN1_CHOICE(DIST_POINT_NAME) = {
+    ASN1_IMP_SEQUENCE_OF(DIST_POINT_NAME, name.fullname, GENERAL_NAME, 0),
+    ASN1_IMP_SET_OF(DIST_POINT_NAME, name.relativename, X509_NAME_ENTRY, 1),
+} ASN1_CHOICE_END(DIST_POINT_NAME)
+
+IMPLEMENT_ASN1_ALLOC_FUNCTIONS(DIST_POINT_NAME)
+
+ASN1_SEQUENCE(DIST_POINT) = {
+    ASN1_EXP_OPT(DIST_POINT, distpoint, DIST_POINT_NAME, 0),
+    ASN1_IMP_OPT(DIST_POINT, reasons, ASN1_BIT_STRING, 1),
+    ASN1_IMP_SEQUENCE_OF_OPT(DIST_POINT, CRLissuer, GENERAL_NAME, 2),
+} ASN1_SEQUENCE_END(DIST_POINT)
+
+IMPLEMENT_ASN1_ALLOC_FUNCTIONS(DIST_POINT)
+
+ASN1_ITEM_TEMPLATE(CRL_DIST_POINTS) = ASN1_EX_TEMPLATE_TYPE(
+    ASN1_TFLG_SEQUENCE_OF, 0, CRLDistributionPoints, DIST_POINT)
+ASN1_ITEM_TEMPLATE_END(CRL_DIST_POINTS)
+
+IMPLEMENT_ASN1_FUNCTIONS_const(CRL_DIST_POINTS)
+
+ASN1_SEQUENCE(ISSUING_DIST_POINT) = {
+    ASN1_EXP_OPT(ISSUING_DIST_POINT, distpoint, DIST_POINT_NAME, 0),
+    ASN1_IMP_OPT(ISSUING_DIST_POINT, onlyuser, ASN1_FBOOLEAN, 1),
+    ASN1_IMP_OPT(ISSUING_DIST_POINT, onlyCA, ASN1_FBOOLEAN, 2),
+    ASN1_IMP_OPT(ISSUING_DIST_POINT, onlysomereasons, ASN1_BIT_STRING, 3),
+    ASN1_IMP_OPT(ISSUING_DIST_POINT, indirectCRL, ASN1_FBOOLEAN, 4),
+    ASN1_IMP_OPT(ISSUING_DIST_POINT, onlyattr, ASN1_FBOOLEAN, 5),
+} ASN1_SEQUENCE_END(ISSUING_DIST_POINT)
+
+IMPLEMENT_ASN1_FUNCTIONS_const(ISSUING_DIST_POINT)
+
+namespace {
+
+UniquePtr<GENERAL_NAMES> gnames_from_sectname(const X509V3_CTX *ctx,
+                                              const char *sect) {
+  const STACK_OF(CONF_VALUE) *gnsect;
+  UniquePtr<STACK_OF(CONF_VALUE)> gnsect_owned;
+  if (*sect == '@') {
+    gnsect = X509V3_get_section(ctx, sect + 1);
+  } else {
+    gnsect_owned.reset(X509V3_parse_list(sect));
+    gnsect = gnsect_owned.get();
+  }
+  if (!gnsect) {
+    OPENSSL_PUT_ERROR(X509V3, X509V3_R_SECTION_NOT_FOUND);
+    return nullptr;
+  }
+  return UniquePtr<GENERAL_NAMES>(v2i_GENERAL_NAMES(nullptr, ctx, gnsect));
+}
+
+// set_dist_point_name decodes a DistributionPointName from `cnf` and writes the
+// result in `*pdp`. It returns 1 on success, -1 on error, and 0 if `cnf` used
+// an unrecognized input type. The zero return can be used by callers to support
+// additional syntax.
+int set_dist_point_name(DIST_POINT_NAME **pdp, const X509V3_CTX *ctx,
+                        const CONF_VALUE *cnf) {
+  UniquePtr<STACK_OF(GENERAL_NAME)> fnm;
+  UniquePtr<STACK_OF(X509_NAME_ENTRY)> rnm;
+  if (!strcmp(cnf->name, "fullname")) {
+    // If `cnf` comes from `X509V3_parse_list`, which is possible for a v2i
+    // function, `cnf->value` may be NULL.
+    if (cnf->value == nullptr) {
+      OPENSSL_PUT_ERROR(X509V3, X509V3_R_MISSING_VALUE);
+      return -1;
+    }
+    fnm = gnames_from_sectname(ctx, cnf->value);
+    if (!fnm) {
+      return -1;
+    }
+  } else if (!strcmp(cnf->name, "relativename")) {
+    // If `cnf` comes from `X509V3_parse_list`, which is possible for a v2i
+    // function, `cnf->value` may be NULL.
+    if (cnf->value == nullptr) {
+      OPENSSL_PUT_ERROR(X509V3, X509V3_R_MISSING_VALUE);
+      return -1;
+    }
+    const STACK_OF(CONF_VALUE) *dnsect = X509V3_get_section(ctx, cnf->value);
+    if (!dnsect) {
+      OPENSSL_PUT_ERROR(X509V3, X509V3_R_SECTION_NOT_FOUND);
+      return -1;
+    }
+    UniquePtr<X509_NAME> nm(X509_NAME_new());
+    if (!nm) {
+      return -1;
+    }
+    int ret = X509V3_NAME_from_section(nm.get(), dnsect, MBSTRING_ASC);
+    rnm = std::move(FromOpaque(nm.get())->entries);
+    if (!ret || sk_X509_NAME_ENTRY_num(rnm.get()) <= 0) {
+      return -1;
+    }
+    // There can only be one RDN in nameRelativeToCRLIssuer.
+    if (X509_NAME_ENTRY_set(sk_X509_NAME_ENTRY_value(
+            rnm.get(), sk_X509_NAME_ENTRY_num(rnm.get()) - 1)) != 0) {
+      OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_MULTIPLE_RDNS);
+      return -1;
+    }
+  } else {
+    return 0;
+  }
+
+  if (*pdp) {
+    OPENSSL_PUT_ERROR(X509V3, X509V3_R_DISTPOINT_ALREADY_SET);
+    return -1;
+  }
+
+  *pdp = DIST_POINT_NAME_new();
+  if (!*pdp) {
+    return -1;
+  }
+  if (fnm) {
+    (*pdp)->type = 0;
+    (*pdp)->name.fullname = fnm.release();
+  } else {
+    (*pdp)->type = 1;
+    (*pdp)->name.relativename = rnm.release();
+  }
+
+  return 1;
+}
+
+const BIT_STRING_BITNAME reason_flags[] = {
+    {0, "Unused", "unused"},
+    {1, "Key Compromise", "keyCompromise"},
+    {2, "CA Compromise", "CACompromise"},
+    {3, "Affiliation Changed", "affiliationChanged"},
+    {4, "Superseded", "superseded"},
+    {5, "Cessation Of Operation", "cessationOfOperation"},
+    {6, "Certificate Hold", "certificateHold"},
+    {7, "Privilege Withdrawn", "privilegeWithdrawn"},
+    {8, "AA Compromise", "AACompromise"},
+};
+
+int set_reasons(ASN1_BIT_STRING **preas, const char *value) {
+  if (*preas) {
+    // Duplicate "reasons" or "onlysomereasons" key.
+    OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_VALUE);
+    return 0;
+  }
+  UniquePtr<STACK_OF(CONF_VALUE)> rsk(X509V3_parse_list(value));
+  if (!rsk) {
+    return 0;
+  }
+  for (const CONF_VALUE *val : rsk.get()) {
+    if (!*preas) {
+      *preas = ASN1_BIT_STRING_new();
+      if (!*preas) {
+        return 0;
+      }
+    }
+    auto it = std::find_if(std::begin(reason_flags), std::end(reason_flags),
+                           [&](const BIT_STRING_BITNAME &reason) {
+                             return strcmp(reason.sname, val->name) == 0;
+                           });
+    if (it == std::end(reason_flags) ||
+        !ASN1_BIT_STRING_set_bit(*preas, it->bitnum, 1)) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+int print_reasons(BIO *out, const char *rname, ASN1_BIT_STRING *rflags,
+                  int indent) {
+  bool first = true;
+  BIO_printf(out, "%*s%s:\n%*s", indent, "", rname, indent + 2, "");
+  for (const BIT_STRING_BITNAME &reason : reason_flags) {
+    if (ASN1_BIT_STRING_get_bit(rflags, reason.bitnum)) {
+      if (first) {
+        first = false;
+      } else {
+        BIO_puts(out, ", ");
+      }
+      BIO_puts(out, reason.lname);
+    }
+  }
+  if (first) {
+    BIO_puts(out, "<EMPTY>\n");
+  } else {
+    BIO_puts(out, "\n");
+  }
+  return 1;
+}
+
+UniquePtr<DIST_POINT> crldp_from_section(const X509V3_CTX *ctx,
+                                         const STACK_OF(CONF_VALUE) *nval) {
+  UniquePtr<DIST_POINT> point(DIST_POINT_new());
+  if (!point) {
+    return nullptr;
+  }
+  for (size_t i = 0; i < sk_CONF_VALUE_num(nval); i++) {
+    const CONF_VALUE *cnf = sk_CONF_VALUE_value(nval, i);
+    int ret = set_dist_point_name(&point->distpoint, ctx, cnf);
+    if (ret > 0) {
+      continue;
+    }
+    if (ret < 0) {
+      return nullptr;
+    }
+    if (!strcmp(cnf->name, "reasons")) {
+      if (!set_reasons(&point->reasons, cnf->value)) {
+        return nullptr;
+      }
+    } else if (!strcmp(cnf->name, "CRLissuer")) {
+      GENERAL_NAMES_free(point->CRLissuer);
+      point->CRLissuer = gnames_from_sectname(ctx, cnf->value).release();
+      if (!point->CRLissuer) {
+        return nullptr;
+      }
+    }
+  }
+
+  return point;
+}
+
+void *v2i_crld(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
+               const STACK_OF(CONF_VALUE) *nval) {
+  UniquePtr<STACK_OF(DIST_POINT)> crld(sk_DIST_POINT_new_null());
+  if (crld == nullptr) {
+    return nullptr;
+  }
+  for (const CONF_VALUE *cnf : nval) {
+    if (!cnf->value) {
+      const STACK_OF(CONF_VALUE) *dpsect = X509V3_get_section(ctx, cnf->name);
+      if (!dpsect) {
+        return nullptr;
+      }
+      UniquePtr<DIST_POINT> point = crldp_from_section(ctx, dpsect);
+      if (!point || !PushToStack(crld.get(), std::move(point))) {
+        return nullptr;
+      }
+    } else {
+      UniquePtr<GENERAL_NAME> gen(v2i_GENERAL_NAME(method, ctx, cnf));
+      if (gen == nullptr) {
+        return nullptr;
+      }
+      UniquePtr<GENERAL_NAMES> gens(GENERAL_NAMES_new());
+      if (gens == nullptr || !PushToStack(gens.get(), std::move(gen))) {
+        return nullptr;
+      }
+      UniquePtr<DIST_POINT> point(DIST_POINT_new());
+      if (point == nullptr) {
+        return nullptr;
+      }
+      if (!(point->distpoint = DIST_POINT_NAME_new())) {
+        return nullptr;
+      }
+      point->distpoint->name.fullname = gens.release();
+      point->distpoint->type = 0;
+      if (!PushToStack(crld.get(), std::move(point))) {
+        return nullptr;
+      }
+    }
+  }
+  return crld.release();
+}
+
+void *v2i_idp(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
+              const STACK_OF(CONF_VALUE) *nval) {
+  ISSUING_DIST_POINT *idp = ISSUING_DIST_POINT_new();
+  if (!idp) {
+    goto err;
+  }
+  for (size_t i = 0; i < sk_CONF_VALUE_num(nval); i++) {
+    const CONF_VALUE *cnf = sk_CONF_VALUE_value(nval, i);
+    const char *name = cnf->name;
+    const char *val = cnf->value;
+    int ret = set_dist_point_name(&idp->distpoint, ctx, cnf);
+    if (ret > 0) {
+      continue;
+    }
+    if (ret < 0) {
+      goto err;
+    }
+    if (!strcmp(name, "onlyuser")) {
+      if (!X509V3_get_value_bool(cnf, &idp->onlyuser)) {
+        goto err;
+      }
+    } else if (!strcmp(name, "onlyCA")) {
+      if (!X509V3_get_value_bool(cnf, &idp->onlyCA)) {
+        goto err;
+      }
+    } else if (!strcmp(name, "onlyAA")) {
+      if (!X509V3_get_value_bool(cnf, &idp->onlyattr)) {
+        goto err;
+      }
+    } else if (!strcmp(name, "indirectCRL")) {
+      if (!X509V3_get_value_bool(cnf, &idp->indirectCRL)) {
+        goto err;
+      }
+    } else if (!strcmp(name, "onlysomereasons")) {
+      if (!set_reasons(&idp->onlysomereasons, val)) {
+        goto err;
+      }
+    } else {
+      OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_NAME);
+      X509V3_conf_err(cnf);
+      goto err;
+    }
+  }
+  return idp;
+
+err:
+  ISSUING_DIST_POINT_free(idp);
+  return nullptr;
+}
+
+int print_gens(BIO *out, STACK_OF(GENERAL_NAME) *gens, int indent) {
+  size_t i;
+  for (i = 0; i < sk_GENERAL_NAME_num(gens); i++) {
+    BIO_printf(out, "%*s", indent + 2, "");
+    GENERAL_NAME_print(out, sk_GENERAL_NAME_value(gens, i));
+    BIO_puts(out, "\n");
+  }
+  return 1;
+}
+
+int print_distpoint(BIO *out, DIST_POINT_NAME *dpn, int indent) {
+  if (dpn->type == 0) {
+    BIO_printf(out, "%*sFull Name:\n", indent, "");
+    print_gens(out, dpn->name.fullname, indent);
+  } else {
+    X509Name ntmp;
+    ntmp.entries.reset(sk_X509_NAME_ENTRY_deep_copy(
+        dpn->name.relativename, X509_NAME_ENTRY_dup, X509_NAME_ENTRY_free));
+    if (ntmp.entries == nullptr) {
+      return 0;
+    }
+    BIO_printf(out, "%*sRelative Name:\n%*s", indent, "", indent + 2, "");
+    X509_NAME_print_ex(out, &ntmp, 0, XN_FLAG_ONELINE);
+    BIO_puts(out, "\n");
+  }
+  return 1;
+}
+
+int i2r_idp(const X509V3_EXT_METHOD *method, void *pidp, BIO *out, int indent) {
+  ISSUING_DIST_POINT *idp = reinterpret_cast<ISSUING_DIST_POINT *>(pidp);
+  if (idp->distpoint) {
+    print_distpoint(out, idp->distpoint, indent);
+  }
+  if (idp->onlyuser > 0) {
+    BIO_printf(out, "%*sOnly User Certificates\n", indent, "");
+  }
+  if (idp->onlyCA > 0) {
+    BIO_printf(out, "%*sOnly CA Certificates\n", indent, "");
+  }
+  if (idp->indirectCRL > 0) {
+    BIO_printf(out, "%*sIndirect CRL\n", indent, "");
+  }
+  if (idp->onlysomereasons) {
+    print_reasons(out, "Only Some Reasons", idp->onlysomereasons, indent);
+  }
+  if (idp->onlyattr > 0) {
+    BIO_printf(out, "%*sOnly Attribute Certificates\n", indent, "");
+  }
+  if (!idp->distpoint && (idp->onlyuser <= 0) && (idp->onlyCA <= 0) &&
+      (idp->indirectCRL <= 0) && !idp->onlysomereasons &&
+      (idp->onlyattr <= 0)) {
+    BIO_printf(out, "%*s<EMPTY>\n", indent, "");
+  }
+
+  return 1;
+}
+
+int i2r_crldp(const X509V3_EXT_METHOD *method, void *pcrldp, BIO *out,
+              int indent) {
+  STACK_OF(DIST_POINT) *crld = reinterpret_cast<STACK_OF(DIST_POINT) *>(pcrldp);
+  DIST_POINT *point;
+  size_t i;
+  for (i = 0; i < sk_DIST_POINT_num(crld); i++) {
+    BIO_puts(out, "\n");
+    point = sk_DIST_POINT_value(crld, i);
+    if (point->distpoint) {
+      print_distpoint(out, point->distpoint, indent);
+    }
+    if (point->reasons) {
+      print_reasons(out, "Reasons", point->reasons, indent);
+    }
+    if (point->CRLissuer) {
+      BIO_printf(out, "%*sCRL Issuer:\n", indent, "");
+      print_gens(out, point->CRLissuer, indent);
+    }
+  }
+  return 1;
+}
+
+}  // namespace
+
+const X509V3_EXT_METHOD bssl::v3_crld = {
+    NID_crl_distribution_points,
+    0,
+    ASN1_ITEM_ref(CRL_DIST_POINTS),
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    v2i_crld,
+    i2r_crldp,
+    nullptr,
+    nullptr,
+};
+
+const X509V3_EXT_METHOD bssl::v3_freshest_crl = {
+    NID_freshest_crl, 0,        ASN1_ITEM_ref(CRL_DIST_POINTS),
+    nullptr,          nullptr,  nullptr,
+    nullptr,          nullptr,  nullptr,
+    nullptr,          v2i_crld, i2r_crldp,
+    nullptr,          nullptr,
+};
+
+const X509V3_EXT_METHOD bssl::v3_idp = {
+    NID_issuing_distribution_point,
+    X509V3_EXT_MULTILINE,
+    ASN1_ITEM_ref(ISSUING_DIST_POINT),
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    v2i_idp,
+    i2r_idp,
+    nullptr,
+    nullptr,
+};

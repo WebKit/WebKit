@@ -1,0 +1,6 @@
+
+PASS scriptPercentScaleDown=80, scriptScriptPercentScaleDown=40
+PASS scriptPercentScaleDown=0, scriptScriptPercentScaleDown=40
+PASS scriptPercentScaleDown=80, scriptScriptPercentScaleDown=0
+PASS No MATH table
+

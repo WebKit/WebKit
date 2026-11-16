@@ -1,0 +1,5 @@
+
+PASS 'font-family' does not support 'Georgia'
+PASS 'font-family' does not support '"Gill Sans"'
+FAIL 'font-family' does not support 'sans-serif' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+

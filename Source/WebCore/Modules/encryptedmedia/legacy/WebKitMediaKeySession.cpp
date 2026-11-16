@@ -1,0 +1,270 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebKitMediaKeySession.h"
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+
+#include "ContextDestructionObserverInlines.h"
+#include "Document.h"
+#include "EventLoop.h"
+#include "EventNames.h"
+#include "EventTargetInlines.h"
+#include "ExceptionOr.h"
+#include "Logging.h"
+#include "Page.h"
+#include "SecurityOriginData.h"
+#include "Settings.h"
+#include "WebKitMediaKeyError.h"
+#include "WebKitMediaKeyMessageEvent.h"
+#include "WebKitMediaKeys.h"
+#include <JavaScriptCore/Uint8Array.h>
+#include <wtf/FileSystem.h>
+#include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKitMediaKeySession);
+
+Ref<WebKitMediaKeySession> WebKitMediaKeySession::create(Document& document, WebKitMediaKeys& keys, const String& keySystem)
+{
+    auto session = adoptRef(*new WebKitMediaKeySession(document, keys, keySystem));
+    session->suspendIfNeeded();
+    return session;
+}
+
+WebKitMediaKeySession::WebKitMediaKeySession(Document& document, WebKitMediaKeys& keys, const String& keySystem)
+    : ActiveDOMObject(&document)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(document.logger())
+    , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
+#endif
+    , m_keys(&keys)
+    , m_keySystem(keySystem)
+    , m_session(keys.cdm().createSession(*this))
+    , m_keyRequestTimer(*this, &WebKitMediaKeySession::keyRequestTimerFired)
+    , m_addKeyTimer(*this, &WebKitMediaKeySession::addKeyTimerFired)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    if (RefPtr session = m_session)
+        m_sessionId = session->sessionId();
+}
+
+WebKitMediaKeySession::~WebKitMediaKeySession()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+}
+void WebKitMediaKeySession::close()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    if (RefPtr session = m_session) {
+        session->releaseKeys();
+        session->invalidate();
+        m_session = nullptr;
+    }
+}
+
+RefPtr<ArrayBuffer> WebKitMediaKeySession::cachedKeyForKeyId(const String& keyId) const
+{
+    RefPtr session = m_session;
+    return session ? session->cachedKeyForKeyID(keyId) : nullptr;
+}
+
+void WebKitMediaKeySession::generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData, const String& mediaKeysHashSalt)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, "mimeType: ", mimeType);
+    m_mediaKeysHashSalt = mediaKeysHashSalt;
+    m_pendingKeyRequests.append({ mimeType, WTF::move(initData) });
+    m_keyRequestTimer.startOneShot(0_s);
+}
+
+void WebKitMediaKeySession::keyRequestTimerFired()
+{
+    ASSERT(m_pendingKeyRequests.size());
+    RefPtr session = m_session;
+    if (!session)
+        return;
+
+    while (!m_pendingKeyRequests.isEmpty()) {
+        auto request = m_pendingKeyRequests.takeFirst();
+
+        // NOTE: Continued from step 5 in MediaKeys::createSession().
+        // The user agent will asynchronously execute the following steps in the task:
+
+        // 1. Let cdm be the cdm loaded in the MediaKeys constructor.
+        // 2. Let destinationURL be null.
+        String destinationURL;
+        WebKitMediaKeyError::Code errorCode = 0;
+        uint32_t systemCode = 0;
+
+        // 3. Use cdm to generate a key request and follow the steps for the first matching condition from the following list:
+
+        auto keyRequest = session->generateKeyRequest(request.mimeType, request.initData.ptr(), destinationURL, errorCode, systemCode);
+
+        // Otherwise [if a request is not successfully generated]:
+        if (errorCode) {
+            // 3.1. Create a new MediaKeyError object with the following attributes:
+            //      code = the appropriate MediaKeyError code
+            //      systemCode = a Key System-specific value, if provided, and 0 otherwise
+            // 3.2. Set the MediaKeySession object's error attribute to the error object created in the previous step.
+            // 3.3. queue a task to fire a simple event named keyerror at the MediaKeySession object.
+            sendError(errorCode, systemCode);
+            // 3.4. Abort the task.
+            continue;
+        }
+
+        // 4. queue a task to fire a simple event named keymessage at the new object
+        //    The event is of type MediaKeyMessageEvent and has:
+        //    message = key request
+        //    destinationURL = destinationURL
+        if (keyRequest)
+            sendMessage(keyRequest.get(), destinationURL);
+    }
+}
+
+ExceptionOr<void> WebKitMediaKeySession::update(Ref<Uint8Array>&& key)
+{
+    // From <http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#dom-addkey>:
+    // The addKey(key) method must run the following steps:
+    // 1. If the first or second argument [sic] is an empty array, throw an InvalidAccessError.
+    // NOTE: the reference to a "second argument" is a spec bug.
+    if (!key->length()) {
+        ERROR_LOG(LOGIDENTIFIER, "error: empty key");
+        return Exception { ExceptionCode::InvalidAccessError };
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    // 2. Schedule a task to handle the call, providing key.
+    m_pendingKeys.append(WTF::move(key));
+    m_addKeyTimer.startOneShot(0_s);
+
+    return { };
+}
+
+void WebKitMediaKeySession::addKeyTimerFired()
+{
+    ASSERT(m_pendingKeys.size());
+    RefPtr session = m_session;
+    if (!session)
+        return;
+
+    while (!m_pendingKeys.isEmpty()) {
+        auto pendingKey = m_pendingKeys.takeFirst();
+        unsigned short errorCode = 0;
+        uint32_t systemCode = 0;
+
+        // NOTE: Continued from step 2. of MediaKeySession::update()
+        // 2.1. Let cdm be the cdm loaded in the MediaKeys constructor.
+        // NOTE: This is m_session.
+        // 2.2. Let 'did store key' be false.
+        bool didStoreKey = false;
+        // 2.3. Let 'next message' be null.
+        RefPtr<Uint8Array> nextMessage;
+        // 2.4. Use cdm to handle key.
+        didStoreKey = session->update(pendingKey.ptr(), nextMessage, errorCode, systemCode);
+        // 2.5. If did store key is true and the media element is waiting for a key, queue a task to attempt to resume playback.
+        // TODO: Find and restart the media element
+
+        // 2.6. If next message is not null, queue a task to fire a simple event named keymessage at the MediaKeySession object.
+        //      The event is of type MediaKeyMessageEvent and has:
+        //      message = next message
+        //      destinationURL = null
+        if (nextMessage)
+            sendMessage(nextMessage.get(), emptyString());
+
+        // 2.7. If did store key is true, queue a task to fire a simple event named keyadded at the MediaKeySession object.
+        if (didStoreKey) {
+            auto keyaddedEvent = Event::create(eventNames().webkitkeyaddedEvent, Event::CanBubble::No, Event::IsCancelable::No);
+            keyaddedEvent->setTarget(this);
+            queueTaskToDispatchEvent(*this, TaskSource::Networking, WTF::move(keyaddedEvent));
+
+            Ref { *m_keys }->keyAdded();
+        }
+
+        // 2.8. If any of the preceding steps in the task failed
+        if (errorCode) {
+            // 2.8.1. Create a new MediaKeyError object with the following attributes:
+            //        code = the appropriate MediaKeyError code
+            //        systemCode = a Key System-specific value, if provided, and 0 otherwise
+            // 2.8.2. Set the MediaKeySession object's error attribute to the error object created in the previous step.
+            // 2.8.3. queue a task to fire a simple event named keyerror at the MediaKeySession object.
+            sendError(errorCode, systemCode);
+            // 2.8.4. Abort the task.
+            // NOTE: no-op
+        }
+    }
+}
+
+void WebKitMediaKeySession::sendMessage(Uint8Array* message, String destinationURL)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    auto event = WebKitMediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, message, destinationURL);
+    event->setTarget(this);
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, WTF::move(event));
+}
+
+void WebKitMediaKeySession::sendError(MediaKeyErrorCode errorCode, uint32_t systemCode)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, "errorCode: ", (unsigned)errorCode, ", systemCode: ", systemCode);
+    m_error = WebKitMediaKeyError::create(errorCode, systemCode);
+
+    auto keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, Event::CanBubble::No, Event::IsCancelable::No);
+    keyerrorEvent->setTarget(this);
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, WTF::move(keyerrorEvent));
+}
+
+String WebKitMediaKeySession::mediaKeysStorageDirectory() const
+{
+    RefPtr document = downcast<Document>(scriptExecutionContext());
+    return document ? document->mediaKeysStorageDirectory() : emptyString();
+}
+
+bool WebKitMediaKeySession::virtualHasPendingActivity() const
+{
+    return m_keys && m_session;
+}
+
+void WebKitMediaKeySession::stop()
+{
+    close();
+}
+
+ScriptExecutionContext* WebKitMediaKeySession::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& WebKitMediaKeySession::logChannel() const
+{
+    return LogEME;
+}
+#endif
+
+}
+
+#endif

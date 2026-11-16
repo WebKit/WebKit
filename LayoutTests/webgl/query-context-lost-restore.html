@@ -1,0 +1,225 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebGLTimerQueriesEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="runTest()">
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Tests that query context loss and restore behavior");
+
+const wtu = WebGLTestUtils;
+
+var gl;
+var query;
+var lostQuery;
+var newQuery;
+
+function waitForEvent(target, eventName, handler) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => reject(new Error("Timed out waiting for " + eventName)), 5000);
+        target.addEventListener(eventName, (e) => {
+            if (handler)
+                handler(e);
+            resolve(e);
+        }, { once: true });
+    });
+}
+
+async function testWebGL1TimerQuery(queryTarget, queryTargetName) {
+    debug(`Running test: contextType: webgl, queryTarget: ${queryTargetName}`);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    gl = wtu.create3DContext(canvas);
+    if (!gl) {
+        testFailed("Could not create webgl context");
+        return;
+    }
+
+    const WEBGL_lose_context = wtu.getExtensionWithKnownPrefixes(gl, "WEBGL_lose_context");
+    if (!WEBGL_lose_context) {
+        testPassed("WEBGL_lose_context not available, skipping");
+        return;
+    }
+
+    let ext = gl.getExtension("EXT_disjoint_timer_query");
+    if (!ext) {
+        testPassed("EXT_disjoint_timer_query not available, skipping");
+        return;
+    }
+
+    query = ext.createQueryEXT();
+    shouldBeNonNull("query");
+    if (queryTarget == ext.TIME_ELAPSED_EXT) {
+        ext.beginQueryEXT(queryTarget, query);
+        wtu.glErrorShouldBe(gl, gl.NO_ERROR, `beginQueryEXT(${queryTargetName}) should succeed`);
+    } else {
+        ext.queryCounterEXT(query, queryTarget);
+        wtu.glErrorShouldBe(gl, gl.NO_ERROR, `queryCounterEXT(${queryTargetName}) should succeed`);
+    }
+
+    const weakQuery = new WeakRef(query);
+    query = null;
+
+    const contextLostPromise = waitForEvent(canvas, "webglcontextlost", (e) => e.preventDefault());
+    WEBGL_lose_context.loseContext();
+    await contextLostPromise;
+    shouldBeTrue("gl.isContextLost()");
+
+    lostQuery = ext.createQueryEXT();
+    shouldBeNonNull("lostQuery");
+
+    ext = null;
+    if (window.GCController)
+        GCController.collect();
+    else if (window.gc)
+        gc();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    if (window.GCController)
+        GCController.collect();
+    else if (window.gc)
+        gc();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    if (weakQuery.deref() === undefined)
+        testPassed("Active query was collected after context loss");
+    else
+        testFailed("Active query should have been collected after context loss but is still alive");
+
+    const contextRestoredPromise = waitForEvent(canvas, "webglcontextrestored");
+    await new Promise(resolve => setTimeout(resolve, 0));
+    WEBGL_lose_context.restoreContext();
+    await contextRestoredPromise;
+    shouldBeFalse("gl.isContextLost()");
+
+    ext = gl.getExtension("EXT_disjoint_timer_query");
+    if (!ext) {
+        testFailed("Could not re-enable EXT_disjoint_timer_query after restore");
+        return;
+    }
+
+    newQuery = ext.createQueryEXT();
+    shouldBeNonNull("newQuery");
+    if (queryTarget == ext.TIME_ELAPSED_EXT) {
+        ext.beginQueryEXT(queryTarget, newQuery);
+        wtu.glErrorShouldBe(gl, gl.NO_ERROR, `beginQueryEXT(${queryTargetName}) with new query should succeed after restore`);
+        ext.endQueryEXT(queryTarget);
+        wtu.glErrorShouldBe(gl, gl.NO_ERROR, `endQueryEXT(${queryTargetName}) should succeed`);
+    } else {
+        ext.queryCounterEXT(newQuery, queryTarget);
+        wtu.glErrorShouldBe(gl, gl.NO_ERROR, `queryCounterEXT(${queryTargetName}) with new query should succeed after restore`);
+    }
+}
+
+async function testWebGL2Query(queryTarget, queryTargetName, requiresExtension) {
+    debug(`Running test: contextType: webgl2, queryTarget: ${queryTargetName}`);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    gl = wtu.create3DContext(canvas, undefined, 2);
+    if (!gl) {
+        testFailed("Could not create webgl2 context");
+        return;
+    }
+
+    const WEBGL_lose_context = wtu.getExtensionWithKnownPrefixes(gl, "WEBGL_lose_context");
+    if (!WEBGL_lose_context) {
+        testPassed("WEBGL_lose_context not available, skipping");
+        return;
+    }
+
+    if (requiresExtension) {
+        const ext = gl.getExtension(requiresExtension);
+        if (!ext) {
+            testPassed(`${requiresExtension} not available, skipping`);
+            return;
+        }
+    }
+
+    query = gl.createQuery();
+    shouldBeNonNull("query");
+    gl.beginQuery(queryTarget, query);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, `beginQuery(${queryTargetName}) should succeed`);
+
+    const weakQuery = new WeakRef(query);
+    query = null;
+
+    const contextLostPromise = waitForEvent(canvas, "webglcontextlost", (e) => e.preventDefault());
+    WEBGL_lose_context.loseContext();
+    await contextLostPromise;
+    shouldBeTrue("gl.isContextLost()");
+
+    lostQuery = gl.createQuery();
+    shouldBeNonNull("lostQuery");
+
+    if (window.GCController)
+        GCController.collect();
+    else if (window.gc)
+        gc();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    if (window.GCController)
+        GCController.collect();
+    else if (window.gc)
+        gc();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    if (weakQuery.deref() === undefined)
+        testPassed(`Active ${queryTargetName} query was collected after context loss`);
+    else
+        testFailed(`Active ${queryTargetName} query should have been collected after context loss but is still alive`);
+
+    const contextRestoredPromise = waitForEvent(canvas, "webglcontextrestored");
+    await new Promise(resolve => setTimeout(resolve, 0));
+    WEBGL_lose_context.restoreContext();
+    await contextRestoredPromise;
+    shouldBeFalse("gl.isContextLost()");
+
+    if (requiresExtension) {
+        const ext = gl.getExtension(requiresExtension);
+        if (!ext) {
+            testFailed(`Could not re-enable ${requiresExtension} after restore`);
+            return;
+        }
+    }
+
+    newQuery = gl.createQuery();
+    shouldBeNonNull("newQuery");
+    gl.beginQuery(queryTarget, newQuery);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, `beginQuery(${queryTargetName}) with new query should succeed after restore`);
+
+    gl.endQuery(queryTarget);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, `endQuery(${queryTargetName}) should succeed`);
+}
+
+var WebGL1QueryTargets = {
+    TIME_ELAPSED_EXT    : 0x88BF,
+    TIMESTAMP_EXT       : 0x8E28,
+};
+
+var WebGL2QueryTargets = {
+    ANY_SAMPLES_PASSED                      : 0x8C2F,
+    ANY_SAMPLES_PASSED_CONSERVATIVE         : 0x8D6A,
+    TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN   : 0x8C88,
+    TIME_ELAPSED_EXT                        : 0x88BF,
+};
+
+async function runTest() {
+    await testWebGL1TimerQuery(WebGL1QueryTargets.TIME_ELAPSED_EXT, "TIME_ELAPSED_EXT");
+    await testWebGL1TimerQuery(WebGL1QueryTargets.TIMESTAMP_EXT, "TIMESTAMP_EXT");
+    await testWebGL2Query(WebGL2QueryTargets.ANY_SAMPLES_PASSED, "ANY_SAMPLES_PASSED", null);
+    await testWebGL2Query(WebGL2QueryTargets.ANY_SAMPLES_PASSED_CONSERVATIVE, "ANY_SAMPLES_PASSED_CONSERVATIVE", null);
+    await testWebGL2Query(WebGL2QueryTargets.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, "TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN", null);
+    await testWebGL2Query(WebGL2QueryTargets.TIME_ELAPSED_EXT, "TIME_ELAPSED_EXT", "EXT_disjoint_timer_query_webgl2");
+    finishTest();
+}
+</script>
+</body>
+</html>

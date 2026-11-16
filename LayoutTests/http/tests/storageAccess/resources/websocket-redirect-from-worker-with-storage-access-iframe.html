@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>html, body { height: 100%; }</style>
+    <script>
+        function messageToTop(type, message)
+        {
+            top.postMessage({ type, message }, "https://127.0.0.1:8443");
+        }
+
+        function startWorker()
+        {
+            let worker = new Worker("websocket-blocked-sending-cookie-as-third-party-after-ws-redirect-worker.js");
+            worker.onmessage = (event) => {
+                let { type, message } = event.data;
+                messageToTop(type, message);
+            };
+        }
+
+        async function makeRequestWithUserGesture()
+        {
+            try {
+                await document.requestStorageAccess();
+            } catch (error) {
+                messageToTop("fail", "document.requestStorageAccess() was rejected: " + error);
+                messageToTop("done", "");
+                return;
+            }
+
+            // Sanity check that the grant is in effect for the iframe itself, so that the worker
+            // result below is meaningful.
+            if (!await document.hasStorageAccess() || !document.cookie.includes("firstPartyCookie=value")) {
+                messageToTop("fail", "Storage access was not granted to the iframe.");
+                messageToTop("done", "");
+                return;
+            }
+            messageToTop("pass", "The iframe has storage access and can see its cookie.");
+
+            startWorker();
+        }
+    </script>
+</head>
+<body onclick="makeRequestWithUserGesture()">
+</body>
+</html>

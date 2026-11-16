@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Borders and Box Decorations 4: 'corner-shape' clip inside an ancestor rectangular clip, both clipping a composited descendant — reference</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: white;
+        }
+
+        .rect-clipper {
+            position: relative;
+            width: 400px;
+            height: 500px;
+            overflow: hidden;
+        }
+
+        .shape-clipper {
+            position: relative;
+            left: 100px;
+            top: 150px;
+            width: 200px;
+            height: 300px;
+            border-radius: 30px;
+            corner-shape: squircle;
+            overflow: hidden;
+        }
+
+        .composited {
+            position: absolute;
+            left: -40px;
+            top: -40px;
+            width: 280px;
+            height: 380px;
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="rect-clipper">
+        <div class="shape-clipper">
+            <div class="composited"></div>
+        </div>
+    </div>
+</body>
+</html>

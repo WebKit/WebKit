@@ -1,0 +1,26 @@
+<style>
+    p {
+      filter: url(#x12);
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function main() {
+        window.resizeTo(0, 1);
+        x27.removeChild(x30);
+    }
+</script>
+<body onload="main()">
+    <p>Passes if it does not crash.</p>
+    <svg id="x11" height="14%">
+        <image href="x" href="#x32" x2="0px">
+            <filter id="x12" width="0px">
+                <feMerge id="x27" result="x27" x="825em" height="100%" y="0%">
+                    <feMergeNode id="x30" result="x30"/>
+                </feMerge>
+            </filter>
+        </image>
+    </svg>
+</body>

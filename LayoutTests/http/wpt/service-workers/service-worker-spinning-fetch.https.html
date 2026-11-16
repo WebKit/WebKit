@@ -1,0 +1,33 @@
+<!doctype html><!-- webkit-test-runner [ ShouldUseServiceWorkerShortTimeout=true dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-fetch" });
+    const worker = registration.installing;
+
+    await waitForState(registration.installing, "activated");
+
+    withIframe("spin-fetch");
+
+    return waitForServiceWorkerNoLongerRunning(worker);
+}, "Spin in fetch");
+
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-after-fetch" });
+    const worker = registration.installing;
+
+    await waitForState(registration.installing, "activated");
+
+    withIframe("spin-after-fetch");
+
+    return waitForServiceWorkerNoLongerRunning(worker);
+}, "Spin after fetch");
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS if 'clicked' text is not shown below.
+content
+

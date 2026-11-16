@@ -1,0 +1,29 @@
+<canvas id="canvas" width="64px" height="64px" style="display: none"></canvas>
+<pre id="log"></pre>
+<img id="result">
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText(pixelTest = true);
+    window.testRunner.waitUntilDone();
+}
+
+function webpDataURLTest()
+{
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    context.drawImage(window.image, 0, 0, canvas.width, canvas.height);
+
+    var dataURL = canvas.toDataURL('image/webp', 0.8);
+    if (!dataURL.match(/^data:image\/webp[;,]/))
+        document.getElementById('log').textContent += "FAIL: canvas.toDataURL('image/webp') not supported";
+    else
+        document.getElementById('result').src = dataURL;
+
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+var image = new Image();
+image.onload = webpDataURLTest;
+image.src = 'resources/html5.png';
+</script>

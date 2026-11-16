@@ -1,0 +1,9 @@
+
+PASS VideoEncoder.isConfigSupported av01.0.04M.08
+PASS VideoEncoder.isConfigSupported av01.0.04M.08.0.110.01.01.01.0
+FAIL VideoEncoder.isConfigSupported av01.0.04M.10 assert_equals: expected false but got true
+FAIL VideoEncoder.isConfigSupported av01.0.04M.12 assert_equals: expected false but got true
+FAIL VideoEncoder.isConfigSupported av01.0.04M.08.1 assert_equals: expected false but got true
+FAIL VideoEncoder.isConfigSupported av01.0.04M.08.0.000 assert_equals: expected false but got true
+FAIL VideoEncoder.isConfigSupported av01.0.04M.08.0.100 assert_equals: expected false but got true
+

@@ -1,0 +1,8 @@
+SVG text
+
+PASS CSSStyleRule: selectorText value: |.style1| isMatch: false
+PASS CSSStyleRule: selectorText value: |svg|*.style1  | isMatch: true
+PASS CSSStyleRule: selectorText value: |*|*.style1  | isMatch: true
+PASS CSSStyleRule: selectorText value: | *.style1  | isMatch: false
+PASS CSSStyleRule: selectorText value: |p| isMatch: false
+

@@ -1,0 +1,5 @@
+
+FAIL Promise rejection event should be muted for cross-origin non-CORS script assert_unreached: unhandledrejection event should never be triggered Reached unreachable code
+PASS Promise rejection should be muted if the rejected promise is handled in cross-origin non-CORS script
+PASS Promise rejection should be muted if the rejected promise is handled in unhandledrejection event handler in cross-origin non-CORS script
+

@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .layer { position: fixed; left: 10px; top: 10px; width: 50px; height: 50px; background-color: green; -webkit-mask-image: linear-gradient(black, black); -webkit-mask-size: 25px 25px; }
+      .child { position: absolute; left: 0; top: 0; width: 150px; height: 150px; background-color: blue; will-change: transform; }
+    </style>
+  </head>
+  <body>
+    <div class="layer"><div class="child"></div></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+      var layer = document.getElementsByClassName("layer")[0];
+      // The mask applies to the child too, which paints beyond the masked layer's bounds, so removing the
+      // mask has to damage the whole subtree rather than just the layer.
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {}, () => {},
+          () => { layer.style.webkitMaskImage = "none"; },
+          () => { assertRectsEq(latestFrameDamage().rects, [[10, 10, 150, 150]]); },
+      ], 0);
+    </script>
+  </body>
+</html>

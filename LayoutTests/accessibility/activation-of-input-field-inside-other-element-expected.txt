@@ -1,0 +1,11 @@
+
+This test checks whether a simulated click will activate a combobox that contains a text field.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Combo box element WAS clicked with accessibility
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

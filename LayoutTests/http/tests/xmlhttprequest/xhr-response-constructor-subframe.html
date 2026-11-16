@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Tests the value of xhr.response.constructor");
+    jsTestIsAsync = true;
+
+    window.addEventListener('load', function(){
+        const iframe = document.createElement('iframe')
+        iframe.src = 'resources/xhr-response-constructor-iframe.html'
+        iframe.addEventListener('load', function(){
+            xhr = new XMLHttpRequest()
+            xhr.responseType = "json";
+            xhr.open('GET', 'resources/data.json');
+            iframe.contentWindow.setupListener(xhr)
+            xhr.addEventListener('load', function() {
+                debug("* In top frame");
+                shouldBe("xhr.response.constructor", "top.Object");
+                finishJSTest();
+            });
+            xhr.send('');
+
+        });
+        document.body.appendChild(iframe)
+    });
+</script>
+</body>
+</html>

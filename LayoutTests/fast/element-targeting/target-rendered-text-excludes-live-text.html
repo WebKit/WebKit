@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+div:has(img) {
+    border: 1px solid tomato;
+    display: inline-block;
+    width: 320px;
+    height: 240px;
+}
+</style>
+</head>
+<body>
+    <div><img src="../images/resources/dice.png"></img></div>
+    <p>This test requires WebKitTestRunner</p>
+    <div id="console"></div>
+</body>
+<script>
+jsTestIsAsync = true;
+addEventListener("load", async () => {
+    const image = document.querySelector("img");
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0.5, 0.5),
+            topRight : new DOMPointReadOnly(1, 0.5),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0.5, 1),
+            children: [{
+                text : "Hello",
+                topLeft : new DOMPointReadOnly(0.5, 0.5),
+                topRight : new DOMPointReadOnly(1, 0.5),
+                bottomRight : new DOMPointReadOnly(1, 1),
+                bottomLeft : new DOMPointReadOnly(0.5, 1),
+            }],
+        }
+    ]);
+    text = await UIHelper.requestRenderedTextForFrontmostTarget(100, 100);
+    shouldBeEqualToString("text", "{320,240}");
+    finishJSTest();
+});
+</script>
+</html>

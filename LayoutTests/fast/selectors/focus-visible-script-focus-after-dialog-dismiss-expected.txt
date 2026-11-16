@@ -1,0 +1,6 @@
+Dismissing a modal dialog by clicking a close button inside it, and restoring focus to the element that opened it, should not show :focus-visible on that element.
+
+Open
+
+PASS focus() restored after dismissing a modal <dialog> should not show :focus-visible
+

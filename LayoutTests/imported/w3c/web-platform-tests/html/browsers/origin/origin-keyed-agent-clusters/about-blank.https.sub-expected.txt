@@ -1,0 +1,10 @@
+
+PASS parent to about:blank: setting document.domain must give sync access
+PASS about:blank to child2: messageerror event must occur
+PASS about:blank to child2: setting document.domain must not give sync access
+PASS child2 to about:blank: messageerror event must occur
+PASS child2 to about:blank: setting document.domain must not give sync access
+PASS parent: originAgentCluster must equal true
+PASS about:blank: originAgentCluster must equal true
+PASS child2: originAgentCluster must equal false
+

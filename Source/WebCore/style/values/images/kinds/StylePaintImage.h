@@ -1,0 +1,75 @@
+/*
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "StyleCustomIdent.h"
+#include "StyleGeneratedImage.h"
+
+namespace WebCore {
+
+class CSSVariableData;
+
+namespace Style {
+
+class PaintImage final : public GeneratedImage {
+public:
+    static Ref<PaintImage> create(CustomIdent&& name, Ref<CSSVariableData> arguments)
+    {
+        return adoptRef(*new PaintImage(WTF::move(name), WTF::move(arguments)));
+    }
+    virtual ~PaintImage();
+
+private:
+    explicit PaintImage(CustomIdent&&, Ref<CSSVariableData>&&);
+
+    bool operator==(const Image&) const final;
+
+    Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
+    Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
+    bool isPending() const final;
+    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
+    ImageDrawResult draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, bool isForFirstLine) const final;
+    ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const final;
+    bool knownToBeOpaque(const RenderElement&) const final;
+    bool canDraw(const RenderElement&) const final;
+    bool containsCurrentColor() const final { return false; }
+    bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
+    void didAddClient(RenderElement&) final { }
+    void didRemoveClient(RenderElement&) final { }
+
+    Vector<WTF::String> paintArguments() const;
+    ImageDrawResult paint(GraphicsContext&, const RenderElement&, FloatSize) const;
+
+    CustomIdent m_name;
+    const Ref<CSSVariableData> m_arguments;
+};
+
+} // namespace Style
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(PaintImage, isPaintImage)

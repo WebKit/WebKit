@@ -1,0 +1,13 @@
+
+PASS Setting defaultValue in a textarea should NOT move the cursor to the end
+PASS Setting defaultValue in a textarea with a value should NOT make any difference
+PASS Setting textContent in a textarea should NOT move selection{Start,End} to the end
+PASS Adding children to a textarea should NOT move selection{Start,End} to the end
+PASS Removing children from a textarea should NOT update selection{Start,End}
+PASS Setting the same value (with different newlines) in a textarea should NOT update selection{Start,End}
+PASS Removing child nodes in non-dirty textarea should make selection{Start,End} 0
+PASS Setting value to a shorter string than defaultValue should correct the cursor position
+PASS Shortening value by turning the input type into 'url' should correct selection{Start,End}
+PASS Shortening value by turning the input type into 'color' and back to 'text' should correct selection{Start,End}
+PASS Resetting a value to a shorter string than defaultValue should correct the cursor position
+

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<svg id="removeSVG" width="200" height="100">
+    <rect id="removeTarget" x="10" y="10" width="20" height="20" fill="green"/>
+    <use id="removeTargetInstance" href="#removeTarget" y="50"/>
+    <animateMotion id="removeMotion" href="#removeTarget" from="0,0" to="100,0" dur="10s"/>
+</svg>
+<svg id="retargetSVG" width="200" height="100">
+    <rect id="retargetTarget" x="10" y="10" width="20" height="20" fill="green"/>
+    <use id="retargetTargetInstance" href="#retargetTarget" y="50"/>
+    <rect id="retargetNewTarget" x="150" y="10" width="20" height="20" fill="blue"/>
+    <animateMotion id="retargetMotion" href="#retargetTarget" from="0,0" to="100,0" dur="10s"/>
+</svg>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that removing or retargeting an active animateMotion element moves its previous target and the target's use instance back to their un-animated position.");
+jsTestIsAsync = true;
+
+function offsetInSVG(element)
+{
+    return Math.round(element.getBoundingClientRect().x - element.ownerSVGElement.getBoundingClientRect().x);
+}
+
+function pauseAt(svg, seconds)
+{
+    svg.pauseAnimations();
+    svg.setCurrentTime(seconds);
+}
+
+window.onload = () => setTimeout(() => {
+    debug("Remove the animation element.");
+    pauseAt(removeSVG, 5);
+    shouldBe("offsetInSVG(removeTarget)", "60");
+    shouldBe("offsetInSVG(removeTargetInstance)", "60");
+    removeMotion.remove();
+    shouldBe("offsetInSVG(removeTarget)", "10");
+    shouldBe("offsetInSVG(removeTargetInstance)", "10");
+
+    debug("");
+    debug("Retarget the animation element with href.");
+    pauseAt(retargetSVG, 5);
+    shouldBe("offsetInSVG(retargetTarget)", "60");
+    shouldBe("offsetInSVG(retargetTargetInstance)", "60");
+    retargetMotion.setAttribute("href", "#retargetNewTarget");
+    shouldBe("offsetInSVG(retargetTarget)", "10");
+    shouldBe("offsetInSVG(retargetTargetInstance)", "10");
+
+    finishJSTest();
+}, 0);
+</script>
+</body>
+</html>

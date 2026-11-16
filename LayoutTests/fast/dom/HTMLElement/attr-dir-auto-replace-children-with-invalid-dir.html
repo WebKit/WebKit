@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<body>
+<div id="container" dir="auto">
+    <span id="rtl">&#1514;</span>
+    <span>a</span>
+</div>
+<style>
+#container { width: 100px; }
+</style>
+<script>
+
+requestAnimationFrame(() => {
+    setTimeout(() => {
+        rtl.dir = 'x';
+        rtl.textContent = 'b';
+        document.documentElement.className = '';
+    }, 0);
+});
+
+</script>
+</body>
+</html>

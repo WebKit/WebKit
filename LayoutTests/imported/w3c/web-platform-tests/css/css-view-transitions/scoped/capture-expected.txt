@@ -1,0 +1,4 @@
+
+FAIL View-transition pseudo elements created for correct element assert_true: Missing scoped view transition support expected true got false
+FAIL Capture with concurrent scoped view-transitions assert_true: Missing scoped view transition support expected true got false
+

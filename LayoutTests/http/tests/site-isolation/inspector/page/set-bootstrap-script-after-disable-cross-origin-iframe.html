@@ -1,0 +1,66 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+let frameCount = 0;
+
+function crossOriginURL(file) {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    return `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/${file}?${++frameCount}`;
+}
+
+function addFrame(doc, url, eventName) {
+    let frame = doc.createElement("iframe");
+    frame.src = url;
+    frame.onload = (event) => { TestPage.dispatchEventToFrontend(eventName, event.target.src); };
+    doc.body.appendChild(frame);
+}
+
+function openPopupWithCrossOriginFrame() {
+    let popup = window.open("about:blank");
+    addFrame(popup.document, crossOriginURL("bootstrap-scriptless-frame.html"), "PopupFrameLoaded");
+}
+
+function addCrossOriginFrame() {
+    addFrame(document, crossOriginURL("bootstrap-frame.html"), "FrameLoaded");
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetBootstrapScriptAfterDisable");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetBootstrapScript.ProcessWithoutInspectedFrames",
+        description: "A process that hosts none of the inspected page's frames should not keep the bootstrap script after Page.disable.",
+        async test() {
+            InspectorTest.log("Opening a popup with a cross-origin iframe...");
+            await Promise.all([
+                InspectorTest.awaitEvent("PopupFrameLoaded"),
+                InspectorTest.evaluateInPage(`openPopupWithCrossOriginFrame()`),
+            ]);
+
+            InspectorTest.log("Setting bootstrap script...");
+            await WI.networkManager.createBootstrapScript(`window.bootstrapValue = "stale";`);
+            WI.networkManager.bootstrapScriptEnabled = true;
+
+            InspectorTest.log("Disabling the Page domain on the WebPage target...");
+            await WI.backendTarget.PageAgent.disable();
+
+            InspectorTest.log("Adding a cross-origin iframe of the popup iframe's site...");
+            let [frameLoadedEvent] = await Promise.all([
+                InspectorTest.awaitEvent("FrameLoaded"),
+                InspectorTest.evaluateInPage(`addCrossOriginFrame()`),
+            ]);
+            let url = frameLoadedEvent.data;
+            let target = await waitForFrameTargetForURLContaining(url.substring(url.lastIndexOf("/") + 1));
+            let response = await target.RuntimeAgent.evaluate.invoke({expression: `window.bootstrapValue ?? null`, objectGroup: "test", returnByValue: true});
+            InspectorTest.expectEqual(response.result.value, null, "Bootstrap script should not run after Page.disable.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.disable clears the bootstrap script from every process it was sent to under site isolation.</p>
+</body>

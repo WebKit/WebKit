@@ -1,0 +1,5 @@
+
+
+PASS input should accept text input even after restyled
+PASS textarea should accept text input even after restyled
+

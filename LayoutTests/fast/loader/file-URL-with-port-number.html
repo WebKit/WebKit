@@ -1,0 +1,54 @@
+<head>
+<script>
+
+function finishTest()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function subframeLoaded()
+{
+    document.getElementById("result").appendChild(document.createTextNode("FAIL: The subframe loaded."));
+    finishTest();
+}
+
+function subframeError()
+{
+    document.getElementById("result").appendChild(document.createTextNode("FAIL: The subframe onerror was called."));
+    finishTest();
+}
+
+function subframeDidNotLoad()
+{
+    document.getElementById("result").appendChild(document.createTextNode("PASS: The subframe did not load."));
+    finishTest();
+}
+
+function runTest()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var subframeLocation = window.location + "";
+    subframeLocation = subframeLocation.replace(/file:\/\/\//, "file://host:1/");
+    subframeLocation = subframeLocation.replace(/file-URL-with-port-number/, "resources/empty-subframe");
+    var subframe = document.getElementById("subframe");
+    subframe.onload = subframeLoaded;
+    subframe.onerror = subframeError;
+    try {
+        subframe.contentWindow.location = subframeLocation;
+    } catch (e) { }
+    setTimeout(subframeDidNotLoad, 100);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>This tests whether we can load a file URL with a port number in the URL. It should be ignored, and so the load should succeed.</p>
+<p id="result"></p>
+<iframe id="subframe" width="20" height="20"></iframe>
+</body>

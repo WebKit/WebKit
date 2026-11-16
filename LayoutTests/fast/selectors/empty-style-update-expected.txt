@@ -1,0 +1,30 @@
+Test the style update with the :empty pseudo class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state is empty.
+PASS getComputedStyle(document.getElementById("with-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("without-renderer")).backgroundColor is "rgb(1, 2, 3)"
+Adding a comment does not change the :empty state.
+PASS getComputedStyle(document.getElementById("with-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("without-renderer")).backgroundColor is "rgb(1, 2, 3)"
+Add an element as child make updates :empty.
+PASS getComputedStyle(document.getElementById("with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+Adding an empty text node, this is still not empty because of the element.
+PASS getComputedStyle(document.getElementById("with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+Removing the elements previously added should restore the :empty state.
+PASS getComputedStyle(document.getElementById("with-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("without-renderer")).backgroundColor is "rgb(1, 2, 3)"
+Adding a non empty text node makes the state non empty.
+PASS getComputedStyle(document.getElementById("with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+Removing the last text child, back to being empty.
+PASS getComputedStyle(document.getElementById("with-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("without-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

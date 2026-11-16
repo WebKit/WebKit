@@ -1,0 +1,6 @@
+
+PASS portal-transform: auto is recomputed against the merged bounds when a model is added
+PASS portal-transform: auto is recomputed when the portal is resized
+PASS portal-transform is recomputed when the property changes between auto and none
+PASS portal-transform is dropped when the model is removed and recomputed when it is reinserted
+

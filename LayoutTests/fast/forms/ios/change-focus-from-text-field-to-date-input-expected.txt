@@ -1,0 +1,12 @@
+Tests that focusing a text field and then immediately focusing a date input on iOS does not result in a hang.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Showed date picker
+PASS Dismissed date picker
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

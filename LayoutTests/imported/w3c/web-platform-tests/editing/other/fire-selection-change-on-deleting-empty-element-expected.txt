@@ -1,0 +1,5 @@
+A
+
+
+FAIL Selection is updated after removing the element in contenteditable div assert_equals: Character should be removed expected "<h1><br></h1>" but got "<h1>A</h1>"
+

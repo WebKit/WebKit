@@ -1,0 +1,7 @@
+
+FAIL inline-start and left map to the same pseudo-element in horizontal LTR assert_equals: inline-start should return cascaded 'B' expected "\"B\"" but got ""
+FAIL Writing-mode vertical-rl LTR correctly maps logical directions to physical directions assert_equals: inline-start should map to up and be overwritten expected "\"V-Up\"" but got ""
+FAIL getComputedStyle() resolves properties when pseudo-element is not created due to no content assert_equals: Should return default 'normal' content expected "normal" but got ""
+FAIL getComputedStyle() resolves properties when the originating element is not a scroll container assert_equals: Should correctly resolve styled content expected "\"<\"" but got ""
+PASS getComputedStyle() with invalid argument falls back cleanly and does not crash
+

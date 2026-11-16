@@ -1,0 +1,4 @@
+
+PASS Flac with 6 channels and a description is supported
+PASS Decoding flac with 6 channels
+

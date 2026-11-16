@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style id="style">
+foo {
+    font: -apple-system-body;
+}
+</style>
+</head>
+<body>
+<script>
+let style = document.getElementById("style").sheet.cssRules[0].style;
+shouldNotBe("style.getPropertyValue('font-family')", "'UICTFontTextStyleBody'");
+shouldBeTrue("isNaN(parseInt(style.getPropertyValue('font-size')))");
+shouldNotBe("style.getPropertyValue('font-style')", "'normal'");
+shouldBeTrue("isNaN(parseInt(style.getPropertyValue('font-weight')))");
+shouldNotBe("style.getPropertyValue('font-variant-caps')", "'normal'");
+shouldNotBe("style.getPropertyValue('line-height')", "'normal'");
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+Checks that obsolete API is no longer present on AudioParam.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS AudioParam.prototype.name is undefined.
+PASS AudioParam.prototype.units is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

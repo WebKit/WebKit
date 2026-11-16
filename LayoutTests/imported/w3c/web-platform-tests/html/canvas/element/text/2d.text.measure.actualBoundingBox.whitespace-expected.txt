@@ -1,0 +1,6 @@
+2d.text.measure.actualBoundingBox.whitespace
+Testing actualBoundingBox with leading/trailing whitespace
+Actual output:
+
+FAIL Testing actualBoundingBox with leading/trailing whitespace assert_true: Math.abs(ctx.measureText(whitespace + 'A').actualBoundingBoxLeft) >= 49 expected true got false
+

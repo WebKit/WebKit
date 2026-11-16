@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    /* Specificity of (1, 1, 1) */
+    :matches(.target):matches(#target):matches(target) {
+        background-color: green;
+    }
+
+    /* This selector has a specificity of (1, 1, 0) but the selector below has a higher position. */
+    #target.target:matches(*) {
+        background-color: red;
+        color: blue;
+    }
+
+    /* Specificity of (1, 1, 0) */
+    :matches(#target):matches(.target) {
+        background-color: red;
+        color: white;
+    }
+
+    /* This selector has a specificity of (1, 0, 1) but the selector below has a higher position. */
+    target#target:not(:not(*, matches(*, *))) {
+        background-color: red;
+        color: blue;
+        border: 25px solid purple;
+    }
+
+    /* Specificity of (1, 0, 1) */
+    :matches(target):matches(#target) {
+        background-color: red;
+        color: blue;
+        border: none;
+    }
+</style>
+</head>
+<body>
+    <p>This test the specificity when chaining multiple :matches() selectors. The test succeed is the text "Target" appears on in white over a green background.</p>
+    <target id="target" class="target">Target</target>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/layer-utilities.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("LayerTree.reasonsForCompositingLayer.Blending");
+
+    suite.addTestCase({
+        name: "LayerTree.reasonsForCompositingLayer.Blending",
+        description: "CSS blending should be reported as the reason an element and its isolating ancestor are composited.",
+        async test() {
+            let {documentNode, layers} = await getDocumentAndLayers();
+
+            async function reasonsForElement(selector) {
+                let node = await getNodeForSelector(documentNode, selector);
+                InspectorTest.expectNotNull(node, `Should have a node for ${selector}.`);
+
+                let layer = layers.find((existingLayer) => existingLayer.nodeId === node.id);
+                InspectorTest.expectNotNull(layer, `Should have a layer for ${selector}.`);
+                if (!layer)
+                    return {};
+
+                return await getReasonsForCompositingLayer(layer);
+            }
+
+            let blendingReasons = await reasonsForElement("#blending");
+            InspectorTest.expectTrue(blendingReasons.blendingWithCompositedDescendants, "#blending should be composited due to having CSS blending applied and composited descendants.");
+
+            let isolatingReasons = await reasonsForElement("#isolating");
+            InspectorTest.expectTrue(isolatingReasons.isolatesCompositedBlendingDescendants, "#isolating should be composited due to isolating composited descendants that have CSS blending applied.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+};
+
+</script>
+<style type="text/css">
+
+    #isolating {
+        isolation: isolate;
+    }
+
+    #blending {
+        mix-blend-mode: difference;
+    }
+
+    #composited {
+        -webkit-transform: translateZ(0);
+    }
+
+</style>
+</head>
+<body onload="runTest()">
+    <div id="isolating">
+        <div id="blending">
+            <div id="composited"></div>
+        </div>
+    </div>
+</body>
+</html>

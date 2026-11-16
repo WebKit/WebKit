@@ -1,0 +1,15 @@
+
+PASS A fit-content() row is not stretched to a definite grid container height
+PASS A fit-content() row is not stretched to the grid container's min-height
+PASS A fit-content() row is floored by its item's automatic minimum size, above the argument
+PASS A fit-content() row's growth limit is clamped by its argument
+PASS A fit-content() argument smaller than the content sizes the row
+PASS A fit-content() argument larger than the content does not size the row
+PASS A percentage fit-content() argument resolves against the grid container's definite height
+PASS A calc() fit-content() argument resolves against the grid container's definite height
+PASS An item spanning fit-content() rows does not grow either past its argument
+PASS A fit-content() argument is applied on a zoomed grid container
+PASS A fit-content() column's growth limit is clamped by its argument
+PASS An auto row in the same position is stretched
+PASS Leftover space goes to the auto row rather than the fit-content() row beside it
+

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that the abort algorithm that addEventListener() adds to its signal is removed along with the listener, so that a signal returned by AbortSignal.any() can be collected while its source signals are alive.");
+jsTestIsAsync = true;
+
+const count = 50;
+let collectedCount;
+let listenerCallCount;
+let requestWasAborted;
+
+function nextTask()
+{
+    return new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function collectGarbage()
+{
+    // Collect from a new task so that the signals are not found on the stack.
+    await nextTask();
+    gc();
+    await nextTask();
+}
+
+async function testCollected(addListener, removeListeners = () => { })
+{
+    const rootController = new AbortController();
+    const weakRefs = [];
+    for (let i = 0; i < count; ++i) {
+        const signal = AbortSignal.any([rootController.signal]);
+        addListener(signal);
+        weakRefs.push(new WeakRef(signal));
+    }
+    removeListeners();
+    // A first collection may only collect the event targets.
+    await collectGarbage();
+    await collectGarbage();
+    collectedCount = weakRefs.filter(weakRef => !weakRef.deref()).length;
+    shouldBeTrue("collectedCount > count / 2");
+    rootController.abort();
+}
+
+onload = async () => {
+    debug("removeEventListener():");
+    await testCollected(signal => {
+        const listener = () => { };
+        window.addEventListener("test-remove", listener, { signal });
+        window.removeEventListener("test-remove", listener);
+    });
+
+    debug("A once listener that was called:");
+    await testCollected(signal => {
+        window.addEventListener("test-once", () => { }, { signal, once: true });
+        window.dispatchEvent(new Event("test-once"));
+    });
+
+    debug("The event target was destroyed:");
+    await testCollected(signal => {
+        new EventTarget().addEventListener("test-target", () => { }, { signal });
+    });
+
+    debug("document.open(), which removes all event listeners:");
+    const frame = document.body.appendChild(document.createElement("iframe"));
+    await testCollected(signal => {
+        frame.contentDocument.addEventListener("test-open", () => { }, { signal });
+        frame.contentWindow.addEventListener("test-open", () => { }, { signal });
+    }, () => {
+        frame.contentDocument.open();
+        frame.contentDocument.close();
+    });
+
+    debug("A listener registered on its own signal, then everything was dropped (must not crash):");
+    let controller = new AbortController();
+    let weakRefs = [];
+    for (let i = 0; i < count; ++i) {
+        const signal = AbortSignal.any([controller.signal]);
+        signal.addEventListener("abort", () => { }, { signal });
+        weakRefs.push(new WeakRef(signal));
+        controller.signal.addEventListener("abort", () => { }, { signal: controller.signal });
+    }
+    controller = null;
+    await collectGarbage();
+    await collectGarbage();
+    collectedCount = weakRefs.filter(weakRef => !weakRef.deref()).length;
+    shouldBeTrue("collectedCount > count / 2");
+
+    debug("A listener removed and added again without a signal stays when the signal aborts:");
+    controller = new AbortController();
+    listenerCallCount = 0;
+    const listener = () => ++listenerCallCount;
+    window.addEventListener("test-readd", listener, { signal: AbortSignal.any([controller.signal]) });
+    window.removeEventListener("test-readd", listener);
+    window.addEventListener("test-readd", listener);
+    controller.abort();
+    window.dispatchEvent(new Event("test-readd"));
+    shouldBe("listenerCallCount", "1");
+
+    debug("After most of its abort algorithms are removed, a signal still has the others, and stays alive for them:");
+    controller = new AbortController();
+    listenerCallCount = 0;
+    let request;
+    (() => {
+        const signal = AbortSignal.any([controller.signal]);
+        const listeners = [];
+        for (let i = 0; i < count; ++i) {
+            if (i == count / 2) {
+                window.addEventListener("test-remaining", () => ++listenerCallCount, { signal });
+                request = new Request("data:text/plain,", { signal });
+            }
+            const listener = () => { };
+            window.addEventListener("test-removed", listener, { signal });
+            listeners.push(listener);
+        }
+        for (const listener of listeners)
+            window.removeEventListener("test-removed", listener);
+    })();
+    await collectGarbage();
+    controller.abort();
+    window.dispatchEvent(new Event("test-remaining"));
+    shouldBe("listenerCallCount", "0");
+    requestWasAborted = request.signal.aborted;
+    shouldBeTrue("requestWasAborted");
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL With Create: Policy to use: null, is cross-origin: false, is allowed by policy: true promise_test: Unhandled rejection with value: object "TypeError: Cannot destructure property 'name' from null or undefined value"
+TIMEOUT With Create: Policy to use: null, is cross-origin: true, is allowed by policy: false Test timed out
+NOTRUN With Create: Policy to use: digital-credentials-create, is cross-origin: false, is allowed by policy: true
+NOTRUN With Create: Policy to use: digital-credentials-create, is cross-origin: true, is allowed by policy: true
+NOTRUN With Create: Policy to use: digital-credentials-create *, is cross-origin: false, is allowed by policy: true
+NOTRUN With Create: Policy to use: digital-credentials-create *, is cross-origin: true, is allowed by policy: true
+NOTRUN With Create: Policy to use: digital-credentials-create 'none', is cross-origin: false, is allowed by policy: false
+NOTRUN With Create: Policy to use: digital-credentials-create 'none', is cross-origin: true, is allowed by policy: false
+NOTRUN With Create: Policy to use: digital-credentials-create 'self', is cross-origin: false, is allowed by policy: true
+NOTRUN With Create: Policy to use: digital-credentials-create 'self', is cross-origin: true, is allowed by policy: false
+NOTRUN With Create: Policy to use: digital-credentials-create https://www1.web-platform.test:9443, is cross-origin: false, is allowed by policy: false
+NOTRUN With Create: Policy to use: digital-credentials-create https://www1.web-platform.test:9443, is cross-origin: true, is allowed by policy: true
+

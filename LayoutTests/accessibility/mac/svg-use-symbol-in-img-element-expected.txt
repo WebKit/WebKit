@@ -1,0 +1,16 @@
+This tests that SVG symbols/use elements inside an img element are not listed in the VoiceOver images rotor.
+
+PASS: accessibilityController.accessibleElementById('img').role === 'AXRole: AXImage'
+PASS: graphicsResults.length === 1
+PASS: graphicsResults[0].role === 'AXRole: AXImage'
+PASS: graphicsResults[0].domIdentifier === 'img'
+PASS: graphicsResults.length === 2
+PASS: graphicsResults[0].domIdentifier === 'img'
+PASS: graphicsResults[1].domIdentifier === 'dynamic-img'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Text before image
+
+

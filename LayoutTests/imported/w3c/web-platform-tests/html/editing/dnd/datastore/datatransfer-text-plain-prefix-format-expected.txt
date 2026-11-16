@@ -1,0 +1,12 @@
+
+PASS setData("text/plainfoo") does not overwrite text/plain
+PASS getData("text/plainfoo") does not return text/plain data
+PASS clearData("text/plainfoo") does not clear text/plain
+PASS setData("text/plain-x") does not overwrite text/plain
+PASS getData("text/plain-x") does not return text/plain data
+PASS clearData("text/plain-x") does not clear text/plain
+PASS setData("TEXT/PLAINFOO") does not overwrite text/plain
+PASS getData("TEXT/PLAINFOO") does not return text/plain data
+PASS clearData("TEXT/PLAINFOO") does not clear text/plain
+PASS setData/getData/clearData("text/plain") operate on text/plain
+

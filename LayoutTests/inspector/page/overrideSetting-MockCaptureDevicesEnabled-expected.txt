@@ -1,0 +1,12 @@
+Tests for the Page.overrideSetting command.
+
+
+== Running test suite: Page.overrideSetting
+-- Running test case: Page.overrideSetting.MockCaptureDevicesEnabled
+Overriding MockCaptureDevicesEnabled to false...
+Mock use check: PASS
+Overriding MockCaptureDevicesEnabled to true...
+Mock use check: PASS
+Removing MockCaptureDevicesEnabled override...
+Mock use check: PASS
+

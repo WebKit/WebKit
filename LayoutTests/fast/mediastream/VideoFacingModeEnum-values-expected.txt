@@ -1,0 +1,3 @@
+
+PASS VideoFacingModeEnum: returned settings/capabilities values are in the spec enum domain
+

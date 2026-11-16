@@ -1,0 +1,13 @@
+inline half square(half x) {
+    return x * x;
+}
+
+half4 main(float2 coords) {
+    half one = 1;
+    half4 result = half4(123);
+    result.r = square(0);
+    result.b = square(result.r);
+    result.g = square(1);
+    result.a = square(one);
+    return result;
+}

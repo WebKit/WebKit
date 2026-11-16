@@ -1,0 +1,80 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true AsyncOverflowScrollingEnabled=true CSSScrollAnchoringEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        .spacer {
+            height: 5000px;
+        }
+
+        input {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <p>This test verifies that clicking an offscreen element via text extraction scrolls it into view and dispatches the click.</p>
+    <div class="spacer"></div>
+    <button id="offscreen-button" aria-label="Offscreen Button">Click Me</button>
+    <input id="offscreen-input" type="text" aria-label="Offscreen Input" placeholder="Type here" />
+    <script>
+    jsTestIsAsync = true;
+
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return rect.bottom >= 0 && rect.top <= window.innerHeight;
+    }
+
+    addEventListener("load", async () => {
+        offscreenButton = document.getElementById("offscreen-button");
+        offscreenInput = document.getElementById("offscreen-input");
+        buttonClicked = false;
+
+        offscreenButton.addEventListener("click", () => {
+            buttonClicked = true;
+        });
+
+        if (!window.testRunner)
+            return;
+
+        const debugText = await UIHelper.requestDebugText({
+            nodeIdentifierInclusion: "interactive",
+            includeAccessibilityAttributes: true,
+        });
+
+        scrollTopBeforeClick = document.scrollingElement.scrollTop;
+
+        clickButtonError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Offscreen Button")
+        });
+
+        scrollTopAfterButtonClick = document.scrollingElement.scrollTop;
+        buttonInViewportAfterClick = isInViewport(offscreenButton);
+
+        clickInputError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Offscreen Input")
+        });
+
+        scrollTopAfterInputClick = document.scrollingElement.scrollTop;
+        activeElementAfterInputClick = document.activeElement;
+        inputInViewportAfterClick = isInViewport(offscreenInput);
+
+        shouldBe("scrollTopBeforeClick", "0");
+        shouldBeEqualToString("clickButtonError", "");
+        shouldBeTrue("buttonClicked");
+        shouldBeTrue("scrollTopAfterButtonClick > 0");
+        shouldBeTrue("buttonInViewportAfterClick");
+        shouldBeEqualToString("clickInputError", "");
+        shouldBeTrue("scrollTopAfterInputClick > 0");
+        shouldBeTrue("inputInViewportAfterClick");
+        shouldBe("activeElementAfterInputClick", "offscreenInput");
+
+        finishJSTest();
+    });
+    </script>
+</body>
+</html>

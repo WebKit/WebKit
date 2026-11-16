@@ -1,0 +1,232 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <memory>
+#include <wtf/Assertions.h>
+#include <wtf/Forward.h>
+#include <wtf/GetPtr.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/SwiftBridging.h>
+#include <wtf/TypeCasts.h>
+#include <wtf/TypeTraits.h>
+
+namespace WTF {
+
+template<typename T> class UniqueRef;
+
+template<typename T, class... Args>
+[[nodiscard]] UniqueRef<T> makeUniqueRefWithoutFastMallocCheck(Args&&... args)
+{
+    // FIXME: Remove this suppression once rdar://190195858 is fixed.
+    SUPPRESS_FORWARD_DECL_ARG return UniqueRef<T>(*new T(std::forward<Args>(args)...));
+}
+
+template<class T, class... Args>
+[[nodiscard]] UniqueRef<T> makeUniqueRefWithoutRefCountedCheck(Args&&... args)
+{
+    static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use TZoneMalloc (WTF_MAKE_TZONE_ALLOCATED or one of its variants)");
+    return makeUniqueRefWithoutFastMallocCheck<T>(std::forward<Args>(args)...);
+}
+
+template<typename T, class... Args>
+[[nodiscard]] UniqueRef<T> makeUniqueRef(Args&&... args)
+{
+    static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use TZoneMalloc (WTF_MAKE_TZONE_ALLOCATED or one of its variants)");
+    static_assert(!HasRefPtrMemberFunctions<T>, "T should not be RefCounted");
+    // FIXME: Remove this suppression once rdar://190195858 is fixed.
+    SUPPRESS_FORWARD_DECL_ARG return makeUniqueRefWithoutFastMallocCheck<T>(std::forward<Args>(args)...);
+}
+
+template<typename T>
+UniqueRef<T> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<T>&& ptr)
+{
+    return UniqueRef<T>(WTF::move(ptr));
+}
+
+template<typename T>
+class SWIFT_SELF_CONTAINED UniqueRef {
+public:
+    template <typename U>
+    UniqueRef(UniqueRef<U>&& other)
+        : m_ref(other.m_ref.release())
+    {
+        ASSERT(m_ref);
+    }
+
+    explicit UniqueRef(T& other)
+        : m_ref(&other)
+    {
+        ASSERT(m_ref);
+    }
+
+    T* ptr() const LIFETIME_BOUND RETURNS_NONNULL { ASSERT(m_ref); return m_ref.get(); }
+    T& get() const LIFETIME_BOUND { ASSERT(m_ref); return *m_ref; }
+
+    T* operator&() const LIFETIME_BOUND { ASSERT(m_ref); return m_ref.get(); }
+    T* operator->() const LIFETIME_BOUND { ASSERT(m_ref); return m_ref.get(); }
+
+    operator T&() const LIFETIME_BOUND { ASSERT(m_ref); return *m_ref; }
+
+    std::unique_ptr<T> moveToUniquePtr() { return WTF::move(m_ref); }
+
+    explicit UniqueRef(HashTableEmptyValueType) { }
+    bool isHashTableEmptyValue() const { return !m_ref; }
+
+private:
+    template<class U, class... Args> friend UniqueRef<U> makeUniqueRefWithoutFastMallocCheck(Args&&...);
+    template<class U> friend UniqueRef<U> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<U>&&);
+    template<class U> friend class UniqueRef;
+
+    explicit UniqueRef(std::unique_ptr<T>&& ptr)
+        : m_ref(WTF::move(ptr))
+    {
+        ASSERT(m_ref);
+    }
+
+    std::unique_ptr<T> m_ref;
+};
+
+template<typename T>
+struct GetPtrHelper<UniqueRef<T>> {
+    using PtrType = T*;
+    using UnderlyingType = T;
+    static T* getPtr(const UniqueRef<T>& p LIFETIME_BOUND) { return const_cast<T*>(p.ptr()); }
+};
+
+template<typename T>
+struct IsSmartPtr<UniqueRef<T>> {
+    static constexpr bool value = true;
+    static constexpr bool isNullable = false;
+};
+
+template<typename ExpectedType, typename ArgType>
+inline bool is(UniqueRef<ArgType>& source)
+{
+    return is<ExpectedType>(source.get());
+}
+
+template<typename ExpectedType, typename ArgType>
+inline bool is(const UniqueRef<ArgType>& source)
+{
+    return is<ExpectedType>(source.get());
+}
+
+template<typename... ExpectedTypes, typename ArgType>
+inline bool isAnyOf(UniqueRef<ArgType>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
+template<typename... ExpectedTypes, typename ArgType>
+inline bool isAnyOf(const UniqueRef<ArgType>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>& uncheckedDowncast(UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return uncheckedDowncast<Target>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>& uncheckedDowncast(const UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return uncheckedDowncast<Target>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>& downcast(UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return downcast<Target>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>& downcast(const UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return downcast<Target>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>* dynamicDowncast(UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return dynamicDowncast<Target>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>* dynamicDowncast(const UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return dynamicDowncast<Target>(source.get());
+}
+
+// The cast result doesn't own the object, so it can't take over from an rvalue.
+template<typename Target, typename Source> void uncheckedDowncast(UniqueRef<Source>&&) = delete;
+template<typename Target, typename Source> void downcast(UniqueRef<Source>&&) = delete;
+template<typename Target, typename Source> void dynamicDowncast(UniqueRef<Source>&&) = delete;
+
+template<typename T>
+inline bool arePointingToEqualData(const UniqueRef<T>& a, const UniqueRef<T>& b)
+{
+    return a.ptr() == b.ptr() || a.get() == b.get();
+}
+
+template<typename T, typename PtrTraits = RawPtrTraits<T>>
+    requires HasRefPtrMemberFunctions<T>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION Ref<T, PtrTraits> protect(const UniqueRef<T>& reference)
+{
+    return Ref<T, PtrTraits>(reference.get());
+}
+
+template<typename T, typename PtrTraits = RawPtrTraits<T>>
+    requires (HasCheckedPtrMemberFunctions<T> && !HasRefPtrMemberFunctions<T>)
+ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedRef<T, PtrTraits> protect(const UniqueRef<T>& reference)
+{
+    return CheckedRef<T, PtrTraits>(reference.get());
+}
+
+template<typename T, typename Deleter, typename PtrTraits = RawPtrTraits<T>>
+    requires HasRefPtrMemberFunctions<T>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION RefPtr<T, PtrTraits> protect(const std::unique_ptr<T, Deleter>& ptr)
+{
+    return RefPtr<T, PtrTraits>(ptr.get());
+}
+
+template<typename T, typename Deleter, typename PtrTraits = RawPtrTraits<T>>
+    requires (HasCheckedPtrMemberFunctions<T> && !HasRefPtrMemberFunctions<T>)
+ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedPtr<T, PtrTraits> protect(const std::unique_ptr<T, Deleter>& ptr)
+{
+    return CheckedPtr<T, PtrTraits>(ptr.get());
+}
+
+} // namespace WTF
+
+using WTF::UniqueRef;
+using WTF::arePointingToEqualData;
+using WTF::makeUniqueRef;
+using WTF::makeUniqueRefWithoutFastMallocCheck;
+using WTF::makeUniqueRefWithoutRefCountedCheck;
+using WTF::makeUniqueRefFromNonNullUniquePtr;

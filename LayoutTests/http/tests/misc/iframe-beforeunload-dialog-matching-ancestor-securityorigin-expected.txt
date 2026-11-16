@@ -1,0 +1,2 @@
+CONFIRM NAVIGATION: This is beforeunload from an iframe.
+

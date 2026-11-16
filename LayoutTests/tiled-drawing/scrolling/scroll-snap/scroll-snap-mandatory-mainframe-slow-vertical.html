@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style>
+            html {
+                scroll-snap-type: y mandatory;
+            }
+            .verticalGallery {
+                width: 100vw;
+                height: 600vh;
+                margin: 0;
+                padding: 0;
+            }
+            .colorBox {
+                height: 100vh;
+                width: 100vw;
+                float: left;
+                scroll-snap-align: start;
+            }
+            #item0 { background-color: red; background-image: url('../../resources/green-blue.png'); background-attachment: fixed;}
+            #item1 { background-color: green; }
+            #item2 { background-color: blue; }
+            #item3 { background-color: aqua; }
+            #item4 { background-color: yellow; }
+            #item5 { background-color: fuchsia; }
+        </style>
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script src="resources/mainframe-scroll-snap-test.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function runTests()
+        {
+            try {
+                await UIHelper.delayFor(0);
+                await doScrollGlide(document.scrollingElement, VERTICAL);
+                expectTrue(document.scrollingElement.scrollTop == window.innerHeight, "div scrolled to next window.");
+
+                await UIHelper.delayFor(0);
+                await doScrollSnap(document.scrollingElement, VERTICAL);
+                expectTrue(document.scrollingElement.scrollTop == window.innerHeight, "div honored snap points.");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+
+        function onLoad()
+        {
+            if (window.eventSender) {
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
+                runTests();
+            } else {
+                var messageLocation = document.getElementById('item0');
+                var message = document.createElement('div');
+                message.innerHTML = "<p>To run this test manually, scroll the page vertically. The page should "
+                    + "snap between uniform colors which fill the view.<p>";
+                messageLocation.appendChild(message);
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();" class="verticalGallery">
+        <div id="item0" class="colorBox"><div id="console"></div></div>
+        <div id="item1" class="colorBox"></div>
+        <div id="item2" class="colorBox"></div>
+        <div id="item3" class="colorBox"></div>
+        <div id="item4" class="colorBox"></div>
+        <div id="item5" class="colorBox"></div>
+    </body>
+</html>

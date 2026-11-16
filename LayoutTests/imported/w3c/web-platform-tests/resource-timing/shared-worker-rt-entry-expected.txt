@@ -1,0 +1,3 @@
+
+FAIL Shared workers should not generate Resource Timing Entries assert_equals: SharedWorker should not create a ResourceTiming entry expected 0 but got 1
+

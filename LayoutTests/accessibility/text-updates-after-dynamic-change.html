@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<button id="aria-label-button"></button>
+<button id="aria-labelledby-button"></button>
+<span id="label">aria-labelledby provided description</span>
+<button id="title-button"></button>
+
+<script>
+    var testOutput = "This test ensures object accessibility text updates after a dynamic change (e.g. via JavaScript).\n\n";
+    var ariaLabelButton, ariaLabelledByButton, titleButton;
+
+    function verifyButtons() {
+        testOutput += `#aria-label-button ${ariaLabelButton.description}\n`;
+        testOutput += `#aria-labelledby-button ${ariaLabelledByButton.description}\n`;
+        testOutput += `#title-button ${titleButton.description}\n\n`;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        ariaLabelButton = accessibilityController.accessibleElementById("aria-label-button");
+        ariaLabelledByButton = accessibilityController.accessibleElementById("aria-labelledby-button");
+        titleButton = accessibilityController.accessibleElementById("title-button");
+        testOutput += "Initial button descriptions:\n\n";
+        verifyButtons();
+
+        document.getElementById("aria-label-button").ariaLabel = "aria-label provided description";
+        document.getElementById("aria-labelledby-button").setAttribute("aria-labelledby", "label");
+        document.getElementById("title-button").title = "title provided description";
+        setTimeout(async function() {
+            await waitFor(() => {
+                return ariaLabelButton.description.includes("aria-label")
+                    && ariaLabelledByButton.description.includes("aria-labelledby")
+                    && titleButton.description.includes("title");
+            });
+            testOutput += "Final button descriptions:\n\n";
+            verifyButtons();
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+</style>
+</head>
+<body>
+<select id="select">
+    <option>January</option>
+    <option>February</option>
+    <option>March</option>
+    <option>April</option>
+    <option>May</option>
+    <option>June</option>
+</select>
+<script>
+const select = document.getElementById("select");
+
+select.addEventListener("change", () => {
+    window.parent.postMessage({
+        type: "result",
+        value: select.value
+    }, "*");
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container" role="region" aria-label="Survey">
+    <button id="initial-button">Initial</button>
+    <button id="nav-button">Next</button>
+</div>
+
+<script>
+var output = "Tests that all newly-added children of a container are reachable in the AX tree after the contents are dynamically replaced.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var container = accessibilityController.accessibleElementById("container");
+    output += "Initial state:\n";
+    output += expect("container.childrenCount", "2");
+
+    var buttonCount = 12;
+    var reachableButtons;
+    setTimeout(async function() {
+        var notificationCounter = 0;
+        var makePageDirty = setInterval(function() {
+            // Continuously dirty layout to defer AXObjectCache::performDeferredCacheUpdate,
+            // necessary to trigger the bug.
+            document.body.style.paddingTop = (Math.floor(Math.random() * 4)) + "px";
+            // Continuously queue an AX notification on the container so that
+            // notificationPostTimer fires repeatedly with a queued nodeUpdate for
+            // the container.
+            document.getElementById("container").setAttribute("aria-atomic", String(notificationCounter++));
+        }, 1);
+
+        // Update the role, triggering a full node update.
+        document.getElementById("container").setAttribute("role", "group");
+        var newContents = "";
+        for (var i = 1; i <= buttonCount; i++)
+            newContents += `<button id="q${i}-button">Q${i}</button>`;
+        newContents += `<button id="nav-button">Next</button>`;
+        document.getElementById("container").innerHTML = newContents;
+
+        container = accessibilityController.accessibleElementById("container");
+        output += "\nAfter swap:\n";
+        output += await expectAsync("container.childrenCount", "13");
+
+        reachableButtons = 0;
+        for (var i = 1; i <= buttonCount; i++) {
+            let button = await waitForElementById(`q${i}-button`);
+            if (button)
+                reachableButtons++;
+        }
+        output += expect("reachableButtons", "buttonCount");
+
+        clearInterval(makePageDirty);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

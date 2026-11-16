@@ -1,0 +1,7 @@
+
+PASS RequestPhoneNumberPossession with an empty challenge fails a message check
+PASS RequestPhoneNumberPossession with a challenge longer than 1024 bytes fails a message check
+PASS RequestPhoneNumberPossession with a phone number suffix hint that isn't digits fails a message check
+PASS RequestPhoneNumberPossession with a PNPI suffix hint longer than 32 bytes fails a message check
+PASS RequestPhoneNumberPossession with an empty RP ID fails a message check
+

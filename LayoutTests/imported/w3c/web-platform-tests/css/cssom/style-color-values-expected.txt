@@ -1,0 +1,9 @@
+Test
+
+PASS Sanity check
+PASS System color keyword
+PASS Color keyword
+PASS Hex color notation
+PASS Color function
+PASS Global keyword
+

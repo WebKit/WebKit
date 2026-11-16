@@ -1,0 +1,14 @@
+<body>
+<script src="/common/get-host-info.sub.js"></script>
+<script>
+// Forward messages from iframe to opener.
+window.addEventListener("message", (e) => {
+  opener.postMessage(e.data, "*");
+});
+onload = () => {
+  let iframe = document.createElement("iframe");
+  iframe.src = get_host_info().ORIGIN + "/clear-site-data/support/echo-clear-site-data.py" + location.search;
+  document.body.appendChild(iframe);
+};
+</script>
+</body>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<title>&lt;select&gt; repaints when &lt;option&gt; background-color changes</title>
+<select id="sel" multiple size="4">
+  <option id="opt">A</option>
+  <option>B</option>
+</select>
+<pre id="repaints"></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+window.addEventListener('load', async () => {
+  await UIHelper.renderingUpdate();
+
+  window.internals?.startTrackingRepaints();
+
+  document.getElementById('opt').style.backgroundColor = 'green';
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  testRunner?.notifyDone();
+});
+</script>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset=utf8>
+
+<!--
+ Copyright (C) 2007 Apple Inc.  All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+-->
+
+<title>SunSpider 1.0.2 JavaScript Benchmark (sunspider-1.0.2 test suite - In Progress...)</title>
+<link rel="stylesheet" href="../sunspider.css">
+</head>
+
+<body onload="start()">
+
+<h2><span id="logo">&#x2600;</span>SunSpider JavaScript Benchmark <small>(In Progress...)</small></h2>
+<h3>Content Version: sunspider-1.0.2</h3>
+
+<script src="sunspider-test-prefix.js"></script>
+<script src="sunspider-test-contents.js"></script>
+<script>
+var testIndex = -1;
+var currentRepeat = -1;
+var repeatCount = 10;
+var warmupMS = 8;
+
+var output = [];
+output.length = repeatCount;
+for (var i = 0; i < output.length; i++) {
+    output[i] = {};
+}
+
+function warmup()
+{
+    for (var start = new Date; new Date - start < warmupMS; ) {
+        for (var i = 0; i < 100; ++i) {
+            if (Math.atan(Math.acos(Math.asin(Math.random()))) > 4) // Always false.
+                return;
+        }
+    }
+}
+
+function start() 
+{
+    window.setTimeout(next, 128);
+}
+
+function next()
+{
+    document.getElementById("frameparent").innerHTML = "";
+    document.getElementById("frameparent").innerHTML = "<iframe id='testframe'>";
+    var testFrame = document.getElementById("testframe");
+    if (++testIndex < tests.length) {
+        // Warm up the CPU a little bit, in case power management clocked it down
+        // or put it to sleep. We're trying to strike a balance here: do enough
+        // work so that all browsers see the CPU at an equal clock rate, but
+        // not so much work that we hide performance problems caused by overly
+        // aggressive power management.
+        warmup();
+
+        testFrame.contentDocument.open();
+        testFrame.contentDocument.write(testContents[testIndex]);
+        testFrame.contentDocument.close();
+
+        window.setTimeout(next, 0);
+    } else if (++currentRepeat < repeatCount) { 
+        document.getElementById("countdown").innerHTML = repeatCount - currentRepeat;
+        testIndex = -1;
+
+        window.setTimeout(next, 128);
+    } else {
+        finish();
+    }
+}
+
+function recordResult(time)
+{
+    if (currentRepeat >= 0) // negative repeats are warmups
+        output[currentRepeat][tests[testIndex]] = time;
+}
+
+function finish()
+{
+    var outputString = "{";
+    outputString += '"v": "sunspider-1.0.2", ';
+    for (var test in output[0]) {
+        outputString += '"' + test + '":[';
+        for (var i = 0; i < output.length; i++) {
+            var time = output[i][test];
+            if (time != time)
+                time = "\"NaN\"";
+            outputString += time + ",";
+        }
+        outputString = outputString.substring(0, outputString.length - 1);
+        outputString += "],";
+    }
+    outputString = outputString.substring(0, outputString.length - 1);
+    outputString += "}";
+
+    location = "results.html?" + encodeURI(outputString);
+}
+
+</script>
+
+<h3 id="countdown">warmup</h3>
+<div id="frameparent"></div>
+
+</body>
+</html>

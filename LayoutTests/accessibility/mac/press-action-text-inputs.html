@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input type="text" id="textInput"/>
+<input type="search" id="searchInput"/>
+<div contenteditable id="editableDiv">Hello</div>
+<input type="number" id="numberInput"/>
+
+<script>
+var output = "This tests that performing a press action on text input types brings focus to those elements.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var textInput = accessibilityController.accessibleElementById("textInput");
+    setTimeout(async function() {
+        textInput.press()
+        await waitFor(() => accessibilityController.focusedElement.role == "AXRole: AXTextField");
+        output += "Successfully focused text input.\n";
+
+        var searchInput = accessibilityController.accessibleElementById("searchInput");
+        searchInput.press();
+        await waitFor(() => accessibilityController.focusedElement.subrole == "AXSubrole: AXSearchField");
+        output += "Successfully focused search input.\n";
+
+        var contentEditable = accessibilityController.accessibleElementById("editableDiv");
+        contentEditable.press();
+        await waitFor(() => accessibilityController.focusedElement.role == "AXRole: AXTextArea");
+        output += "Successfully focused content editable div.\n";
+
+        var numberInput = accessibilityController.accessibleElementById("numberInput");
+        numberInput.press();
+        await waitFor(() => accessibilityController.focusedElement.role == "AXRole: AXTextField");
+        output += "Successfully focused number input.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+
+</script>
+
+</body>
+</html>

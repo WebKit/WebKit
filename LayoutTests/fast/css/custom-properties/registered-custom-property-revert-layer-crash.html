@@ -1,0 +1,13 @@
+<script>
+window.testRunner?.dumpAsText();
+</script>
+<div>This test passes if it doesn't crash.</div>
+<style>
+@property --v0 {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 10px;
+}
+@layer { div { --v0: foo } }
+div { --v0: revert-layer; }
+</style>

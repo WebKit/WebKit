@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+
+    .blurred {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        filter: blur(10px);
+    }
+
+    #first {
+        left: 100px;
+        top: 100px;
+    }
+
+    #second {
+        left: 100px;
+        top: 400px;
+    }
+
+    .inner {
+        position: absolute;
+        left: 25px;
+        top: 25px;
+        width: 50px;
+        height: 50px;
+        background-color: green;
+    }
+
+    .before {
+        background-color: red;
+    }
+</style>
+<script>
+// Neither of the shared repaint helpers fits here: both start tracking at load, while
+// the second measurement must only begin tracking once the first paint has happened...
+let dumpedRects = "";
+
+function trackRepaintRects(mutate)
+{
+    internals.startTrackingRepaints();
+    mutate();
+    document.body.offsetTop;
+    dumpedRects += internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText(false);
+    testRunner.waitUntilDone();
+}
+
+addEventListener("load", () => {
+    if (!window.testRunner || !window.internals)
+        return;
+
+    trackRepaintRects(() => {
+        document.querySelector("#first .inner").classList.remove("before");
+    });
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            trackRepaintRects(() => {
+                document.querySelector("#second .inner").classList.remove("before");
+            });
+
+            const pre = document.createElement("pre");
+            pre.textContent = dumpedRects;
+            document.body.appendChild(pre);
+            testRunner.notifyDone();
+        });
+    });
+});
+</script>
+</head>
+<body>
+<div class="blurred" id="first"><div class="inner before"></div></div>
+<div class="blurred" id="second"><div class="inner before"></div></div>
+</body>
+</html>

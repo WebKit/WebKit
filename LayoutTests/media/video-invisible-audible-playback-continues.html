@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            if (window.internals)
+                internals.settings.setInvisibleAutoplayNotPermitted(true);
+
+            function start()
+            {
+                findMediaElement();
+                video.volume = 0.1;
+
+                consoleWrite('** setting video.src on a visible audible video');
+                video.src = findMediaFile('video', 'content/test');
+                waitForEventOnce('playing', onPlaying);
+                consoleWrite('');
+            }
+
+            function onPlaying()
+            {
+                testExpected('video.paused', false);
+
+                waitForEventAndFail('pause');
+
+                consoleWrite('** moving the video outside the viewport');
+                run('video.style.top = "-9999px"');
+                setTimeout(checkStillPlaying, 100);
+            }
+
+            function checkStillPlaying()
+            {
+                testExpected('video.paused', false);
+                endTest();
+            }
+        </script>
+        <style>
+        video { position: absolute; top: 0; left: 0; }
+        </style>
+    </head>
+
+    <body onload="start()">
+        <video controls autoplay></video>
+        <p>Test that an audible &lt;video&gt; that is already playing continues to play after it is moved outside the viewport.</p>
+    </body>
+</html>

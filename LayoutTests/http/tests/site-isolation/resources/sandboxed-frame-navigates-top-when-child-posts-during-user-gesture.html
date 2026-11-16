@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function navigateTop()
+{
+    try {
+        top.location = "http://localhost:8000/security/resources/should-have-loaded.html";
+    } catch (e) {
+        parent.postMessage("the navigation was blocked: " + e.name, "*");
+    }
+}
+
+window.addEventListener("message", navigateTop, false);
+</script>
+<iframe src="http://127.0.0.1:8000/site-isolation/resources/post-message-to-parent-during-user-gesture.html"></iframe>
+</body>
+</html>

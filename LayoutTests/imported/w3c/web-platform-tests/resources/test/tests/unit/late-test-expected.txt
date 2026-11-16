@@ -1,0 +1,7 @@
+
+PASS Test declared after harness completion
+This test simulates an automated test running scenario, where the test results emitted by testharness.js may be interpreted after some delay. It is intended to demonstrate that in such cases, any additional tests which are executed during that delay are included in the dataset.
+
+Although these "late tests" are likely an indication of a mistake in test design, they are also recorded. Previously, "late tests" were ignored. This test changed to assert "late tests" were no longer ignored after https://github.com/web-platform-tests/wpt/pull/38806 was introduced.
+
+

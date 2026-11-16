@@ -1,0 +1,4 @@
+
+PASS SVGAnimationElement exceptions, getStartTime throws with unresolved interval.
+PASS SVGAnimationElement exceptions, getSimpleDuration throws with undefined simple duration.
+

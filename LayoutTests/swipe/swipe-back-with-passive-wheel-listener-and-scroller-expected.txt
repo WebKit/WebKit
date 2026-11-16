@@ -1,0 +1,4 @@
+This test should not start a swipe, and instead scroll the horizontal overflow.
+startSlowSwipeGesture
+completeSwipeGesture
+

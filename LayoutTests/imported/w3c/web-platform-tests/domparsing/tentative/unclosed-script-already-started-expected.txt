@@ -1,0 +1,6 @@
+
+FAIL Unclosed <script> from createContextualFragment() never runs assert_false: createContextualFragment: must not run on insertion expected false got true
+PASS Unclosed <script> from setHTMLUnsafe({runScripts: true}) never runs
+PASS Unclosed <script> from innerHTML never runs once connected
+FAIL Control: closed <script> from setHTMLUnsafe({runScripts: true}) runs assert_true: expected true got false
+

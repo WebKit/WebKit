@@ -1,0 +1,5 @@
+
+PASS e.style['block-step-round'] = "up" should set the property value
+PASS e.style['block-step-round'] = "down" should set the property value
+PASS e.style['block-step-round'] = "nearest" should set the property value
+

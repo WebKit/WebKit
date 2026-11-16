@@ -1,0 +1,7 @@
+This tests that the hangul IM behaviour in which enter both confirms a composition but still sends a keypress for the <enter>.
+To test manually, switch to the 2-Set Korean IM and type at least two characters and press <enter>, if the behaviour is correct a single keypress event should be fired as the last event.
+
+Received valid keydown event
+Received valid keydown event
+Received valid keydown event
+Received valid keypress event

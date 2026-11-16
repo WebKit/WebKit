@@ -1,0 +1,23 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    name = "gpu_text_utils",
+    testonly = True,
+    srcs = [
+        "TextBlobTools.cpp",
+    ],
+    hdrs = [
+        "TextBlobTools.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:core",
+        "//src/gpu/ganesh:ganesh_TEST_UTIL",
+    ],
+)

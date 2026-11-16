@@ -1,0 +1,25 @@
+<script src="/js-test-resources/ui-helper.js"></script>
+
+<script>
+    (async () => {
+        screen.orientation.onchange = function () {
+            var newScreenOrientationResults = screen.orientation;
+
+            var angleChanged = (originalScreenOrientationResultsAngle != parseInt(newScreenOrientationResults.angle));
+            var typeChanged = (originalScreenOrientationResultType != newScreenOrientationResults.type);
+            if (angleChanged && typeChanged)
+                window.parent.postMessage("Screen Orientation rotation succesful", "*");
+            else
+                window.parent.postMessage("Screen Orientation rotation failed", "*");
+        };
+
+        var originalScreenOrientationResultType = screen.orientation.type;
+        var originalScreenOrientationResultsAngle = parseInt(screen.orientation.angle);
+
+        if (UIHelper.isMac()) {
+            window.parent.postMessage("Screen Orientation: " + originalScreenOrientationResultType + "; Screen Angle: " + originalScreenOrientationResultsAngle, "*");
+        } else {
+            window.parent.postMessage("rotate device", "*");
+        }
+    })();
+</script>

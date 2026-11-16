@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="editor" contenteditable><img src="../resources/abe.png"></div>
+<script>
+
+Markup.description('Test indenting an image element twice.');
+
+var editor = document.getElementById('editor');
+editor.focus();
+document.execCommand('SelectAll', false, null);
+Markup.dump(editor, 'Initial state');
+
+document.execCommand('Indent', false, null);
+Markup.dump(editor, 'After indenting once');
+
+document.execCommand('Indent', false, null);
+Markup.dump(editor, 'After indenting again');
+
+</script>
+</body>
+</html>

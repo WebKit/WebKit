@@ -1,0 +1,19 @@
+Tests that navigating an iframe without src to a cross-origin page lists its document and script once each, under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.SrclessIFrameCrossOriginNavigation
+-- Running test case: SiteIsolation.Network.SrclessIFrameCrossOriginNavigation.DocumentAndScriptRows
+PASS: Same-site iframe should be attached.
+PASS: Same-site iframe should finish loading.
+PASS: Child frame should show the cross-origin document.
+PASS: Document should be listed once.
+PASS: Document should finish loading.
+PASS: Document should carry the request identifier of its load.
+PASS: Document should have a response.
+PASS: Script should be added to the child frame.
+PASS: Script should be listed once.
+PASS: Script should finish loading.
+PASS: No about:blank placeholder row should be listed.
+PASS: Main frame should have exactly the two child frames.
+

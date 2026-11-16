@@ -1,0 +1,21 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (br_on_null.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (br_on_null.wast:38)
+PASS #4 Test that WebAssembly compilation succeeds (br_on_null.wast:46)
+PASS #5 Test that WebAssembly compilation fails (br_on_null.wast:81)
+PASS #6 Reinitialize the default imports
+PASS #7 Test that WebAssembly compilation succeeds (br_on_null.wast:1)
+PASS #8 Test that WebAssembly instantiation succeeds (br_on_null.wast:1)
+PASS #9 Test that a WebAssembly code traps (br_on_null.wast:32)
+PASS #10 Test that a WebAssembly code returns a specific result (br_on_null.wast:34)
+PASS #11 Test that a WebAssembly code returns a specific result (br_on_null.wast:35)
+PASS #12 Test that a WebAssembly code returns a specific result (br_on_null.wast:36)
+PASS #13 Test that WebAssembly compilation succeeds (br_on_null.wast:38)
+PASS #14 Test that WebAssembly instantiation succeeds (br_on_null.wast:38)
+PASS #15 Test that WebAssembly compilation succeeds (br_on_null.wast:46)
+PASS #16 Test that WebAssembly instantiation succeeds (br_on_null.wast:46)
+PASS #17 Test that a WebAssembly code returns a specific result (br_on_null.wast:65)
+PASS #18 Test that a WebAssembly code returns a specific result (br_on_null.wast:66)
+PASS #19 Test that WebAssembly compilation fails (br_on_null.wast:81)
+

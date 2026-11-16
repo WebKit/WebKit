@@ -1,0 +1,119 @@
+/*
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#import "BindableResource.h"
+#import <WebGPU/WebGPUCpp.h>
+#import <wtf/FastMalloc.h>
+#import <wtf/HashSet.h>
+#import <wtf/Ref.h>
+#import <wtf/TZoneMalloc.h>
+#import <wtf/Vector.h>
+
+
+@interface ResourceUsageAndRenderStage : NSObject
+- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::Metal::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding resource:(WebGPU::Metal::BindGroupEntryUsageData::Resource)resource;
+
+@property (nonatomic) MTLResourceUsage usage;
+@property (nonatomic) MTLRenderStages renderStages;
+@property (nonatomic) OptionSet<WebGPU::Metal::BindGroupEntryUsage> entryUsage;
+@property (nonatomic) uint32_t binding;
+@property (nonatomic) WebGPU::Metal::BindGroupEntryUsageData::Resource resource;
+@end
+
+@class RenderBundleICBWithResources;
+
+namespace WebGPU::Metal {
+
+class BindGroup;
+class Buffer;
+class CommandEncoder;
+class Device;
+class RenderBundleEncoder;
+class RenderPassEncoder;
+class RenderPipeline;
+class TextureOrTextureView;
+class TextureView;
+
+// https://gpuweb.github.io/gpuweb/#gpurenderbundle
+class RenderBundle final : public WebGPU::RenderBundle {
+    WTF_MAKE_TZONE_ALLOCATED(RenderBundle);
+public:
+    using MinVertexCountsContainer = HashMap<uint64_t, IndexBufferAndIndexData>;
+    using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;
+    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, Vector<WebGPU::Metal::BindableResources>&& bindableResources, RefPtr<WebGPU::Metal::RenderBundleEncoder> encoder, std::span<const std::optional<WebGPU::TextureFormat>> colorFormats, std::optional<WebGPU::TextureFormat> depthStencilFormat, uint32_t sampleCount, bool depthReadOnly, bool stencilReadOnly, uint64_t commandCount, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&& bindGroups, Device& device)
+    {
+        return adoptRef(*new RenderBundle(resources, WTF::move(bindableResources), encoder, colorFormats, depthStencilFormat, sampleCount, depthReadOnly, stencilReadOnly, commandCount, makeSubmitInvalid, WTF::move(bindGroups), device));
+    }
+    static Ref<RenderBundle> createInvalid(Device& device, NSString* errorString)
+    {
+        return adoptRef(*new RenderBundle(device, errorString));
+    }
+
+    ~RenderBundle();
+
+    void setLabel(String&&) final;
+
+    NODELETE bool isValid() const final;
+
+    Device& device() const { return m_device; }
+    NSArray<RenderBundleICBWithResources*> *renderBundlesResources() const { return m_renderBundlesResources; }
+
+    void replayCommands(RenderPassEncoder&, float minDepth, float maxDepth) const;
+    void updateMinMaxDepths(float minDepth, float maxDepth);
+    bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const Vector<TextureOrTextureView>&, const std::optional<TextureOrTextureView>&) const;
+    NODELETE bool validatePipeline(const RenderPipeline*);
+    NODELETE uint64_t drawCount() const;
+    NODELETE NSString* lastError() const;
+    NODELETE bool requiresCommandReplay() const;
+    NODELETE bool makeSubmitInvalid() const;
+    bool rebindSamplersIfNeeded() const;
+    void releaseDestroyedResources();
+    const Vector<WebGPU::Metal::BindableResources>& resources() LIFETIME_BOUND { return m_resources; }
+
+private:
+    RenderBundle(NSArray<RenderBundleICBWithResources*> *, Vector<WebGPU::Metal::BindableResources>&&, RefPtr<RenderBundleEncoder>, std::span<const std::optional<WebGPU::TextureFormat>> colorFormats, std::optional<WebGPU::TextureFormat> depthStencilFormat, uint32_t sampleCount, bool depthReadOnly, bool stencilReadOnly, uint64_t, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&&, Device&);
+    RenderBundle(Device&, NSString*);
+
+    const Ref<Device> m_device;
+    RefPtr<RenderBundleEncoder> m_renderBundleEncoder;
+    NSArray<RenderBundleICBWithResources*> *m_renderBundlesResources;
+    Vector<WebGPU::Metal::BindableResources> m_resources;
+    const Vector<std::optional<WebGPU::TextureFormat>> m_colorFormats;
+    const std::optional<WebGPU::TextureFormat> m_depthStencilFormat;
+    const uint32_t m_sampleCount { 0 };
+    const bool m_depthReadOnly { false };
+    const bool m_stencilReadOnly { false };
+    HashSet<RefPtr<const BindGroup>> m_bindGroups;
+
+    NSString* m_lastErrorString { nil };
+    uint64_t m_commandCount { 0 };
+    float m_minDepth { 0.f };
+    float m_maxDepth { 1.f };
+    bool m_makeSubmitInvalid { false };
+};
+
+} // namespace WebGPU::Metal

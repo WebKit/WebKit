@@ -1,0 +1,13 @@
+text
+
+PASS "::highlight(*)" should be a valid selector
+PASS "div::highlight(*)" should be a valid selector
+PASS ":root::highlight(*)" should be a valid selector
+PASS "::highlight()" should be an invalid selector
+PASS "::highlight(* foo)" should be an invalid selector
+PASS "::highlight(*.class)" should be an invalid selector
+PASS "::highlight(foo*)" should be an invalid selector
+PASS "::highlight(**)" should be an invalid selector
+PASS named highlight merges with the universal base on the same element
+PASS named highlight without its own rule falls back to the universal style
+

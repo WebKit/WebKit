@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html, body { margin: 0; height: 100%; background: red; }
+</style>
+</head>
+<body>
+<script>
+onload = () => {
+    setTimeout(() => {
+        // A third site is required: the frame must be hosted in a non-parent process both
+        // before and after this navigation. https is a different site from http even on the
+        // same host, so this is distinct from both the test page (http://127.0.0.1) and this
+        // frame (http://localhost).
+        location.href = "https://127.0.0.1:8443/security/XFrameOptions/resources/x-frame-options-deny.cgi";
+    }, 0);
+};
+</script>
+</body>
+</html>

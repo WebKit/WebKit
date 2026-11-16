@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Heading before navigation</h1>
+<a id="link">Follow link</a>
+<script>
+document.getElementById("link").href = new URLSearchParams(location.search).get("target");
+</script>
+</body>
+</html>

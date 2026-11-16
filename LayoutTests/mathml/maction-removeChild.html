@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <body>
+    <p>This test passes if it does not crash</p>
+    <math>
+      <maction id="testSelect" actiontype="toggle" selection="2">
+        <mi>g</mi>
+        <mspace/>
+      </maction>
+    </math>
+    <script>
+      if (window.testRunner)
+        testRunner.dumpAsText();
+
+      var testSelect = document.getElementById("testSelect");
+      testSelect.innerHTML = "123.123.123";
+    </script>
+  </body>
+</html>

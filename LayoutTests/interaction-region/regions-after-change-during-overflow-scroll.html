@@ -1,0 +1,94 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+    body { margin: 0; }
+    #scroller {
+        overflow: scroll;
+        width: 400px;
+        height: 400px;
+        margin: 20px;
+    }
+    .gap { height: 150px; }
+    .tail { height: 1200px; }
+    #list { padding: 10px; }
+    #list a {
+        display: block;
+        width: 300px;
+        height: 40px;
+        margin-bottom: 10px;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<div id="scroller">
+    <div class="gap"></div>
+    <div id="list">
+        <a href="#1"></a>
+        <a href="#2"></a>
+        <a href="#3"></a>
+        <a href="#4"></a>
+    </div>
+    <div class="tail"></div>
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function regionLayerCount(element)
+{
+    const tree = await UIHelper.getCALayerTreeForCompositedElement(element);
+    return (tree.match(/\(type 0\)/g) || []).length;
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    const results = document.createElement("pre");
+    document.body.appendChild(results);
+    const log = line => results.textContent += line + "\n";
+    const scroller = document.getElementById("scroller");
+    const list = document.getElementById("list");
+
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+    // Change the links once while the view is stable, so their regions are rebuilt before the drag starts.
+    for (const link of list.children)
+        link.style.width = "296px";
+    await UIHelper.ensureStablePresentationUpdate();
+    const countBefore = await regionLayerCount(scroller);
+    log(`${countBefore == 4 ? "PASS" : "FAIL"}: before dragging, each of the 4 links has a region layer (found ${countBefore}).`);
+
+    // Remove 3 of the 4 links as soon as the box starts moving, while the user is still dragging it.
+    let dragEnded = false;
+    let dragEndedWhenChanged;
+    scroller.addEventListener("scroll", () => {
+        if (dragEndedWhenChanged !== undefined)
+            return;
+        dragEndedWhenChanged = dragEnded;
+        while (list.children.length > 1)
+            list.lastElementChild.remove();
+    });
+
+    // Drag inside the box, below the links, and hold still before lifting so the box does not keep scrolling.
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(220, 380)
+        .move(220, 280, 1)
+        .wait(0.2)
+        .end()
+        .takeResult());
+    dragEnded = true;
+    await UIHelper.waitForZoomingOrScrollingToEnd();
+    log(`${dragEndedWhenChanged === false ? "PASS" : "FAIL"}: the links were removed while the box was being dragged.`);
+
+    const countAfter = await regionLayerCount(scroller);
+    log(`${countAfter == 1 ? "PASS" : "FAIL"}: after the box stops scrolling, only the remaining link has a region layer (found ${countAfter}).`);
+
+    scroller.remove();
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

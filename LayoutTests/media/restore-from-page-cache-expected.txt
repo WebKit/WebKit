@@ -1,0 +1,16 @@
+
+Make sure we don't reload a <video> element when navigating back to an uncached page.
+
+EVENT(loadstart)
+EVENT(canplaythrough)
+EXPECTED (loadCount == '0') OK
+*** Page going into cache
+*** Changing playbackRate just before going into cache, to schedule a ratechange event.
+*** Changing volume just before going into cache, to schedule a volumechange event.
+*** Page returned from cache
+EXPECTED (loadCount == '1') OK
+EXPECTED (videoComputedStyle.width == '320px') OK
+EXPECTED (videoComputedStyle.height == '240px') OK
+*** ratechange event fired. This should happen AFTER returning from cache.
+*** volumechange event fired. This should happen AFTER returning from cache.
+

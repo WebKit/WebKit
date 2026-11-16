@@ -1,0 +1,15 @@
+<script>
+window.onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    getSelection().setPosition(start, 0);
+    document.querySelector('span').appendChild(document.createElement("video"));
+    document.execCommand("delete", false);
+    document.write("Test passes if it does not crash.")
+}
+</script>
+<div contentEditable="true" style="-webkit-border-fit: lines;">
+    <div style="margin-inline-start: 40px;"><span></span> </div>
+    <div id="start"><details open="true">content</details></div>
+</div>

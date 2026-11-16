@@ -1,0 +1,14 @@
+<script>
+window.parentTicks = 0;
+setInterval(() => { window.parentTicks++; }, 50);
+
+function pauseAndDispatch()
+{
+    debugger;
+    let childDocument = window.frames[0].document;
+    childDocument.dispatchEvent(new CustomEvent("test-event"));
+    return childDocument.defaultView.testEventCount;
+}
+</script>
+<iframe src="same-process-frame.html?child"></iframe>
+<p>Cross-site frame with a same-process child, for debugger stepping tests.</p>

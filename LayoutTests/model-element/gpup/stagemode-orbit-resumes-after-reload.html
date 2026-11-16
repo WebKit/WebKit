@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> stagemode=orbit resumes from the restored pose after reload</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="../resources/model-utils.js"></script>
+<style>
+.spacer {
+    height: 200vh;
+}
+.model-element {
+    width: 300px;
+    height: 300px;
+}
+</style>
+<body>
+<div class="spacer"></div>
+<script>
+'use strict';
+
+function modelCenter(model) {
+    const rect = model.getBoundingClientRect();
+    return { x: Math.round(rect.left + rect.width / 2), y: Math.round(rect.top + rect.height / 2) };
+}
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/heart.usdz");
+    model.className = "model-element";
+    model.stageMode = "orbit";
+
+    scrollElementIntoView(model);
+    await waitForModelState(model, "Loaded");
+    const initialTransform = await waitForEntityTransform(model);
+
+    const center = modelCenter(model);
+    eventSender.mouseMoveTo(center.x, center.y);
+    eventSender.mouseDown();
+    await sleepForSeconds(0.1);
+    eventSender.mouseMoveTo(center.x - 100, center.y);
+    await sleepForSeconds(0.1);
+    eventSender.mouseMoveTo(center.x - 100, center.y);
+    await sleepForSeconds(0.1);
+    eventSender.mouseUp();
+    await sleepForSeconds(0.1);
+
+    const orbitedTransform = model.entityTransform;
+    // The gesture did rotate the model.
+    assert_3d_matrix_not_equals(orbitedTransform, initialTransform);
+
+    window.scrollTo(0, 0);
+    await waitForModelState(model, "Unloaded", 10000);
+    scrollElementIntoView(model);
+    await waitForModelState(model, "Loaded");
+    const reloadedTransform = await waitForEntityTransform(model);
+    // The model keeps its rotation during reload.
+    assert_3d_matrix_approx_equals(reloadedTransform, orbitedTransform);
+
+    const reloadedCenter = modelCenter(model);
+    eventSender.mouseMoveTo(reloadedCenter.x, reloadedCenter.y);
+    eventSender.mouseDown();
+    await sleepForSeconds(0.1);
+    eventSender.mouseMoveTo(reloadedCenter.x, reloadedCenter.y);
+    await sleepForSeconds(0.1);
+    const transformAfterPress = model.entityTransform;
+    eventSender.mouseUp();
+
+    // The "no move" gesture did not reset the model rotation.
+    assert_3d_matrix_approx_equals(transformAfterPress, reloadedTransform);
+
+    eventSender.mouseMoveTo(reloadedCenter.x, reloadedCenter.y);
+    eventSender.mouseDown();
+    await sleepForSeconds(0.1);
+    eventSender.mouseMoveTo(reloadedCenter.x - 100, reloadedCenter.y);
+    await sleepForSeconds(0.1);
+    const transformAfterDrag = model.entityTransform;
+    eventSender.mouseUp();
+
+    // The gesture still rotates the model.
+    assert_3d_matrix_not_equals(transformAfterDrag, reloadedTransform);
+}, `<model> stagemode=orbit resumes from the restored pose after an unload/reload cycle`);
+
+</script>
+</body>

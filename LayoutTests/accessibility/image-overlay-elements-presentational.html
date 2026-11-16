@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<img role="presentation" src="resources/green-400x400.png">
+
+<script>
+var output = "This test ensures image overlay elements are not exposed for presentational images.\n\n";
+var webArea;
+
+var overlayData = [
+    {
+        topLeft: new DOMPointReadOnly(0, 0),
+        topRight: new DOMPointReadOnly(1, 0),
+        bottomRight: new DOMPointReadOnly(1, 1),
+        bottomLeft: new DOMPointReadOnly(0, 1),
+        children: [
+            {
+                text: "overlay text",
+                topLeft: new DOMPointReadOnly(0, 0),
+                topRight: new DOMPointReadOnly(1, 0),
+                bottomRight: new DOMPointReadOnly(1, 1),
+                bottomLeft: new DOMPointReadOnly(0, 1),
+            }
+        ],
+    }
+];
+
+addEventListener("load", () => {
+    internals.installImageOverlay(document.querySelector("img"), overlayData);
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        webArea = accessibilityController.rootElement.childAtIndex(0);
+        output += expect("webArea.childrenCount", "0");
+
+        // Remove role="presentation" and verify overlay children become visible.
+        document.querySelector("img").removeAttribute("role");
+
+        setTimeout(async () => {
+            output += await expectAsync("webArea.childrenCount > 0", "true");
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+});
+</script>
+</body>
+</html>

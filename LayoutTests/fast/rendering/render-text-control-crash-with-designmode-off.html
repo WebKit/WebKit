@@ -1,0 +1,16 @@
+<style>
+  body {
+    container-type: size;
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    document.designMode = 'off';
+    i.type = 'radio';
+    document.body.offsetHeight;
+    document.body.innerHTML = 'PASS if no crash.';
+  };
+</script>
+<input id="i">

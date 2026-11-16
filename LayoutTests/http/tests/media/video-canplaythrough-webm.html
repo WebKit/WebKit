@@ -1,0 +1,22 @@
+<html>
+  <head>
+      <script src=../../media-resources/media-file.js></script>
+      <script src=../../media-resources/video-test.js></script>
+      <script>
+          function start() {
+              findMediaElement();
+
+              // Make sure we've at least reached NETWORK_LOADING before waiting for progress.
+              waitForEvent('loadstart', function() {
+                  waitForEventAndEnd('canplaythrough')
+              } );
+
+              video.src = "resources/long-test-vp9-vorbis.webm";
+          }
+      </script>
+    </head>
+    <body onload="start()">
+      <video></video>
+      <p>Test that the canplaythrough event is fired after starting to load a webm resource with video with audio.</p>
+    </body>
+</html>

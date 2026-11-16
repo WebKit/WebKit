@@ -1,0 +1,13 @@
+Test the maximum ImageBitmap sizes of Cairo port
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS imageBitmap.width is 1
+PASS imageBitmap.width is 1
+PASS imageBitmap.height is 1
+PASS imageBitmap.height is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,19 @@
+Testing the LayoutNode various constructor parameters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+No parameter
+PASS nodeWithNoParameter.element.localName is "div"
+
+Element parameter
+PASS nodeWithElementParameter.element === element is true
+
+HTML string parameter
+PASS nodeWithStringParameter.element.localName is "span"
+PASS nodeWithStringParameter.element.textContent is "hello world"
+PASS nodeWithStringParameter.element.firstElementChild.localName is "strong"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

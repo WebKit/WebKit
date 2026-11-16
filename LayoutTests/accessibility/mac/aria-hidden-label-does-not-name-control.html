@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- An aria-hidden label is hidden from assistive technology, so it does not name its control. -->
+<label id="hiddenLabel" aria-hidden="true" for="hiddenLabelControl">Hidden label</label>
+<input id="hiddenLabelControl" type="text">
+
+<!-- A visible label still names its control. -->
+<label id="visibleLabel" for="visibleLabelControl">Visible label</label>
+<input id="visibleLabelControl" type="text">
+
+<!-- aria-labelledby is a relation traversal, so it does pull in a directly referenced hidden subtree. -->
+<span id="hiddenTarget" aria-hidden="true">Hidden target</span>
+<input id="labelledbyControl" type="text" aria-labelledby="hiddenTarget">
+
+<!-- An aria-hidden legend does not name its fieldset either. -->
+<fieldset id="hiddenLegendFieldset">
+<legend id="hiddenLegend" aria-hidden="true">Hidden legend</legend>
+<input type="text">
+</fieldset>
+
+<!-- A visible legend still names its fieldset. -->
+<fieldset id="visibleLegendFieldset">
+<legend id="visibleLegend">Visible legend</legend>
+<input type="text">
+</fieldset>
+
+<script>
+var output = "This tests that an aria-hidden label or legend does not name what it labels, while aria-labelledby still pulls in a directly referenced hidden target.\n\n";
+
+if (window.accessibilityController) {
+    function titleOf(id) {
+        var title = accessibilityController.accessibleElementById(id).title;
+        var value = title.replace(/^AXTitle: /, "");
+        return value ? value : "(empty)";
+    }
+
+    for (var id of ["hiddenLabelControl", "visibleLabelControl", "labelledbyControl", "hiddenLegendFieldset", "visibleLegendFieldset"])
+        output += `#${id} AXTitle: ${titleOf(id)}\n`;
+
+    debug(output);
+}
+</script>
+</body>
+</html>

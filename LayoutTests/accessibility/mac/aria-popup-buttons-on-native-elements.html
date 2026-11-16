@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+<a id="button1" class="button" href="#" aria-haspopup="true" role="button">Options</a>
+<span id="button2" class="button" role="button" aria-haspopup="true">Options</span>
+
+<button id="button3" type="button" class="button" aria-haspopup="true">Options</button>
+<input id="button4" type="button" class="button" aria-haspopup="true" value="Options">
+</div>
+
+<script>
+    if (window.accessibilityController) {
+        let output = "This tests that native style buttons with aria-haspopup appear as popup buttons.\n";
+
+        var button;
+        document.querySelectorAll(".button").forEach(element => {
+           button = accessibilityController.accessibleElementById(element.id);
+           output += expect("button.role", "'AXRole: AXPopUpButton'");
+           output += expect("button.title", "'AXTitle: Options'");
+
+           // Verify that the title is not duplicated as the AXValue
+           output += expect("button.stringValue", "'AXValue: '");
+        });
+
+        debug(output);
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+</body>
+</html>

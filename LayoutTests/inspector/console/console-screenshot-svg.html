@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function screenshotDetachedSVGImage(attributes) {
+    let image = document.createElement("img");
+    image.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' ${attributes}><rect width='100%' height='100%' fill='green'/></svg>`;
+    image.addEventListener("load", () => {
+        console.screenshot(image);
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("console.screenshot.SVG");
+
+    function addTest({name, attributes, width, height, shouldError}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let [event] = await Promise.all([
+                    WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                    InspectorTest.evaluateInPage(`screenshotDetachedSVGImage("${attributes}")`),
+                ]);
+
+                let {message} = event.data;
+                if (shouldError) {
+                    InspectorTest.expectEqual(message.level, WI.ConsoleMessage.MessageLevel.Error, "Error: " + message.messageText);
+                    return;
+                }
+
+                InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
+
+                let image = new Image;
+                await new Promise((resolve, reject) => {
+                    image.addEventListener("load", resolve);
+                    image.addEventListener("error", reject);
+                    image.src = message.messageText;
+                });
+
+                InspectorTest.expectEqual(image.width, width, `The image width should be ${width}px.`);
+                InspectorTest.expectEqual(image.height, height, `The image height should be ${height}px.`);
+            },
+        });
+    }
+
+    addTest({
+        name: "console.screenshot.SVG.WidthAndHeight",
+        attributes: "width='200' height='100'",
+        width: 200,
+        height: 100,
+    });
+
+    addTest({
+        name: "console.screenshot.SVG.WidthOnly",
+        attributes: "width='200'",
+        width: 200,
+        height: 150,
+    });
+
+    addTest({
+        name: "console.screenshot.SVG.ViewBoxOnly",
+        attributes: "viewBox='0 0 1 2'",
+        width: 75,
+        height: 150,
+    });
+
+    addTest({
+        name: "console.screenshot.SVG.NoNaturalDimensions",
+        attributes: "",
+        width: 300,
+        height: 150,
+    });
+
+    addTest({
+        name: "console.screenshot.SVG.ZeroWidth",
+        attributes: "width='0'",
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.SVG.TooLarge",
+        attributes: "width='1000000' height='1000000'",
+        shouldError: true,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that console.screenshot sizes a detached SVG &lt;img&gt; with the default sizing algorithm.</p>
+</body>
+</html>

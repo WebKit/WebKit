@@ -1,0 +1,7 @@
+
+
+PASS bless in top document
+PASS bless added directly from parent script to same-origin iframe's window context
+PASS bless added from parent script to same-origin iframe via sendMessage
+PASS bless added from inside cross-origin iframe
+

@@ -1,0 +1,16 @@
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    let div0 = document.createElement('div');
+    document.body.appendChild(div0);
+    document.body.appendChild(document.createTextNode("Test passes if there is no crash."));
+    div0.append(document.createElementNS('http://www.w3.org/2000/svg', 'font-face'));
+    let shadowRoot = div0.attachShadow({mode: 'open'});
+    div0.remove();
+    shadowRoot.styleSheets;
+    queueMicrotask(() => {
+      GCController.collect();
+    });
+  };
+</script>

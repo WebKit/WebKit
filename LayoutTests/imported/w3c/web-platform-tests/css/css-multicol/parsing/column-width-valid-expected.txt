@@ -1,0 +1,5 @@
+
+PASS e.style['column-width'] = "auto" should set the property value
+PASS e.style['column-width'] = "0" should set the property value
+PASS e.style['column-width'] = "10px" should set the property value
+

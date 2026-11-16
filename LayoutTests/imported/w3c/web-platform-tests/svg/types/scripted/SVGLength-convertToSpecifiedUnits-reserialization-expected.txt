@@ -1,0 +1,9 @@
+
+PASS SVGLength, convertToSpecifiedUnits reserialization of reflected attribute, px to cm
+PASS SVGLength, convertToSpecifiedUnits reserialization of reflected attribute, px to in
+PASS SVGLength, convertToSpecifiedUnits reserialization of reflected attribute, px to percentage
+PASS SVGLength, convertToSpecifiedUnits reserialization of reflected attribute, px to unitless
+PASS SVGLength, convertToSpecifiedUnits reserialization of reflected attribute, px to pt
+PASS SVGLength, convertToSpecifiedUnits reserialization of reflected attribute, px to mm
+PASS SVGLength, convertToSpecifiedUnits reserialization of reflected attribute, double conversion reserializes both times
+

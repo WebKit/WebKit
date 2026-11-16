@@ -1,0 +1,6 @@
+2d.text.drawing.style.textRendering.settings
+Testing basic functionalities of textRendering in Canvas
+Actual output:
+
+PASS Testing basic functionalities of textRendering in Canvas
+

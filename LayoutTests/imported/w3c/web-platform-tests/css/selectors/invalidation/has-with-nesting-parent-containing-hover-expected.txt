@@ -1,0 +1,7 @@
+#dt1
+#dd1, Hover me, the DT above should go lime
+#dt2
+#dd2, Hover me, both DTs above should go lime
+
+PASS CSS Selector Invalidation: :has() with nesting parent containing :hover
+

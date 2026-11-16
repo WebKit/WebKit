@@ -1,0 +1,3 @@
+Iframe in a separate process: true
+Gamepad indices visible to the iframe: 0, 2, 3
+

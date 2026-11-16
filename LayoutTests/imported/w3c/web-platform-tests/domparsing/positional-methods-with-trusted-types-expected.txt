@@ -1,0 +1,535 @@
+
+FAIL Comment.beforeHTMLUnsafe passes a "Node" sink name to the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe passes a "Node" sink name to the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe passes a "Node" sink name to the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe passes a "Node" sink name to the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe passes a "Node" sink name to the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe passes a "Node" sink name to the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe passes a "Node" sink name to the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe passes a "Node" sink name to the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe passes a "Node" sink name to the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL NonDocumentTypeChildNode unsafe methods evaluate Trusted Types before checking if parent is null assert_throws_exactly: function "() => {
+      div.beforeHTMLUnsafe("foo");
+    }" threw object "TypeError: div.beforeHTMLUnsafe is not a function. (In 'div.beforeHTMLUnsafe("foo")', 'div.beforeHTMLUnsafe' is undefined)" but we expected it to throw object "Error: TT Error"
+FAIL NonDocumentTypeChildNode unsafe methods evaluate Trusted Types before parent for HTML insertion checks assert_throws_exactly: function "() => {
+      doc.documentElement.beforeHTMLUnsafe("text");
+    }" threw object "TypeError: doc.documentElement.beforeHTMLUnsafe is not a function. (In 'doc.documentElement.beforeHTMLUnsafe("text")', 'doc.documentElement.beforeHTMLUnsafe' is undefined)" but we expected it to throw object "Error: TT Error"
+FAIL beforeHTMLUnsafe evaluates Trusted Types before determining the parent target.beforeHTMLUnsafe is not a function. (In 'target.beforeHTMLUnsafe("<span>foo</span>")', 'target.beforeHTMLUnsafe' is undefined)
+FAIL afterHTMLUnsafe evaluates Trusted Types before determining the parent target.afterHTMLUnsafe is not a function. (In 'target.afterHTMLUnsafe("<span>foo</span>")', 'target.afterHTMLUnsafe' is undefined)
+FAIL replaceWithHTMLUnsafe evaluates Trusted Types before determining the parent target.replaceWithHTMLUnsafe is not a function. (In 'target.replaceWithHTMLUnsafe("<span>foo</span>")', 'target.replaceWithHTMLUnsafe' is undefined)
+FAIL NonDocumentTypeChildNode unsafe methods throw HierarchyRequestError when parent is a Document assert_throws_dom: function "() => {
+      doc.documentElement.beforeHTMLUnsafe("text");
+    }" threw object "TypeError: doc.documentElement.beforeHTMLUnsafe is not a function. (In 'doc.documentElement.beforeHTMLUnsafe("text")', 'doc.documentElement.beforeHTMLUnsafe' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL Unsafe positional methods evaluate Trusted Types before html element HierarchyRequestError checks assert_throws_exactly: function "() => {
+      doc.body.beforeHTMLUnsafe("text");
+    }" threw object "TypeError: doc.body.beforeHTMLUnsafe is not a function. (In 'doc.body.beforeHTMLUnsafe("text")', 'doc.body.beforeHTMLUnsafe' is undefined)" but we expected it to throw object "Error: TT Error"
+FAIL Unsafe positional methods throw HierarchyRequestError when parent or target is an html element assert_throws_dom: function "() => {
+      doc.body.beforeHTMLUnsafe("<p>text</p>");
+    }" threw object "TypeError: doc.body.beforeHTMLUnsafe is not a function. (In 'doc.body.beforeHTMLUnsafe("<p>text</p>")', 'doc.body.beforeHTMLUnsafe' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTMLUnsafe evaluates Trusted Types before determining the reference child target.prependHTMLUnsafe is not a function. (In 'target.prependHTMLUnsafe("<i>foo</i>")', 'target.prependHTMLUnsafe' is undefined)
+FAIL afterHTMLUnsafe evaluates Trusted Types before determining the next sibling target.afterHTMLUnsafe is not a function. (In 'target.afterHTMLUnsafe("<i>foo</i>")', 'target.afterHTMLUnsafe' is undefined)
+FAIL Element.appendHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.appendHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.appendHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Element.appendHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.prependHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.prependHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.prependHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Element.prependHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.beforeHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.beforeHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.beforeHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Element.beforeHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.afterHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.afterHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.afterHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Element.afterHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.replaceWithHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.replaceWithHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Element.replaceWithHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Comment.beforeHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Comment.beforeHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Comment.beforeHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Comment.afterHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.afterHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Comment.afterHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Comment.afterHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Comment.replaceWithHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Comment.replaceWithHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Comment.replaceWithHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Text.beforeHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.beforeHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Text.beforeHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Text.beforeHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Text.afterHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.afterHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Text.afterHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Text.afterHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Text.replaceWithHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Text.replaceWithHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL Text.replaceWithHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ProcessingInstruction.beforeHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS ProcessingInstruction.beforeHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL ProcessingInstruction.beforeHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ProcessingInstruction.afterHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS ProcessingInstruction.afterHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL ProcessingInstruction.afterHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ProcessingInstruction.replaceWithHTML (Element) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTML (Element) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (Element) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (Element) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (Element) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS ProcessingInstruction.replaceWithHTMLUnsafe (Element) throws TypeError when the default policy rejects the input
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (Element) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (Element) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.appendHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.appendHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.appendHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Element.appendHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.prependHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.prependHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.prependHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Element.prependHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.beforeHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.beforeHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.beforeHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Element.beforeHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.afterHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.afterHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.afterHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Element.afterHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.replaceWithHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.replaceWithHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Element.replaceWithHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Comment.beforeHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Comment.beforeHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Comment.beforeHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Comment.afterHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.afterHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Comment.afterHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Comment.afterHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Comment.replaceWithHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Comment.replaceWithHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Comment.replaceWithHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Text.beforeHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.beforeHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Text.beforeHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Text.beforeHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Text.afterHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.afterHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Text.afterHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Text.afterHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Text.replaceWithHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Text.replaceWithHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL Text.replaceWithHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ProcessingInstruction.beforeHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS ProcessingInstruction.beforeHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL ProcessingInstruction.beforeHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ProcessingInstruction.afterHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS ProcessingInstruction.afterHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL ProcessingInstruction.afterHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ProcessingInstruction.replaceWithHTML (ShadowRoot) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTML (ShadowRoot) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (ShadowRoot) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (ShadowRoot) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (ShadowRoot) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS ProcessingInstruction.replaceWithHTMLUnsafe (ShadowRoot) throws TypeError when the default policy rejects the input
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (ShadowRoot) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (ShadowRoot) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.appendHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.appendHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.appendHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Element.appendHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.prependHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.prependHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.prependHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Element.prependHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.beforeHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.beforeHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.beforeHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Element.beforeHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.afterHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.afterHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.afterHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Element.afterHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.replaceWithHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Element.replaceWithHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Element.replaceWithHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Comment.beforeHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Comment.beforeHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Comment.beforeHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Comment.beforeHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Comment.afterHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.afterHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Comment.afterHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Comment.afterHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Comment.replaceWithHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Comment.replaceWithHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Comment.replaceWithHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Text.beforeHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.beforeHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Text.beforeHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Text.beforeHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Text.afterHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.afterHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Text.afterHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Text.afterHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Text.replaceWithHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS Text.replaceWithHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL Text.replaceWithHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ProcessingInstruction.beforeHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS ProcessingInstruction.beforeHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL ProcessingInstruction.beforeHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ProcessingInstruction.afterHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS ProcessingInstruction.afterHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL ProcessingInstruction.afterHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ProcessingInstruction.replaceWithHTML (template.content) does not go via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTML (template.content) does not invoke the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (template.content) goes via createHTML with expected sink name object[method_name] is not a function. (In 'object[method_name](
+            safe ? "<span>html;</span>" : "<span>forbidden;</span>",
+          )', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (template.content) passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (template.content) with vetting-free options passes the correct sink name to the default policy's createHTML object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>", { runScripts: false })', 'object[method_name]' is undefined)
+PASS ProcessingInstruction.replaceWithHTMLUnsafe (template.content) throws TypeError when the default policy rejects the input
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (template.content) accepts TrustedHTML without invoking the default policy's createHTML object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe (template.content) accepts TrustedHTMLParserOptions without invoking the default policy's createHTML passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+

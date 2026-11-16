@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<img id="animated" src="resources/cssAnimation.svg">
+<script>
+description("Tests that an SVG image animated with CSS animations reports that it is animating.");
+jsTestIsAsync = true;
+
+onload = function() {
+    animatedImage = document.getElementById("animated");
+
+    shouldBecomeEqual("internals.isImageAnimating(animatedImage)", "true", finishJSTest);
+}
+</script>
+</body>
+</html>

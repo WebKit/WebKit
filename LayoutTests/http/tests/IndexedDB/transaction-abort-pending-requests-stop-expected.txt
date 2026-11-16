@@ -1,0 +1,3 @@
+
+PASS IDBTransaction with pending requests should not leak when aborted transaction is stopped
+

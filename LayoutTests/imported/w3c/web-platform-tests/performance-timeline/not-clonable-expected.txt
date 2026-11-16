@@ -1,0 +1,4 @@
+
+
+PASS Test that a postMessage of a performance entry fails
+

@@ -1,0 +1,4 @@
+
+PASS <model> remains deferred if page is hidden, loads after becoming visible
+PASS <model> should not load if scroll and hide the page, loads after becoming visible
+

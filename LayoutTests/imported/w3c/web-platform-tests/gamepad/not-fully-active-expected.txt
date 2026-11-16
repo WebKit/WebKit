@@ -1,0 +1,3 @@
+
+PASS calling getGamepads() in a non-fully-active document
+

@@ -1,0 +1,9 @@
+Tests for ES6 method syntax in classes and object literals with keyword names
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+
+PASS Cross-Origin-Embedder-Policy ignores a token report-to
+PASS Cross-Origin-Embedder-Policy-Report-Only ignores a token report-to
+PASS Cross-Origin-Embedder-Policy ignores a byte sequence report-to
+PASS Cross-Origin-Embedder-Policy-Report-Only ignores a byte sequence report-to
+

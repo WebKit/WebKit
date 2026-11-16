@@ -1,0 +1,16 @@
+<style>
+p { margin: 5px 1em; width: 0; }
+* { padding-top: 1073741824rem; }
+:first-of-type { position: fixed; }
+</style>
+<p id="a">a</p>
+<p id="b">b</p>
+<p id="c">-_</p>
+Test passes if it doesn't hit an assertion or crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.parentNode.appendChild(document.getElementById("a"));
+document.body.parentNode.appendChild(document.getElementById("b"));
+document.body.parentNode.appendChild(document.getElementById("c"));
+</script>

@@ -1,0 +1,3 @@
+
+PASS history properties should throw SecurityError when not in a fully active Document
+

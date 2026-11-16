@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Subframe that navigates itself with navigation.navigate() and reports to its parent</title>
+<script>
+const remote = new URLSearchParams(location.search).get("remote");
+
+addEventListener("beforeunload", () => parent.postMessage("beforeunload", "*"));
+navigation.onnavigateerror = () => parent.postMessage("navigateerror", "*");
+
+addEventListener("load", () => {
+  const result = navigation.navigate(remote);
+  result.committed.catch(() => {});
+  result.finished.catch(() => {});
+});
+</script>
+<body></body>

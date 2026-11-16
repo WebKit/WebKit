@@ -1,0 +1,3 @@
+
+PASS ondragexit must not be present on the GlobalEventHandlers locations
+

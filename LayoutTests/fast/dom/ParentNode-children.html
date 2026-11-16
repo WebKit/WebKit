@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Tests the basic functionality of the `children` property on ParentNode.");
+
+shouldBeType("document.children", "HTMLCollection");
+shouldBeType("document.documentElement.children", "HTMLCollection");
+shouldBeType("document.createDocumentFragment().children", "HTMLCollection");
+
+shouldBe("document.children.length", "1");
+shouldBe("document.children[0]", "document.documentElement");
+
+shouldBe("document.documentElement.children.length", "2");
+shouldBe("document.documentElement.children[0]", "document.head");
+shouldBe("document.documentElement.children[1]", "document.body");
+
+var documentFragment = document.createDocumentFragment();
+var child1 = document.createElement("div");
+var child2 = document.createElement("div");
+documentFragment.appendChild(child1);
+documentFragment.appendChild(child2);
+
+shouldBe("documentFragment.children.length", "2");
+shouldBe("documentFragment.children[0]", "child1");
+shouldBe("documentFragment.children[1]", "child2");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

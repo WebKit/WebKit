@@ -1,0 +1,13 @@
+𝑥
++
+2
+text
+string
+
+PASS a MathML token element with text content does not crash
+PASS <mi> lays out its text content
+PASS <mo> lays out its text content
+PASS <mn> lays out its text content
+PASS <mtext> lays out its text content
+PASS <ms> lays out its text content
+

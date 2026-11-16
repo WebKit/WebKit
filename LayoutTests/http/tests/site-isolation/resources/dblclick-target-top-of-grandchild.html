@@ -1,0 +1,9 @@
+<body style="margin: 0;">
+<div id="target" style="width: 100%; height: 60px;"></div>
+<script>
+target.addEventListener("dblclick", (event) => {
+    window.top.postMessage({ type: "dblclick", clientX: event.clientX, clientY: event.clientY }, "*");
+});
+window.top.postMessage("ready", "*");
+</script>
+</body>

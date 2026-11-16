@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<div id="container" aria-hidden="true">
+    <button id="button1">Button 1</button>
+    <button id="button2">Button 2</button>
+</div>
+<button id="outside">Outside</button>
+</div>
+
+<script>
+var output = "This tests that focusing inside an aria-hidden region permanently overrides aria-hidden after one animation frame.\n\n";
+
+if (window.accessibilityController) {
+    jsTestIsAsync = true;
+
+    // Initially, buttons inside aria-hidden should not be accessible.
+    var button1 = accessibilityController.accessibleElementById("button1");
+    output += expect("!button1 || !button1.isValid", "true");
+
+    var button2 = accessibilityController.accessibleElementById("button2");
+    output += expect("!button2 || !button2.isValid", "true");
+
+    // Focus button1 inside the aria-hidden region, then poll for the override
+    // to take effect. The override happens during the post-rendering update
+    // after at least one animation frame with focus still inside the region.
+    // We observe it by checking that button2 (unfocused) becomes accessible.
+    document.getElementById("button1").focus();
+
+    (async function() {
+        await waitFor(() => {
+            button2 = accessibilityController.accessibleElementById("button2");
+            return button2 && button2.isValid;
+        });
+        output += expect("button2 && button2.isValid", "true");
+
+        // Move focus to button2 (still inside the same aria-hidden region).
+        // button1 should remain accessible because the override is permanent.
+        document.getElementById("button2").focus();
+        await waitFor(() => {
+            button1 = accessibilityController.accessibleElementById("button1");
+            return button1 && button1.isValid;
+        });
+        output += expect("button1 && button1.isValid", "true");
+
+        // Move focus completely outside. Both buttons should remain accessible.
+        document.getElementById("outside").focus();
+        await waitFor(() => {
+            return accessibilityController.focusedElement.domIdentifier === "outside";
+        });
+        button1 = accessibilityController.accessibleElementById("button1");
+        output += expect("button1 && button1.isValid", "true");
+        button2 = accessibilityController.accessibleElementById("button2");
+        output += expect("button2 && button2.isValid", "true");
+
+        // Test reset: removing and re-adding aria-hidden should clear the override.
+        document.getElementById("container").removeAttribute("aria-hidden");
+        document.getElementById("container").setAttribute("aria-hidden", "true");
+        await waitFor(() => {
+            button1 = accessibilityController.accessibleElementById("button1");
+            return !button1 || !button1.isValid;
+        });
+        output += expect("!button1 || !button1.isValid", "true");
+
+        document.getElementById("content").style.display = "none";
+        debug(output);
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>

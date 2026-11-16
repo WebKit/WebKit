@@ -1,0 +1,16 @@
+Exercises that at least one frame passes on captureStream(0).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Drawing to canvas.
+PASS Got a stream from canvas.
+PASS stream.getVideoTracks().length is 1
+PASS track.readyState is "live"
+PASS Recorder has new data available
+PASS recorder.state is "recording"
+PASS Recorded data is not empty
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

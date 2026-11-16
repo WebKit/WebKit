@@ -1,0 +1,61 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ ARIAActionsSupportEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="source" aria-actions="action">Source</button>
+<button id="action">Delete</button>
+<button id="elsewhere">Elsewhere</button>
+
+<script>
+var output = "This test verifies that when an aria-actions custom action's handler moves focus to some other element, that focus change is respected (not bounced back to the origin) and is surfaced to assistive technology.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var actionClicked = false;
+    document.getElementById("action").addEventListener("click", () => {
+        actionClicked = true;
+        // The action handler deliberately moves focus somewhere of its own choosing.
+        document.getElementById("elsewhere").focus();
+    });
+
+    var focusNotificationCount = 0;
+    accessibilityController.addNotificationListener((axElement, notification) => {
+        if (notification == "AXFocusChanged")
+            ++focusNotificationCount;
+    });
+
+    var source = accessibilityController.accessibleElementById("source");
+
+    setTimeout(async () => {
+        document.getElementById("source").focus();
+        await waitFor(() => accessibilityController.focusedElement?.domIdentifier == "source");
+
+        // Ignore focus notifications from establishing the initial focus above.
+        focusNotificationCount = 0;
+
+        output += "Invoking the custom action runs the handler, which moves focus elsewhere:\n";
+        output += expect("source.invokeCustomActionAtIndex(0)", "true");
+        output += expect("actionClicked", "true");
+        output += "\n";
+
+        output += "Focus lands on the element the handler chose, not the origin or the action target:\n";
+        output += expect("document.activeElement.id", "'elsewhere'");
+        await waitFor(() => accessibilityController.focusedElement?.domIdentifier == "elsewhere");
+        output += expect("accessibilityController.focusedElement.domIdentifier", "'elsewhere'");
+        output += "\n";
+
+        output += "That focus change is surfaced to assistive technology:\n";
+        output += expect("focusNotificationCount > 0", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

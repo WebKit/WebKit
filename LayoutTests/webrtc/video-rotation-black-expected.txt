@@ -1,0 +1,4 @@
+
+
+PASS Rotated disabled track should keep sending the same intrinsic size video if CVO is on
+

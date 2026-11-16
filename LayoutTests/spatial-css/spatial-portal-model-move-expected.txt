@@ -1,0 +1,3 @@
+
+PASS A <model> moved into a spatial portal delegates to the destination portal
+

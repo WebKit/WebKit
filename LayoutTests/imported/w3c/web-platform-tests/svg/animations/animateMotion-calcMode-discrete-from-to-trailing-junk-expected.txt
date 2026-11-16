@@ -1,0 +1,3 @@
+
+PASS animateMotion from/to values with trailing garbage are invalid
+

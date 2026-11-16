@@ -1,0 +1,4 @@
+
+PASS Should not stylesheet when style-src is 'none'
+PASS Should fire a securitypolicyviolation event
+Lorem ipsum

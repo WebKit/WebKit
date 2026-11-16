@@ -1,0 +1,73 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("With two same-site cross-origin iframes at different positions on the page, tapping a button in either one should show a tap highlight over that button, not at the other iframe's position.");
+jsTestIsAsync = true;
+
+const buttonWidth = 200;
+const buttonHeight = 60;
+const frameATop = 20;
+const frameBTop = 400;
+const tapHighlightInflationPerSide = 4;
+let highlightTop;
+let highlightWidth;
+let highlightHeight;
+let clickCount = 0;
+let readyCount = 0;
+
+async function tapButtonInFrameAndGetHighlight(frameID)
+{
+    const frameRect = document.getElementById(frameID).getBoundingClientRect();
+    await UIHelper.activateAt(frameRect.left + buttonWidth / 2, frameRect.top + buttonHeight / 2);
+
+    let rect;
+    for (let i = 0; i < 100; i++) {
+        rect = await UIHelper.tapHighlightViewRect();
+        if (rect.width > 0 && rect.height > 0 && rect.top >= frameRect.top - 20 && rect.top <= frameRect.top + 40)
+            break;
+        await UIHelper.ensurePresentationUpdate();
+    }
+    return rect;
+}
+
+addEventListener("message", async (event) => {
+    if (event.data === "clicked") {
+        ++clickCount;
+        return;
+    }
+    if (event.data !== "ready")
+        return;
+
+    if (++readyCount < 2)
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+
+    let rect = await tapButtonInFrameAndGetHighlight("frameA");
+    highlightTop = rect.top;
+    highlightWidth = rect.width;
+    highlightHeight = rect.height;
+
+    debug("Tapped the button in frame A:");
+    shouldBe("highlightWidth", "buttonWidth + 2 * tapHighlightInflationPerSide");
+    shouldBe("highlightHeight", "buttonHeight + 2 * tapHighlightInflationPerSide");
+    shouldBe("highlightTop", "frameATop - tapHighlightInflationPerSide");
+
+    rect = await tapButtonInFrameAndGetHighlight("frameB");
+    highlightTop = rect.top;
+    highlightWidth = rect.width;
+    highlightHeight = rect.height;
+
+    debug("Tapped the button in frame B:");
+    shouldBe("highlightWidth", "buttonWidth + 2 * tapHighlightInflationPerSide");
+    shouldBe("highlightHeight", "buttonHeight + 2 * tapHighlightInflationPerSide");
+    shouldBe("highlightTop", "frameBTop - tapHighlightInflationPerSide");
+
+    shouldBe("clickCount", "2");
+
+    finishJSTest();
+});
+</script>
+<iframe id="frameA" style="position: absolute; left: 100px; top: 20px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/tap-target-frame.html"></iframe>
+<iframe id="frameB" style="position: absolute; left: 300px; top: 400px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/tap-target-frame.html"></iframe>

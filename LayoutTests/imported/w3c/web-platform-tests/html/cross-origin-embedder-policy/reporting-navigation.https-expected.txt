@@ -1,0 +1,32 @@
+
+PASS parent: (none), target: (none), with empty frame: false
+PASS parent: (none), target: (none), with empty frame: true
+PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false
+PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: (none), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: (none), with empty frame: true
+PASS parent: (none), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: (none), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true
+PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: (none), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: (none), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(content-security-policy,frame-ancestors 'none'), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(content-security-policy,frame-ancestors 'none'), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(x-frame-options,deny), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(x-frame-options,deny), with empty frame: true
+

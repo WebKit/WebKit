@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Scroll to text fragment - ensure that loading a stylesheet doesn't cause the page to re-scroll</title>
+<meta name="assert" content="This test checks that loading a stylesheet doesn't cause the page to re-scroll.">
+
+<head>
+<script src="/js-test-resources/ui-helper.js"></script>
+
+<script>
+
+    document.addEventListener('readystatechange', () => {
+        if (document.readyState !== 'interactive')
+            return;
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.media = 'all';
+        link.property = 'stylesheet';
+        link.href = 'not-even-a-file.css';
+        document.body.appendChild(link);
+    });
+
+    function adjustStyle() {
+        const head = document.head || document.getElementsByTagName("head")[0];
+        const styleElement = document.createElement('style');
+
+        styleElement.type = "text/css";
+        head.appendChild(styleElement);
+        const css = '#matches-nothing-in-dom {}';
+        const cssNode = document.createTextNode(css);
+        const childNodes = styleElement.childNodes;
+        const child = childNodes[0];
+
+        if (child)
+            styleElement.replaceChild(cssNode, child);
+        else
+            styleElement.appendChild(cssNode);
+    }
+
+    if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    }
+
+  
+ async function runTest()
+ {
+    if (!testRunner.runUIScript)
+        return;
+
+    location.href = "#:~:text=Scroll%20Point";
+    var output = "";
+
+    await UIHelper.ensurePresentationUpdate();
+
+    if (window.pageYOffset > 0)
+      output += "PASS: Page scrolls to correct Text Fragment.";
+    else 
+      output += "FAIL: Page does not scroll to correct Text Fragment.";
+    output += '<br>';
+
+    var scrollOffset = window.pageYOffset;
+
+    await UIHelper.initiateUserScroll();
+
+    adjustStyle();
+
+    await UIHelper.renderingUpdate();
+
+    if (window.pageYOffset != scrollOffset)
+      output += "PASS: Addition of dynamic style element did not adjust scroll.";
+    else
+      output += "FAIL: Addition of dynamic style element causes page to re-scroll. First Scroll: " + scrollOffset + " Second Scroll: " + window.pageYOffset;
+    output += '<br>';
+
+    var target = document.getElementById('target');
+    target.innerHTML = output;
+    target.style.paddingTop = "0px";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+  }
+
+  window.addEventListener('load', () => {
+    runTest();
+  }, false);
+</script>
+</head>
+
+<body>
+    <div id="target" style="padding-top: 10000px;">
+    
+        <p>Scroll Point</p>
+
+    </div>
+</body>
+</html>
+

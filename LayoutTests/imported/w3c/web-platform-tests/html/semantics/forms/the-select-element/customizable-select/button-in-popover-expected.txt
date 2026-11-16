@@ -1,0 +1,5 @@
+invoker
+
+PASS Buttons in the popover should be rendered and should not close the popover when clicked.
+PASS Non-interactive content in the popover should not close the popover when clicked.
+

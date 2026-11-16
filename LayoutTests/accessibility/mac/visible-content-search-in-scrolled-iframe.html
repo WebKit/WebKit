@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body style="height: 2000px;">
+
+<button id="outside-iframe-button">Outside iframe</button>
+<iframe id="iframe" style="overflow: scroll" onload="runTest()" srcdoc="
+<div style='height: 500px'>
+    <button id='inside-iframe-button'>Inside iframe</button>
+</div>
+"></iframe>
+
+<script>
+var output = `This test ensures we properly consider content inside iframes accessible or non-accessible from searches 
+done via AXUIElementsForSearchPredicate with the AXVisibleOnly search key, particularly after a scroll has been performed.\n\n`;
+
+window.jsTestIsAsync = true;
+var traversalOutput;
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    // The button inside the iframe should be initially visible.
+    traversalOutput = dumpAXSearchTraversal(webArea, { visibleOnly: true });
+    output += expect("traversalOutput.includes('#outside-iframe-button')", "true");
+    output += expect("traversalOutput.includes('#inside-iframe-button')", "true");
+
+    var iframeWindow = document.getElementById("iframe").contentWindow;
+    // Scroll to make the button invisible.
+    iframeWindow.scroll(0, 100);
+    output += "\n";
+    setTimeout(async function() {
+        await waitFor(() => {
+            traversalOutput = dumpAXSearchTraversal(webArea, { visibleOnly: true });
+            return traversalOutput.includes("#outside-iframe-button") && !traversalOutput.includes("#inside-iframe-button");
+        });
+
+        // Scroll the button back into view. Only about half the button is visible at 20px y-scroll, which should be enough.
+        iframe.contentWindow.scroll(0, 20);
+
+        await waitFor(() => {
+            traversalOutput = dumpAXSearchTraversal(webArea, { visibleOnly: true });
+            return traversalOutput.includes("#outside-iframe-button") && traversalOutput.includes("#inside-iframe-button");
+        });
+
+        // Scroll the outer window. Nothing should be visible.
+        window.scroll(0, 1000);
+
+        await waitFor(() => {
+            traversalOutput = dumpAXSearchTraversal(webArea, { visibleOnly: true });
+            return !traversalOutput.includes("#outside-iframe-button") && !traversalOutput.includes("#inside-iframe-button");
+        });
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

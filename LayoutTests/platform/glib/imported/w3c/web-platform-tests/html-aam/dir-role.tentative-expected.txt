@@ -1,0 +1,9 @@
+Tentative test for the expected role mappings of the obsolete dir element. The computedrole mappings are defined in HTML-AAM.
+
+Merge the outcome of this test into roles.html in the appropriate alphabetical order, when it is no longer considered tentative:
+
+x
+x
+
+FAIL el-dir assert_equals: <dir data-testname="el-dir" data-expectedrole="list" class="ex"><li>x</li><li>x</li></dir> expected "list" but got "generic"
+

@@ -1,0 +1,30 @@
+
+
+FAIL source is readonly defaulting to null Can't find variable: InterestEvent
+FAIL InterestEventInit properties set value (manual event) Can't find variable: InterestEvent
+FAIL InterestEventInit properties set value (beforetoggle event) Can't find variable: InterestEvent
+FAIL InterestEventInit properties set value (toggle event) Can't find variable: InterestEvent
+FAIL source set to undefined Can't find variable: InterestEvent
+FAIL source set to null Can't find variable: InterestEvent
+FAIL source set to false assert_throws_js: source is not an object function "function () {
+        new InterestEvent("test", { source: false });
+      }" threw object "ReferenceError: Can't find variable: InterestEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL source set to true assert_throws_js: source is not an object function "function () {
+        const event = new InterestEvent("test", { source: true });
+      }" threw object "ReferenceError: Can't find variable: InterestEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL source set to {} assert_throws_js: source is not an object function "function () {
+        const event = new InterestEvent("test", { source: {} });
+      }" threw object "ReferenceError: Can't find variable: InterestEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL source set to non-Element EventTarget assert_throws_js: source is not an Element function "function () {
+        const eventInit = { source: new XMLHttpRequest() };
+        const event = new InterestEvent("toggle", eventInit);
+      }" threw object "ReferenceError: Can't find variable: InterestEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

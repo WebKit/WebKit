@@ -1,0 +1,7 @@
+
+PASS shadowRoot.setHTMLUnsafe(html) assigned via policy (successful HTML transformation).
+PASS `shadowRoot.setHTMLUnsafe(string)` throws.
+PASS `shadowRoot.setHTMLUnsafe(null)` throws.
+PASS `shadowRoot.setHTMLUnsafe(string)` assigned via default policy (successful HTML transformation).
+PASS `shadowRoot.setHTMLUnsafe(string)` assigned via default policy does not throw
+

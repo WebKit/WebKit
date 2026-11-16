@@ -1,0 +1,13 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level spi -module-abi-name GroupActivities -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -user-module-version 256.100.4 -module-name GroupActivities_SPI
+import Darwin
+import Foundation
+@_exported import GroupActivities
+import Swift
+@_exported import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+
+public struct URLActivity : GroupActivities.GroupActivity {
+    public var webpageURL: Foundation.URL
+}

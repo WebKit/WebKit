@@ -1,0 +1,19 @@
+Manual Testing Instructions
+
+The test is automatic, but if you wish to test it manually, you can do so by following the steps below.
+
+Click on the label of the interactive element of your choosing. For example, you can click on the label of the first button element by clicking on the text "button1". Do not click on anything afterwards before the next step.
+Expected behavior: While mousedowning, the element on the right of the title text should have received a red outline for the duration of the mousedown.
+Click again on the same label (do not double-click, wait a second before clicking again).
+Expected behavior: Again, while mousedowning on the click, the element on the right of the title text should have received a red outline.
+Expected behavior: The above steps should pass for all the labels on this page.
+button1   button2
+input1   input2
+checkbox1   checkbox2
+meter1   meter2
+progress1   progress2
+select1   select2
+textarea1   textarea2
+
+FAIL Control should be :active on mousedown when clicking the label twice in succession. assert_equals: Control element button1 should be :active when label is mousedowned on the first click. expected true but got false
+

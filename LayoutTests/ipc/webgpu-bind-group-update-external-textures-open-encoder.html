@@ -1,0 +1,164 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true WebGPUEnabled=true ] -->
+<body>
+<p>This test passes if RemoteBindGroup::UpdateExternalTextures only rewrites the bind group's
+argument buffer for the ExternalTexture it was created with, and only while no command encoder has
+made that ExternalTexture resident.</p>
+<pre id="log"></pre>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+function log(message)
+{
+    document.getElementById("log").textContent += message + "\n";
+}
+
+function freshId()
+{
+    return Math.floor(Math.random() * 0x7fffffff) + 1;
+}
+
+async function run()
+{
+    if (!window.IPC)
+        return "PASS";
+
+    const { CoreIPC, StreamConnection } = await import("./coreipc.js");
+
+    // Make the GPU process connection exist so WebGPUEnabled propagates to it.
+    if (!await navigator.gpu?.requestAdapter())
+        return "PASS";
+
+    const backendId = freshId();
+    const backendConnection = new StreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: backendId,
+        connectionHandle: backendConnection,
+    });
+
+    const gpuId = freshId();
+    const gpuConnection = new StreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateGPU(0, {
+        identifier: gpuId,
+        renderingBackendIdentifier: backendId,
+        serverConnection: gpuConnection,
+    });
+    const wasCreated = gpuConnection.connection.waitForMessage(gpuId, IPC.messages.RemoteGPUProxy_WasCreated.name, 5);
+    if (!wasCreated || !wasCreated[0].value)
+        return "FAIL: no RemoteGPUProxy::WasCreated";
+    const remoteGPU = gpuConnection.newInterface("RemoteGPU", gpuId);
+
+    const adapterId = freshId();
+    let hasAdapter = false;
+    remoteGPU.RequestAdapter({
+        options: { alias: { powerPreference: { }, forceFallbackAdapter: false, xrCompatible: false } },
+        identifier: adapterId,
+    }, () => { hasAdapter = true; });
+    if (!hasAdapter)
+        return "PASS";
+
+    const deviceId = freshId();
+    let hasDevice = false;
+    gpuConnection.newInterface("RemoteAdapter", adapterId).RequestDevice({
+        deviceDescriptor: { label: "device", requiredFeatures: [], requiredLimits: [] },
+        identifier: deviceId,
+        queueIdentifier: freshId(),
+    }, () => { hasDevice = true; });
+    if (!hasDevice)
+        return "PASS";
+    const remoteDevice = gpuConnection.newInterface("RemoteDevice", deviceId);
+
+    // Two ExternalTextures: boundTextureId is bound into the bind group below, unboundTextureId never is.
+    const boundTextureId = freshId();
+    const unboundTextureId = freshId();
+    for (const identifier of [boundTextureId, unboundTextureId]) {
+        remoteDevice.ImportExternalTextureFromVideoFrame({
+            descriptor: { label: "externalTexture", mediaIdentifier: { }, colorSpace: 0, visibleSize: { width: 0, height: 0 }, sharedFrame: { } },
+            identifier,
+        });
+    }
+
+    const bindGroupLayoutId = freshId();
+    remoteDevice.CreateBindGroupLayout({
+        descriptor: {
+            label: "bindGroupLayout",
+            entries: [{
+                alias: {
+                    binding: 0,
+                    visibility: 4, // ShaderStage::Compute
+                    buffer: { },
+                    sampler: { },
+                    texture: { },
+                    storageTexture: { },
+                    externalTexture: { optionalValue: { } },
+                },
+            }],
+        },
+        identifier: bindGroupLayoutId,
+    });
+
+    const bindGroupId = freshId();
+    remoteDevice.CreateBindGroup({
+        descriptor: {
+            label: "bindGroup",
+            bindGroupLayout: bindGroupLayoutId,
+            entries: [{
+                binding: 0,
+                bufferBinding: { buffer: boundTextureId, offset: 0, size: { } },
+                identifier: boundTextureId,
+                type: 4, // BindingResourceType::ExternalTexture
+            }],
+        },
+        identifier: bindGroupId,
+    });
+
+    const remoteBindGroup = gpuConnection.newInterface("RemoteBindGroup", bindGroupId);
+    function updateExternalTextures(externalTextureIdentifier) {
+        let success = "<no reply>";
+        remoteBindGroup.UpdateExternalTextures({ externalTextureIdentifier }, (reply) => { success = reply?.success; });
+        return success;
+    }
+
+    // The legitimate case: the bind group's own ExternalTexture, with no command encoder holding it.
+    const boundWithoutEncoder = updateExternalTextures(boundTextureId);
+
+    // An ExternalTexture which was never bound into this bind group. Rewriting the argument buffer
+    // for it would store MTLTextures which are absent from the bind group's resource usage list.
+    const unboundWithoutEncoder = updateExternalTextures(unboundTextureId);
+
+    // Open a compute pass and record setBindGroup(), making the bound ExternalTexture's textures
+    // resident on the encoder. Rewriting the argument buffer now would bind textures which were
+    // never passed to useResources: for this encoder.
+    const commandEncoderId = freshId();
+    remoteDevice.CreateCommandEncoder({
+        descriptor: { optionalValue: { alias: { label: "commandEncoder" } } },
+        identifier: commandEncoderId,
+    });
+    const computePassId = freshId();
+    gpuConnection.newInterface("RemoteCommandEncoder", commandEncoderId).BeginComputePass({
+        descriptor: { },
+        identifier: computePassId,
+    });
+    gpuConnection.newInterface("RemoteComputePassEncoder", computePassId).SetBindGroup({
+        index: 0,
+        identifier: { optionalValue: bindGroupId },
+        dynamicOffsets: { },
+    });
+
+    const boundWithEncoder = updateExternalTextures(boundTextureId);
+    const unboundWithEncoder = updateExternalTextures(unboundTextureId);
+
+    if (boundWithoutEncoder !== true)
+        return `FAIL: bound ExternalTexture, no open encoder: update should succeed, got ${boundWithoutEncoder}`;
+    if (unboundWithoutEncoder !== false)
+        return `FAIL: unbound ExternalTexture, no open encoder: update should be refused, got ${unboundWithoutEncoder}`;
+    if (boundWithEncoder !== false)
+        return `FAIL: bound ExternalTexture, open encoder: update should be refused, got ${boundWithEncoder}`;
+    if (unboundWithEncoder !== false)
+        return `FAIL: unbound ExternalTexture, open encoder: update should be refused, got ${unboundWithEncoder}`;
+    return "PASS";
+}
+
+run().then(log, (error) => log(`FAIL: ${error}`)).then(() => window.testRunner?.notifyDone());
+</script>
+</body>

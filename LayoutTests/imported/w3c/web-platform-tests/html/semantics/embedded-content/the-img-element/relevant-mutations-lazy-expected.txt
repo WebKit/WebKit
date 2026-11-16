@@ -1,0 +1,12 @@
+
+FAIL width attribute changes assert_unreached: update the image data didn't run Reached unreachable code
+PASS width property changes
+PASS percentage width, CB width changes
+PASS height property changes (with aspect-ratio)
+PASS loading attribute state changes
+PASS being rendered changes
+PASS display property changes to inline-block
+PASS loading attribute changes to LAZY
+
+
+

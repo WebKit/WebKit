@@ -1,0 +1,35 @@
+Tests that a select element with the multiple attribute and a size of 1 is a dropdown box whose menu checks every selected option, and that choosing an option toggles it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS buttonText() is "2 Items"
+
+Open the picker.
+PASS popupVisible is true
+PASS checkedRows is "true,false,true"
+
+Choose an option that is not selected.
+PASS selectedValues() is "One,Two,Three"
+PASS events.join() is "input,change"
+PASS internals.isSelectPopupVisible(select) is false
+PASS buttonText() is "3 Items"
+
+Choose an option that is selected.
+PASS checkedRows is "true,true,true"
+PASS selectedValues() is "Two,Three"
+PASS events.join() is "input,change"
+PASS buttonText() is "2 Items"
+
+Dismiss the picker without choosing an option.
+PASS checkedRows is "false,true,true"
+PASS selectedValues() is "Two,Three"
+PASS events.join() is ""
+PASS internals.isSelectPopupVisible(select) is false
+
+Without a size attribute it is still a list box.
+PASS internals.isSelectPopupVisible(listBox) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

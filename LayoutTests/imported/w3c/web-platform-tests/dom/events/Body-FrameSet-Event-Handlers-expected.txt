@@ -1,0 +1,50 @@
+
+PASS Set HTMLBodyElement.onblur
+PASS Enumerate HTMLBodyElement.onblur
+PASS Reflect HTMLBodyElement.onblur
+PASS Forward HTMLBodyElement.onblur to Window
+PASS Set HTMLFrameSetElement.onblur
+PASS Enumerate HTMLFrameSetElement.onblur
+PASS Reflect HTMLFrameSetElement.onblur
+PASS Forward HTMLFrameSetElement.onblur to Window
+PASS Set HTMLBodyElement.onerror
+PASS Enumerate HTMLBodyElement.onerror
+PASS Reflect HTMLBodyElement.onerror
+PASS Forward HTMLBodyElement.onerror to Window
+PASS Set HTMLFrameSetElement.onerror
+PASS Enumerate HTMLFrameSetElement.onerror
+PASS Reflect HTMLFrameSetElement.onerror
+PASS Forward HTMLFrameSetElement.onerror to Window
+PASS Set HTMLBodyElement.onfocus
+PASS Enumerate HTMLBodyElement.onfocus
+PASS Reflect HTMLBodyElement.onfocus
+PASS Forward HTMLBodyElement.onfocus to Window
+PASS Set HTMLFrameSetElement.onfocus
+PASS Enumerate HTMLFrameSetElement.onfocus
+PASS Reflect HTMLFrameSetElement.onfocus
+PASS Forward HTMLFrameSetElement.onfocus to Window
+PASS Set HTMLBodyElement.onload
+PASS Enumerate HTMLBodyElement.onload
+PASS Reflect HTMLBodyElement.onload
+PASS Forward HTMLBodyElement.onload to Window
+PASS Set HTMLFrameSetElement.onload
+PASS Enumerate HTMLFrameSetElement.onload
+PASS Reflect HTMLFrameSetElement.onload
+PASS Forward HTMLFrameSetElement.onload to Window
+PASS Set HTMLBodyElement.onscroll
+PASS Enumerate HTMLBodyElement.onscroll
+PASS Reflect HTMLBodyElement.onscroll
+PASS Forward HTMLBodyElement.onscroll to Window
+PASS Set HTMLFrameSetElement.onscroll
+PASS Enumerate HTMLFrameSetElement.onscroll
+PASS Reflect HTMLFrameSetElement.onscroll
+PASS Forward HTMLFrameSetElement.onscroll to Window
+PASS Set HTMLBodyElement.onresize
+PASS Enumerate HTMLBodyElement.onresize
+PASS Reflect HTMLBodyElement.onresize
+PASS Forward HTMLBodyElement.onresize to Window
+PASS Set HTMLFrameSetElement.onresize
+PASS Enumerate HTMLFrameSetElement.onresize
+PASS Reflect HTMLFrameSetElement.onresize
+PASS Forward HTMLFrameSetElement.onresize to Window
+

@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<style>
+.unicode-bidi-normal {
+    unicode-bidi: normal;
+}
+.unicode-bidi-embed {
+    unicode-bidi: embed;
+}
+.unicode-bidi-bidi-override {
+    unicode-bidi: bidi-override;
+}
+.unicode-bidi-plaintext {
+    unicode-bidi: plaintext;
+}
+.unicode-bidi-isolate {
+    unicode-bidi: isolate;
+}
+.unicode-bidi-isolate-override {
+    unicode-bidi: isolate-override;
+}
+</style>
+</head>
+
+<body>
+<div id="content-normal" class="unicode-bidi-normal">Anyone can try لغة برمجة C++</div>
+<div id="content-embed" class="unicode-bidi-embed">Anyone can try لغة برمجة C++</div>
+<div id="content-bidi-override" class="unicode-bidi-bidi-override">Anyone can try لغة برمجة C++</div>
+<div id="content-plaintext" class="unicode-bidi-plaintext">Anyone can try لغة برمجة C++</div>
+<div id="content-isolate" class="unicode-bidi-isolate">Anyone can try لغة برمجة C++</div>
+<div id="content-isolate-override" class="unicode-bidi-isolate-override">Anyone can try لغة برمجة C++</div>
+<script>
+
+// This is essentially expectRectWithVariance, but uses data from
+// boundsForRange directly, instead of building out a template
+// string for the expectedRect tuple (see accessibility-helper.js)
+function getRectWidthFromBoundsForRange(boundsForRangeData) {
+    const parsedResult = boundsForRangeData
+        .replaceAll(/{|}/g, '')
+        .split(/[ ,]+/)
+        .map(token => parseFloat(token))
+        .filter(float => !isNaN(float));
+    if (parsedResult.length !== 4) {
+        debug(`FAIL: Expression ${boundsForRangeData} didn't produce a string result with four numbers (was ${parsedResult}).\n`);
+    }
+    return parsedResult[2]
+}
+var output = "This test verifies that a combination of Arabic and English is read correctly by Accessibility, when using CSS unicode-bidi property.\n\n";
+
+if (window.accessibilityController) {
+    var testIDs = ["content-normal", "content-embed", "content-plaintext", "content-isolate"] 
+    var testOverrideIDs = ["content-bidi-override", "content-isolate-override"]
+    var staticText, staticTextTextMarkerRange, startMarker, endMarker, rangeLength, maxBounds, lastBounds, currentBounds;
+    var ltrCount = 0;
+    var rtlCount = 0;
+    testIDs.forEach(testID => {
+        ltrCount = 0;
+        rtlCount = 0;
+        staticText = accessibilityController.accessibleElementById(testID).childAtIndex(0);
+        staticTextTextMarkerRange = staticText.textMarkerRangeForElement(staticText);
+        rangeLength = staticText.textMarkerRangeLength(staticTextTextMarkerRange);
+        output += expect("rangeLength", "28");
+        maxBounds = getRectWidthFromBoundsForRange(staticText.boundsForRange(0, 28));
+
+        lastBounds = -1;
+        for (let i = 0; i <= rangeLength; i++) {
+            currentBounds = getRectWidthFromBoundsForRange(staticText.boundsForRange(0, i));
+            if (currentBounds > lastBounds) {
+                ltrCount++;
+            }
+            if (currentBounds < lastBounds) {
+                rtlCount++;
+            }
+            lastBounds = currentBounds;
+        }
+        output += expect("ltrCount", "22");
+        output += expect("rtlCount", "7");
+        output += expect("staticText.stringForTextMarkerRange(staticTextTextMarkerRange).trim()", "'Anyone can try لغة برمجة C++'")
+    });
+
+    testOverrideIDs.forEach(testOverrideID => {
+        ltrCount = 0;
+        rtlCount = 0;
+        staticText = accessibilityController.accessibleElementById(testOverrideID).childAtIndex(0);
+        staticTextTextMarkerRange = staticText.textMarkerRangeForElement(staticText);
+        rangeLength = staticText.textMarkerRangeLength(staticTextTextMarkerRange);
+        output += expect("rangeLength", "28");
+        maxBounds = getRectWidthFromBoundsForRange(staticText.boundsForRange(0, 28));
+
+        lastBounds = -1;
+        for (let i = 0; i < rangeLength; i++) {
+            currentBounds = getRectWidthFromBoundsForRange(staticText.boundsForRange(0, i));
+            if (currentBounds > lastBounds) {
+                ltrCount++;
+            }
+            if (currentBounds < lastBounds) {
+                rtlCount++;
+            }
+            lastBounds = currentBounds;
+        }
+        output += expect("ltrCount", "28");
+        output += expect("rtlCount", "0");
+
+        output += expect("staticText.stringForTextMarkerRange(staticTextTextMarkerRange).trim()", "'Anyone can try لغة برمجة C++'")
+    });
+
+    debug(output);
+}
+</script>
+</body>
+</html>

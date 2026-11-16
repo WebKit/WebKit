@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<script src="../../../resources/js-test.js"></script>
+<input type=checkbox switch style="zoom: 5; writing-mode: vertical-lr">
+<script>
+description("A vertical switch tracks the pointer along its inline axis, which runs down the track. A drag that stays short of the middle of the track and comes back leaves the thumb where it was, so releasing it is an ordinary click and flips the switch.");
+jsTestIsAsync = true;
+
+const input = document.querySelector("input");
+
+(async () => {
+    if (!window.eventSender) {
+        testFailed("This test requires eventSender.");
+        finishJSTest();
+        return;
+    }
+
+    const rect = input.getBoundingClientRect();
+    const x = Math.round(rect.left + rect.width / 2);
+    const start = Math.round(rect.top + rect.height * 0.15);
+    const partway = Math.round(rect.top + rect.height * 0.4);
+
+    const clicked = new Promise(resolve => input.addEventListener("click", resolve, { once: true }));
+    await eventSender.asyncMouseMoveTo(x, start);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(x, partway);
+    await eventSender.asyncMouseMoveTo(x, start);
+    await eventSender.asyncMouseUp();
+    await Promise.race([clicked, new Promise(resolve => setTimeout(resolve, 1000))]);
+
+    shouldBeTrue("input.checked");
+    finishJSTest();
+})();
+</script>
+</html>

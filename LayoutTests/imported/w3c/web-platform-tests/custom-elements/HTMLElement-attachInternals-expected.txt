@@ -1,0 +1,6 @@
+
+PASS Successful attachInternals() and the second call.
+PASS attachInternals() throws a NotSupportedError if it is called for a customized built-in element
+PASS If a custom element definition for the local name of the element doesn't exist, throw an NotSupportedError
+PASS If a custom element definition for the local name of the element has disable internals flag, throw a NotSupportedError
+

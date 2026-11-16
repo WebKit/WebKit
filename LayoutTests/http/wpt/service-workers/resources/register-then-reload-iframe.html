@@ -1,0 +1,17 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+async function startTest()
+{
+    window.internals?.setTopDocumentURLForQuirks("https://www.capitalgroup.com");
+
+    const scope = "";
+    const registration = navigator.serviceWorker.register("lengthy-worker.py", { scope });
+    await new Promise(resolve => setTimeout(resolve, 100));
+    window.location.reload();
+}
+</script>
+</body>
+</html>

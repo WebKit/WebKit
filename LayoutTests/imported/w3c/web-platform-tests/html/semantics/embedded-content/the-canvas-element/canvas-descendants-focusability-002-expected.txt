@@ -1,0 +1,7 @@
+
+PASS <button data-focusable="false">
+PASS <section tabindex="-1" data-focusable="false">
+PASS <div tabindex="-1" data-focusable="false">
+PASS <span tabindex="-1" data-focusable="false">
+PASS <a href="#" data-focusable="false">
+

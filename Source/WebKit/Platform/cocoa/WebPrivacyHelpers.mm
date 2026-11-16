@@ -1,0 +1,1006 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WebPrivacyHelpers.h"
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+#import "Logging.h"
+#import "WKContentRuleListStoreInternal.h"
+#import <WebCore/DNS.h>
+#import <WebCore/LinkDecorationFilteringData.h>
+#import <WebCore/OrganizationStorageAccessPromptQuirk.h>
+#import <WebCore/ResourceRequest.h>
+#import <WebCore/TrackingPreventionTypes.h>
+#import <numeric>
+#import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NetworkSPI.h>
+#import <pal/spi/cocoa/WebPrivacySPI.h>
+#import <time.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
+#import <wtf/MonotonicTime.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RobinHoodHashMap.h>
+#import <wtf/RunLoop.h>
+#import <wtf/Scope.h>
+#import <wtf/WeakRandom.h>
+#import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/posix/SocketPOSIX.h>
+#import <wtf/text/MakeString.h>
+#import <pal/cocoa/WebPrivacySoftLink.h>
+
+@interface WKWebPrivacyNotificationListener : NSObject
+
+@end
+
+@implementation WKWebPrivacyNotificationListener {
+    BlockPtr<void()> _callback;
+    WPResourceType _resourceType;
+}
+
+- (instancetype)initWithType:(WPResourceType)resourceType callback:(void(^)())callback
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _resourceType = resourceType;
+    _callback = callback;
+
+    if (PAL::isWebPrivacyFrameworkAvailable())
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdate:) name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationNameSingleton() object:nil];
+    return self;
+}
+
+- (void)dealloc
+{
+    if (PAL::isWebPrivacyFrameworkAvailable())
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationNameSingleton() object:nil];
+    [super dealloc];
+}
+
+- (void)didUpdate:(NSNotification *)notification
+{
+    ASSERT(PAL::isWebPrivacyFrameworkAvailable());
+    RetainPtr type = dynamic_objc_cast<NSNumber>([retainPtr(notification.userInfo) objectForKey:PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKeySingleton()]);
+    if (!type)
+        return;
+
+    if (_callback && type.get().integerValue == _resourceType)
+        _callback();
+}
+
+@end
+
+namespace WebKit {
+
+Ref<ListDataObserver> ListDataControllerBase::observeUpdates(Function<void()>&& callback)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    if (!m_notificationListener) {
+        lazyInitialize(m_notificationListener, adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(resourceTypeValue()) callback:^{
+            updateList([weakThis = WeakPtr { *this }] {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
+                protectedThis->m_observers.forEach([](auto& observer) {
+                    observer.invokeCallback();
+                });
+            });
+        }]));
+    }
+    Ref observer = ListDataObserver::create(WTF::move(callback));
+    m_observers.add(observer.get());
+    return observer;
+}
+
+void ListDataControllerBase::initializeIfNeeded()
+{
+    if (hasCachedListData())
+        return;
+
+    if (std::exchange(m_wasInitialized, true))
+        return;
+
+    updateList([weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->m_observers.forEach([](auto& observer) {
+            observer.invokeCallback();
+        });
+    });
+}
+
+unsigned LinkDecorationFilteringController::resourceTypeValue() const
+{
+    return WPResourceTypeLinkFilteringData;
+}
+
+void LinkDecorationFilteringController::updateList(CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    if (!PAL::isWebPrivacyFrameworkAvailable()) {
+        completionHandler();
+        return;
+    }
+
+    static NeverDestroyed<Vector<CompletionHandler<void()>, 1>> lookupCompletionHandlers;
+    lookupCompletionHandlers->append(WTF::move(completionHandler));
+    if (lookupCompletionHandlers->size() > 1)
+        return;
+
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestLinkFilteringData:options.get() completionHandler:^(WPLinkFilteringData *data, NSError *error) {
+        Vector<WebCore::LinkDecorationFilteringData> result;
+        if (error)
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request query parameters from WebPrivacy.");
+        else {
+            RetainPtr rules = [data rules];
+            for (WPLinkFilteringRule *rule : rules.get()) {
+                auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, String { rule.domain }) } };
+                result.append(WebCore::LinkDecorationFilteringData { WTF::move(domain), [rule respondsToSelector:@selector(path)] ? rule.path : @"", rule.queryParameter });
+            }
+            setCachedListData(WTF::move(result));
+        }
+
+        for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
+            completionHandler();
+    }];
+
+}
+
+using LinkFilteringRulesCallback = CompletionHandler<void(Vector<WebCore::LinkDecorationFilteringData>&&)>;
+void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
+{
+    if (!PAL::isWebPrivacyFrameworkAvailable()) {
+        callback({ });
+        return;
+    }
+
+    static BOOL canRequestAllowedQueryParameters = [] {
+        return [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestAllowedLinkFilteringData:completionHandler:)];
+    }();
+
+    if (!canRequestAllowedQueryParameters) {
+        callback({ });
+        return;
+    }
+
+    static NeverDestroyed<Vector<LinkFilteringRulesCallback, 1>> lookupCallbacks;
+    lookupCallbacks->append(WTF::move(callback));
+    if (lookupCallbacks->size() > 1)
+        return;
+
+    auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestAllowedLinkFilteringData:options.get() completionHandler:^(WPLinkFilteringData *data, NSError *error) {
+        Vector<WebCore::LinkDecorationFilteringData> result;
+        if (error)
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request allowed query parameters from WebPrivacy.");
+        else {
+            RetainPtr rules = [data rules];
+            for (WPLinkFilteringRule *rule : rules.get()) {
+                auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, String { rule.domain }) } };
+                result.append(WebCore::LinkDecorationFilteringData { WTF::move(domain), { }, rule.queryParameter });
+            }
+        }
+
+        auto callbacks = std::exchange(lookupCallbacks.get(), { });
+        Borrow borrowedCallbacks = callbacks;
+        for (int i = borrowedCallbacks->size() - 1; i >= 0; --i) {
+            auto& callback = borrowedCallbacks[i];
+            if (i)
+                callback(Vector { result });
+            else
+                callback(WTF::move(result));
+        }
+    }];
+}
+
+unsigned StorageAccessPromptQuirkController::resourceTypeValue() const
+{
+    return WPResourceTypeStorageAccessPromptQuirksData;
+}
+
+void StorageAccessPromptQuirkController::didUpdateCachedListData()
+{
+    m_cachedListData.shrinkToFit();
+    RELEASE_LOG(ResourceLoadStatistics, "StorageAccessPromptQuirkController::didUpdateCachedListData: Loaded %lu storage access prompt(s) quirks from WebPrivacy.", m_cachedListData.size());
+}
+
+static HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> quirkDomainsDictToMap(NSDictionary<NSString *, NSArray<NSString *> *> *quirkDomains)
+{
+    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> map;
+    RetainPtr<NSArray<NSString *>> topDomains = quirkDomains.allKeys;
+    for (NSString *topDomain : topDomains.get()) {
+        Vector<WebCore::RegistrableDomain> subFrameDomains;
+        for (NSString *subFrameDomain : [quirkDomains objectForKey:topDomain])
+            subFrameDomains.append(WebCore::RegistrableDomain::fromRawString(subFrameDomain));
+        map.add(WebCore::RegistrableDomain::fromRawString(String { topDomain }), WTF::move(subFrameDomains));
+    }
+    return map;
+}
+
+static Vector<URL> quirkPagesArrayToVector(NSArray<NSString *> *triggerPages)
+{
+    Vector<URL> triggers;
+    for (NSString *page : triggerPages) {
+        if (![page isEqualToString:@"*"])
+            triggers.append(URL { page });
+    }
+    return triggers;
+}
+
+void StorageAccessPromptQuirkController::updateList(CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestStorageAccessPromptQuirksData:completionHandler:)]) {
+        RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
+        return;
+    }
+
+    static MainRunLoopNeverDestroyed<Vector<CompletionHandler<void()>, 1>> lookupCompletionHandlers;
+    lookupCompletionHandlers->append(WTF::move(completionHandler));
+    if (lookupCompletionHandlers->size() > 1)
+        return;
+
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestStorageAccessPromptQuirksData:options.get() completionHandler:^(WPStorageAccessPromptQuirksData *data, NSError *error) {
+        Vector<WebCore::OrganizationStorageAccessPromptQuirk> result;
+        if (error)
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request storage access quirks from WebPrivacy.");
+        else {
+            RetainPtr quirks = [data quirks];
+            auto hasQuirkDomainsAndTriggerPages = [PAL::getWPStorageAccessPromptQuirkClassSingleton() instancesRespondToSelector:@selector(quirkDomains)] && [PAL::getWPStorageAccessPromptQuirkClassSingleton() instancesRespondToSelector:@selector(triggerPages)];
+            for (WPStorageAccessPromptQuirk *quirk : quirks.get()) {
+                if (hasQuirkDomainsAndTriggerPages)
+                    result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, quirkDomainsDictToMap(retainPtr(quirk.quirkDomains).get()), quirkPagesArrayToVector(retainPtr(quirk.triggerPages).get()) });
+                else
+                    result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, quirkDomainsDictToMap(retainPtr(quirk.domainPairings).get()), { } });
+            }
+            setCachedListData(WTF::move(result));
+        }
+
+        for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
+            completionHandler();
+    }];
+}
+
+unsigned StorageAccessUserAgentStringQuirkController::resourceTypeValue() const
+{
+    return WPResourceTypeStorageAccessUserAgentStringQuirksData;
+}
+
+void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestStorageAccessUserAgentStringQuirksData:completionHandler:)]) {
+        RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
+        return;
+    }
+
+    static MainRunLoopNeverDestroyed<Vector<CompletionHandler<void()>, 1>> lookupCompletionHandlers;
+    lookupCompletionHandlers->append(WTF::move(completionHandler));
+    if (lookupCompletionHandlers->size() > 1)
+        return;
+
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestStorageAccessUserAgentStringQuirksData:options.get() completionHandler:^(WPStorageAccessUserAgentStringQuirksData *data, NSError *error) {
+        HashMap<WebCore::RegistrableDomain, String> result;
+        if (error)
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request storage access user agent string quirks from WebPrivacy.");
+        else {
+            RetainPtr quirks = [data quirks];
+            for (WPStorageAccessUserAgentStringQuirk *quirk : quirks.get())
+                result.add(WebCore::RegistrableDomain::fromRawString(quirk.domain), quirk.userAgentString);
+            setCachedListData(WTF::move(result));
+        }
+
+        for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
+            completionHandler();
+    }];
+}
+
+HighValueFraudTargetDomainsController& HighValueFraudTargetDomainsController::singleton()
+{
+    static MainRunLoopNeverDestroyed<HighValueFraudTargetDomainsController> sharedInstance;
+    return sharedInstance.get();
+}
+
+HighValueFraudTargetDomainsController::HighValueFraudTargetDomainsController()
+{
+    scheduleNextUpdate(ContinuousApproximateTime::now());
+    update();
+
+    lazyInitialize(m_notificationListener, adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(WPResourceTypeHighValueFraudTargetDomains) callback:^{
+        update();
+    }]));
+}
+
+void HighValueFraudTargetDomainsController::scheduleNextUpdate(ContinuousApproximateTime now)
+{
+    // Allow the list to be re-requested from the server sometime between [24, 26) hours from now.
+    static WeakRandom random;
+    m_nextScheduledUpdateTime = now + 24_h + random.get() * 2_h;
+}
+
+void HighValueFraudTargetDomainsController::update()
+{
+    ASSERT(RunLoop::isMain());
+    if (m_hasInjectedDomainsForTesting)
+        return;
+
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestHighValueFraudTargetDomains:completionHandler:)])
+        return;
+
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    auto requestStartTime = MonotonicTime::now();
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestHighValueFraudTargetDomains:options.get() completionHandler:^(NSArray<WPHighValueFraudTargetDomain *> *domains, NSError *error) {
+        if (m_hasInjectedDomainsForTesting)
+            return;
+
+        auto elapsed = MonotonicTime::now() - requestStartTime;
+        if (error) {
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request high-value fraud target domains from WebPrivacy after %.1f ms: %@", elapsed.milliseconds(), error);
+            return;
+        }
+
+        HashSet<WebCore::RegistrableDomain> highValueDomains;
+        highValueDomains.reserveInitialCapacity(domains.count);
+
+        for (WPHighValueFraudTargetDomain *domainInfo in domains) {
+            auto registrableDomain = WebCore::RegistrableDomain::fromRawString(domainInfo.domain);
+            if (registrableDomain.isEmpty())
+                continue;
+            highValueDomains.add(WTF::move(registrableDomain));
+        }
+
+        m_domains = WTF::move(highValueDomains);
+
+        if (std::exchange(m_didReceiveInitialData, true))
+            RELEASE_LOG(ResourceLoadStatistics, "HighValueFraudTargetDomainsController::update: Reloaded %u high-value fraud target domain(s) from WebPrivacy in %.1f ms.", m_domains.size(), elapsed.milliseconds());
+        else
+            RELEASE_LOG(ResourceLoadStatistics, "HighValueFraudTargetDomainsController::update: Loaded initial %u high-value fraud target domain(s) from WebPrivacy in %.1f ms.", m_domains.size(), elapsed.milliseconds());
+    }];
+}
+
+bool HighValueFraudTargetDomainsController::contains(const WebCore::RegistrableDomain& domain) const
+{
+    auto now = ContinuousApproximateTime::now();
+    if (now > m_nextScheduledUpdateTime) {
+        auto mutableThis = const_cast<HighValueFraudTargetDomainsController*>(this);
+        mutableThis->scheduleNextUpdate(now);
+        mutableThis->update();
+    }
+
+    return m_domains.contains(domain);
+}
+
+void HighValueFraudTargetDomainsController::setDomainsForTesting(HashSet<WebCore::RegistrableDomain>&& domains)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    m_domains = WTF::move(domains);
+    m_didReceiveInitialData = true;
+    // Keep update() from replacing the injected list with real data from WebPrivacy.
+    m_hasInjectedDomainsForTesting = true;
+}
+
+ResourceMonitorURLsController& ResourceMonitorURLsController::singleton()
+{
+    static MainRunLoopNeverDestroyed<ResourceMonitorURLsController> sharedInstance;
+    return sharedInstance.get();
+}
+
+void ResourceMonitorURLsController::setContentRuleListStore(API::ContentRuleListStore& store)
+{
+    m_contentRuleListStore = &store;
+}
+
+bool ResourceMonitorURLsController::canRequestContentRuleList() const
+{
+    return PAL::isWebPrivacyFrameworkAvailable() && [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(prepareResourceMonitorRulesForStore:completionHandler:)];
+}
+
+void ResourceMonitorURLsController::requestContentRuleList(PrepareCompletionHandler&& completionHandler)
+{
+    Ref<API::ContentRuleListStore> store = m_contentRuleListStore ? *m_contentRuleListStore : API::ContentRuleListStore::defaultStoreSingleton();
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] prepareResourceMonitorRulesForStore:protect(wrapper(store.get())).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](WKContentRuleList *list, bool updated, NSError *error) mutable {
+        if (error)
+            RELEASE_LOG_ERROR(ResourceMonitoring, "Failed to request resource monitor urls from WebPrivacy: %@", error);
+
+        completionHandler(list, updated);
+    }).get()];
+}
+
+void ResourceMonitorURLsController::getSource(CompletionHandler<void(String&&)>&& completionHandler)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestResourceMonitorRulesSource:completionHandler:)]) {
+        completionHandler({ });
+        return;
+    }
+
+    static MainRunLoopNeverDestroyed<Vector<CompletionHandler<void(NSString *)>, 1>> lookupCompletionHandlers;
+    lookupCompletionHandlers->append(WTF::move(completionHandler));
+    if (lookupCompletionHandlers->size() > 1)
+        return;
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestResourceMonitorRulesSource:nil completionHandler:^(NSString *source, NSError *error) {
+        if (error)
+            RELEASE_LOG_ERROR(ResourceMonitoring, "Failed to request resource monitor urls source from WebPrivacy");
+
+        for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
+            completionHandler(source);
+    }];
+}
+
+TrackingPreventionContentRuleListController& TrackingPreventionContentRuleListController::singleton()
+{
+    static MainRunLoopNeverDestroyed<TrackingPreventionContentRuleListController> sharedInstance;
+    return sharedInstance.get();
+}
+
+unsigned TrackingPreventionContentRuleListController::resourceTypeValue() const
+{
+    return WPResourceTypeDefaultTrackerBlockRules;
+}
+
+bool TrackingPreventionContentRuleListController::canRequestContentRuleList() const
+{
+    return PAL::isWebPrivacyFrameworkAvailable() && [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(loadDefaultContentRuleListForStore:completionHandler:)];
+}
+
+void TrackingPreventionContentRuleListController::requestContentRuleList(PrepareCompletionHandler&& completionHandler)
+{
+    Ref<API::ContentRuleListStore> store = API::ContentRuleListStore::defaultStoreSingleton();
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] loadDefaultContentRuleListForStore:protect(wrapper(store.get())).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](WKContentRuleList *list, NSError *error) mutable {
+        if (error)
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to load the tracking prevention content rule list from WebPrivacy: %@", error);
+
+        completionHandler(list);
+    }).get()];
+}
+
+#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+
+inline static std::optional<WebCore::IPAddress> ipAddress(const struct sockaddr* address)
+{
+    if (auto* addressV4 = dynamicCastToIPV4SocketAddress(*address))
+        return WebCore::IPAddress { addressV4->sin_addr };
+
+    if (auto* addressV6 = dynamicCastToIPV6SocketAddress(*address))
+        return WebCore::IPAddress { addressV6->sin6_addr };
+
+    return std::nullopt;
+}
+
+inline static std::optional<WebCore::IPAddress> ipAddress(nw_endpoint_t endpoint)
+{
+    if (nw_endpoint_get_type(endpoint) != nw_endpoint_type_address)
+        return std::nullopt;
+
+    return ipAddress(nw_endpoint_get_address(endpoint));
+}
+
+inline static std::optional<const char*> hostname(nw_endpoint_t endpoint)
+{
+    if (nw_endpoint_get_type(endpoint) != nw_endpoint_type_host)
+        return std::nullopt;
+
+    return nw_endpoint_get_hostname(endpoint);
+}
+
+class TrackerAddressLookupInfo {
+public:
+    enum class CanBlock : bool { No, Yes };
+
+    // Single lock shared by both tracker lookup tables below, guarding their population, refresh,
+    // and lookups. A raw pointer into a table can never escape its critical section because the
+    // matchingInfo() helpers that return such pointers are private to their classes.
+    static Lock& trackerLookupLock()
+    {
+        static Lock lock;
+        return lock;
+    }
+
+    TrackerAddressLookupInfo(WebCore::IPAddress&& network, unsigned netMaskLength, String&& owner, String&& host, CanBlock canBlock)
+        : m_network { WTF::move(network) }
+        , m_netMaskLength { netMaskLength }
+        , m_owner { owner.utf8() }
+        , m_host { host.utf8() }
+        , m_canBlock { canBlock }
+    {
+    }
+
+    TrackerAddressLookupInfo(WPNetworkAddressRange *range)
+        : m_network { ipAddress(range.address).value() }
+        , m_netMaskLength { static_cast<unsigned>(range.netMaskLength) }
+        , m_owner { range.owner }
+        , m_host { range.host }
+        , m_canBlock { CanBlock::Yes } // FIXME: Grab this from WPNetworkAddressRange as well, once it's available.
+    {
+    }
+
+    TrackerAddressLookupInfo() = default;
+
+    NODELETE const UTF8CString& owner() const { return m_owner; }
+    NODELETE const UTF8CString& host() const { return m_host; }
+
+    NODELETE CanBlock canBlock() const { return m_canBlock; }
+
+    static void populateIfNeeded()
+    {
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [&] {
+            if (!PAL::isWebPrivacyFrameworkAvailable())
+                return;
+
+            auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+            [options setAfterUpdates:YES];
+
+            [[PAL::getWPResourcesClassSingleton() sharedInstance] requestTrackerNetworkAddresses:options.get() completionHandler:^(NSArray<WPNetworkAddressRange *> *ranges, NSError *error) {
+                if (error) {
+                    RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request tracking IP addresses from WebPrivacy");
+                    return;
+                }
+
+                Locker locker { trackerLookupLock() };
+                version4List().clear();
+                version6List().clear();
+
+                for (WPNetworkAddressRange *range in ranges) {
+                    switch (range.version) {
+                    case WPNetworkAddressVersion4:
+                        version4List().append({ range });
+                        break;
+                    case WPNetworkAddressVersion6:
+                        version6List().append({ range });
+                        break;
+                    default:
+                        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Skipped invalid tracking IP address: %@", range);
+                        break;
+                    }
+                }
+
+                version4List().shrinkToFit();
+                version6List().shrinkToFit();
+            }];
+        });
+    }
+
+    // Looks up the entry matching address and, while holding the lock, invokes function with it,
+    // returning whether a match was found. The entry reference passed to function is valid only for
+    // the duration of the call (while the lock is held) and must not escape it.
+    template<typename Function>
+    static bool find(const WebCore::IPAddress& address, NOESCAPE const Function& function)
+    {
+        Locker locker { trackerLookupLock() };
+        auto* info = matchingInfo(address);
+        if (!info)
+            return false;
+        function(*info);
+        return true;
+    }
+
+    static bool contains(const WebCore::IPAddress& address)
+    {
+        Locker locker { trackerLookupLock() };
+        return matchingInfo(address);
+    }
+
+private:
+    static const TrackerAddressLookupInfo* matchingInfo(const WebCore::IPAddress& address) WTF_REQUIRES_LOCK(trackerLookupLock())
+    {
+        auto& list = address.isIPv4() ? version4List() : version6List();
+        if (list.isEmpty())
+            return nullptr;
+
+        size_t lower = 0;
+        size_t upper = list.size() - 1;
+        if (address < list[lower].m_network)
+            upper = lower;
+        else if (address > list[upper].m_network)
+            lower = upper;
+        else {
+            while (upper - lower > 1) {
+                auto middle = std::midpoint(lower, upper);
+                auto compareResult = address <=> list[middle].m_network;
+                if (is_eq(compareResult))
+                    return &list[middle];
+                if (is_lt(compareResult))
+                    upper = middle;
+                else if (is_gt(compareResult))
+                    lower = middle;
+                else {
+                    ASSERT_NOT_REACHED();
+                    return nullptr;
+                }
+            }
+        }
+
+        Borrow borrowedList = list;
+        if (borrowedList[upper].containsAddress(address))
+            return &list[upper];
+
+        if (upper != lower && borrowedList[lower].containsAddress(address))
+            return &list[lower];
+
+        return nullptr;
+    }
+
+    static Vector<TrackerAddressLookupInfo>& version4List() WTF_REQUIRES_LOCK(trackerLookupLock())
+    {
+        static NeverDestroyed sharedList = [] {
+            return Vector<TrackerAddressLookupInfo> { };
+        }();
+        return sharedList.get();
+    }
+
+    static Vector<TrackerAddressLookupInfo>& version6List() WTF_REQUIRES_LOCK(trackerLookupLock())
+    {
+        static NeverDestroyed sharedList = [] {
+            return Vector<TrackerAddressLookupInfo> { };
+        }();
+        return sharedList.get();
+    }
+
+    bool containsAddress(const WebCore::IPAddress& address) const
+    {
+        return m_network.matchingNetMaskLength(address) >= m_netMaskLength;
+    }
+
+    WebCore::IPAddress m_network { WTF::HashTableEmptyValue };
+    unsigned m_netMaskLength { 0 };
+    UTF8CString m_owner;
+    UTF8CString m_host;
+    CanBlock m_canBlock { CanBlock::No };
+};
+
+class TrackerDomainLookupInfo {
+public:
+    enum class CanBlock : uint8_t { No, WithAdvancedPrivacyProtections };
+
+    TrackerDomainLookupInfo(WPTrackingDomain *domain)
+        : m_owner { domain.owner }
+        , m_canBlock { domain.canBlock ? CanBlock::WithAdvancedPrivacyProtections : CanBlock::No }
+    {
+    }
+
+    TrackerDomainLookupInfo() = default;
+
+    NODELETE const UTF8CString& owner() const { return m_owner; }
+
+    NODELETE CanBlock canBlock() const { return m_canBlock; }
+
+    static void populateIfNeeded()
+    {
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [&] {
+            if (!PAL::isWebPrivacyFrameworkAvailable())
+                return;
+
+            static BOOL canRequestTrackerDomainNames = [] {
+                return [PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestTrackerDomainNamesData:completionHandler:)];
+            }();
+
+            if (!canRequestTrackerDomainNames)
+                return;
+
+            auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+            [options setAfterUpdates:YES];
+            [[PAL::getWPResourcesClassSingleton() sharedInstance] requestTrackerDomainNamesData:options.get() completionHandler:^(NSArray<WPTrackingDomain *> * domains, NSError *error) {
+                if (error) {
+                    RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request tracking domains from WebPrivacy");
+                    return;
+                }
+
+                // Readers walk this map and read the entries' CStrings under
+                // TrackerAddressLookupInfo::trackerLookupLock() (via find()/contains()), so the
+                // writer must hold it too — otherwise it races the map structure and frees CString
+                // buffers out from under a concurrent reader.
+                Locker locker { TrackerAddressLookupInfo::trackerLookupLock() };
+                for (WPTrackingDomain *domain in domains)
+                    list().set(String::fromLatin1([domain.host UTF8String]), TrackerDomainLookupInfo { domain });
+            }];
+        });
+    }
+
+    // Looks up the entry for host and, while holding the lock, invokes function with it if it names
+    // a known tracker (a matching entry with a non-empty owner), returning whether it did. The entry
+    // reference passed to function is valid only for the duration of the call and must not escape it.
+    template<typename Function>
+    static bool find(const String& host, NOESCAPE const Function& function)
+    {
+        Locker locker { TrackerAddressLookupInfo::trackerLookupLock() };
+        auto* info = matchingInfo(host);
+        if (!info || !info->owner().length())
+            return false;
+        function(*info);
+        return true;
+    }
+
+    static bool contains(const String& host)
+    {
+        Locker locker { TrackerAddressLookupInfo::trackerLookupLock() };
+        auto* info = matchingInfo(host);
+        return info && info->owner().length();
+    }
+
+private:
+    static const TrackerDomainLookupInfo* matchingInfo(const String& host) WTF_REQUIRES_LOCK(TrackerAddressLookupInfo::trackerLookupLock())
+    {
+        if (!list().isValidKey(host))
+            return nullptr;
+        auto it = list().find(host);
+        return it != list().end() ? &it->value : nullptr;
+    }
+
+    NODELETE static MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>& list() WTF_REQUIRES_LOCK(TrackerAddressLookupInfo::trackerLookupLock())
+    {
+        static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>> map;
+        return map.get();
+    }
+
+    UTF8CString m_owner;
+    CanBlock m_canBlock { CanBlock::No };
+};
+
+void configureForAdvancedPrivacyProtections(NSURLSession *session)
+{
+    static bool canSetTrackerLookupCallback = [&] {
+        return [NSURLSession instancesRespondToSelector:@selector(_networkContext)];
+    }();
+
+    if (!canSetTrackerLookupCallback)
+        return;
+
+    RetainPtr<nw_context_t> context = session._networkContext;
+    if (!context)
+        return;
+
+    TrackerAddressLookupInfo::populateIfNeeded();
+    TrackerDomainLookupInfo::populateIfNeeded();
+
+    nw_context_set_tracker_lookup_callback(context.get(), ^(nw_endpoint_t endpoint, const char** hostName, const char** owner, bool* canBlock) {
+        // The networking stack reads *owner and *hostName after this block returns (it copies them
+        // before the next lookup on this thread), so the strings must outlive the block without
+        // being tied to the lookup lists, which are refreshed on the WebPrivacy thread. Hold them in
+        // per-thread UTF8CStrings populated via isolatedCopy(): each copy owns its own CStringBuffer,
+        // referenced only by this thread, so nothing races the refresh — CStringBuffer is not
+        // ThreadSafeRefCounted, so we must never share a buffer across threads. NeverDestroyed avoids
+        // an exit-time destructor; each assignment releases the previous copy's buffer.
+        static thread_local NeverDestroyed<UTF8CString> lastOwner;
+        static thread_local NeverDestroyed<UTF8CString> lastHost;
+
+        if (auto address = ipAddress(endpoint)) {
+            bool matched = TrackerAddressLookupInfo::find(*address, [&](auto& info) {
+                lastOwner.get() = info.owner().isolatedCopy();
+                lastHost.get() = info.host().isolatedCopy();
+                *owner = lastOwner.get().legacyCStringPointer();
+                *hostName = lastHost.get().legacyCStringPointer();
+                *canBlock = info.canBlock() != TrackerAddressLookupInfo::CanBlock::No;
+            });
+            if (matched)
+                return;
+        }
+
+        if (auto host = hostname(endpoint)) {
+            auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, String::fromLatin1(*host)) } };
+            TrackerDomainLookupInfo::find(domain.string(), [&](auto& info) {
+                lastOwner.get() = info.owner().isolatedCopy();
+                *owner = lastOwner.get().legacyCStringPointer();
+                *hostName = *host;
+                *canBlock = info.canBlock() != TrackerDomainLookupInfo::CanBlock::No;
+            });
+        }
+    });
+}
+
+bool isKnownTrackerAddressOrDomain(StringView host)
+{
+    TrackerAddressLookupInfo::populateIfNeeded();
+    TrackerDomainLookupInfo::populateIfNeeded();
+
+    if (auto address = URL::hostIsIPAddress(host) ? WebCore::IPAddress::fromString(host.toStringWithoutCopying()) : std::nullopt) {
+        if (TrackerAddressLookupInfo::contains(*address))
+            return true;
+    }
+
+    auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, host) } };
+    return TrackerDomainLookupInfo::contains(domain.string());
+}
+
+WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest& request)
+{
+    return request.isThirdParty() && isKnownTrackerAddressOrDomain(request.url().host()) ? WebCore::IsKnownCrossSiteTracker::Yes : WebCore::IsKnownCrossSiteTracker::No;
+}
+#else
+
+void configureForAdvancedPrivacyProtections(NSURLSession *) { }
+bool isKnownTrackerAddressOrDomain(StringView) { return false; }
+WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest&) { return WebCore::IsKnownCrossSiteTracker::No; }
+
+#endif
+
+#if ENABLE(SCRIPT_TRACKING_PRIVACY_PROTECTIONS)
+
+static WebCore::ScriptTrackingPrivacyFlags allowedScriptTrackingCategories(WPScriptAccessCategories categories)
+{
+    WebCore::ScriptTrackingPrivacyFlags result;
+    if (categories & WPScriptAccessCategoryAudio)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Audio);
+    if (categories & WPScriptAccessCategoryCanvas)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Canvas);
+    if (categories & WPScriptAccessCategoryCookies)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Cookies);
+    if (categories & WPScriptAccessCategoryHardwareConcurrency)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::HardwareConcurrency);
+    if (categories & WPScriptAccessCategoryLocalStorage)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::LocalStorage);
+    if (categories & WPScriptAccessCategoryPayments)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Payments);
+    if (categories & WPScriptAccessCategoryQueryParameters)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::QueryParameters);
+    if (categories & WPScriptAccessCategoryReferrer)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Referrer);
+    if (categories & WPScriptAccessCategoryScreenOrViewport)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::ScreenOrViewport);
+    if (categories & WPScriptAccessCategorySpeech)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::Speech);
+    if (categories & WPScriptAccessCategoryFormControls)
+        result.add(WebCore::ScriptTrackingPrivacyFlag::FormControls);
+    return result;
+}
+
+#endif // ENABLE(SCRIPT_TRACKING_PRIVACY_PROTECTIONS)
+
+void ScriptTrackingPrivacyController::updateList(CompletionHandler<void()>&& completion)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+#if ENABLE(SCRIPT_TRACKING_PRIVACY_PROTECTIONS)
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestFingerprintingScripts:completionHandler:)]) {
+        RunLoop::mainSingleton().dispatch(WTF::move(completion));
+        return;
+    }
+
+    static MainRunLoopNeverDestroyed<Vector<CompletionHandler<void()>, 1>> pendingCompletionHandlers;
+    pendingCompletionHandlers->append(WTF::move(completion));
+    if (pendingCompletionHandlers->size() > 1)
+        return;
+
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestFingerprintingScripts:options.get() completionHandler:^(NSArray<WPFingerprintingScript *> *scripts, NSError *error) {
+        auto callCompletionHandlers = makeScopeExit([&] {
+            for (auto& completionHandler : std::exchange(pendingCompletionHandlers.get(), { }))
+                completionHandler();
+        });
+
+        if (error) {
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request known fingerprinting scripts from WebPrivacy: %@", error);
+            return;
+        }
+
+        ScriptTrackingPrivacyRules result;
+        for (WPFingerprintingScript *script in scripts) {
+            static bool supportsAllowedCategories = [script respondsToSelector:@selector(allowedCategories)];
+            auto allowedCategories = allowedScriptTrackingCategories(supportsAllowedCategories ? script.allowedCategories : WPScriptAccessCategoryNone);
+            if (script.firstParty) {
+                if (script.topDomain)
+                    result.firstPartyTopDomains.append({ script.host, allowedCategories });
+                else
+                    result.firstPartyHosts.append({ script.host, allowedCategories });
+            } else {
+                if (script.topDomain)
+                    result.thirdPartyTopDomains.append({ script.host, allowedCategories });
+                else
+                    result.thirdPartyHosts.append({ script.host, allowedCategories });
+            }
+        }
+        setCachedListData(WTF::move(result));
+    }];
+#else
+    RunLoop::mainSingleton().dispatch(WTF::move(completion));
+#endif
+}
+
+unsigned ScriptTrackingPrivacyController::resourceTypeValue() const
+{
+    return WPResourceTypeFingerprintingScripts;
+}
+
+void ScriptTrackingPrivacyController::didUpdateCachedListData()
+{
+    m_cachedListData.firstPartyTopDomains.shrinkToFit();
+    m_cachedListData.firstPartyHosts.shrinkToFit();
+    m_cachedListData.thirdPartyTopDomains.shrinkToFit();
+    m_cachedListData.thirdPartyHosts.shrinkToFit();
+}
+
+void ConsistentPrivacyQuirkController::updateList(CompletionHandler<void()>&& completion)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
+#if ENABLE(SCRIPT_TRACKING_PRIVACY_PROTECTIONS)
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestFingerprintingScripts:completionHandler:)]) {
+        RunLoop::mainSingleton().dispatch(WTF::move(completion));
+        return;
+    }
+
+    static MainRunLoopNeverDestroyed<Vector<CompletionHandler<void()>, 1>> pendingCompletionHandlers;
+    pendingCompletionHandlers->append(WTF::move(completion));
+    if (pendingCompletionHandlers->size() > 1)
+        return;
+
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestFingerprintingScripts:options.get() completionHandler:^(NSArray<WPFingerprintingScript *> *, NSError *error) {
+        auto callCompletionHandlers = makeScopeExit([&] {
+            for (auto& completionHandler : std::exchange(pendingCompletionHandlers.get(), { }))
+                completionHandler();
+        });
+
+        if (error) {
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request known fingerprinting scripts from WebPrivacy for consistent privacy quirks: %@", error);
+            return;
+        }
+
+        setCachedListData({ });
+    }];
+#else
+    RunLoop::mainSingleton().dispatch(WTF::move(completion));
+#endif
+}
+
+unsigned ConsistentPrivacyQuirkController::resourceTypeValue() const
+{
+    return WPResourceTypeConsistentPrivacyQuirk;
+}
+
+void ConsistentPrivacyQuirkController::didUpdateCachedListData()
+{
+    m_cachedListData.firstPartyTopDomains.shrinkToFit();
+    m_cachedListData.firstPartyHosts.shrinkToFit();
+    m_cachedListData.thirdPartyTopDomains.shrinkToFit();
+    m_cachedListData.thirdPartyHosts.shrinkToFit();
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

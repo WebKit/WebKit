@@ -1,0 +1,19 @@
+<style>
+  video { transform: rotateX(0deg); -webkit-writing-mode: vertical-lr; }
+</style>
+<script>
+  testRunner?.dumpAsText();
+  function runTest() {
+    video.poster = + "foo";
+    video.scrollIntoViewIfNeeded();
+    iframe.src = document.createElement("base").href;
+  }
+</script>
+<body onload=runTest() onwheel="foo()">
+  <video id="video" ></video>
+  <dialog>
+    <iframe id="iframe"></iframe>
+  </dialog>
+PASS if no crash or assert.
+</body>
+

@@ -1,0 +1,137 @@
+<!--
+Copyright (c) 2026 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Switching transform feedback programs</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../js/js-test-pre.js"></script>
+<script src="../../js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<canvas id="canvas" style="width: 10px; height: 10px;"> </canvas>
+<div id="console"></div>
+<script>
+"use strict";
+description("Tests switching programs during paused transform feedback.");
+
+debug("");
+
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("canvas");
+var gl = wtu.create3DContext(canvas, null, 2);
+
+if (!gl) {
+  testFailed("WebGL context does not exist");
+} else {
+  testPassed("WebGL context exists");
+  runTest();
+}
+
+function runTest() {
+  const vsSource = `#version 300 es
+    in float a_in;
+    out float a_out;
+    void main() {
+      a_out = a_in;
+      gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+  `;
+  const fsSource = `#version 300 es
+    precision mediump float;
+    out vec4 color;
+    void main() {
+      color = vec4(1.0);
+    }
+  `;
+
+  function createProgramWithTF(vsSrc, fsSrc) {
+    const vs = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs, vsSrc);
+    gl.compileShader(vs);
+    if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
+      testFailed("Vertex shader compile failed: " + gl.getShaderInfoLog(vs));
+    } else {
+      testPassed("Vertex shader compiled successfully");
+    }
+
+    const fs = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fs, fsSrc);
+    gl.compileShader(fs);
+    if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+      testFailed("Fragment shader compile failed: " + gl.getShaderInfoLog(fs));
+    } else {
+      testPassed("Fragment shader compiled successfully");
+    }
+
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.transformFeedbackVaryings(prog, ['a_out'], gl.SEPARATE_ATTRIBS);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      testFailed("Program linking failed: " + gl.getProgramInfoLog(prog));
+    } else {
+      testPassed("Program linked successfully");
+    }
+    return prog;
+  }
+
+  const p1 = createProgramWithTF(vsSource, fsSource);
+  const p2 = createProgramWithTF(vsSource, fsSource);
+
+  // Prepare a transform feedback buffer so beginTransformFeedback succeeds.
+  const tf = gl.createTransformFeedback();
+  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tf);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(16), gl.STATIC_DRAW);
+  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, buf);
+
+  // Activate P2 and start transform feedback.
+  gl.useProgram(p2);
+  gl.beginTransformFeedback(gl.POINTS);
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "beginTransformFeedback with P2 should succeed");
+
+  // Pause transform feedback and swap active program to P1.
+  gl.pauseTransformFeedback();
+  gl.useProgram(p1);
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "useProgram(P1) while paused should succeed");
+
+  // End transform feedback while P1 is current_program_.
+  gl.endTransformFeedback();
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "endTransformFeedback should succeed");
+
+  // Now verify P1's and P2's state when neither is active for transform feedback.
+  // 1. P1 was the current program during endTransformFeedback, but never active in TF. Re-linking P1 must succeed.
+  gl.linkProgram(p1);
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "linkProgram(P1) after endTransformFeedback should succeed");
+
+  // 2. P2 was the program active during TF, which has now ended. Re-linking P2 must succeed.
+  gl.linkProgram(p2);
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "linkProgram(P2) after endTransformFeedback should succeed");
+
+  // 3. Now start transform feedback with P1 (which is still the current program).
+  gl.beginTransformFeedback(gl.POINTS);
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "beginTransformFeedback with P1 should succeed");
+
+  // Attempt to re-link P1 while it is active for transform feedback.
+  // This must be rejected with INVALID_OPERATION per specification.
+  gl.linkProgram(p1);
+  wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION,
+      "linkProgram(P1) while active in transform feedback must return INVALID_OPERATION");
+
+  gl.endTransformFeedback();
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "final endTransformFeedback should succeed");
+
+  finishTest();
+}
+</script>
+</body>
+</html>

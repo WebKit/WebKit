@@ -1,0 +1,15 @@
+Visibility hidden
+
+Spec
+Setting a table to visibility:hidden, but rows and cells to different nested visibility values. Height and width of table should not change.
+
+row 1	
+row 1	
+Bottom table is identical to top except entire row group of two rows is hidden, and first row is visible with two hidden cells and a visible span in the left cell.
+row 1	
+
+PASS table visibility:hidden doesn't change table height
+PASS table visibility:hidden doesn't change table width
+PASS hidden and visible cells should have same height
+PASS hidden and visible cells should have same width
+

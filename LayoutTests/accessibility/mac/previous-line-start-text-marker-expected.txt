@@ -1,0 +1,16 @@
+This test ensures previous line start finds the start of the line containing the given marker, and steps back one line when that marker is already at a line start. Lines broken by a br element and lines broken only by wrapping are both covered.
+
+PASS: lineOf(alphaEnd) === 'Alpha'
+PASS: lineOf(bravoEnd) === 'Bravo'
+PASS: lineOf(charlieEnd) === 'Charlie'
+PASS: textBetween(text.previousLineStartTextMarkerForTextMarker(charlieStart), bravoEnd) === 'Bravo'
+
+Lines broken by wrapping rather than by a br element:
+PASS: wrappedLineOf(wrappedLine1End) === 'aaa'
+PASS: wrappedLineOf(wrappedLine2End) === 'bbb'
+PASS: wrappedLineOf(wrappedLine3End) === 'ccc'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

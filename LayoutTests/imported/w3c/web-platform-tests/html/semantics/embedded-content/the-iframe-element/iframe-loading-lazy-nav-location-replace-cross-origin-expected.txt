@@ -1,0 +1,6 @@
+
+
+FAIL Navigating to a cross-origin for iframe loading='lazy' before it is loaded: location.replace Error: assert_throws_dom: The iframe should load the cross-site url via locaiton.replace function "() => {
+        iframe.contentWindow.location.href
+      }" did not throw
+

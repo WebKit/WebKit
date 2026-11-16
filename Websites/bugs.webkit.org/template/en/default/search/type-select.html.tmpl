@@ -1,0 +1,18 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS "global/field-descs.none.tmpl" %]
+  
+<select name="[% name FILTER html %]" title="Search type"
+        class="[% class FILTER css_class_quote %]">
+  [% FOREACH type = types %]
+    <option value="[% type FILTER html %]"
+            [%- ' selected="selected"' IF type == selected %]>
+        [%- search_descs.$type FILTER html %]</option>
+  [% END %]
+</select>

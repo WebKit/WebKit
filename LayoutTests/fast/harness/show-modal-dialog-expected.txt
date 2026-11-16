@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Window 'showModalDialog' function is deprecated and will be removed soon.
+CONSOLE MESSAGE: showModalDialog() is deprecated and will be removed. Please use the <dialog> element instead.
+This test verifies that showModalDialog implementation in DRT works.
+
+You need to disable pop-up blocker for this test to run successfully.
+
+Modal dialog closing.

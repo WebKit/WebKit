@@ -1,0 +1,21 @@
+<p>Cross-origin iframe that sends requests with bodies, referrer policies, and integrity metadata on demand.</p>
+<script>
+function postTextWithFetch() {
+    fetch("data.json?fetch-post-text", {method: "POST", body: "fetch body 👍"});
+}
+
+function postEmptyWithFetch() {
+    fetch("data.json?fetch-post-empty", {method: "POST", body: ""});
+}
+
+function postFormWithXHR() {
+    let request = new XMLHttpRequest();
+    request.open("POST", "data.json?xhr-post-form", true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.send("utf8=👍&name=value");
+}
+
+function fetchWithOptions() {
+    fetch("integrity-target.txt?iframe-fetch-" + Math.random(), {referrerPolicy: "no-referrer", integrity: "sha256-J28BWuhFhKbPSZ3G99UX3srA4RJDsNBN4QrRJAIULso="});
+}
+</script>

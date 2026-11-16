@@ -1,0 +1,13 @@
+
+PASS Deep clone of a document with a <base>
+PASS Shallow clone of a document with a <base>
+PASS Clone of a document without a <base>
+PASS Clone of a createHTMLDocument() document without a <base>
+PASS Clone of a createHTMLDocument() document with a <base>
+PASS Deep clone of a document with a relative <base>
+PASS Shallow clone of a document with a relative <base>
+PASS Shallow clone is unaffected by later mutation of the source
+PASS Shallow clone's base URL survives later mutation of the clone
+PASS Inserting a <base> into a shallow clone overrides the copied base URL
+PASS Clone of a blob: URL document
+

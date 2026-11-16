@@ -1,0 +1,132 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true OffscreenCanvasEnabled=true OffscreenCanvasInWorkersEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../worker/resources/worker-utilities.js"></script>
+<script>
+let workerReadyPromise = Promise.withResolvers();
+let worker = new Worker("resources/webgpu-worker.js");
+worker.addEventListener("message", (event) => {
+    if (event.data === "ready")
+        workerReadyPromise.resolve();
+});
+worker.addEventListener("error", workerReadyPromise.reject);
+
+function terminateWorker() {
+    worker.terminate();
+}
+
+async function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.WebGPU.Worker");
+    let workerTarget = await window.awaitTarget((target) => target instanceof WI.WorkerTarget && target.displayName.endsWith("webgpu-worker.js"));
+    InspectorTest.assert(workerTarget, "There should be a Worker target.");
+
+    let findCanvas = () => Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.target === workerTarget && canvas.contextType === WI.Canvas.ContextType.WebGPU);
+    let canvas = findCanvas();
+    while (!canvas) {
+        await WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded);
+        canvas = findCanvas();
+    }
+    InspectorTest.assert(canvas, "There should be a worker-owned WebGPU Canvas.");
+
+    suite.addTestCase({
+        name: "Canvas.WebGPU.Worker.Device",
+        description: "Check that a GPUDevice created in a Worker is discovered on the Worker target and can be resolved.",
+        async test() {
+            if (!canvas.sizes.length)
+                await canvas.awaitEvent(WI.Canvas.Event.SizeChanged);
+
+            InspectorTest.expectTrue(workerTarget.hasDomain("Canvas"), "Worker target should expose the Canvas domain.");
+            InspectorTest.expectEqual(canvas.target, workerTarget, "WebGPU Canvas should belong to the Worker target.");
+            InspectorTest.expectEqual(canvas.displayName, "Labeled Worker WebGPU Device", "Worker Canvas should use the GPUDevice label as its display name.");
+
+            const objectGroup = "test";
+            let {object} = await canvas.target.CanvasAgent.resolveContext(canvas.identifier, objectGroup);
+            InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
+            InspectorTest.expectEqual(object.className, "GPUDevice", `Payload should have className "GPUDevice".`);
+
+            let nodes = await canvas.requestNodes();
+            InspectorTest.expectEqual(nodes.length, 0, "Worker GPUDevice should have no DOM nodes.");
+            let cssCanvasClientNodes = await canvas.requestCSSCanvasClientNodes();
+            InspectorTest.expectEqual(cssCanvasClientNodes.length, 0, "Worker GPUDevice should have no CSS canvas nodes.");
+            InspectorTest.expectTrue(canvas.sizes.length === 1 && canvas.sizes[0].equals(new WI.Size(4, 4)), "Worker GPUDevice should have the size of its OffscreenCanvas.");
+
+            let content = await canvas.requestContent();
+            InspectorTest.expectGreaterThan(content.length, "data:image/png;base64,".length, "Worker WebGPU Canvas content should not be empty.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.WebGPU.Worker.Pipelines",
+        description: "Check that compute and render pipelines used with an OffscreenCanvas in a Worker are discovered with their WGSL source.",
+        async test() {
+            await workerTarget.HeapAgent.gc();
+            InspectorTest.expectEqual(canvas.shaderProgramCollection.size, 2, "Worker GPUDevice should have two ShaderPrograms.");
+
+            let computeProgram = Array.from(canvas.shaderProgramCollection).find((shaderProgram) => shaderProgram.programType === WI.ShaderProgram.ProgramType.Compute);
+            InspectorTest.expectThat(computeProgram instanceof WI.ShaderProgram, "Found the Worker compute ShaderProgram.");
+            InspectorTest.expectEqual(computeProgram.displayName, "Labeled Worker Compute Pipeline", "Worker compute ShaderProgram should use the pipeline label as its display name.");
+            let computeSourceResult = await computeProgram.target.CanvasAgent.requestShaderSource(computeProgram.identifier, WI.ShaderProgram.ShaderType.Compute);
+            let computeSource = computeSourceResult.source;
+            InspectorTest.expectTrue(computeSource.includes("@compute") && computeSource.includes("computeMain"), "Compute ShaderProgram should expose its WGSL source.");
+
+            let renderProgram = Array.from(canvas.shaderProgramCollection).find((shaderProgram) => shaderProgram.programType === WI.ShaderProgram.ProgramType.Render);
+            InspectorTest.expectThat(renderProgram instanceof WI.ShaderProgram, "Found the Worker render ShaderProgram.");
+            InspectorTest.expectEqual(renderProgram.displayName, "Labeled Worker Render Pipeline", "Worker render ShaderProgram should use the pipeline label as its display name.");
+            InspectorTest.expectTrue(renderProgram.sharesVertexFragmentShader, "Worker render pipeline should report its shared shader module.");
+            let vertexSourceResult = await renderProgram.target.CanvasAgent.requestShaderSource(renderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex);
+            let vertexSource = vertexSourceResult.source;
+            let fragmentSourceResult = await renderProgram.target.CanvasAgent.requestShaderSource(renderProgram.identifier, WI.ShaderProgram.ShaderType.Fragment);
+            let fragmentSource = fragmentSourceResult.source;
+            InspectorTest.expectEqual(vertexSource, fragmentSource, "Shared Worker vertex and fragment stages should expose the same WGSL source.");
+            InspectorTest.expectTrue(vertexSource.includes("vertexMain") && vertexSource.includes("fragmentMain"), "Render ShaderProgram should expose both WGSL entry points.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.WebGPU.Worker.UpdateShaders",
+        description: "Check that WGSL shaders can be edited through a Worker CanvasAgent.",
+        async test() {
+            let computeProgram = Array.from(canvas.shaderProgramCollection).find((shaderProgram) => shaderProgram.programType === WI.ShaderProgram.ProgramType.Compute);
+            let computeSourceResult = await computeProgram.target.CanvasAgent.requestShaderSource(computeProgram.identifier, WI.ShaderProgram.ShaderType.Compute);
+            let updatedComputeSource = `// Updated in Worker.\n${computeSourceResult.source}`;
+            await computeProgram.target.CanvasAgent.updateShader(computeProgram.identifier, WI.ShaderProgram.ShaderType.Compute, updatedComputeSource);
+            let actualComputeSourceResult = await computeProgram.target.CanvasAgent.requestShaderSource(computeProgram.identifier, WI.ShaderProgram.ShaderType.Compute);
+            InspectorTest.expectEqual(actualComputeSourceResult.source, updatedComputeSource, "Worker compute WGSL source should be updated.");
+
+            let renderProgram = Array.from(canvas.shaderProgramCollection).find((shaderProgram) => shaderProgram.programType === WI.ShaderProgram.ProgramType.Render);
+            let renderSourceResult = await renderProgram.target.CanvasAgent.requestShaderSource(renderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex);
+            let updatedRenderSource = `// Updated in Worker.\n${renderSourceResult.source}`;
+            await renderProgram.target.CanvasAgent.updateShader(renderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex, updatedRenderSource);
+            let actualVertexSourceResult = await renderProgram.target.CanvasAgent.requestShaderSource(renderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex);
+            let actualFragmentSourceResult = await renderProgram.target.CanvasAgent.requestShaderSource(renderProgram.identifier, WI.ShaderProgram.ShaderType.Fragment);
+            InspectorTest.expectEqual(actualVertexSourceResult.source, updatedRenderSource, "Worker render vertex WGSL source should be updated.");
+            InspectorTest.expectEqual(actualFragmentSourceResult.source, updatedRenderSource, "Worker shared fragment WGSL source should be updated with its vertex source.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.WebGPU.Worker.Terminate",
+        description: "Check that terminating a Worker removes its WebGPU Canvas and ShaderPrograms.",
+        async test() {
+            let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            let canvasRemovedPromise = WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemRemoved);
+            InspectorTest.evaluateInPage(`terminateWorker()`);
+
+            let [targetRemovedEvent, canvasRemovedEvent] = await Promise.all([targetRemovedPromise, canvasRemovedPromise]);
+            InspectorTest.expectEqual(targetRemovedEvent.data.target, workerTarget, "Removed the expected Worker target.");
+            InspectorTest.expectEqual(canvasRemovedEvent.data.item, canvas, "Removed the Worker GPUDevice Canvas.");
+            InspectorTest.expectFalse(WI.canvasManager.canvasCollection.has(canvas), "CanvasManager should not retain the Worker GPUDevice Canvas.");
+            InspectorTest.expectEqual(canvas.shaderProgramCollection.size, 0, "Worker GPUDevice Canvas should have no remaining ShaderPrograms.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="testRunner.waitUntilDone(); workerReadyPromise.promise.then(runTest)">
+    <p>Test WebGPU Canvas instrumentation for a Worker rendering to an OffscreenCanvas.</p>
+</body>
+</html>

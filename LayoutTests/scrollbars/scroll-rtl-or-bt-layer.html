@@ -1,0 +1,105 @@
+<html>
+<body>
+
+<p>This test requires DumpRenderTree.  To test manually, try to scroll the
+blue div to the left and the red div up using the scrollbar arrows or the
+mouse wheel.  The test passes if the divs scroll.</p>
+
+<div id='rtl' style="direction: rtl; width: 100px; overflow: auto; border: 1px solid blue;">
+01234567890123456789
+</div>
+
+<div id='bt' style="-webkit-writing-mode: horizontal-bt; height: 100px; overflow: auto; border: 1 px solid red;">
+aaa<br>
+bbb<br>
+ccc<br>
+ddd<br>
+eee<br>
+fff<br>
+ggg<br>
+hhh<br>
+iii<br>
+jjj<br>
+kkk
+</div>
+
+<div id="console"></div>
+<script src="../resources/ui-helper.js"></script>
+<script>
+function log(message)
+{
+    document.getElementById("console").innerHTML += message + "<br>";
+}
+
+function centerOfElement(element)
+{
+    return { x: element.offsetLeft + element.offsetWidth / 2, y : element.offsetTop + element.offsetHeight / 2 };
+}
+
+async function testRTL()
+{
+    var rtl = document.getElementById("rtl");
+    var position = centerOfElement(rtl);
+    var offsetBefore = rtl.scrollLeft;
+
+    await Promise.all([
+        UIHelper.waitForEvent(rtl, 'scroll'),
+        UIHelper.statelessMouseWheelScrollAt(position.x, position.y, 1, 0)
+    ]);
+
+    var offsetAfter = rtl.scrollLeft;
+    if (offsetBefore > offsetAfter)
+        log("rtl: PASS");
+    else {
+        log("rtl: FAIL");
+        log("scrollLeft before: " + offsetBefore);
+        log("scrollLeft after: " + offsetAfter);
+    }
+}
+
+async function testBT()
+{
+    var bt = document.getElementById("bt");
+    var position = centerOfElement(bt);
+    var offsetBefore = bt.scrollTop;
+    await Promise.all([
+        UIHelper.waitForEvent(bt, 'scroll'),
+        UIHelper.statelessMouseWheelScrollAt(position.x, position.y, 0, 1)
+    ]);
+    
+    var offsetAfter = bt.scrollTop;
+    if (offsetBefore > offsetAfter)
+        log("bt: PASS");
+    else {
+        log("bt: FAIL");
+        log("scrollTop before: " + offsetBefore);
+        log("scrollTop after: " + offsetAfter);
+    }
+
+    document.body.removeChild(document.getElementById("rtl"));
+    document.body.removeChild(document.getElementById("bt"));
+}
+
+async function runTest()
+{
+    if (!window.eventSender || !window.eventSender.mouseScrollBy) {
+        log("This test requires eventSender.mouseScrollBy.");
+        return;
+    }
+
+    await testRTL();
+    await testBT();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener('load', runTest, false);
+</script>
+
+</body>
+</html>

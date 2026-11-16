@@ -1,0 +1,8 @@
+The cross-site child frame below has to be restored from session history.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS: the child frame loaded.

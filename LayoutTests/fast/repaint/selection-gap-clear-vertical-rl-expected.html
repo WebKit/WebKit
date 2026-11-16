@@ -1,0 +1,62 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body { margin: 0; }
+p { margin: 10px; }
+#host { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 10px; }
+.editor {
+    font: 16px/1.5 Ahem;
+    color: #888;
+    caret-color: transparent;
+    width: 220px;
+    height: 220px;
+    padding: 6px;
+    border: 1px solid #888;
+    margin: 0;
+    overflow: auto;
+    white-space: pre-wrap;
+    resize: none;
+    outline: none;
+    writing-mode: vertical-rl;
+}
+#block { font: 16px/1 Ahem; color: #666; background: #ccc; writing-mode: vertical-rl; width: 100px; height: 100px; }
+</style>
+</head>
+<body>
+<p>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=119635">119635</a>: Selection gaps in vertical-rl should be repainted when the selection is cleared. No blue should remain.</p>
+<div id="host">
+<textarea class="editor" data-scroll="0"></textarea>
+<textarea class="editor" data-scroll="150"></textarea>
+<div class="editor" contenteditable="plaintext-only" data-scroll="0"></div>
+<div class="editor" contenteditable="plaintext-only" data-scroll="150"></div>
+<div id="block">abc<br><br>hello world</div>
+</div>
+<script>
+const text = Array.from({ length: 30 }, (_, i) => (i % 3 === 1) ? "" : `${i + 1} XXXXXX XXXX`).join("\n");
+
+async function runTest()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    for (const editor of document.querySelectorAll(".editor")) {
+        if (editor.tagName === "TEXTAREA")
+            editor.value = text;
+        else
+            editor.textContent = text;
+        editor.scrollLeft = -editor.dataset.scroll;
+    }
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runTest();
+</script>
+</body>
+</html>

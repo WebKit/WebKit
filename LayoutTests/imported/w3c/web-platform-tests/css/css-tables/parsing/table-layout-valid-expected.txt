@@ -1,0 +1,4 @@
+
+PASS e.style['table-layout'] = "auto" should set the property value
+PASS e.style['table-layout'] = "fixed" should set the property value
+

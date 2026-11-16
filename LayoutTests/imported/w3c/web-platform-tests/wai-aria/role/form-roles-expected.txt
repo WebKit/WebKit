@@ -1,0 +1,8 @@
+Verifies 9.1 Roles - handling author errors and the form role.
+
+x
+x
+
+PASS form without label
+PASS form with label
+

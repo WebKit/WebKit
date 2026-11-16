@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-pt-collision-tail</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-MP4 regression coverage for the proposed MSE Coded Frame
+    // Processing amendment w3c/media-source#375 (presentation-timestamp
+    // collision cleanup).
+    //
+    // When an incoming sample's (DTS, PT) coincides with the existing
+    // sample at the END of the buffer, none of the spec's existing
+    // cleanup steps in SourceBufferPrivate::processMediaSample populate
+    // erasedSamples:
+    //   - step 1.13 only fires post-reset (lastDTS invalid)
+    //   - step 1.14-first only fires post-reset (highestPT invalid)
+    //   - step 1.14-third's range [highestPT, frameEnd-tol) sits past the
+    //     colliding sample at the buffer tail (highestPT - tol ≈ existing
+    //     sample's PT + dur - 1ms is well above incoming.PT for any
+    //     duration > 1ms)
+    //   - the cascade's findSampleAfterDecodeKey returns end()
+    //
+    // Without the unconditional #375 pass the trackBuffer.addSample of
+    // the incoming sample silently no-ops (SampleMap is std::map-backed
+    // and the duplicate-key insert collapses); with the fix the existing
+    // sample is evicted first and the new sample inserts successfully.
+    //
+    // Shape (timescale=1000):
+    //   Seg 1: one sync sample at baseDecodeTime=2000 dur=1000 CTO=0
+    //     -> DTS=2000 PTS=2000 (interval [2000, 3000)).
+    //   Seg 2: one sync sample at baseDecodeTime=2000 dur=500 CTO=0
+    //     -> DTS=2000 PTS=2000 (interval [2000, 2500)).
+    //
+    // Detection via sourceBuffer.buffered.end(0):
+    //   - bug present: 3.0  (seg 1's sample preserved with dur=1000)
+    //   - bug fixed:   2.5  (seg 1's sample evicted, seg 2's dur=500 wins)
+    //
+    // Timestamps shifted past t=1s so seg 2's DTS is non-zero, avoiding
+    // Source/WebCore/platform/graphics/gstreamer/mse/AppendPipeline.cpp's
+    // extendToTheBeginning hack (which fires on DTS==0 && PTS>0 && sync).
+
+    var source, sourceBuffer, init, segment1, segment2;
+
+    async function runTest() {
+        findMediaElement();
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+
+        init = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }],
+        });
+        segment1 = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{
+                id: 1, type: 'video', baseDecodeTime: 2000,
+                samples: [{ duration: 1000, compositionTimeOffset: 0, isSync: true }],
+            }],
+        });
+        run('sourceBuffer.appendBuffer(MP4.concat(init, segment1))');
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 2.0, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 3.0, 0.01);
+
+        segment2 = MP4.mediaSegment({
+            sequenceNumber: 2,
+            tracks: [{
+                id: 1, type: 'video', baseDecodeTime: 2000,
+                samples: [{ duration: 500, compositionTimeOffset: 0, isSync: true }],
+            }],
+        });
+        run('sourceBuffer.appendBuffer(segment2)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // #375 must evict seg 1's sample so seg 2's shorter sample wins.
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 2.0, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 2.5, 0.01);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

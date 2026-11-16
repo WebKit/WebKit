@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+description("Test that keyboard accessory bar next/previous navigation works for form elements inside a cross-origin iframe when site isolation is enabled.");
+jsTestIsAsync = true;
+
+// The cross-origin iframe lives in its own web process, so a focus change driven
+// from the keyboard accessory bar has to round-trip through IPC before the iframe's
+// document.activeElement updates. Rather than polling after a fixed delay, the iframe
+// posts a message each time one of its inputs is focused and we react to those events,
+// which keeps the test in sync with the focus changes as they actually land.
+window.addEventListener("message", (event) => {
+    if (event.data.type === "firstInputFocused") {
+        testPassed("First input focused in cross-origin iframe");
+
+        // Tap "Next" on the keyboard accessory bar to move to the second input.
+        UIHelper.moveToNextByKeyboardAccessoryBar();
+    } else if (event.data.type === "secondInputFocused") {
+        window.focusedElementId = event.data.id;
+        shouldBeEqualToString("focusedElementId", "second");
+
+        // Tap "Previous" to go back to the first input.
+        UIHelper.moveToPreviousByKeyboardAccessoryBar();
+    } else if (event.data.type === "firstInputRefocused") {
+        window.focusedElementIdAfterPrevious = event.data.id;
+        shouldBeEqualToString("focusedElementIdAfterPrevious", "first");
+        finishJSTest();
+    }
+});
+
+async function runTest() {
+    const iframe = document.getElementById("frame");
+    const iframeRect = iframe.getBoundingClientRect();
+
+    const clickX = iframeRect.left + 50;
+    const clickY = iframeRect.top + 15;
+    await UIHelper.activateAndWaitForInputSessionAt(clickX, clickY);
+}
+</script>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/focus-navigation-iframe.html" onload="runTest()"></iframe>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<html>
+<head>
+<style>
+    #target {
+        background-color:purple;
+        width:25px;
+        height:25px;
+    }
+</style>
+<script>
+    var numberOfClicks = 0;
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
+
+    async function runTest() {
+        if (!window.eventSender)
+            return;
+        if (window.internals)
+            window.internals.setHeaderHeight(100);
+
+        if (window.testRunner) {
+            await window.testRunner.setPageScaleFactor(2, 0, 0);
+            testRunner.dumpAsText();
+        }
+
+        // The page should scale, but the header should not.
+        eventSender.mouseMoveTo(25, 125);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        var result = document.getElementById("result");
+        if (numberOfClicks > 0)
+            result.innerHTML = "Pass!";
+        else
+            result.innerHTML = "Fail.";
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+    }
+    
+    function clicked() {
+        numberOfClicks = 1;
+    }
+</script>
+</head>
+<body onload="runTest()">
+    <div id="target" onclick="clicked()"></div>
+    <div id="result">This test needs to be run through WebKitTestRunner.</div>
+</body>
+</html>

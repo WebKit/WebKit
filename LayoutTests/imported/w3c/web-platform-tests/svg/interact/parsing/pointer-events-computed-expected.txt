@@ -1,0 +1,13 @@
+
+PASS Property pointer-events value 'auto'
+PASS Property pointer-events value 'bounding-box'
+PASS Property pointer-events value 'visiblepainted'
+PASS Property pointer-events value 'visiblefill'
+PASS Property pointer-events value 'visiblestroke'
+PASS Property pointer-events value 'visible'
+PASS Property pointer-events value 'painted'
+PASS Property pointer-events value 'fill'
+PASS Property pointer-events value 'stroke'
+PASS Property pointer-events value 'all'
+PASS Property pointer-events value 'none'
+

@@ -1,0 +1,5 @@
+
+PASS non-fully active document behavior for navigator.credentials.get()
+PASS Promise rejects with DOMException when the document becomes non-fully active
+PASS Aborted Digital Credentials get() requests do not leave a subsequent request stuck in an invalid state
+

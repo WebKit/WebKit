@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html style="display: inline-table">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function() {
+    var selection = getSelection();
+    selection.selectAllChildren(document);
+    selection.collapseToEnd();
+    var element = document.activeElement;
+    document.open();
+    document.write("Test calling containsNode on a selection of a closed document doesn't cause a crash.");
+    document.close();
+    if (selection.containsNode(element, true))
+        alert('FAIL: containsNode returned true even though the element was not in the document');
+    else
+        alert('PASS: containsNode returned false');
+    testRunner.notifyDone();
+}
+</script>
+</html>

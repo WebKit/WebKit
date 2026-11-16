@@ -1,0 +1,36 @@
+<style>
+div {
+  margin: 20px;
+  font-family: Ahem;
+}
+span {
+  text-decoration: underline;
+  text-underline-offset: 10px;
+  color: blue;
+}
+</style>
+PASS if the underlines are green.
+<div id=container>
+<div><span>content</span></div>
+<div style="writing-mode: vertical-lr"><span>content</span></div>
+<div style="writing-mode: vertical-rl"><span>content</span></div>
+</div>
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+setTimeout(function() {
+  if (window.internals)
+    window.internals.startTrackingRepaints();
+  for (let changeThis of container.getElementsByTagName("span"))
+    changeThis.style.textDecorationColor = "green";
+  if (window.internals) {
+    result.innerText = window.internals.repaintRectsAsText();
+    window.internals.stopTrackingRepaints();
+  }
+  if (window.testRunner)
+    testRunner.notifyDone();
+}, 10);
+</script>

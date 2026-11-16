@@ -1,0 +1,16 @@
+This test ensures that a forward AnyType immediate-descendants search whose start element has become ignored resumes from the correct direct child of the container, instead of jumping back to the container's first child.
+
+
+Shallow (start between two direct children): PASS: nextDOMId === 'b3'
+
+Deep (start's predecessor nested several levels in the first child): PASS: deepNextDOMId === 'deepTarget'
+
+End edge (nothing follows the start): PASS: endNextDOMId === 'null'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button 1  Button 2    Button 3  Button 4
+Deep Last
+  Deep Target
+End Button 1  End Button 2

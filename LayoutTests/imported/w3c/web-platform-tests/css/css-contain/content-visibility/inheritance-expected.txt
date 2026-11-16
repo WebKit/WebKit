@@ -1,0 +1,4 @@
+
+PASS Property content-visibility has initial value visible
+PASS Property content-visibility does not inherit
+

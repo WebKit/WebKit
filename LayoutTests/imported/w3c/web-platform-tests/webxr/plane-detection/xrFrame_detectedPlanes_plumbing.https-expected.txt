@@ -1,0 +1,4 @@
+
+PASS XRFrame.detectedPlanes plumbing works - webgl
+PASS XRFrame.detectedPlanes plumbing works - webgl2
+

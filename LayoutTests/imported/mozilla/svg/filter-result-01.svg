@@ -1,0 +1,23 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" onload="createFilter();">
+
+  <title>Testcase for filter result property</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=935902 -->
+
+  <defs>
+    <filter id="f1">
+      <feGaussianBlur id="gb" in="SourceGraphic" stdDeviation="4"/>
+      <feColorMatrix values="1 0 0 0 0  0 0.333 0 0 0  0 0 1 0 0  0 0 0 1 0" in="blur"/>
+    </filter>
+  </defs>
+  <circle cx="100" cy="50" r="50" fill="yellow" filter="url('#f1')"/>
+  <script type="text/javascript">
+    function createFilter() {
+      document.getElementById('gb').result.baseVal = 'blur';
+    }
+  </script>
+</svg>

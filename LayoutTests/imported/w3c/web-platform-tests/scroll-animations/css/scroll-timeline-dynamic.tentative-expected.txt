@@ -1,0 +1,16 @@
+
+PASS Switching between document and scroll timelines [immediate]
+PASS Switching between document and scroll timelines [scroll]
+PASS Switching pending animation from document to scroll timelines [immediate]
+PASS Switching pending animation from document to scroll timelines [scroll]
+PASS Changing computed value of animation-timeline changes effective timeline [immediate]
+PASS Changing computed value of animation-timeline changes effective timeline [scroll]
+FAIL Changing to/from unresolved timeline [immediate] assert_equals: expected "100px" but got "0px"
+FAIL Changing to/from unresolved timeline [scroll] assert_equals: expected "100px" but got "0px"
+PASS Reverse animation direction [immediate]
+PASS Reverse animation direction [scroll]
+PASS Change to timeline attachment while paused [immediate]
+PASS Change to timeline attachment while paused [scroll]
+PASS Switching timelines and pausing at the same time [immediate]
+PASS Switching timelines and pausing at the same time [scroll]
+

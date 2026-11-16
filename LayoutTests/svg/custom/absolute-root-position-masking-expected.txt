@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x0
+  RenderBlock {html} at (0,0) size 800x0
+    RenderBody {body} at (0,0) size 800x0
+layer at (0,100) size 300x300
+  RenderSVGRoot {svg:svg} at (200,300) size 100x100
+    RenderSVGEllipse {svg:circle} at (200,300) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [cx=300.00] [cy=300.00] [r=100.00]
+      [masker="mask"] RenderSVGResourceMasker {svg:mask} at (180,180) size 420x420
+    RenderSVGHiddenContainer {svg:defs} at (0,0) size 0x0
+      RenderSVGResourcePattern {svg:pattern} [id="pattern"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+        RenderSVGRect {svg:rect} at (0,100) size 300x300 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=600.00] [height=600.00]
+      RenderSVGResourceMasker {svg:mask} [id="mask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+        RenderSVGRect {svg:rect} at (0,100) size 300x300 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=0.00] [width=600.00] [height=600.00]

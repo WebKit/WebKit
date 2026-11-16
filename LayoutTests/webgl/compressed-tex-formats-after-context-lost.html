@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="runTest()">
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Tests that compressed texture formats are properly cleared after context loss and restored when extensions are re-enabled.");
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+const wtu = WebGLTestUtils;
+
+var knownFormats = {
+    COMPRESSED_RGBA_S3TC_DXT5_EXT           : 0x83F3,
+    COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT     : 0x8C4F,
+    COMPRESSED_RGBA8_ETC2_EAC               : 0x9278,
+    COMPRESSED_RGB_ETC1_WEBGL               : 0x8D64,
+    COMPRESSED_RGBA_ASTC_4x4_KHR            : 0x93B0,
+    COMPRESSED_RGBA_PVRTC_4BPPV1_IMG        : 0x8C02,
+    COMPRESSED_RGBA_BPTC_UNORM_EXT          : 0x8E8C,
+    COMPRESSED_RED_RGTC1_EXT                : 0x8DBB,
+};
+
+const compressedExtensions = [
+    { name: "WEBGL_compressed_texture_s3tc",      format: knownFormats.COMPRESSED_RGBA_S3TC_DXT5_EXT },
+    { name: "WEBGL_compressed_texture_s3tc_srgb", format: knownFormats.COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT },
+    { name: "WEBGL_compressed_texture_etc",        format: knownFormats.COMPRESSED_RGBA8_ETC2_EAC },
+    { name: "WEBGL_compressed_texture_etc1",       format: knownFormats.COMPRESSED_RGB_ETC1_WEBGL },
+    { name: "WEBGL_compressed_texture_astc",       format: knownFormats.COMPRESSED_RGBA_ASTC_4x4_KHR },
+    { name: "WEBGL_compressed_texture_pvrtc",      format: knownFormats.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG },
+    { name: "EXT_texture_compression_bptc",        format: knownFormats.COMPRESSED_RGBA_BPTC_UNORM_EXT },
+    { name: "EXT_texture_compression_rgtc",        format: knownFormats.COMPRESSED_RED_RGTC1_EXT },
+];
+
+const contextTypes = ["webgl", "webgl2"];
+
+var gl;
+var formats;
+var compressedFormatEnum;
+var ext;
+
+function testDescription(subcase) {
+    return Object.keys(subcase).map((k) => `${k}: ${subcase[k]}`).join(", ");
+}
+
+function waitForEvent(target, eventName, handler) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => reject(new Error("Timed out waiting for " + eventName)), 5000);
+        target.addEventListener(eventName, (e) => {
+            if (handler)
+                handler(e);
+            resolve(e);
+        }, { once: true });
+    });
+}
+
+async function runSubcase(subcase) {
+    debug(`Running test: ${testDescription(subcase)}`);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    gl = wtu.create3DContext(canvas, undefined, subcase.contextType == "webgl2" ? 2 : 1);
+
+    if (!gl) {
+        testFailed("Could not create " + subcase.contextType + " context");
+        return;
+    }
+
+    const WEBGL_lose_context = wtu.getExtensionWithKnownPrefixes(gl, "WEBGL_lose_context");
+    if (!WEBGL_lose_context) {
+        testPassed("WEBGL_lose_context not available, skipping");
+        return;
+    }
+
+    ext = gl.getExtension(subcase.extName);
+    if (!ext) {
+        testPassed(`Optional ext ${subcase.extName} MAY be unsupported, skipping.`);
+        return;
+    }
+
+    compressedFormatEnum = subcase.format;
+
+    formats = gl.getParameter(gl.COMPRESSED_TEXTURE_FORMATS);
+    shouldBeNonNull("formats");
+    shouldBeTrue("formats.length > 0");
+    shouldBeTrue("Array.from(formats).includes(compressedFormatEnum)");
+
+    const contextLostPromise = waitForEvent(canvas, "webglcontextlost", (e) => e.preventDefault());
+    WEBGL_lose_context.loseContext();
+    await contextLostPromise;
+    shouldBeTrue("gl.isContextLost()");
+
+    const contextRestoredPromise = waitForEvent(canvas, "webglcontextrestored");
+    await new Promise(resolve => setTimeout(resolve, 0));
+    WEBGL_lose_context.restoreContext();
+    await contextRestoredPromise;
+    shouldBeFalse("gl.isContextLost()");
+
+    formats = gl.getParameter(gl.COMPRESSED_TEXTURE_FORMATS);
+    shouldBeNonNull("formats");
+    shouldBe("formats.length", "0");
+
+    // compressedTexImage2D with the old format should fail.
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    wtu.shouldGenerateGLError(gl, gl.INVALID_ENUM, "gl.compressedTexImage2D(gl.TEXTURE_2D, 0, compressedFormatEnum, 4, 4, 0, new Uint8Array(16))");
+    gl.deleteTexture(tex);
+
+    ext = gl.getExtension(subcase.extName);
+    shouldBeTrue("ext != null");
+
+    formats = gl.getParameter(gl.COMPRESSED_TEXTURE_FORMATS);
+    shouldBeNonNull("formats");
+    shouldBeTrue("formats.length > 0");
+    shouldBeTrue("Array.from(formats).includes(compressedFormatEnum)");
+}
+
+const subcases = [];
+for (const contextType of contextTypes) {
+    for (const compressedExt of compressedExtensions)
+        subcases.push({ contextType, extName: compressedExt.name, format: compressedExt.format });
+}
+
+async function runTest() {
+    for (const subcase of subcases)
+        await runSubcase(subcase);
+    finishTest();
+}
+
+window.nonKhronosFrameworkNotifyDone = () => {
+    // Replace results since they vary between HW.
+    if (window.layoutTestController) {
+        if (!RESULTS.fail)
+            document.body.innerHTML = "PASSED";
+        layoutTestController.notifyDone();
+    }
+}
+</script>
+</body>
+</html>

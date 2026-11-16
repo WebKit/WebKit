@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script src=../../resources/testharness.js></script>
+    <script src=../../resources/testharnessreport.js></script>
+    <script type="text/javascript">
+promise_test(async (test) => {
+    const videoConfiguration = { contentType: 'video/webm; codecs="vp8"', bitrate: 800000, height: 720, width: 1280, framerate: 30 };
+    const result = await navigator.mediaCapabilities.decodingInfo({ type: 'file', video: videoConfiguration });
+    assert_true(result.supported);
+    assert_false(result.powerEfficient);
+}, "VP8 is supported and not powerEfficient for file");
+    </script>
+</body>
+</html>

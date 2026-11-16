@@ -1,0 +1,11 @@
+autowrap text area with dir=rtl.
+
+nowrap text area with dir=rtl.
+
+autowrap text area with dir=ltr.
+
+vertical text.
+
+FAIL test id: textarea_rtl (text width: 107 != caretRange: 106), which means moving caret in the text, caret might be invisible or overlap with element.
+FAIL test id: textarea_rtl_no_wrap (text width: 107 != caretRange: 105), which means moving caret in the text, caret might be invisible or overlap with element.
+

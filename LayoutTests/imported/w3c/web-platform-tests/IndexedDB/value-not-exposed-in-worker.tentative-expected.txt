@@ -1,0 +1,6 @@
+
+PASS Reading the get() result in a worker where RTCCertificate is not exposed throws a DataCloneError
+PASS Reading the getAll() result in a worker where RTCCertificate is not exposed throws a DataCloneError
+PASS Reading the IDBCursorWithValue value in a worker where RTCCertificate is not exposed throws a DataCloneError
+PASS Reading the getAllRecords() IDBRecord value in a worker where RTCCertificate is not exposed throws a DataCloneError
+

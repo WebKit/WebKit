@@ -1,0 +1,6 @@
+
+PASS Trailing semicolon in values attribute is ignored for length animation
+PASS Trailing semicolon in values attribute is ignored for class animation
+PASS Double trailing semicolon in values preserves empty value between them
+PASS Empty value in the middle of values attribute is preserved
+

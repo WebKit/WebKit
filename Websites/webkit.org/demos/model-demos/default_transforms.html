@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Models of many scales</title>
+    <style>
+      html,
+      body {
+        background-color: #679ec6;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        color: #172c3b;
+        font-size: 1.1rem;
+      }
+      main {
+        width: 80vw;
+        left: 10vw;
+        display: block;
+        position: relative;
+        margin-top: 10vh;
+      }
+
+      h3 span {
+        font-size: 1.1rem;
+      }
+      model {
+        background-color: #5b8bae;
+        width: 32vw;
+        height: 32vw;
+        border-radius: 5vw;
+      }
+      .card {
+        display: inline-block;
+        width: 39vw;
+        vertical-align: top;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Models of many scales</h1>
+      <div class="card">
+        <h2>555 Timer</h2>
+        <model stagemode="orbit">
+          <source src="./models/timer.usdz" type="model/vnd.usdz+zip" />
+        </model>
+        <h3>Dimensions: <span></span></h3>
+        <h4>Wikipedia summary:</h4>
+        <p>
+          The 555 timer IC is an integrated circuit used in a variety of timer,
+          delay, pulse generation, and oscillator applications.
+          <br />
+          It is one of the most popular timing ICs due to its flexibility and
+          price. Derivatives provide two (556) or four (558) timing circuits in
+          one package.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Mountain bike</h2>
+        <model stagemode="orbit">
+          <source src="./models/bike-side.usdz" type="model/vnd.usdz+zip" />
+        </model>
+        <h3>Dimensions: <span></span></h3>
+        <h4>Wikipedia summary:</h4>
+        <p>
+            A mountain bike (MTB) or mountain bicycle is a bicycle designed for off-road cycling (mountain biking).
+            <br>
+            Mountain bikes share some similarities with other bicycles, but incorporate features designed to enhance durability and performance in rough terrain, which often makes them heavier, more complex and less efficient on smooth surfaces.
+        </p>
+      </div>
+    </main>
+  </body>
+  <script type="module">
+    function toMetricUnits(valueInMeters) {
+      var curValue = valueInMeters;
+      var units = ["c", "m", "µ", "n"];
+      var curUnit = "";
+      var factors = [100, 10, 1000, 1000, 1000];
+      while (Math.floor(curValue) <= 0) {
+        curValue *= factors.shift();
+        curUnit = units.shift();
+      }
+      return curValue.toFixed(1) + " " + curUnit + "m";
+    }
+
+    document.querySelectorAll("model").forEach(async (model) => {
+      await model.ready;
+
+      const { x, y, z } = model.boundingBoxExtents;
+      const a = [x, y, z];
+      model.closest(".card").querySelector("h3 span").innerHTML =
+        " " + a.map(toMetricUnits).join(" x ");
+    });
+  </script>
+</html>

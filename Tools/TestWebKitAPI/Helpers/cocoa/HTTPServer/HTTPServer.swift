@@ -1,0 +1,515 @@
+// Copyright (C) 2025 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+import Foundation
+import struct Swift.String
+
+#if USE_APPLE_INTERNAL_SDK
+@_spi(HTTP) public import Network
+#else
+public import Network_SPI
+#endif
+
+/// A description of an HTTP server route with a path and a response.
+///
+/// Typically, a simple route can be created using a path and some response data:
+///
+/// ```swift
+/// Route("/hello") {
+///     "Hello World!"
+/// }
+/// ```
+///
+/// A route can also be used to express a group of routes that share a common path prefix:
+///
+/// ```swift
+/// Route("/parent") {
+///     Route("/a") {
+///         "My path is /parent/a"
+///     }
+///
+///     Route("/b") {
+///         "My path is /parent/b"
+///     }
+/// }
+/// ```
+public struct Route: Sendable {
+    /// How a route responds to a request for its path.
+    public enum ResponseBehavior: Sendable {
+        /// Sends the route's response.
+        case sendResponseNormally
+
+        /// Closes the connection as soon as the request arrives, without sending anything.
+        case terminateConnectionAfterReceivingRequest
+
+        /// Leaves the request unanswered.
+        case neverSendResponse
+    }
+
+    fileprivate struct Storage: Sendable {
+        let pathComponents: [String]
+        let statusCode: Int
+        let headerFields: [String: String]
+        let response: Data
+        var behavior: HTTPResponseData.Behavior = .sendResponseNormally
+
+        var path: String { pathComponents.joined() }
+
+        var responseData: HTTPResponseData {
+            HTTPResponseData(
+                statusCode: UInt(statusCode),
+                headerFields: headerFields.map { (name: $0.key, value: $0.value) },
+                body: response,
+                behavior: behavior
+            )
+        }
+    }
+
+    fileprivate let children: [Storage]
+
+    fileprivate init(children: [Storage]) {
+        self.children = children
+    }
+
+    fileprivate init(
+        path: String,
+        statusCode: Int,
+        headerFields: [String: String],
+        response: Data,
+        behavior: HTTPResponseData.Behavior = .sendResponseNormally
+    ) {
+        self.children = [
+            Storage(
+                pathComponents: [path],
+                statusCode: statusCode,
+                headerFields: headerFields,
+                response: response,
+                behavior: behavior
+            )
+        ]
+    }
+
+    /// Creates a Route from a group of child Routes.
+    ///
+    /// - Parameters:
+    ///   - path: The path of this route. If this value is non-empty, it must start with `/`.
+    ///   - route: The children of this route; each child has it's full path prepended by the path of this route.
+    public init(_ path: String, @RouteBuilder _ route: () -> Route) {
+        self.children = route().children
+            .map {
+                Storage(
+                    pathComponents: [path] + $0.pathComponents,
+                    statusCode: $0.statusCode,
+                    headerFields: $0.headerFields,
+                    response: $0.response,
+                    behavior: $0.behavior
+                )
+            }
+    }
+
+    /// Creates a Route whose response data is binary, such as an image or a PDF.
+    ///
+    /// - Parameters:
+    ///   - path: The path of this route. If this value is non-empty, it must start with `/`.
+    ///   - statusCode: The status code of the response.
+    ///   - headerFields: The header fields of the response, such as `["Content-Type": "application/pdf"]`.
+    ///   - response: The response to be used.
+    public init(_ path: String, statusCode: Int = 200, headerFields: [String: String] = [:], _ response: () -> Data) {
+        self.init(path: path, statusCode: statusCode, headerFields: headerFields, response: response())
+    }
+
+    /// Creates a Route whose response data is a String.
+    ///
+    /// - Parameters:
+    ///   - path: The path of this route. If this value is non-empty, it must start with `/`.
+    ///   - statusCode: The status code of the response.
+    ///   - headerFields: The header fields of the response.
+    ///   - response: The response to be used. Defaults to an empty body.
+    public init(_ path: String, statusCode: Int = 200, headerFields: [String: String] = [:], _ response: () -> String = { "" }) {
+        self.init(path: path, statusCode: statusCode, headerFields: headerFields, response: Data(response().utf8))
+    }
+
+    /// Creates a Route whose response never finishes.
+    public init(unfinished path: String, headerFields: [String: String] = [:], _ response: () -> String) {
+        self.init(path: path, statusCode: 200, headerFields: headerFields, response: Data(response().utf8), behavior: .neverFinishResponse)
+    }
+
+    /// Changes how this route responds to requests for its path.
+    ///
+    /// For example, a route can close the connection instead of responding:
+    ///
+    /// ```swift
+    /// Route("/dropped")
+    ///     .responseBehavior(.terminateConnectionAfterReceivingRequest)
+    /// ```
+    ///
+    /// - Parameter behavior: How the route responds. For a group of routes, this applies to every route in the group.
+    /// - Returns: A copy of this route that responds with `behavior`.
+    public func responseBehavior(_ behavior: ResponseBehavior) -> Route {
+        Route(
+            children: children.map { child in
+                Storage(
+                    pathComponents: child.pathComponents,
+                    statusCode: child.statusCode,
+                    headerFields: child.headerFields,
+                    response: child.response,
+                    behavior: .init(behavior)
+                )
+            }
+        )
+    }
+}
+
+/// A result builder used to create a ``Route``.
+@resultBuilder
+public struct RouteBuilder {
+    /// Create a ``Route`` from a group of Routes.
+    public static func buildBlock(_ components: Route...) -> Route {
+        .init(children: components.flatMap(\.children))
+    }
+}
+
+/// A type used to simulate an HTTP server with a set of predefined responses for different types of requests.
+@MainActor
+public struct HTTPServer: ~Copyable {
+    /// A protocol describing how an HTTP connection handles requests.
+    public enum `Protocol`: Sendable {
+        /// The HTTP protocol.
+        case http
+
+        /// The HTTPS protocol.
+        case https
+
+        /// The HTTPS protocol, using a legacy version of TLS.
+        case httpsWithLegacyTLS
+
+        /// The HTTP2 protocol without framing, using raw bytes instead.
+        case http2Raw
+
+        /// The HTTP2 protocol.
+        case http2
+
+        /// The HTTP3 protocol.
+        case http3
+
+        /// The HTTPS proxy protocol.
+        case httpsProxy
+
+        /// The HTTPS proxy protocol with authentication.
+        case httpsProxyWithAuthentication
+
+        /// The HTTPS proxy protocol, serving HTTP2 to clients that connect through it.
+        case http2Proxy
+    }
+
+    private let `protocol`: `Protocol`
+    private let storage: HTTPServerCore
+
+    /// Create a server from a group of routes.
+    ///
+    /// For example, a server which loads `/webkit/success` after loading `/example` can be created using two routes:
+    ///
+    /// ```swift
+    /// func doSomethingCool() async throws {
+    ///     let server = HTTPServer(protocol: .httpsProxy) {
+    ///         Route("/example") {
+    ///             "<script>w = window.open('https://webkit.org/webkit/success')</script>"
+    ///         }
+    ///
+    ///         Route("/webkit/success") {
+    ///             "Loaded!"
+    ///         }
+    ///     }
+    ///
+    ///     let page = WebPage()
+    ///
+    ///     let result = try await server.run {
+    ///         let destination = address.appendingPathComponent("example")
+    ///
+    ///         try await page.load(destination).wait()
+    ///
+    ///         return page.url
+    ///     }
+    ///
+    ///     // `result` is now a `URL` with a value like `http://127.0.0.1:8080/webkit/success`.
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - protocol: The HTTP protocol to use for this server.
+    ///   - route: A group of routes that correspond to a mapping of request paths to responses.
+    /// - Throws: Any error that happens during creation of the server.
+    public init(protocol: `Protocol`, @RouteBuilder _ route: () -> Route) throws {
+        let responses = route().children
+            .reduce(into: [String: HTTPResponseData]()) { result, child in
+                precondition(
+                    child.behavior != .neverFinishResponse || !`protocol`.usesHTTPMessaging,
+                    "\(child.path) has an unfinished response, which \(`protocol`) does not support"
+                )
+
+                result[child.path] = child.responseData
+            }
+
+        self.protocol = `protocol`
+        self.storage = try HTTPServerCore(protocol: .init(`protocol`), responses: responses)
+    }
+
+    /// Create a server that hands each connection it accepts to a closure instead of responding from routes.
+    ///
+    /// Use this when a test needs to control exactly what goes over the wire, such as a response that is cut off
+    /// partway through its body:
+    ///
+    /// ```swift
+    /// var server = try HTTPServer(protocol: .http) { connection in
+    ///     guard try await connection.receiveRequestPath() == "/truncated" else {
+    ///         return
+    ///     }
+    ///
+    ///     try await connection.send("HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\nFewer than 100 bytes")
+    ///     await connection.terminate()
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - protocol: The HTTP protocol to use for this server.
+    ///   - connectionHandler: A closure called once for each connection the server accepts. If it throws, ``run(_:)``
+    ///     rethrows the first such error once the server shuts down.
+    /// - Throws: Any error that happens during creation of the server.
+    public init(protocol: `Protocol`, connectionHandler: @escaping @MainActor (Connection) async throws -> Void) throws {
+        self.protocol = `protocol`
+        self.storage = try HTTPServerCore(protocol: .init(`protocol`)) { server, connection in
+            Task {
+                do {
+                    try await connectionHandler(Connection(server: server, connection: connection))
+                } catch NWError.posix(.ECANCELED) {
+                    // `run(_:)` cancels every connection when the server shuts down, including any still sending a response.
+                } catch {
+                    // Left for `run(_:)` to throw, so that only the test using this server fails.
+                    server.connectionHandlerError = server.connectionHandlerError ?? error
+                }
+            }
+        }
+    }
+
+    /// Calls the given closure after starting the server, and then closes the server once finished, even if the closure
+    /// throws.
+    ///
+    /// - Parameter body: A closure that will run while this server is active.
+    /// - Returns: The return value, if any, of the `body` closure parameter.
+    /// - Throws: Any error thrown by `body`, or otherwise the first error thrown by the server's connection handler.
+    public mutating func run<Result: ~Copyable>(
+        _ body: (Configuration) async throws -> sending Result
+    ) async throws -> sending Result {
+        try await storage.startListening()
+
+        let result: Result
+        do {
+            result = try await body(Configuration(port: Int(storage.port), scheme: `protocol`.scheme, storage: storage))
+        } catch {
+            // Close the server before the error leaves `run`, as when the body returns.
+            await storage.cancel()
+            throw error
+        }
+
+        await storage.cancel()
+
+        if let error = storage.connectionHandlerError {
+            throw error
+        }
+
+        return result
+    }
+
+    /// The number of requests this server has received so far.
+    public var totalRequests: Int {
+        storage.totalRequests
+    }
+
+    /// The requests this server has received so far, with their bodies, in the order they arrived.
+    ///
+    /// Only the HTTP2 and HTTP3 protocols (`.http2`, `.http3` and `.http2Proxy`) record requests.
+    @_spi(HTTP)
+    public var receivedRequests: [(request: HTTPRequest, body: Data)] {
+        precondition(`protocol`.recordsRequests, "\(`protocol`) does not record requests")
+        return storage.receivedRequests
+    }
+}
+
+extension HTTPServer.`Protocol` {
+    fileprivate var scheme: String {
+        switch self {
+        case .https, .httpsWithLegacyTLS, .http2Raw, .http2, .http3: "https"
+        case .http, .httpsProxy, .httpsProxyWithAuthentication, .http2Proxy: "http"
+        }
+    }
+
+    fileprivate var recordsRequests: Bool {
+        switch self {
+        case .http2, .http3, .http2Proxy: true
+        case .http, .https, .httpsWithLegacyTLS, .http2Raw, .httpsProxy, .httpsProxyWithAuthentication: false
+        }
+    }
+
+    fileprivate var usesHTTPMessaging: Bool {
+        switch self {
+        case .http2, .http3, .http2Proxy: true
+        case .http, .https, .httpsWithLegacyTLS, .http2Raw, .httpsProxy, .httpsProxyWithAuthentication: false
+        }
+    }
+}
+
+extension HTTPResponseData.Behavior {
+    fileprivate init(_ behavior: Route.ResponseBehavior) {
+        self =
+            switch behavior {
+            case .sendResponseNormally: .sendResponseNormally
+            case .terminateConnectionAfterReceivingRequest: .terminateConnectionAfterReceivingRequest
+            case .neverSendResponse: .neverSendResponse
+            }
+    }
+}
+
+extension HTTPServerCore.`Protocol` {
+    fileprivate init(_ protocol: HTTPServer.`Protocol`) {
+        self =
+            switch `protocol` {
+            case .http: .http
+            case .https: .https
+            case .httpsWithLegacyTLS: .httpsWithLegacyTLS
+            case .http2Raw: .http2Raw
+            case .http2: .http2
+            case .http3: .http3
+            case .httpsProxy: .httpsProxy
+            case .httpsProxyWithAuthentication: .httpsProxyWithAuthentication
+            case .http2Proxy: .http2Proxy
+            }
+    }
+}
+
+extension HTTPServer {
+    /// A collection of information about the properties of an `HTTPServer`.
+    public struct Configuration: Sendable {
+        /// The port of the server.
+        public let port: Int
+
+        fileprivate let scheme: String
+
+        fileprivate let storage: HTTPServerCore
+
+        /// The number of connections the client closed while the server was sending an unfinished response.
+        @MainActor
+        public var closedUnfinishedResponseCount: Int {
+            storage.closedUnfinishedResponseCount
+        }
+
+        // swift-format-ignore: NeverForceUnwrap
+        /// The URL of the server, addressed by IP.
+        ///
+        /// The scheme is `https` for the protocols that use TLS, and `http` otherwise.
+        public var address: Foundation.URL {
+            // Well formed for every port number, so this cannot fail.
+            Foundation.URL(string: "\(scheme)://127.0.0.1:\(port)/")!
+        }
+
+        // swift-format-ignore: NeverForceUnwrap
+        /// The URL of the server, addressed by the `localhost` host name.
+        ///
+        /// Some code paths treat `localhost` and `127.0.0.1` as distinct origins, so a test that
+        /// needs two same-server origins can use one of each.
+        public var localhostAddress: Foundation.URL {
+            // Well formed for every port number, so this cannot fail.
+            Foundation.URL(string: "\(scheme)://localhost:\(port)/")!
+        }
+
+        /// The URL representing the HTTPS proxy for the server.
+        public var httpsProxy: Foundation.URL? {
+            Foundation.URL(string: "https://127.0.0.1:\(port)/")
+        }
+
+        /// The number of requests the server has received so far.
+        ///
+        /// Unlike ``HTTPServer/totalRequests``, this can be read while the server runs, such as to check how many
+        /// requests one step of a test makes.
+        @MainActor
+        public var totalRequests: Int {
+            storage.totalRequests
+        }
+
+        /// Replaces the responses for paths the server already has, so that later requests for them get the new
+        /// responses.
+        ///
+        /// Use this to change a page between two loads of it, such as to drop the headers that made the document of a
+        /// back/forward list item cross-origin isolated before going back to it.
+        ///
+        /// ```swift
+        /// serverConfiguration.replaceResponses {
+        ///     Route("/isolated") { "no longer isolated" }
+        /// }
+        /// ```
+        ///
+        /// - Parameter route: The new responses, for paths the server already has responses for.
+        @MainActor
+        public func replaceResponses(@RouteBuilder _ route: () -> Route) {
+            for child in route().children {
+                storage.setResponse(child.responseData, for: child.path)
+            }
+        }
+    }
+}
+
+extension HTTPServer {
+    /// A connection accepted by a server created with ``init(protocol:connectionHandler:)``.
+    @MainActor
+    public struct Connection {
+        fileprivate let server: HTTPServerCore
+        fileprivate let connection: NWConnection
+
+        /// Waits for the client to send a request.
+        ///
+        /// - Returns: The path of the request, or `nil` once the client has closed the connection.
+        /// - Throws: An error if the request cannot be parsed.
+        public func receiveRequestPath() async throws -> String? {
+            let request = await connection.receiveHTTPRequest()
+            guard !request.isEmpty else {
+                return nil
+            }
+
+            let parser = HTTPRequestComponentParser(request: request)
+            return try parser.path
+        }
+
+        /// Sends data to the client exactly as given, without adding any HTTP framing.
+        ///
+        /// - Parameter data: The data to send, usually a complete or deliberately incomplete HTTP response.
+        /// - Throws: An error if the data could not be sent.
+        public func send(_ data: String) async throws {
+            try await connection.send(Data(data.utf8))
+        }
+
+        /// Closes the connection.
+        public func terminate() async {
+            // Through the server, so that shutting it down does not also try to terminate this connection.
+            await server.terminateIfNeeded(connection)
+        }
+    }
+}

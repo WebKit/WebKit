@@ -1,0 +1,6 @@
+2d.text.drawing.style.fontVariant.settings
+Testing basic functionalities of fontVariant for canvas
+Actual output:
+
+PASS Testing basic functionalities of fontVariant for canvas
+

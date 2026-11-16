@@ -1,0 +1,4 @@
+
+PASS appendRule with a single keyframe rule works
+PASS appendRule with multiple keyframe rules silently does nothing
+

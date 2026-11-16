@@ -1,0 +1,5 @@
+
+
+PASS The editing host should have inserted text
+FAIL The editing host should have no text assert_equals: expected "" but got "<br>"
+

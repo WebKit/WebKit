@@ -1,0 +1,8 @@
+before
+after
+
+PASS An inline box around a block level box bounds exactly its content
+PASS Inline boxes at every nesting level around a block level box report the same height
+PASS Nesting depth does not offset an inline box around a block level box
+PASS A block level box nested in inline boxes is positioned by its margin
+

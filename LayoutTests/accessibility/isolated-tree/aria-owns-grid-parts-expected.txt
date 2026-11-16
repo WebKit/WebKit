@@ -1,0 +1,52 @@
+This tests that ARIA grids correctly recognize rows and cells via aria-owns, including after dynamic attribute changes.
+
+Testing grid with aria-owned rows:
+PASS: ownedRowsGrid.rowCount === 2
+PASS: ownedRowsGrid.columnCount === 2
+PASS: ownedRowsGrid.width >= 2 === true
+PASS: ownedRowsGrid.height >= 2 === true
+PASS: ownedRowsGrid.cellForColumnAndRow(0, 0).domIdentifier === 'owned-row-cell-1-1'
+PASS: ownedRowsGrid.cellForColumnAndRow(1, 1).domIdentifier === 'owned-row-cell-2-2'
+
+Testing grid with aria-owned cells:
+PASS: ownedCellsGrid.rowCount === 1
+PASS: ownedCellsGrid.columnCount === 2
+PASS: ownedCellsGrid.width >= 2 === true
+PASS: ownedCellsGrid.height >= 2 === true
+PASS: ownedCellsGrid.cellForColumnAndRow(0, 0).domIdentifier === 'owned-cell-1'
+PASS: ownedCellsGrid.cellForColumnAndRow(1, 0).domIdentifier === 'owned-cell-2'
+
+Testing grid with DOM children that are also aria-owned (ordering test):
+PASS: domAndOwnedGrid.rowCount === 3
+PASS: domAndOwnedGrid.width >= 2 === true
+PASS: domAndOwnedGrid.height >= 2 === true
+PASS: domAndOwnedGrid.cellForColumnAndRow(0, 0).domIdentifier === 'dom-row-C-cell'
+PASS: domAndOwnedGrid.cellForColumnAndRow(0, 1).domIdentifier === 'dom-row-B-cell'
+PASS: domAndOwnedGrid.cellForColumnAndRow(0, 2).domIdentifier === 'dom-row-A-cell'
+
+Adding row-3 to aria-owns...
+PASS: ownedRowsGrid.rowCount === 3
+PASS: ownedRowsGrid.cellForColumnAndRow(0, 2).domIdentifier === 'owned-row-cell-3-1'
+
+Adding owned-cell-3 to row...
+PASS: ownedCellsGrid.cellForColumnAndRow(2, 0).domIdentifier === 'owned-cell-3'
+
+Removing owned-row-1 from aria-owns...
+PASS: ownedRowsGrid.rowCount === 2
+PASS: ownedRowsGrid.cellForColumnAndRow(0, 0).domIdentifier === 'owned-row-cell-2-1'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Owned Row 1 Cell 1
+Owned Row 1 Cell 2
+Owned Row 2 Cell 1
+Owned Row 2 Cell 2
+Owned Row 3 Cell 1
+Owned Row 3 Cell 2
+Owned Cell 1
+Owned Cell 2
+Owned Cell 3
+Row A Cell
+Row B Cell
+Row C Cell

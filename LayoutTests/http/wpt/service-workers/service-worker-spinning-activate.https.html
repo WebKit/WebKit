@@ -1,0 +1,46 @@
+<!doctype html><!-- webkit-test-runner [ ShouldUseServiceWorkerShortTimeout=true ] -->
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-activate" });
+    const worker = registration.installing;
+
+    await waitForState(registration.installing, "activating");
+
+    var promises = [];
+
+    promises.push(with_iframe("spin-activate/1"));
+    promises.push(with_iframe("spin-activate/2"));
+    promises.push(with_iframe("spin-activate/3"));
+    promises.push(with_iframe("spin-activate/4"));
+    promises.push(with_iframe("spin-activate/5"));
+    promises.push(with_iframe("spin-activate/6"));
+    promises.push(with_iframe("spin-activate/7"));
+    promises.push(with_iframe("spin-activate/8"));
+    promises.push(with_iframe("spin-activate/9"));
+
+    await Promise.all(promises);
+
+    await waitForServiceWorkerNoLongerRunning(worker);
+
+    await waitForState(worker, "activated");
+}, "Spin in activate");
+
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-after-activate" });
+    const worker = registration.installing;
+
+    await waitForState(worker, "activated");
+
+    return waitForServiceWorkerNoLongerRunning(worker);
+}, "Spin after activate");
+</script>
+</body>
+</html>

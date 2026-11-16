@@ -1,0 +1,27 @@
+<style>
+    * { 
+        min-width: max-content;
+        text-align-last: justify;
+        text-decoration-style: wavy;
+        text-decoration-line: underline;
+        column-span: all; 
+        columns: 100;
+        font: 1px/1 ivsfont;
+        -webkit-text-security: circle;
+    }
+    form { 
+        column-count: 1;
+    }
+</style>
+<body>
+    <div>
+        <form>
+            <legend>Passes if it does not crash</legend>
+            <select></select>
+        </form>
+    </div>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</body>

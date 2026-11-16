@@ -1,0 +1,8 @@
+{
+    "extends": "plugin:@next/next/recommended",
+    "settings": {
+        "next": {
+            "rootDir": "resources/newssite/news-next/"
+        }
+    }
+}

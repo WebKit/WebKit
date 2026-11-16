@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<!-- Do not reformat this markup, as doing so can break the conditions required for the bug to reproduce. -->
+<div>
+<template shadowrootmode=open>
+  <h2>
+    <slot name=title></slot>
+  </h2>
+</template>
+<div slot=title>
+  <foo-link><template shadowrootmode=open>
+    <a href="#url">
+      <slot></slot>
+    </a></template>
+    <div>
+        <a id="link" href="#url">Clickable</a>
+    </div>
+  </foo-link>
+</div>
+<script>
+var output = "This test ensures we don't hang when traversing and getting the accessibility text of a link that is part of an inline continuation.\n\n";
+
+if (window.accessibilityController) {
+    output += dumpAXSearchTraversal(accessibilityController.rootElement, { includeAccessibilityText: true });
+    output += "PASS: No hang.\n";
+    debug(output);
+}
+</script>
+</body>
+</html>
+

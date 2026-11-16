@@ -1,0 +1,19 @@
+BODY: Read-only
+	#nonEditable: Read-only
+		Directly inside a normal div.
+		P: Read-only
+			In a child of a normal div.
+	#visible: Editable
+		Directly inside a contenteditable.
+		P: Editable
+			In a child of a contenteditable.
+	#nonVisible: Editable
+		Directly inside a display:none contenteditable.
+		P: Editable
+			In a child of a display:none contenteditable.
+	DIV: Read-only
+		#nonVisibleParent: Editable
+			Directly inside a contenteditable with a display:none parent.
+			P: Editable
+				In a child of a contenteditable with a display:none parent.
+

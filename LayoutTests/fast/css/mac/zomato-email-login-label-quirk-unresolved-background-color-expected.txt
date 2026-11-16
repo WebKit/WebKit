@@ -1,0 +1,12 @@
+Tests zomato quirk resolves currentcolor before checking for a white background-color.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(white).backgroundColor is "rgba(0, 0, 0, 0)"
+PASS getComputedStyle(currentColor).backgroundColor is "rgba(0, 0, 0, 0)"
+PASS getComputedStyle(nonWhiteCurrentColor).backgroundColor is "rgb(0, 128, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email Email Email

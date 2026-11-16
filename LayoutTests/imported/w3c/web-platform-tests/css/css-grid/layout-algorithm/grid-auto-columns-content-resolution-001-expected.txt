@@ -1,0 +1,10 @@
+Test that resolving auto tracks on grid items works properly.
+
+XXX XXX XXX
+XX XX XX XX XX XX
+XXXXX
+
+PASS .gridAutoContent 1
+PASS .gridAutoContent 2
+PASS .gridAutoContent 3
+

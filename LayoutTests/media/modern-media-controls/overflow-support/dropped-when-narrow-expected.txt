@@ -1,0 +1,12 @@
+Testing the OverflowSupport button does not appear when controls are narrow.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.overflow') became different from null
+PASS shadowRoot.querySelector('button.overflow').getBoundingClientRect().width became different from 0
+PASS shadowRoot.querySelector('button.overflow') became null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

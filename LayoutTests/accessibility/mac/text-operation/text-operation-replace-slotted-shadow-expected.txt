@@ -1,0 +1,16 @@
+Tests that a Replace text operation correctly replaces text in a slotted light DOM div rendered via the shadow DOM.
+
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'THE'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: THE quick brown fox jumps over the lazy dog.'
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'fox named Finn'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: THE quick brown fox named Finn jumps over the lazy dog.'
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'koala.'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: THE quick brown fox named Finn jumps over the lazy koala.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

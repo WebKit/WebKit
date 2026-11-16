@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-heading id="heading-1">1. Some title</custom-heading>
+<custom-heading id="heading-1-1" aria-level="2">1.1. Subtitle</custom-heading>
+<script>
+
+customElements.define('custom-heading', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'heading';
+        internals.ariaLevel = '1';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBe('accessibilityController.accessibleElementById("heading-1").intValue', '1');
+    shouldBe('accessibilityController.accessibleElementById("heading-1-1").intValue', '2');
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ isAppInitiated=true ] -->
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body onload="fetchAndRedirectWithCORSPreflightCheck()">
+<script>
+    description("Tests that CORS preflight checks for HTTP redirects are marked app initiated.");
+    jsTestIsAsync = true;
+
+    function log(message)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+    }
+    
+    function askForAttribution() {
+        var didLoadAppBoundRequest = testRunner.didLoadAppInitiatedRequest();
+        var didLoadNonAppBoundRequest = testRunner.didLoadNonAppInitiatedRequest();
+
+        if (didLoadNonAppBoundRequest) {
+            log("FAIL did load non app initiated request");
+            finishJSTest();
+            return;
+        }
+
+        if (!didLoadAppBoundRequest) {
+            log("FAIL did not load app initiated request");
+            finishJSTest();
+            return;
+        }
+
+        log("PASS successfully loaded only app initiated requests");
+
+        finishJSTest();
+    }
+    
+    var loadedUrl;
+    function fetchAndRedirectWithCORSPreflightCheck() {
+        fetch("http://localhost:8000/app-privacy-report/resources/redirect-with-cors-preflight-check.py",
+            {
+                headers: {
+                    "X-WebKit": "1234",
+                }
+            }
+        ).then(function(response) {
+            loadedUrl = response.url;
+            shouldBeEqualToString("loadedUrl", "http://localhost:8000/app-privacy-report/resources/cors-preflight.py?value=1234");
+            askForAttribution();
+        }).catch(function(error) {
+            testFailed(error.message);
+            finishJSTest();
+        });
+    }
+</script>
+</body>
+</html>

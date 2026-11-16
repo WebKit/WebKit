@@ -1,0 +1,13 @@
+
+FAIL identical directory handles return the same ID promise_test: Unhandled rejection with value: object "TypeError: root_dir.getUniqueId is not a function. (In 'root_dir.getUniqueId()', 'root_dir.getUniqueId' is undefined)"
+FAIL different directories return different IDs promise_test: Unhandled rejection with value: object "TypeError: root_dir.getUniqueId is not a function. (In 'root_dir.getUniqueId()', 'root_dir.getUniqueId' is undefined)"
+FAIL different handles for the same directory return the same ID promise_test: Unhandled rejection with value: object "TypeError: subdir.getUniqueId is not a function. (In 'subdir.getUniqueId()', 'subdir.getUniqueId' is undefined)"
+FAIL identical file handles return the same unique ID promise_test: Unhandled rejection with value: object "TypeError: handle.getUniqueId is not a function. (In 'handle.getUniqueId()', 'handle.getUniqueId' is undefined)"
+FAIL different files return different IDs promise_test: Unhandled rejection with value: object "TypeError: handle1.getUniqueId is not a function. (In 'handle1.getUniqueId()', 'handle1.getUniqueId' is undefined)"
+FAIL different handles for the same file return the same ID promise_test: Unhandled rejection with value: object "TypeError: handle1.getUniqueId is not a function. (In 'handle1.getUniqueId()', 'handle1.getUniqueId' is undefined)"
+FAIL two files of the same name in different directories return different IDs promise_test: Unhandled rejection with value: object "TypeError: handle1.getUniqueId is not a function. (In 'handle1.getUniqueId()', 'handle1.getUniqueId' is undefined)"
+FAIL a file and a directory return different IDs promise_test: Unhandled rejection with value: object "TypeError: handle1.getUniqueId is not a function. (In 'handle1.getUniqueId()', 'handle1.getUniqueId' is undefined)"
+FAIL a file and a directory of the same path return different IDs promise_test: Unhandled rejection with value: object "TypeError: file_handle.getUniqueId is not a function. (In 'file_handle.getUniqueId()', 'file_handle.getUniqueId' is undefined)"
+FAIL unique ID of a file handle does not change after writes promise_test: Unhandled rejection with value: object "TypeError: handle.getUniqueId is not a function. (In 'handle.getUniqueId()', 'handle.getUniqueId' is undefined)"
+FAIL unique ID is in GUID version 4 format promise_test: Unhandled rejection with value: object "TypeError: root_dir.getUniqueId is not a function. (In 'root_dir.getUniqueId()', 'root_dir.getUniqueId' is undefined)"
+

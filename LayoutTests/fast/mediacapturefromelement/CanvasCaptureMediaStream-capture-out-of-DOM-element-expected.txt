@@ -1,0 +1,4 @@
+
+PASS Verify that drawing to a 2D canvas that is not attached to the DOM dispatches frames to an attached MediaRecorder.
+PASS Verify that drawing to a webgl canvas that is not attached to the DOM dispatches frames to an attached MediaRecorder.
+

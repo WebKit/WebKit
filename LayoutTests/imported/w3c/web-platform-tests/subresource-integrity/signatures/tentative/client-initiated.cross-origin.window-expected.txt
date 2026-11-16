@@ -1,0 +1,16 @@
+
+PASS `fetch()`: No signature, valid integrity check, w/o cors: blocked.
+FAIL `fetch()`: No signature, valid integrity check, w/ cors: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS `fetch()`: Valid signature, matching integrity check, no cors: blocked.
+PASS `fetch()`: Valid signature, mismatched integrity check, no cors: blocked.
+PASS `fetch()`: Valid signature, one valid integrity check, no cors: loads.
+FAIL `fetch()`: Valid signature, matching integrity check, cors: loads. assert_equals: `accept-signature` was set. expected "sig0=(\"unencoded-digest\";sf);keyid=\"JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=\";tag=\"ed25519-integrity\"" but got ""
+FAIL `fetch()`: Valid signature, mismatched integrity check, cors: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Valid signature, one valid integrity check, cors: loads. assert_equals: `accept-signature` was set. expected "sig0=(\"unencoded-digest\";sf);keyid=\"JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=\";tag=\"ed25519-integrity\", sig1=(\"unencoded-digest\";sf);keyid=\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\";tag=\"ed25519-integrity\"" but got ""
+PASS `fetch()`: Invalid signature, matching integrity check, no cors: blocked.
+PASS `fetch()`: Invalid signature, mismatched integrity check, no cors: blocked.
+PASS `fetch()`: Invalid signature, one valid integrity check, no cors: loads.
+FAIL `fetch()`: Invalid signature, matching integrity check, cors: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Invalid signature, mismatched integrity check, cors: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL `fetch()`: Invalid signature, one valid integrity check, cors: loads. assert_unreached: Should have rejected: undefined Reached unreachable code
+

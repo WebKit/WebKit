@@ -1,0 +1,7 @@
+Tests that a grid item with a fit-content block size resolves that size from its layout rather than from separate min-content and max-content measurements. The item has an automatic height and is not stretched, so it is sized to fit-content. Each layout pass over the item repaints it at its old position, so an extra repaint rect here means an extra layout of the item.
+(repaint rects
+  (rect 0 50 100 50)
+  (rect 0 50 100 50)
+  (rect 0 100 100 50)
+)
+

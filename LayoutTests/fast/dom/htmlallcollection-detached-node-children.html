@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This tests verifies that the name getter on element.children works even when element is not in the document");
+
+function createElementWithId(id) {
+    var span = document.createElement('span');
+    span.id = 'foo';
+    return span;
+}
+
+var element = document.createElement('div');
+shouldBeUndefined("element.children['foo']");
+shouldBe("span = createElementWithId('foo'); element.appendChild(span); element.children['foo']", "span");
+shouldBeUndefined("document.all['foo']");
+shouldBe("document.body.appendChild(span); document.all['foo']", "span");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+
+PASS Check default media stream player visibility
+PASS Check media stream player visibility with CSS
+PASS Check media stream player visibility of unattached media element
+

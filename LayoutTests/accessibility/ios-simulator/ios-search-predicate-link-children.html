@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<p id="start">start text</p>
+<a id="link" href='#'>
+<h3>heading text</h3>
+<div>sub text</div>
+</a>
+
+<p id="start2">start text 2</p>
+<a id="link2" href='#'>
+<span>link2</span>
+<span> text</span>
+</a>
+<a href="#">link3</a>
+    
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests the ability to search for exposed link children.");
+    
+    if (window.accessibilityController) {
+        window.testRunner.keepWebHistory();
+        
+        var containerElement = accessibilityController.rootElement;
+        var startElement = accessibilityController.accessibleElementById("start");
+        var resultElement;
+        
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXLinkSearchKey", "", false);
+        shouldBe("resultElement.description", "'AXLabel: heading text'");
+        
+        startElement = resultElement;
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXLinkSearchKey", "", false);
+        shouldBe("resultElement.description", "'AXLabel: sub text'");
+        
+        // Search backwards.
+        startElement = resultElement;
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXLinkSearchKey", "", false);
+        shouldBe("resultElement.description", "'AXLabel: heading text'");
+        
+        // Test the case where the link itself is not ignored.
+        startElement = accessibilityController.accessibleElementById("start2");
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXLinkSearchKey", "", false);
+        shouldBe("resultElement.description", "'AXLabel: link2 text'");
+        
+        startElement = resultElement;
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXLinkSearchKey", "", false);
+        shouldBe("resultElement.description", "'AXLabel: link3'");
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

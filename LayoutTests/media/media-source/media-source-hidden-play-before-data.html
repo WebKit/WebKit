@@ -1,0 +1,115 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>media-source-hidden-play-before-data</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+    async function hidePage() {
+        const hidden = waitFor(document, 'visibilitychange', true);
+        run('testRunner.setPageVisibility("hidden")');
+        await hidden;
+    }
+
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    // The media element load algorithm runs when src is set, so the load starts before the first await.
+    async function attachSource() {
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await once(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer(loader.type());
+    }
+
+    async function appendData() {
+        sourceBuffer.appendBuffer(loader.initSegment());
+        await once(sourceBuffer, 'update');
+        do {
+            sourceBuffer.timestampOffset = sourceBuffer.buffered.length ? sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1) : 0;
+            sourceBuffer.appendBuffer(loader.mediaSegment(0));
+            await once(sourceBuffer, 'update');
+        } while (sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1) < 5);
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (MediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            waitFor(video, 'error').then(failTest);
+
+            run('internals.setMediaElementRestrictions(video, "RequireUserGestureToStartAudiblePlaybackWhenHidden")');
+            run('internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 0.5)');
+
+            await attachSource();
+            await appendData();
+            await shouldResolve(run('video.play()'));
+
+            await hidePage();
+
+            consoleWrite('play() requested within the grace period, data arrives after it');
+            run('video.pause()');
+            let attached = attachSource();
+            let playPromise = run('video.play()');
+            await attached;
+            await sleepFor(1000);
+            await appendData();
+            await shouldResolve(playPromise);
+
+            consoleWrite('autoplay requested within the grace period, data arrives after it');
+            run('video.pause()');
+            run('video.autoplay = true');
+            await attachSource();
+            await sleepFor(1000);
+            let playing = waitFor(video, 'playing');
+            await appendData();
+            await playing;
+            testExpected('video.paused', false);
+            await testExpectedEventuallySilent('internals.mediaSessionState(video)', 'Playing');
+
+            consoleWrite('script play() during a granted autoplay load, after the grace period');
+            run('video.pause()');
+            await attachSource();
+            await sleepFor(1000);
+            await shouldReject(run('video.play()'));
+            playing = waitFor(video, 'playing');
+            await appendData();
+            await playing;
+            testExpected('video.paused', false);
+
+            consoleWrite('autoplay removed before data arrives');
+            run('video.pause()');
+            await attachSource();
+            run('video.autoplay = false');
+            await appendData();
+            await sleepFor(500);
+            testExpected('video.paused', true);
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

@@ -1,0 +1,8 @@
+
+FAIL 0th scroll marker test assert_equals: the :target-current ::scroll-marker should be green expected "rgb(0, 128, 0)" but got ""
+FAIL 1th scroll marker test assert_equals: ::scroll-marker before the :target-current one should be red as :target-before expected "rgb(255, 0, 0)" but got ""
+FAIL 2th scroll marker test assert_equals: ::scroll-marker before the :target-current one should be red as :target-before expected "rgb(255, 0, 0)" but got ""
+FAIL 3th scroll marker test assert_equals: ::scroll-marker before the :target-current one should be red as :target-before expected "rgb(255, 0, 0)" but got ""
+FAIL 4th scroll marker test assert_equals: ::scroll-marker before the :target-current one should be red as :target-before expected "rgb(255, 0, 0)" but got ""
+FAIL 5th scroll marker test assert_equals: ::scroll-marker before the :target-current one should be red as :target-before expected "rgb(255, 0, 0)" but got ""
+

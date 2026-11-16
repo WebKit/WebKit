@@ -1,0 +1,7 @@
+PASS after bare viewport meta: requestFullscreen is absent
+PASS after viewport-fit=cover meta: requestFullscreen is present
+PASS DOMContentLoaded: requestFullscreen is present
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

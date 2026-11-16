@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <p>Message text</p>
+    <button id="more" aria-label="More actions"></button>
+    <div id="composer" contenteditable="true">Composer text</div>
+</div>
+
+<script>
+var output = "This test verifies that setting the accessibility selected-text-marker range to an empty non-text element (e.g. an icon button with no text of its own) does not walk the selection forward into a following contenteditable and steal DOM focus into it.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async () => {
+        const webArea = accessibilityController.rootElement.childAtIndex(0);
+        const more = accessibilityController.accessibleElementById("more");
+        const composer = document.getElementById("composer");
+
+        // As VoiceOver navigates (with "Synchronize keyboard focus and VoiceOver cursor" on), it
+        // sets a collapsed text marker range to represent the "cursor" or insertion point position.
+        // Emulate that.
+        const moreRange = more.textMarkerRangeForElement(more);
+        const startMarker = webArea.startTextMarkerForTextMarkerRange(moreRange);
+        const collapsedRange = webArea.textMarkerRangeForMarkers(startMarker, startMarker);
+        webArea.setSelectedTextMarkerRange(collapsedRange);
+
+        // The set is applied asynchronously, so wait until it has taken effect (the web area reports a
+        // selected range whose start marker resolves to an element).
+        await waitFor(() => {
+            const range = webArea.selectedTextMarkerRange();
+            if (!range)
+                return false;
+            const start = webArea.startTextMarkerForTextMarkerRange(range);
+            return start && webArea.accessibilityElementForTextMarker(start);
+        });
+
+        // Setting the "cursor" to a position should not jump into the adjacent editable. This would
+        // result in navigation loops in a real browser environment, since the focus-changed notification
+        // that would be generated would jump VoiceOver to the editable every time you tried to move to
+        // the button.
+        const anchorNode = window.getSelection().anchorNode;
+        window.selectionEnteredComposer = !!(anchorNode && composer.contains(anchorNode));
+        output += expect("selectionEnteredComposer", "false");
+
+        window.focusEnteredComposer = document.activeElement === composer;
+        output += expect("focusEnteredComposer", "false");
+
+        debug(output);
+        document.getElementById("content").style.display = "none";
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        var minXOffset;
+        var maxXOffset;
+
+        function reset()
+        {
+            minXOffset = 0;
+            maxXOffset = -1000;
+        }
+
+        async function scrollTest()
+        {
+            description('Swipes should rubber-band on each side.');
+
+            if (window.testRunner) {
+                testRunner.setNavigationGesturesEnabled(true);
+                testRunner.installDidBeginSwipeCallback(() => { debug('begin swipe') });
+            }
+
+            history.pushState({ name: 'backstate' }, 'back');
+
+            window.addEventListener('scroll', () => {
+                minXOffset = Math.min(minXOffset, window.pageXOffset);
+                maxXOffset = Math.max(maxXOffset, window.pageXOffset);
+            }, false);
+
+            if (!window.eventSender) {
+                finishJSTest();
+                return;
+            }
+
+            reset();
+            debug('Swipe to the left');
+            
+            await UIHelper.mouseWheelScrollAt(10, 10, 1, 0, 10, 0);
+            // Should not have received any scroll events.
+            shouldBe('minXOffset', '0');
+            shouldBe('maxXOffset', '-1000');
+
+            reset();
+            debug('');
+            debug('Swipe to the right');
+            await UIHelper.mouseWheelScrollAt(10, 10, -1, 0, -10, 0);
+            shouldBe('minXOffset', '0');
+            shouldBeTrue('maxXOffset > 0');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            scrollTest();
+        }, false);
+    </script>
+</head>
+<body>
+    
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

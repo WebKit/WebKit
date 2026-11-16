@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+#container {
+    width: 200px;
+    font: 16px/18px Ahem;
+}
+
+#float {
+    float: left;
+    width: 199px;
+    height: 100px;
+    background: silver;
+}
+
+#target {
+    margin: 0;
+    outline: none;
+}
+</style>
+</head>
+<body>
+<div id="container">
+    <p style="margin: 0"><span id="float"></span></p>
+    <p id="target">Selected</p>
+</div>
+<script>
+description("This test verifies that selecting text on the first line of a block whose first line is pushed below an intrusive float does not extend the selection up over that float. To run the test manually, select the word below the gray box and make sure the gray box does not get highlighted.");
+
+if (window.testRunner) {
+    const target = document.getElementById("target");
+    const floatBox = document.getElementById("float");
+
+    getSelection().selectAllChildren(target);
+
+    const selectionRect = internals.selectionBounds();
+    const floatBottom = floatBox.getBoundingClientRect().bottom + scrollY;
+
+    if (selectionRect.top >= floatBottom - 1)
+        testPassed(`Selection did not start above the float's bottom edge.`);
+    else
+        testFailed(`Selection started ${floatBottom - selectionRect.top}px above the float's bottom edge (selection top: ${selectionRect.top}, float bottom: ${floatBottom}).`);
+
+    if (selectionRect.height < 50)
+        testPassed(`Selection height did not extend over the float.`);
+    else
+        testFailed(`Selection height was too tall (observed: ${selectionRect.height}).`);
+
+    getSelection().removeAllRanges();
+}
+</script>
+</body>
+</html>

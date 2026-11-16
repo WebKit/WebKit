@@ -1,0 +1,15 @@
+This test ensures content revealed by programmatically removing hidden='until-found' becomes reachable by assistive technologies (and becomes unreachable again when re-hidden).
+
+While hidden='until-found', the revealed text should not be reachable:
+PASS: revealedTextIsReachable() === false
+
+After programmatically removing hidden='until-found', the revealed text should be reachable:
+PASS: revealedTextIsReachable() === true
+
+After programmatically re-applying hidden='until-found', the revealed text should not be reachable:
+PASS: revealedTextIsReachable() === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

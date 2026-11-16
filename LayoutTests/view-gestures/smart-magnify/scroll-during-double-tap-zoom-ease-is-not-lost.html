@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        .target {
+            margin: 100px;
+            width: 400px;
+            height: 400px;
+            background-color: silver;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function overrideOnceCommitted(isCommitted)
+        {
+            let override = '';
+            while (!isCommitted(override))
+                override = await UIHelper.delegatedZoomOverrideAsText();
+            return override;
+        }
+
+        async function overrideOnceSettled(isSettled)
+        {
+            let override = '';
+            for (let attempt = 0; attempt < 40; ++attempt) {
+                await new Promise(resolve => setTimeout(resolve, 50));
+                override = await UIHelper.delegatedZoomOverrideAsText();
+                if (isSettled(override))
+                    break;
+            }
+            return override;
+        }
+
+        async function doTest()
+        {
+            const output = [];
+            const isOwnedByTheScrollingThread = override => /owned by the scrolling thread/.test(override);
+
+            await UIHelper.setWebViewAllowsMagnification(true);
+
+            eventSender.mouseMoveTo(300, 300);
+            eventSender.smartMagnify();
+            const zoomedIn = await overrideOnceCommitted(override => !!override);
+            output.push('Zoomed in: ' + !/^scale 1\.00/.test(zoomedIn));
+            window.scrollTo(0, 0);
+            output.push('After the ease, the scrolling thread owns the layer position again: ' + isOwnedByTheScrollingThread(await overrideOnceSettled(isOwnedByTheScrollingThread)));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="target"></div>
+    <pre id="output"></pre>
+</body>
+</html>

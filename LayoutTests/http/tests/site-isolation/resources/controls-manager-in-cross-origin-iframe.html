@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<body>
+<video id="video" width="640" height="480" autoplay src="/media-resources/content/test.mp4"></video>
+<script>
+const video = document.getElementById('video');
+
+function report(result)
+{
+    window.parent.postMessage(result, '*');
+}
+
+video.addEventListener('playing', () => {
+    if (!window.internals) {
+        report('FAIL: internals is unavailable');
+        return;
+    }
+    const best = internals.bestMediaElementForRemoteControls('ControlsManager');
+    report(best === video ? 'PASS' : 'FAIL: bestMediaElementForRemoteControls returned ' + best);
+}, { once: true });
+
+video.addEventListener('error', () => {
+    report('FAIL: video failed to load');
+}, { once: true });
+</script>
+</body>

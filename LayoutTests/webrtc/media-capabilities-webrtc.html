@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+async function validateDecodingCapabilities(test, videoConfiguration)
+{
+    const results = await navigator.mediaCapabilities.decodingInfo({type: 'webrtc', video: videoConfiguration });
+    assert_not_equals(results.configuration, undefined, "decoder MC configuration");
+    return results.supported && results.powerEfficient;
+}
+
+promise_test(async (test) => {
+    const videoConfiguration = { contentType: 'video/h265', hdrMetadataType: "smpteSt2094-10", width: 800, height: 600, bitrate: 3000, framerate: 24 };
+    assert_false(await validateDecodingCapabilities(test, videoConfiguration), "decoder MC not supported");
+}, "HEVC baseline with HDR is not supported");
+
+promise_test(async (test) => {
+    const videoConfiguration = { contentType: 'video/vp9;profile-id=3', width: 800, height: 600, bitrate: 3000, framerate: 24 };
+    assert_false(await validateDecodingCapabilities(test, videoConfiguration), "decoder MC not supported");
+}, "VP9 profile 3 is not supported");
+        </script>
+    </body>
+</html>

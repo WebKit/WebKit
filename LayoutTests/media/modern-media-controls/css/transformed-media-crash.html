@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script>
+  if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+  }
+  function notifyDone() {
+      requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+              if (window.testRunner) {
+                  testRunner.notifyDone();
+              }
+          });
+      });
+  }
+</script>
+<p>PASS if no crash.</p>
+<video style="height: 10px; width: 10px;
+              transform: matrix(1, 0, 986610, 1, 0, 0);"
+       onerror="notifyDone()" controls src="about:blank"></video>

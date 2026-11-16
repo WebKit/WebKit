@@ -1,0 +1,18 @@
+Test download error cases. "load" or "error" events should be fired exactly once for each @font-face rule.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS events['myfont1'] is ['loadstart', 'error']
+PASS events['myfont2'] is ['loadstart', 'error']
+PASS events['myfont3'] is ['loadstart', 'error']
+PASS events['myfont4'] is ['loadstart', 'load']
+PASS events['myfont5'] is ['loadstart', 'error']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+font1
+font2
+font3
+font4
+font5

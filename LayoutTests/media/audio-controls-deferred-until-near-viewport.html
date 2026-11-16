@@ -1,0 +1,54 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>An audio element builds its controls only once it is near the viewport</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/media-controls-deferral.js"></script>
+<body>
+<div id="spacer" style="height: 20000px"></div>
+<div id="container"></div>
+<script>
+buildFirstMediaControls();
+
+function hasBuiltControls(audio) {
+    // Unlike internals.shadowRoot(), this does not build deferred controls.
+    return !!internals.ensureUserAgentShadowRoot(audio).querySelector(".media-controls");
+}
+
+function animationFrames(count) {
+    return new Promise(resolve => {
+        const step = () => count-- > 0 ? requestAnimationFrame(step) : resolve();
+        step();
+    });
+}
+
+async function waitUntilBuilt(audio) {
+    while (!hasBuiltControls(audio))
+        await animationFrames(1);
+}
+
+promise_test(async t => {
+    const count = 200;
+    const audios = [];
+    for (let i = 0; i < count; i++) {
+        const audio = document.createElement("audio");
+        audio.controls = true;
+        container.appendChild(audio);
+        audios.push(audio);
+    }
+    t.add_cleanup(() => { container.textContent = ""; scrollTo(0, 0); });
+
+    // Give the first intersection observation time to be delivered.
+    await animationFrames(3);
+    assert_equals(audios.filter(hasBuiltControls).length, 0, "no controls are built for elements far below the viewport");
+
+    audios[0].scrollIntoView();
+    await waitUntilBuilt(audios[0]);
+
+    const built = audios.filter(hasBuiltControls).length;
+    assert_greater_than(built, 0, "elements scrolled into view build their controls");
+    assert_less_than(built, count, "elements still far from the viewport keep their controls deferred");
+    assert_false(hasBuiltControls(audios[count - 1]), "the last element is still deferred");
+}, "Only audio elements near the viewport build their controls");
+</script>
+</body>

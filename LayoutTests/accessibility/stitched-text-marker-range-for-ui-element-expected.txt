@@ -1,0 +1,9 @@
+This test ensures AXTextMarkerRangeForUIElement spans the full text of a stitch-group representative, rather than collapsing to its first run.
+
+PASS: rangeString === 'By John Gruber'
+PASS: webArea.textMarkerRangeLength(range) === 14
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+By John Gruber

@@ -1,0 +1,692 @@
+# Copyright (C) 2010 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#    * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#    * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import unittest
+import optparse
+
+from webkitpy.common.system.systemhost_mock import MockSystemHost
+
+from webkitpy.port import Port, Driver, DriverInput, DriverOutput
+from webkitpy.port.server_process_mock import MockServerProcess
+from webkitpy.thirdparty.mock import patch
+
+# FIXME: remove the dependency on TestWebKitPort
+from webkitpy.port.port_testcase import TestWebKitPort
+
+from webkitpy.tool.mocktool import MockOptions
+
+import os
+import sys
+
+
+class DriverOutputTest(unittest.TestCase):
+    def test_strip_metrics(self):
+        patterns = [
+            ('RenderView at (0,0) size 800x600', 'RenderView '),
+            ('text run at (0,0) width 100: "some text"', '"some text"'),
+            ('RenderBlock {HTML} at (0,0) size 800x600', 'RenderBlock {HTML} '),
+            ('RenderBlock {INPUT} at (29,3) size 12x12 [color=#000000]', 'RenderBlock {INPUT}'),
+
+            ('RenderBlock (floating) {DT} at (5,5) size 79x310 [border: (5px solid #000000)]',
+            'RenderBlock (floating) {DT} [border: px solid #000000)]'),
+
+            ('\n    "truncate text    "\n', '\n    "truncate text"\n'),
+
+            ('RenderText {#text} at (0,3) size 41x12\n    text run at (0,3) width 41: "whimper "\n',
+            'RenderText {#text} \n    "whimper"\n'),
+
+            ("""text run at (0,0) width 109: ".one {color: green;}"
+          text run at (109,0) width 0: " "
+          text run at (0,17) width 81: ".1 {color: red;}"
+          text run at (81,17) width 0: " "
+          text run at (0,34) width 102: ".a1 {color: green;}"
+          text run at (102,34) width 0: " "
+          text run at (0,51) width 120: "P.two {color: purple;}"
+          text run at (120,51) width 0: " "\n""",
+            '".one {color: green;}  .1 {color: red;}  .a1 {color: green;}  P.two {color: purple;}"\n'),
+
+            ('text-- other text', 'text--other text'),
+
+            (' some output   "truncate trailing spaces at end of line after text"   \n',
+            ' some output   "truncate trailing spaces at end of line after text"\n'),
+
+            (r'scrollWidth 120', r'scrollWidth'),
+            (r'scrollHeight 120', r'scrollHeight'),
+        ]
+
+        for pattern in patterns:
+            driver_output = DriverOutput(pattern[0], None, None, None)
+            driver_output.strip_metrics()
+            self.assertEqual(driver_output.text, pattern[1])
+
+
+class DriverTest(unittest.TestCase):
+    def make_port(self, host=None, options=None):
+        port = Port(host or MockSystemHost(), 'test', options or MockOptions(configuration='Release'))
+        port._config.build_directory = lambda configuration: '/mock-build'
+        return port
+
+    def _assert_wrapper(self, wrapper_string, expected_wrapper):
+        wrapper = Driver(self.make_port(options=MockOptions(wrapper=wrapper_string)), None, pixel_tests=False)._command_wrapper()
+        self.assertEqual(wrapper, expected_wrapper)
+
+    def test_command_wrapper(self):
+        self._assert_wrapper(None, [])
+        self._assert_wrapper("valgrind", ["valgrind"])
+
+        # Validate that shlex works as expected.
+        command_with_spaces = "valgrind --smc-check=\"check with spaces!\" --foo"
+        expected_parse = ["valgrind", "--smc-check=check with spaces!", "--foo"]
+        self._assert_wrapper(command_with_spaces, expected_parse)
+
+    def test_profiler_as_wrapper(self):
+        driver = Driver(self.make_port(MockSystemHost(os_name='linux'), MockOptions(profile=True, profiler='perf')), None, False)
+        self.assertEqual(driver._command_wrapper(), ['perf', 'record', '-g', '--output', '/mock-build/layout-test-results/test.data'])
+
+    def test_profiler_and_wrapper(self):
+        driver = Driver(self.make_port(MockSystemHost(os_name='linux'), MockOptions(profile=True, profiler='perf', wrapper='valgrind')), None, False)
+        self.assertEqual(driver._command_wrapper(), ['valgrind', 'perf', 'record', '-g', '--output', '/mock-build/layout-test-results/test.data'])
+
+    def test_test_to_uri(self):
+        port = self.make_port()
+        driver = Driver(port, None, pixel_tests=False)
+
+        self.assertEqual(driver.test_to_uri(DriverInput('foo/bar.html', 1000, None, None)), 'file://%s/foo/bar.html' % port.layout_tests_dir())
+        self.assertEqual(driver.test_to_uri(DriverInput('foo/bar.html', 1000, None, None, additional_header='runInCrossOriginFrame=true')), 'http://127.0.0.1:8000/root/foo/bar.html')
+        self.assertEqual(driver.test_to_uri(DriverInput('http/tests/foo.html', 1000, None, None)), 'http://127.0.0.1:8000/foo.html')
+        self.assertEqual(driver.test_to_uri(DriverInput('http/tests/ssl/bar.html', 1000, None, None)), 'https://127.0.0.1:8443/ssl/bar.html')
+        self.assertEqual(driver.test_to_uri(DriverInput('imported/w3c/web-platform-tests/foo/bar.html', 1000, None, None)), 'http://localhost:8800/foo/bar.html')
+        self.assertEqual(driver.test_to_uri(DriverInput('imported/w3c/web-platform-tests/foo/bar.https.html', 1000, None, None)), 'https://localhost:9443/foo/bar.https.html')
+        self.assertEqual(driver.test_to_uri(DriverInput('http/wpt/bar2.html', 1000, None, None)), 'http://localhost:8800/WebKit/bar2.html')
+        self.assertEqual(driver.test_to_uri(DriverInput('http/wpt/bar2.https.html', 1000, None, None)), 'https://localhost:9443/WebKit/bar2.https.html')
+
+    def test_uri_to_test(self):
+        port = self.make_port()
+        driver = Driver(port, None, pixel_tests=False)
+        self.assertEqual(driver.uri_to_test('file://%s/foo/bar.html' % port.layout_tests_dir()), 'foo/bar.html')
+        self.assertEqual(driver.uri_to_test('http://127.0.0.1:8000/foo.html'), 'http/tests/foo.html')
+        self.assertEqual(driver.uri_to_test('https://127.0.0.1:8443/ssl/bar.html'), 'http/tests/ssl/bar.html')
+        self.assertEqual(driver.uri_to_test('https://127.0.0.1:8443/ssl/bar.https.html'), 'http/tests/ssl/bar.https.html')
+        self.assertEqual(driver.uri_to_test('http://localhost:8800/foo/bar.html'), 'imported/w3c/web-platform-tests/foo/bar.html')
+        self.assertEqual(driver.uri_to_test('http://localhost:8800/WebKit/bar2.html'), 'http/wpt/bar2.html')
+        self.assertEqual(driver.uri_to_test('https://localhost:9443/WebKit/bar2.https.html'), 'http/wpt/bar2.https.html')
+        self.assertEqual(driver.uri_to_test('http://127.0.0.1:8000/root/foo/bar.html'), 'foo/bar.html')
+
+    def test_command_from_driver_input_strips_variant_from_absolute_path(self):
+        port = self.make_port()
+        driver = Driver(port, None, pixel_tests=False)
+        for test_name in ['imported/w3c/web-platform-tests/foo/bar.any.html', 'http/tests/foo/bar.html']:
+            for variant in ['?1-10', '#fragment']:
+                arguments = driver._command_from_driver_input(DriverInput(test_name + variant, 1000, None, False)).rstrip('\n').split("'")
+                self.assertTrue(arguments[0].endswith(variant), arguments[0])
+                self.assertEqual(arguments[arguments.index('--absolutePath') + 1], port.abspath_for_test(test_name))
+
+    def test_read_block(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=False)
+        driver._server_process = MockServerProcess(lines=[
+            'ActualHash: foobar',
+            'Content-Type: my_type',
+            'Content-Transfer-Encoding: none',
+            "#EOF",
+        ])
+        content_block = driver._read_block(0, "")
+        self.assertEqual(content_block.content_type, 'my_type')
+        self.assertEqual(content_block.encoding, 'none')
+        self.assertEqual(content_block.content_hash, 'foobar')
+        # We should only poll once for each line.
+        self.assertEqual(driver._server_process.number_of_times_polled, 4)
+        driver._server_process = None
+
+    def test_read_block_crashed_process(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=False)
+        driver._server_process = MockServerProcess(
+            crashed=True,
+            lines=[
+                'ActualHash: foobar',
+                'Content-Type: my_type',
+                'Content-Transfer-Encoding: none',
+                '#EOF',
+            ])
+
+        content_block = driver._read_block(0, "")
+        self.assertEqual(content_block.content_type, None)
+        self.assertEqual(content_block.encoding, None)
+        self.assertEqual(content_block.content_hash, None)
+        driver._server_process = None
+
+    def test_read_binary_block(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=True)
+        driver._server_process = MockServerProcess(lines=[
+            'ActualHash: actual',
+            'ExpectedHash: expected',
+            'Content-Type: image/png',
+            'Content-Length: 9',
+            "12345678",
+            "#EOF",
+        ])
+        content_block = driver._read_block(0, "")
+        self.assertEqual(content_block.content_type, 'image/png')
+        self.assertEqual(content_block.content_hash, 'actual')
+        self.assertEqual(content_block.content, b'12345678\n')
+        self.assertEqual(content_block.decoded_content, '12345678\n')
+        driver._server_process = None
+
+    def test_read_base64_block(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=True)
+        driver._server_process = MockServerProcess(lines=[
+            'ActualHash: actual',
+            'ExpectedHash: expected',
+            'Content-Type: image/png',
+            'Content-Transfer-Encoding: base64',
+            'Content-Length: 12',
+            'MTIzNDU2NzgK#EOF',
+        ])
+        content_block = driver._read_block(0, "")
+        self.assertEqual(content_block.content_type, 'image/png')
+        self.assertEqual(content_block.content_hash, 'actual')
+        self.assertEqual(content_block.encoding, 'base64')
+        self.assertEqual(content_block.content, b'MTIzNDU2NzgK')
+        self.assertEqual(content_block.decoded_content, b'12345678\n')
+
+    def _make_driver_with_output(self, lines, err_lines, pixel_tests=False):
+        port = TestWebKitPort()
+        port._test_runner_process_constructor = lambda *args, **kwargs: MockServerProcess(lines=lines, err_lines=err_lines)
+        return Driver(port, 0, pixel_tests=pixel_tests)
+
+    def test_run_test_reports_skip_reply(self):
+        driver = self._make_driver_with_output(
+            lines=['Content-Type: text/x-webkit-skipped', 'skipIfDisabled: TestKey', '#EOF', '#EOF'],
+            err_lines=['#EOF'])
+        output = driver.run_test(DriverInput('fast/harness/skip-if-disabled.html', 1000, None, False), stop_when_done=False)
+        self.assertTrue(output.skipped)
+        self.assertEqual(output.skipped_key, 'TestKey')
+        self.assertFalse(output.crash)
+        self.assertFalse(output.timeout)
+        self.assertIsNone(output.image)
+
+    def test_run_test_reports_skip_reply_with_pixel_tests(self):
+        driver = self._make_driver_with_output(
+            lines=['Content-Type: text/x-webkit-skipped', 'skipIfDisabled: TestKey', '#EOF', '#EOF'],
+            err_lines=['#EOF'],
+            pixel_tests=True)
+        output = driver.run_test(DriverInput('fast/harness/skip-if-disabled.html', 1000, None, True), stop_when_done=False)
+        self.assertTrue(output.skipped)
+        self.assertEqual(output.skipped_key, 'TestKey')
+        self.assertIsNone(output.image)
+        self.assertIsNone(output.image_hash)
+
+    def test_run_test_normal_reply_is_not_skipped(self):
+        driver = self._make_driver_with_output(
+            lines=['Content-Type: text/plain', 'PASS', '#EOF', '#EOF'],
+            err_lines=['#EOF'])
+        output = driver.run_test(DriverInput('fast/harness/skip-if-disabled.html', 1000, None, False), stop_when_done=False)
+        self.assertFalse(output.skipped)
+        self.assertIsNone(output.skipped_key)
+        self.assertEqual(output.text, 'PASS\n')
+
+    def test_run_test_reports_skip_reply_without_key(self):
+        driver = self._make_driver_with_output(
+            lines=['Content-Type: text/x-webkit-skipped', '#EOF', '#EOF'],
+            err_lines=['#EOF'])
+        output = driver.run_test(DriverInput('fast/harness/skip-if-disabled.html', 1000, None, False), stop_when_done=False)
+        self.assertTrue(output.skipped)
+        self.assertEqual(output.skipped_key, '?')
+
+    def test_no_timeout(self):
+        port = TestWebKitPort(options=optparse.Values({'enable_all_experimental_features': True}))
+        port._config.build_directory = lambda configuration: '/mock-build'
+        driver = Driver(port, 0, pixel_tests=True, no_timeout=True)
+        if sys.platform.startswith('win'):
+            self.assertEqual(driver.cmd_line(True, []), ['/mock-build/WebKitTestRunner.exe', '--no-timeout', '-'])
+        else:
+            self.assertEqual(driver.cmd_line(True, []), ['/mock-build/WebKitTestRunner', '--no-timeout', '-'])
+
+    def _make_port_for_cmd_line(self, **options):
+        values = {'enable_all_experimental_features': True}
+        values.update(options)
+        port = TestWebKitPort(options=optparse.Values(values))
+        port._config.build_directory = lambda configuration: '/mock-build'
+        return port
+
+    def test_cmd_line_has_no_disabled_keys_by_default(self):
+        cmd = Driver(self._make_port_for_cmd_line(), 0, pixel_tests=False).cmd_line(False, [])
+        self.assertNotIn('--disabled-keys', cmd)
+
+    def test_cmd_line_passes_disabled_keys_as_one_sorted_comma_list(self):
+        port = self._make_port_for_cmd_line(disabled_keys=['TestKey', 'OtherKey,TestKey'])
+        cmd = Driver(port, 0, pixel_tests=False).cmd_line(False, [])
+        self.assertEqual(cmd.count('--disabled-keys'), 1)
+        self.assertEqual(cmd[cmd.index('--disabled-keys') + 1], 'OtherKey,TestKey')
+        self.assertEqual(cmd[-1], '-')
+
+    def _reference_arguments(self, port, is_reference):
+        driver = Driver(port, 0, pixel_tests=False)
+        driver_input = DriverInput('fast/harness/skip-if-disabled-reftest-expected.html', 1000, None, False, is_reference=is_reference)
+        return driver._command_from_driver_input(driver_input).rstrip('\n').split("'")
+
+    def test_command_marks_a_reference_load_when_disabled_keys_are_set(self):
+        self.assertIn('--reference', self._reference_arguments(self._make_port_for_cmd_line(disabled_keys=['TestKey']), is_reference=True))
+
+    def test_command_does_not_mark_a_test_load_as_a_reference(self):
+        self.assertNotIn('--reference', self._reference_arguments(self._make_port_for_cmd_line(disabled_keys=['TestKey']), is_reference=False))
+
+    def test_command_does_not_mark_a_reference_load_without_disabled_keys(self):
+        self.assertNotIn('--reference', self._reference_arguments(self._make_port_for_cmd_line(), is_reference=True))
+
+    def test_check_for_driver_crash(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=True)
+
+        class FakeServerProcess(object):
+            def __init__(self, crashed):
+                self.crashed = crashed
+
+            def pid(self):
+                return 1234
+
+            def system_pid(self):
+                return self.pid()
+
+            def process_name(self):
+                return 'FakeServerProcess'
+
+            def has_crashed(self):
+                return self.crashed
+
+            def stop(self, timeout):
+                pass
+
+            def write(self, bytes, ignore_crash=False):
+                pass
+
+        def assert_crash(driver, error_line, crashed, name, pid, unresponsive=False):
+            self.assertEqual(driver._check_for_driver_crash_or_unresponsiveness(error_line), crashed)
+            self.assertEqual(driver._crashed_process_name, name)
+            self.assertEqual(driver._crashed_pid, pid)
+            self.assertEqual(driver._driver_timed_out, unresponsive)
+            driver.stop()
+
+        driver._server_process = FakeServerProcess(False)
+        assert_crash(driver, b'', False, None, None)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(False)
+        driver._driver_timed_out = False
+        assert_crash(driver, b'#CRASHED\n', True, 'FakeServerProcess', 1234)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(False)
+        driver._driver_timed_out = False
+        assert_crash(driver, b'#CRASHED - WebProcess\n', True, 'WebProcess', None)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(False)
+        driver._driver_timed_out = False
+        assert_crash(driver, b'#CRASHED - WebProcess (pid 8675)\n', True, 'WebProcess', 8675)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(False)
+        driver._driver_timed_out = False
+        assert_crash(driver, b'#PROCESS UNRESPONSIVE - WebProcess (pid 8675)\n', True, None, None, True)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(False)
+        driver._driver_timed_out = False
+        assert_crash(driver, b'#CRASHED - renderer (pid 8675)\n', True, 'renderer', 8675)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(True)
+        driver._driver_timed_out = False
+        assert_crash(driver, b'', True, 'FakeServerProcess', 1234)
+
+    def test_creating_a_port_does_not_write_to_the_filesystem(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=True)
+        self.assertEqual(port._filesystem.written_files, {})
+        self.assertEqual(port._filesystem.last_tmpdir, None)
+
+    def test_stop_cleans_up_properly(self):
+        port = TestWebKitPort()
+        port._test_runner_process_constructor = MockServerProcess
+        driver = Driver(port, 0, pixel_tests=True)
+        driver.start(True, [])
+        last_tmpdir = port._filesystem.last_tmpdir
+        self.assertNotEqual(last_tmpdir, None)
+        driver.stop()
+        self.assertFalse(port._filesystem.isdir(last_tmpdir))
+
+    def test_two_starts_cleans_up_properly(self):
+        port = TestWebKitPort()
+        port._test_runner_process_constructor = MockServerProcess
+        driver = Driver(port, 0, pixel_tests=True)
+        driver.start(True, [])
+        last_tmpdir = port._filesystem.last_tmpdir
+        driver._start(True, [])
+        self.assertFalse(port._filesystem.isdir(last_tmpdir))
+
+    def test_start_actually_starts(self):
+        port = TestWebKitPort()
+        port._test_runner_process_constructor = MockServerProcess
+        driver = Driver(port, 0, pixel_tests=True)
+        driver.start(True, [])
+        self.assertTrue(driver._server_process.started)
+
+    def test__append_environment_variable_path(self):
+        port = self.make_port()
+        driver = Driver(port, None, pixel_tests=False)
+
+        environment = {}
+        variable = 'DYLD_FAKE_PATH'
+        path = '/tmp/fake-dyld-path'
+        driver._append_environment_variable_path(environment, variable, path)
+        self.assertEqual(environment[variable], path)
+
+        base_value = ''
+        environment[variable] = base_value
+        driver._append_environment_variable_path(environment, variable, path)
+        self.assertEqual(environment[variable], base_value + os.pathsep + path)
+
+        base_value = '/usr/lib'
+        environment[variable] = base_value
+        driver._append_environment_variable_path(environment, variable, path)
+        self.assertEqual(environment[variable], base_value + os.pathsep + path)
+
+        base_value = os.pathsep.join(['/usr/lib', '/usr/local/lib'])
+        environment[variable] = base_value
+        driver._append_environment_variable_path(environment, variable, path)
+        self.assertEqual(environment[variable], base_value + os.pathsep + path)
+
+    def test_setup_environ_for_test(self):
+        environment_user = {}
+        environment_user['WEBKIT_OUTPUTDIR'] = '/opt/webkit/WebKitBuild/Release'
+        environment_user['FOO'] = 'BAR'
+        with patch('os.environ', environment_user):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment_driver_test = driver._setup_environ_for_test()
+            self.assertNotIn('FOO', environment_driver_test)
+            self.assertIn('WEBKIT_OUTPUTDIR', environment_driver_test)
+            self.assertEqual(environment_user['WEBKIT_OUTPUTDIR'], environment_driver_test['WEBKIT_OUTPUTDIR'])
+
+    def test_setup_environ_for_test_asan_options(self):
+        # No ASAN_OPTIONS: set our default.
+        with patch('os.environ', {}):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+            self.assertEqual(environment['ASAN_OPTIONS'], environment['__XPC_ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_asan_options_additive(self):
+        # ASAN_OPTIONS set with a different key: keep theirs, append ours.
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['ASAN_OPTIONS=detect_leaks=1']))
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('detect_leaks=1:allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_asan_options_not_clobbered(self):
+        # ASAN_OPTIONS already sets our key: leave it alone.
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['ASAN_OPTIONS=allocator_may_return_null=0']))
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('allocator_may_return_null=0', environment['ASAN_OPTIONS'])
+
+    def make_tsan_port(self, additional_env_var=None):
+        # A TSan build is identified by the marker file build-webkit --tsan writes.
+        port = self.make_port(options=MockOptions(additional_env_var=additional_env_var or []))
+        port.host.filesystem.write_text_file(port.host.filesystem.join(port._config.build_directory(None), 'TSan'), 'YES\n')
+        return port
+
+    def test_setup_environ_for_test_tsan_options_non_tsan_build(self):
+        # Not a TSan build: leave TSAN_OPTIONS alone entirely.
+        with patch('os.environ', {}):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertNotIn('TSAN_OPTIONS', environment)
+            self.assertNotIn('__XPC_TSAN_OPTIONS', environment)
+
+    def test_setup_environ_for_test_tsan_options_unset(self):
+        # TSan build, no TSAN_OPTIONS: set the in-tree suppressions file.
+        with patch('os.environ', {}):
+            port = self.make_tsan_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('second_deadlock_stack=1:suppressions=' + port.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt'), environment['TSAN_OPTIONS'])
+            # XPC-spawned children only inherit the __XPC_-prefixed twin.
+            self.assertEqual(environment['TSAN_OPTIONS'], environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_tsan_options_without_suppressions(self):
+        # TSAN_OPTIONS set without suppressions=: append ours, keep theirs.
+        # The separator is always ':', even on Windows where os.pathsep is ';'
+        # (TSan fails flag parsing and aborts on ';').
+        with patch('os.environ', {}):
+            port = self.make_tsan_port(additional_env_var=['TSAN_OPTIONS=log_path=/tmp/tsan'])
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('log_path=/tmp/tsan:second_deadlock_stack=1:suppressions=' + port.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt'), environment['TSAN_OPTIONS'])
+            self.assertNotIn(';', environment['TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_tsan_options_with_suppressions(self):
+        # TSAN_OPTIONS already names a suppressions file: leave it alone.
+        with patch('os.environ', {}):
+            port = self.make_tsan_port(additional_env_var=['TSAN_OPTIONS=suppressions=/tmp/mine.txt'])
+            driver = Driver(port, None, pixel_tests=False)
+            environment = driver._setup_environ_for_test()
+            self.assertEqual('suppressions=/tmp/mine.txt:second_deadlock_stack=1', environment['TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_asan_options_reach_xpc_services(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['ASAN_OPTIONS=log_path=/tmp/asan:allocator_may_return_null=0']))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('log_path=/tmp/asan:allocator_may_return_null=0', environment['ASAN_OPTIONS'])
+            self.assertEqual('log_path=/tmp/asan:allocator_may_return_null=0', environment['__XPC_ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_xpc_asan_options_kept(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['__XPC_ASAN_OPTIONS=log_path=/tmp/xpc']))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+            self.assertEqual('log_path=/tmp/xpc:allocator_may_return_null=1', environment['__XPC_ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_xpc_asan_options_override_asan_options(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=[
+                'ASAN_OPTIONS=log_path=/tmp/asan:detect_stack_use_after_return=1',
+                '__XPC_ASAN_OPTIONS=allocator_may_return_null=0:log_path=/tmp/xpc',
+            ]))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('log_path=/tmp/asan:detect_stack_use_after_return=1:allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+            self.assertEqual('allocator_may_return_null=0:log_path=/tmp/xpc:detect_stack_use_after_return=1', environment['__XPC_ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_asan_options_repeated_key_reaches_xpc_services(self):
+        # The sanitizer uses the last setting for a repeated key, so XPC services must get every copy in order.
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=[
+                'ASAN_OPTIONS=log_path=/tmp/a:log_path=/tmp/b',
+                '__XPC_ASAN_OPTIONS=halt_on_error=0',
+            ]))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('log_path=/tmp/a:log_path=/tmp/b:allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+            self.assertEqual('halt_on_error=0:log_path=/tmp/a:log_path=/tmp/b:allocator_may_return_null=1', environment['__XPC_ASAN_OPTIONS'])
+
+    def test_setup_environ_for_test_tsan_options_reach_xpc_services_non_tsan_build(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['TSAN_OPTIONS=halt_on_error=1:log_path=/tmp/tsan']))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('halt_on_error=1:log_path=/tmp/tsan', environment['TSAN_OPTIONS'])
+            self.assertEqual('halt_on_error=1:log_path=/tmp/tsan', environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_tsan_options_reach_xpc_services(self):
+        with patch('os.environ', {}):
+            port = self.make_tsan_port(additional_env_var=['TSAN_OPTIONS=log_path=/tmp/tsan:second_deadlock_stack=0'])
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            expected = 'log_path=/tmp/tsan:second_deadlock_stack=0:suppressions=' + port.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt')
+            self.assertEqual(expected, environment['TSAN_OPTIONS'])
+            self.assertEqual(expected, environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_xpc_tsan_options_kept(self):
+        with patch('os.environ', {}):
+            port = self.make_tsan_port(additional_env_var=['__XPC_TSAN_OPTIONS=halt_on_error=1'])
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            suppressions = 'suppressions=' + port.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt')
+            self.assertEqual('second_deadlock_stack=1:' + suppressions, environment['TSAN_OPTIONS'])
+            self.assertEqual('halt_on_error=1:second_deadlock_stack=1:' + suppressions, environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_xpc_tsan_options_override_tsan_options(self):
+        with patch('os.environ', {}):
+            port = self.make_tsan_port(additional_env_var=[
+                'TSAN_OPTIONS=suppressions=/tmp/mine.txt:halt_on_error=0',
+                '__XPC_TSAN_OPTIONS=suppressions=/tmp/xpc.txt:second_deadlock_stack=0',
+            ])
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('suppressions=/tmp/mine.txt:halt_on_error=0:second_deadlock_stack=1', environment['TSAN_OPTIONS'])
+            self.assertEqual('suppressions=/tmp/xpc.txt:second_deadlock_stack=0:halt_on_error=0', environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_xpc_tsan_options_kept_non_tsan_build(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=['__XPC_TSAN_OPTIONS=halt_on_error=1']))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertNotIn('TSAN_OPTIONS', environment)
+            self.assertEqual('halt_on_error=1', environment['__XPC_TSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_lsan_and_ubsan_options_reach_xpc_services(self):
+        with patch('os.environ', {}):
+            port = self.make_port(options=MockOptions(additional_env_var=[
+                'LSAN_OPTIONS=log_path=/tmp/lsan:report_objects=1',
+                '__XPC_LSAN_OPTIONS=log_path=/tmp/xpc',
+                'UBSAN_OPTIONS=print_stacktrace=1',
+            ]))
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('log_path=/tmp/lsan:report_objects=1', environment['LSAN_OPTIONS'])
+            self.assertEqual('log_path=/tmp/xpc:report_objects=1', environment['__XPC_LSAN_OPTIONS'])
+            self.assertEqual('print_stacktrace=1', environment['UBSAN_OPTIONS'])
+            self.assertEqual('print_stacktrace=1', environment['__XPC_UBSAN_OPTIONS'])
+
+    def test_setup_environ_for_test_sanitizer_options_ignore_shell_environment(self):
+        with patch('os.environ', {'ASAN_OPTIONS': 'log_path=/tmp/shell', '__XPC_TSAN_OPTIONS': 'halt_on_error=1'}):
+            port = self.make_port()
+            environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+            self.assertEqual('allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+            self.assertEqual('allocator_may_return_null=1', environment['__XPC_ASAN_OPTIONS'])
+            self.assertNotIn('__XPC_TSAN_OPTIONS', environment)
+
+    def test_setup_environ_for_test_sanitizer_options_match_api_tests(self):
+        for additional_env_var in [
+            [],
+            ['ASAN_OPTIONS=log_path=/tmp/asan', '__XPC_ASAN_OPTIONS=halt_on_error=0'],
+            ['TSAN_OPTIONS=halt_on_error=1', '__XPC_TSAN_OPTIONS=log_path=/tmp/xpc'],
+            ['UBSAN_OPTIONS=print_stacktrace=1', 'LSAN_OPTIONS=report_objects=1'],
+        ]:
+            for is_tsan_build in [False, True]:
+                with patch('os.environ', {}):
+                    port = self.make_tsan_port(additional_env_var) if is_tsan_build else self.make_port(options=MockOptions(additional_env_var=additional_env_var))
+                    driver_environment = Driver(port, None, pixel_tests=False)._setup_environ_for_test()
+                    api_tests_environment = port.environment_for_api_tests()
+                    for variable in Port.SANITIZER_OPTIONS_VARIABLES:
+                        for name in [variable, '__XPC_' + variable]:
+                            self.assertEqual(driver_environment.get(name), api_tests_environment.get(name), '{} with {}'.format(name, additional_env_var))
+
+    def test_setup_environ_for_test_webkit_prefix(self):
+        environment_user = {}
+        environment_user['WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH'] = '1'
+        environment_user['WEBKIT_ENABLE_RANDOM_FEATURE'] = '1'
+        environment_user['WEBKIT_DISABLE_ANOTHER_RANDOM_FEATURE'] = '1'
+        environment_user['WEBKIT_SET_RANDOM_VALUE'] = 'rand0m'
+        environment_user['WEBKIT_GST_USE_PLAYBIN3'] = '0'
+        environment_user['WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR'] = '0'
+        with patch('os.environ', environment_user):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment_driver_test = driver._setup_environ_for_test()
+            for var in environment_user:
+                self.assertIn(var, environment_driver_test)
+                self.assertEqual(environment_user[var], environment_driver_test[var])
+
+    def test_setup_environ_base_vars(self):
+        # This are essential environment variables that should be copied
+        # as part of base:setup_environ_for_server for all drivers
+        environ_keep_yes = {'PATH': '/bin:/usr/sbin:/usr/bin',
+                           'WEBKIT_TESTFONTS': '/opt/webkit/WebKitBuild/WKTestFonts',
+                           'WEBKIT_OUTPUTDIR': '/opt/webkit/WebKitBuild/Release',
+                           'LANG': 'en_US.utf8'}
+        # This are environment variables that should be copied
+        # on the driver (wayland, x11). But not in the base driver.
+        environ_keep_no = {'DISPLAY': ':0.0',
+                          'XAUTHORITY': '/home/igalia/.Xauthority',
+                          'WAYLAND_DISPLAY': 'wayland-0',
+                          'WAYLAND_SOCKET': 'wayland-socket-0',
+                          'GDK_BACKEND': 'x11'}
+        environment_user = dict(list(environ_keep_yes.items()) + list(environ_keep_no.items()))
+        with patch('os.environ', environment_user):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment_driver_test = driver._setup_environ_for_test()
+            for var in environ_keep_no.keys():
+                    self.assertNotIn(var, environment_driver_test)
+            for var in environ_keep_yes.keys():
+                    self.assertIn(var, environment_driver_test)
+                    self.assertEqual(environment_driver_test[var], environ_keep_yes[var])
+
+    def test_setup_environ_without_starting_driver(self):
+        environ_user = {'WEBKIT_OUTPUTDIR': '/opt/webkit/WebKitBuild/Release'}
+        with patch('os.environ', environ_user):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            self.assertEqual(driver._driver_tempdir, None)
+            environ_driver = driver._setup_environ_for_test()
+            self.assertNotEqual(driver._driver_tempdir, None)
+            self.assertTrue(port._filesystem.isdir(str(driver._driver_tempdir)))
+            for var in environ_driver:
+                self.assertNotEqual(var, None)
+                self.assertNotEqual(environ_driver[var], None)
+
+    def test_create_temporal_home_dir(self):
+        environ_user = {'HOME': '/home/igalia'}
+        with patch('os.environ', environ_user), patch('sys.platform', 'linux2'):
+            port = self.make_port()
+            port._test_runner_process_constructor = MockServerProcess
+            driver = Driver(port, None, pixel_tests=False)
+            driver.start(True, [])
+            environ_driver = driver._setup_environ_for_test()
+            self.assertNotEqual(environ_driver['HOME'], environ_user['HOME'])
+            self.assertIn(str(driver._driver_tempdir), environ_driver['HOME'])
+            self.assertNotIn(str(driver._driver_tempdir), environ_user['HOME'])
+            self.assertTrue(port._filesystem.isdir(environ_driver['HOME']))

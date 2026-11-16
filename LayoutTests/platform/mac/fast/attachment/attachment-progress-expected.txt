@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x93
+  RenderBlock {HTML} at (0,0) size 800x93
+    RenderBody {BODY} at (8,8) size 784x77
+      RenderAttachment {ATTACHMENT} at (0,0) size 76x77
+      RenderText {#text} at (76,54) size 4x18
+        text run at (76,54) width 4: " "
+      RenderAttachment {ATTACHMENT} at (80,0) size 76x77
+      RenderText {#text} at (156,54) size 4x18
+        text run at (156,54) width 4: " "
+      RenderAttachment {ATTACHMENT} at (160,0) size 76x77
+      RenderText {#text} at (236,54) size 4x18
+        text run at (236,54) width 4: " "
+      RenderAttachment {ATTACHMENT} at (240,0) size 76x77
+      RenderText {#text} at (316,54) size 4x18
+        text run at (316,54) width 4: " "
+      RenderAttachment {ATTACHMENT} at (320,0) size 76x77
+      RenderText {#text} at (396,54) size 4x18
+        text run at (396,54) width 4: " "
+      RenderAttachment {ATTACHMENT} at (400,0) size 76x77
+      RenderText {#text} at (476,54) size 4x18
+        text run at (476,54) width 4: " "
+      RenderAttachment {ATTACHMENT} at (480,0) size 76x77
+      RenderText {#text} at (556,54) size 4x18
+        text run at (556,54) width 4: " "
+      RenderAttachment {ATTACHMENT} at (560,0) size 76x77
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,107 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget");
+
+    const frameFileName = "frame-with-adopted-stylesheet.html";
+
+    let frameTarget = null;
+    let frameDocument = null;
+
+    async function frameDocumentForTarget(target) {
+        let document = WI.domManager.frameTargetDocumentForTarget(target);
+        while (!document) {
+            let event = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            if (event.data.target === target)
+                document = event.data.document;
+        }
+        return document;
+    }
+
+    async function querySelectorInFrame(selector) {
+        return WI.domManager.nodeForId(await frameDocument.querySelector(selector));
+    }
+
+    async function evaluateInFrame(expression) {
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+    }
+
+    function expectRuleInFrameDocument(domNodeStyles, selectorText) {
+        let rule = domNodeStyles.matchedRules.find((rule) => rule.selectorText === selectorText);
+        InspectorTest.assert(rule, `Should find a matched rule for "${selectorText}".`);
+        if (!rule)
+            return;
+
+        let sourceCode = rule.sourceCodeLocation?.sourceCode;
+        InspectorTest.expectEqual(sourceCode?.urlComponents.lastPathComponent, frameFileName, `Source code for "${selectorText}" should be in file named "${frameFileName}".`);
+        InspectorTest.expectThat(sourceCode instanceof WI.Resource, `Source code for "${selectorText}" should be the frame's document resource.`);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget.Setup",
+        description: "Find the cross-origin frame target and its document.",
+        async test() {
+            frameTarget = await frameTargetForURLContaining(frameFileName);
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            frameDocument = await frameDocumentForTarget(frameTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget.StyleTag",
+        description: "A rule from a <style> tag should point at the frame's document.",
+        async test() {
+            let domNodeStyles = WI.cssManager.stylesForNode(await querySelectorInFrame("#inline"));
+            await domNodeStyles.refreshIfNeeded();
+            expectRuleInFrameDocument(domNodeStyles, "#inline");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget.AdoptedBeforeInspector",
+        description: "A rule from a constructed style sheet adopted before the inspector attached should point at the frame's document.",
+        async test() {
+            let domNodeStyles = WI.cssManager.stylesForNode(await querySelectorInFrame("#onload"));
+            await domNodeStyles.refreshIfNeeded();
+            expectRuleInFrameDocument(domNodeStyles, "#onload");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget.AdoptedAfterInspector",
+        description: "A rule from a constructed style sheet adopted after the inspector attached should point at the frame's document.",
+        async test() {
+            InspectorTest.log("Adopting `body { background: yellow; }` in the frame...");
+            await evaluateInFrame(`let sheet = new CSSStyleSheet(); sheet.replaceSync("body { background: yellow; }"); document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];`);
+
+            let domNodeStyles = WI.cssManager.stylesForNode(await querySelectorInFrame("body"));
+            await domNodeStyles.refreshIfNeeded();
+            expectRuleInFrameDocument(domNodeStyles, "body");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget.AdoptedWhileStylesShown",
+        description: "A rule from a constructed style sheet adopted after the node's styles were fetched should point at the frame's document.",
+        async test() {
+            let domNodeStyles = WI.cssManager.stylesForNode(await querySelectorInFrame("#selected"));
+            await domNodeStyles.refreshIfNeeded();
+
+            InspectorTest.log("Adopting `#selected { color: purple; }` in the frame...");
+            await evaluateInFrame(`adopt("#selected { color: purple; }")`);
+
+            await domNodeStyles.refresh();
+            expectRuleInFrameDocument(domNodeStyles, "#selected");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+    <p>Tests that rules from constructed style sheets in a cross-origin iframe point at the frame's document, through the frame target.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-adopted-stylesheet.html"></iframe>
+</body>

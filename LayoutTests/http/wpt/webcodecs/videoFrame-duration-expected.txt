@@ -1,0 +1,3 @@
+
+PASS H.264 encoder with frames having the same timestamp
+

@@ -1,0 +1,4 @@
+
+
+PASS permissions-policy-opaque-origin
+

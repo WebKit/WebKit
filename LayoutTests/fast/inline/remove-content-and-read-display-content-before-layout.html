@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<style>
+div {
+    font: 20px/1 monospace;
+    width: 10ch;
+}
+</style>
+<!-- Removing laid out content truncates the display content at the damaged line. Removing more content repaints it from the truncated display content before the next layout. -->
+<div id="textContainer">line<br>aaaaaaaaaa aaaa<!----> bbbb bbbbbbbbbb bbbbbbbbbb<br>line</div>
+<div id="lineBreakContainer">line<br>line<br>line<br>line<br>line<br>line<br>aaaaaaaaaa <br>bbbbbbbbbb cccccccccc<br>line<br>line</div>
+<svg width="200" height="30"><text id="svgText" x="0" y="20" font-size="20">kept<!----> removed<!----> removed</text></svg>
+<script>
+document.body.offsetHeight;
+
+// Only the first box of the text that continues on the damaged line is left.
+const textOnDamagedLine = textContainer.childNodes[2];
+textContainer.childNodes[4].remove();
+textOnDamagedLine.remove();
+
+// Text that was never laid out is removed after a line break. Partial layout runs on the truncated display content.
+lineBreakContainer.append("appended");
+lineBreakContainer.querySelectorAll("br")[6].remove();
+lineBreakContainer.lastChild.remove();
+
+const svgTextToRemove = svgText.childNodes[2];
+svgText.childNodes[4].remove();
+svgTextToRemove.remove();
+</script>

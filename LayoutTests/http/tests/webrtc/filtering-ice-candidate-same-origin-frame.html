@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var didGetUserMedia = false;
+window.addEventListener("message", (event) => {
+    if (!didGetUserMedia && event.data === "filtering enabled") {
+        check2.innerHTML = "<iframe src='resources/do-get-user-media.html'></iframe>";
+        return;
+    }
+    if (event.data === "getUserMedia done") {
+        didGetUserMedia = true;
+        frame1.contentWindow.postMessage("check filtering", "*");
+        return;
+    }
+    check1.innerHTML = "";
+    check2.innerHTML = "";
+    result.innerHTML = event.data === "filtering disabled" ? "PASS" : "FAIL";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+
+  </script>
+  <div id="result"></div>
+  <div id="check1">
+    <iframe id="frame1" src='resources/check-ice-candidate-filtering.html'></iframe>
+  </div>
+  <div id="check2">
+  </div>
+</body>
+</html>

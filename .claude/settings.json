@@ -1,0 +1,10 @@
+{
+  "extraKnownMarketplaces": {
+    "webkit-plugins": {
+      "source": {
+        "source": "directory",
+        "path": ".claude/plugins"
+      }
+    }
+  }
+}

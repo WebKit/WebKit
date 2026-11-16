@@ -1,0 +1,19 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Document that navigates itself cross-site while it keeps loading, and records its events</title>
+<script>
+const params = new URLSearchParams(location.search);
+const record = event => navigator.sendBeacon("record-event.py?event=" + event + "&token=" + params.get("token"));
+
+navigation.onnavigateerror = () => record("navigateerror");
+addEventListener("pagehide", () => record("pagehide"));
+
+addEventListener("load", () => {
+    const result = navigation.navigate(params.get("remote"));
+    result.committed.catch(() => { });
+    result.finished.catch(() => { });
+    // Keep this document loading until it is torn down.
+    setInterval(() => fetch("/common/slow.py?delay=3000").catch(() => { }), 20);
+});
+</script>
+<body></body>

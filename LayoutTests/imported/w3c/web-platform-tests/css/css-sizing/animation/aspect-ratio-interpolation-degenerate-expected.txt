@@ -1,0 +1,14 @@
+
+PASS aspect-ratio animates discretely from [0 / 1] to [2 / 1]
+PASS aspect-ratio animates discretely from [1 / 0] to [2 / 1]
+PASS aspect-ratio animates discretely from [0 / 0] to [2 / 1]
+PASS aspect-ratio animates discretely from [2 / 1] to [0 / 1]
+PASS aspect-ratio animates discretely from [2 / 1] to [1 / 0]
+PASS aspect-ratio animates discretely from [2 / 1] to [0 / 0]
+PASS aspect-ratio animates discretely from [0 / 1] to [1 / 0]
+PASS aspect-ratio animates discretely from [auto 0 / 1] to [auto 2 / 1]
+PASS aspect-ratio animates discretely from [auto 1 / 0] to [auto 2 / 1]
+PASS aspect-ratio animates discretely from [auto 0 / 0] to [auto 2 / 1]
+PASS aspect-ratio with non-degenerate auto ratios still interpolates
+PASS aspect-ratio never computes to NaN or infinity when animating from a degenerate ratio
+

@@ -1,0 +1,21 @@
+<html>
+<head>
+<script>
+function runTest()
+{
+   document.execCommand("selectAll", true);
+   document['designMode'] = 'on';
+   document.execCommand("insertHorizontalRule", true);
+   document.body.replaceWith(document.createElement('div'));
+   document.execCommand("insertHorizontalRule", true);
+   if (window.testRunner) {
+       testRunner.dumpAsText();
+       document.documentElement.textContent = 'PASS. WebKit did not crash.';
+   }
+}
+window.onload = runTest;
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,14 @@
+
+PASS Document: setting length to 0 removes the adopted styles
+PASS Document: shrinking length removes the truncated styles
+PASS Document: modifying a sheet still applies after popping its duplicate
+PASS Document: modifying a sheet still applies after truncating its duplicate
+PASS Document: modifying a sheet still applies after overwriting its duplicate
+PASS Document: modifying a sheet still applies after reassigning the array with it
+PASS ShadowRoot: setting length to 0 removes the adopted styles
+PASS ShadowRoot: shrinking length removes the truncated styles
+PASS ShadowRoot: modifying a sheet still applies after popping its duplicate
+PASS ShadowRoot: modifying a sheet still applies after truncating its duplicate
+PASS ShadowRoot: modifying a sheet still applies after overwriting its duplicate
+PASS ShadowRoot: modifying a sheet still applies after reassigning the array with it
+

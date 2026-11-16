@@ -1,0 +1,18 @@
+Tests that when decoding a finished resource's body makes BackendResourceDataStore evict that same resource, the store's size accounting stays correct and later loads in the process are still recorded.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.DecodeEvictsDecodingResource
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.DecodeEvictsDecodingResource.LoadResources
+PASS: A should finish loading.
+PASS: B should finish loading.
+PASS: C should finish loading.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.DecodeEvictsDecodingResource.ResourceBeingDecodedIsEvicted
+PASS: getResponseBody for A should fail.
+Error: Resource content was evicted from inspector cache
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.DecodeEvictsDecodingResource.OtherBodiesAreKept
+PASS: B's body should have 600,000 characters.
+PASS: B's body should be all 'B'.
+PASS: C's body should match the served content.
+

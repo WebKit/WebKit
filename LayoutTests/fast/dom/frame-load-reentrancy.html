@@ -1,0 +1,15 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+function loadEventHandler() {
+    try { dlElement.appendChild(dataElement) } catch (e) { console.log("first error " + e) }
+    try { document.head.appendChild(anchorElement) } catch (e) { console.log("second error " + e) }
+    // Checking for window.testRunner or calling dumpAsText changes whether this test originally crashed.
+    console.log("This test passes if it does not crash or overly recurse.");
+}
+</script>
+<data id="dataElement"></h3>
+<a id="anchorElement">
+<dl id="dlElement">
+<iframe onload="loadEventHandler()"></iframe>
+<a></a>

@@ -1,0 +1,6 @@
+
+PASS Test origin header /beacon/resources/ - without body
+PASS Test origin header /beacon/resources/ - with body
+PASS Test origin header http://www1.web-platform.test:8800/beacon/resources/ - without body
+PASS Test origin header http://www1.web-platform.test:8800/beacon/resources/ - with body
+

@@ -1,0 +1,3 @@
+
+PASS getIntersectionList() on clipped element
+

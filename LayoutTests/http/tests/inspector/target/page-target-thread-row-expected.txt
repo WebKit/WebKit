@@ -1,0 +1,7 @@
+Tests that the page target stays a debugger thread target without site isolation, so the call stack sidebar keeps its thread row.
+
+
+== Running test suite: Target.PageTargetThreadRow
+-- Running test case: Target.PageTargetThreadRow.ShownWithoutSiteIsolation
+PASS: The page target should be a debugger thread target.
+

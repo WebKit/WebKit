@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=false EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+#scroller {
+    width: 300px;
+    height: 300px;
+    overflow: scroll;
+    scroll-snap-type: y mandatory;
+}
+
+#scroller > div {
+    height: 200px;
+    scroll-snap-align: start;
+}
+</style>
+</head>
+<body>
+<div id="scroller" tabindex="0"></div>
+<script>
+description("Tests that scrolling up during an animated scroll to the end of a scroller that animates on the main thread scrolls up from where the scroller is, rather than from the end.");
+jsTestIsAsync = true;
+
+for (let i = 0; i < 45; ++i)
+    scroller.appendChild(document.createElement("div"));
+
+var scrollTopBeforeScrollingUp;
+var finalScrollTop;
+var snapPositions;
+
+async function scrollToEndThenScrollUp(key)
+{
+    scroller.scrollTop = 0;
+    await UIHelper.renderingUpdate();
+    const maxScrollTop = scroller.scrollHeight - scroller.clientHeight;
+    snapPositions = [0, maxScrollTop, ...Array.from(scroller.children, child => child.offsetTop - scroller.offsetTop).filter(offset => offset < maxScrollTop)];
+
+    const scrolled = new Promise(resolve => scroller.addEventListener("scroll", resolve, { once: true }));
+    await UIHelper.keyDown("end");
+    await scrolled;
+    await UIHelper.animationFrame();
+    await UIHelper.animationFrame();
+
+    scrollTopBeforeScrollingUp = scroller.scrollTop;
+    await UIHelper.keyDown(key);
+    await UIHelper.waitForTargetScrollAnimationToSettle(scroller);
+
+    finalScrollTop = scroller.scrollTop;
+    shouldBeTrue("finalScrollTop < scrollTopBeforeScrollingUp");
+    shouldBeTrue("snapPositions.includes(finalScrollTop)");
+}
+
+async function runTest()
+{
+    scroller.focus();
+
+    debug("Page Up");
+    await scrollToEndThenScrollUp("pageUp");
+
+    debug("Up Arrow");
+    await scrollToEndThenScrollUp("upArrow");
+
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

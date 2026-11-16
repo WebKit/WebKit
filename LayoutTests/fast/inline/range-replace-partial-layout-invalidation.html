@@ -1,0 +1,10 @@
+<style>
+div {
+  width: 100px;
+}
+</style>
+<div id=focus_this>this is some text and should not ASSERT when focused</div>
+<script>
+document.body.offsetHeight;
+focus_this.innerHTML = "this is some text and should not ASSERT focused";
+</script>

@@ -1,0 +1,30 @@
+Tests that the layers of "extended" tone mapping canvases are updated when their dynamic-range-limit changes, without making their enclosing layer HDR. Only an HDR canvas's own layer should draw HDR content.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+- Initially, both "extended" canvases have their own HDR layer
+PASS hdrLayerCount() is 2
+
+- dynamic-range-limit: standard on an "extended" canvas
+PASS hdrLayerCount() is 1
+
+- dynamic-range-limit: constrained on an "extended" canvas
+PASS hdrLayerCount() is 2
+PASS hdrLayerCount() is 1
+
+- dynamic-range-limit: standard inherited by an "extended" canvas
+PASS hdrLayerCount() is 0
+
+- dynamic-range-limit: no-limit on a "standard" canvas
+PASS hdrLayerCount() is 0
+
+- Back to the initial dynamic-range-limits
+PASS hdrLayerCount() is 1
+PASS hdrLayerCount() is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

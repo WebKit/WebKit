@@ -1,0 +1,21 @@
+
+EVENT(sourceopen)
+EXPECTED (sourceBuffer.mode == 'segments') OK
+RUN(sourceBuffer.mode = "sequence")
+EXPECTED (sourceBuffer.mode == 'sequence') OK
+EXPECTED (sourceBuffer.timestampOffset == '0') OK
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '2') OK
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '4') OK
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '5') OK
+END OF TEST
+

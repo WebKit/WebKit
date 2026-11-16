@@ -1,0 +1,4 @@
+This tests that setting the options collection length to a string representation of a number works.
+
+Test Passed
+

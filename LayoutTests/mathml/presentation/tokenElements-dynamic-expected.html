@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Token elements - dynamic changes</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      #styled > mo { color: red; }
+      #styled > mi { color: green; }
+      #styled > mi ~ * { color: blue; }
+    </style>
+  </head>
+  <body>
+
+    <!-- Test 1 -->
+    <p style="display: none;">
+      <math><mi>sin</mi><mi>x</mi></math>
+      <math><mi>cos</mi><mi>y</mi></math>
+      <math><mi>tan</mi><mi>z</mi></math>
+    </p>
+
+    <!-- Test 2 -->
+    <p>
+      <math><mn>1</mn><mo>+</mo><mn>2</mn><mo>−</mo><mn>3</mn></math>
+      <math><mo>(</mo><msqrt><mfrac><mn>4</mn><mn>5</mn></mfrac></msqrt><mo>]</mo></math>
+      <math><mo>+</mo><mo>{</mo><mfrac><mfrac><mn>6</mn><mn>7</mn></mfrac><mfrac><mn>8</mn><mn>9</mn></mfrac></mfrac></math>
+    </p>
+
+    <!-- Test 3 -->
+    <p>
+      <math><mi mathvariant="bold">x</mi></math>
+      <math><mi mathvariant="italic">sin</mi></math>
+      <math><mi>x</mi></math>
+      <math><mi>sin</mi></math>
+    </p>
+
+    <!-- Test 4 -->
+    <p>
+      <math><mo stretchy="false">{</mo><mfrac><mfrac><mn>6</mn><mn>7</mn></mfrac><mfrac><mn>8</mn><mn>9</mn></mfrac></mfrac></math>
+      <math><mo>{</mo><mfrac><mfrac><mn>6</mn><mn>7</mn></mfrac><mfrac><mn>8</mn><mn>9</mn></mfrac></mfrac></math>
+    </p>
+    
+    <!-- Test 5 -->
+    <p>
+      <math id="styled"><mo>-</mo><mi>sin</mi><mi>x</mi></math>
+    </p>
+
+  </body>
+</html>

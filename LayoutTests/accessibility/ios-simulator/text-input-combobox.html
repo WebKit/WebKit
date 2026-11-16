@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Some websites implement searchboxes this way. Without the proper traits,
+     things like VoiceOver word echo will not work. -->
+<textarea role="combobox" id="textarea"></textarea>
+<input type="text" role="combobox" id="text-input"></input>
+<input type="submit" role="combobox" id="submit-input"></input>
+<select name="pets" role="combobox" id="select">
+  <option value="">--Please choose an option--</option>
+  <option value="dog">Dog</option>
+  <option value="cat">Cat</option>
+</select>
+
+<script>
+var output = "This test ensures that the text entry trait is exposed for text controls with a combobox role.\n\n";
+
+if (window.accessibilityController) {
+    output += expect("accessibilityController.accessibleElementById('textarea').hasTextEntryTrait", "true");
+    output += expect("accessibilityController.accessibleElementById('text-input').hasTextEntryTrait", "true");
+    // Non-text inputs with a role of combobox should not have the text entry trait because they are not "editable" in
+    // the same way a text input is.
+    output += expect("accessibilityController.accessibleElementById('submit-input').hasTextEntryTrait", "false");
+    output += expect("accessibilityController.accessibleElementById('select').hasTextEntryTrait", "false");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,196 @@
+<script src="/inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+// Also defined in the subframe, so each frame can trigger the breakpoint in its own realm. Both
+// copies must be page scripts, since the frontend drops a pause with only injected-script frames.
+function triggerNativeCall() {
+    [1, 2, 3].reverse();
+}
+
+function triggerNativeConstruct() {
+    new EventTarget;
+}
+
+function test() {
+    // The two same-origin frames get separate frame targets but share a VM, and the hooks for native
+    // symbolic breakpoints are VM-wide, so only the first agent to ask installs them.
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.SymbolicBreakpoint.Native");
+
+    const subframePath = "resources/symbolic-breakpoint-native-frame.html";
+
+    let mainFrameTarget = null;
+    let subframeTarget = null;
+    let breakpoint = null;
+
+    function nameForTarget(target) {
+        if (target === mainFrameTarget)
+            return "main frame";
+        if (target === subframeTarget)
+            return "subframe";
+        return `unexpected ${target.type} target`;
+    }
+
+    // Debugger.Event.Paused only fires for a pause's first target, so it cannot see a second agent
+    // pausing for the same call. CallFramesDidChange fires for every one, on both pause and resume.
+    async function triggerAndExpectPauses(target, expression, symbol, expectedPauseCount) {
+        let pauseCount = 0;
+
+        let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+            let pausedTarget = event.data.target;
+            let targetData = WI.debuggerManager.dataForTarget(pausedTarget);
+            if (!targetData.paused)
+                return;
+
+            ++pauseCount;
+
+            InspectorTest.log(`Paused in the ${nameForTarget(pausedTarget)} target.`);
+            InspectorTest.expectEqual(pausedTarget, target, `Should pause in the ${nameForTarget(target)} target, which made the call.`);
+            InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.FunctionCall, "Pause reason should be FunctionCall.");
+            InspectorTest.expectEqual(targetData.pauseData?.name, symbol, `Pause data should name "${symbol}".`);
+
+            let siblingTarget = pausedTarget === subframeTarget ? mainFrameTarget : subframeTarget;
+            InspectorTest.expectFalse(WI.debuggerManager.dataForTarget(siblingTarget).paused, `The ${nameForTarget(siblingTarget)} target should not pause.`);
+
+            WI.debuggerManager.resume();
+        });
+
+        // The listener resumes every pause, so this settles once no agent is pausing any more.
+        await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+
+        if (!pauseCount)
+            InspectorTest.log("Did not pause.");
+
+        InspectorTest.expectEqual(pauseCount, expectedPauseCount, `Should pause ${expectedPauseCount} time(s).`);
+    }
+
+    async function actionCountForTarget(target) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({
+            expression: "window.actionCount || 0",
+            objectGroup: "test",
+            returnByValue: true,
+        });
+        return result.value;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SymbolicBreakpoint.Native.Setup",
+        description: "Find the frame targets of the main frame and of the same-origin subframe.",
+        async test() {
+            let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+
+            // The subframe's target can be registered after the load event that started this test.
+            for (let attempt = 0; attempt < 20 && !subframeTarget; ++attempt) {
+                subframeTarget = await frameTargetForURLContaining(subframePath);
+                if (!subframeTarget)
+                    await new Promise((resolve) => setTimeout(resolve, 100));
+            }
+
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame's target.");
+            InspectorTest.expectNotNull(subframeTarget, "Should find the same-origin subframe's target.");
+            InspectorTest.expectNotEqual(mainFrameTarget, subframeTarget, "The two frames should have distinct targets.");
+            InspectorTest.expectNotNull(mainFrameTarget?.DebuggerAgent, "The main frame target should have a DebuggerAgent.");
+            InspectorTest.expectNotNull(subframeTarget?.DebuggerAgent, "The subframe target should have a DebuggerAgent.");
+        },
+    });
+
+    // `reverse` reaches the debugger through the swapped native executable thunk, shared VM-wide.
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SymbolicBreakpoint.Native.Call.Subframe",
+        description: "A native call in the subframe should pause the subframe's agent, which is not the agent that installed the hook.",
+        async test() {
+            breakpoint = new WI.SymbolicBreakpoint("reverse");
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+
+            await triggerAndExpectPauses(subframeTarget, "triggerNativeCall()", "reverse", 1);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SymbolicBreakpoint.Native.Call.MainFrame",
+        description: "The same native call in the main frame should pause the main frame's agent.",
+        async test() {
+            await triggerAndExpectPauses(mainFrameTarget, "triggerNativeCall()", "reverse", 1);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SymbolicBreakpoint.Native.Call.Removed",
+        description: "Removing the breakpoint should stop both frames from pausing.",
+        async test() {
+            breakpoint.remove();
+            breakpoint = null;
+
+            await triggerAndExpectPauses(subframeTarget, "triggerNativeCall()", "reverse", 0);
+            await triggerAndExpectPauses(mainFrameTarget, "triggerNativeCall()", "reverse", 0);
+        },
+    });
+
+    // `EventTarget` is an InternalFunction, so it reaches the debugger through a replaced native
+    // function pointer instead, which unlike a thunk belongs to a single realm.
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SymbolicBreakpoint.Native.Construct.Subframe",
+        description: "Constructing a native DOM object in the subframe should pause only the subframe's agent.",
+        async test() {
+            breakpoint = new WI.SymbolicBreakpoint("EventTarget");
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+
+            await triggerAndExpectPauses(subframeTarget, "triggerNativeConstruct()", "EventTarget", 1);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SymbolicBreakpoint.Native.Construct.MainFrame",
+        description: "The same construction in the main frame should pause only the main frame's agent.",
+        async test() {
+            await triggerAndExpectPauses(mainFrameTarget, "triggerNativeConstruct()", "EventTarget", 1);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SymbolicBreakpoint.Native.Construct.Removed",
+        description: "Removing the breakpoint should stop both frames from pausing.",
+        async test() {
+            breakpoint.remove();
+            breakpoint = null;
+
+            await triggerAndExpectPauses(subframeTarget, "triggerNativeConstruct()", "EventTarget", 0);
+            await triggerAndExpectPauses(mainFrameTarget, "triggerNativeConstruct()", "EventTarget", 0);
+        },
+    });
+
+    // A breakpoint action runs in the injected script of the agent that handled the pause, so where
+    // its result lands tells us which agent was notified.
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SymbolicBreakpoint.Native.Construct.Action",
+        description: "A breakpoint action should run once, in the frame that made the call.",
+        async test() {
+            breakpoint = new WI.SymbolicBreakpoint("EventTarget");
+            breakpoint.addAction(new WI.BreakpointAction(WI.BreakpointAction.Type.Evaluate, {data: "window.actionCount = (window.actionCount || 0) + 1;"}));
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+
+            await triggerAndExpectPauses(subframeTarget, "triggerNativeConstruct()", "EventTarget", 1);
+
+            InspectorTest.expectEqual(await actionCountForTarget(subframeTarget), 1, "The action should have run once in the subframe.");
+            InspectorTest.expectEqual(await actionCountForTarget(mainFrameTarget), 0, "The action should not have run in the main frame.");
+
+            breakpoint.remove();
+            breakpoint = null;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a symbolic breakpoint on a native function pauses the frame target that made the call, and only that one, when two same-origin frames share a process.</p>
+<iframe src="resources/symbolic-breakpoint-native-frame.html"></iframe>
+</body>

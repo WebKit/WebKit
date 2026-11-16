@@ -1,0 +1,3 @@
+
+FAIL computed style for float assert_equals: expected "left" but got "none"
+

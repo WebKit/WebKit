@@ -1,0 +1,20 @@
+Tests that toggling `inert` doesn't prevent scrolling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.scrollY is 0
+PASS outerScrollElement.scrollTop is 0
+PASS innerScrollElement.scrollTop is 0
+Setting pointer-events: none through inert.
+PASS window.scrollY is non-zero.
+PASS outerScrollElement.scrollTop is 0
+PASS innerScrollElement.scrollTop is 0
+Removing pointer-events: none by removing inert.
+PASS window.scrollY is 0
+PASS outerScrollElement.scrollTop is 0
+PASS innerScrollElement.scrollTop is non-zero.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,8 @@
+This test ensures that hit testing a text input yields the text input, not any element within it (e.g. those rendered in the user-agent shadow tree created by the text input).
+
+PASS: hitTestResult.role.toLowerCase().includes('textfield') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

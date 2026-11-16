@@ -1,0 +1,10 @@
+Test wrapping a JWK oct key with RSA-OAEP using an imported key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS wrappedKey.byteLength is 256
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

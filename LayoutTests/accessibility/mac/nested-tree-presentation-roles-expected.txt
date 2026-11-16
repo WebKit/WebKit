@@ -1,0 +1,10 @@
+This test ensures that trees with multi-level deep presentation roles still are marked as trees.
+
+PASS: accessibilityController.accessibleElementById('item1').boolAttributeValue('AXSelected') === true
+PASS: accessibilityController.accessibleElementById('tree').role === 'AXRole: AXOutline'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Leaf 1
+Leaf 2

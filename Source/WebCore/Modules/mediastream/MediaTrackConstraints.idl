@@ -1,0 +1,132 @@
+/*
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// https://w3c.github.io/mediacapture-main/#dom-mediatrackconstraints
+[
+    Conditional=MEDIA_STREAM,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
+] dictionary MediaTrackConstraints : MediaTrackConstraintSet {
+    sequence<MediaTrackConstraintSet> advanced;
+};
+
+// https://w3c.github.io/mediacapture-main/#dom-mediatrackconstraintset
+[
+    Conditional=MEDIA_STREAM,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
+    ImplementedAs=MediaTrackConstraintSet,
+] dictionary MediaTrackConstraintSet {
+    // FIXME: `width` should be of type `ConstrainULong`.
+    ConstrainLong width;
+    // FIXME: `height` should be of type `ConstrainULong`.
+    ConstrainLong height;
+    ConstrainDouble aspectRatio;
+    ConstrainDouble frameRate;
+    ConstrainDOMString facingMode;
+    ConstrainDouble volume;
+    // FIXME: `sampleRate` should be of type `ConstrainULong`.
+    ConstrainLong sampleRate;
+    // FIXME: `sampleSize` should be of type `ConstrainULong`.
+    ConstrainLong sampleSize;
+    // FIXME: `echoCancellation` should be of type `ConstrainBooleanOrDOMString`.
+    ConstrainBoolean echoCancellation;
+    // FIXME 169871: add latency
+    // FIXME 169871: add channelCount
+    ConstrainDOMString deviceId;
+    ConstrainDOMString groupId;
+    ConstrainDOMString displaySurface;
+    ConstrainBoolean logicalSurface;
+
+    ConstrainDOMString whiteBalanceMode;
+    // FIXME: add exposureMode;
+    // FIXME: add focusMode;
+    // FIXME: add pointsOfInterest;
+
+    // FIXME: add exposureCompensation;
+    // FIXME: add exposureTime;
+    // FIXME: add colorTemperature;
+    // FIXME: add iso;
+
+    // FIXME: add brightness;
+    // FIXME: add contrast;
+    // FIXME: add saturation;
+    // FIXME: add sharpness;
+
+    // FIXME: add focusDistance;
+    ConstrainDouble zoom;
+
+    ConstrainBoolean torch;
+
+    ConstrainBoolean backgroundBlur;
+    ConstrainBoolean powerEfficient;
+};
+
+typedef (double or ConstrainDoubleRange) ConstrainDouble;
+typedef (long or ConstrainLongRange) ConstrainLong;
+typedef (boolean or ConstrainBooleanParameters) ConstrainBoolean;
+typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) ConstrainDOMString;
+
+// https://w3c.github.io/mediacapture-main/#dom-constrainbooleanparameters
+[
+    Conditional=MEDIA_STREAM,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
+    ImplementedAs=ConstrainBooleanParameters,
+] dictionary ConstrainBooleanParameters {
+    boolean exact;
+    boolean ideal;
+};
+
+// https://w3c.github.io/mediacapture-main/#dom-constraindomstringparameters
+[
+    Conditional=MEDIA_STREAM,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
+    ImplementedAs=ConstrainDOMStringParameters,
+] dictionary ConstrainDOMStringParameters {
+    (DOMString or sequence<DOMString>) exact;
+    (DOMString or sequence<DOMString>) ideal;
+};
+
+// https://w3c.github.io/mediacapture-main/#dom-constraindoublerange
+[
+    Conditional=MEDIA_STREAM,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
+    ImplementedAs=ConstrainDoubleRange,
+] dictionary ConstrainDoubleRange : DoubleRange {
+    double exact;
+    double ideal;
+};
+
+[
+    Conditional=MEDIA_STREAM,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
+    ImplementedAs=ConstrainLongRange,
+] dictionary ConstrainLongRange : LongRange {
+    long exact;
+    long ideal;
+};

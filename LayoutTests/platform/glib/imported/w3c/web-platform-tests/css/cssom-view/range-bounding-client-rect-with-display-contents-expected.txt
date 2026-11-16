@@ -1,0 +1,7 @@
+spacer before
+HEIGHT: 30px
+HEIGHT: 30px
+spacer after
+
+FAIL the space between elements using a range should be the same as using another method assert_equals: range.getBoundingClientRect().height expected 47 but got 60
+

@@ -1,0 +1,21 @@
+This test verifies AX radio group member count is updated for existing members when a new radio button is added to a group.
+
+Verify radio 2a's first linked element is itself:
+PASS: radio2a.linkedUIElementAtIndex(0).isEqual(radio2a) === true
+
+Verify radio 2a has no second linked element:
+PASS: !radio2a.linkedUIElementAtIndex(1) === true
+
+Verify radio2b dynamically added to DOM successfully:
+PASS: !!accessibilityController.accessibleElementById('radio2b') === true
+
+Verify radio 2a's first linked element is itself:
+PASS: radio2a.linkedUIElementAtIndex(0).isEqual(accessibilityController.accessibleElementById('radio2a')) === true
+
+Verify radio 2a's second linked element is now radio 2b:
+PASS: radio2a.linkedUIElementAtIndex(1).isEqual(accessibilityController.accessibleElementById('radio2b')) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

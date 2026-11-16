@@ -1,0 +1,6 @@
+Test that playing a video in fullscreen is accelerated.
+
+EVENT(webkitbeginfullscreen)
+EXPECTED (window.internals.mediaPlayerRenderingCanBeAccelerated(video) == 'true') OK
+END OF TEST
+

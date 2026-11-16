@@ -1,0 +1,31 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="test" style="width: 200px; font-size: 16px;">Some text with <i>italic</i> and <b>bold</b> formatting that wraps across <i>several</i> lines in this <b>narrow</b> container</p>
+
+<script>
+var output = "This test ensures stitched text across inline elements gets a multi-line path.\n\n";
+
+if (window.accessibilityController) {
+    // The text "Some text with " + "italic" + " and " + "bold" + " formatting..."
+    // is stitched into a single StaticText. The stitch group representative
+    // should aggregate rects from all members and produce a multi-line path.
+    var p = accessibilityController.accessibleElementById("test");
+    var firstChild = p.childAtIndex(0);
+    var supportsPath = firstChild.isAttributeSupported("AXPath");
+    output += expect("supportsPath", "true");
+
+    var pathDescription = firstChild.pathDescription;
+    var hasPathSegments = pathDescription.indexOf("Line to") !== -1;
+    output += expect("hasPathSegments", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

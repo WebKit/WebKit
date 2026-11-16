@@ -1,0 +1,66 @@
+
+PASS none
+PASS span-all
+PASS span-all span-all
+PASS top left
+PASS top center
+PASS top right
+PASS center left
+PASS center center
+PASS center right
+PASS bottom left
+PASS bottom center
+PASS bottom right
+PASS start start
+PASS start center
+PASS start end
+PASS center start
+PASS center end
+PASS end start
+PASS end center
+PASS end end
+PASS self-start self-start
+PASS self-start center
+PASS self-start self-end
+PASS center self-start
+PASS center self-end
+PASS self-end self-start
+PASS self-end center
+PASS self-end self-end
+PASS y-start x-start
+PASS y-start center
+PASS y-start x-end
+PASS center x-start
+PASS center x-end
+PASS y-end x-start
+PASS y-end center
+PASS y-end x-end
+PASS self-y-start self-x-start
+PASS self-y-start center
+PASS self-y-start self-x-end
+PASS center self-x-start
+PASS center self-x-end
+PASS self-y-end self-x-start
+PASS self-y-end center
+PASS self-y-end self-x-end
+PASS span-self-y-start span-self-x-end
+PASS span-bottom span-all
+PASS Placement: --top
+PASS Placement: --left
+PASS Placement: --right, --top
+PASS Placement: --bottom, --top
+PASS Placement: --bottom, --right, --top
+PASS Placement: --bottom, --right, --left, --top
+PASS Placement: --bottom, --left, --top, --right
+PASS Placement: --right flip-inline
+PASS Placement: --bottom flip-block
+PASS Placement: --left flip-start
+PASS Placement: --right flip-x
+PASS Placement: --bottom flip-y
+PASS Placement: --left flip-inline, --top
+PASS Placement: --left flip-x, --top
+PASS Placement: --top flip-block, --left
+PASS Placement: --top flip-y, --left
+PASS Placement: --left flip-start flip-block, --left
+PASS Placement: --left flip-start flip-y, --left
+

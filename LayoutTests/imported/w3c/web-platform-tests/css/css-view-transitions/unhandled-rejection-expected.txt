@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Reject ready promise due to skipping a view-transition with an AbortError
+PASS Unhandled rejection of ready promise due to skipping a view-transition throws an DOMException
+TIMEOUT If the promise returned by updateCallback rejects, the transition is skipped. Test timed out
+NOTRUN Reference error in callback triggers rejection of view-transition promises
+

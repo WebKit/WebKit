@@ -1,0 +1,17 @@
+Tests copyBufferToTexture with layout.rowsPerImage omitted. The Swift implementation kept an omitted rowsPerImage as WGPU_COPY_STRIDE_UNDEFINED instead of the copy height, so bytesPerImage became 0xFFFFFFFF times bytesPerRow. rowsPerImage may only be omitted when a single image is copied, so that stride never addressed anything, but a copy into a 3D texture whose bytesPerRow is more than 2048 texel blocks is split into one copy per row of blocks, and that path gave up when bytesPerImage did not fit in 32 bits, dropping the copy without a validation error. Every copy below has to land, and every texel outside a copy has to keep its previous contents.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rowsPerImageOmittedOverStaleContents is "copied"
+PASS rowsPerImageOmittedIntoFreshTexture is "copied"
+PASS rowsPerImageOmittedIntoOneSlice is "copied"
+PASS rowsPerImageSpecified is "copied"
+PASS narrowRowsInto3DTexture is "copied"
+PASS wideRowsInto2DTexture is "copied"
+PASS wideRowsInto2DArrayLayer is "copied"
+PASS rowInto1DTexture is "copied"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

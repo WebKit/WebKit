@@ -1,0 +1,52 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=false ] -->
+<html>
+<head>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
+<div id="target"></div>
+
+<script>
+
+promise_test(async () => {
+    const target = document.getElementById("target");
+    target.animate({ transform: ["translateX(100px)", "none"] }, 1000 * 1000);
+
+    await renderingFrames(3);
+
+    const initialAnimations = internals.acceleratedAnimationsForElement(target);
+    assert_equals(initialAnimations.length, 1, "There should be a single accelerated animation before suspension.");
+    assert_equals(initialAnimations[0].property, "transform",
+                         'The single accelerated animation before suspension should be targeting the "transform" property.');
+    assert_equals(initialAnimations[0].speed, 1,
+                         'The single accelerated animation before suspension should be running.');
+
+    internals.suspendAnimations();
+
+    await renderingFrames(2);
+
+    const suspendedAnimations = internals.acceleratedAnimationsForElement(target);
+    assert_equals(suspendedAnimations.length, 1, "There should be a single accelerated animation after suspension.");
+    assert_equals(suspendedAnimations[0].property, "transform",
+                         'The single accelerated animation after suspension should be targeting the "transform" property.');
+    assert_equals(suspendedAnimations[0].speed, 0,
+                         'The single accelerated animation after suspension should be paused.');
+    internals.resumeAnimations();
+
+    await new Promise(setTimeout);
+}, "Suspending animations should pause running accelerated animations.");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+This test exercises a combination of selectedTextRange, stringForRange, and newline manipulation.
+
+PASS: contenteditable.selectedTextRange === '{5, 0}'
+PASS: contenteditable.stringForRange(0, 11).replace(new RegExp('(?:\r\n|\r|\n)', 'g'), '[newline]') === 'hello[newline]world'
+PASS: contenteditable.selectedTextRange === '{6, 0}'
+PASS: contenteditable.stringForRange(6, 5) === 'world'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello
+world

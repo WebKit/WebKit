@@ -1,0 +1,3 @@
+
+PASS test that matching link in a shadow tree is prefetched
+

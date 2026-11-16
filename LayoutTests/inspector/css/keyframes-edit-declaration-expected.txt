@@ -1,0 +1,6 @@
+
+== Running test suite: CSS.Keyframes.Edit
+-- Running test case: CSS.Keyframes.EditDeclarationChangesAnimation
+PASS: `from` keyframe is editable.
+PASS: After editing `from`, opacity is 0.4 (animation changed).
+

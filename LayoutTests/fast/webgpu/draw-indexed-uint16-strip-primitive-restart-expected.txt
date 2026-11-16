@@ -1,0 +1,3 @@
+PASS - drawIndexed: 16 of 16 pixels drawn
+PASS - drawIndexed in a render bundle: 16 of 16 pixels drawn
+

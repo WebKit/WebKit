@@ -1,0 +1,32 @@
+Verifies that web content receives stylus touches while a finger is touching the screen, and vice versa. To test manually, rest a finger on the gray area and then touch it with Apple Pencil (and vice versa); both the finger and the pencil should be reported, and each should be the primary pointer of its type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Finger, then pencil:
+pointerdown: pointerType=touch isPrimary=true
+touchstart: touches=[direct] changedTouches=[direct]
+pointerdown: pointerType=pen isPrimary=true
+touchstart: touches=[direct, stylus] changedTouches=[stylus]
+pointermove: pointerType=pen isPrimary=true
+pointerup: pointerType=pen isPrimary=true
+touchend: touches=[direct] changedTouches=[stylus]
+pointerup: pointerType=touch isPrimary=true
+touchend: touches=[] changedTouches=[direct]
+
+Pencil, then finger:
+pointerdown: pointerType=pen isPrimary=true
+touchstart: touches=[stylus] changedTouches=[stylus]
+pointermove: pointerType=pen isPrimary=true
+pointerdown: pointerType=touch isPrimary=true
+touchstart: touches=[direct, stylus] changedTouches=[direct]
+pointermove: pointerType=pen isPrimary=true
+pointerup: pointerType=pen isPrimary=true
+touchend: touches=[direct] changedTouches=[stylus]
+pointerup: pointerType=touch isPrimary=true
+touchend: touches=[] changedTouches=[direct]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

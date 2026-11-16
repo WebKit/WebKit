@@ -1,0 +1,19 @@
+<style>
+    body {
+        width: 0vmin;
+        overflow-y: -webkit-paged-x;
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function main() {
+        x1.src = window.location;
+        x1.height = "10";
+        window.find("crash", false, false);
+    }
+</script>
+
+<body onload=main()>
+    <embed id="x1">This test passes if it does not crash</embed>
+</body>

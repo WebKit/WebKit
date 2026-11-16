@@ -1,0 +1,19 @@
+
+PASS e.style['width'] = "stretch" should set the property value
+PASS e.style['height'] = "stretch" should set the property value
+PASS e.style['max-width'] = "stretch" should set the property value
+PASS e.style['min-width'] = "stretch" should set the property value
+PASS e.style['max-height'] = "stretch" should set the property value
+PASS e.style['min-height'] = "stretch" should set the property value
+PASS e.style['inline-size'] = "stretch" should set the property value
+PASS e.style['block-size'] = "stretch" should set the property value
+PASS e.style['max-inline-size'] = "stretch" should set the property value
+PASS e.style['min-inline-size'] = "stretch" should set the property value
+PASS e.style['max-block-size'] = "stretch" should set the property value
+PASS e.style['min-block-size'] = "stretch" should set the property value
+PASS e.style['flex-basis'] = "stretch" should set the property value
+PASS e.style['flex'] = "1 0 stretch" should set flex-basis
+PASS e.style['flex'] = "1 0 stretch" should set flex-grow
+PASS e.style['flex'] = "1 0 stretch" should set flex-shrink
+PASS e.style['flex'] = "1 0 stretch" should not set unrelated longhands
+

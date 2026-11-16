@@ -1,0 +1,3 @@
+
+PASS window.onerror - runtime error in cross-origin setTimeout
+

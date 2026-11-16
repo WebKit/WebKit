@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html aria-hidden="true">
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button">Submit</button>
+
+<script>
+var output = "This test ensures that aria-hidden='true' is not respected on the html element.\n\n";
+
+if (window.accessibilityController) {
+    output += expect("accessibilityController.accessibleElementById('button').role.toLowerCase().includes('button')", "true");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

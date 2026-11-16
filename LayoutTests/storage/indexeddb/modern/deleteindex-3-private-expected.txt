@@ -1,0 +1,23 @@
+This tests creating an index, deleting it, creating a new one with the same name, and making sure those two indexes aren't equal.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+First and Second indexes are the same: false
+First index keyPath: foo
+Second index keyPath: bar
+First index unique: false
+Second index unique: true
+First index references back to objectStore: true
+Second index references back to objectStore: true
+objectStore's index for 'FooIndex' is equal to first index: false
+objectStore's index for 'FooIndex' is equal to second index: true
+Initial upgrade versionchange transaction complete
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

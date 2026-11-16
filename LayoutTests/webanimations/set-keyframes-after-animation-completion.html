@@ -1,0 +1,31 @@
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+<div id="target"></div>
+<script>
+
+(async () => {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    const timing = { fill: "forwards", duration: 1 };
+    const originalKeyframes = { marginLeft: ["0px", "100px"] };
+    const updatedKeyframes = { marginLeft: ["50px", "150px"] };
+    const animation = document.getElementById("target").animate(originalKeyframes, timing);
+
+    await animation.finished;
+    await new Promise(resolve => setTimeout(resolve));
+
+    animation.effect.setKeyframes(updatedKeyframes);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>

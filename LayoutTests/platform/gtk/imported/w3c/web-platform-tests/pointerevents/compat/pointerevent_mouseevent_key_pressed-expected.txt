@@ -1,0 +1,7 @@
+
+FAIL Pointer events correctly show Alt pressed promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+FAIL Pointer events correctly show Control pressed promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+FAIL Pointer events correctly show Meta pressed promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+FAIL Pointer events correctly show Shift pressed promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+FAIL Pointer events correctly show Alt,Control,Meta,Shift pressed promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+

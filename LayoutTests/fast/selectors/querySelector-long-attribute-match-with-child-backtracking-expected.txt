@@ -1,0 +1,13 @@
+Test backtracking of matching attributes with multiple child selector relations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("[data-foobar]>[data-webkit]>[data-html]>pre [style]").length is 3
+PASS document.querySelectorAll("[data-foobar]>[data-webkit]>[data-html]>pre [style]")[0].id is "target1"
+PASS document.querySelectorAll("[data-foobar]>[data-webkit]>[data-html]>pre [style]")[1].id is "target2"
+PASS document.querySelectorAll("[data-foobar]>[data-webkit]>[data-html]>pre [style]")[2].id is "target3"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

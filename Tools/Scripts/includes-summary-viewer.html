@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#dropzone {
+    border-radius: 1rem;
+    padding: 2rem;
+    margin: 2rem;
+    background: lightgreen;
+}
+.disclosure {
+    color: inherit;
+    text-decoration: underline;
+    font-weight: normal;
+}
+</style>
+</head>
+<body>
+<div id="dropzone">Drag & drop the summary JSON here</div>
+<script>
+
+class Project {
+    #name;
+    #sources;
+
+    constructor(name)
+    {
+        this.#name = name;
+        this.#sources = [];
+    }
+    
+    name() { return this.#name; }
+
+    headerCount()
+    {
+        let headerCount = 0;
+        for (const source of this.#sources)
+            headerCount += source.isHeader();
+        return headerCount;
+    }
+
+    addSource(source)
+    {
+        console.assert(source instanceof Source);
+        this.#sources.push(source);
+    }
+
+    sources() { return this.#sources.slice(); }
+}
+
+class Source {
+    #path;
+    #name;
+    #relativePath;
+    #project;
+    #includePaths;
+    #includes;
+    #origins;
+    #includeCount;
+    #includeSet;
+    #translationUnitCount;
+    #notFound;
+
+    constructor(path, name, relativePath, project, includes, notFound) {
+        console.assert(project instanceof Project);
+        this.#path = path;
+        this.#name = name;
+        this.#relativePath = relativePath;
+        this.#project = project;
+        this.#includePaths = includes;
+        this.#includes = null;
+        this.#origins = [];
+        this.#includeCount = null;
+        this.#includeSet = null;
+        this.#translationUnitCount = 0;
+        this.#notFound = notFound;
+        project.addSource(this);
+    }
+
+    resolveIncludes(sourceMap) {
+        this.#includes = [];
+        for (const path of this.#includePaths) {
+            const target = sourceMap[path];
+            this.#includes.push(target);
+            target.#origins.push(this);
+        }
+    }
+
+    name() { return this.#name; }
+    path() { return this.#path; }
+    relativePath() { return this.#relativePath; }
+    project() { return this.#project; }
+    includes() { return this.#includes.slice(); }
+    origins() { return this.#origins.slice(); }
+    translationUnitCount() { return this.#translationUnitCount; }
+    id() { return this.#relativePath.replace(/\//g, '-'); }
+    isHeader() { return this.path().endsWith('.h'); }
+
+    includeCount(workingSet=new Set)
+    {
+        return this.includeSet().size;
+        if (!this.#includeSet) {
+            this.#includeSet = new Set;
+            for (let source of this.#includes) {
+                this.#includeSet.add(source);
+            }
+        }
+        if (workingSet.has(this))
+            return 0; // Detected a cycle;
+        let count = 0;
+        const newSet = new Set(workingSet);
+        newSet.add(this);
+        for (const includedSource of this.#includes)
+            count += 1 + includedSource.includeCount(newSet);
+        return this.#includeCount;
+    }
+
+    includeSet(workingSet = new Set)
+    {
+        if (workingSet.has(this))
+            return workingSet;
+        if (!this.#includeSet) {
+            let workingSet = new Set(this.#includes);
+            for (let source of this.#includes)
+                workingSet = workingSet.union(source.includeSet(workingSet));
+            this.#includeSet = workingSet;
+        }
+        return this.#includeSet;
+    }
+
+    recursivelyIncrementTranslationUnitCount(includeSet, workingSet=new Set)
+    {
+        if (includeSet.has(this))
+            return;
+        includeSet.add(this);
+        if (workingSet.has(this))
+            return; // Detected a cycle.
+        this.#translationUnitCount++;
+        const newSet = new Set(workingSet);
+        newSet.add(this);
+        for (const source of this.#includes)
+            source.recursivelyIncrementTranslationUnitCount(includeSet, newSet);
+    }
+}
+
+function create(elementName) {
+    const element = document.createElement(elementName);
+    let attributes = {};
+    let children = [];
+    if (arguments.length >= 3) {
+        attributes = arguments[1]
+        children = arguments[2];
+    } else if (arguments.length) {
+        if (Array.isArray(arguments[1]))
+            children = arguments[1];
+        else
+            attributes = arguments[1];
+    }
+    for (const attribute in attributes) {
+        if (attribute.startsWith('on'))
+            element.addEventListener(attribute.substring(2), attributes[attribute]);
+        else
+            element.setAttribute(attribute, attributes[attribute]);
+    }
+    if (!Array.isArray(children))
+        children = [children];
+    element.append(...children.flat(256));
+    return element;
+}
+
+function compare(a, b) {
+    if (a < b)
+        return -1;
+    if (a > b)
+        return 1;
+    return 0;
+}
+
+async function load(summary) {
+    dropzone.style.display = 'none';
+
+    let projects = [];
+    let projectMap = {};
+    let sourceMap = {};
+    for (projectEntry of summary.projects) {
+        const project = new Project(projectEntry.name);
+        projects.push(project);
+        projectMap[projectEntry.name] = project;
+    }
+    for (const source of summary.sources)
+        sourceMap[source.path] = new Source(source.path, source.name, source.relative, projectMap[source.project], source.includes, source.notFound);
+    for (const path in sourceMap)
+        sourceMap[path].resolveIncludes(sourceMap);
+    for (const path in sourceMap) {
+        if (sourceMap[path].isHeader())
+            continue;
+        const set = new Set;
+        sourceMap[path].recursivelyIncrementTranslationUnitCount(set);
+    }
+
+    const expandable = new Map;
+
+    function expandableListItem(itemLabel, details, attributes, container, expand) {
+        return {
+            content: create('li', attributes, [
+                create('a',
+                    {
+                        class: 'disclosure',
+                        href: '#',
+                        onclick: function (event) {
+                            event.preventDefault();
+                            if (container.childNodes.length) {
+                                container.style.display = container.style.display == 'none' ? null : 'none';
+                                return;
+                            }
+                            container.append(...expand());
+                        }
+                    },
+                    itemLabel),
+                ' ',
+                details,
+                container,
+            ]),
+            expand: () => {
+                if (container.childNodes.length) {
+                    container.style.display = null;
+                    return;
+                }
+                container.append(...expand());
+            }
+        };
+    }
+
+    function createViewLink(source) {
+        if (!source.relativePath().startsWith('Source/'))
+            return [];
+        return [' (', create('a', {target: '_blank', href: 'https://github.com/WebKit/WebKit/tree/main/' + source.relativePath()}, ['view']), ') '];
+    }
+
+    function createJumpLink(source) {
+        if (!source.isHeader())
+            return [];
+        return [' (', create('a', {
+            class: 'jump',
+            href: '#' + source.id(),
+            onclick: (event) => {
+                let expand = expandable.get(source.project());
+                if (expand)
+                    expand();
+            }
+        }, 'jump'), ') '];
+    }
+    
+    function createIncludeCount(source) {
+        if (!source.includeCount())
+            return [];
+        return [`includes ${source.includeCount()} files, `];
+    }
+
+    function createIncludedByCount(source) {
+        return ` included by ${source.translationUnitCount()} files`;
+    }
+
+    document.body.append(create('ul', projects.sort((a, b) => compare(a.name(), b.name())).map((project) => {
+        const result = expandableListItem(project.name(), `(${project.headerCount()} files)`, { }, create('ol'), (element) => {
+            return project.sources().sort((a, b) => b.translationUnitCount() - a.translationUnitCount()).map((source) => {
+                if (!source.isHeader())
+                    return [];
+                let includeCount = [];
+                const result = expandableListItem(
+                    source.name(),
+                    ['-', createViewLink(source), createIncludeCount(source), `included by ${source.translationUnitCount()} files`],
+                    {id: source.id()},
+                    create('div'),
+                    () => {
+                        return [
+                            'Includes:',
+                            create('ol', source.includes().sort((a, b) => compare(a.path(), b.path())).map((includedSource) => {
+                                return create('li', { }, [
+                                    includedSource.relativePath(),
+                                    ' - ',
+                                    createJumpLink(includedSource),
+                                    createViewLink(includedSource),
+                                    createIncludeCount(includedSource),
+                                    createIncludedByCount(includedSource),
+                                ]);
+                            })),
+                            'Included by:',
+                            create('ol', source.origins().sort((a, b) => b.translationUnitCount() - a.translationUnitCount()).map((originSource) => {
+                                return create('li', { }, [
+                                    originSource.relativePath(),
+                                    ' - ',
+                                    createJumpLink(originSource),
+                                    createViewLink(originSource),
+                                    createIncludeCount(originSource),
+                                    createIncludedByCount(originSource),
+                                ]);
+                            })),
+                        ];
+                    });
+                return result.content;
+            });
+        });
+        expandable.set(project, result.expand);
+        return result.content;
+    })));
+}
+
+dropzone.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+});
+dropzone.addEventListener('drop', (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.items[0].getAsFile();
+    const reader = new FileReader();
+    reader.onload = () => {
+        load(JSON.parse(reader.result));
+    }
+    reader.readAsText(file);
+});
+
+</script>
+</body>
+</html>

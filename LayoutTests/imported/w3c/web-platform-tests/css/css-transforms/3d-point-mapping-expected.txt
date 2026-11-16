@@ -1,0 +1,14 @@
+
+PASS Point mapping through 3D transforms, hittesting box1)
+PASS Point mapping through 3D transforms, hittesting box2)
+PASS Point mapping through 3D transforms, hittesting box5)
+PASS Point mapping through 3D transforms, hittesting box6)
+PASS Point mapping through 3D transforms, hittesting box7)
+PASS Point mapping through 3D transforms, hittesting box8)
+PASS Point mapping through 3D transforms, hittesting box9)
+PASS Point mapping through 3D transforms, hittesting box10)
+PASS Point mapping through 3D transforms, hittesting box11)
+PASS Point mapping through 3D transforms, hittesting box12)
+PASS Point mapping through 3D transforms, hittesting box13)
+PASS Point mapping through 3D transforms, hittesting box14)
+

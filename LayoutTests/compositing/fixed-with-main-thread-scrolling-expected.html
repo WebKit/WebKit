@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 6000px;
+        }
+        .box {
+            position: absolute;
+            top: 5718px;
+            left: 10px;
+            width: 200px;
+            height: 200px;
+            background-color: green;
+        }
+        
+        .fixed-background {
+            margin-top: 300px;
+            height: 200px;
+            background-image: linear-gradient(white, silver);
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box"></div>
+
+<div class="fixed-background">
+    I have a fixed background.
+</div>
+<script>
+    window.scrollTo(0, 6000);
+</script>
+</body>
+</html>

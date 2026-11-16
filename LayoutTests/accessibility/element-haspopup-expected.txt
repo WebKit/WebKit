@@ -1,0 +1,22 @@
+This tests that an element will report that it has a popup correctly.
+
+PASS: linkOne.hasPopup === true
+PASS: accessibilityController.accessibleElementById('link2').hasPopup === false
+PASS: accessibilityController.accessibleElementById('paragraph1').hasPopup === true
+PASS: accessibilityController.accessibleElementById('paragraph2').hasPopup === false
+PASS: accessibilityController.accessibleElementById('paragraph3').hasPopup === false
+
+Setting aria-haspopup to false for #link1.
+PASS: linkOne.hasPopup === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Link 1 Link 2
+Paragraph 1.
+
+Paragraph 2.
+
+Paragraph 3.
+
+

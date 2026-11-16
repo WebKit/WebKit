@@ -1,0 +1,8 @@
+start
+middle
+end
+
+FAIL Hidden SVG Tab focus test assert_equals: End element should be focused after pressing Tab expected Element node <a href="#void" id="end">
+    <text tabindex="-1" x="50" ... but got Element node <a href="#void" id="start">
+    <text tabindex="-1" x="10...
+

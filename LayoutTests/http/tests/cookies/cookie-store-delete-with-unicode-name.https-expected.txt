@@ -1,0 +1,11 @@
+This test checks that cookieStore.delete() removes a cookie that was set with a Unicode name, exercising the same name encoding used by cookieStore.set(). See: rdar://124266311 Correct the encoding of cookies sent/received from CFNetwork
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cookieStore.get('日本語cookie') found the cookie after it was set
+PASS cookieStore.get('日本語cookie') returned null after the cookie with a Unicode name was deleted
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

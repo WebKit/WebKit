@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<head>
+    <title>The interactive-widget key and its values are ASCII case-insensitive, and whitespace around the "=" separator is allowed, so no warnings are reported.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=RESIZES-CONTENT, INTERACTIVE-WIDGET=Overlays-Content, interactive-widget = resizes-visual, interactive-widget=ReSiZeS-CoNtEnT">
+    <script>
+        function test() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                alert(internals.configurationForViewport(1, 320, 480, 320, 352));
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

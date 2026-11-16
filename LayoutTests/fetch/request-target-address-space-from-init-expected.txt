@@ -1,0 +1,5 @@
+
+PASS Request constructed from a URL string reads targetAddressSpace from init
+PASS Request constructed from another Request reads targetAddressSpace from init
+PASS Request defaults targetAddressSpace to public when init omits it
+

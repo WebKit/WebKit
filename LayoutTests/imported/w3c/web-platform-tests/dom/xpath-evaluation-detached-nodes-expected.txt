@@ -1,0 +1,21 @@
+
+PASS ORDERED_NODE_SNAPSHOT_TYPE with union of connected element and detached attribute
+PASS ORDERED_NODE_ITERATOR_TYPE with union of connected element and detached attribute
+PASS FIRST_ORDERED_NODE_TYPE with union of connected element and detached attribute
+PASS ANY_UNORDERED_NODE_TYPE with union of connected element and detached attribute
+PASS UNORDERED_NODE_SNAPSHOT_TYPE with union of connected element and detached attribute
+PASS UNORDERED_NODE_ITERATOR_TYPE with union of connected element and detached attribute
+PASS String value evaluation with node-set containing detached attribute
+PASS ORDERED_NODE_SNAPSHOT_TYPE with self-union on detached attribute
+PASS ORDERED_NODE_SNAPSHOT_TYPE with union of connected element and disconnected element
+PASS ORDERED_NODE_SNAPSHOT_TYPE does not crash with union of connected and disconnected nodes
+PASS ORDERED_NODE_SNAPSHOT_TYPE does not crash with union containing disconnected element, attribute, and child
+PASS Positional predicate [1] on union containing detached attribute
+PASS Positional predicate [last()] on union containing detached attribute
+PASS Equality comparison of node-sets containing detached attribute
+PASS Axis traversal on detached attribute does not crash and returns empty node-set
+PASS TraversalSort with >10000 connected nodes and a detached attribute
+PASS TraversalSort with connected node and a disconnected subtree with >10000 nodes
+PASS TraversalSort with >10000 nodes in a shadow tree
+PASS Sorting nodes in a shadow tree
+

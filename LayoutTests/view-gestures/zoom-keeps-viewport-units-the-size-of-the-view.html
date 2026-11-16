@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>A delegated zoom leaves the viewport units the size of the view</title>
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        body {
+            height: 3000px;
+        }
+
+        #probes {
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .probe {
+            height: 1px;
+        }
+
+        #vw { width: 100vw; }
+        #vh { width: 100vh; }
+        #svw { width: 100svw; }
+        #lvw { width: 100lvw; }
+        #dvw { width: 100dvw; }
+        #dvh { width: 100dvh; }
+
+        #centred-column {
+            padding: 0 calc(50vw - 300px);
+        }
+
+        #centred-column-content {
+            height: 1px;
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        const probes = [
+            { name: '100vw', id: 'vw' },
+            { name: '100vh', id: 'vh' },
+            { name: '100svw', id: 'svw' },
+            { name: '100lvw', id: 'lvw' },
+            { name: 'calc(50vw - 300px) centred column', id: 'centred-column-content' },
+        ];
+
+        const dynamicProbes = [
+            { name: '100dvw', id: 'dvw' },
+            { name: '100dvh', id: 'dvh' },
+        ];
+
+        let sizesBeforeZooming = null;
+
+        function measure()
+        {
+            const sizes = { };
+            for (const probe of [...probes, ...dynamicProbes])
+                sizes[probe.name] = document.getElementById(probe.id).getBoundingClientRect().width;
+            return sizes;
+        }
+
+        async function results(description, scaleExpectation, { checkDynamicUnits = false } = { })
+        {
+            for (let i = 0; i < 4; ++i)
+                await UIHelper.ensurePresentationUpdate();
+
+            const scale = parseFloat(await UIHelper.zoomScale());
+            const matches = scaleExpectation.test(scale);
+            const output = [`  ${description}, ${scaleExpectation.description}: ${matches ? 'PASS' : `FAIL (scale ${scale.toFixed(2)})`}`];
+
+            const sizes = measure();
+            for (const probe of checkDynamicUnits ? [...probes, ...dynamicProbes] : probes) {
+                const before = sizesBeforeZooming[probe.name];
+                const now = sizes[probe.name];
+                if (Math.abs(now - before) < 0.5)
+                    output.push(`    ${probe.name}: PASS`);
+                else
+                    output.push(`    ${probe.name}: FAIL (${before.toFixed(1)}px before zooming, ${now.toFixed(1)}px now)`);
+            }
+            return output.join('\n');
+        }
+
+        const belowUnity = { description: 'below unity', test: scale => scale < 1 };
+        const atUnity = { description: 'at unity', test: scale => Math.abs(scale - 1) < 0.001 };
+        const aboveUnity = { description: 'above unity', test: scale => scale > 1 };
+
+        async function doTest()
+        {
+            sizesBeforeZooming = measure();
+
+            const output = ['Viewport units and a column centred with them, compared with before zooming:'];
+
+            await UIHelper.beginMagnifyGestureAt(400, 300, -0.9);
+            output.push(await results('Held zoom out', belowUnity));
+            await UIHelper.continueMagnifyGesture(-0.9);
+            output.push(await results('Held zoom out, further', belowUnity));
+            await UIHelper.endMagnifyGesture();
+            output.push(await results('After releasing the zoom out', atUnity, { checkDynamicUnits: true }));
+
+            await UIHelper.beginMagnifyGestureAt(400, 300, 0.5);
+            output.push(await results('Held zoom in', aboveUnity));
+            await UIHelper.endMagnifyGesture();
+            output.push(await results('After releasing the zoom in', aboveUnity));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="probes">
+        <div id="vw" class="probe"></div>
+        <div id="vh" class="probe"></div>
+        <div id="svw" class="probe"></div>
+        <div id="lvw" class="probe"></div>
+        <div id="dvw" class="probe"></div>
+        <div id="dvh" class="probe"></div>
+    </div>
+    <div id="centred-column"><div id="centred-column-content"></div></div>
+    <pre id="output"></pre>
+</body>
+</html>

@@ -1,0 +1,8 @@
+Zoomed in with the viewer open:
+  PASS
+After going back:
+  page scale is back to 1: PASS
+  scroll position is back to the top left: PASS
+After scrolling down:
+  page scale stays at 1: PASS
+  the page scrolled straight down: PASS

@@ -1,0 +1,9 @@
+Click into the first text input.
+Click into the second text input.
+Click the "Done" button.
+
+
+Done
+
+PASS Focus-related events should fire in the correct order
+

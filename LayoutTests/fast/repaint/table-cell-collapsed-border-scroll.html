@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <style>
+  table
+  {
+  border-collapse: collapse;
+  color: white;
+  font: 22.25em/1 Ahem;
+  }
+
+  td {padding: 0px;}
+
+  table#test td
+  {
+  border-style: solid;
+  border-width: 1em;
+  }
+
+  td#one {border-color: blue blue blue blue;}
+  td#two {border-color: yellow yellow yellow red;}
+
+  td#five {border-color: red yellow yellow yellow;}
+  td#six {border-color: red green green red;}
+  </style>
+    <script src="resources/repaint.js" type="text/javascript"></script>
+    <script>
+        function repaintTest()
+        {
+            window.scrollTo(0,1000);
+        }
+    </script>
+</head>
+<body onload="runRepaintTest();">
+  <!--- webkit.org/b/85658: Repaint collapsed borders correctly when scrolling. There should be a blue bar across the top when you load the page. -->
+  <table id="test">
+   <tr>
+    <td id="one">B</td>
+   </tr>
+   <tr>
+     <td id="five">Y</td> 
+   </tr>
+  </table>
+ </body>
+</html>

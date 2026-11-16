@@ -1,0 +1,6 @@
+
+PASS e.style['grid-row-gap'] = "auto" should not set the property value
+PASS e.style['grid-row-gap'] = "-10px" should not set the property value
+PASS e.style['grid-row-gap'] = "10px 20%" should not set the property value
+PASS e.style['grid-row-gap'] = "normal 10px" should not set the property value
+

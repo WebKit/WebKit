@@ -1,0 +1,7 @@
+
+PASS @property detected when stylesheet appears
+PASS @property removal detected when last @property rule disappears
+PASS @property detected in second stylesheet
+PASS @property removal detected with removal of second stylesheet
+PASS @property removal detected with removal of first stylesheet
+

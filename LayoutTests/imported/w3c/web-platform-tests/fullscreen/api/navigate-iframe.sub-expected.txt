@@ -1,0 +1,7 @@
+
+PASS same_to_cross
+FAIL cross_to_same assert_equals: expected false but got true
+PASS same_to_same
+PASS cross_to_cross
+PASS allowed_cross_to_same
+

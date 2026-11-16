@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+@font-face {
+	font-family: "WebFont";
+	src: url("garbage");
+}
+@font-face {
+	font-family: "WebFont";
+	src: url("garbage");
+	font-variant: small-caps;
+}
+</style>
+</head>
+<body>
+<script>
+self.jsTestIsAsync = true;
+var globalX;
+document.fonts.load("16px WebFont").then(function() {
+    testFailed("Bogus URLs should not load");
+    finishJSTest();
+}, function(x) {
+	globalX = x;
+    shouldBe("globalX.code", "globalX.NETWORK_ERR");
+    finishJSTest();
+})
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

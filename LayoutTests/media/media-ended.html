@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+            var endedCount = 0;
+            var canplaythroughCount = 0;
+            var audio;
+
+            function start()
+            {
+                audio = document.querySelector("audio");
+                waitForEvent("ended", ended);
+
+                audio.src = findMediaFile("audio", "content/silence")
+            }
+
+            function ended()
+            {
+                switch (++endedCount)
+                {
+                    case 1:
+                        testExpected("audio.ended", true);
+
+                        // Change src but don't seek so that internal state isn't reset.
+                        audio.src = findMediaFile("audio", "content/silence")
+                        testExpected("audio.ended", false);
+
+                        consoleWrite("");
+                        break;
+                    case 2:
+                        testExpected("audio.ended", true);
+                        endTest();
+                        break;
+                }
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <audio controls autoplay></audio>
+        <p><b>Test ended by:</b>
+        <ol>
+            <li>Play to the end.</li>
+            <li>When 'ended' event fires, change the source.</li>
+            <li>Verify that 'ended' event fires again on different source.</li>
+        </ol>
+        </p>
+    </body>
+</html>

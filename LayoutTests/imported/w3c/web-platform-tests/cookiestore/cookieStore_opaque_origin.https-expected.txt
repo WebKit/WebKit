@@ -1,0 +1,5 @@
+
+PASS cookieStore in non-sandboxed iframe should not throw
+PASS cookieStore in sandboxed iframe should throw SecurityError
+PASS cookieStore in sandboxed iframe --- listener access
+

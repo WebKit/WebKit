@@ -1,0 +1,10 @@
+This tests platform specific system font styles. If any of the styles appear in monospace the test fails.
+caption: 16px Liberation Sans
+icon: 16px Liberation Sans
+menu: 16px Liberation Sans
+message-box: 16px Liberation Sans
+small-caption: 16px Liberation Sans
+status-bar: 16px Liberation Sans
+-webkit-mini-control: 16px Liberation Sans
+-webkit-small-control: 16px Liberation Sans
+-webkit-control: 16px Liberation Sans

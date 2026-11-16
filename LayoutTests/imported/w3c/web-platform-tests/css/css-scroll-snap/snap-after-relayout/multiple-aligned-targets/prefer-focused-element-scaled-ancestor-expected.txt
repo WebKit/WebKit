@@ -1,0 +1,3 @@
+
+PASS out-of-viewport focused element is not the selected snap target under a scaled ancestor.
+

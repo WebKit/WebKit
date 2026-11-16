@@ -1,0 +1,8 @@
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', audio: { contentType: 'audio/mp4;codecs=ec-3', channels: 6, spatialRendering: true } });)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', audio: { contentType: 'audio/mp4;codecs=ec-3', channels: 2, spatialRendering: true } });)
+Promise resolved OK
+EXPECTED (info.supported == 'false') OK
+END OF TEST
+

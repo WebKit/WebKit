@@ -1,0 +1,55 @@
+
+
+RUN(video.showCaptionDisplaySettings({positionArea: "top left"}))
+EXPECTED (options.xPositionArea == 'Left') OK
+EXPECTED (options.yPositionArea == 'Top') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "left top"}))
+EXPECTED (options.xPositionArea == 'Left') OK
+EXPECTED (options.yPositionArea == 'Top') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "top center"}))
+EXPECTED (options.xPositionArea == 'Center') OK
+EXPECTED (options.yPositionArea == 'Top') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "top right"}))
+EXPECTED (options.xPositionArea == 'Right') OK
+EXPECTED (options.yPositionArea == 'Top') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "top x-start"}))
+EXPECTED (options.xPositionArea == 'Left') OK
+EXPECTED (options.yPositionArea == 'Top') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "top x-end"}))
+EXPECTED (options.xPositionArea == 'Right') OK
+EXPECTED (options.yPositionArea == 'Top') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "center center"}))
+EXPECTED (options.xPositionArea == 'Center') OK
+EXPECTED (options.yPositionArea == 'Center') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "bottom left"}))
+EXPECTED (options.xPositionArea == 'Left') OK
+EXPECTED (options.yPositionArea == 'Bottom') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "left bottom"}))
+EXPECTED (options.xPositionArea == 'Left') OK
+EXPECTED (options.yPositionArea == 'Bottom') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "bottom center"}))
+EXPECTED (options.xPositionArea == 'Center') OK
+EXPECTED (options.yPositionArea == 'Bottom') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "bottom right"}))
+EXPECTED (options.xPositionArea == 'Right') OK
+EXPECTED (options.yPositionArea == 'Bottom') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "bottom x-start"}))
+EXPECTED (options.xPositionArea == 'Left') OK
+EXPECTED (options.yPositionArea == 'Bottom') OK
+
+RUN(video.showCaptionDisplaySettings({positionArea: "bottom x-end"}))
+EXPECTED (options.xPositionArea == 'Right') OK
+EXPECTED (options.yPositionArea == 'Bottom') OK
+END OF TEST
+

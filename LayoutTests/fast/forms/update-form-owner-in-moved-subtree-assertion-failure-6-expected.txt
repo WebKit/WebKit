@@ -1,0 +1,3 @@
+This tests removing a subtree containing a form associated element with two form elements with matching ID.
+The test passses if WebKit doesn't hit a debug assertion.
+PASS.

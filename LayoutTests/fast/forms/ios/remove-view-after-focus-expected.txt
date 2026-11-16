@@ -1,0 +1,10 @@
+This test verifies that unparenting the web view due to creating a new tab on a zero delay timer after focusing a text field doesn't trigger a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

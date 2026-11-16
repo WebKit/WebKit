@@ -1,0 +1,12 @@
+
+RUN(audio.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = loader.duration())
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(updateend)
+Switching to a similar audio stream but with different mp4 track ID.
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(updateend)
+END OF TEST
+

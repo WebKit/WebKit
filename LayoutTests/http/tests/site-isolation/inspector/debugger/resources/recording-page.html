@@ -1,0 +1,9 @@
+<script>
+window.tickTimes = [];
+setInterval(() => { window.tickTimes.push(Date.now()); }, 50);
+
+addEventListener("message", (event) => {
+    event.source.postMessage(window.tickTimes, "*");
+});
+</script>
+<p>Page that records when its interval runs and sends the times to any page that posts it a message, for debugger tests.</p>

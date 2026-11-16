@@ -1,0 +1,5 @@
+
+PASS non-fully active document behavior for navigator.credentials.create()
+FAIL Promise rejects with DOMException when the document becomes non-fully active promise_rejects_dom: Expect promise to reject if the document becomes non-fully active function "function() { throw e; }" threw object "NotSupportedError: No credential type was specified." that is not a DOMException AbortError: property "code" is equal to 9, expected 20
+FAIL Aborted Digital Credentials create() requests do not leave a subsequent request stuck in an invalid state assert_equals: Iteration 0: should reject with the exact abort reason expected object "Error: Aborted iteration 0" but got object "NotSupportedError: No credential type was specified."
+

@@ -1,0 +1,4 @@
+
+FAIL e.style['-webkit-perspective'] = "calc(1000)" should not set the property value assert_equals: expected "" but got "calc(1000)"
+FAIL e.style['-webkit-perspective'] = "calc(25)" should not set the property value assert_equals: expected "" but got "calc(25)"
+

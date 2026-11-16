@@ -1,0 +1,22 @@
+
+PASS "::picker(select)" should be a valid selector
+PASS "*::picker(select)" should be a valid selector
+PASS "foo.bar[baz]::picker(select)" should be a valid selector
+PASS "::picker(select) *" should be an invalid selector
+PASS "::picker(foo)" should be an invalid selector
+PASS "::picker()" should be an invalid selector
+PASS "::picker" should be an invalid selector
+PASS "::picker(SELECT)" should be a valid selector
+PASS "::picker(select)::picker(select)" should be a valid selector
+PASS "::before::picker(select)" should be an invalid selector
+PASS "::after::picker(select)" should be an invalid selector
+PASS "::marker::picker(select)" should be an invalid selector
+PASS "::placeholder::picker(select)" should be an invalid selector
+PASS "::picker(select)::before" should be a valid selector
+PASS "::picker(select)::after" should be a valid selector
+PASS "::picker(select)::marker" should be a valid selector
+PASS "::picker(select)::placeholder" should be a valid selector
+FAIL "::slotted(*)::picker(select)::slotted(*)" should be an invalid selector assert_throws_dom: "::slotted(*)::picker(select)::slotted(*)" should throw in querySelector function "() => document.querySelector(selector)" did not throw
+PASS "::slotted(*)::picker(select)" should be a valid selector
+PASS "::part(foo)::picker(select)" should be a valid selector
+

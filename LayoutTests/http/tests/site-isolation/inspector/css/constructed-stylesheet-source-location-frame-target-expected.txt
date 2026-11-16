@@ -1,0 +1,26 @@
+Tests that rules from constructed style sheets in a cross-origin iframe point at the frame's document, through the frame target.
+
+
+
+== Running test suite: SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget
+-- Running test case: SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget.Setup
+PASS: Should find the cross-origin frame target.
+
+-- Running test case: SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget.StyleTag
+PASS: Source code for "#inline" should be in file named "frame-with-adopted-stylesheet.html".
+PASS: Source code for "#inline" should be the frame's document resource.
+
+-- Running test case: SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget.AdoptedBeforeInspector
+PASS: Source code for "#onload" should be in file named "frame-with-adopted-stylesheet.html".
+PASS: Source code for "#onload" should be the frame's document resource.
+
+-- Running test case: SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget.AdoptedAfterInspector
+Adopting `body { background: yellow; }` in the frame...
+PASS: Source code for "body" should be in file named "frame-with-adopted-stylesheet.html".
+PASS: Source code for "body" should be the frame's document resource.
+
+-- Running test case: SiteIsolation.CSS.ConstructedStyleSheetSourceLocation.FrameTarget.AdoptedWhileStylesShown
+Adopting `#selected { color: purple; }` in the frame...
+PASS: Source code for "#selected" should be in file named "frame-with-adopted-stylesheet.html".
+PASS: Source code for "#selected" should be the frame's document resource.
+

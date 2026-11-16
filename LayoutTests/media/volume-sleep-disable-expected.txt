@@ -1,0 +1,9 @@
+
+RUN(video.volume = 0)
+RUN(video.src = findMediaFile("video", "content/test-25fps"))
+RUN(video.play())
+EXPECTED (internals.elementIsBlockingDisplaySleep(video) == 'false') OK
+RUN(video.volume = 1)
+EXPECTED (internals.elementIsBlockingDisplaySleep(video) == 'true') OK
+END OF TEST
+

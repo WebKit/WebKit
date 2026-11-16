@@ -1,0 +1,6 @@
+RUN(video = document.createElement("video"))
+RUN(document.body.appendChild(video))
+RUN(video.src = "content/test-h264.mkv")
+received error event
+END OF TEST
+

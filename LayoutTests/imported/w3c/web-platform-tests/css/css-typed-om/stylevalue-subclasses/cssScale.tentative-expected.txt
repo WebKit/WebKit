@@ -1,0 +1,27 @@
+
+PASS Constructing a CSSScale with an angle CSSUnitValue for the coordinates throws a TypeError
+PASS Constructing a CSSScale with a CSSMathValue that doesn't match <number> for the coordinates throws a TypeError
+FAIL Constructing a CSSScale with an invalid division by px/px for the coordinates throws a TypeError assert_throws_js: function "() => new CSSScale(coord, 0)" did not throw
+PASS Updating CSSScale.x to an angle CSSUnitValue throws a TypeError
+PASS Updating CSSScale.x to a CSSMathValue that doesn't match <number> throws a TypeError
+PASS Updating CSSScale.x to an invalid division by px/px throws a TypeError
+PASS Updating CSSScale.y to an angle CSSUnitValue throws a TypeError
+PASS Updating CSSScale.y to a CSSMathValue that doesn't match <number> throws a TypeError
+PASS Updating CSSScale.y to an invalid division by px/px throws a TypeError
+PASS Updating CSSScale.z to an angle CSSUnitValue throws a TypeError
+PASS Updating CSSScale.z to a CSSMathValue that doesn't match <number> throws a TypeError
+PASS Updating CSSScale.z to an invalid division by px/px throws a TypeError
+PASS CSSScale can be constructed from two number coordinates
+PASS CSSScale can be constructed from three number coordinates
+PASS CSSScale can be constructed from CSSMathValue coordinates
+PASS CSSScale.x can be updated to a number
+PASS CSSScale.x can be updated to a numberish
+PASS CSSScale.x can be updated to a CSSMathValue
+PASS CSSScale.y can be updated to a number
+PASS CSSScale.y can be updated to a numberish
+PASS CSSScale.y can be updated to a CSSMathValue
+PASS CSSScale.z can be updated to a number
+PASS CSSScale.z can be updated to a numberish
+PASS CSSScale.z can be updated to a CSSMathValue
+PASS Modifying CSSScale.is2D can be updated to true or false
+

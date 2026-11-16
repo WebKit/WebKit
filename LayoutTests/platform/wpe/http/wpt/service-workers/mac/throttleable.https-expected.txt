@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Setup worker
+PASS Service worker should not be throttleable
+TIMEOUT Service worker should be throttleable Test timed out
+

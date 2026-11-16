@@ -1,0 +1,5 @@
+
+PASS Bytes received before any read are given to later reads
+PASS A BYOB read smaller than the received bytes keeps the rest for later reads
+PASS A read waits for bytes that have not been received yet
+

@@ -1,0 +1,230 @@
+<!DOCTYPE html><!-- webkit-test-runner [ PhoneNumberPossessionEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Phone Number Possession: request validation</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="./resources/util.js"></script>
+<body>
+<script>
+setMockConfiguration();
+
+// Runs first, before any test has left an unconsumed activation behind.
+promise_test(async (t) => {
+    await navigator.credentials
+        .get(makeOptions())
+        .then(t.unreached_func("get() should reject."), (error) => {
+            assert_throws_dom("NotAllowedError", () => {
+                throw error;
+            });
+            assert_equals(
+                error.message,
+                "Calling get() needs to be triggered by an activation triggering user event.",
+            );
+        });
+}, "get() requires transient activation.");
+
+promise_test(async (t) => {
+    await getWithActivation(makeOptions({ rpId: "example.com" })).then(
+        t.unreached_func("get() should reject."),
+        (error) => {
+            assert_throws_dom("SecurityError", () => {
+                throw error;
+            });
+            assert_equals(
+                error.message,
+                "The origin of the document is not authorized for the provided RP ID.",
+            );
+        },
+    );
+}, "An RP ID from another site is rejected.");
+
+promise_test(async (t) => {
+    await getWithActivation(makeOptions({ rpId: "sub.localhost" })).then(
+        t.unreached_func("get() should reject."),
+        (error) => {
+            assert_throws_dom("SecurityError", () => {
+                throw error;
+            });
+            assert_equals(
+                error.message,
+                "The origin of the document is not authorized for the provided RP ID.",
+            );
+        },
+    );
+}, "An RP ID that isn't a suffix of the document's domain is rejected.");
+
+promise_test(async (t) => {
+    await getWithActivation(makeOptions({ rpId: "" })).then(
+        t.unreached_func("get() should reject."),
+        (error) => {
+            assert_throws_js(TypeError, () => {
+                throw error;
+            });
+            assert_equals(error.message, "The RP ID must not be empty.");
+        },
+    );
+}, "An empty RP ID is rejected.");
+
+for (const phoneNumberSuffixHint of [
+    "",
+    "1".repeat(16),
+    "12a4",
+    "+1234",
+    "123 4",
+]) {
+    promise_test(async (t) => {
+        await getWithActivation(makeOptions({ phoneNumberSuffixHint })).then(
+            t.unreached_func("get() should reject."),
+            (error) => {
+                assert_throws_js(TypeError, () => {
+                    throw error;
+                });
+                assert_equals(
+                    error.message,
+                    "The phoneNumberSuffixHint must contain between 1 and 15 digits.",
+                );
+            },
+        );
+    }, `The phoneNumberSuffixHint "${phoneNumberSuffixHint}" is rejected.`);
+}
+
+for (const length of [0, 1025]) {
+    promise_test(async (t) => {
+        await getWithActivation(
+            makeOptions({ challenge: new Uint8Array(length) }),
+        ).then(t.unreached_func("get() should reject."), (error) => {
+            assert_throws_js(TypeError, () => {
+                throw error;
+            });
+            assert_equals(
+                error.message,
+                "The challenge must be between 1 and 1024 bytes long.",
+            );
+        });
+    }, `A ${length} byte challenge is rejected.`);
+}
+
+for (const length of [0, 33]) {
+    promise_test(async (t) => {
+        await getWithActivation(
+            makeOptions({ pnpiSuffixHint: new Uint8Array(length) }),
+        ).then(t.unreached_func("get() should reject."), (error) => {
+            assert_throws_js(TypeError, () => {
+                throw error;
+            });
+            assert_equals(
+                error.message,
+                "The pnpiSuffixHint must be between 1 and 32 bytes long.",
+            );
+        });
+    }, `A ${length} byte pnpiSuffixHint is rejected.`);
+}
+
+for (const length of [0, 1025]) {
+    promise_test(async (t) => {
+        await getWithActivation(
+            makeOptions({ knownCarrierPubKey: new Uint8Array(length) }),
+        ).then(t.unreached_func("get() should reject."), (error) => {
+            assert_throws_js(TypeError, () => {
+                throw error;
+            });
+            assert_equals(
+                error.message,
+                "The knownCarrierPubKey must be between 1 and 1024 bytes long.",
+            );
+        });
+    }, `A ${length} byte knownCarrierPubKey is rejected.`);
+}
+
+promise_test(async (t) => {
+    await promise_rejects_js(
+        t,
+        TypeError,
+        getWithActivation(makeOptions({ desiredResponseType: "phone-number" })),
+    );
+}, "desiredResponseType must be a valid PhoneNumberPossessionResponseType.");
+
+promise_test(async (t) => {
+    const options = makeOptions();
+    delete options.phoneNumberPossessionIdentifier.challenge;
+    await promise_rejects_js(t, TypeError, getWithActivation(options));
+}, "challenge is required.");
+
+promise_test(async (t) => {
+    const options = makeOptions();
+    delete options.phoneNumberPossessionIdentifier.desiredResponseType;
+    await promise_rejects_js(t, TypeError, getWithActivation(options));
+}, "desiredResponseType is required.");
+
+promise_test(async (t) => {
+    const options = {
+        ...makeOptions(),
+        publicKey: { challenge: new Uint8Array([1, 2, 3, 4]) },
+    };
+    await getWithActivation(options).then(
+        t.unreached_func("get() should reject."),
+        (error) => {
+            assert_throws_dom("NotSupportedError", () => {
+                throw error;
+            });
+            assert_equals(
+                error.message,
+                "The credential type combination is not supported.",
+            );
+        },
+    );
+}, "phoneNumberPossessionIdentifier can't be combined with another credential type.");
+
+promise_test(async (t) => {
+    await getWithActivation({
+        ...makeOptions(),
+        mediation: "conditional",
+    }).then(t.unreached_func("get() should reject."), (error) => {
+        assert_throws_js(TypeError, () => {
+            throw error;
+        });
+        assert_equals(
+            error.message,
+            "Conditional mediation is not supported for phone number possession credentials.",
+        );
+    });
+}, "Conditional mediation is rejected.");
+
+promise_test(async () => {
+    assert_equals(
+        await getWithActivation({ ...makeOptions(), mediation: "silent" }),
+        null,
+    );
+}, "Silent mediation resolves with null, because the user always has to consent.");
+
+promise_test(async (t) => {
+    await test_driver.bless("request phone number possession");
+    await navigator.credentials
+        .get(makeOptions({ phoneNumberSuffixHint: "" }))
+        .then(t.unreached_func("get() should reject."), (error) => {
+            assert_throws_js(TypeError, () => {
+                throw error;
+            });
+            assert_equals(
+                error.message,
+                "The phoneNumberSuffixHint must contain between 1 and 15 digits.",
+            );
+        });
+    await navigator.credentials
+        .get(makeOptions({ rpId: "example.com" }))
+        .then(t.unreached_func("get() should reject."), (error) => {
+            assert_throws_dom("SecurityError", () => {
+                throw error;
+            });
+            assert_equals(
+                error.message,
+                "The origin of the document is not authorized for the provided RP ID.",
+            );
+        });
+    const credential = await navigator.credentials.get(makeOptions());
+    assert_true(credential instanceof PhoneNumberPossessionCredential);
+}, "An invalid request doesn't consume transient activation.");
+</script>
+</body>

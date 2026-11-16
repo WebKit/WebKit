@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scrolling a page the UI process is holding at a scale keeps fixed elements where the view puts them</title>
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        body {
+            height: 3000px;
+            background: linear-gradient(silver, gray);
+        }
+
+        .bar {
+            position: fixed;
+            width: 200px;
+            height: 40px;
+            background-color: black;
+        }
+
+        #top-left-bar {
+            left: 10px;
+            top: 10px;
+        }
+
+        /* Like the side tab a lot of sites pin to the edge of the window: it only stays put if the fixed layer and the
+           scrolled contents layer it hangs off agree on the scroll position every frame. */
+        #right-bar {
+            right: 10px;
+            top: calc(50% - 20px);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        const inset = 10;
+        const barWidth = 200;
+        const barHeight = 40;
+
+        // In document order, which is the order the fixed nodes come out of the tree dump.
+        const bars = [
+            { name: 'top left bar', positionIn: viewport => ({ x: viewport.x + inset, y: viewport.y + inset }) },
+            { name: 'right bar   ', positionIn: viewport => ({ x: viewport.x + viewport.width - inset - barWidth, y: viewport.y + (viewport.height - barHeight) / 2 }) },
+        ];
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // Read before the zoom so nothing the gesture does can move it.
+        let viewSize = null;
+
+        function point(match, index)
+        {
+            return { x: parseFloat(match[index]), y: parseFloat(match[index + 1]) };
+        }
+
+        function rect(match, index)
+        {
+            return { x: parseFloat(match[index]), y: parseFloat(match[index + 1]), width: parseFloat(match[index + 2]), height: parseFloat(match[index + 3]) };
+        }
+
+        async function overrideState()
+        {
+            const override = await UIHelper.delegatedZoomOverrideAsText();
+            const layerPosition = override.match(/scrolled contents layer position \((-?\d+), (-?\d+)\)/);
+            const owner = override.match(/owned by the (UI process|scrolling thread)/);
+
+            return {
+                scale: await UIHelper.zoomScale(),
+                layerPosition: layerPosition ? point(layerPosition, 1) : null,
+                positionOwner: owner ? owner[1] : null,
+            };
+        }
+
+        // The view in content coordinates. The scrolled contents layer puts the scroll position at the top left of the
+        // view and scales from there, so the view covers viewSize / scale of content starting at it.
+        function viewRectInContentCoordinates(scale)
+        {
+            return { scale, x: window.scrollX, y: window.scrollY, width: viewSize.width / scale, height: viewSize.height / scale };
+        }
+
+        // For each fixed node, the viewport and layer position it was last laid out against plus where its layer
+        // actually is now, which the tree dump reads off the layer.
+        async function fixedNodes()
+        {
+            const tree = await UIHelper.getScrollingTree();
+            const nodes = [...tree.matchAll(/\(fixed node\s+\(fixed constraints\s+\(viewport-rect-at-last-layout \((-?[\d.]+),(-?[\d.]+)\) width=([\d.]+) height=([\d.]+)\)\s+\(layer-position-at-last-layout \((-?[\d.]+),(-?[\d.]+)\)\)\)\s+\(layer top left \((-?[\d.]+),(-?[\d.]+)\)\)/g)];
+
+            return nodes.map(node => ({
+                viewportAtLastLayout: rect(node, 1),
+                layerPositionAtLastLayout: point(node, 5),
+                layerTopLeft: point(node, 7),
+            }));
+        }
+
+        // How far the bar has ended up from where the view would put it, in screen pixels.
+        function offsetFromWhereTheViewPutsIt(bar, node, view)
+        {
+            const laidOutAt = bar.positionIn(node.viewportAtLastLayout);
+            const content = {
+                x: laidOutAt.x + node.layerTopLeft.x - node.layerPositionAtLastLayout.x,
+                y: laidOutAt.y + node.layerTopLeft.y - node.layerPositionAtLastLayout.y,
+            };
+
+            const expected = bar.positionIn(view);
+            return { x: (content.x - expected.x) * view.scale, y: (content.y - expected.y) * view.scale };
+        }
+
+        async function barResults(description, scale)
+        {
+            for (let i = 0; i < 4; ++i)
+                await UIHelper.ensurePresentationUpdate();
+
+            const view = viewRectInContentCoordinates(scale);
+            const nodes = await fixedNodes();
+            const output = [`  ${description}:`];
+
+            if (nodes.length != bars.length) {
+                output.push(`    FAIL (found ${nodes.length} of ${bars.length} fixed nodes in the scrolling tree)`);
+                return output.join('\n');
+            }
+
+            bars.forEach((bar, index) => {
+                const offset = offsetFromWhereTheViewPutsIt(bar, nodes[index], view);
+                if (Math.abs(offset.x) <= 1 && Math.abs(offset.y) <= 1)
+                    output.push(`    ${bar.name}: PASS`);
+                else
+                    output.push(`    ${bar.name}: FAIL (${offset.x.toFixed(1)}px across and ${offset.y.toFixed(1)}px down from where the view puts it)`);
+            });
+            return output.join('\n');
+        }
+
+        async function doTest()
+        {
+            // The layout size rather than window.innerWidth/innerHeight, which count the space classic scrollbars take.
+            viewSize = { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight };
+
+            const output = [];
+
+            await UIHelper.magnifyGestureAt(400, 300, 1.0);
+            const zoomed = await overrideState();
+            output.push(`Zoomed in to scale ${zoomed.scale.toFixed(2)}.`);
+
+            // The gesture and the hold after it are over, so the scrolling thread owns this layer again. While the UI
+            // process owns it, every commit pins it to a scroll position sampled on the main thread, and the fixed
+            // layers hanging off it keep following the live one, so fixed content jitters as the page scrolls. A page
+            // the UI process holds at a scale, like a link preview, is in this state for its whole life.
+            output.push(`  the scrolled contents layer position is owned by the ${zoomed.positionOwner}: `
+                + (zoomed.positionOwner == 'scrolling thread' ? 'PASS' : 'FAIL'));
+            output.push(await barResults('Before scrolling', zoomed.scale));
+
+            const scrollYBeforeScrolling = window.scrollY;
+            await UIHelper.mouseWheelScrollAt(400, 300, 0, -1, 0, -10);
+            for (let i = 0; i < 4; ++i)
+                await UIHelper.ensurePresentationUpdate();
+
+            const scrolled = await overrideState();
+            const scrolledDown = window.scrollY > scrollYBeforeScrolling;
+            output.push(`Scrolled down while zoomed: ${scrolledDown ? 'PASS' : 'FAIL (the page did not scroll)'}`);
+
+            // The layer carries the scroll position, scaled, so this is also a check that handing the position back
+            // didn't leave it behind at the position the zoom settled on.
+            const expectedLayerY = Math.round(-window.scrollY * scrolled.scale);
+            const layerIsAtTheScrollPosition = Math.abs(scrolled.layerPosition.y - expectedLayerY) <= 1;
+            output.push(`  the scrolled contents layer followed the scroll: `
+                + (layerIsAtTheScrollPosition ? 'PASS' : `FAIL (at ${scrolled.layerPosition.y}, expected ${expectedLayerY})`));
+            output.push(await barResults('After scrolling', scrolled.scale));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="top-left-bar" class="bar"></div>
+    <div id="right-bar" class="bar"></div>
+    <pre id="output"></pre>
+</body>
+</html>

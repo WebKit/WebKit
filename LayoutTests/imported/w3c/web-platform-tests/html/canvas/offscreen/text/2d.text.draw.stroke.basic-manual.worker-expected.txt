@@ -1,0 +1,3 @@
+
+PASS strokeText draws stroked text
+

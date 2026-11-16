@@ -1,0 +1,5 @@
+
+
+FAIL createValueRange throws IndexSizeError for out-of-bounds offsets. assert_throws_dom: function "() => textarea.createValueRange(10, 15)" threw object "TypeError: textarea.createValueRange is not a function. (In 'textarea.createValueRange(10, 15)', 'textarea.createValueRange' is undefined)" that is not a DOMException IndexSizeError: property "code" is equal to undefined, expected 1
+FAIL createValueRange handles all range types correctly: forward, backwards, and out-of-bounds. textarea.createValueRange is not a function. (In 'textarea.createValueRange(start, end)', 'textarea.createValueRange' is undefined)
+

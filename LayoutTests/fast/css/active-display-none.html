@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<style>
+  div { background: rgb(0, 0, 0); }
+  div:active { background: rgb(255, 0, 0); }
+  #parent {
+    width: 200px;
+    height: 200px;
+    border: 2px solid rgb(0, 0, 255);
+  }
+  #child {
+    width: 100px;
+    height: 100px;
+    border: 2px solid rgb(0, 0, 255);
+  }
+</style>
+
+<body>
+  <div id="parent">
+    <div id="child"></div>
+  </div>
+  <pre id="description"></div>
+  <pre id="console"></pre>
+</body>
+
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+  function shouldHaveBackground(element, bg) {
+    background = getComputedStyle(element, null).getPropertyValue("background-color")
+    shouldBeEqualToString('background', bg)
+  }
+
+  if (window.testRunner) {
+    description(":active style should be cleared even if display property is set to none before mouse released.")
+    var child = document.getElementById('child')
+    var parent = document.getElementById('parent')
+    testRunner.dumpAsText();
+
+    // Move and down into the child box.
+    eventSender.mouseMoveTo(50, 50)
+    eventSender.mouseDown()
+    shouldHaveBackground(child, 'rgb(255, 0, 0)')
+    shouldHaveBackground(parent, 'rgb(255, 0, 0)')
+
+    // With the mouse still down, set parent box to display:none.
+    parent.style.display = "none";
+
+    // Mouse up to clear active style.
+    eventSender.mouseUp()
+    parent.style.display = "block";
+    shouldHaveBackground(child, 'rgb(0, 0, 0)')
+    shouldHaveBackground(parent, 'rgb(0, 0, 0)')
+  }
+</script>

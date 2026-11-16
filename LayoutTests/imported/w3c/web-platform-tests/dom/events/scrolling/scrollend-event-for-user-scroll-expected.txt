@@ -1,0 +1,7 @@
+
+PASS Tests that the target_div gets scrollend event when touch dragging.
+PASS Tests that the target_div gets scrollend event when clicking scrollbar.
+PASS Tests that the target_div gets scrollend event when dragging the scrollbar thumb.
+PASS Tests that the target_div gets scrollend event when mouse wheel scrolling.
+PASS Tests that the target_div gets scrollend event when sending DOWN key to the target.
+

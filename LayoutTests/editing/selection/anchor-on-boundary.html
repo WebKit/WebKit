@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/assert-selection.js"></script>
+<script>
+
+selection_test(
+    '<div contenteditable> before<span>| span text </span>after</div>',
+    selection => {
+        const spanTextLength = ' span text '.length;
+        for (let i = 0; i < spanTextLength; i++)
+            selection.modify('extend', 'forward', 'character');
+    },
+    '<div contenteditable> before<span>^ span text |</span>after</div>',
+    'anchor stays in inner span when extending forward from leading boundary'
+);
+
+</script>

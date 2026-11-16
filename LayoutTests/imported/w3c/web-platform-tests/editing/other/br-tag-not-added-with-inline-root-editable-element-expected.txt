@@ -1,0 +1,4 @@
+
+
+FAIL BR tag is not inserted after deleting the text node content since root editable element is inline assert_not_equals: First child is not a <br> tag got disallowed value "BR"
+

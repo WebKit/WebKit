@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<head>
+  <script src="../../resources/js-test-pre.js"></script>
+  <script>
+    function findText() {
+      window.find("Something");
+      shouldBeTrue("window.getSelection().toString() == 'Something'");
+    }
+  </script>
+<body onload="findText()">
+  <p draggable="true">Something</p>
+</body>

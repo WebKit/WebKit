@@ -1,0 +1,13 @@
+ALERT: PASS
+Tests that event handlers are not called in detached documents, even if the event is dispatched by JavaScript. This test passes if you do not see a FAIL alert message.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS video.__proto__ is HTMLVideoElement.prototype
+PASS video.__proto__ is HTMLVideoElement.prototype
+Adopting node into a document that has a frame
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

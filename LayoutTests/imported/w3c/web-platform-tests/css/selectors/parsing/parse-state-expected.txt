@@ -1,0 +1,26 @@
+
+PASS ":state(--foo)" should be a valid selector
+PASS ":state(bar)" should be a valid selector
+PASS ":state(--)" should be a valid selector
+PASS ":state(--0)" should be a valid selector
+PASS ":host(:state(--foo))" should be a valid selector
+PASS "my-input[type=\"foo\"]:state(checked)" should be a valid selector
+PASS "my-input[type=\"foo\"]:state(--0)::before" should be a valid selector
+PASS "my-input[type=\"foo\"]:state(--0)::part(inner)" should be a valid selector
+PASS "my-input[type=\"foo\"]:state(--0)::part(inner):state(bar)" should be a valid selector
+PASS "::part(inner):state(bar)::before" should be a valid selector
+PASS "::part(inner):state(bar)::after" should be a valid selector
+PASS ":state" should be an invalid selector
+PASS ":state(" should be an invalid selector
+PASS ":state()" should be an invalid selector
+PASS ":state(0)" should be an invalid selector
+PASS ":state(0rem)" should be an invalid selector
+PASS ":state(url())" should be an invalid selector
+PASS ":state(foo(1))" should be an invalid selector
+PASS ":state(:host)" should be an invalid selector
+PASS "my-input::after:state(foo)" should be an invalid selector
+PASS "::part(inner):state(bar)::before:state(foo)" should be an invalid selector
+PASS "::part(inner):state(bar)::after:state(foo)" should be an invalid selector
+PASS "my-input::first-letter:state(foo)" should be an invalid selector
+PASS "::slotted(foo):state(foo)" should be an invalid selector
+

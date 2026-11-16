@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0;">
+<svg width="300" height="300">
+    <rect x="5" y="5" width="100" height="100" fill="url(#pattern)"/>
+    <defs>
+        <pattern id="pattern" width="10%" height="10%">
+            <circle fill="green" cx="5" cy="5" r="5"/>
+        </pattern>
+    </defs>
+</svg>
+<script>
+// At the time of writing, the pattern would be rendered in accelerated manner in GPUP.
+// This would produce a RemoteNativeImageProxy. Memory pressure would remove all
+// GPUP images. Later destroying the pattern -induced RemoteNativeImageProxy would
+// try to remove itself from the cache and assert as it could not do this.
+window?.testRunner?.waitUntilDone();
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        window?.internals?.beginSimulatedMemoryPressure();
+        window?.internals?.endSimulatedMemoryPressure();
+        requestAnimationFrame(() => {
+            window?.testRunner?.notifyDone();
+        });
+    });
+});
+</script>
+</body>
+</html>

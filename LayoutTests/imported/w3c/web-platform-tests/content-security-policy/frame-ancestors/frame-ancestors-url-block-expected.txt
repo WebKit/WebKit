@@ -1,0 +1,4 @@
+
+
+PASS A 'frame-ancestors' CSP directive with a URL which doesn't match this origin should be blocked.
+

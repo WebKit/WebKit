@@ -1,0 +1,12 @@
+Tests that Network.getResponseBody works for resources loaded in a cross-origin iframe. Under Site Isolation, this exercises the BackendResourceDataStore and reverse IPC path through ProxyingNetworkAgent.
+
+
+== Running test suite: Network.getResponseBody.CrossOriginIframe
+-- Running test case: Network.getResponseBody.CrossOriginIframe.TextContent
+Child frame added: http://localhost:8000/inspector/network/resources/echo.py?mimetype=text/plain&content=cross-origin-response-body-test
+PASS: Child frame should be cross-origin (localhost).
+PASS: Child frame should have a main resource.
+PASS: Should not have an error retrieving content.
+PASS: Content should not be base64 encoded.
+PASS: Content should match expected response body.
+

@@ -1,0 +1,9 @@
+
+PASS View timeline with range as <name> <percent> pair.
+PASS View timeline with range and inferred name or offset.
+PASS View timeline with range as <name> <px> pair.
+PASS View timeline range accepts absolute units.
+PASS View timeline with range as <name> <percent+px> pair.
+PASS View timeline with range as strings.
+PASS View timeline with range using relative units.
+

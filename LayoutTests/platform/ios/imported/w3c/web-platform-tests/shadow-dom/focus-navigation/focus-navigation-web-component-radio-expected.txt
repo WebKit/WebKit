@@ -1,0 +1,7 @@
+OUT
+A B
+C D
+OUT
+
+FAIL Focus for web component input type elements should be bound by <form> inside shadow DOM assert_equals: expected "A" but got "start"
+

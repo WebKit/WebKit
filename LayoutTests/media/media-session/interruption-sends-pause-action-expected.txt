@@ -1,0 +1,8 @@
+RUN(navigator.mediaSession.setPositionState({position: 0, duration: 100, plyabackRate: 1}))
+RUN(navigator.mediaSession.playbackState = "playing")
+RUN(internals.beginMediaSessionInterruption("system"))
+Promise resolved OK
+RUN(internals.endMediaSessionInterruption("mayresumeplaying"))
+Promise resolved OK
+END OF TEST
+

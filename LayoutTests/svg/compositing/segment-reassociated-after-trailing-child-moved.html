@@ -1,0 +1,30 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+</style>
+</head>
+<body>
+<!-- A plain trailing rect is moved at runtime to between the two anchors. Afterwards green sits between red and blue, so blue must paint on top where they overlap. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <rect id="a0" style="will-change: transform" x="10" y="10" width="80" height="80" fill="red"/>
+    <rect id="a1" style="will-change: transform" x="110" y="10" width="80" height="80" fill="blue"/>
+    <rect id="t" x="110" y="40" width="80" height="80" fill="green"/>
+</svg>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        const a1 = document.getElementById('a1');
+        const t = document.getElementById('t');
+        a1.parentNode.insertBefore(t, a1);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }));
+    }));
+</script>
+</body>
+</html>

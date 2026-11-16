@@ -1,0 +1,63 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<figure id="appleFigure">
+    <img id="captionNamed" width="20" height="20" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+    <figcaption>A ripe apple</figcaption>
+</figure>
+
+<figure id="pearFigure">
+    <img id="flowContentSibling" width="20" height="20" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+    <p id="prose">Prose that is flow content.</p>
+    <figcaption>A ripe pear</figcaption>
+</figure>
+
+<figure>
+    <img id="altNamed" alt="Alt text" width="20" height="20" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+    <figcaption>A ripe plum</figcaption>
+</figure>
+</div>
+
+<script>
+var output = "This test verifies when an unlabeled image takes its accessible name from an ancestor figure's figcaption.\n\n";
+
+function descriptionOf(id)
+{
+    return accessibilityController.accessibleElementById(id).description;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        // Per html-aam, an img with no alt and no title derives its name from the figcaption,
+        // but only when the figure holds nothing else that counts as flow content.
+        output += await expectAsync("descriptionOf('captionNamed')", "'AXDescription: A ripe apple'");
+        output += await expectAsync("descriptionOf('flowContentSibling')", "'AXDescription: '");
+        // An alt attribute names the image itself, so the figcaption is never consulted.
+        output += await expectAsync("descriptionOf('altNamed')", "'AXDescription: Alt text'");
+
+        output += "\nRemoving the paragraph, leaving the figcaption as the figure's only other child.\n";
+        document.getElementById("prose").remove();
+        output += await expectAsync("descriptionOf('flowContentSibling')", "'AXDescription: A ripe pear'");
+
+        output += "\nAdding a paragraph to the first figure.\n";
+        var paragraph = document.createElement("p");
+        paragraph.textContent = "Prose that is flow content.";
+        document.getElementById("appleFigure").appendChild(paragraph);
+        output += await expectAsync("descriptionOf('captionNamed')", "'AXDescription: '");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

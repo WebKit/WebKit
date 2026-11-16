@@ -1,0 +1,4 @@
+
+
+PASS Default behavior for entry.getState() for a non-current cross-document entry
+

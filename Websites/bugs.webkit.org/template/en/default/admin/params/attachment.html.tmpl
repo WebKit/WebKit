@@ -1,0 +1,62 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[%
+   title = "Attachments"
+   desc = "Set up attachment options"
+%]
+
+[% param_descs = {
+  allow_attachment_display =>
+    "If this option is on, users will be able to view attachments from"
+    _ " their browser, if their browser supports the attachment's MIME type."
+    _ " If this option is off, users are forced to download attachments,"
+    _ " even if the browser is able to display them."
+    _ "<p>This is a security restriction for installations where untrusted"
+    _ " users may upload attachments that could be potentially damaging if"
+    _ " viewed directly in the browser.</p>"
+    _ "<p>It is highly recommended that you set the <var>attachment_base</var>"
+    _ " parameter if you turn this parameter on.",
+
+  attachment_base => 
+    "When the <var>allow_attachment_display</var> parameter is on, it is "
+    _ " possible for a malicious attachment to steal your cookies or"
+    _ " perform an attack on Bugzilla using your credentials."
+    _ "<p>If you would like additional security on attachments to avoid"
+    _ " this, set this parameter to an alternate URL for your Bugzilla"
+    _ " that is not the same as <var>urlbase</var> or <var>sslbase</var>."
+    _ " That is, a different domain name that resolves to this exact"
+    _ " same Bugzilla installation.</p>"
+    _ "<p>Note that if you have set the"
+    _ " <a href=\"editparams.cgi?section=advanced#cookiedomain_desc\"><var>cookiedomain</var>"
+    _" parameter</a>, you should set <var>attachment_base</var> to use a"
+    _ " domain that would <em>not</em> be matched by"
+    _ " <var>cookiedomain</var>.</p>"
+    _ "<p>For added security, you can insert <var>%bugid%</var> into the URL,"
+    _ " which will be replaced with the ID of the current $terms.bug that"
+    _ " the attachment is on, when you access an attachment. This will limit"
+    _ " attachments to accessing only other attachments on the same"
+    _ " ${terms.bug}. Remember, though, that all those possible domain names "
+    _ " (such as <kbd>1234.your.domain.com</kbd>) must point to this same"
+    _ " Bugzilla instance.",
+
+  allow_attachment_deletion => "If this option is on, administrators will be able to delete " _
+                               "the content of attachments.",
+
+  maxattachmentsize => "The maximum size (in kilobytes) of attachments to be stored " _
+                       "in the database. If a file larger than this size is attached " _
+                       "to ${terms.abug}, Bugzilla will look at the " _
+                       "<a href=\"#maxlocalattachment\"><var>maxlocalattachment</var> parameter</a> " _
+                       "to determine if the file can be stored locally on the web server. " _
+                       "If the file size exceeds both limits, then the attachment is rejected. " _
+                       "Settings both parameters to 0 will prevent attaching files to ${terms.bugs}.",
+
+  maxlocalattachment => "The maximum size (in megabytes) of attachments to be stored " _
+                        "locally on the web server. If set to a value lower than the " _
+                        "<a href=\"#maxattachmentsize\"><var>maxattachmentsize</var> parameter</a>, " _
+                        "attachments will never be kept on the local filesystem." }
+%]

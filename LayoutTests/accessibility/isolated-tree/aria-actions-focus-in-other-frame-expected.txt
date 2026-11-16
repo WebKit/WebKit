@@ -1,0 +1,15 @@
+This test verifies that when page focus is in a different frame than an aria-actions host, invoking one of its actions falls back to a plain activation (focus may move to the target) rather than losing the focus that was in the other frame.
+
+Focus starts in a different frame:
+PASS: document.activeElement.id === 'frame'
+PASS: frame.contentDocument.activeElement.id === 'inner'
+
+Invoking the action falls back to a plain press, so focus is not lost from the other frame:
+PASS: source.invokeCustomActionAtIndex(0) === true
+PASS: actionClicked === true
+PASS: document.activeElement.id === 'action'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Source Delete

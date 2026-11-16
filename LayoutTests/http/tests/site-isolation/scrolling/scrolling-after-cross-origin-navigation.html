@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// Navigate to cross-origin page where the scroll test will be performed.
+// localhost is treated as cross-origin relative to 127.0.0.1 (which is where the test runner hosts this file)
+window.addEventListener('load', () => {
+    location.href = "http://localhost:8000/site-isolation/scrolling/basic-mouse-wheel-scrolling.html?fromNavigation=1";
+});
+</script>
+<body>
+Navigating to cross-origin page...
+</body>

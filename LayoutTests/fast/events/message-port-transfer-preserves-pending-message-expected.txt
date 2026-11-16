@@ -1,0 +1,4 @@
+Test that a message already posted to a same-context MessagePort is not lost when that port is transferred from within another port's message handler. The message should be delivered either to the port in this context (before it is neutered) or to the re-entangled port in the destination, but it must not be silently dropped.
+
+PASS: 'toB' was delivered.
+

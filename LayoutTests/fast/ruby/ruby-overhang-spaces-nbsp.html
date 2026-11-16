@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>ruby-overhang: spaces overhangs an adjacent no-break space</title>
+<link rel="help" href="https://drafts.csswg.org/css-ruby-1/#propdef-ruby-overhang">
+<link rel="author" title="Alan Baradlay" href="mailto:zalan@apple.com">
+<style>
+  body { margin: 0; }
+  div { font-family: Ahem; font-size: 20px; line-height: 3; }
+  ruby, rt { color: transparent; }
+</style>
+<!--
+  A no-break space (U+00A0) is one of the "spaces" the annotation may overhang, so 'spaces' must
+  overhang it exactly as 'ruby-overhang: auto' does (see the reference). Both sides use the same
+  U+00A0, so only the overhang amount can differ; if U+00A0 were not treated as a space, 'spaces'
+  would refuse to overhang and the trailing "X" would not match.
+-->
+<div>X&#xA0;<ruby style="ruby-overhang: spaces">X<rt>XXXX</rt></ruby>&#xA0;X</div>

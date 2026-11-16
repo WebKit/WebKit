@@ -1,0 +1,56 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that ImageDataSettings contains pixelFormat.");
+
+var canvas = document.createElement("canvas");
+canvas.width = 10;
+canvas.height = 10;
+var context = canvas.getContext("2d");
+var r = 0;
+var g = 128;
+var b = 255;
+var a = 255;
+context.fillStyle = `rgb(${r} ${g} ${b})`;
+context.fillRect(0, 0, 1, 1);
+
+const componentsPerPixel = 4;
+
+function shouldBeAround(to_eval, targetNumber, tolerance, quiet)
+{
+    if (!tolerance)
+        return shouldBe(to_eval, String(targetNumber), quiet);
+    return shouldBeCloseTo(to_eval, targetNumber, tolerance, quiet);
+}
+
+function verifyImageData(variable, constructor, bytesPerElement, red, green, blue, alpha, tolerance, quiet) {
+    shouldBe(variable + '.width', '1', quiet);
+    shouldBe(variable + '.height', '1', quiet);
+    shouldBe(variable + '.data.constructor', constructor, quiet);
+    shouldBe(variable + '.data.BYTES_PER_ELEMENT', String(bytesPerElement), quiet);
+    shouldBe(variable + '.data.length', '4', quiet);
+    shouldBe(variable + '.data.byteLength', String(bytesPerElement * 4), quiet);
+    shouldBeAround(variable + '.data.at(0)', red, tolerance, quiet);
+    shouldBeAround(variable + '.data.at(1)', green, tolerance, quiet);
+    shouldBeAround(variable + '.data.at(2)', blue, tolerance, quiet);
+    shouldBeAround(variable + '.data.at(3)', alpha, tolerance, quiet);
+}
+
+const unorm8_bytes_per_element = 1;
+
+var created_imageData_unorm8 = context.createImageData(1, 1, { pixelFormat: "rgba-unorm8" });
+verifyImageData('created_imageData_unorm8', 'Uint8ClampedArray', unorm8_bytes_per_element, 0, 0, 0, 0);
+
+var gotten_imageData_unorm8 = context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-unorm8" });
+verifyImageData('gotten_imageData_unorm8', 'Uint8ClampedArray', unorm8_bytes_per_element, r, g, b, a);
+
+shouldThrowErrorName(`context.createImageData(1, 1, { pixelFormat: "foo" })`, "TypeError")
+shouldThrowErrorName(`context.getImageData(0, 0, 1, 1, { pixelFormat: "foo" })`, "TypeError")
+</script>
+</body>
+</html>

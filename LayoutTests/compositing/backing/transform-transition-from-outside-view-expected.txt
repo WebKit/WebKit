@@ -1,0 +1,30 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 1
+        (GraphicsLayer
+          (offsetFromRenderer width=-14 height=-14)
+          (position 94.00 86.00)
+          (bounds 148.00 128.00)
+          (drawsContent 1)
+          (backingStoreAttached 1)
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=-14 height=-14)
+              (bounds 48.00 48.00)
+              (drawsContent 1)
+              (backingStoreAttached 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

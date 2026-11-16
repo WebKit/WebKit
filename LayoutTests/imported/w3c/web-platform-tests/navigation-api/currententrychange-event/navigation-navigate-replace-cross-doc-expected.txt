@@ -1,0 +1,4 @@
+
+
+PASS currententrychange does not fire for cross-document navigation.navigate() with replace
+

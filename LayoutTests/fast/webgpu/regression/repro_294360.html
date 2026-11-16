@@ -1,0 +1,102 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  const format = 'bgra8unorm';
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let module = device.createShaderModule({
+      code: `
+@group(0) @binding(0) var<storage, read_write> b: u32;
+
+struct VertexOutput {
+  @builtin(position) position : vec4f,
+  @location(0) something: f32,
+}
+
+@vertex
+fn v(@location(0) fromVertexBuffer: f32) -> VertexOutput {
+  var v = VertexOutput();
+    v.position = vec4(fromVertexBuffer);
+    v.something = fromVertexBuffer;
+  return v;
+}
+
+@fragment
+fn f(@location(0) @interpolate(flat) something: f32) -> @location(0) vec4f {
+  b = bitcast<u32>(something);
+  return vec4();
+}
+`,
+    });
+    let pipeline = device.createRenderPipeline({
+      layout: device.createPipelineLayout({bindGroupLayouts: []}),
+      vertex: {
+        module,
+        buffers: [{
+          arrayStride: 8,
+          attributes: [{format: 'float32', offset: 0, shaderLocation: 0}],
+        }],
+      },
+      fragment: {module, targets: [{format}]},
+      primitive: {topology: 'point-list'},
+    });
+    let texture = device.createTexture({format, size: [1, 1, 1], usage: GPUTextureUsage.RENDER_ATTACHMENT});
+    let renderPassDescriptor = {
+      colorAttachments: [
+        {
+          view: texture.createView(),
+          clearValue: [0, 0, 0, 0],
+          loadOp: 'clear',
+          storeOp: 'store',
+        },
+      ],
+    };
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+    renderPassEncoder.setPipeline(pipeline);
+    let uniformBuffer = device.createBuffer({size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC});
+    let bindGroup0 = device.createBindGroup({
+      layout: pipeline.getBindGroupLayout(0),
+      entries: [{binding: 0, resource: {buffer: uniformBuffer}}],
+    });
+
+    let vertexBuffer1 = device.createBuffer({size: 32, usage: GPUBufferUsage.VERTEX, mappedAtCreation: true});
+    let firstU32 = new Uint32Array(vertexBuffer1.getMappedRange());
+    firstU32.fill(123456789);
+    vertexBuffer1.unmap();
+
+    let vertexBuffer2 = device.createBuffer({size: 32, usage: GPUBufferUsage.VERTEX});
+
+    renderPassEncoder.setVertexBuffer(0, vertexBuffer1);
+    renderPassEncoder.setVertexBuffer(0, vertexBuffer2);
+    renderPassEncoder.setBindGroup(0, bindGroup0);
+
+    renderPassEncoder.draw(3);
+    renderPassEncoder.end();
+
+    let outputBuffer = device.createBuffer({size: 4, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ});
+    commandEncoder.copyBufferToBuffer(uniformBuffer, 0, outputBuffer, 0, 4);
+
+    device.queue.submit([commandEncoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    let error = await device.popErrorScope();
+
+    await outputBuffer.mapAsync(GPUMapMode.READ);
+    let outputU32 = new Uint32Array(outputBuffer.getMappedRange());
+    log(outputU32);
+
+    if (error) {
+      log(error.message);
+    } else {
+      log('no validation error');
+    }
+    globalThis.testRunner?.dumpAsText();
+    globalThis.testRunner?.notifyDone();
+  };
+
+</script>
+

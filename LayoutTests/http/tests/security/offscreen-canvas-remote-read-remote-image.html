@@ -1,0 +1,47 @@
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+    <canvas width="200" height="200"></canvas>
+    <script>
+        function testToDataURL(canvas, state, shouldSucceed)
+        {
+            state = "Calling toDataURL() on " + state;
+            try {
+                var dataURL = canvas.toDataURL();
+                debug((shouldSucceed ? "PASS " : "FAIL ") + state + " was allowed.");
+            } catch (e) {
+                debug((shouldSucceed ? "FAIL " : "PASS ") + state + " was not allowed - Threw error: (" + e + ").");
+            }
+        }
+
+        (async () => {
+            description("Test that offscreen canvas does not allow leaking cross-site image.");
+
+            window.jsTestIsAsync = true;
+
+            const image = new Image;
+            image.src = "http://localhost:8000/security/resources/abe.png";
+            await image.decode();
+
+            const canvas = document.querySelector('canvas');
+
+            testToDataURL(canvas, "an untainted canvas", true);
+
+            const offscreenCanvas = canvas.transferControlToOffscreen();
+            const offscreenContext = offscreenCanvas.getContext('bitmaprenderer');
+            const imageBitmapLeak = await createImageBitmap(image);
+
+            offscreenContext.transferFromImageBitmap(imageBitmapLeak);
+
+            await new Promise((resolve) => {
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        resolve();
+                    });
+                });
+            });
+
+            testToDataURL(canvas, "remote image", false);
+            finishJSTest();
+        })();
+    </script>
+</body>

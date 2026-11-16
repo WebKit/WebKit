@@ -1,0 +1,7 @@
+
+
+PASS Shared worker in subframe
+PASS Nested worker in shared worker in subframe
+PASS Shared worker in popup
+PASS Nested worker from shared worker in popup
+

@@ -1,0 +1,10 @@
+Tests that a tap dispatches pointerdown and pointerup only once, for the touch, and not again for the mouse events synthesized from the tap.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pointerEvents.join(' ') is "pointerdown:touch pointerup:touch"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="resources/window-onerror.js">
+</script>
+</head>
+<body>
+<p>Test that window.onerror is called on window object for events created using new ErrorEvent('error', {}).</p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg) {
+    document.getElementById("console").innerHTML += msg + "<br>";
+}
+
+window.onerror = function(msg, url, line, column, error)
+{
+    log("Main frame window.onerror: ");
+    log("msg: " + msg);
+    log("url: " + url);
+    log("line: " + line);
+    log("column: " + column);
+    log("error: " + error);
+    return true;
+}
+
+var evt = new ErrorEvent('error', {
+    message: 'Some error',
+    filename: 'Some file',
+    lineno: 42,
+    colno: 43,
+    error: 'Hello there',
+});
+window.dispatchEvent(evt);
+log("DONE.");
+</script>
+</body>
+</html>

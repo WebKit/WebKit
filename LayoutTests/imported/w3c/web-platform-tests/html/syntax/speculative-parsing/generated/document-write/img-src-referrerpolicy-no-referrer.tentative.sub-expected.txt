@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <img src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=428087c3-550b-4511-af1c-110cee235448&amp;encodingcheck=&Gbreve;" referrerpolicy=no-referrer>
+
+
+
+PASS Speculative parsing, document.write(): img-src-referrerpolicy-no-referrer
+

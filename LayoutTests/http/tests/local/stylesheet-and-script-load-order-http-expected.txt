@@ -1,0 +1,3 @@
+Test that stylesheet loads complete before external scripts are executed.
+
+PASS

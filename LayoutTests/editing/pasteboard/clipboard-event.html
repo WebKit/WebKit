@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<textarea id="testArea">Content</textarea>
+<script src="../editing.js"></script>
+<script>
+description("Tests the ClipboardEvent.");
+
+function testClipboardEvent(e)
+{
+    event = e;
+    shouldBe("event.__proto__", "ClipboardEvent.prototype");
+    shouldBeTrue("event.isTrusted")
+    shouldBeTrue("event.bubbles");
+    shouldBeTrue("event.cancelable");
+    shouldBe("event.clipboardData.__proto__", "DataTransfer.prototype");
+}
+
+var firedCopyEvent = false;
+var firedPasteEvent = false;
+
+var testArea = document.getElementById("testArea");
+testArea.addEventListener("copy", function(e) {
+    event = e;
+    firedCopyEvent = true;
+    shouldBeEqualToString("event.type", "copy");
+    testClipboardEvent(event);
+});
+
+testArea.addEventListener("paste", function(e) {
+    event = e;
+    firedPasteEvent = true;
+    shouldBeEqualToString("event.type", "paste");
+    testClipboardEvent(event);
+    shouldBeEqualToString("event.clipboardData.getData('text/plain')", "Content");
+});
+
+testArea.focus();
+execSelectAllCommand();
+shouldBeFalse("firedCopyEvent");
+shouldBeFalse("firedPasteEvent");
+
+execCopyCommand();
+shouldBeTrue("firedCopyEvent");
+shouldBeFalse("firedPasteEvent")
+firedCopyEvent = false;
+
+execPasteCommand();
+shouldBeFalse("firedCopyEvent");
+shouldBeTrue("firedPasteEvent");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

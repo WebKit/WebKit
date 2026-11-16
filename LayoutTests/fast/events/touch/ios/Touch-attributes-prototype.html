@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script>
+description("Checks that Touch attributes are on the prototype.");
+
+var touch = new Touch({ identifier: 1, target: document.body });
+shouldBe("touch.__proto__", "Touch.prototype");
+shouldBe("Object.getOwnPropertyNames(touch).length", "0");
+
+function checkAttributeGetter(prototype, propertyName)
+{
+    descriptor = Object.getOwnPropertyDescriptor(prototype, propertyName);
+    shouldBeType("descriptor.get", "Function");
+    shouldBeTrue("descriptor.enumerable");
+    shouldBeTrue("descriptor.configurable");
+}
+
+for (var propertyName of ["identifier", "target", "screenX", "screenY", "clientX", "clientY", "pageX", "pageY", "force"]) {
+    debug("");
+    debug("* touch.__proto__." + propertyName);
+    checkAttributeGetter(touch.__proto__, propertyName);
+
+    debug("");
+    debug("* Touch.prototype." + propertyName);
+    checkAttributeGetter(Touch.prototype, propertyName);
+}
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+
+PASS The HTML parser should disallow nested options in select datalist.
+PASS Nested <options> not should be listed in <select> IDLs.
+PASS Showing the popup with nested <option>s should not crash.
+

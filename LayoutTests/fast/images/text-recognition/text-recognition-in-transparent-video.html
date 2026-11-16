@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+img, video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: 400px;
+}
+
+video {
+    opacity: 0;
+}
+</style>
+</head>
+<body>
+<img src="../resources/green-400x400.png"></img>
+<video></video>
+<script>
+jsTestIsAsync = true;
+addEventListener("load", () => {
+    internals.requestTextRecognition(document.querySelector("video"), finishJSTest);
+});
+</script>
+</body>
+</html>

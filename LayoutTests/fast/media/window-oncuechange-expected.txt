@@ -1,0 +1,16 @@
+Test window.oncuechange EventHandler attribute
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.oncuechange is null
+window.oncuechange = function() { ran = true; };
+window.dispatchEvent(testEvent)
+PASS ran is true
+window.oncuechange = null
+track.dispatchEvent(testEvent)
+PASS ran is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

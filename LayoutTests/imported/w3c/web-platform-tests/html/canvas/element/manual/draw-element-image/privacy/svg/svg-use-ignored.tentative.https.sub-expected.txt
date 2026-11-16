@@ -1,0 +1,4 @@
+
+
+PASS drawElementImage does not use cross-origin SVG use content
+

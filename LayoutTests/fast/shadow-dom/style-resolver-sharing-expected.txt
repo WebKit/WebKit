@@ -1,0 +1,28 @@
+Verify that shadow roots with identical styles share style resolvers (have equal identifier below).
+(document resolver (identifier=0) (author rule count=0))
+(shadow root resolver (user agent) (identifier=1) (author rule count=0))
+(shadow root resolver (author) (identifier=2) (author rule count=0))
+(shadow root resolver (author) (identifier=2) (author rule count=0))
+(shadow root resolver (author) (identifier=2) (author rule count=0))
+(shadow root resolver (author) (identifier=2) (author rule count=0))
+(shadow root resolver (author) (identifier=3) (author rule count=1))
+(shadow root resolver (author) (identifier=3) (author rule count=1))
+(shadow root resolver (author) (identifier=3) (author rule count=1))
+(shadow root resolver (author) (identifier=3) (author rule count=1))
+(shadow root resolver (author) (identifier=3) (author rule count=1))
+(shadow root resolver (user agent) (identifier=1) (author rule count=0))
+
+After style mutation
+(document resolver (identifier=0) (author rule count=0))
+(shadow root resolver (user agent) (identifier=1) (author rule count=0))
+(shadow root resolver (author) (identifier=2) (author rule count=0))
+(shadow root resolver (author) (identifier=2) (author rule count=0))
+(shadow root resolver (author) (identifier=3) (author rule count=1))
+(shadow root resolver (author) (identifier=3) (author rule count=1))
+(shadow root resolver (author) (identifier=4) (author rule count=2))
+(shadow root resolver (author) (identifier=5) (author rule count=2))
+(shadow root resolver (author) (identifier=2) (author rule count=0))
+(shadow root resolver (author) (identifier=2) (author rule count=0))
+(shadow root resolver (author) (identifier=3) (author rule count=1))
+(shadow root resolver (user agent) (identifier=1) (author rule count=0))
+

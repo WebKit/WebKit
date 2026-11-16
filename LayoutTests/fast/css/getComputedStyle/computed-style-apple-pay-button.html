@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src='../../../resources/js-test-pre.js'></script>
+</head>
+<body>
+	<button id='plain' style='-webkit-appearance: -apple-pay-button;'></button>
+	<button id='square-corners' style='-webkit-appearance: -apple-pay-button; border-radius: 0px;'></button>
+	<button id='buy' style='-webkit-appearance: -apple-pay-button; -apple-pay-button-type: buy;'></button>
+
+	<script>
+		description('Test computed style adjustments for the "-apple-pay-button" appearance.');
+
+		plainButton = document.querySelector('#plain');
+		shouldBeEqualToString('getComputedStyle(plainButton).minWidth', '100px');
+		shouldBeEqualToString('getComputedStyle(plainButton).width', '100px');
+		shouldBeEqualToString('getComputedStyle(plainButton).minHeight', '30px');
+		shouldBeEqualToString('getComputedStyle(plainButton).height', '30px');
+		shouldBeEqualToString('getComputedStyle(plainButton).borderRadius', '4px');
+
+		squareCornersButton = document.querySelector('#square-corners');
+		shouldBeEqualToString('getComputedStyle(squareCornersButton).minWidth', '100px');
+		shouldBeEqualToString('getComputedStyle(squareCornersButton).width', '100px');
+		shouldBeEqualToString('getComputedStyle(squareCornersButton).minHeight', '30px');
+		shouldBeEqualToString('getComputedStyle(squareCornersButton).height', '30px');
+		shouldBeEqualToString('getComputedStyle(squareCornersButton).borderRadius', '0px');
+
+		buyButton = document.querySelector('#buy');
+		shouldBeEqualToString('getComputedStyle(buyButton).minWidth', '140px');
+		shouldBeEqualToString('getComputedStyle(buyButton).width', '140px');
+		shouldBeEqualToString('getComputedStyle(buyButton).minHeight', '30px');
+		shouldBeEqualToString('getComputedStyle(buyButton).height', '30px');
+		shouldBeEqualToString('getComputedStyle(buyButton).borderRadius', '4px');
+	</script>
+
+	<script src='../../../resources/js-test-post.js'></script>
+</body>
+</html>

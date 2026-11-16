@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This test that compositing layers get repainted properly when cliprect is applied with position change.</title>
+<style>
+  #foo {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    clip: rect(70px, 102px, 102px, -1px);
+    -webkit-transform: translateZ(0);
+}
+</style>
+</head> 
+<body>     
+<div id=foo></div>      
+<script>
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+
+  setTimeout(function() { 
+    var box = document.getElementById("foo");
+    box.style.clip = "rect(0px, 102px, 202px, 0px)";
+    box.style.top = "1px";
+    box.offsetHeight;
+    
+  if (window.testRunner)
+    testRunner.notifyDone();
+  }, 0);
+</script>
+</body>
+</html>

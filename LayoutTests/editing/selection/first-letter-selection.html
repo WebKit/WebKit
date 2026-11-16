@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+div::first-letter {
+    color: red;
+}
+</style>
+</head>
+<body>
+<div id="test1">Hello</div>
+<div id="test2">12</div>
+<div id="test3">"Quote</div>
+<div id="test4">A</div>
+<div id="test5"><span>Nested</span></div>
+<div id="test6">First<br>Second</div>
+<div id="test7" contenteditable>Editable</div>
+<div id="container"></div>
+
+<script>
+description("Test that selection works correctly with ::first-letter pseudo-element.");
+
+function selectAll(element) {
+    var range = document.createRange();
+    range.selectNodeContents(element);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
+function selectRange(node, start, end) {
+    var range = document.createRange();
+    range.setStart(node, start);
+    range.setEnd(node, end);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
+// Test 1: Select all text in element with first-letter
+selectAll(test1);
+shouldBeEqualToString("window.getSelection().toString()", "Hello");
+
+// Test 2: Short text - select all
+selectAll(test2);
+shouldBeEqualToString("window.getSelection().toString()", "12");
+
+// Test 3: First-letter with punctuation (first-letter includes quote + letter)
+selectAll(test3);
+shouldBeEqualToString("window.getSelection().toString()", "\"Quote");
+
+// Test 4: Single character text (entire text is first-letter)
+selectAll(test4);
+shouldBeEqualToString("window.getSelection().toString()", "A");
+
+// Test 5: First-letter with nested inline
+selectAll(test5);
+shouldBeEqualToString("window.getSelection().toString()", "Nested");
+
+// Test 6: Multi-line - select all should get both lines
+selectAll(test6);
+shouldBeEqualToString("window.getSelection().toString().replace(/\\n/g, '|')", "First|Second");
+
+// Test 7: Contenteditable with first-letter
+selectAll(test7);
+shouldBeEqualToString("window.getSelection().toString()", "Editable");
+
+// Test 8: Select only the first-letter portion
+selectRange(test2.firstChild, 0, 1);
+shouldBeEqualToString("window.getSelection().toString()", "1");
+
+// Test 9: Select only the remaining portion (after first-letter)
+selectRange(test2.firstChild, 1, 2);
+shouldBeEqualToString("window.getSelection().toString()", "2");
+
+// Test 10: Select range spanning first-letter boundary
+selectRange(test1.firstChild, 0, 3);
+shouldBeEqualToString("window.getSelection().toString()", "Hel");
+
+// Test 11: Select from middle of first-letter text to end
+selectRange(test3.firstChild, 0, 2);
+shouldBeEqualToString("window.getSelection().toString()", "\"Q");
+
+// Test 12: Caret at first-letter boundary (offset = first-letter length)
+selectRange(test1.firstChild, 1, 1);
+shouldBe("window.getSelection().isCollapsed", "true");
+shouldBe("window.getSelection().anchorOffset", "1");
+
+// Test 13: Caret at start of text (offset 0, inside first-letter)
+selectRange(test1.firstChild, 0, 0);
+shouldBe("window.getSelection().isCollapsed", "true");
+shouldBe("window.getSelection().anchorOffset", "0");
+
+// Test 14: Select all on single-character first-letter (entire text is first-letter)
+selectRange(test4.firstChild, 0, 1);
+shouldBeEqualToString("window.getSelection().toString()", "A");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

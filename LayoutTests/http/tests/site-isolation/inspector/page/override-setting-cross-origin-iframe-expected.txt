@@ -1,0 +1,23 @@
+Test that Page.overrideSetting propagates to cross-origin iframes under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.OverrideSettingCrossOriginIFrame
+-- Running test case: SiteIsolation.Page.OverrideSetting.DefaultStyles
+PASS: Added target should have Frame type.
+PASS: Main page should have author styles applied (red).
+PASS: Cross-origin iframe should have author styles applied (red).
+
+-- Running test case: SiteIsolation.Page.OverrideSetting.DisableAndReload
+Overriding AuthorAndUserStylesEnabled to false...
+Reloading...
+PASS: Main page should have author styles disabled (black).
+Re-adding cross-origin iframe...
+PASS: Cross-origin iframe should have author styles disabled (black).
+
+-- Running test case: SiteIsolation.Page.OverrideSetting.RemoveOverrideAndReload
+Removing AuthorAndUserStylesEnabled override...
+Reloading...
+PASS: Main page should have author styles restored (red).
+Re-adding cross-origin iframe...
+PASS: Cross-origin iframe should have author styles restored (red).
+

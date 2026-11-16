@@ -1,0 +1,47 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<iframe src="http://localhost:8000/site-isolation/resources/iframe-with-contextmenu-target.html" onload="runTest();"></iframe>
+
+<script>
+var output = "Ensures that the ShowMenu accessibility action fires a contextmenu DOM event on elements inside a remote iframe.\n";
+
+window.jsTestIsAsync = true;
+
+if (window.accessibilityController)
+    accessibilityController.setClientAccessibilityMode(true);
+
+var contextMenuFired = false;
+var contextMenuTargetId = null;
+
+window.addEventListener("message", function(event) {
+    if (event.data && event.data.type === "contextmenu") {
+        contextMenuFired = true;
+        contextMenuTargetId = event.data.targetId;
+    }
+});
+
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    // Find the element inside the remote iframe via client accessibility mode,
+    // which traverses the AX tree through the UI process. Then trigger the menu
+    // via the AX API.
+    var target = await waitForElementById("contextmenu-target");
+    target.showMenu();
+
+    await waitFor(() => contextMenuFired);
+    output += expect("contextMenuFired", "true");
+    output += expect("contextMenuTargetId", "'contextmenu-target'");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>

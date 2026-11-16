@@ -1,0 +1,7 @@
+This address should be in green characters.
+This paragraph should be in green characters.
+This paragraph should be in green characters.
+This paragraph should be in green characters.
+
+PASS NEGATED universal selector with declared namespace
+

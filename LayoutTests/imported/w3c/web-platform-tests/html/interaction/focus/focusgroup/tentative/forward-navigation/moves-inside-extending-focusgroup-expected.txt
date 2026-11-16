@@ -1,0 +1,6 @@
+item2 item3
+item4
+
+FAIL When the focus is set on a focusgroup item which happens to also be an extending focusgroup, an arrow key press should move the focus to the next item within the extending focusgroup and skip non-focusable items. assert_equals: expected Element node <span id="item3" tabindex="-1">item3</span> but got Element node <div id="item1" tabindex="0" focusgroup="extend">
+    <sp...
+

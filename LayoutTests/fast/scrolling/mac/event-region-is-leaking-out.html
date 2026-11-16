@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+body {
+  height: 2000px;
+}
+
+.container {
+  width: 400px;
+  height: 420px;
+  padding: 10px;
+  margin: 120px;
+  border: 1px solid black;
+}
+</style>
+<script>     
+window.onload = function () {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    let container = document.querySelector('.container');
+    container.addEventListener('wheel', () => { }, { passive: true });
+    document.body.offsetLeft;
+    
+    if (window.internals)
+        results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</head>
+<body>
+<div class="container">Wheel Event Handlers here.</div>
+<pre id="results"></pre>
+</body>
+</html>

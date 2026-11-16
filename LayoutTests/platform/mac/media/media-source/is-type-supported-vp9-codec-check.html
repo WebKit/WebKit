@@ -1,0 +1,97 @@
+<html>
+<head>
+    <title>media-source-change-source</title>
+    <script src="../../../../media/media-source/media-source-loader.js"></script>
+    <script src="../../../../media/video-test.js"></script>
+    <script>
+    window.addEventListener('load', event => {
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="bad-parameter"')`, false);
+        consoleWrite('');
+        consoleWrite('Test invalid number of required parameters:')
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09"')`, false);
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.00"')`, false);
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.00.41"')`, false);
+        consoleWrite('');
+        consoleWrite('Test valid default optional parameters:')
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.00.41.08"')`, true);
+        consoleWrite('');
+        consoleWrite('Test invalid number of optional parameters:')
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01"')`, false);
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09"')`, false);
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.16"')`, false);
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.16.09"')`, false);
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.16.09.01.00"')`, false);
+        consoleWrite('');
+        consoleWrite('Test valid required and optional parameters:')
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.16.09.01"')`, true);
+        consoleWrite('');
+        consoleWrite('Test invalid codec type');
+        testExpected(`MediaSource.isTypeSupported('vp10.00.41.08"')`, false);
+        consoleWrite('');
+        consoleWrite('Test invalid combination of matrixCoefficients and chromaSubsampling');
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.00.41.08.01.01.01.00.00"')`, false);
+        consoleWrite('');
+        consoleWrite('Test valid profiles:');
+        for (let profile of [0, 2])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.${profile.toString().padStart(2, '0')}.41.08"')`, true);
+        consoleWrite('Test invalid profiles:');
+        for (let profile of [1, 3, 4])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.${profile.toString().padStart(2, '0')}.41.08"')`, false);
+        consoleWrite('');
+        consoleWrite('Test valid levels:');
+        for (let level of [10, 11, 20, 21, 30, 31, 40, 41, 50, 51, 52, 60])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.00.${level.toString().padStart(2, '0')}.08"')`, true);
+        consoleWrite('');
+        consoleWrite('Test invalid levels:');
+        for (let level of [61, 62, 70])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.00.${level.toString().padStart(2, '0')}.08"')`, false);
+        consoleWrite('');
+        consoleWrite('Test valid bitDepths:');
+        for (let bitDepth of [8, 10])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.00.41.${bitDepth.toString().padStart(2, '0')}"')`, true);
+        consoleWrite('');
+        consoleWrite('Test invalid bitDepths:');
+        for (let bitDepth of [12, 14])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.00.41.${bitDepth.toString().padStart(2, '0')}"')`, false);
+        consoleWrite('');
+        consoleWrite('Test valid chromaSubsampling:');
+        for (let chromaSubsampling of [0, 1])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.${chromaSubsampling.toString().padStart(2, '0')}.09.16.09.01"')`, true);
+        consoleWrite('');
+        consoleWrite('Test invalid chromaSubsampling:');
+        for (let chromaSubsampling of [2, 3, 4])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.${chromaSubsampling.toString().padStart(2, '0')}.09.16.09.01"')`, false);
+        consoleWrite('');
+        consoleWrite('Test valid colorPrimaries:');
+        for (let colorPrimaries of [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 22])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.${colorPrimaries.toString().padStart(2, '0')}.16.09.01"')`, true);
+        consoleWrite('');
+        consoleWrite('Test invalid colorPrimaries:');
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.03.16.09.01"')`, false);
+        consoleWrite('');
+        consoleWrite('Test valid transferCharacteristics:');
+        for (let transferCharacteristics of [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.${transferCharacteristics.toString().padStart(2, '0')}.09.01"')`, true);
+        consoleWrite('');
+        consoleWrite('Test invalid transferCharacteristics:');
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.03.09.01"')`, false);
+        consoleWrite('');
+        consoleWrite('Test valid matrixCoefficients:');
+        for (let matrixCoefficients of [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+            testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.16.${matrixCoefficients.toString().padStart(2, '0')}.01"')`, true);
+        consoleWrite('');
+        consoleWrite('Test invalid matrixCoefficients:');
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.16.09.03"')`, false);
+        consoleWrite('');
+        consoleWrite('Test valid videoFullRangeFlag:');
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.16.01.00"')`, true);
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.16.01.01"')`, true);
+        consoleWrite('');
+        consoleWrite('Test invalid videoFullRangeFlag:');
+        testExpected(`MediaSource.isTypeSupported('video/webm; codecs="vp09.02.10.10.01.09.16.01.02"')`, false);
+
+		consoleWrite('');
+		endTest();
+	});
+    </script>
+</head>

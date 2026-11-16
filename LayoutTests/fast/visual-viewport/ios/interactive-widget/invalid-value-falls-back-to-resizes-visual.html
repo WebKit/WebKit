@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, interactive-widget=resize-content"/>
+    <style>
+        input {
+            width: 200px;
+            height: 50px;
+        }
+    </style>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input" type="text">
+
+    <script>
+        jsTestIsAsync = true;
+        addEventListener("load", async () => {
+            let textField = document.querySelector("input");
+            window.initialLayoutViewportHeight = internals.layoutViewportRect().height;
+            window.initialVisualViewportHeight = window.visualViewport.height;
+
+            await UIHelper.activateElement(textField);
+            await UIHelper.waitForKeyboardToShow();
+            await UIHelper.ensureStablePresentationUpdate();
+
+            // "resize-content" is not a valid interactive-widget value (it is missing the "s" in
+            // "resizes"), so it must be ignored and the default resizes-visual behavior used: the
+            // keyboard shrinks the visual viewport but leaves the layout viewport unshrunk.
+            shouldBeTrue('internals.layoutViewportRect().height == window.initialLayoutViewportHeight');
+            shouldBeTrue('window.visualViewport.height < window.initialVisualViewportHeight');
+
+            finishJSTest();
+        });
+    </script>
+</body>
+
+</html>

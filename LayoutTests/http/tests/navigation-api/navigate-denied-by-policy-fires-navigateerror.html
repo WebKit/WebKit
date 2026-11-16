@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that a cross-document navigation.navigate() that the client denies fires the navigate event, then navigateerror, and rejects its finished promise, whether the client answers right away or later.");
+jsTestIsAsync = true;
+
+async function navigateAndCollectEvents(frameWindow, url)
+{
+    const events = [];
+    frameWindow.navigation.onnavigate = () => events.push("navigate");
+    frameWindow.navigation.onnavigateerror = event => events.push("navigateerror: " + event.error.name);
+    const result = frameWindow.navigation.navigate(url);
+    result.committed.catch(() => { });
+    try {
+        await result.finished;
+        events.push("finished fulfilled");
+    } catch (error) {
+        events.push("finished rejected: " + error.name);
+    }
+    return JSON.stringify(events);
+}
+
+onload = async () => {
+    const frame = document.getElementById("testFrame");
+    window.originalFrameURL = frame.contentWindow.location.href;
+
+    testRunner.setCustomPolicyDelegate(true, false);
+    testRunner.skipPolicyDelegateNotifyDone();
+
+    debug("The client denies the navigation right away:");
+    window.events = await navigateAndCollectEvents(frame.contentWindow, "/security/resources/empty.html?denied-immediately");
+    shouldBeEqualToString("events", '["navigate","navigateerror: AbortError","finished rejected: AbortError"]');
+
+    testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+    debug("The client denies the navigation later:");
+    window.events = await navigateAndCollectEvents(frame.contentWindow, "/security/resources/empty.html?denied-later");
+    shouldBeEqualToString("events", '["navigate","navigateerror: AbortError","finished rejected: AbortError"]');
+
+    window.frameURL = frame.contentWindow.location.href;
+    shouldBe("frameURL", "originalFrameURL");
+    finishJSTest();
+};
+</script>
+<iframe id="testFrame" src="/security/resources/empty.html"></iframe>
+</body>
+</html>

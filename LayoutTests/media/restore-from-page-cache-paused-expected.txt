@@ -1,0 +1,12 @@
+
+Test that a <video> that was paused before entering the back/forward cache is still paused, and still visibly displaying its last frame, after being restored. The visible-frame part of this is verified by the pixel/screenshot comparison against restore-from-page-cache-paused-expected.png, not by anything in this script.
+
+EVENT(loadeddata)
+EXPECTED (loadCount == '0') OK
+EXPECTED (video.paused == 'true') OK
+*** Page going into cache while paused
+*** Page going into cache, video.paused = true
+*** Page returned from cache
+EXPECTED (loadCount == '1') OK
+EXPECTED (video.paused == 'true') OK
+

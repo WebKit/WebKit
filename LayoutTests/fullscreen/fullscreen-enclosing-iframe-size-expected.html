@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    iframe {
+        border: none;
+        background-color: green;
+        width: 100vw;
+        height: 100vh;
+        box-sizing: border-box;
+        display: block;
+    }
+</style>
+</head>
+<body>
+    <iframe srcdoc="<button onclick='document.documentElement.requestFullscreen();'>Go fullscreen</button><p>This test passes if background is fully green with no red.</p>"></iframe>
+</body>
+</html>

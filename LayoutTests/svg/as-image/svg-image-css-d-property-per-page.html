@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<title>An SVG image shared by two pages is parsed with the CSS d property setting of each</title>
+<link rel="author" title="Sam Weinig" href="mailto:sam@webkit.org">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/svg-image-per-page.js"></script>
+<script>
+const imageURL = new URL("resources/css-d-property-square.svg", location.href).href;
+
+promise_test(async test => {
+    assert_own_property(window, "internals");
+
+    // Opening a page reapplies the shared preferences to every page, so change the setting after.
+    const secondPage = openSecondPage(test);
+    await new Promise(requestAnimationFrame);
+    assert_own_property(secondPage, "internals");
+    internals.settings.setCSSDPropertyEnabled(true);
+    secondPage.internals.settings.setCSSDPropertyEnabled(false);
+
+    const enabledImage = await loadImage(document, imageURL);
+    const disabledImage = await loadImage(secondPage.document, imageURL);
+
+    assert_array_equals(pixelOfDraw(enabledImage, 50, 50), [0, 128, 0, 255], "page with the CSS d property");
+    assert_array_equals(pixelOfDraw(disabledImage, 50, 50), [0, 0, 0, 0], "page without the CSS d property");
+    assert_array_equals(pixelOfDraw(enabledImage, 50, 50), [0, 128, 0, 255], "page with the CSS d property after the other page");
+});
+</script>

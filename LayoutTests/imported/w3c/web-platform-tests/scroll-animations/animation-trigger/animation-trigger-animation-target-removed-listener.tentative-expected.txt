@@ -1,0 +1,3 @@
+
+FAIL triggered animation with event listener can trigger after target is removed. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TimelineTrigger"
+

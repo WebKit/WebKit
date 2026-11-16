@@ -1,0 +1,8 @@
+Description
+
+This test validates that, for a cross origin resource, the timing allow check algorithm will correctly distinguish between 'null' and 'Null' values in the Timing-Allow-Origin header. An opaque origin's serialization is the string "null" and the timing allow origin check needs to do a case-sensitive comparison to the Timing-Allow-Origin header.
+
+
+FAIL An opaque origin should be authorized to see resource timings when theTAO header is the string 'null' assert_greater_than: transferSize should be greater than 0 expected a number greater than 0 but got 0
+PASS An opaque origin must not be authorized to see resource timings when the TAO header is the string 'Null'. (The check for 'null' must be case-sensitive)
+

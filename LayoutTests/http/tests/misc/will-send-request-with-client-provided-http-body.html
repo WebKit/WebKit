@@ -1,0 +1,34 @@
+<p>This tests that the http body set by willSendRequestForFrame is sent.</p>
+<pre id="console"></pre>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function log(msg)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+    }
+
+    var xhr1 = new XMLHttpRequest();
+    xhr1.onreadystatechange = function () {
+        if (xhr1.readyState == 4){
+            log("Request body before setWillSendRequestAddsHTTPBody: " + xhr1.responseText);
+            testRunner.setWillSendRequestAddsHTTPBody("This body should also be sent");
+            
+            var xhr2 = new XMLHttpRequest();
+            xhr2.onreadystatechange = function () {
+                if (xhr2.readyState == 4){
+                    log("Request body after setWillSendRequestAddsHTTPBody: " + xhr2.responseText);
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }            
+            }
+            xhr2.open("POST", "resources/post-echo.cgi");
+            xhr2.send("This body should not be sent because of setWillSendRequestHTTPBody");
+        }
+    };
+    xhr1.open("POST", "resources/post-echo.cgi");
+    xhr1.send("This body should be sent");
+</script>

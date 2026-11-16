@@ -1,0 +1,54 @@
+This test checks iteration on FileSystemDirectoryHandle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test keys():
+PASS resultKeys.length is handleNames.length
+PASS resultKeys is handleNames
+PASS typeof iterator[Symbol.asyncIterator] === "function" is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is false
+PASS nextResults is expectedResults
+PASS nextResultsEnd.done is true
+PASS nextResultsEnd.value is undefined.
+Test values():
+PASS resultValuesName.length is handleNames.length
+PASS resultValuesName is handleNames
+PASS resultValuesType is handleTypes
+PASS typeof iterator[Symbol.asyncIterator] === "function" is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is false
+PASS nextResults.length is expectedResults.length
+PASS isEqual(expectedResults[index], nextResults[index]) is true
+PASS isEqual(expectedResults[index], nextResults[index]) is true
+PASS isEqual(expectedResults[index], nextResults[index]) is true
+PASS isEqual(expectedResults[index], nextResults[index]) is true
+PASS nextResultsEnd.done is true
+PASS nextResultsEnd.value is undefined.
+Test entries():
+PASS typeof iterator[Symbol.asyncIterator] === "function" is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is false
+PASS resultKeys.length is handleNames.length
+PASS resultKeys is handleNames
+PASS resultValuesName is handleNames
+PASS resultValuesType is handleTypes
+PASS typeof iterator[Symbol.asyncIterator] === "function" is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is false
+PASS nextResults.length is expectedResults.length
+PASS isEqual(expectedResults[index], nextResults[index]) is true
+PASS isEqual(expectedResults[index], nextResults[index]) is true
+PASS isEqual(expectedResults[index], nextResults[index]) is true
+PASS isEqual(expectedResults[index], nextResults[index]) is true
+PASS nextResultsEnd.done is true
+PASS nextResultsEnd.value is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

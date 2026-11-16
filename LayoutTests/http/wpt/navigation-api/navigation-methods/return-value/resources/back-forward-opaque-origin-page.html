@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!-- 
+    Platform-specific copy of imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/resources/back-forward-opaque-origin-page.html
+    
+    This iframe test is modified to work around CORS issues by inlining all test framework
+    dependencies instead of loading them via cross-origin requests which fail for null origin.
+    
+    Original upstream test loads testharness.js, helpers.js and helpers.mjs externally, but those fail
+    with "Origin null is not allowed by Access-Control-Allow-Origin" in WebKit's test server.
+    
+    rdar://158265130
+-->
+<!-- Put this page in a sandbox to give it an opaque origin -->
+
+<script>
+// Inline helper function to avoid CORS issues
+async function ensureWindowLoadEventFired() {
+  return new Promise(resolve => {
+    const callback = () => setTimeout(resolve, 0);
+    if (document.readyState === 'complete') {
+      callback();
+    } else {
+      window.onload = callback;
+    }
+  });
+}
+
+// Inline assertion functions
+function assert_equals(actual, expected, description) {
+  if (actual !== expected) {
+    throw new Error(`${description || 'Assertion failed'}: expected ${expected}, got ${actual}`);
+  }
+}
+
+function assert_true(condition, description) {
+  if (!condition) {
+    throw new Error(`${description || 'Assertion failed'}: expected true, got ${condition}`);
+  }
+}
+
+function assert_throws_dom(expectedCode, func, description) {
+  let thrown = false;
+  let error;
+  try {
+    func();
+  } catch (e) {
+    thrown = true;
+    error = e;
+  }
+  
+  if (!thrown) {
+    throw new Error(`${description || 'Assertion failed'}: expected exception ${expectedCode} but none was thrown`);
+  }
+  
+  if (!(error instanceof DOMException)) {
+    throw new Error(`${description || 'Assertion failed'}: expected DOMException but got ${error.constructor.name}`);
+  }
+  
+  if (error.name !== expectedCode) {
+    throw new Error(`${description || 'Assertion failed'}: expected ${expectedCode} but got ${error.name}`);
+  }
+}
+
+async function assertBothRejectDOM(result, expectedCode) {
+  // Check the result object structure
+  assert_equals(Object.getPrototypeOf(result), Object.prototype, "result object must be from the right realm");
+  const keys = Reflect.ownKeys(result);
+  assert_equals(keys.length, 2, "result should have exactly 2 properties");
+  assert_true(keys.includes("committed"), "result should have 'committed' property");
+  assert_true(keys.includes("finished"), "result should have 'finished' property");
+  assert_true(result.committed instanceof Promise, "committed should be a Promise");
+  assert_true(result.finished instanceof Promise, "finished should be a Promise");
+
+  // Both promises should reject with InvalidStateError
+  let committedRejected = false;
+  let finishedRejected = false;
+  
+  try {
+    await result.committed;
+  } catch (e) {
+    committedRejected = true;
+    assert_true(e instanceof DOMException, "committed should reject with DOMException");
+    assert_equals(e.name, expectedCode, `committed should reject with ${expectedCode}`);
+  }
+  
+  try {
+    await result.finished;
+  } catch (e) {
+    finishedRejected = true;
+    assert_true(e instanceof DOMException, "finished should reject with DOMException");
+    assert_equals(e.name, expectedCode, `finished should reject with ${expectedCode}`);
+  }
+  
+  assert_true(committedRejected, "committed promise should have rejected");
+  assert_true(finishedRejected, "finished promise should have rejected");
+}
+
+async function runTest() {
+  try {
+    // Wait for after the load event so that the navigation doesn't get converted
+    // into a replace navigation.
+    await ensureWindowLoadEventFired();
+
+    // Set up event listeners that should never fire
+    let navigateEventFired = false;
+    let navigateSuccessEventFired = false;
+    let navigateErrorEventFired = false;
+    
+    navigation.onnavigate = () => { navigateEventFired = true; };
+    navigation.onnavigatesuccess = () => { navigateSuccessEventFired = true; };
+    navigation.onnavigateerror = () => { navigateErrorEventFired = true; };
+
+    // Create some history entries
+    location.hash = "#1";
+    await new Promise(resolve => window.onhashchange = resolve);
+    location.hash = "#2";
+    await new Promise(resolve => window.onhashchange = resolve);
+    history.back();
+    await new Promise(resolve => window.onhashchange = resolve);
+
+    assert_equals(location.hash, "#1", "Should be at #1 after going back");
+
+    // Test that navigation.back() and navigation.forward() reject with InvalidStateError
+    await assertBothRejectDOM(navigation.back(), "InvalidStateError");
+    await assertBothRejectDOM(navigation.forward(), "InvalidStateError");
+    
+    // Verify events didn't fire
+    assert_equals(navigateEventFired, false, "onnavigate should not have been called");
+    assert_equals(navigateSuccessEventFired, false, "onnavigatesuccess should not have been called");
+    assert_equals(navigateErrorEventFired, false, "onnavigateerror should not have been called");
+    
+    // Signal success to parent window
+    if (window.parent !== window) {
+      window.parent.postMessage({type: 'test-complete', success: true}, '*');
+    }
+  } catch (error) {
+    // Signal failure to parent window
+    if (window.parent !== window) {
+      window.parent.postMessage({type: 'test-complete', success: false, error: error.message}, '*');
+    }
+  }
+}
+
+// Run the test when the page loads
+window.addEventListener('load', runTest);
+</script>

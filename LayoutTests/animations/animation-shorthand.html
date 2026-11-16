@@ -1,0 +1,114 @@
+<html> 
+<head>
+<title>Test animation shorthand property</title> 
+<style type="text/css" media="screen">
+.box {
+  height: 10px;
+  width: 10px;
+  background-color: blue;
+}
+#a {
+}
+#b {
+  -webkit-animation: none;
+}
+#c {
+  -webkit-animation: anim1 10s;
+}
+#d {
+  -webkit-animation: anim1 10s linear;
+}
+#e {
+  -webkit-animation: anim1 10s linear 5s;
+}
+#f {
+  -webkit-animation: anim1 10s linear 5s 3;
+}
+#g {
+  -webkit-animation: anim1 10s linear 5s infinite alternate;
+}
+#h {
+  -webkit-animation: anim1 10s linear 5s infinite alternate forwards;
+}
+#i {
+  -webkit-animation: anim1 10s linear normal none;
+}
+#j {
+  -webkit-animation: anim1 10s ease infinite both paused;
+}
+#k {
+  -webkit-animation: anim1 10s linear infinite backwards, anim2 3s none paused, anim3 5s both;
+}
+
+@-webkit-keyframes anim1 { }
+@-webkit-keyframes anim2 { }
+</style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  
+    const kProperties = [
+      "webkitAnimationName",
+      "webkitAnimationDuration",
+      "webkitAnimationTimingFunction",
+      "webkitAnimationDelay",
+      "webkitAnimationIterationCount",
+      "webkitAnimationDirection",
+      "webkitAnimationFillMode",
+      "webkitAnimationPlayState",
+    ];
+    const kExpectedResults = [
+      { id: 'a',  values: [ "none", "0s", "ease", "0s", "1", "normal", "none", "running" ] },
+      { id: 'b',  values: [ "none", "0s", "ease", "0s", "1", "normal", "none", "running" ] },
+      { id: 'c',  values: [ "anim1", "10s", "ease", "0s", "1", "normal", "none", "running" ] },
+      { id: 'd',  values: [ "anim1", "10s", "linear", "0s", "1", "normal", "none", "running" ] },
+      { id: 'e',  values: [ "anim1", "10s", "linear", "5s", "1", "normal", "none", "running" ] },
+      { id: 'f',  values: [ "anim1", "10s", "linear", "5s", "3", "normal", "none", "running" ] },
+      { id: 'g',  values: [ "anim1", "10s", "linear", "5s", "infinite", "alternate", "none", "running" ] },
+      { id: 'h',  values: [ "anim1", "10s", "linear", "5s", "infinite", "alternate", "forwards", "running" ] },
+      { id: 'i',  values: [ "anim1", "10s", "linear", "0s", "1", "normal", "none", "running" ] },
+      { id: 'j',  values: [ "anim1", "10s", "ease", "0s", "infinite", "normal", "both", "paused" ] },
+      { id: 'k',  values: [ "anim1, anim2, anim3", "10s, 3s, 5s", "linear, ease, ease", "0s, 0s, 0s", "infinite, 1, 1", "normal, normal, normal", "backwards, none, both", "running, paused, running" ] },
+    ];
+    
+    function start()
+    {
+      var resultsString = "";
+      kExpectedResults.forEach(function(curItem) {
+        var el = document.getElementById(curItem.id);
+        var elStyle = window.getComputedStyle(el);
+        
+        for (var i=0; i < kProperties.length; i++) {
+          var computedValue = elStyle[kProperties[i]];
+          var expectedValue = curItem.values[i];
+          if (computedValue == expectedValue)
+            resultsString += "Testing " + kProperties[i] + " on " + curItem.id + ": PASS" + "<br>";
+          else
+            resultsString += "Testing " + kProperties[i] + " on " + curItem.id + " expected <code>" + expectedValue + "</code> got <code>" + computedValue + "</code>: FAIL" + "<br>";
+          
+        }
+      });
+
+      var results = document.getElementById('result');
+      results.innerHTML = resultsString;
+    }
+    
+    window.addEventListener('load', start, false);
+  </script>
+</head> 
+<body>
+<div id="a" class="box"></div>
+<div id="b" class="box"></div>
+<div id="c" class="box"></div>
+<div id="d" class="box"></div>
+<div id="e" class="box"></div>
+<div id="f" class="box"></div>
+<div id="g" class="box"></div>
+<div id="h" class="box"></div>
+<div id="i" class="box"></div>
+<div id="j" class="box"></div>
+<div id="k" class="box"></div>
+<div id="result">
+</div>
+</body>
+</html>

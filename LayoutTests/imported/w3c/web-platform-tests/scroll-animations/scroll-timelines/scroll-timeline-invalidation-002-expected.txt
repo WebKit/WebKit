@@ -1,0 +1,8 @@
+
+PASS Basic invalidation for scroll(self)
+PASS Opacity animation invalidation for scroll(self)
+PASS Other axis invalidation for scroll(self)
+PASS Basic invalidation for scroll(nearest)
+PASS Opacity animation invalidation for scroll(nearest)
+PASS Other axis invalidation for scroll(nearest)
+

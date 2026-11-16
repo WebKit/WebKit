@@ -1,0 +1,3 @@
+
+PASS Anchor with a fragment href and a click handler that navigates back
+

@@ -1,0 +1,20 @@
+This test checks the automatic minimum size ('min-width: auto' and 'min-height: auto') of grid items.
+
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+PASS .grid 7
+PASS .grid 8
+

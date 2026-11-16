@@ -1,0 +1,344 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2026 Google LLC. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+
+import glob
+import os
+import re
+import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+candidate_root = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
+if os.path.exists(os.path.join(candidate_root, 'Source', 'WebKit')):
+    WEBKIT_ROOT = candidate_root
+elif os.path.exists(os.path.expanduser('~/webkit/Source/WebKit')):
+    WEBKIT_ROOT = os.path.expanduser('~/webkit')
+else:
+    WEBKIT_ROOT = candidate_root
+
+EXT_DIR = os.path.join(WEBKIT_ROOT, 'Source', 'WebKit', 'WebProcess', 'Extensions')
+CPP_DIR = os.path.join(EXT_DIR, 'API')
+COCOA_DIR = os.path.join(CPP_DIR, 'Cocoa')
+IDL_DIR = os.path.join(EXT_DIR, 'Interfaces')
+
+
+def load_keys():
+    keys = {}
+    pattern_headers = glob.glob(os.path.join(EXT_DIR, '**', '*Keys*.h'), recursive=True)
+    pattern_constants = glob.glob(os.path.join(EXT_DIR, '**', '*Constants*.h'), recursive=True)
+    pattern_mm = glob.glob(os.path.join(EXT_DIR, '**', '*Constants*.mm'), recursive=True)
+
+    for p in pattern_headers + pattern_constants + pattern_mm:
+        try:
+            with open(p, 'r', errors='ignore') as f:
+                content = f.read()
+                for m in re.finditer(r'(?:static\s+NSString\s*\*\s*(?:const\s+)?|NSString\s*\*const\s+|static\s+NSString\s*\*)\s*(\w+)\s*=\s*@"([^"]+)"', content):
+                    keys[m.group(1)] = m.group(2)
+                for m in re.finditer(r'#define\s+(\w+Key)\s+@"([^"]+)"', content):
+                    keys[m.group(1)] = m.group(2)
+        except Exception:
+            pass
+
+    # Direct mapping fallbacks for well-known keys
+    keys.update({
+        'activeKey': 'active', 'allFramesKey': 'allFrames', 'alwaysOnTopKey': 'alwaysOnTop',
+        'argsKey': 'args', 'argumentsKey': 'args', 'checkedKey': 'checked', 'colorKey': 'color',
+        'contextsKey': 'contexts', 'cssKey': 'css', 'defaultTitleKey': 'defaultTitle',
+        'delayInMinutesKey': 'delayInMinutes', 'descriptionKey': 'description',
+        'documentIdKey': 'documentId', 'documentIdsKey': 'documentIds', 'documentIDsKey': 'documentIds',
+        'documentUrlPatternsKey': 'documentUrlPatterns', 'documentURLPatternsKey': 'documentUrlPatterns',
+        'domainKey': 'domain', 'enabledKey': 'enabled', 'expirationDateKey': 'expirationDate',
+        'filesKey': 'files', 'focusedKey': 'focused', 'formatKey': 'format',
+        'frameIdKey': 'frameId', 'frameIdsKey': 'frameIds', 'frameIDsKey': 'frameIds',
+        'frameURLKey': 'frameURL', 'funcKey': 'func', 'functionKey': 'func',
+        'heightKey': 'height', 'highlightedKey': 'highlighted', 'httpOnlyKey': 'httpOnly',
+        'iconsKey': 'icons', 'idKey': 'id', 'imageDataKey': 'imageData', 'incognitoKey': 'incognito',
+        'indexKey': 'index', 'leftKey': 'left', 'mutedKey': 'muted', 'nameKey': 'name',
+        'onclickKey': 'onclick', 'openInReaderModeKey': 'openInReaderMode',
+        'openerTabIdKey': 'openerTabId', 'originKey': 'origin', 'originsKey': 'origins',
+        'pagePathKey': 'pagePath', 'panelKey': 'panel', 'parentIdKey': 'parentId', 'pathKey': 'path',
+        'periodInMinutesKey': 'periodInMinutes', 'permissionsKey': 'permissions',
+        'pinnedKey': 'pinned', 'populateKey': 'populate', 'popupKey': 'popup',
+        'propertiesKey': 'properties', 'qualityKey': 'quality', 'rectKey': 'rect',
+        'rulesetIdKey': 'rulesetId', 'ruleIdKey': 'ruleId', 'sameSiteKey': 'sameSite',
+        'saveAsKey': 'saveAs', 'scaleKey': 'scale', 'selectedKey': 'selected',
+        'shortcutKey': 'shortcut', 'stateKey': 'state', 'storeIdKey': 'storeId',
+        'tabIdKey': 'tabId', 'tabIDKey': 'tabId', 'targetKey': 'target',
+        'targetUrlPatternsKey': 'targetUrlPatterns', 'targetURLPatternsKey': 'targetUrlPatterns',
+        'textKey': 'text', 'titleKey': 'title', 'tlsChannelIdKey': 'tlsChannelId',
+        'topKey': 'top', 'typeKey': 'type', 'typesKey': 'types', 'urlKey': 'url',
+        'urlsKey': 'urls', 'valueKey': 'value', 'visibleKey': 'visible',
+        'whenKey': 'when', 'widthKey': 'width', 'windowIdKey': 'windowId',
+        'windowTypesKey': 'windowTypes', 'worldKey': 'world',
+    })
+    return keys
+
+
+def parse_idl_file(filepath):
+    with open(filepath, 'r', errors='ignore') as f:
+        content = f.read()
+    content = re.sub(r'//.*', '', content)
+    content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+
+    dictionaries = {}
+    for m in re.finditer(r'dictionary\s+(\w+)(?:\s*:\s*(\w+))?\s*\{([^}]+)\};', content):
+        dict_name = m.group(1)
+        parent_name = m.group(2)
+        members_raw = m.group(3)
+        members = {}
+        for line in members_raw.split(';'):
+            line = line.strip()
+            if not line:
+                continue
+            is_required = bool(re.search(r'\brequired\b', line))
+            clean_line = re.sub(r'\[[^\]]*\]', '', line)
+            clean_line = re.sub(r'\brequired\b', '', clean_line).strip()
+            parts = clean_line.split()
+            if len(parts) >= 2:
+                m_type = ' '.join(parts[:-1])
+                m_name = parts[-1]
+                members[m_name] = {'type': m_type, 'required': is_required}
+        dictionaries[dict_name] = {'parent': parent_name, 'members': members}
+
+    return {'dictionaries': dictionaries}
+
+
+def split_dict_entries(raw_dict):
+    raw_dict = re.sub(r'#if\s+ENABLE\([\w_]+\)[\s\S]*?#endif', '', raw_dict)
+    raw_dict = re.sub(r'#.*', '', raw_dict)
+    entries = []
+    curr = []
+    depth = 0
+    for c in raw_dict:
+        if c in '[{(':
+            depth += 1
+        elif c in ']})':
+            depth -= 1
+        elif c == ',' and depth == 0:
+            entries.append(''.join(curr).strip())
+            curr = []
+            continue
+        curr.append(c)
+    if curr:
+        entries.append(''.join(curr).strip())
+    return [e for e in entries if e]
+
+
+def parse_cocoa_parsers(filepath, keys):
+    with open(filepath, 'r', errors='ignore') as f:
+        content = f.read()
+
+    funcs = {}
+    func_pattern = re.compile(
+        r'(?:^[ \t]*(?:static\s+|inline\s+|virtual\s+)*[A-Za-z0-9_:<>&*,\s]+?\s+(?:\w+::)?(\w+)\s*\([^)]*(?:NSDictionary\s*\*|RefPtr<JSON::Value>)\s*(\w+)[^)]*\)\s*\{)',
+        re.MULTILINE
+    )
+
+    pos = 0
+    while True:
+        match = func_pattern.search(content, pos)
+        if not match:
+            break
+        func_name = match.group(1)
+        dict_param = match.group(2)
+        start_idx = match.end()
+
+        depth = 1
+        idx = start_idx
+        while idx < len(content) and depth > 0:
+            c = content[idx]
+            if c == '{':
+                depth += 1
+            elif c == '}':
+                depth -= 1
+            idx += 1
+        body = content[start_idx:idx - 1]
+        pos = idx
+
+        types = {}
+        required = set()
+        parents = []
+
+        for pm in re.finditer(r'(!parse\w+|parse\w+)\s*\(\s*([^,\s]+)\s*,', body):
+            called_p = re.search(r'(parse\w+)', pm.group(1)).group(1)
+            if called_p != func_name and pm.group(2) == dict_param:
+                parents.append(called_p)
+
+        # 1. Obj-C static types dictionary
+        m_types = re.search(r'static\s+(?:auto\s*\*|NSDictionary<[^>]+>\s*\*)\s*(?:types|keyTypes)\s*=\s*@\{([^}]+)\};', body)
+        if m_types:
+            for entry in split_dict_entries(m_types.group(1)):
+                pair = entry.split(':', 1)
+                if len(pair) == 2:
+                    k_raw = pair[0].strip()
+                    v_raw = pair[1].strip()
+                    k_val = keys.get(k_raw, k_raw.replace('@"', '').replace('"', ''))
+                    types[k_val] = v_raw
+
+        # 2. C++ validateDictionary
+        m_cpp_types = re.search(r'validateDictionary\(\w+,\s*[^,]+,\s*\{[^}]*\},\s*\{((?:[^{}]*\{[^{}]*\}[^{}]*)+)\}', body)
+        if m_cpp_types:
+            for k_raw, v_raw in re.findall(r'\{\s*(\w+)\s*,\s*([^}]+)\s*\}', m_cpp_types.group(1)):
+                k_val = keys.get(k_raw, k_raw.replace('Key', ''))
+                types[k_val] = v_raw.strip()
+
+        # 3. Direct objectForKey calls
+        for obj_m in re.finditer(r'\[details\s+objectForKey:(\w+)\]', body):
+            k_val = keys.get(obj_m.group(1), obj_m.group(1).replace('Key', ''))
+            types[k_val] = 'NSNumber.class'
+
+        # 4. Required keys (excluding conditional calls like forUpdate)
+        if 'forUpdate == ForUpdate::Yes ? nil : requiredKeys' not in body:
+            for m_req in re.finditer(r'static\s+(?:auto\s*\*|NSSet<[^>]+>\s*\*|NSArray<[^>]+>\s*\*)\s*\*?requiredKeys\s*=\s*(?:\[NSSet\s+setWithArray:|)@\[([^\]]+)\]', body):
+                for entry in split_dict_entries(m_req.group(1)):
+                    k_raw = entry.strip()
+                    if k_raw:
+                        k_val = keys.get(k_raw, k_raw.replace('@"', '').replace('"', ''))
+                        required.add(k_val)
+
+        funcs[func_name] = {'types': types, 'required': required, 'parents': parents}
+
+    return funcs
+
+
+def compare_dictionary_against_parse_options(dict_name, idl_dict, parse_func, all_parse_funcs, keys):
+    findings = []
+    all_accepted_types = dict(parse_func['types'])
+    all_required = set(parse_func['required'])
+    for p_name in parse_func.get('parents', []):
+        if p_name in all_parse_funcs:
+            all_accepted_types.update(all_parse_funcs[p_name]['types'])
+            all_required.update(all_parse_funcs[p_name]['required'])
+
+    idl_members = idl_dict['members']
+
+    for impl_key, impl_cls in all_accepted_types.items():
+        if impl_key not in idl_members:
+            findings.append(('MISSING_IN_IDL', dict_name, impl_key, f'Cocoa accepts {impl_key}: {impl_cls} but IDL lacks it'))
+
+    for idl_key, idl_info in idl_members.items():
+        if idl_key not in all_accepted_types:
+            findings.append(('EXTRA_IN_IDL', dict_name, idl_key, f'IDL declares {idl_key} but Cocoa types table lacks it'))
+
+    for key in set(idl_members.keys()).intersection(all_accepted_types.keys()):
+        idl_m = idl_members[key]
+        impl_cls = all_accepted_types[key]
+        idl_req = idl_m['required']
+        impl_req = key in all_required
+
+        if idl_req != impl_req:
+            findings.append(('OPTIONALITY_MISMATCH', dict_name, key, f'IDL required={idl_req} vs Cocoa required={impl_req}'))
+
+        if impl_cls == 'NSString.class' and idl_m['type'] not in ['DOMString', 'any', 'WebExtensionMenuItemType', 'WebExtensionCookieSameSiteStatus', 'WebExtensionTabStatus', 'WebExtensionWindowState', 'WebExtensionWindowType', 'WebExtensionOffscreenReason', 'WebExtensionScriptInjectionExecutionWorld', 'WebExtensionCSSOrigin', 'WebExtensionWebRequestResourceType']:
+            findings.append(('TYPE_MISMATCH', dict_name, key, f"Cocoa expects NSString, IDL has {idl_m['type']}"))
+
+    return findings
+
+
+PAIR_MAPPINGS = [
+    ('WebExtensionAPITabs.idl', os.path.join(COCOA_DIR, 'WebExtensionAPITabsCocoa.mm'), {
+        'WebExtensionTabCreateProperties': 'parseTabCreateOptions',
+    }),
+    ('WebExtensionAPIWindows.idl', os.path.join(COCOA_DIR, 'WebExtensionAPIWindowsCocoa.mm'), {
+        'WebExtensionWindowCreateData': 'parseWindowCreateOptions',
+        'WebExtensionWindowGetInfo': 'parseWindowGetOptions',
+        'WebExtensionWindowUpdateInfo': 'parseWindowUpdateOptions',
+    }),
+    ('WebExtensionAPICookies.idl', os.path.join(COCOA_DIR, 'WebExtensionAPICookiesCocoa.mm'), {
+        'WebExtensionCookieDetails': 'parseCookieDetails',
+        'WebExtensionCookieGetAllDetails': 'getAll',
+        'WebExtensionCookieSetDetails': 'set',
+    }),
+    ('WebExtensionAPIScripting.idl', os.path.join(COCOA_DIR, 'WebExtensionAPIScriptingCocoa.mm'), {
+        'WebExtensionScriptInjection': 'parseScriptInjectionOptions',
+        'WebExtensionScriptInjectionTarget': 'parseTargetInjectionOptions',
+        'WebExtensionCSSInjection': 'parseCSSInjectionOptions',
+    }),
+    ('WebExtensionAPIAction.idl', os.path.join(COCOA_DIR, 'WebExtensionAPIActionCocoa.mm'), {
+        'WebExtensionActionDetails': 'parseActionDetails',
+    }),
+    ('WebExtensionAPIMenus.idl', os.path.join(COCOA_DIR, 'WebExtensionAPIMenusCocoa.mm'), {
+        'WebExtensionMenuItemProperties': 'parseCreateAndUpdateProperties',
+    }),
+    ('WebExtensionAPIRuntime.idl', os.path.join(COCOA_DIR, 'WebExtensionAPIRuntimeCocoa.mm'), {
+        'WebExtensionConnectOptions': 'parseConnectOptions',
+    }),
+    ('WebExtensionAPIPermissions.idl', os.path.join(COCOA_DIR, 'WebExtensionAPIPermissionsCocoa.mm'), {
+        'WebExtensionPermissions': 'parseDetailsDictionary',
+    }),
+    ('WebExtensionAPISidebarAction.idl', os.path.join(COCOA_DIR, 'WebExtensionAPISidebarActionCocoa.mm'), {
+        'WebExtensionSidebarActionDetails': 'parseSidebarActionDetails',
+    }),
+    ('WebExtensionAPIAlarms.idl', os.path.join(CPP_DIR, 'WebExtensionAPIAlarms.cpp'), {
+        'WebExtensionAlarmCreateInfo': 'createAlarm',
+    }),
+]
+
+if __name__ == '__main__':
+    keys = load_keys()
+
+    if len(sys.argv) == 2 and sys.argv[1] == '--all':
+        total_findings = []
+        audited_count = 0
+
+        for idl_rel, cocoa_path, dict_map in PAIR_MAPPINGS:
+            idl_path = os.path.join(IDL_DIR, idl_rel)
+
+            if not os.path.exists(idl_path) or not os.path.exists(cocoa_path):
+                continue
+
+            idl_data = parse_idl_file(idl_path)
+            cocoa_funcs = parse_cocoa_parsers(cocoa_path, keys)
+
+            for dict_name, func_name in dict_map.items():
+                if dict_name in idl_data['dictionaries'] and func_name in cocoa_funcs:
+                    f = compare_dictionary_against_parse_options(dict_name, idl_data['dictionaries'][dict_name], cocoa_funcs[func_name], cocoa_funcs, keys)
+                    total_findings.extend(f)
+                    audited_count += 1
+
+        for finding in total_findings:
+            print('|'.join(finding))
+
+        if total_findings:
+            print(f"FAIL: {len(total_findings)} findings across {audited_count} audited dictionaries in tree")
+            sys.exit(1)
+        else:
+            print(f"OK: 0 findings across {audited_count} audited dictionaries in tree")
+            sys.exit(0)
+
+    elif len(sys.argv) >= 3:
+        idl_file = sys.argv[1]
+        cocoa_file = sys.argv[2]
+
+        idl_data = parse_idl_file(idl_file)
+        cocoa_funcs = parse_cocoa_parsers(cocoa_file, keys)
+
+        total_findings = []
+        for dict_name, idl_dict in idl_data['dictionaries'].items():
+            matched = False
+            for func_name, parse_func in cocoa_funcs.items():
+                if dict_name.lower().replace('webextension', '').replace('properties', '').replace('details', '').replace('options', '') in func_name.lower():
+                    f = compare_dictionary_against_parse_options(dict_name, idl_dict, parse_func, cocoa_funcs, keys)
+                    total_findings.extend(f)
+                    matched = True
+
+        for finding in total_findings:
+            print('|'.join(finding))
+
+        if total_findings:
+            sys.exit(1)
+        else:
+            print("OK: 0 findings")
+            sys.exit(0)
+    else:
+        print("Usage: verify-webextension-declarations.py --all | <idl_file> <cocoa_file>")
+        sys.exit(1)

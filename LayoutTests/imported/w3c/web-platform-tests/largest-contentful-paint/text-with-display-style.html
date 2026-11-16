@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<meta charset=utf-8>
+<title>Largest Contentful Paint: observe text with display style.</title>
+<body>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/largest-contentful-paint-helpers.js"></script>
+<style>
+#title {
+  display: flex;
+}
+</style>
+<h1 id='title'>I am a title!</h1>
+<script>
+  async_test(function (t) {
+    assert_implements(window.LargestContentfulPaint, "LargestContentfulPaint is not implemented");
+    let beforeRender;
+    /* In this test, we first observe a header with style 'display: flex'.
+     * Once observed, we remove it and add a header with style 'display: grid'.
+     * And once that is observed, we remove it and add a header with style 'display: block'.
+     * At each step, we check the values of the entries received.
+     */
+    let observedFlex = false;
+    let observedGrid = false;
+    const observer = new PerformanceObserver(
+      t.step_func(function(entryList) {
+        assert_equals(entryList.getEntries().length, 1);
+        const entry = entryList.getEntries()[0];
+        // TODO: find a good way to bound text size.
+        if (!observedFlex) {
+          observedFlex = true;
+          checkTextEntry(entry, 'title', 500, beforeRender);
+          const title = document.getElementById('title');
+          // Remove 'display: flex' and add 'display: grid' text.
+          title.parentNode.removeChild(title);
+          const title2 = document.createElement('h1');
+          title2.id = 'title2';
+          title2.style = 'display: grid';
+          title2.innerHTML = 'I am a second title!';
+          document.body.appendChild(title2);
+          beforeRender = performance.now();
+        } else if (!observedGrid) {
+          observedGrid = true;
+          checkTextEntry(entry, 'title2', 500, beforeRender);
+          const title2 = document.getElementById('title2');
+          // Remove 'display: grid' and add 'display: block' text.
+          title2.parentNode.removeChild(title2);
+          const title3 = document.createElement('h1');
+          title3.id = 'title3';
+          title3.style = 'display: block';
+          title3.innerHTML = 'I am the third and last title!';
+          document.body.appendChild(title3);
+          beforeRender = performance.now();
+        } else {
+          checkTextEntry(entry, 'title3', 500, beforeRender);
+          t.done();
+        }
+      })
+    );
+    observer.observe({type: 'largest-contentful-paint', buffered: true});
+    beforeRender = performance.now();
+  }, 'Text with display style is observable.');
+</script>
+</body>

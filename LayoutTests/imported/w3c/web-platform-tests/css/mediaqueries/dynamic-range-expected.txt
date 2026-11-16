@@ -1,0 +1,25 @@
+
+PASS Should be known: '(dynamic-range: standard)'
+PASS Should be known: '(dynamic-range: high)'
+FAIL Should be known: '(video-dynamic-range: standard)' assert_true: expected true got false
+FAIL Should be known: '(video-dynamic-range: high)' assert_true: expected true got false
+PASS Should be known: '(dynamic-range)'
+FAIL Should be known: '(video-dynamic-range)' assert_true: expected true got false
+PASS Should be parseable: '(dynamic-range: 0)'
+PASS Should be unknown: '(dynamic-range: 0)'
+PASS Should be parseable: '(dynamic-range: 10px)'
+PASS Should be unknown: '(dynamic-range: 10px)'
+PASS Should be parseable: '(dynamic-range: invalid)'
+PASS Should be unknown: '(dynamic-range: invalid)'
+PASS Should be parseable: '(video-dynamic-range: 0)'
+PASS Should be unknown: '(video-dynamic-range: 0)'
+PASS Should be parseable: '(video-dynamic-range: 10px)'
+PASS Should be unknown: '(video-dynamic-range: 10px)'
+PASS Should be parseable: '(video-dynamic-range: invalid)'
+PASS Should be unknown: '(video-dynamic-range: invalid)'
+FAIL Check that dynamic-range evaluates to false in the boolean context assert_false: expected false got true
+PASS Check that video-dynamic-range evaluates to false in the boolean context
+PASS Check that dynamic-range always matches 'standard'
+FAIL Check that video-dynamic-range always matches 'standard' assert_true: expected true got false
+PASS Check that video-dynamic-range is not 'invalid'
+

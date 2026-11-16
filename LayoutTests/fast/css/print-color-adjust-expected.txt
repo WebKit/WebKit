@@ -1,0 +1,6 @@
+economy: PASS
+exact: PASS
+shorthand-economy: PASS
+shorthand-exact: PASS
+prefixed-economy: PASS
+prefixed-exact: PASS

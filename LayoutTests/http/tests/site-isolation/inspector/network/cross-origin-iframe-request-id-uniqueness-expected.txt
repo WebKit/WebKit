@@ -1,0 +1,15 @@
+Test that network request IDs from fetches in different cross-origin iframes are unique and do not collide.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.RequestIdUniqueness
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.RequestIdsAreUnique
+PASS: First resource should be created.
+PASS: Second resource should be created.
+PASS: First resource should finish loading.
+PASS: Second resource should finish loading.
+PASS: First resource should have a request ID.
+PASS: Second resource should have a request ID.
+PASS: Request IDs from different cross-origin iframes should be unique.
+Request ID A: 0
+Request ID B: 1
+

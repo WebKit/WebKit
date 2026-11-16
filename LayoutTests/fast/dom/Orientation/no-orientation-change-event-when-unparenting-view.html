@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+description("Tests that no orientation change event gets dispatched when unparenting the view");
+jsTestIsAsync = true;
+
+let orientationChangeCount = 0;
+
+function getRemoveThenReinsertViewScript()
+{
+    return `
+    (function() {
+        uiController.removeViewFromWindow();
+        uiController.addViewToWindow();
+        uiController.uiScriptComplete('');
+    })();`
+}
+
+function getRotationUIScript()
+{
+    return `
+    (function() {
+        uiController.simulateRotation('landscape-right', function() {
+            uiController.doAfterVisibleContentRectUpdate(function () {
+                uiController.uiScriptComplete();
+            })
+        });
+    })();`
+}
+
+screen.orientation.addEventListener("change", () => {
+    debug("Orientation changed");
+    orientationChangeCount++;
+    if (orientationChangeCount == 1) {
+        debug("* Unparenting view, then re-parenting it...");
+        testRunner.runUIScript(getRemoveThenReinsertViewScript(), function(result) { });
+        setTimeout(() => {
+            debug("* No additional orientation change event should have been fired");
+            shouldBe("orientationChangeCount", "1");
+            finishJSTest();
+        }, 100);
+    }
+});
+
+onload = () => {
+    debug("* Start off in landscape mode");
+    testRunner.runUIScript(getRotationUIScript(), function(result) { });
+}
+</script>
+</body>
+</html>

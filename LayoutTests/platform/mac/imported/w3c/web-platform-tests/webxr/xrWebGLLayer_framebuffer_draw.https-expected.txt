@@ -1,0 +1,4 @@
+
+FAIL Ensure a WebGL layer's framebuffer can only be drawn to inside a XR frame - webgl assert_equals: expected 0 but got 1280
+FAIL Ensure a WebGL layer's framebuffer can only be drawn to inside a XR frame - webgl2 assert_equals: expected 1286 but got 0
+

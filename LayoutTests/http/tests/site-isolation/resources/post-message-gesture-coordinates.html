@@ -1,0 +1,11 @@
+<style>
+body { margin: 0; }
+#target { position: absolute; left: 20px; top: 30px; width: 40px; height: 40px; background: green; }
+</style>
+<div id="target"></div>
+<script>
+addEventListener("gesturestart", (event) => {
+    const target = event.target.id || event.target.localName;
+    window.parent.postMessage(`${target},${event.clientX},${event.clientY}`, "*");
+});
+</script>

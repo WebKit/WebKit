@@ -1,0 +1,12 @@
+Each draw replayed from a render bundle must use its own pipeline's sample mask. The fragment shaders write @builtin(sample_mask), so the pipeline's mask is applied in the shader. Each result is the number of samples, out of 4, written by the first, second and third draw, which write the red, green and blue channels with sample masks 0x1, 0xf and 0x3.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS results.direct is "1,4,2"
+PASS results.replayedBundle is "1,4,2"
+PASS results.replayedBundleWithDynamicOffsets is "1,4,2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

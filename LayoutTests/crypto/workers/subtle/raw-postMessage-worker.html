@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../resources/common.js"></script>
+</head>
+<body>
+<script>
+
+description("Test sending raw crypto keys via postMessage to a worker.");
+
+jsTestIsAsync = true;
+
+crypto.subtle.importKey("raw", asciiToUint8Array("16 bytes of key!"), "PBKDF2", false, ["deriveBits", "deriveKey"]).then(function(localKey) {
+    var worker = new Worker("resources/raw-postMessage-worker.js");
+    worker.onmessage = function(evt) {
+        if (!evt.data.result) {
+            testFailed("Check failed in worker: " + evt.data.message);
+        } else {
+            testPassed("All checks passed in worker");
+            key = evt.data.key;
+            shouldBe("key.type", "'secret'");
+            shouldBe("key.extractable", "false");
+            shouldBe("key.algorithm.name", "'PBKDF2'");
+            shouldBe("key.usages", "['deriveBits', 'deriveKey']");
+        }
+        finishJSTest();
+    }
+    worker.postMessage(localKey);
+});
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

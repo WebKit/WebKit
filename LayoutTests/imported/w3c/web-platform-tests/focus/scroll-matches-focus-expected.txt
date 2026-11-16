@@ -1,0 +1,4 @@
+I am focusable
+
+PASS :focus applies before scrolling into view
+

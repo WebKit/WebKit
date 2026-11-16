@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: ahem; -webkit-font-smoothing: none;">
+<style>
+#container { -webkit-column-width: 100px; }
+#div1 { -webkit-column-span: all; }
+#summary1 { color: white; }
+</style>
+<script>
+document.body.offsetTop;
+var container = document.createElement('div');
+container.setAttribute('id', 'container');
+document.body.appendChild(container);
+summary1 = document.createElement('summary');
+summary1.setAttribute('id', 'summary1');
+container.appendChild(summary1);
+var div1 = document.createElement('div');
+div1.setAttribute('id', 'div1');
+summary1.style.display = 'table-row';
+summary1.appendChild(document.createTextNode('a'));
+summary1.appendChild(div1);
+summary1.appendChild(document.createTextNode('b'));
+</script>
+</body>
+</html>

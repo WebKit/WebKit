@@ -1,0 +1,169 @@
+/*
+ * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006, 2007, 2010 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "SVGFitToViewBox.h"
+
+#include "AffineTransform.h"
+#include "Document.h"
+#include "FloatRect.h"
+#include "NodeDocument.h"
+#include "SVGDocumentExtensions.h"
+#include "SVGElement.h"
+#include "SVGNames.h"
+#include "SVGParserUtilities.h"
+#include "SVGPreserveAspectRatioValue.h"
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringParsingBuffer.h>
+#include <wtf/text/StringView.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFitToViewBox);
+
+SVGFitToViewBox::SVGFitToViewBox(SVGElement* contextElement, SVGPropertyAccess access)
+    : m_viewBox(SVGAnimatedRect::create(contextElement, access))
+    , m_preserveAspectRatio(SVGAnimatedPreserveAspectRatio::create(contextElement, access))
+{
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
+        PropertyRegistry::registerProperty<SVGNames::viewBoxAttr, &SVGFitToViewBox::m_viewBox>();
+        PropertyRegistry::registerProperty<SVGNames::preserveAspectRatioAttr, &SVGFitToViewBox::m_preserveAspectRatio>();
+    }
+}
+
+void SVGFitToViewBox::setViewBox(const FloatRect& viewBox)
+{
+    m_viewBox->setBaseValInternal(viewBox);
+    m_isViewBoxValid = true;
+}
+
+void SVGFitToViewBox::resetViewBox()
+{
+    m_viewBox->setBaseValInternal({ });
+    m_isViewBoxValid = false;
+}
+
+void SVGFitToViewBox::reset()
+{
+    resetViewBox();
+    resetPreserveAspectRatio();
+}
+
+bool SVGFitToViewBox::parseAttribute(const QualifiedName& name, const AtomString& value)
+{
+    if (name == SVGNames::viewBoxAttr) {
+        if (!value.isNull()) {
+            if (auto result = parseViewBox(value, ParsingContext::Attribute)) {
+                setViewBox(WTF::move(*result));
+                return true;
+            }
+        }
+        resetViewBox();
+        return true;
+    }
+
+    if (name == SVGNames::preserveAspectRatioAttr) {
+        setPreserveAspectRatio(SVGPreserveAspectRatioValue { value });
+        return true;
+    }
+
+    return false;
+}
+
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringView value, ParsingContext context)
+{
+    return readCharactersForParsing(value, [&](auto buffer) {
+        return parseViewBoxGeneric(buffer, context);
+    });
+}
+
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<Latin1Character>& buffer, ParsingContext context)
+{
+    return parseViewBoxGeneric(buffer, context);
+}
+
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<char16_t>& buffer, ParsingContext context)
+{
+    return parseViewBoxGeneric(buffer, context);
+}
+
+template<typename CharacterType> std::optional<FloatRect> SVGFitToViewBox::parseViewBoxGeneric(StringParsingBuffer<CharacterType>& buffer, ParsingContext context)
+{
+    StringView stringToParse = buffer.stringViewOfCharactersRemaining();
+
+    auto message = [&](ASCIILiteral problem) {
+        return makeString("Invalid viewBox=\""_s, stringToParse, "\": "_s, problem);
+    };
+    auto reportWarning = [&](ASCIILiteral problem) {
+        if (context == ParsingContext::Attribute)
+            protect(protect(m_viewBox->contextElement()->document())->svgExtensions())->reportWarning(message(problem));
+    };
+    auto reportError = [&](ASCIILiteral problem) {
+        if (context == ParsingContext::Attribute)
+            protect(protect(m_viewBox->contextElement()->document())->svgExtensions())->reportError(message(problem));
+    };
+
+    skipOptionalSVGSpaces(buffer);
+
+    auto x = parseNumber(buffer);
+    auto y = parseNumber(buffer);
+    auto width = parseNumber(buffer);
+    auto height = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
+
+    if (!x || !y || !width || !height) {
+        reportWarning("expected four numbers"_s);
+        return std::nullopt;
+    }
+
+    if (*width < 0.0) {
+        reportError("width must not be negative"_s);
+        return std::nullopt;
+    }
+
+    if (*height < 0.0) {
+        reportError("height must not be negative"_s);
+        return std::nullopt;
+    }
+
+    // Nothing should come after the last, fourth number of an attribute. In an svgView() fragment, ')' does.
+    if (context == ParsingContext::Attribute) {
+        skipOptionalSVGSpaces(buffer);
+        if (buffer.hasCharactersRemaining()) {
+            reportWarning("unexpected content after the fourth number"_s);
+            return std::nullopt;
+        }
+    }
+
+    return FloatRect { *x, *y, *width, *height };
+}
+
+AffineTransform SVGFitToViewBox::viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatioValue& preserveAspectRatio, float viewWidth, float viewHeight)
+{
+    // Per SVG spec, negative viewBox dimensions are invalid and should be ignored
+    if (!viewBoxRect.width() || !viewBoxRect.height() || !viewWidth || !viewHeight || viewBoxRect.width() < 0 || viewBoxRect.height() < 0)
+        return AffineTransform();
+
+    return preserveAspectRatio.getCTM(viewBoxRect.x(), viewBoxRect.y(), viewBoxRect.width(), viewBoxRect.height(), viewWidth, viewHeight);
+}
+
+}

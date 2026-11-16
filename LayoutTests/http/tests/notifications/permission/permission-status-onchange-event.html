@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This test checks that the Permissions API on-change event works.")
+
+jsTestIsAsync = true;
+
+debug("No permission state is set");
+navigator.permissions.query({ name: "notifications" }).then((permissionStatus)=>{
+    permissionStatusState = permissionStatus.state;
+    shouldBeEqualToString("permissionStatusState", "prompt");
+
+    onChangeCalled = false;
+    permissionStatus.onchange = () => {
+        permissionStatusState = permissionStatus.state;
+        shouldBeEqualToString("permissionStatusState", "granted");
+        onChangeCalled = true;
+    };
+
+    testRunner.grantWebNotificationPermission(testURL);
+    debug("Permission has been granted");
+    shouldBecomeEqual("onChangeCalled", "true", () => {
+        finishJSTest();
+    });
+});
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+Tests for URL breakpoint functionality (DOMDebugger) in a Worker.
+
+
+== Running test suite: Worker.DOMDebugger.URLBreakpoint
+-- Running test case: Worker.DOMDebugger.URLBreakpoint.Fetch
+PASS: Should have paused.
+PASS: Pause reason should have been URL.
+PASS: Pause data URL should include "Fetch".
+CALL STACK:
+0: [F] loadResourceFetch
+1: [F] triggerFetchRequest
+2: [F] handleMessage
+ASYNC CALL STACK:
+3: --- addEventListener ---
+4: [P] Global Code
+

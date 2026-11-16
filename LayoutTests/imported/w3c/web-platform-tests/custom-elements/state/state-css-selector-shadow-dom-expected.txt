@@ -1,0 +1,5 @@
+
+PASS state selector has no influence when state is not applied
+PASS state selector has influence when state is applied
+PASS state selector only applies on given ident
+

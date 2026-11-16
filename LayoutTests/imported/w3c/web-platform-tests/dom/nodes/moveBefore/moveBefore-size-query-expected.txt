@@ -1,0 +1,4 @@
+This text should be green
+
+PASS moveBefore() between different size containers invalidates target
+

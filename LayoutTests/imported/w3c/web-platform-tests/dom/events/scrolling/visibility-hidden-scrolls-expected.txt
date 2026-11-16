@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Scrolling should chain to a visibility: hidden element. Test timed out
+NOTRUN Scrolling over a visibility: visible child should scroll a visibility: hidden scroller.
+

@@ -1,0 +1,34 @@
+<html>
+<head>
+<script>
+async function testRects()
+{
+    if (!window.testRunner || !window.internals)
+        return;
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    
+    var div = document.getElementById("div");
+    var rect = div.getBoundingClientRect();
+    await window.testRunner.setPageScaleFactor(2, 0, 0);
+    var scaledRect = div.getBoundingClientRect();
+
+    var result = document.getElementById("result");
+    if (rect.left == scaledRect.left &&
+        rect.top == scaledRect.top &&
+        rect.right == scaledRect.right &&
+        rect.bottom == scaledRect.bottom)
+        result.innerHTML = "Pass";
+    else
+        result.innerHTML = "Fail";
+    testRunner.notifyDone();
+    
+}
+</script>
+</head>
+
+<body onload="testRects();">
+    <div id="div" style="width:100px; height:100px; background-color:green;"></div>
+    <p id="result">This test must be run via DumpRenderTree.</p>
+</body>
+</html>

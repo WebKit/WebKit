@@ -1,0 +1,19 @@
+<!doctype html>
+<meta charset="utf-8">
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+const beaconCount = Number(params.get("count"));
+const deadline = Date.now() + 5000;
+
+(async function poll() {
+    const received = Number(await (await fetch("../resources/count-beacons.py?token=" + params.get("token"))).text());
+    if (received < beaconCount && Date.now() < deadline) {
+        setTimeout(poll, 50);
+        return;
+    }
+    document.body.textContent = "Beacons received from the previous page: " + received + " of " + beaconCount;
+    testRunner.notifyDone();
+})();
+</script>
+</body>

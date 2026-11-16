@@ -1,0 +1,3 @@
+Test for double tap triggering dblclick event on window. To run manually, double tap anywhere in the viewport.
+
+PASS: Received dblclick event on window.

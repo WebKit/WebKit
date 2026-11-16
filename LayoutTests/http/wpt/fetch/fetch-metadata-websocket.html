@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+
+<link rel="author" href="mtrzos@google.com" title="Maciek Trzos">
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/fetch/metadata/resources/helper.js></script>
+<script src=/common/utils.js></script>
+<body></body>
+<script>
+  let nonce = token();
+
+console.log(window.location.href);
+
+  promise_test(t => {
+    return new Promise((resolve, reject) => {
+      let key = "websocket-" + nonce;
+
+      let ws = new WebSocket("ws://localhost:8800/fetch/metadata/resources/record-header.py?file=" + key);
+      let expected = {"site": "same-origin", "user": "", "mode": "websocket", "dest": "websocket"};
+
+      // This is expected to fail but will still record the headers from the handshake.
+      ws.addEventListener("error", e => {
+        validate_expectations(key, expected, "WebSocket Handshake")
+          .then(_ => resolve())
+          .catch(e => reject(e));
+      });
+    })
+  }, "Websocket Handshake fetch metadata");
+</script>
+

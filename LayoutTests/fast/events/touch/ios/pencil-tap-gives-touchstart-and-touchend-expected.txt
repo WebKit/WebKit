@@ -1,0 +1,12 @@
+Test that an Apple Pencil tap is registered.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+    touchstart fired.
+touchend fired.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

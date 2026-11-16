@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<style>
+.wrapper {
+  display: grid;
+}
+
+.result {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.result > div {
+  width: 24px;
+  height: 24px;
+}
+</style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+var rowCount = 5;
+var nestingDepth = 12;
+var container = document.getElementById("container");
+for (var i = 0; i < rowCount; ++i) {
+  var node = document.createElement("div");
+  node.className = "result";
+  for (var j = 0; j < 3; ++j)
+    node.appendChild(document.createElement("div"));
+  for (var depth = 0; depth < nestingDepth; ++depth) {
+    var wrapper = document.createElement("div");
+    wrapper.className = "wrapper";
+    wrapper.appendChild(node);
+    node = wrapper;
+  }
+  container.appendChild(node);
+}
+document.body.offsetHeight;
+
+var items = document.querySelectorAll(".result > :first-child");
+var index = 0;
+PerfTestRunner.measureRunsPerSecond({run: function() {
+  var width = ++index % 2 ? "25px" : "24px";
+  for (var item of items)
+    item.style.width = width;
+  document.body.offsetHeight;
+}});
+</script>
+</body>
+</html>

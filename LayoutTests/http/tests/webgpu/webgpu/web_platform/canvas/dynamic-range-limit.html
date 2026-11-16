@@ -1,0 +1,53 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SupportHDRDisplayEnabled=true CSSConstrainedDynamicRangeLimitEnabled=true ] -->
+<html id="html">
+<body>
+<script src='../../resources/js-test-pre.js'></script>
+<canvas id="canvasd"></canvas>
+<canvas id="canvasn" style="dynamic-range-limit: no-limit"></canvas>
+<canvas id="canvasc" style="dynamic-range-limit: constrained"></canvas>
+<canvas id="canvass" style="dynamic-range-limit: standard"></canvas>
+<script>
+var canvasd;
+var canvasn;
+var canvasc;
+var canvass;
+var canvas2;
+
+const quiet = true; // So that the non-failure output is the same if dynamic-range-limit is not supported.
+
+function verifyCanvas(expectations)
+{
+    shouldBe(expectations.canvas + '.style["dynamic-range-limit"]', expectations.limit, quiet);
+    shouldBe('getComputedStyle(' + expectations.canvas + ')["dynamic-range-limit"]', expectations.computed, quiet);
+    shouldBe('internals.getContextEffectiveDynamicRangeLimitValue(' + expectations.canvas + ')', expectations.value, quiet);
+}
+
+if (!window.internals) {
+    failTest('This test requires window.internals.');
+} else if (CSS.supports("dynamic-range-limit", "standard") && CSS.supports("dynamic-range-limit", "no-limit")) {
+    shouldBe('CSS.supports("dynamic-range-limit", "constrained")', 'true', quiet);
+
+    canvasd = document.getElementById("canvasd");
+    canvasn = document.getElementById("canvasn");
+    canvasc = document.getElementById("canvasc");
+    canvass = document.getElementById("canvass");
+
+    const contextd = canvasd.getContext("webgpu");
+    const contextn = canvasn.getContext("webgpu");
+    const contextc = canvasc.getContext("webgpu");
+    const contexts = canvass.getContext("webgpu");
+
+    verifyCanvas({canvas: 'canvasd', limit: '""', computed: '"no-limit"', value: '1.0'});
+    verifyCanvas({canvas: 'canvasn', limit: '"no-limit"', computed: '"no-limit"', value: '1.0'});
+    verifyCanvas({canvas: 'canvasc', limit: '"constrained"', computed: '"constrained"', value: '0.5'});
+    verifyCanvas({canvas: 'canvass', limit: '"standard"', computed: '"standard"', value: '0.0'});
+
+    canvas2 = document.createElement("canvas");
+    canvasn.append(canvas2);
+    const context2 = canvas2.getContext("webgpu");
+    verifyCanvas({canvas: 'canvas2', limit: '""', computed: '"no-limit"', value: '1.0'});
+}
+</script>
+<script src='../../resources/js-test-post.js'></script>
+</body>
+</html>

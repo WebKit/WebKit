@@ -1,0 +1,3 @@
+
+FAIL Validate render blocking status of script resources in PerformanceResourceTiming assert_equals: render blocking status for http://web-platform.test:8800/resource-timing/resources/empty_script.js?script-head should be blocking expected (string) "blocking" but got (undefined) undefined
+

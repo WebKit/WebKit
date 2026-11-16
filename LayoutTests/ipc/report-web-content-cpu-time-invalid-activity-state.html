@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function test() {
+    if (!window.IPC)
+        return;
+
+    // WebCore::ActivityStateForCPUSampling only has values 0, 1 and 2. 255 used
+    // to reach the UI process unvalidated, where it collided with
+    // WTF::StrongEnumHashTraits<>::emptyValue() and tripped a RELEASE_ASSERT in
+    // the HashMap keyed on the enum. 254 is the deleted-value sentinel; 3 and 42
+    // are plain out-of-range values.
+    //
+    // The activity state is deliberately encoded as uint64_t rather than as the
+    // uint8_t the message now declares: that is the wire format this message had
+    // when the bug was reported, so it is what reproduces the crash on an
+    // unfixed build. Encoding a single byte would instead make the old decoder
+    // fail on a short message, which would make this pass for the wrong reason.
+    for (const activityState of [255, 254, 3, 42]) {
+        IPC.sendMessage('UI', 0, IPC.messages.WebProcessPool_ReportWebContentCPUTime.name,
+            [{ type: 'double', value: 1.5329279109640181e+25 }, // WTF::Seconds cpuTime
+             { type: 'uint64_t', value: BigInt(activityState) }]);
+    }
+
+    // Round-trip through the UI process on the same connection so the messages
+    // above have all been dispatched before the test finishes.
+    await asyncFlush('UI');
+}
+
+test().finally(() => window.testRunner?.notifyDone());
+</script>

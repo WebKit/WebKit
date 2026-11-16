@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<body>
+<div id="result"><input type="password"></div>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+onload = async () => {
+    if (!window.testRunner || !window.eventSender) {
+        result.innerHTML = '<p>FAIL - This test requires testRunner and eventSender.</p>';
+        return;
+    }
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const input = document.querySelector('input');
+    internals.setAutofillButtonType(input, 'Credentials');
+
+    const autoFillButton = Array.from(internals.shadowRoot(input).querySelectorAll('div')).find((div) => {
+        return internals.userAgentPart(div) == '-webkit-credentials-auto-fill-button';
+    });
+
+    input.addEventListener('click', () => {
+        input.type = 'button';
+        if (window.GCController)
+            GCController.collect();
+    }, { once:true });
+
+    await UIHelper.activateElement(autoFillButton);
+
+    result.innerHTML = '<p>This test passes if WebKit does not hit debug assertions or crash under ASAN.</p><br>PASS';
+
+    testRunner.notifyDone();
+};
+</script>

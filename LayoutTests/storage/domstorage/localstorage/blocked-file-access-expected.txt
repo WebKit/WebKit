@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: PASS: window.localStorage is NOT accessible
+CONSOLE MESSAGE: Exception: The operation is insecure.
+
+Test that we cannot access localStorage from a file URL if unversal access is turned off.

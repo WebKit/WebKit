@@ -1,0 +1,5 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ScopedCustomElementRegistryEnabled=false ] -->
+<script src="../../resources/js-test.js"></script>
+<script>
+shouldBeTrue("document.createElement('div').attachShadow({mode: 'open'}) instanceof ShadowRoot");
+</script>

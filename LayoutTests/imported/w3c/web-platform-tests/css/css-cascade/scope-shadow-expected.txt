@@ -1,0 +1,11 @@
+
+PASS @scope can match :host
+PASS @scope can match :host(...)
+PASS :scope matches host via the scoping root
+PASS :scope within :is() matches host via the scoping root
+PASS Implicit @scope as direct child of shadow root
+PASS Implicit @scope in construted stylesheet
+PASS Matching :host via &, :scope (subject)
+PASS Matching :host via &, :scope (non-subject)
+PASS Matching :host via &, :scope (non-subject, >)
+

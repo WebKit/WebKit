@@ -1,0 +1,13 @@
+
+Tests that the all captions in a long WebVTT file are parsed correctly.
+
+EVENT(canplaythrough)
+EXPECTED (video.textTracks.length > '0') OK
+RUN(textTrack = video.textTracks[0])
+RUN(textTrack.mode = "hidden")
+EVENT(cuechange)
+EXPECTED (textTrack.cues.length > '0') OK
+Validating 100 cues...
+
+END OF TEST
+

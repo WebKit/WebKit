@@ -1,0 +1,17 @@
+ a a2
+
+PASS Executing the javascript URL should violate the parent's CSP for
+          iframe.contentWindow.location.href
+PASS Executing the javascript URL should violate the parent's CSP for
+          iframe.src
+PASS Executing the javascript URL should violate the parent's CSP for
+          a[target=iframeWithScriptSrcNone].href
+PASS Executing the javascript URL should violate the parent's CSP for
+          a[target=otherTabWithScriptSrcNone].href
+PASS Executing the javascript URL should violate the parent's CSP for
+          area[target=iframeWithScriptScrcNone].href
+PASS Executing the javascript URL should violate the parent's CSP for
+          area[target=otherTabWithScriptSrcNone].href
+PASS Executing the javascript URL should violate the parent's CSP for
+          otherTabWithScriptSrcNone.location.href
+

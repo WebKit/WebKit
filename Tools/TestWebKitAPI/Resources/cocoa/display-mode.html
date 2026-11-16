@@ -1,0 +1,27 @@
+<style>
+div { display: none; }
+@media (display-mode) {
+    .display-mode-null { display: inline; }
+}
+@media (display-mode: browser) {
+    .display-mode-browser { display: inline; }
+}
+@media (display-mode: minimal-ui) {
+    .display-mode-minimal-ui { display: inline; }
+}
+@media (display-mode: standalone) {
+    .display-mode-standalone { display: inline; }
+}
+@media (display-mode: fullscreen) {
+    .display-mode-fullscreen { display: inline; }
+}
+@media (display-mode: invalid-value) {
+    .display-mode-invalid-value { display: inline; }
+}
+</style>
+<div class="display-mode-null">(display-mode)</div>
+<div class="display-mode-browser">(display-mode: browser)</div>
+<div class="display-mode-minimal-ui">(display-mode: minimal-ui)</div>
+<div class="display-mode-standalone">(display-mode: standalone)</div>
+<div class="display-mode-fullscreen">(display-mode: fullscreen)</div>
+<div class="display-mode-invalid-value">(display-mode: invalid-value)</div>

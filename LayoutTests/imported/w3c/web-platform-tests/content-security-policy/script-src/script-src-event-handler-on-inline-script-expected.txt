@@ -1,0 +1,6 @@
+
+PASS Use the hash of a non-empty event handler content attribute (<div> element).
+PASS Use the hash of an empty event handler content attribute (<div> element).
+PASS Use the hash of a non-empty event handler content attribute (<script> element).
+PASS Use the hash of an empty event handler content attribute (<script> element).
+

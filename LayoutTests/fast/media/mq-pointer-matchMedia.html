@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    description("Test the pointer media feature with machMedia.")
+
+    function testPointerCondition(condition) {
+        var testString = 'window.matchMedia("(' + condition + ')").matches';
+        debug(testString + " = " + eval(testString));
+    }
+
+    testPointerCondition("pointer");
+
+    testPointerCondition("pointer: fine");
+    testPointerCondition("pointer: coarse");
+    testPointerCondition("pointer: none");
+
+    testPointerCondition("pointer: Fine");
+    testPointerCondition("pointer: Coarse");
+    testPointerCondition("pointer: None");
+
+    testPointerCondition("Pointer: fine");
+    testPointerCondition("Pointer: coarse");
+    testPointerCondition("Pointer: none");
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

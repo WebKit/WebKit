@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .target {
+            margin: 100px;
+            width: 400px;
+            height: 400px;
+            background-color: silver;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function doTest()
+        {
+            const output = [];
+
+            await UIHelper.setWebViewAllowsMagnification(true);
+
+            eventSender.mouseMoveTo(300, 300);
+            eventSender.smartMagnify();
+
+            let override = '';
+            while (!override)
+                override = await UIHelper.delegatedZoomOverrideAsText();
+
+            const scale = override.match(/^scale ([\d.]+)/);
+            const easedFrom = override.match(/easing from \((-?\d+), (-?\d+)\)/);
+            output.push('Zoomed in: ' + !!(scale && parseFloat(scale[1]) > 1));
+            output.push('The scrolled contents layer eases from where the page was: ' + !!(easedFrom && easedFrom[1] == 0 && easedFrom[2] == 0));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="target"></div>
+    <pre id="output"></pre>
+</body>
+</html>

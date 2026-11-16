@@ -1,0 +1,4 @@
+
+
+PASS <img> representing image: Natural size before partially available
+

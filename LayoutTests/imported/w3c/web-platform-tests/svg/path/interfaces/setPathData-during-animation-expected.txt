@@ -1,0 +1,6 @@
+
+FAIL setPathData() updates base value while SMIL animation is running promise_test: Unhandled rejection with value: object "TypeError: path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [200, 200] }
+  ])', 'path.setPathData' is undefined)"
+

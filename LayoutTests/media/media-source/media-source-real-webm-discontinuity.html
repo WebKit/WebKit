@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-discontinuity</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        sourceBuffer.appendBuffer(WebM.initSegment({ tracks: [{ id: 1, type: 'video' }] }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Segment 1: [0, 2) with 1-second samples
+        sourceBuffer.appendBuffer(WebM.mediaSegment({
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+            ]}]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+
+        // Segment 2: starts at 10s — gap of 8s >> 2x frame duration (1s)
+        // This triggers discontinuity detection → new coded frame group
+        sourceBuffer.appendBuffer(WebM.mediaSegment({
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 10000, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+            ]}]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 2);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 2, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(1)', 10, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(1)', 12, 0.05);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

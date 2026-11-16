@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+img {
+    width: 300px;
+    height: 225px;
+}
+
+body, html {
+    margin: 0;
+}
+</style>
+<script>
+function selectImageOverlay()
+{
+    const overlay = internals.shadowRoot(document.querySelector("img")).querySelector("div#image-overlay");
+    offset = [...overlay.parentNode.childNodes].indexOf(overlay);
+    internals.setSelectionWithoutValidation(overlay.parentNode, offset, overlay.parentNode, offset + 1);
+}
+
+addEventListener("load", () => {
+    if (!window.internals)
+        return;
+
+    internals.installImageOverlay(document.querySelector("img"), [{
+        topLeft : new DOMPointReadOnly(0, 0),
+        topRight : new DOMPointReadOnly(1, 0),
+        bottomRight : new DOMPointReadOnly(1, 0.5),
+        bottomLeft : new DOMPointReadOnly(0, 0.5),
+        children: [
+            {
+                text : "foobar",
+                topLeft : new DOMPointReadOnly(0, 0),
+                topRight : new DOMPointReadOnly(1, 0),
+                bottomRight : new DOMPointReadOnly(1, 0.5),
+                bottomLeft : new DOMPointReadOnly(0, 0.5),
+            }
+        ]
+    }]);
+});
+</script>
+</head>
+<body><img src='sunset-in-cupertino-600px.jpg'></img></body>
+</html>

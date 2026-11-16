@@ -1,0 +1,4 @@
+
+PASS Property font-optical-sizing value 'auto'
+PASS Property font-optical-sizing value 'none'
+

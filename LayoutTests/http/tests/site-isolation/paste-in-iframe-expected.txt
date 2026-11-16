@@ -1,0 +1,10 @@
+Tests that the iframe is able to receive paste events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.data is 'Text to be copied and pasted'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

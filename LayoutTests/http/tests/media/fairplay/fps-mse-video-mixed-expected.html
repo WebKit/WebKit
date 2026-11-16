@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-mse-video-mixed</title>
+    <script>window.requirePixelDump = true</script>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=support.js></script>
+    <script src="eme2016.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(() => {
+            consoleWrite('TESTDONE');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+
+    async function startTest() {
+        window.video = document.querySelector('video');
+        let options = { silent: true };
+
+        let mediaSource = new MediaSource;
+        video.srcObject = mediaSource;
+        await waitFor(mediaSource, 'sourceopen');
+
+        let sourceBuffer = mediaSource.addSourceBuffer('video/mp4');
+        sourceBuffer.appendWindowEnd = 1;
+        let fetchPromise = fetchAndAppend(sourceBuffer, '../resources/test-video.mp4', options);
+        let canplayPromise = waitFor(video, 'canplay');
+        await Promise.all([fetchPromise, canplayPromise]);
+        mediaSource.endOfStream();
+
+        video.currentTime = video.duration - .1;
+        await waitFor(video, 'seeked');
+        await shouldResolve(run('video.play()'));
+        await waitFor(video, 'ended');
+    }
+    </script>
+</head>
+<body>
+    <video width="480"></audio>
+</body>
+</html>

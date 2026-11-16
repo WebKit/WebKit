@@ -1,0 +1,27 @@
+<html>
+<div id="targetElem"></div>
+This test passes if it doesn't crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+var head = document.getElementsByTagName("head")[0];
+var style = document.createElement("style");
+style.innerHTML=`* {
+position: inherit;
+-webkit-animation-name: name;
+-webkit-animation-duration: 0.1s;
+-webkit-animation-direction: alternate;
+}
+@-webkit-keyframes name {
+  from {
+    word-spacing: 5;
+  }
+  to {
+    word-spacing: 10%;
+  }
+}
+`;
+head.appendChild(style);
+document.getElementById("targetElem").style.WebkitTransitionDuration="1s";
+</script>
+</html>

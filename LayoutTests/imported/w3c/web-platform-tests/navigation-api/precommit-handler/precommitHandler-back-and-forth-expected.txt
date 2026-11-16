@@ -1,0 +1,6 @@
+
+FAIL
+  Test that going back and forward during a precommitHandler ends up in the
+  correct entry
+ promise_test: Unhandled rejection with value: object "AbortError: Navigation aborted"
+

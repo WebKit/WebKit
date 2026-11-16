@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .wrapper {
+            position: relative;
+            margin-top: 10px;
+            margin-left: -50px;
+            width: 952px;
+            height: 82px;
+            border: 1px solid black;
+            perspective: 2000px;
+        }
+        
+        .middle {
+            position: absolute;
+            top: 15px;
+            left: 544px;
+            width: 9px;
+            height: 31px;
+        }
+        
+        .letter {
+            top: 0px;
+            left: 0px;
+            width: 9px;
+            height: 31px;
+            position: absolute;
+            background-color: blue;
+            animation-fill-mode: forwards;
+            animation-duration: 3s;
+            animation-name: bounce;
+        }
+        
+        .animating {
+            animation-name: bounce;
+        }
+
+        @keyframes bounce {
+            0% { transform: matrix3d(1.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, -565.25, 7.75, 0, 1); }
+            19% { transform: matrix3d(1.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, -565.25, 7.75, 0, 1); }
+            25% { transform: matrix3d(1.1558, 0, 0, 0, -0.00666, 0.7771, 0, 0, 0, 0, 1, 0, -504.006, -41.6730, 0, 1); }
+            47% { transform: matrix3d(1.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, -283.75, 7.75, 0, 1); }
+            60% { transform: matrix3d(1.3906, 0, 0, 0, 0.073394, 0.6825, 0, 0, 0, 0, 1, 0, -143.645, 4.920146, 0, 1); }
+            89% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+            100% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="middle">
+        <div id="target" class="letter">T</div>
+    </div>
+</div>
+
+<pre id="layers">Layer tree goes here in DRT</pre>
+
+<script src="../../webanimations/threaded-animations/threaded-animations-utils.js"></script>
+<script>
+
+(async function () {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    const target = document.getElementById('target');
+    target.classList.add('animating');
+    const animation = target.getAnimations()[0];
+    await animationAcceleration(animation);
+
+    document.getElementById('layers').innerText = window.internals?.layerTreeAsText(document, window.internals?.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+
+    window.testRunner?.notifyDone();
+})();
+
+</script>
+
+</body>
+</html>

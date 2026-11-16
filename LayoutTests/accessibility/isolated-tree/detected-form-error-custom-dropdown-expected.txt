@@ -1,0 +1,30 @@
+This tests that a dropdown the page built itself, a combobox element around a hidden text input, is given the error message shown under it, both without a form element and inside one.
+
+PASS: axElement('day').stringAttributeValue('AXInvalid') === 'false'
+PASS: payload === 'AXFormValidationUnannouncedText: Full Name is required | Phone is required | Select a Day is required | Select a Time is required\nAXFormValidationErrorFieldCount: 4\n'
+PASS: axElement('day').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('day')) === 'Select a Day is required'
+PASS: axElement('time').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('time')) === 'Select a Time is required'
+PASS: axElement('dentist').stringAttributeValue('AXInvalid') === 'false'
+PASS: payload === 'AXFormValidationUnannouncedText: Select a Dentist is required | Patient name is required\nAXFormValidationErrorFieldCount: 2\n'
+PASS: axElement('dentist').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('dentist')) === 'Select a Dentist is required'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Full Name is required
+
+Phone is required
+Select a Day
+Select a Day is required
+Select a Time
+Select a Time is required
+Request an appointment
+Select a Dentist
+Select a Dentist is required
+
+Patient name is required
+Book

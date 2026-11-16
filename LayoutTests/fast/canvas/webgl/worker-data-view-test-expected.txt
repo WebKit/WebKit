@@ -1,0 +1,3 @@
+Test DataView in worker.
+12345678
+

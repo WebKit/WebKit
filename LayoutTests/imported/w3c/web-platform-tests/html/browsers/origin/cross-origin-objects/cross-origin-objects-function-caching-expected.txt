@@ -1,0 +1,6 @@
+
+PASS Cross-origin Window methods are cached
+PASS Cross-origin Window accessors are cached
+PASS Cross-origin Location `replace` method is cached
+PASS Cross-origin Location `href` setter is cached
+

@@ -1,0 +1,1531 @@
+{
+    "constants": {
+        "userAgents": {
+            "chrome": {
+                "mac": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+                "v143Mac": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+            },
+            "safari": {
+                "v18_6Mac": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+            }
+        }
+    },
+    "quirks": [
+        {
+            "bugs": ["rdar://116491386"],
+            "matches": ["*://*.365scores.com/*"],
+            "available": "iOS || vision",
+            "behaviors": [{ "id": "ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting" }]
+        },
+        {
+            "bugs": ["rdar://124017544"],
+            "matches": ["*://*.actesting.org/*"],
+            "behaviors": [{ "id": "ShouldEnableLegacyGetUserMediaQuirk" }]
+        },
+        {
+            "bugs": ["rdar://190768633"],
+            "matches": ["*://*.affirm.com/*"],
+            "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
+        },
+        {
+            "bugs": ["https://webkit.org/b/317375"],
+            "matches": ["*://*.airindiaexpress.com/*"],
+            "behaviors": [{ "id": "NeedsAirIndiaExpressLayeringQuirk" }]
+        },
+        {
+            "bugs": ["rdar://49124313"],
+            "matches": ["*://*.airtable.com/*"],
+            "behaviors": [{ "id": "ShouldDispatchSimulatedMouseEventsQuirk" }]
+        },
+        {
+            "matches": ["*://*.amazon.*/*"],
+            "behaviors": [
+                {
+                    "id": "ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk",
+                    "elementSelector": "#magnifierLens, :has(+ #magnifierLens)",
+                    "bugs": ["rdar://49124529"]
+                },
+                { "id": "ShouldDispatchSimulatedMouseEventsQuirk", "bugs": ["rdar://49124313"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://117771731"],
+            "matches": ["*://*.amazon.*/gp/video/", "*://*.amazon.*/gp/video/?*"],
+            "available": "iOS",
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.v143Mac" }
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.amazon.design/*"],
+            "behaviors": [{ "id": "NeedsAmazonDesignMenuViewportUnitQuirk" }]
+        },
+        {
+            "bugs": ["rdar://154434137"],
+            "matches": ["*://*.apple.com/*"],
+            "behaviors": [{ "id": "EnsureCaptionVisibilityInFullscreenAndPictureInPicture" }]
+        },
+        {
+            "bugs": ["rdar://181007316", "rdar://182134549"],
+            "comment": "Added for rdar://181007316; remove when rdar://182134549 is fixed.",
+            "matches": ["*://*.apple.*/retail*", "*://*.apple.*/*/retail*"],
+            "behaviors": [{ "id": "ShouldDisableScrollAnchoringQuirk" }]
+        },
+        {
+            "bugs": ["rdar://157636545"],
+            "matches": ["*://studio.atomm.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://55185021"],
+            "matches": ["*://*.att.com/*"],
+            "available": "iOSFamily",
+            "behaviors": [{ "id": "ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk" }]
+        },
+        {
+            "bugs": ["https://webkit.org/b/327442", "rdar://181630431"],
+            "matches": ["*://configurator.audi.com/*"],
+            "behaviors": [{ "id": "ShouldRenderModelElementFallbackContentQuirk" }]
+        },
+        {
+            "bugs": ["rdar://189631150"],
+            "matches": ["*://www.baidu.com/*"],
+            "available": "mac",
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "(function() { let userAgent = Object.getOwnPropertyDescriptor(Navigator.prototype, 'userAgent').get.call(navigator); Object.defineProperty(navigator, 'userAgent', { get: () => { return new Error().stack?.includes('/molecules/app/chat-input/') ? userAgent + ' Chrome/152.0.0.0' : userAgent; }, configurable: true }); })();",
+                    "secondaryURL": ["*://pss.bdstatic.com/r/www/cache/static/molecules/app/chat-input/*"]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://104938789"],
+            "matches": ["*://*.bankofamerica.com/*"],
+            "behaviors": [
+                {
+                    "id": "ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk",
+                    "documentSelector": "#signIn.loading"
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://126494734", "rdar://157499149"],
+            "matches": ["*://*.bbc.co.uk/*", "*://*.bbc.com/*"],
+            "behaviors": [
+                { "id": "ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk" },
+                { "id": "NeedsPerDocumentAutoplayBehaviorQuirk" }
+            ]
+        },
+        {
+            "bugs": ["rdar://136235936"],
+            "matches": ["*://*.bestbuy.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "Object.defineProperty(navigator,'language',{get:function(){return'en-US'}});Object.defineProperty(navigator,'languages',{get:function(){return['en-US','en']}});"
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://154408203"],
+            "matches": ["*://*.bilibili.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.safari.v18_6Mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://141328971"],
+            "matches": ["*://*.billpaysite.com/*"],
+            "behaviors": [{ "id": "NeedsPartitionedCookiesQuirk" }]
+        },
+        {
+            "matches": ["*://*.bing.com/*"],
+            "behaviors": [
+                {
+                    "id": "ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk",
+                    "documentSelector": "#sb_sbidialog",
+                    "bugs": ["rdar://133223599"]
+                },
+                {
+                    "id": "NeedsMediaRewriteRangeRequestQuirk",
+                    "secondaryURL": ["*://*.bing.com/*"],
+                    "bugs": ["rdar://126573838"]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://133423460"],
+            "matches": ["*://*.bing.com/*"],
+            "available": "appleTV",
+            "environment": "HomeView",
+            "behaviors": [{ "id": "ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk" }]
+        },
+        {
+            "bugs": ["rdar://187475153"],
+            "matches": ["*://*.box.com/*"],
+            "behaviors": [{ "id": "NeedsBoxAnnotationQuirk", "elementSelector": ".ba-RegionCreation-creator" }]
+        },
+        {
+            "bugs": ["rdar://61658940"],
+            "matches": ["*://*.bungalow.com/*"],
+            "behaviors": [{ "id": "ShouldBypassAsyncScriptDeferring" }]
+        },
+        {
+            "bugs": ["https://webkit.org/b/293886"],
+            "matches": ["*://*.canva.com/*"],
+            "behaviors": [{ "id": "ShouldTranscodeHeicImagesQuirk" }]
+        },
+        {
+            "bugs": ["rdar://177597110"],
+            "matches": ["*://*.capcut.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.capitalgroup.com/*"],
+            "behaviors": [{ "id": "ShouldDelayReloadWhenRegisteringServiceWorker" }]
+        },
+        {
+            "bugs": ["rdar://139478801"],
+            "matches": ["*://*.cbssports.com/*"],
+            "available": "iOSFamily",
+            "behaviors": [{ "id": "ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk", "elementSelector": "avia-button" }]
+        },
+        {
+            "matches": ["*://*.ceac.state.gov/*"],
+            "behaviors": [
+                { "id": "NeedsFormControlToBeMouseFocusableQuirk", "bugs": ["https://webkit.org/b/193478"] },
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "(function() {\n    if (window.__ceacBeforeUnloadFix) return;\n    window.__ceacBeforeUnloadFix = true;\n    var origAEL = window.addEventListener;\n    window.addEventListener = function(type, fn, opts) {\n        if (type === 'beforeunload') {\n            return origAEL.call(this, type, function(e) {\n                var ae = document.activeElement;\n                if (ae && ae.tagName === 'INPUT') {\n                    var t = (ae.type || '').toLowerCase();\n                    if (t === 'radio' || t === 'checkbox' || t === 'submit' || t === 'button')\n                        return;\n                }\n                if (typeof fn === 'function') fn.call(this, e);\n            }, opts);\n        }\n        return origAEL.apply(this, arguments);\n    };\n})();",
+                    "secondaryURL": [
+                        "*://*/CheckBrowserClose.js",
+                        "*://*/CheckBrowserClose.js?*",
+                        "*://*/*/CheckBrowserClose.js",
+                        "*://*/*/CheckBrowserClose.js?*"
+                    ],
+                    "bugs": ["https://webkit.org/b/311383"]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://126715227"],
+            "matches": ["*://secure.chase.com/*"],
+            "available": "touchEvents",
+            "behaviors": [{ "id": "ShouldOmitTouchEventDOMAttributesForDesktopWebsiteQuirk" }]
+        },
+        {
+            "bugs": ["rdar://190449381"],
+            "matches": ["*://*.chatgpt.com/*"],
+            "behaviors": [{ "id": "ShouldUseLayoutViewportForClientRectsQuirk" }]
+        },
+        {
+            "bugs": ["rdar://189766320", "rdar://191470125"],
+            "matches": ["*://*.chatgpt.com/*", "*://*.grok.com/*"],
+            "behaviors": [{ "id": "NeedsMarginTrimInlineSupportsQuirk" }]
+        },
+        {
+            "matches": ["*://*.chess.com/*"],
+            "environment": "SmallScreen",
+            "available": "iOS",
+            "behaviors": [{ "id": "ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen" }]
+        },
+        {
+            "matches": ["*://*.claude.ai/*"],
+            "behaviors": [
+                { "id": "NeedsClaudeSidebarViewportUnitQuirk", "elementSelector": "[aria-label=\"Sidebar\"]" },
+                {
+                    "id": "NeedsLogoutCookieCleanupQuirk",
+                    "cookieNames": ["__ssid", "__cf_bm", "anthropic-device-id", "lastActiveOrg", "activitySessionId"],
+                    "secondaryURL": ["*://claude.ai/api/auth/logout", "*://claude.ai/api/auth/logout?*"],
+                    "bugs": ["rdar://174779259"]
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.claude.ai/*", "*://*.claude.com/*"],
+            "behaviors": [{ "id": "NeedsHideSelectionDuringOverflowScrollQuirk" }]
+        },
+        {
+            "matches": ["*://*.cnn.com/*"],
+            "available": "iOSFamily",
+            "behaviors": [
+                { "id": "NeedsFullscreenObjectFitQuirk", "bugs": ["rdar://119640248"] },
+                { "id": "NeedsCNNCaptionQuirk" },
+                { "id": "ShouldDisableThreadedAnimationsQuirk", "bugs": ["rdar://176539646"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://190735753"],
+            "matches": ["*://*.cnn.com/*"],
+            "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
+        },
+        {
+            "matches": ["*://*.cnn.com/*"],
+            "behaviors": [{ "id": "RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk" }]
+        },
+        {
+            "matches": ["*://codepen.io/*"],
+            "behaviors": [{ "id": "ShouldEnableSpeakerSelectionPermissionsPolicyQuirk" }]
+        },
+        {
+            "bugs": ["rdar://129051694"],
+            "matches": ["*://*.commitmono.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.crunchyroll.com/*"],
+            "behaviors": [{ "id": "NeedsSuppressPostLayoutBoundaryEventsQuirk" }]
+        },
+        {
+            "matches": ["*://*.dailymail.co.uk/*"],
+            "behaviors": [{ "id": "ShouldUnloadHeavyFrames" }]
+        },
+        {
+            "bugs": ["rdar://67081760"],
+            "matches": ["*://mypay.dfas.mil/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "matches": ["*://digits.t-mobile.com/*"],
+            "behaviors": [
+                { "id": "NeedsNavigatorUserAgentDataQuirk" },
+                { "id": "NeedsCustomUserAgentData" },
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" },
+                    "bugs": ["rdar://158721595"]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://156024693"],
+            "matches": ["*://*.descript.com/*"],
+            "behaviors": [{ "id": "ShouldDisableDOMAudioSession" }]
+        },
+        {
+            "matches": ["*://*.dictionary.com/*"],
+            "behaviors": [{ "id": "NeedsAnchorToBeMouseFocusableQuirk" }]
+        },
+        {
+            "bugs": ["rdar://138789765"],
+            "matches": ["*://*.dictionary.com/*"],
+            "available": "iOSFamily",
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "(function() { let userAgent = navigator.userAgent; Object.defineProperty(navigator, 'userAgent', { get: () => { return userAgent + ' Chrome/130.0.0.0 Android/15.0'; }, configurable: true }); })();",
+                    "secondaryURL": ["*://player.anyclip.com/*lre.js", "*://player.anyclip.com/*lre.js?*"]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://177229829"],
+            "matches": ["*://*.digiposte.fr/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://162719481"],
+            "matches": ["*://*.discord.com/*"],
+            "behaviors": [{ "id": "ShouldUseLayoutViewportForClientRectsQuirk" }]
+        },
+        {
+            "bugs": ["rdar://137613110"],
+            "matches": ["*://*.disneyplus.com/*"],
+            "behaviors": [{ "id": "ShouldHideCoarsePointerCharacteristicsQuirk" }]
+        },
+        {
+            "bugs": ["rdar://151715964"],
+            "matches": ["*://*.disneyplus.com/*"],
+            "available": "appleTV",
+            "environment": "HomeView",
+            "behaviors": [{ "id": "NeedsZeroMaxTouchPointsQuirk" }]
+        },
+        {
+            "bugs": ["rdar://188849586"],
+            "matches": ["*://*.disneyplus.com/*"],
+            "available": "iOS",
+            "environment": "Desktop",
+            "behaviors": [{ "id": "NeedsZeroMaxTouchPointsQuirk" }]
+        },
+        {
+            "bugs": ["rdar://190675819"],
+            "matches": ["*://englishtest.duolingo.com/*", "*://englishtest.duolingo.cn/*"],
+            "behaviors": [{ "id": "NeedsChromeCompatibilityUserAgentQuirk", "chromeCompatibilityVersion": "157" }]
+        },
+        {
+            "matches": ["*://*.ea.com/*"],
+            "behaviors": [{ "id": "ShouldPreventKeyframeEffectAccelerationQuirk", "elementSelector": "ea-network-nav" }]
+        },
+        {
+            "matches": ["*://*.espn.com/*"],
+            "behaviors": [
+                { "id": "NeedsSuppressedPauseEventOnFullscreenExitQuirk", "bugs": ["rdar://184169028"] },
+                { "id": "AllowLayeredFullscreenVideos", "bugs": ["rdar://95651814"] },
+                {
+                    "id": "ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk",
+                    "bugs": ["rdar://73227900"]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://174765438"],
+            "comment": "Media volume is locked on iPhone, so the player's volume slider does nothing. Hide it, the mute button keeps working.",
+            "matches": ["*://*.espn.com/*"],
+            "environment": "SmallScreen",
+            "available": "iOS",
+            "behaviors": [{ "id": "NeedsStyleSheetInjectedQuirk", "styleSheet": ":root { --volume-bar-container-display: none !important; }" }]
+        },
+        {
+            "bugs": ["rdar://59424306"],
+            "matches": ["*://tool.european-calculator.eu/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://126631968"],
+            "matches": [
+                "*://*.carrentals.com/*",
+                "*://*.cheaptickets.com/*",
+                "*://*.hoteis.com/*",
+                "*://*.hoteles.com/*",
+                "*://*.hotels.com/*",
+                "*://*.mrjet.se/*",
+                "*://*.orbitz.com/*",
+                "*://*.travelocity.ca/*",
+                "*://*.travelocity.com/*",
+                "*://*.wotif.co.nz/*",
+                "*://*.wotif.com/*"
+            ],
+            "behaviors": [
+                {
+                    "id": "NeedsExpediaGroupAnimationQuirk",
+                    "elementSelector": ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://126631968"],
+            "matches": ["*://*.ebookers.*/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsExpediaGroupAnimationQuirk",
+                    "elementSelector": ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://126631968"],
+            "matches": ["*://*.expedia.*/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsExpediaGroupAnimationQuirk",
+                    "elementSelector": ".uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open"
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.facebook.com/*"],
+            "available": "appleTV",
+            "environment": "HomeView",
+            "behaviors": [{ "id": "ShouldFlipScreenDimensionsQuirk", "bugs": ["rdar://133768147"] }]
+        },
+        {
+            "matches": ["*://*.facebook.com/*"],
+            "behaviors": [
+                { "id": "NeedsFacebookRemoveNotSupportedQuirk", "bugs": ["rdar://100871402"] },
+                {
+                    "id": "ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk",
+                    "elementSelector": "[role=slider]",
+                    "bugs": ["rdar://174179871"]
+                },
+                { "id": "RequiresUserGestureToPauseInPictureInPictureQuirk", "bugs": ["rdar://67273166"] },
+                { "id": "ShouldEnableCameraAndMicrophonePermissionStateQuirk", "bugs": ["rdar://158736355"] },
+                { "id": "ShouldEnableRemoteTrackLabelQuirk", "bugs": ["rdar://158736355"] },
+                { "id": "ShouldEnableFacebookFlagQuirk", "bugs": ["rdar://41104397"] },
+                { "id": "ShouldEnableEnumerateDeviceQuirk", "bugs": ["rdar://161269819"] },
+                { "id": "ShouldEnableRTCEncodedStreamsQuirk", "bugs": ["rdar://158736355"] },
+                {
+                    "id": "ShouldDispatchSimulatedMouseEventsQuirk",
+                    "elementSelector": "[role=slider], [role=slider] *",
+                    "bugs": ["rdar://174179871"]
+                },
+                { "id": "ShouldComputeSimulatedMouseEventMovementDeltaQuirk", "bugs": ["rdar://174179871"] },
+                {
+                    "id": "NeedsFacebookStoriesCreationFormQuirk",
+                    "secondaryURL": ["*://*/stories/create*"],
+                    "bugs": ["rdar://141103350"]
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.facebook.com/groupcall/ROOM:*", "*://*.messenger.com/groupcall/ROOM:*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.v143Mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://49648520"],
+            "matches": ["*://*.flipkart.com/*"],
+            "behaviors": [{ "id": "ShouldDispatchSimulatedMouseEventsQuirk" }]
+        },
+        {
+            "bugs": ["rdar://67273166"],
+            "matches": ["*://*.forbes.com/*"],
+            "behaviors": [{ "id": "RequiresUserGestureToPauseInPictureInPictureQuirk" }]
+        },
+        {
+            "bugs": ["https://webkit.org/b/319011", "rdar://181825035"],
+            "matches": ["*://*.github.com/*"],
+            "behaviors": [{ "id": "NeedsChromeCompatibilityUserAgentQuirk", "chromeCompatibilityVersion": "151" }]
+        },
+        {
+            "bugs": ["rdar://102227302"],
+            "matches": ["*://*.gizmodo.com/*"],
+            "behaviors": [{ "id": "NeedsFullscreenDisplayNoneQuirk" }]
+        },
+        {
+            "bugs": ["rdar://162717044"],
+            "comment": "The author bio sits flush against an overflow:hidden column, which clips the auto focus ring drawn outside the border box.",
+            "matches": ["*://*.goodreads.com/*"],
+            "behaviors": [{ "id": "NeedsStyleSheetInjectedQuirk", "styleSheet": ".TruncatedContent:focus-visible, .TruncatedContent__text:focus-visible { outline-offset: inset; }" }]
+        },
+        {
+            "bugs": ["rdar://57670064", "rdar://59893415"],
+            "comment": "Deliberately not limited to docs.google.com, because of hosted G Suite apps.",
+            "matches": ["*://*.google.*/*"],
+            "behaviors": [
+                {
+                    "id": "ShouldBypassBackForwardCacheWhenElementMatchesQuirk",
+                    "documentSelector": "body > div.docs-homescreen-freeze-el-full:first-child"
+                }
+            ]
+        },
+        {
+            "bugs": ["https://webkit.org/b/323851", "rdar://181740296"],
+            "matches": ["*://*.google.*/search", "*://*.google.*/search?*"],
+            "behaviors": [{ "id": "NeedsAnchorToBeMouseFocusableQuirk", "elementSelector": "[data-expc], [data-expc] *" }]
+        },
+        {
+            "matches": ["*://*.google.*/maps", "*://*.google.*/maps?*", "*://*.google.*/maps/*"],
+            "behaviors": [
+                {
+                    "id": "MayNeedToIgnoreContentObservation",
+                    "elementSelector": "[aria-label=Suggestions], [aria-label=Suggestions] *",
+                    "bugs": ["rdar://152194074"]
+                },
+                { "id": "NeedsGoogleMapsMagnificationWheelDeltaScalingQuirk", "bugs": ["rdar://185857498"] },
+                { "id": "NeedsGoogleMapsScrollingQuirk", "bugs": ["rdar://67358928"] },
+                { "id": "ShouldAvoidResizingWhenInputViewBoundsChangeQuirk", "bugs": ["https://webkit.org/b/214945"] },
+                { "id": "ShouldDispatchSimulatedMouseEventsQuirk", "bugs": ["rdar://49124313"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://184166392"],
+            "embeddedMatches": ["*://*.google.*/maps/embed*"],
+            "behaviors": [{ "id": "NeedsGoogleMapsEmbedManipulationSurfaceQuirk" }]
+        },
+        {
+            "bugs": ["rdar://190477522"],
+            "matches": ["*://gemini.google.com/*"],
+            "behaviors": [{ "id": "ShouldIgnoreViewportInteractiveWidgetQuirk" }]
+        },
+        {
+            "matches": ["*://docs.google.com/*"],
+            "behaviors": [
+                { "id": "InputMethodUsesCorrectKeyEventOrder" },
+                { "id": "InputMethodMustUseCompositionEvents" },
+                {
+                    "id": "IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk",
+                    "bugs": ["https://webkit.org/b/161984"]
+                },
+                {
+                    "id": "MayNeedToIgnoreContentObservation",
+                    "elementSelector": ".navigation-item-list, .navigation-item-list *",
+                    "bugs": ["rdar://54102411"]
+                },
+                {
+                    "id": "NeedsGoogleDocsNavigationWidgetScrollQuirk",
+                    "bugs": ["rdar://189433637"]
+                },
+                {
+                    "id": "ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk",
+                    "bugs": ["rdar://49864669"]
+                },
+                {
+                    "id": "ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk",
+                    "elementSelector": ".docs-ml-promotion-action-container, .docs-ml-promotion-action-container > *, .docs-ml-promotion-action-container > * > *",
+                    "bugs": ["rdar://59402637"]
+                },
+                { "id": "ShouldOpenAsAboutBlankQuirk", "bugs": ["https://webkit.org/b/199933"] }
+            ]
+        },
+        {
+            "bugs": ["https://webkit.org/b/199587"],
+            "matches": ["*://docs.google.com/spreadsheets/*"],
+            "behaviors": [{ "id": "NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk" }]
+        },
+        {
+            "matches": ["*://docs.google.com/presentation/*"],
+            "behaviors": [{ "id": "ShouldIgnoreInputModeNone" }]
+        },
+        {
+            "bugs": ["rdar://191131755"],
+            "comment": "accounts.youtube.com resolves through a CNAME to google.com. Capping the expiry of the cookies it sets on youtube.com signs users out of YouTube.",
+            "matches": ["*://*.youtube.com/*", "*://*.google.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk",
+                    "secondaryURL": ["*://*.youtube.com/*", "*://*.google.com/*"]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://49403416"],
+            "matches": ["*://mail.google.com/*"],
+            "behaviors": [{ "id": "NeedsGMailOverflowScrollQuirk" }]
+        },
+        {
+            "bugs": ["rdar://106539018"],
+            "matches": ["*://translate.google.com/*"],
+            "behaviors": [{ "id": "NeedsGoogleTranslateScrollingQuirk" }]
+        },
+        {
+            "matches": ["*://translate.google.com/*"],
+            "available": "iOSFamily",
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "(function() { let userAgent = navigator.userAgent; Object.defineProperty(navigator, 'userAgent', { get: () => { return userAgent + ' Chrome/130.0.0.0 Android/15.0'; }, configurable: true }); })();"
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://58653069"],
+            "matches": ["*://sites.google.com/*"],
+            "behaviors": [{ "id": "ShouldPreventTouchEndDispatchQuirk", "elementSelector": ".DPvwYc.sm8sCf" }]
+        },
+        {
+            "matches": ["*://meet.google.com/*"],
+            "behaviors": [{ "id": "ShouldEnableCameraBackgroundPlayback" }]
+        },
+        {
+            "bugs": ["rdar://112632639"],
+            "matches": ["*://meet.goto.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://158560192"],
+            "matches": ["*://*.gradescope.com/*"],
+            "behaviors": [{ "id": "NeedsPartitionedCookiesQuirk" }]
+        },
+        {
+            "bugs": ["rdar://157388533"],
+            "matches": ["*://*.gunbroker.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.safari.v18_6Mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["https://webkit.org/b/244737"],
+            "matches": ["*://*.hbomax.com/*"],
+            "behaviors": [{ "id": "ShouldEnableFontLoadingAPIQuirk" }]
+        },
+        {
+            "matches": ["*://play.hbomax.com/*"],
+            "behaviors": [{ "id": "ShouldDisableAdSkippingInPip", "bugs": ["rdar://158430821"] }]
+        },
+        {
+            "matches": ["*://play.hbomax.com/*"],
+            "available": "appleTV",
+            "environment": "HomeView",
+            "behaviors": [
+                { "id": "NeedsZeroMaxTouchPointsQuirk", "bugs": ["rdar://138424489"] },
+                { "id": "ShouldSupportHoverMediaQueriesQuirk", "bugs": ["rdar://138806698"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://61788722"],
+            "matches": ["*://*.hfhs.org/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://65870401"],
+            "matches": ["*://security.us.hsbc.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15"
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.hulu.com/*"],
+            "behaviors": [
+                { "id": "NeedsCanPlayAfterSeekedQuirk", "bugs": ["rdar://55041979"] },
+                { "id": "NeedsVideoShouldMaintainAspectRatioQuirk", "bugs": ["rdar://100199996"] },
+                { "id": "ImplicitMuteWhenVolumeSetToZero", "bugs": ["rdar://126096361"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://187710972"],
+            "matches": ["*://*.icloud.com/*"],
+            "behaviors": [{ "id": "MayNeedToIgnoreContentObservation", "elementSelector": "[role=treeitem i], [role=treeitem i] *" }]
+        },
+        {
+            "bugs": ["rdar://188875593"],
+            "matches": ["*://*.icloud.com/*"],
+            "behaviors": [
+                {
+                    "id": "ShouldTreatLongClickAsSecondaryClickQuirk",
+                    "elementSelector": ".thread-list-item[role=treeitem i], .thread-list-item[role=treeitem i] *"
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://131836301"],
+            "matches": ["*://*.icloud.com/*mail*"],
+            "behaviors": [{ "id": "ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting" }]
+        },
+        {
+            "bugs": ["rdar://131836301"],
+            "matches": ["*://*.icloud.com/*"],
+            "fragmentContains": "mail",
+            "behaviors": [{ "id": "ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting" }]
+        },
+        {
+            "bugs": ["rdar://26013388"],
+            "matches": ["*://*.icloud.com/*notes*"],
+            "behaviors": [{ "id": "IsNeverRichlyEditableForTouchBarQuirk" }]
+        },
+        {
+            "bugs": ["rdar://26013388"],
+            "matches": ["*://*.icloud.com/*"],
+            "fragmentContains": "notes",
+            "behaviors": [{ "id": "IsNeverRichlyEditableForTouchBarQuirk" }]
+        },
+        {
+            "matches": ["*://*.iheart.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "document.cookie = 'app=listen:60; path=/; domain=.iheart.com';"
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.imdb.com/*"],
+            "behaviors": [
+                { "id": "NeedsChromeMediaControlsPseudoElementQuirk", "bugs": ["rdar://137991466"] },
+                { "id": "NeedsZeroMaxTouchPointsQuirk", "bugs": ["rdar://162684936"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://113978106"],
+            "matches": ["*://www.indiatimes.com/*"],
+            "behaviors": [{ "id": "NeedsIPadMiniUserAgentQuirk" }]
+        },
+        {
+            "matches": ["*://*.instacart.com/*"],
+            "environment": "SafariWebApp",
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.instagram.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsInstagramResizingReelsQuirk",
+                    "elementSelector": ":has(video)",
+                    "bugs": ["rdar://166400170"]
+                },
+                { "id": "ShouldSendFakeTouchForceChangeEvent", "bugs": ["rdar://174936655"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://171741842", "https://webkit.org/b/311602"],
+            "matches": ["*://*.invideo.io/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "if(!window.chrome)window.chrome={};"
+                },
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://82221582"],
+            "matches": ["*://*.ippk.pl/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://60782373"],
+            "matches": ["*://*.irs.gov/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.linkedin.com/*"],
+            "behaviors": [{ "id": "ShouldAllowNativeTapsOnMediaElementsQuirk", "elementSelector": "video.vjs-tech, audio.vjs-tech" }]
+        },
+        {
+            "bugs": ["rdar://167489768"],
+            "matches": ["*://*.live.com/*"],
+            "embeddedMatches": [
+                "*://*/wordeditorframe.aspx",
+                "*://*/wordeditorframe.aspx?*",
+                "*://*/*/wordeditorframe.aspx",
+                "*://*/*/wordeditorframe.aspx?*"
+            ],
+            "behaviors": [
+                {
+                    "id": "NeedsChromeOSNavigatorUserAgentQuirk",
+                    "secondaryURL": [
+                        "*://*/wordeditords.js",
+                        "*://*/wordeditords.js?*",
+                        "*://*/*/wordeditords.js",
+                        "*://*/*/wordeditords.js?*"
+                    ]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://52116170"],
+            "matches": ["*://*.live.com/*"],
+            "behaviors": [{ "id": "ShouldAvoidResizingWhenInputViewBoundsChangeQuirk" }]
+        },
+        {
+            "matches": ["*://outlook.live.com/*"],
+            "behaviors": [
+                { "id": "NeedsMozillaFileTypeForDataTransferQuirk", "bugs": ["rdar://136624720"] },
+                {
+                    "id": "MayNeedToIgnoreContentObservation",
+                    "elementSelector": "[id^=swatchColorPicker]",
+                    "bugs": ["rdar://152277211"]
+                },
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.v143Mac" }
+                },
+                { "id": "ShouldAllowTouchMoveToChangeSelectionQuirk", "bugs": ["rdar://151851274"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://187832523"],
+            "matches": [
+                "*://outlook.live.com/*",
+                "*://outlook.office.com/*",
+                "*://outlook.office365.com/*",
+                "*://outlook.cloud.microsoft/*"
+            ],
+            "behaviors": [
+                {
+                    "id": "ShouldTreatLongClickAsSecondaryClickQuirk",
+                    "elementSelector": "[data-focusable-row], [data-focusable-row] *"
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://48008837"],
+            "matches": ["*://outlook.live.com/*"],
+            "available": "touchEvents",
+            "behaviors": [{ "id": "ShouldPreventTouchMoveDispatchQuirk", "elementSelector": ".ms-Suggestions, .ms-Suggestions *" }]
+        },
+        {
+            "bugs": ["rdar://114573089"],
+            "matches": ["*://*.officeapps.live.com/*"],
+            "behaviors": [{ "id": "ShouldDisableDataURLPaddingValidation" }]
+        },
+        {
+            "matches": ["*://*.onedrive.live.com/*"],
+            "behaviors": [{ "id": "ShouldDisableDataURLPaddingValidation" }]
+        },
+        {
+            "bugs": ["rdar://26013388"],
+            "matches": ["*://onedrive.live.com/*"],
+            "behaviors": [{ "id": "IsNeverRichlyEditableForTouchBarQuirk" }]
+        },
+        {
+            "bugs": ["rdar://189705627"],
+            "matches": ["*://*.openrice.com/*"],
+            "behaviors": [{ "id": "NeedsOpenRiceAdPopupHeightQuirk", "elementSelector": ".popup-ad-subview-container" }]
+        },
+        {
+            "bugs": ["https://webkit.org/b/296989"],
+            "matches": ["*://*.madisoncity.k12.al.us/*"],
+            "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
+        },
+        {
+            "bugs": ["rdar://47868965"],
+            "matches": ["*://*.mailchimp.com/*"],
+            "behaviors": [{ "id": "ShouldDisablePointerEventsQuirk" }]
+        },
+        {
+            "matches": ["*://*.marcus.com/*"],
+            "behaviors": [
+                { "id": "ShouldExposeShowModalDialog", "bugs": ["rdar://101086391"] },
+                { "id": "ShouldNavigatorPluginsBeEmpty", "bugs": ["rdar://102959860"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://60601895"],
+            "matches": ["*://*.jalopnik.com/*", "*://*.kotaku.com/*", "*://*.theroot.com/*", "*://*.theinventory.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsKinjaLoginStorageAccessQuirk",
+                    "elementSelector": ".js_switch-to-burner-login, .js_header-userbutton, .sc-1il3uru-3, .cIhKfd, .iyvn34-0, .bYIjtl, svg[aria-label=\"UserFilled icon\"], svg[aria-label=\"UserFilled icon\"] > path"
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://50457837"],
+            "matches": ["*://*.medium.com/*"],
+            "behaviors": [{ "id": "ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk" }]
+        },
+        {
+            "bugs": ["rdar://157794706"],
+            "matches": ["*://*.m365.cloud.microsoft/*"],
+            "behaviors": [{ "id": "ShouldAllowPopupFromMicrosoftOfficeToOneDrive", "secondaryURL": ["*://*.onedrive.live.com/*"] }]
+        },
+        {
+            "bugs": ["rdar://135114489"],
+            "matches": ["*://safe.menlosecurity.com/*"],
+            "behaviors": [{ "id": "ShouldDisableWritingSuggestionsByDefaultQuirk" }]
+        },
+        {
+            "matches": ["*://*.messenger.com/*"],
+            "behaviors": [
+                { "id": "ShouldEnableCameraAndMicrophonePermissionStateQuirk", "bugs": ["rdar://158736355"] },
+                { "id": "ShouldEnableRemoteTrackLabelQuirk", "bugs": ["rdar://158736355"] },
+                { "id": "ShouldEnableEnumerateDeviceQuirk", "bugs": ["rdar://161269819"] },
+                { "id": "ShouldEnableRTCEncodedStreamsQuirk", "bugs": ["rdar://158736355"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://147429596"],
+            "matches": ["*://*.nba.com/*"],
+            "available": "iOSFamily",
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "if (!window.__nbaSeekFix) {\n    window.__nbaSeekFix = true;\n    document.addEventListener('touchmove', function({ target, touches }) {\n        if (!target?.getAttribute\n            || target.getAttribute('data-id') !== 'video-player:scrub-bar:controls'\n            || !touches?.[0])\n            return;\n        const touch = touches[0];\n        const rect = target.getBoundingClientRect();\n        const event = new MouseEvent('mousemove', {\n            clientX: touch.clientX,\n            clientY: touch.clientY,\n            screenX: touch.screenX,\n            screenY: touch.screenY,\n            bubbles: true,\n            cancelable: true\n        });\n        Object.defineProperty(event, 'offsetX', { value: touch.clientX - rect.left, configurable: true });\n        Object.defineProperty(event, 'offsetY', { value: touch.clientY - rect.top, configurable: true });\n        target.dispatchEvent(event);\n    }, false);\n}"
+                },
+                { "id": "NeedsPerDocumentAutoplayBehaviorQuirk" }
+            ]
+        },
+        {
+            "matches": ["*://*.nba.com/*"],
+            "environment": "SmallScreen",
+            "available": "iOS",
+            "behaviors": [{ "id": "ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen" }]
+        },
+        {
+            "bugs": ["rdar://51770057"],
+            "matches": ["*://*.mybinder.org/*"],
+            "available": "touchEvents || touchEventRegions",
+            "behaviors": [
+                {
+                    "id": "ShouldDispatchSimulatedMouseEventsQuirk",
+                    "elementSelector": ".lm-DockPanel-tabBar, .lm-DockPanel-tabBar *"
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://48068610"],
+            "matches": ["*://*.naver.com/*"],
+            "excludeMatches": ["*://tv.naver.com/*", "*://mail.naver.com/*", "*://m.naver.com/*"],
+            "behaviors": [{ "id": "ShouldDispatchSimulatedMouseEventsQuirk" }]
+        },
+        {
+            "matches": ["*://*.netflix.com/*"],
+            "behaviors": [
+                { "id": "NeedsSeekingSupportDisabledQuirk", "bugs": ["https://webkit.org/b/173030"] },
+                { "id": "NeedsNetflixVolumeSliderQuirk", "bugs": ["rdar://178545839"] },
+                {
+                    "id": "ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick",
+                    "bugs": ["https://webkit.org/b/304608"]
+                },
+                { "id": "NeedsPerDocumentAutoplayBehaviorQuirk", "bugs": ["https://webkit.org/b/193301"] }
+            ]
+        },
+        {
+            "matches": ["*://*.netflix.com/*"],
+            "available": "vision",
+            "behaviors": [{ "id": "NeedsNowPlayingFullscreenSwapQuirk" }]
+        },
+        {
+            "matches": ["*://*.nfl.com/*"],
+            "behaviors": [{ "id": "ShouldSuppressHLSSubtitles" }]
+        },
+        {
+            "bugs": ["rdar://5976384"],
+            "matches": ["*://*.nytimes.com/*"],
+            "available": "iOS || vision",
+            "behaviors": [{ "id": "ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting" }]
+        },
+        {
+            "bugs": ["rdar://100243111"],
+            "matches": ["*://*.pandora.com/*"],
+            "behaviors": [{ "id": "ShouldExposeShowModalDialog" }]
+        },
+        {
+            "bugs": ["https://webkit.org/b/318201"],
+            "matches": ["*://mms.pinduoduo.com/*"],
+            "behaviors": [{ "id": "NeedsChromeCompatibilityUserAgentQuirk", "chromeCompatibilityVersion": "149" }]
+        },
+        {
+            "bugs": ["rdar://104979314", "rdar://165745719"],
+            "matches": ["*://*.pinterest.com/*"],
+            "behaviors": [{ "id": "ShouldAllowNotificationPermissionWithoutUserGesture" }]
+        },
+        {
+            "matches": ["*://*.premierleague.com/*"],
+            "behaviors": [
+                { "id": "ShouldIgnorePlaysInlineRequirementQuirk", "bugs": ["rdar://123721211"] },
+                { "id": "ShouldDispatchPlayPauseEventsOnResume", "bugs": ["rdar://68938833"] },
+                { "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor", "bugs": ["rdar://136791737"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://55629493"],
+            "matches": ["*://*.ralphlauren.com/*"],
+            "behaviors": [{ "id": "ShouldIgnoreAriaForFastPathContentObservationCheckQuirk" }]
+        },
+        {
+            "bugs": ["rdar://80550715"],
+            "matches": ["*://*.reddit.com/*"],
+            "available": "videoPresentationMode || iOSFamily",
+            "behaviors": [{ "id": "RequiresUserGestureToPauseInPictureInPictureQuirk" }]
+        },
+        {
+            "bugs": ["rdar://176377447"],
+            "matches": ["*://*.reddit.com/*"],
+            "available": "iOSFamily",
+            "behaviors": [{ "id": "ShouldDisableScrollAnchoringQuirk", "documentSelector": "#sink-it-back-to-top" }]
+        },
+        {
+            "bugs": ["rdar://61733101"],
+            "matches": ["*://*.roblox.com/*"],
+            "behaviors": [{ "id": "NeedsIPadMiniUserAgentQuirk" }]
+        },
+        {
+            "bugs": ["rdar://60314791"],
+            "matches": ["*://*.sapo.pt/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.scribd.com/*"],
+            "behaviors": [{ "id": "NeedsReuseLiveRangeForSelectionUpdateQuirk" }]
+        },
+        {
+            "bugs": ["rdar://116292738"],
+            "matches": ["*://*.sfusd.edu/*"],
+            "behaviors": [{ "id": "ShouldBypassAsyncScriptDeferring" }]
+        },
+        {
+            "bugs": ["rdar://52116170"],
+            "matches": ["*://*.sharepoint.com/*"],
+            "behaviors": [{ "id": "ShouldAvoidResizingWhenInputViewBoundsChangeQuirk" }]
+        },
+        {
+            "matches": ["*://shopee.sg/payment/account-linking/landing", "*://shopee.sg/payment/account-linking/landing?*"],
+            "available": "iOSFamily",
+            "behaviors": [{ "id": "NeedsIPhoneUserAgentQuirk" }]
+        },
+        {
+            "matches": ["*://*.slack.com/*"],
+            "available": "iOSFamily",
+            "behaviors": [
+                { "id": "ShouldIgnoreViewportArgumentsToAvoidEnlargedViewQuirk", "bugs": ["rdar://138614711"] },
+                { "id": "ShouldUseDynamicViewportUnitsAsDefaultQuirk", "bugs": ["rdar://171190689"] }
+            ]
+        },
+        {
+            "matches": ["*://*.soundcloud.com/*"],
+            "behaviors": [
+                {
+                    "id": "ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk",
+                    "elementSelector": ".sceneLayer",
+                    "bugs": ["rdar://52915981"]
+                },
+                { "id": "ShouldExposeShowModalDialog", "bugs": ["rdar://102913500"] },
+                { "id": "ShouldDispatchSimulatedMouseEventsQuirk", "bugs": ["rdar://52915981"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://113314067"],
+            "matches": ["*://*.soylent.*/*"],
+            "behaviors": [{ "id": "ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick" }]
+        },
+        {
+            "bugs": ["rdar://138918575"],
+            "matches": ["*://open.spotify.com/*"],
+            "behaviors": [
+                { "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" },
+                { "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" },
+                { "id": "ShouldLimitHLSPlaybackRate" },
+                { "id": "ShouldDeferIntersectionObserversDuringResize" },
+                { "id": "ShouldBlockAudiblePlaybackWhileAudioIsPlaying" },
+                { "id": "NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk" }
+            ]
+        },
+        {
+            "matches": ["*://*.spotify.com/*"],
+            "behaviors": [{ "id": "ShouldFlipScreenDimensionsQuirk", "bugs": ["rdar://133423460"] }]
+        },
+        {
+            "bugs": ["rdar://142573562"],
+            "matches": ["*://*.steampowered.com/*"],
+            "behaviors": [{ "id": "ShouldTreatAddingMouseOutEventListenerAsContentChange" }]
+        },
+        {
+            "bugs": ["rdar://61788722"],
+            "matches": ["*://*.sutterhealth.org/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.theguardian.*/*"],
+            "behaviors": [{ "id": "ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk", "elementSelector": "[id*=crossword]" }]
+        },
+        {
+            "bugs": ["rdar://166727225"],
+            "matches": ["*://*.theguardian.*/*"],
+            "embeddedMatches": ["*://*.youtube.com/*", "*://*.youtube-nocookie.com/*"],
+            "behaviors": [{ "id": "NeedsYouTubeEmbedAutoplayQuirk" }]
+        },
+        {
+            "bugs": ["rdar://88678598", "rdar://90434296"],
+            "matches": ["*://teams.live.com/*", "*://teams.microsoft.com/*"],
+            "behaviors": [{ "id": "ShouldAllowMSTeamsProtocolWithoutUserGestureQuirk" }]
+        },
+        {
+            "bugs": ["https://webkit.org/b/218779"],
+            "matches": ["*://www.microsoft.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsStorageAccessOnLoginButtonClickQuirk",
+                    "elementSelector": ".glyph_signIn_circle, .mectrl_headertext, .mectrl_header"
+                }
+            ]
+        },
+        {
+            "bugs": ["https://webkit.org/b/218760"],
+            "matches": ["*://www.playstation.com/*", "*://my.playstation.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsStorageAccessOnLoginButtonClickQuirk",
+                    "elementSelector": ".web-toolbar__signin-button, .web-toolbar__signin-button-label, .sb-signin-button"
+                }
+            ]
+        },
+        {
+            "bugs": ["https://webkit.org/b/219505"],
+            "matches": ["*://teams.microsoft.com/*"],
+            "queryContains": "Retried+3+times+without+success",
+            "behaviors": [{ "id": "IsMicrosoftTeamsRedirectURLQuirk" }]
+        },
+        {
+            "bugs": ["rdar://165844163"],
+            "matches": ["*://santaclaracounty.telleronline.net/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.thesaurus.com/*"],
+            "behaviors": [{ "id": "NeedsAnchorToBeMouseFocusableQuirk" }]
+        },
+        {
+            "bugs": ["rdar://138789765"],
+            "matches": ["*://*.thesaurus.com/*"],
+            "available": "iOSFamily",
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "(function() { let userAgent = navigator.userAgent; Object.defineProperty(navigator, 'userAgent', { get: () => { return userAgent + ' Chrome/130.0.0.0 Android/15.0'; }, configurable: true }); })();",
+                    "secondaryURL": ["*://player.anyclip.com/*lre.js", "*://player.anyclip.com/*lre.js?*"]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://190263358"],
+            "matches": ["*://*.thetimes.com/*"],
+            "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
+        },
+        {
+            "bugs": ["rdar://126629168"],
+            "matches": ["*://dev.ti.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.tiktok.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsTikTokCommentsOverflowingContentQuirk",
+                    "elementSelector": "[class*=DivBrowserModeContainer] > [class*=DivContentContainer]"
+                },
+                {
+                    "id": "NeedsTikTokVideoOverflowingContentQuirk",
+                    "elementSelector": "[class*=DivBrowserModeContainer] > [class*=DivVideoContainer]"
+                },
+                {
+                    "id": "ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk",
+                    "elementSelector": "[role=slider]",
+                    "bugs": ["rdar://174179805"]
+                },
+                {
+                    "id": "ShouldDispatchSimulatedMouseEventsQuirk",
+                    "elementSelector": "[role=slider], [role=slider] *",
+                    "bugs": ["rdar://174179805"]
+                },
+                { "id": "ShouldComputeSimulatedMouseEventMovementDeltaQuirk", "bugs": ["rdar://174179805"] },
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.safari.v18_6Mac" },
+                    "bugs": ["rdar://154893648"]
+                },
+                {
+                    "id": "NeedsChromeCompatibilityUserAgentQuirk",
+                    "chromeCompatibilityVersion": "136",
+                    "bugs": ["rdar://148759791"]
+                },
+                {
+                    "id": "NeedsTikTokCaptchaSliderTouchActionQuirk",
+                    "elementSelector": "#secsdk-captcha-drag-wrapper",
+                    "bugs": ["rdar://183445905"]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://28242210"],
+            "matches": ["*://*.trix-editor.org/*"],
+            "behaviors": [{ "id": "IsNeverRichlyEditableForTouchBarQuirk" }]
+        },
+        {
+            "bugs": ["rdar://102420527"],
+            "matches": ["*://*.twitch.tv/*"],
+            "behaviors": [{ "id": "ShouldReportDocumentAsVisibleIfActivePIPQuirk" }]
+        },
+        {
+            "bugs": ["rdar://143839620"],
+            "matches": ["*://*.tympanus.net/*"],
+            "behaviors": [{ "id": "ShouldBlockFetchWithNewlineAndLessThan" }]
+        },
+        {
+            "bugs": ["rdar://173206598"],
+            "matches": ["*://*.uhc.com/*"],
+            "behaviors": [{ "id": "ShouldTranscodeHeicImagesQuirk" }]
+        },
+        {
+            "bugs": ["rdar://180411019"],
+            "matches": ["*://*.ui.com/*"],
+            "behaviors": [{ "id": "NeedsSupportsProgressMonitoringQuirk" }]
+        },
+        {
+            "bugs": ["rdar://170751919"],
+            "matches": ["*://*.upgrad.com/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://104818312"],
+            "matches": ["*://*.victoriassecret.com/*"],
+            "behaviors": [{ "id": "ShouldDisableFetchMetadata" }]
+        },
+        {
+            "matches": ["*://*.vimeo.com/*"],
+            "behaviors": [
+                { "id": "ShouldBypassBackForwardCacheForNoStoreQuirk", "bugs": ["rdar://56996057"] },
+                { "id": "NeedsPreloadAutoQuirk", "bugs": ["rdar://55759025"] },
+                {
+                    "id": "ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk",
+                    "bugs": ["rdar://73227900"]
+                },
+                { "id": "BlocksEnteringStandardFullscreenFromPictureInPictureQuirk", "bugs": ["rdar://107592139"] },
+                { "id": "BlocksReturnToFullscreenFromPictureInPictureQuirk", "bugs": ["rdar://70788878"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://123734840"],
+            "matches": ["*://*.walmart.com/*"],
+            "available": "twoPhaseClicks",
+            "behaviors": [{ "id": "MayNeedToIgnoreContentObservation", "elementSelector": "[role=listitem i] > [role=button i]" }]
+        },
+        {
+            "bugs": ["rdar://139689157"],
+            "matches": ["*://*.weather.com/*"],
+            "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
+        },
+        {
+            "matches": ["*://*.webex.com/*"],
+            "available": "appleTV",
+            "environment": "HomeView",
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "Object.defineProperty(window, 'Touch', { get: () => undefined });",
+                    "secondaryURL": ["*://*/pushdownload.*", "*://*/*/pushdownload.*"]
+                },
+                { "id": "NeedsWebExScrollabilityQuirk", "bugs": ["rdar://143715630"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://48003980"],
+            "matches": ["*://*.weebly.com/*"],
+            "behaviors": [{ "id": "ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk" }]
+        },
+        {
+            "bugs": ["rdar://185639386"],
+            "matches": ["*://*.wellnessliving.com/*"],
+            "behaviors": [{ "id": "NeedsPartitionedCookiesQuirk" }]
+        },
+        {
+            "matches": ["*://*.wikipedia.org/*"],
+            "behaviors": [
+                {
+                    "id": "ShouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk",
+                    "bugs": ["rdar://54856323"]
+                },
+                {
+                    "id": "ShouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk",
+                    "bugs": ["https://webkit.org/b/247636"]
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://170412045", "https://webkit.org/b/307933", "rdar://49124313"],
+            "matches": ["*://*.wix.com/*"],
+            "excludeMatches": ["*://*.wix.com/website/templates/*"],
+            "behaviors": [{ "id": "ShouldDispatchSimulatedMouseEventsQuirk" }]
+        },
+        {
+            "matches": ["*://*.workspaces.xyz/*"],
+            "behaviors": [{ "id": "ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions" }]
+        },
+        {
+            "bugs": ["rdar://156109518"],
+            "matches": ["*://*.wpdevelopment.ca/*"],
+            "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
+        },
+        {
+            "matches": ["*://*.x.com/*"],
+            "behaviors": [
+                { "id": "ShouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk", "bugs": ["rdar://132850672"] },
+                { "id": "ShouldSilenceMediaQueryListChangeEvents", "bugs": ["rdar://121473410"] },
+                { "id": "RequiresUserGestureToLoadInPictureInPictureQuirk", "bugs": ["rdar://73369869"] },
+                { "id": "RequiresUserGestureToPauseInPictureInPictureQuirk", "bugs": ["rdar://73369869"] },
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "(function() {\n    if (window.__xGoogleSignInButtonFix)\n        return;\n    window.__xGoogleSignInButtonFix = true;\n    var style = document.createElement('style');\n    style.textContent = '.jf-gsi-hit > div > div:first-child:empty:not([role]) { display: none !important }';\n    (document.head || document.documentElement).appendChild(style);\n})();\n",
+                    "secondaryURL": ["*://accounts.google.com/gsi/client", "*://accounts.google.com/gsi/client?*"],
+                    "bugs": ["https://webkit.org/b/323931", "rdar://183399060"]
+                }
+            ]
+        },
+        {
+            "matches": ["*://*.x.com/*"],
+            "available": "iOS || vision",
+            "behaviors": [
+                {
+                    "id": "ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting",
+                    "bugs": ["rdar://58804852", "rdar://61731801"]
+                },
+                { "id": "ShouldAvoidProgrammaticScrollClampingQuirk", "bugs": ["rdar://175565114"] }
+            ]
+        },
+        {
+            "matches": ["*://*.yahoo.*/*"],
+            "behaviors": [
+                { "id": "NeedsYahooVolumeSliderQuirk", "bugs": ["rdar://170502516"] },
+                { "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor", "bugs": ["rdar://136767005"] }
+            ]
+        },
+        {
+            "bugs": ["rdar://148284059"],
+            "matches": ["*://*.yahoo.*/*"],
+            "embeddedMatches": ["*://*.yimg.com/*"],
+            "behaviors": [{ "id": "RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk" }]
+        },
+        {
+            "bugs": ["rdar://142894603"],
+            "matches": ["*://*.yahoo.*/*"],
+            "available": "touchEvents",
+            "behaviors": [
+                {
+                    "id": "ShouldPreventTouchEndDispatchQuirk",
+                    "elementSelector": ".DPvwYc.sm8sCf, .vjs-subs-cap-button.vjs-menu-button"
+                }
+            ]
+        },
+        {
+            "bugs": ["rdar://177395486"],
+            "comment": "FIXME: Remove once Yelp stops covering the top of the video lightbox with a pointer-event-eating Share/Report bar.",
+            "matches": ["*://*.yelp.com/*"],
+            "behaviors": [{ "id": "NeedsStyleSheetInjectedQuirk", "styleSheet": "div:has(button[aria-label=\"Share\"]):has(button[aria-label=\"Report\"]):not(:has(video)) { pointer-events: none; } button[aria-label=\"Share\"], button[aria-label=\"Report\"] { pointer-events: auto; }" }]
+        },
+        {
+            "bugs": ["rdar://127246368"],
+            "matches": ["*://news.ycombinator.com/*"],
+            "behaviors": [{ "id": "ShouldIgnoreTextAutoSizingQuirk" }]
+        },
+        {
+            "bugs": ["rdar://64549429"],
+            "embeddedMatches": ["*://*.youtube.com/*"],
+            "behaviors": [{ "id": "NeedsStorageAccessForYouTubeWatchLaterQuirk", "elementSelector": ".ytp-watch-later-icon" }]
+        },
+        {
+            "matches": ["*://*.youtube.com/*"],
+            "behaviors": [
+                { "id": "HasBrokenEncryptedMediaAPISupportQuirk", "bugs": ["https://webkit.org/b/195598"] },
+                { "id": "NeedsScrollbarWidthThinDisabledQuirk", "bugs": ["rdar://135886305"] },
+                { "id": "NeedsYouTubeCaptionQuirk" },
+                { "id": "ShouldSilenceResizeObservers", "bugs": ["rdar://110097836"] }
+            ]
+        },
+        {
+            "embeddedMatches": ["*://*.youtube.com/*", "*://*.youtube-nocookie.com/*"],
+            "behaviors": [{ "id": "NeedsYouTubeCaptionQuirk" }]
+        },
+        {
+            "bugs": ["rdar://49582231"],
+            "matches": ["*://www.youtube.com/*"],
+            "behaviors": [{ "id": "NeedsYouTubeOverflowScrollQuirk" }]
+        },
+        {
+            "matches": ["*://*.youtube.com/*"],
+            "environment": "TubularApp",
+            "available": "iOSFamily",
+            "behaviors": [{ "id": "ShouldSuppressMediaSessionPauseActionOnInterruption" }]
+        },
+        {
+            "bugs": ["rdar://52361019"],
+            "matches": ["*://www.youtube.com/*"],
+            "behaviors": [{ "id": "NeedsYouTubeMouseOutQuirk" }]
+        },
+        {
+            "bugs": ["rdar://178769976"],
+            "matches": ["*://*.youtube.com/*"],
+            "environment": "LensApp",
+            "available": "vision",
+            "behaviors": [{ "id": "RequiresUserGestureToPlayInFullscreenQuirk" }]
+        },
+        {
+            "bugs": ["rdar://143087016"],
+            "matches": ["*://*.zencastr.com/*"],
+            "behaviors": [{ "id": "NeedsLimitedMatroskaSupportQuirk" }]
+        },
+        {
+            "bugs": ["rdar://53103732"],
+            "matches": ["*://www.zillow.com/*"],
+            "behaviors": [{ "id": "ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk" }]
+        },
+        {
+            "matches": ["*://*.zillow.com/*"],
+            "behaviors": [
+                { "id": "ShouldTranscodeHeicImagesQuirk", "bugs": ["rdar://79872092"] },
+                { "id": "ShouldSilenceResizeObservers", "bugs": ["rdar://110097836"] }
+            ]
+        },
+        {
+            "matches": ["*://*.zomato.com/*"],
+            "behaviors": [{ "id": "NeedsZomatoEmailLoginLabelQuirk" }]
+        },
+        {
+            "matches": ["*://*.zoom.us/*"],
+            "behaviors": [
+                { "id": "ShouldAutoplayWebAudioForArbitraryUserGestureQuirk", "bugs": ["https://webkit.org/b/223180"] },
+                { "id": "ShouldDisableImageCaptureQuirk", "bugs": ["rdar://118185086"] },
+                { "id": "ShouldAllowMediaStreamTrackSerializationQuirk" }
+            ]
+        }
+    ]
+}

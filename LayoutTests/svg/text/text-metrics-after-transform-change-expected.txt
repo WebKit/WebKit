@@ -1,0 +1,7 @@
+attribute-change: PASS
+attribute-removal: PASS
+css-transform: PASS
+css-scale: PASS
+web-animation: PASS
+self-attribute-change: PASS
+self-css-transform: PASS

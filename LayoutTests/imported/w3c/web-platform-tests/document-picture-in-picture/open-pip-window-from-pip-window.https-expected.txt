@@ -1,0 +1,4 @@
+
+PASS Test that documentPictureInPicture.requestWindow()
+  rejects from a PiP window
+

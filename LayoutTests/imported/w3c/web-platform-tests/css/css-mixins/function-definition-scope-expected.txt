@@ -1,0 +1,5 @@
+
+PASS Parameter default resolves a dashed-function in the definition scope
+PASS result resolves a dashed-function in the definition scope
+PASS A local resolves a dashed-function in the definition scope
+

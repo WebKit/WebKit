@@ -1,0 +1,5 @@
+PASS writingMode is "vertical-rl"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    #box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-transition-duration: 1s;
+      -webkit-transition-timing-function: linear;
+      -webkit-transition-property: -webkit-transform;
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    
+    var result = "PASS";
+    const defaultTolerance = 10;
+    var transitionStartTime;
+    
+    function isCloseEnough(actual, desired)
+    {
+        var diff = Math.abs(actual - desired);
+        return diff < defaultTolerance;
+    }
+    
+    function changeValues()
+    {
+        var box = document.getElementById('box');
+        box.style.webkitTransitionDuration = "0.1s";
+    }
+    
+    function getXPosition()
+    {
+        var t = window.getComputedStyle(document.getElementById('box')).webkitTransform;
+        t = t.split("(");
+        t = t[1].split(",");
+        return t[4];
+    }
+    
+    function checkIntermediateValue()
+    {
+        // We should be roughly halfway in the transition from 0 to 100, but the
+        // timeout may not fire exactly then. Figure out where we should be 
+        // based on a linear interpolation of timestamps.
+        var actualXPos = getXPosition();
+        var expectedXPos = (new Date().getTime() - transitionStartTime)/1000 * 100;
+        if (!isCloseEnough(actualXPos, expectedXPos))
+            result = 'FAIL for intermediate value (was: ' + actualXPos + ', expected: ' + expectedXPos + ')';
+    }
+
+    function checkFinalValue()
+    {
+        var actualXPos = getXPosition();
+        var transitionFraction = (new Date().getTime() - transitionStartTime)/100;
+        var expectedXPos = 100 - Math.min(transitionFraction, 1) * 100;
+ 
+        if (!isCloseEnough(actualXPos, expectedXPos)) {
+            if (result == 'PASS')
+                result = '';
+            result += 'FAIL for final value (was: ' + actualXPos + ', expected: ' + expectedXPos + ')';
+        }
+        
+        document.getElementById('result').innerText = result;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    
+    function goBack()
+    {
+        var box = document.getElementById('box');
+        box.style.webkitTransform = 'translateX(0)';
+        transitionStartTime = new Date().getTime();
+    }
+
+    function start()
+    {
+        var box = document.getElementById('box');
+        setTimeout(changeValues, 100);
+        setTimeout(checkIntermediateValue, 500);
+        setTimeout(checkFinalValue, 1300);
+        box.style.webkitTransform = 'translateX(100px)';
+        transitionStartTime = new Date().getTime();
+    }
+    
+    window.addEventListener('load', start, false);
+    document.addEventListener('webkitTransitionEnd', goBack, false);
+  </script>
+</head>
+<body>
+
+<p>Test changes -webkit-transition-duration while the transition is running to ensure that the running transition is not affected</p>
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<style>
+    img {
+        width: 100px;
+        height: 100px;
+        border: 2px solid black;
+        content: -webkit-named-image(apple-pay-logo-white);
+    }
+</style>
+<body>
+    <p>PASS if no crash happens.</p>
+    <img src='resources/green-400x400.png'>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+        setTimeout(function() {
+            var image = document.querySelector('img');
+            image.remove();
+        }, 0);
+    </script>
+</body>

@@ -1,0 +1,230 @@
+/*
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "StyleJustifyItems.h"
+
+#include "CSSKeywordValue.h"
+#include "StyleBuilderChecking.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
+
+namespace WebCore {
+namespace Style {
+
+StyleSelfAlignmentData JustifyItems::resolve() const
+{
+    auto resolveOverflowPosition = [&](auto itemPosition) -> StyleSelfAlignmentData {
+        switch (overflowPosition()) {
+        case OverflowPositionKind::None:
+            return { itemPosition };
+        case OverflowPositionKind::Unsafe:
+            return { itemPosition, OverflowAlignment::Unsafe };
+        case OverflowPositionKind::Safe:
+            return { itemPosition, OverflowAlignment::Safe, };
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    switch (primary()) {
+    case PrimaryKind::Normal:
+        return resolveOverflowPosition(ItemPosition::Normal);
+    case PrimaryKind::Stretch:
+        return { ItemPosition::Stretch };
+    case PrimaryKind::Baseline:
+        if (baselineAlignmentPreference() == BaselineAlignmentPreferenceKind::Last)
+            return { ItemPosition::LastBaseline };
+        return { ItemPosition::Baseline };
+    case PrimaryKind::Center:
+        return resolveOverflowPosition(ItemPosition::Center);
+    case PrimaryKind::Start:
+        return resolveOverflowPosition(ItemPosition::Start);
+    case PrimaryKind::End:
+        return resolveOverflowPosition(ItemPosition::End);
+    case PrimaryKind::SelfStart:
+        return resolveOverflowPosition(ItemPosition::SelfStart);
+    case PrimaryKind::SelfEnd:
+        return resolveOverflowPosition(ItemPosition::SelfEnd);
+    case PrimaryKind::FlexStart:
+        return resolveOverflowPosition(ItemPosition::FlexStart);
+    case PrimaryKind::FlexEnd:
+        return resolveOverflowPosition(ItemPosition::FlexEnd);
+    case PrimaryKind::Left:
+        return resolveOverflowPosition(ItemPosition::Left);
+    case PrimaryKind::Right:
+        return resolveOverflowPosition(ItemPosition::Right);
+    case PrimaryKind::AnchorCenter:
+        return resolveOverflowPosition(ItemPosition::AnchorCenter);
+    case PrimaryKind::Legacy:
+        switch (legacyPosition()) {
+        case LegacyPositionKind::None:
+            return { ItemPosition::Normal, OverflowAlignment::Default, ItemPositionType::Legacy };
+        case LegacyPositionKind::Left:
+            return { ItemPosition::Left, OverflowAlignment::Default, ItemPositionType::Legacy };
+        case LegacyPositionKind::Right:
+            return { ItemPosition::Right, OverflowAlignment::Default, ItemPositionType::Legacy };
+        case LegacyPositionKind::Center:
+            return { ItemPosition::Center, OverflowAlignment::Default, ItemPositionType::Legacy };
+        }
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+// MARK: - Conversion
+
+auto CSSValueConversion<JustifyItems>::operator()(BuilderState& state, const CSSValue& value) -> JustifyItems
+{
+    if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
+        switch (keywordValue->valueID()) {
+        // normal
+        case CSSValueID::Normal:
+            return CSS::Keyword::Normal { };
+        // stretch
+        case CSSValueID::Stretch:
+            return CSS::Keyword::Stretch { };
+        // <baseline-position>
+        case CSSValueID::Baseline:
+            return CSS::Keyword::Baseline { };
+        // <overflow-position>? [ <self-position> | left | right ]
+        case CSSValueID::Center:
+            return CSS::Keyword::Center { };
+        case CSSValueID::Start:
+            return CSS::Keyword::Start { };
+        case CSSValueID::End:
+            return CSS::Keyword::End { };
+        case CSSValueID::SelfStart:
+            return CSS::Keyword::SelfStart { };
+        case CSSValueID::SelfEnd:
+            return CSS::Keyword::SelfEnd { };
+        case CSSValueID::FlexStart:
+            return CSS::Keyword::FlexStart { };
+        case CSSValueID::FlexEnd:
+            return CSS::Keyword::FlexEnd { };
+        case CSSValueID::Left:
+            return CSS::Keyword::Left { };
+        case CSSValueID::Right:
+            return CSS::Keyword::Right { };
+        case CSSValueID::AnchorCenter:
+            return CSS::Keyword::AnchorCenter { };
+        // legacy
+        case CSSValueID::Legacy:
+            return CSS::Keyword::Legacy { };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Legacy { };
+        }
+    }
+
+    auto pair = requiredPairDowncast<CSSKeywordValue>(state, value);
+    if (!pair)
+        return CSS::Keyword::Legacy { };
+
+    auto consumeAfterBaselinePositionPreference = [&](auto baselinePositionPreference, auto secondValueID) -> JustifyItems {
+        switch (secondValueID) {
+        case CSSValueID::Baseline:
+            return { CSS::Keyword::Baseline { }, { baselinePositionPreference } };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Legacy { };
+        }
+    };
+
+    auto consumeAfterOverflowPosition = [&](auto overflowPosition, auto secondValueID) -> JustifyItems {
+        switch (secondValueID) {
+        case CSSValueID::Normal:
+            return { CSS::Keyword::Normal { }, overflowPosition };
+        case CSSValueID::Center:
+            return { CSS::Keyword::Center { }, overflowPosition };
+        case CSSValueID::Start:
+            return { CSS::Keyword::Start { }, overflowPosition };
+        case CSSValueID::End:
+            return { CSS::Keyword::End { }, overflowPosition };
+        case CSSValueID::SelfStart:
+            return { CSS::Keyword::SelfStart { }, overflowPosition };
+        case CSSValueID::SelfEnd:
+            return { CSS::Keyword::SelfEnd { }, overflowPosition };
+        case CSSValueID::FlexStart:
+            return { CSS::Keyword::FlexStart { }, overflowPosition };
+        case CSSValueID::FlexEnd:
+            return { CSS::Keyword::FlexEnd { }, overflowPosition };
+        case CSSValueID::Left:
+            return { CSS::Keyword::Left { }, overflowPosition };
+        case CSSValueID::Right:
+            return { CSS::Keyword::Right { }, overflowPosition };
+        case CSSValueID::AnchorCenter:
+            return { CSS::Keyword::AnchorCenter { }, overflowPosition };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Legacy { };
+        }
+    };
+
+    auto consumeAfterLegacyPosition = [&](auto legacyPosition, auto secondValueID) -> JustifyItems {
+        switch (secondValueID) {
+        case CSSValueID::Legacy:
+            return { CSS::Keyword::Legacy { }, { legacyPosition } };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Legacy { };
+        }
+    };
+
+    switch (pair->first->valueID()) {
+    // <baseline-position>
+    case CSSValueID::First:
+        return consumeAfterBaselinePositionPreference(CSS::Keyword::First { }, pair->second->valueID());
+    case CSSValueID::Last:
+        return consumeAfterBaselinePositionPreference(CSS::Keyword::Last { }, pair->second->valueID());
+    // <overflow-position>? <self-position>
+    case CSSValueID::Unsafe:
+        return consumeAfterOverflowPosition(CSS::Keyword::Unsafe { }, pair->second->valueID());
+    case CSSValueID::Safe:
+        return consumeAfterOverflowPosition(CSS::Keyword::Safe { }, pair->second->valueID());
+    // legacy && [ left | right | center ]
+    case CSSValueID::Legacy:
+        switch (pair->second->valueID()) {
+        case CSSValueID::Left:
+            return { CSS::Keyword::Legacy { }, { CSS::Keyword::Left { } } };
+        case CSSValueID::Right:
+            return { CSS::Keyword::Legacy { }, { CSS::Keyword::Right { } } };
+        case CSSValueID::Center:
+            return { CSS::Keyword::Legacy { }, { CSS::Keyword::Center { } } };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Legacy { };
+        }
+    case CSSValueID::Left:
+        return consumeAfterLegacyPosition(CSS::Keyword::Left { }, pair->second->valueID());
+    case CSSValueID::Right:
+        return consumeAfterLegacyPosition(CSS::Keyword::Right { }, pair->second->valueID());
+    case CSSValueID::Center:
+        return consumeAfterLegacyPosition(CSS::Keyword::Center { }, pair->second->valueID());
+    default:
+        state.setCurrentPropertyInvalidAtComputedValueTime();
+        return CSS::Keyword::Legacy { };
+    }
+}
+
+} // namespace Style
+} // namespace WebCore

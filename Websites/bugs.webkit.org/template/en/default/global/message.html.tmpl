@@ -1,0 +1,28 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # url: string. An optional URL to go to.
+  # link: string. The link text for that URL.
+  #%]
+
+[% DEFAULT title = "$terms.Bugzilla Message" %]
+
+[% PROCESS global/header.html.tmpl %]
+
+[%# The "header" template automatically displays a message if it finds one.
+    Note that the global messages list is in messages.html.tmpl. %]
+
+[%# Display a URL if the calling script or message block has included one. %]
+[% IF url && link %]
+  <p>
+    <a href="[% url FILTER html %]">[% link FILTER html %]</a>
+  </p>
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]

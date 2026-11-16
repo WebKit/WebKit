@@ -1,0 +1,5 @@
+123
+4567
+
+FAIL Text selection by a pointer device should work correctly assert_equals: expected "67" but got ""
+

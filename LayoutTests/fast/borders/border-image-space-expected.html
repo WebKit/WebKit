@@ -1,0 +1,41 @@
+<html>
+<head>
+    <style>
+        div {
+            border-width: 50px 0 0 0;
+            margin: 10px;
+            width: 50px;
+            height: 50px;
+            box-sizing: border-box;
+            background-color: gray;
+        }
+        
+        .one {
+            width: 159px;
+        }
+
+        .two {
+            width: 239px;
+        }
+
+        .three {
+            width: 319px;
+        }
+        
+        .vertical {
+            border-width: 0 50px 0 0;
+            width: 50px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="horizontal" style="width: 159px; -webkit-clip-path: inset(0 120px 0 0)"></div>
+    <div class="horizontal" style="width: 239px; -webkit-clip-path: inset(0 110px 0 110px)"></div>
+    <div class="horizontal" style="width: 319px; -webkit-clip-path: inset(0 200px 0 100px)"></div>
+
+    <div class="vertical" style="height: 159px; -webkit-clip-path: inset(0 0 130px 0)"></div>
+    <div class="vertical" style="height: 239px; -webkit-clip-path: inset(112px 0 112px 0)"></div>
+    <div class="vertical" style="height: 319px; -webkit-clip-path: inset(102px 0 206px 0)"></div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="http://127.0.0.1:8000/resources/checkResourcePriority.js"></script>
+
+<script>
+  const tests = [
+    {description: 'high fetchpriority on <img>s not fetched by the preload scanner must translate to medium resource load priority', fetchPriority: 'high', expected_priority: "ResourceLoadPriorityMedium"},
+    {description: 'low fetchpriority on <img>s not fetched by the preload scanner must translate to very low resource load priority', fetchPriority: 'low', expected_priority: "ResourceLoadPriorityVeryLow"},
+    {description: 'auto fetchpriority on <img>s not fetched by the preload scanner must have no effect on resource load priority', fetchPriority: 'auto', expected_priority: "ResourceLoadPriorityLow"},
+    {description: 'invalid fetchpriority on <img>s not fetched by the preload scanner must have no effect on resource load priority', fetchPriority: 'xyz', expected_priority: "ResourceLoadPriorityLow"},
+    {description: 'missing fetchpriority on <img>s not fetched by the preload scanner must have no effect on resource load priority', expected_priority: "ResourceLoadPriorityLow"}
+  ];
+  let iteration = 0;
+  for (const test of tests) {
+    async_test(t => {
+      const img = document.createElement('img');
+      if (test.fetchPriority) img.fetchPriority = test.fetchPriority;
+
+      const url = new URL(`../resources/square100.png?${iteration++}`, location);
+      img.onload = t.step_func(() => { checkResourcePriority(url, test.expected_priority, test.description); t.done(); });
+      img.src = url;
+    });
+  }
+</script>

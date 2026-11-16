@@ -1,0 +1,9 @@
+
+PASS :texture_state:textureState="valid"
+PASS :texture_state:textureState="invalid"
+PASS :texture_state:textureState="destroyed"
+PASS :usages:
+PASS :sample_count:sampleCount=1
+PASS :sample_count:sampleCount=4
+PASS :texture,device_mismatch:
+

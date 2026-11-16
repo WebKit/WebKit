@@ -1,0 +1,4 @@
+You shouldn't see an orange image at the end of this line
+
+PASS Select image at the end of the line.
+

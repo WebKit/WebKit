@@ -1,0 +1,62 @@
+<html>
+<head id="head">
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body >
+<script>
+    
+description("Test that system colors for CSS values are correct.");
+
+if (window.internals) {
+    let colors = ['-apple-system-background',
+                  '-apple-system-blue',
+                  '-apple-system-brown',
+                  '-apple-system-container-border',
+                  '-apple-system-control-background',
+                  '-apple-system-gray',
+                  '-apple-system-green',
+                  '-apple-system-grid',
+                  '-apple-system-grouped-background',
+                  '-apple-system-header-text',
+                  '-apple-system-indigo',
+                  '-apple-system-label',
+                  '-apple-system-opaque-fill',
+                  '-apple-system-opaque-secondary-fill',
+                  '-apple-system-opaque-tertiary-fill',
+                  '-apple-system-orange',
+                  '-apple-system-pink',
+                  '-apple-system-placeholder-text',
+                  '-apple-system-purple',
+                  '-apple-system-quaternary-label',
+                  '-apple-system-red',
+                  '-apple-system-secondary-background',
+                  '-apple-system-secondary-grouped-background',
+                  '-apple-system-secondary-label',
+                  '-apple-system-selected-content-background',
+                  '-apple-system-separator',
+                  '-apple-system-teal',
+                  '-apple-system-tertiary-background',
+                  '-apple-system-tertiary-grouped-background',
+                  '-apple-system-tertiary-label',
+                  '-apple-system-text-background',
+                  '-apple-system-unemphasized-selected-content-background',
+                  '-apple-system-yellow',
+                  '-apple-wireless-playback-target-active',
+                  '-webkit-control-background'];
+
+    for (const color of colors) {
+        debug(`${color}`);
+        for (const useDarkAppearance of [false, true]) {
+            for (const useElevatedUserInterfaceLevel of [false, true]) {
+                const value = internals.systemColorForCSSValue(color, useDarkAppearance, useElevatedUserInterfaceLevel);
+                debug(`${value.padEnd(24)}\tuseDarkAppearance=${useDarkAppearance}\tuseElevatedUserInterfaceLevel=${useElevatedUserInterfaceLevel}`);
+            }
+        }
+        debug('');
+    }
+}
+
+</script>
+
+</body>
+</html>

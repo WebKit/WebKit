@@ -1,0 +1,4 @@
+
+PASS A script already loaded without integrity metadata loads again with a matching hash.
+PASS A script already loaded without integrity metadata does not load again with a non-matching hash.
+

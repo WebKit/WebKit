@@ -1,0 +1,3 @@
+
+FAIL The 'all' shorthand should set 'interactivity' assert_equals: expected (string) "auto" but got (undefined) undefined
+

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+field-error, labeled-error { display: block; color: #c62828; }
+</style>
+</head>
+<body>
+
+<form id="form">
+  <div><label for="name">Name</label><input id="name" type="text"><field-error id="name-error"></field-error></div>
+  <div><label for="email">Email</label><input id="email" type="text"></div>
+  <button id="submit" type="submit">Sign up</button>
+</form>
+
+<script>
+var output = "This tests that a field reports the error a component shows for it from a shadow root. One component is already on the page and writes its message as text directly inside its shadow root. The other is added on submission and puts a label of its own in front of the page's text, which it slots in. Only the components themselves are in the page's own DOM, so each message has to be found and read where it is rendered, and read whole. When a component takes its message away, the field stops reporting invalid.\n\n";
+
+customElements.define("field-error", class extends HTMLElement {
+    constructor() {
+        super();
+        this.messageText = this.attachShadow({ mode: "open" }).appendChild(document.createTextNode(""));
+    }
+
+    set message(text) {
+        this.messageText.data = text;
+    }
+});
+
+customElements.define("labeled-error", class extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" }).innerHTML = "<span>Error:</span> <slot></slot>";
+    }
+});
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var notifications = 0;
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification != "AXPossibleFormValidationError")
+            return;
+        ++notifications;
+        payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("name-error").message = "Enter your name.";
+
+        var emailError = document.createElement("labeled-error");
+        emailError.id = "email-error";
+        emailError.textContent = "Enter a valid email address.";
+        document.getElementById("email").after(emailError);
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    function invalidStatus(id) {
+        return axElement(id).stringAttributeValue("AXInvalid");
+    }
+
+    function fieldsWithError() {
+        return formFieldWithErrorCount(axElement("form"));
+    }
+
+    function hasErrorMessage(id) {
+        return errorMessageCount(axElement(id)) > 0;
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("invalidStatus('name')", "'false'");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("notifications", "1");
+        output += expect("payload", "'AXFormValidationUnannouncedText: Enter your name. | Error: Enter a valid email address.\\nAXFormValidationErrorFieldCount: 2\\n'");
+        output += await expectAsync("invalidStatus('name')", "'true'");
+        output += await expectAsync("hasErrorMessage('name')", "true");
+        output += await expectAsync("invalidStatus('email')", "'true'");
+        output += await expectAsync("hasErrorMessage('email')", "true");
+        output += expect("fieldsWithError()", "2");
+
+        output += evalAndReturn("document.getElementById('name-error').message = '';");
+        output += await expectAsync("invalidStatus('name')", "'false'");
+        output += await expectAsync("hasErrorMessage('name')", "false");
+
+        output += evalAndReturn("document.getElementById('email-error').remove();");
+        output += await expectAsync("invalidStatus('email')", "'false'");
+        output += await expectAsync("hasErrorMessage('email')", "false");
+        output += await expectAsync("fieldsWithError()", "0");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

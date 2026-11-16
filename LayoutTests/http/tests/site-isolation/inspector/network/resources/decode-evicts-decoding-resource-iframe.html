@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<p>Cross-origin iframe that loads text resources sized so that BackendResourceDataStore evicts a resource while decoding it.</p>
+
+<script>
+window.addEventListener("message", (event) => {
+    if (event.data.type === "TriggerLoads")
+        triggerLoads();
+});
+
+function triggerLoads() {
+    // A: 440,000 bytes of UTF-8, which decode to 400,000 UTF-16 characters (800,000 bytes).
+    let xhrA = new XMLHttpRequest;
+    xhrA.open("GET", "repeated-text.py?resource=A&repeat=20000&content=" + encodeURIComponent("A".repeat(19) + "☃"));
+    xhrA.onreadystatechange = () => {
+        if (xhrA.readyState !== XMLHttpRequest.DONE)
+            return;
+
+        // This handler runs before the inspector is told that A finished, so B is buffered and
+        // decoded first.
+        let xhrB = new XMLHttpRequest;
+        xhrB.open("GET", "repeated-text.py?resource=B&repeat=600000&content=B", false);
+        xhrB.send();
+
+        // Loaded after A is decoded, so the store checks its free space again.
+        setTimeout(() => fetch("repeated-text.py?resource=C&repeat=10&content=C"));
+    };
+    xhrA.send();
+}
+</script>

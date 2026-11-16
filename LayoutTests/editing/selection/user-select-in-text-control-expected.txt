@@ -1,0 +1,51 @@
+
+edixtableParagraph
+
+edixtableParagraphWebkitUserSelectAll
+
+Verifies the used user-select value for the inner text element of a text control.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+By default, a control's value is selectable.
+PASS selectTextIn("mutable") is "mutable"
+PASS selectTextIn("readOnly") is "readOnly"
+PASS selectTextIn("textarea") is "textarea"
+PASS selectTextIn("textareaReadOnly") is "textareaReadOnly"
+
+'none' makes it unselectable, but it is overridden if the text is editable.
+PASS selectTextIn("webkitUserSelectNone") is "webkitUserSelectNone"
+PASS selectTextIn("textareaWebkitUserSelectNone") is "textareaWebkitUserSelectNone"
+PASS selectTextIn("readOnlyWebkitUserSelectNone") is ""
+PASS selectTextIn("textareaReadOnlyWebkitUserSelectNone") is ""
+
+By default, a control's value is not atomically selectable (all).
+PASS extendOneCharacterIn("mutable") is "m"
+PASS extendOneCharacterIn("readOnly") is "r"
+PASS extendOneCharacterIn("textarea") is "t"
+PASS extendOneCharacterIn("textareaReadOnly") is "t"
+
+'all' makes the value atomically selectable, but it doesn't apply if editable.
+PASS extendOneCharacterIn("webkitUserSelectAll") is "w"
+PASS extendOneCharacterIn("textareaWebkitUserSelectAll") is "t"
+PASS extendOneCharacterIn("readOnlyWebkitUserSelectAll") is "readOnlyWebkitUserSelectAll"
+PASS extendOneCharacterIn("textareaReadOnlyWebkitUserSelectAll") is "textareaReadOnlyWebkitUserSelectAll"
+
+'all' no longer removes editability from ordinary editable content.
+PASS typedTextLandsAt("editableParagraph") is true
+PASS typedTextLandsAt("editableParagraphWebkitUserSelectAll") is true
+
+'all' does not remove editability from editable text controls.
+PASS typedTextLandsAt("mutable") is true
+PASS typedTextLandsAt("textarea") is true
+PASS typedTextLandsAt("readOnly") is false
+PASS typedTextLandsAt("textareaReadOnly") is false
+PASS typedTextLandsAt("webkitUserSelectAll") is true
+PASS typedTextLandsAt("textareaWebkitUserSelectAll") is true
+PASS typedTextLandsAt("readOnlyWebkitUserSelectAll") is false
+PASS typedTextLandsAt("textareaReadOnlyWebkitUserSelectAll") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

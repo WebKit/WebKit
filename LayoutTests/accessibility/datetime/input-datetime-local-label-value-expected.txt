@@ -1,0 +1,27 @@
+This tests input type=datetime-local label and value properties.
+
+datetime1:
+PASS: datetime.title === 'AXTitle: Meeting time:'
+AXValue: Oct 21, 2024 at 3:45 PM
+AXDateValue: 2024-10-21 15:45:59 +0000
+
+datetime2:
+PASS: datetime.title === 'AXTitle: Meeting time:'
+AXValue: Oct 21, 2024 at 3:45 PM
+AXDateValue: 2024-10-21 15:45:59 +0000
+
+datetime3:
+PASS: datetime.title === 'AXTitle: Meeting time:'
+AXValue: Oct 21, 2024 at 3:45 PM
+AXDateValue: 2024-10-21 15:45:59 +0000
+
+datetime4:
+PASS: datetime.title === 'AXTitle: '
+AXValue: Oct 21, 2024 at 3:45 PM
+AXDateValue: 2024-10-21 15:45:59 +0000
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Meeting time:  Meeting time:

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+    .box {
+        height: 300px;
+        width: 300px;
+        padding: 10px;
+        position: absolute;
+        border: 1px solid black;
+        transform: translateZ(0);
+        transform-style: preserve-3d;
+        clip: rect(10px, 200px, 200px, 10px);
+    }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+<div class="box">
+    <div class="box">
+        This test should not assert in debug builds.
+    </div>
+</div>
+</body>
+</html>

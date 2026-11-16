@@ -1,0 +1,9 @@
+This tests that passing an inconsistent compareFn to sort() doesn't cause a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

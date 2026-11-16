@@ -1,0 +1,8 @@
+
+PASS wrap-inside initial computed value is 'auto'
+PASS wrap-inside: auto
+PASS wrap-inside: avoid
+PASS wrap-inside ignores invalid values
+PASS wrap-inside is not inherited
+PASS wrap-inside: inherit resolves to the parent value
+

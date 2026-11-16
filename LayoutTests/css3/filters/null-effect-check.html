@@ -1,0 +1,40 @@
+<style>
+div {
+    float:left;
+    display: block;
+    margin: 10px;
+    padding:0px;
+    width: 50px;
+    height: 50px;
+    background: green;
+}
+br {
+    clear: left;
+}
+</style>
+<!-- 
+    This test checks that a null filter will not affect the rendering of the box at all.
+    There should be 13 green boxes on screen. 
+-->
+<div style="-webkit-filter: blur(0)"></div>
+<div style="-webkit-filter: brightness(1)"></div>
+<div style="-webkit-filter: invert(0)"></div>
+<div style="-webkit-filter: contrast(1)"></div>
+
+<br />
+
+<div style="-webkit-filter: drop-shadow(0px 0px 0px rgba(0, 0, 0, 0))"></div>
+<div style="-webkit-filter: grayscale(0)"></div>
+<div style="-webkit-filter: hue-rotate(0)"></div>
+<div style="-webkit-filter: invert(0)"></div>
+
+<br />
+
+<div style="-webkit-filter: opacity(1)"></div>
+<div style="-webkit-filter: saturate(1)"></div>
+<div style="-webkit-filter: sepia(0)"></div>
+<div style="-webkit-filter: blur(0) grayscale(0)"></div>
+
+<br />
+
+<div style="-webkit-filter: grayscale(0) blur(0)"></div>

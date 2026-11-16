@@ -1,0 +1,15 @@
+Make sure that we properly remove cached entry if the entry is no longer cacheable after revalidation
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+200: {"version":1}
+200: {"version":1}
+404: {"not":"found"}
+200: {"version":2}
+200: {"version":2}
+PASS bugReproduced is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>Tests that a &lt;tref&gt; with display inherit doesn't cause an assertion failure.</p>
+<svg>
+    <text x="0" y="20">
+        <tref display="inherit"></tref>PASS
+    </text>
+</svg>
+</body>
+</html>

@@ -1,0 +1,12 @@
+This test ensures that we can get the text under a display:contents element in accessibility requests.
+
+AXTitle: Click me
+
+Clearing innerHTML of #button.
+
+AXTitle:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

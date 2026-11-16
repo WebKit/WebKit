@@ -1,0 +1,22 @@
+<style>
+    .grid-container {
+        display: grid;
+        position: relative;
+    }
+
+    .other {
+        position: absolute;
+        inset-block: 0px;
+        grid-column: 1;
+        padding-top: 7%;
+    }
+</style>
+<div class="grid-container">
+    <div>
+        <div class="other"></div>
+    </div>
+</div>
+This test has passed if it didn't crash.
+<script>
+    testRunner?.dumpAsText();
+</script>

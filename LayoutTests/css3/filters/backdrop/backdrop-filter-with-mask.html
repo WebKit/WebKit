@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that backdrop filter with mask works properly.</title>
+<style>
+.container {
+    width: 200px;
+    height: 200px;
+}
+.inner {
+    -webkit-backdrop-filter: invert(1); 
+	border: 10px solid green;
+    width: 100px;
+    height: 100px;
+	-webkit-mask-image: linear-gradient(black, transparent);
+}
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function dumpLayers() {
+        if (window.internals)
+            document.getElementById('result').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS)
+    }
+    window.addEventListener('load', dumpLayers, false);
+</script>
+</head>
+<body>
+<div class=container>foo<div class=inner>bar</div></div>
+<pre id=result></pre>
+</body>
+</html>

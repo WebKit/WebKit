@@ -1,0 +1,13 @@
+Tests that we do not crash when trying to access an Event's relatedTarget when the target is an AudioNode and we have GC'd.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS focusEvent.relatedTarget.delayTime.value is 0
+PASS focusEvent.relatedTarget.__proto__ is DelayNode.prototype
+PASS focusEvent.relatedTarget.channelCount is 2
+PASS focusEvent.relatedTarget.context.sampleRate is 3000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

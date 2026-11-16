@@ -1,0 +1,14 @@
+
+FAIL streamHTML called from non-TT document on an element adopted into a TT document returns a WritableStream. promise_test: Unhandled rejection with value: object "TypeError: adoptedDiv[method] is not a function. (In 'adoptedDiv[method]()', 'adoptedDiv[method]' is undefined)"
+PASS streamHTMLUnsafe called from non-TT document on an element adopted into a TT document throws TypeError.
+FAIL streamAppendHTML called from non-TT document on an element adopted into a TT document returns a WritableStream. promise_test: Unhandled rejection with value: object "TypeError: adoptedDiv[method] is not a function. (In 'adoptedDiv[method]()', 'adoptedDiv[method]' is undefined)"
+PASS streamAppendHTMLUnsafe called from non-TT document on an element adopted into a TT document throws TypeError.
+FAIL streamPrependHTML called from non-TT document on an element adopted into a TT document returns a WritableStream. promise_test: Unhandled rejection with value: object "TypeError: adoptedDiv[method] is not a function. (In 'adoptedDiv[method]()', 'adoptedDiv[method]' is undefined)"
+PASS streamPrependHTMLUnsafe called from non-TT document on an element adopted into a TT document throws TypeError.
+FAIL streamBeforeHTML called from non-TT document on an element adopted into a TT document returns a WritableStream. promise_test: Unhandled rejection with value: object "TypeError: adoptedDiv[method] is not a function. (In 'adoptedDiv[method]()', 'adoptedDiv[method]' is undefined)"
+PASS streamBeforeHTMLUnsafe called from non-TT document on an element adopted into a TT document throws TypeError.
+FAIL streamAfterHTML called from non-TT document on an element adopted into a TT document returns a WritableStream. promise_test: Unhandled rejection with value: object "TypeError: adoptedDiv[method] is not a function. (In 'adoptedDiv[method]()', 'adoptedDiv[method]' is undefined)"
+PASS streamAfterHTMLUnsafe called from non-TT document on an element adopted into a TT document throws TypeError.
+FAIL streamReplaceWithHTML called from non-TT document on an element adopted into a TT document returns a WritableStream. promise_test: Unhandled rejection with value: object "TypeError: adoptedDiv[method] is not a function. (In 'adoptedDiv[method]()', 'adoptedDiv[method]' is undefined)"
+PASS streamReplaceWithHTMLUnsafe called from non-TT document on an element adopted into a TT document throws TypeError.
+

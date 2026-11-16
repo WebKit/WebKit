@@ -1,0 +1,78 @@
+CONSOLE MESSAGE: AES-CBC and AES-CTR do not provide authentication by default, and implementing it manually can result in minor, but serious mistakes. We recommended using authenticated encryption like AES-GCM to protect against chosen-ciphertext attacks.
+Test encrypting using AES-CBC with an imported 128bit key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Plain text:
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: A
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: AB
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABC
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCD
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDE
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEF
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFG
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGH
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHI
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJ
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJK
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKL
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLM
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMN
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNO
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOP
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQ
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQR
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRS
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRST
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTU
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUV
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVW
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVWX
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVWXY
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZA
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZAB
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZABC
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZABCD
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF
+PASS bytesToHexString(cipherText) is expectedCipherText
+Plain text: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFG
+PASS bytesToHexString(cipherText) is expectedCipherText
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<title>field-sizing: content should size number inputs so the placeholder is not clipped by the spin button</title>
+<link rel="help" href="https://drafts.csswg.org/css-ui-4/#field-sizing">
+<link rel="match" href="number-field-sizing-content-placeholder-expected.html">
+<style>
+input {
+  field-sizing: content;
+  padding: 0px;
+  border: none;
+  font: 20px Ahem;
+}
+::placeholder {
+  color: green;
+  opacity: 1;
+}
+</style>
+<input type="number" placeholder="1">
+<input type="number" placeholder="1234">

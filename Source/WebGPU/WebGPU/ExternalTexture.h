@@ -1,0 +1,93 @@
+/*
+ * Copyright (c) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#import "BindableResource.h"
+#import "Device.h"
+#import <CoreVideo/CVPixelBuffer.h>
+#import <WebGPU/WebGPUCpp.h>
+#import <simd/vector_types.h>
+#import <wtf/Ref.h>
+#import <wtf/TZoneMalloc.h>
+#import <wtf/WeakHashSet.h>
+#import <wtf/WeakPtr.h>
+#import <wtf/cf/CFTypeTraits.h>
+
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
+
+WTF_DECLARE_CF_TYPE_TRAIT(CVPixelBuffer);
+
+namespace WebGPU::Metal {
+
+class CommandEncoder;
+
+class ExternalTexture final : public WebGPU::ExternalTexture, public TrackedResource {
+    WTF_MAKE_TZONE_ALLOCATED(ExternalTexture);
+public:
+    static Ref<ExternalTexture> create(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, simd::uint2 visibleSize, Device& device)
+    {
+        return adoptRef(*new ExternalTexture(pixelBuffer, colorSpace, visibleSize, device));
+    }
+    static Ref<ExternalTexture> createInvalid(Device& device)
+    {
+        return adoptRef(*new ExternalTexture(device));
+    }
+
+    ~ExternalTexture();
+
+    CVPixelBufferRef pixelBuffer() const { return m_pixelBuffer.get(); }
+    WebGPU::PredefinedColorSpace colorSpace() const { return m_colorSpace; }
+    // The size the source presents the frame at, which is not the size its planes were decoded into.
+    // Zero in either component means the source could not say.
+    simd::uint2 visibleSize() const { return m_visibleSize; }
+
+    void destroy() final;
+    void undestroy() final;
+    void setCommandEncoder(CommandEncoder&) const;
+    NODELETE bool isDestroyed() const;
+
+    void setLabel(String&&) final { }
+    NODELETE bool isValid() const final;
+    void update(CVPixelBufferRef);
+    void updateExternalTexture(CVPixelBufferRef pixelBuffer) final { update(pixelBuffer); }
+    size_t openCommandEncoderCount() const;
+    void updateExternalTextures(id<MTLTexture>, id<MTLTexture>);
+    Device& device() const { return m_device; }
+
+private:
+    ExternalTexture(CVPixelBufferRef, WebGPU::PredefinedColorSpace, simd::uint2 visibleSize, Device&);
+    ExternalTexture(Device&);
+
+    RetainPtr<CVPixelBufferRef> m_pixelBuffer;
+    WebGPU::PredefinedColorSpace m_colorSpace;
+    simd::uint2 m_visibleSize { 0, 0 };
+    const Ref<Device> m_device;
+    bool m_destroyed { false };
+    id<MTLTexture> m_texture0 { nil };
+    id<MTLTexture> m_texture1 { nil };
+};
+
+} // namespace WebGPU::Metal

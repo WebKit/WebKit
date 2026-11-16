@@ -1,0 +1,50 @@
+
+PASS Window interface: existence and properties of interface object
+PASS Window interface object length
+PASS Window interface object name
+PASS Window interface: existence and properties of interface prototype object
+PASS Window interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to a new value via Object.setPrototypeOf should throw a TypeError
+PASS Window interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to a new value via __proto__ should throw a TypeError
+PASS Window interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to a new value via Reflect.setPrototypeOf should return false
+PASS Window interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via Object.setPrototypeOf should not throw
+PASS Window interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via __proto__ should not throw
+PASS Window interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via Reflect.setPrototypeOf should return true
+PASS Window interface: existence and properties of interface prototype object's "constructor" property
+PASS Window interface: existence and properties of interface prototype object's @@unscopables property
+PASS Window interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Object.setPrototypeOf should throw a TypeError
+PASS Window interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via __proto__ should throw a TypeError
+PASS Window interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Reflect.setPrototypeOf should return false
+PASS Window interface: internal [[SetPrototypeOf]] method of global platform object - setting to its original value via Object.setPrototypeOf should not throw
+PASS Window interface: internal [[SetPrototypeOf]] method of global platform object - setting to its original value via __proto__ should not throw
+PASS Window interface: internal [[SetPrototypeOf]] method of global platform object - setting to its original value via Reflect.setPrototypeOf should return true
+PASS Window must be primary interface of window
+PASS Stringification of window
+PASS Foo interface: existence and properties of interface object
+PASS Foo interface object length
+PASS Foo interface object name
+PASS Foo interface: existence and properties of interface prototype object
+FAIL Foo interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to a new value via Object.setPrototypeOf should throw a TypeError assert_throws_js: function "function() {
+            Object.setPrototypeOf(obj, newValue);
+        }" did not throw
+FAIL Foo interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to a new value via __proto__ should throw a TypeError assert_throws_js: function "function() {
+            obj.__proto__ = newValue;
+        }" did not throw
+FAIL Foo interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to a new value via Reflect.setPrototypeOf should return false assert_false: expected false got true
+PASS Foo interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via Object.setPrototypeOf should not throw
+PASS Foo interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via __proto__ should not throw
+PASS Foo interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via Reflect.setPrototypeOf should return true
+PASS Foo interface: existence and properties of interface prototype object's "constructor" property
+PASS Foo interface: existence and properties of interface prototype object's @@unscopables property
+FAIL Foo interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Object.setPrototypeOf should throw a TypeError assert_throws_js: function "function() {
+            Object.setPrototypeOf(obj, newValue);
+        }" did not throw
+FAIL Foo interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via __proto__ should throw a TypeError assert_throws_js: function "function() {
+            obj.__proto__ = newValue;
+        }" did not throw
+FAIL Foo interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Reflect.setPrototypeOf should return false assert_false: expected false got true
+PASS Foo interface: internal [[SetPrototypeOf]] method of global platform object - setting to its original value via Object.setPrototypeOf should not throw
+PASS Foo interface: internal [[SetPrototypeOf]] method of global platform object - setting to its original value via __proto__ should not throw
+PASS Foo interface: internal [[SetPrototypeOf]] method of global platform object - setting to its original value via Reflect.setPrototypeOf should return true
+PASS Foo must be primary interface of new Foo()
+PASS Stringification of new Foo()
+

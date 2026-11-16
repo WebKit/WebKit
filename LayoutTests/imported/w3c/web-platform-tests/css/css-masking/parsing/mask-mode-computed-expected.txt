@@ -1,0 +1,5 @@
+
+PASS Property mask-mode value 'alpha'
+PASS Property mask-mode value 'luminance'
+PASS Property mask-mode value 'match-source'
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.base {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="nativeSingle" size="3">
+    <option>Apple</option>
+    <option>Banana</option>
+    <option>Cherry</option>
+</select>
+
+<select id="nativeMultiple" multiple size="3">
+    <option>Cheese</option>
+    <option id="nativeHam">Ham</option>
+    <option>Olives</option>
+</select>
+
+<select id="baseSingle" class="base" size="3">
+    <option>Apple</option>
+    <option>Banana</option>
+    <option>Cherry</option>
+</select>
+
+<select id="baseMultiple" class="base" multiple size="3">
+    <option>Cheese</option>
+    <option id="baseHam">Ham</option>
+    <option>Olives</option>
+</select>
+
+<script>
+var output = "This test ensures that a list box posts AXSelectedChildrenChanged when its selection changes, with and without base appearance.\n\n";
+
+var notifications = [];
+
+async function expectNotification(id)
+{
+    output += await expectAsync(`notifications.includes('${id}')`, "true");
+    output += expect("[...new Set(notifications)].join()", `'${id}'`);
+    notifications = [];
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        for (const select of document.querySelectorAll("select"))
+            await waitForElementById(select.id);
+        accessibilityController.addNotificationListener((element, notification) => {
+            if (notification == "AXSelectedChildrenChanged")
+                notifications.push(element.domIdentifier);
+        });
+
+        for (const kind of ["native", "base"]) {
+            output += `${kind}:\n`;
+            const single = document.getElementById(`${kind}Single`);
+            single.selectedIndex = 1;
+            await expectNotification(`${kind}Single`);
+
+            single.focus();
+            eventSender.keyDown("downArrow");
+            eventSender.keyDown(" ");
+            await expectNotification(`${kind}Single`);
+            output += expect(`document.getElementById('${kind}Single').value`, "'Cherry'");
+
+            // None of these change the selection.
+            eventSender.keyDown(" ");
+            output += expect(`document.getElementById('${kind}Single').value`, "'Cherry'");
+            single.selectedIndex = single.selectedIndex;
+            single.add(new Option("Date"));
+
+            document.getElementById(`${kind}Ham`).selected = true;
+            await expectNotification(`${kind}Multiple`);
+        }
+
+        accessibilityController.removeNotificationListener();
+        for (const select of document.querySelectorAll("select"))
+            select.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

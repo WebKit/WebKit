@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>An explicit aspect-ratio coerces the natural block size of a replaced element</title>
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#aspect-ratio">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/11236#issuecomment-2718502765">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
+<style>
+.test {
+    background-color: green;
+    vertical-align: top;
+}
+.flex {
+    display: flex;
+    align-items: flex-start;
+}
+.grid {
+    display: grid;
+    justify-items: start;
+    align-items: start;
+}
+</style>
+<body onload="checkLayout('.test')">
+<!-- The natural inline size is kept and the natural block size is derived from it through the aspect-ratio. -->
+<canvas class="test" style="aspect-ratio: 1 / 4" data-expected-width="300" data-expected-height="1200"></canvas>
+<canvas class="test" width="50" height="25" style="aspect-ratio: 1" data-expected-width="50" data-expected-height="50"></canvas>
+<img class="test" src="resources/square-blue-100x100.png" style="aspect-ratio: 2 / 1" data-expected-width="100" data-expected-height="50">
+<div style="writing-mode: vertical-rl">
+    <canvas class="test" width="40" height="40" style="aspect-ratio: 1 / 2" data-expected-width="20" data-expected-height="40"></canvas>
+</div>
+
+<!-- The aspect-ratio applies to the box specified by box-sizing. -->
+<canvas class="test" style="aspect-ratio: 1 / 4; padding: 10px" data-expected-width="320" data-expected-height="1220"></canvas>
+<canvas class="test" style="aspect-ratio: 1 / 4; padding: 10px; box-sizing: border-box" data-expected-width="320" data-expected-height="1280"></canvas>
+
+<!-- Min/max constraints are transferred through the aspect-ratio and applied to the coerced natural size. -->
+<canvas class="test" style="aspect-ratio: 1 / 4; max-height: 200px" data-expected-width="50" data-expected-height="200"></canvas>
+<canvas class="test" style="aspect-ratio: 1 / 4; max-width: 100px" data-expected-width="100" data-expected-height="400"></canvas>
+
+<div class="flex"><canvas class="test" style="aspect-ratio: 1 / 4" data-expected-width="300" data-expected-height="1200"></canvas></div>
+<div class="grid"><canvas class="test" style="aspect-ratio: 1 / 4" data-expected-width="300" data-expected-height="1200"></canvas></div>
+<div style="position: relative"><canvas class="test" style="position: absolute; aspect-ratio: 1 / 4" data-expected-width="300" data-expected-height="1200"></canvas></div>
+<canvas class="test" style="float: left; aspect-ratio: 1 / 4" data-expected-width="300" data-expected-height="1200"></canvas>
+
+<!-- With auto && <ratio> the natural aspect ratio wins, so there is nothing to coerce. -->
+<canvas class="test" style="aspect-ratio: auto 1 / 4" data-expected-width="300" data-expected-height="150"></canvas>
+</body>

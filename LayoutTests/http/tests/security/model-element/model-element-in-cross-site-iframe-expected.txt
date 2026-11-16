@@ -1,0 +1,2 @@
+ALERT: postMessage received: ready
+ This test passes if the model in the cross-site iframe becomes ready.

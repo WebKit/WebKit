@@ -1,0 +1,19 @@
+hello
+
+hey
+
+div
+Alpha
+Beta
+Gamma
+Delta
+
+PASS querySelector
+PASS querySelectorAll
+PASS querySelector comma separated
+PASS querySelectorAll comma separated
+PASS querySelector with :scope > child should not match descendants
+PASS querySelectorAll with :scope > child should only match direct children
+PASS querySelectorAll with :scope in unattached svg document
+PASS querySelectorAll with :scope in document where element moved
+

@@ -1,0 +1,4 @@
+
+
+PASS Canvas.drawElementImage: animated gif advances and repaints the canvas
+

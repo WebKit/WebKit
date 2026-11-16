@@ -1,0 +1,9 @@
+Test for keyboard activation trigger for ESCAPE key
+
+Tests missing user activation from a ESCAPE keyboard event.
+
+
+Press ESCAPE key.
+
+PASS Activation through ESCAPE keyboard event
+

@@ -1,0 +1,13 @@
+Testing that adding a CSS property to a style with no source range does not throw.
+
+
+== Running test suite: AddCSSPropertyWithoutSourceRange
+-- Running test case: AddCSSPropertyWithoutSourceRange
+PASS: Should have a matched style with no source range.
+PASS: newBlankProperty(0) should not throw for a style with no source range.
+PASS: newBlankProperty(0) should return a property.
+PASS: newBlankProperty(1) should not throw for a style with no source range.
+PASS: newBlankProperty(1) should return a property.
+PASS: newBlankProperty(2) should not throw for a style with no source range.
+PASS: newBlankProperty(2) should return a property.
+

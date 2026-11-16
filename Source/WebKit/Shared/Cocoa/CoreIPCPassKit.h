@@ -1,0 +1,67 @@
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if USE(PASSKIT)
+
+#include "CoreIPCContacts.h"
+#include "CoreIPCPersonNameComponents.h"
+#include <wtf/ArgumentCoder.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
+
+OBJC_CLASS PKContact;
+
+namespace WebKit {
+
+class CoreIPCPKContact {
+public:
+    CoreIPCPKContact(PKContact *);
+
+    RetainPtr<id> toID() const;
+
+private:
+    friend struct IPC::ArgumentCoder<CoreIPCPKContact>;
+
+    CoreIPCPKContact(std::optional<CoreIPCPersonNameComponents>&& name, String&& emailAddress, std::optional<CoreIPCCNPhoneNumber>&& phoneNumber, std::optional<CoreIPCCNPostalAddress>&& postalAddress, String&& supplementarySublocality)
+        : m_name(WTF::move(name))
+        , m_emailAddress(WTF::move(emailAddress))
+        , m_phoneNumber(WTF::move(phoneNumber))
+        , m_postalAddress(WTF::move(postalAddress))
+        , m_supplementarySublocality(WTF::move(supplementarySublocality))
+    {
+    }
+
+    std::optional<CoreIPCPersonNameComponents> m_name;
+    String m_emailAddress;
+    std::optional<CoreIPCCNPhoneNumber> m_phoneNumber;
+    std::optional<CoreIPCCNPostalAddress> m_postalAddress;
+    String m_supplementarySublocality;
+};
+
+} // namespace WebKit
+
+#endif // USE(PASSKIT)

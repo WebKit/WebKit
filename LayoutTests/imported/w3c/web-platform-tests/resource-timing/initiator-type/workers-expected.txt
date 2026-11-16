@@ -1,0 +1,4 @@
+
+PASS The initiator type for classic worker must be 'other'
+FAIL The initiator type for module worker must be 'script' assert_equals: expected "script" but got "other"
+

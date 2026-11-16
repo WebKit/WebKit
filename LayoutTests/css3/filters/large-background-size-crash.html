@@ -1,0 +1,12 @@
+<!-- Test passes if doesn't crash. -->
+<style>
+* {
+    background-size: 1px 16777218;
+    background-image: -webkit-filter(url(''), contrast(0));
+}
+</style>
+PASS if test does not crash or cause an ASSERT failure.
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText(false);
+</script>

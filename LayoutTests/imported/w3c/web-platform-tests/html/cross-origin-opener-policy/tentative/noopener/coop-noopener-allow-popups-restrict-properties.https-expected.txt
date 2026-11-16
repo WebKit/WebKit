@@ -1,0 +1,12 @@
+
+PASS
+    Cross-Origin-Opener-Policy: noopener-allow-popups means that the opener
+    has no access to the openee. This test verfies it for restrict-properties
+    COOP values.
+
+PASS
+    Cross-Origin-Opener-Policy: noopener-allow-popups means that the opener
+    has no access to the openee. This test verfies it for restrict-properties
+    COOP values.
+ 1
+

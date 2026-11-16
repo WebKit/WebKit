@@ -1,0 +1,41 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["keyids"])
+RUN(capabilities.initDataTypes = ["keyids"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+RUN(capabilities.sessionTypes = [ "temporary", "persistent-license" ])
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+Temporary session: keys are purged when the session is closed.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(window.tempSession = mediaKeys.createSession("temporary"))
+RUN(promise = window.tempSession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+RUN(window.tempSessionID = window.tempSession.sessionId)
+EXPECTED (mock.keyCountForSession(window.tempSessionID) == '1') OK
+RUN(promise = window.tempSession.close())
+Promise resolved OK
+EXPECTED (mock.keyCountForSession(window.tempSessionID) == '0') OK
+
+Persistent-license session: keys are retained across close.
+RUN(kids = JSON.stringify({ kids: [ "Njc4OTA=" ] }))
+RUN(window.persistSession = mediaKeys.createSession("persistent-license"))
+RUN(promise = window.persistSession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+RUN(window.persistSessionID = window.persistSession.sessionId)
+EXPECTED (mock.keyCountForSession(window.persistSessionID) == '1') OK
+RUN(promise = window.persistSession.close())
+Promise resolved OK
+EXPECTED (mock.keyCountForSession(window.persistSessionID) == '1') OK
+
+Persistent-license: load() restores a previously stored session.
+RUN(window.loadedSession = mediaKeys.createSession("persistent-license"))
+RUN(promise = window.loadedSession.load(window.persistSessionID))
+Promise resolved OK
+EXPECTED (window.loadedSession.sessionId === window.persistSessionID == 'true') OK
+EXPECTED (mock.keyCountForSession(window.loadedSession.sessionId) == '1') OK
+END OF TEST
+

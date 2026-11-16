@@ -1,0 +1,5 @@
+
+PASS multiple return values from wasm to js
+PASS multiple return values inside wasm
+PASS multiple return values from js to wasm
+

@@ -1,0 +1,114 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=50 obscuredInset.left=50 ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body, html {
+    font-family: system-ui;
+    font-size: 16px;
+    background: #eee;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: rgb(0, 122, 255);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+button {
+    position: absolute;
+    right: 1em;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 60vw;
+    height: 100%;
+    background: rgb(100, 100, 100);
+    z-index: 101;
+    transform: translateX(-100%);
+    display: none;
+}
+
+.sidebar.visible {
+    transform: translateX(0);
+    display: block;
+}
+
+.content {
+    margin-top: 80px;
+    padding: 20px;
+}
+
+.tall {
+    height: 300vh;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    const button = document.querySelector("button");
+    const sidebar = document.querySelector(".sidebar");
+    button.addEventListener("click", () => {
+        sidebar.classList.toggle("visible");
+    });
+
+    await UIHelper.setObscuredInsets(50, 50, 50, 50);
+    await UIHelper.ensurePresentationUpdate();
+
+    colorsBeforeOpeningSidebar = await UIHelper.fixedContainerEdgeColors();
+    shouldBeEqualToString("colorsBeforeOpeningSidebar.top", "rgb(0, 122, 255)");
+    shouldBeNull("colorsBeforeOpeningSidebar.left");
+    shouldBeNull("colorsBeforeOpeningSidebar.right");
+    shouldBeNull("colorsBeforeOpeningSidebar.bottom");
+
+    button.click();
+    await UIHelper.ensurePresentationUpdate();
+
+    colorsAfterOpeningSidebar = await UIHelper.fixedContainerEdgeColors();
+    shouldBeEqualToString("colorsAfterOpeningSidebar.top", "rgb(0, 122, 255)");
+    shouldBeEqualToString("colorsAfterOpeningSidebar.left", "rgb(100, 100, 100)");
+    shouldBeNull("colorsAfterOpeningSidebar.right");
+    shouldBeNonNull("colorsAfterOpeningSidebar.bottom");
+    shouldBeTrue("['multiple', 'rgb(100, 100, 100)'].includes(colorsAfterOpeningSidebar.bottom)");
+
+    button.click();
+    await UIHelper.ensurePresentationUpdate();
+
+    colorsAfterClosingSidebar = await UIHelper.fixedContainerEdgeColors();
+    shouldBeEqualToString("colorsAfterClosingSidebar.top", "rgb(0, 122, 255)");
+    shouldBeNull("colorsAfterClosingSidebar.left");
+    shouldBeNull("colorsAfterClosingSidebar.right");
+    shouldBeNull("colorsAfterClosingSidebar.bottom");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="header">
+        <button>Toggle sidebar</button>
+    </div>
+    <div class="sidebar"></div>
+    <div class="content">
+        <p>Main content area</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <div class="tall"></div>
+    </div>
+</body>
+</html>

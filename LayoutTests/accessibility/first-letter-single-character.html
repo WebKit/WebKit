@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+div::first-letter { text-transform: capitalize; }
+</style>
+</head>
+<body>
+
+<div id="single-char" role="group">h</div>
+<div id="multi-char" role="group">hi</div>
+
+<script>
+var output = "This test verifies that first-letter pseudo-element text is exposed in the accessibility tree.\n\n";
+
+if (window.accessibilityController) {
+    output += "Test case 1: Single character (entire text is first-letter)\n";
+    var singleCharContainer = accessibilityController.accessibleElementById("single-char");
+    output += expect("singleCharContainer.childrenCount", "1");
+    var singleCharText = singleCharContainer.childAtIndex(0);
+    output += expect("singleCharText.role.toLowerCase().includes('text')", "true");
+    output += expectStaticTextValue(singleCharText, "H");
+
+    output += "\nTest case 2: Multiple characters (first-letter plus remaining text)\n";
+    var multiCharContainer = accessibilityController.accessibleElementById("multi-char");
+    output += expect("multiCharContainer.childrenCount", "1");
+    var multiCharText = multiCharContainer.childAtIndex(0);
+    output += expect("multiCharText.role.toLowerCase().includes('text')", "true");
+    // Should expose "Hi" - the "h" is capitalized by text-transform
+    output += expectStaticTextValue(multiCharText, "Hi");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

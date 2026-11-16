@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ GraphicsContextFiltersEnabled=false ]-->
+<!DOCTYPE html>
+
+<title>When save stack is exhausted, filtered drawing should still use the last set filter</title>
+
+<canvas width="300" height="300" id="canvas"></canvas>
+
+<script>
+  const context = canvas.getContext("2d");
+
+  for (let i = 0; i < 20000; ++i)
+    context.save();
+
+  context.filter = "drop-shadow(-5px -5px)";
+  context.fillStyle = "blue";
+  context.fillRect(100, 100, 100, 100);
+
+  context.filter = "drop-shadow(5px 5px)";
+  context.fillStyle = "green";
+  context.fillRect(200, 200, 50, 50);
+
+  for (let i = 0; i < 20000; ++i)
+    context.restore();
+</script>

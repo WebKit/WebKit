@@ -1,0 +1,4 @@
+
+PASS Opus with 6 channels and a description is supported
+PASS Decoding opus with 6 channels
+

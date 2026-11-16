@@ -1,0 +1,147 @@
+list-item1list-item3
+
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dt>[]list-item2</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+FAIL Backspace at "<dl><dt>list-item1</dt><dt}>list-item2</dt></dl><ul><li>[]list-item3</li></ul>" promise_test: Unhandled rejection with value: "Should match number of open/close markers"
+PASS Backspace at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><ul><li>}list-item3</li></ul>"
+FAIL Backspace at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><ul><li>list-item3]</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"list-item3\", 10)" but got "(#text \"list-item2\", 0) - (#text \"list-item3\", 10)"
+PASS Backspace at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><ul><li>list-item3]</li></ul>"
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dt>[]list-item2</dt><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>"
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>"
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dt>list-item2</dt><dt>}list-item3</dt></dl>"
+FAIL Backspace at "<dl><dt>list-item1</dt><dd}>list-item2</dd></dl><ul><li>[]list-item3</li></ul>" promise_test: Unhandled rejection with value: "Should match number of open/close markers"
+PASS Backspace at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><ul><li>}list-item3</li></ul>"
+PASS Backspace at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><ul><li>list-item3]</li></ul>"
+PASS Backspace at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><ul><li>list-item3]</li></ul>"
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dt>[]list-item2</dt><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>"
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>"
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dt>list-item2</dt><dd>}list-item3</dd></dl>"
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dd>[]list-item2</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+FAIL Backspace at "<dl><dd>list-item1</dd><dt}>list-item2</dt></dl><ul><li>[]list-item3</li></ul>" promise_test: Unhandled rejection with value: "Should match number of open/close markers"
+PASS Backspace at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><ul><li>}list-item3</li></ul>"
+PASS Backspace at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><ul><li>list-item3]</li></ul>"
+PASS Backspace at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><ul><li>list-item3]</li></ul>"
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dd>[]list-item2</dd><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>"
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>"
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dd>list-item2</dd><dt>}list-item3</dt></dl>"
+FAIL Backspace at "<dl><dd>list-item1</dd><dd}>list-item2</dd></dl><ul><li>[]list-item3</li></ul>" promise_test: Unhandled rejection with value: "Should match number of open/close markers"
+PASS Backspace at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><ul><li>}list-item3</li></ul>"
+FAIL Backspace at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><ul><li>list-item3]</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"list-item3\", 10)" but got "(#text \"list-item2\", 0) - (#text \"list-item3\", 10)"
+PASS Backspace at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><ul><li>list-item3]</li></ul>"
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dd>[]list-item2</dd><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>"
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>"
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dd>list-item2</dd><dd>}list-item3</dd></dl>"
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dt>[]list-item2</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+FAIL Backspace at "<dl><dt>list-item1</dt><dt}>list-item2</dt></dl><ol><li>[]list-item3</li></ol>" promise_test: Unhandled rejection with value: "Should match number of open/close markers"
+PASS Backspace at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><ol><li>}list-item3</li></ol>"
+FAIL Backspace at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><ol><li>list-item3]</li></ol>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"list-item3\", 10)" but got "(#text \"list-item2\", 0) - (#text \"list-item3\", 10)"
+PASS Backspace at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><ol><li>list-item3]</li></ol>"
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dt>[]list-item2</dt><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>"
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>"
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dt>list-item2</dt><dt>}list-item3</dt></dl>"
+FAIL Backspace at "<dl><dt>list-item1</dt><dd}>list-item2</dd></dl><ol><li>[]list-item3</li></ol>" promise_test: Unhandled rejection with value: "Should match number of open/close markers"
+PASS Backspace at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><ol><li>}list-item3</li></ol>"
+PASS Backspace at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><ol><li>list-item3]</li></ol>"
+PASS Backspace at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><ol><li>list-item3]</li></ol>"
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dt>[]list-item2</dt><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>"
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>"
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dt>list-item2</dt><dd>}list-item3</dd></dl>"
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dd>[]list-item2</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+FAIL Backspace at "<dl><dd>list-item1</dd><dt}>list-item2</dt></dl><ol><li>[]list-item3</li></ol>" promise_test: Unhandled rejection with value: "Should match number of open/close markers"
+PASS Backspace at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><ol><li>}list-item3</li></ol>"
+PASS Backspace at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><ol><li>list-item3]</li></ol>"
+PASS Backspace at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><ol><li>list-item3]</li></ol>"
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dd>[]list-item2</dd><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>"
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>"
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dd>list-item2</dd><dt>}list-item3</dt></dl>"
+FAIL Backspace at "<dl><dd>list-item1</dd><dd}>list-item2</dd></dl><ol><li>[]list-item3</li></ol>" promise_test: Unhandled rejection with value: "Should match number of open/close markers"
+PASS Backspace at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><ol><li>}list-item3</li></ol>"
+FAIL Backspace at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><ol><li>list-item3]</li></ol>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"list-item3\", 10)" but got "(#text \"list-item2\", 0) - (#text \"list-item3\", 10)"
+PASS Backspace at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><ol><li>list-item3]</li></ol>"
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dd>[]list-item2</dd><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"ist-item2\", 0)" but got "(#text \"ist-item2\", 0) - (#text \"ist-item2\", 1)"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>"
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>"
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dd>list-item2</dd><dd>}list-item3</dd></dl>"
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dt>[]list-item2</dt></dl>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1list-item2</li></ul>" but got "<ul><li>list-item1</li></ul><dl><dt>ist-item2</dt></dl>"
+PASS Backspace at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><ul><li>}list-item3</li></ul>" - comparing innerHTML
+PASS Backspace at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><ul><li>list-item3]</li></ul>" - comparing innerHTML
+PASS Backspace at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><ul><li>list-item3]</li></ul>" - comparing innerHTML
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dt>[]list-item2</dt><dt>list-item3</dt></dl>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1list-item2</li></ul><dl><dt>list-item3</dt></dl>" but got "<ul><li>list-item1</li></ul><dl><dt>ist-item2</dt><dt>list-item3</dt></dl>"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dt>list-item2</dt><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><ul><li>}list-item3</li></ul>" - comparing innerHTML
+PASS Backspace at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><ul><li>list-item3]</li></ul>" - comparing innerHTML
+PASS Backspace at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><ul><li>list-item3]</li></ul>" - comparing innerHTML
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dt>[]list-item2</dt><dd>list-item3</dd></dl>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1list-item2</li></ul><dl><dd>list-item3</dd></dl>" but got "<ul><li>list-item1</li></ul><dl><dt>ist-item2</dt><dd>list-item3</dd></dl>"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dt>list-item2</dt><dd>}list-item3</dd></dl>" - comparing innerHTML
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dd>[]list-item2</dd></dl>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1list-item2</li></ul>" but got "<ul><li>list-item1</li></ul><dl><dd>ist-item2</dd></dl>"
+PASS Backspace at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><ul><li>}list-item3</li></ul>" - comparing innerHTML
+PASS Backspace at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><ul><li>list-item3]</li></ul>" - comparing innerHTML
+PASS Backspace at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><ul><li>list-item3]</li></ul>" - comparing innerHTML
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dd>[]list-item2</dd><dt>list-item3</dt></dl>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1list-item2</li></ul><dl><dt>list-item3</dt></dl>" but got "<ul><li>list-item1</li></ul><dl><dd>ist-item2</dd><dt>list-item3</dt></dl>"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dd>list-item2</dd><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><ul><li>}list-item3</li></ul>" - comparing innerHTML
+PASS Backspace at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><ul><li>list-item3]</li></ul>" - comparing innerHTML
+PASS Backspace at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><ul><li>list-item3]</li></ul>" - comparing innerHTML
+FAIL Backspace at "<ul><li>list-item1</li></ul><dl><dd>[]list-item2</dd><dd>list-item3</dd></dl>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1list-item2</li></ul><dl><dd>list-item3</dd></dl>" but got "<ul><li>list-item1</li></ul><dl><dd>ist-item2</dd><dd>list-item3</dd></dl>"
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>[list-item1</li></ul><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ul><li>list-item1[</li></ul><dl><dd>list-item2</dd><dd>}list-item3</dd></dl>" - comparing innerHTML
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dt>[]list-item2</dt></dl>" - comparing innerHTML assert_equals: expected "<ol><li>list-item1list-item2</li></ol>" but got "<ol><li>list-item1</li></ol><dl><dt>ist-item2</dt></dl>"
+PASS Backspace at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><ol><li>}list-item3</li></ol>" - comparing innerHTML
+PASS Backspace at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><ol><li>list-item3]</li></ol>" - comparing innerHTML
+PASS Backspace at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><ol><li>list-item3]</li></ol>" - comparing innerHTML
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dt>[]list-item2</dt><dt>list-item3</dt></dl>" - comparing innerHTML assert_equals: expected "<ol><li>list-item1list-item2</li></ol><dl><dt>list-item3</dt></dl>" but got "<ol><li>list-item1</li></ol><dl><dt>ist-item2</dt><dt>list-item3</dt></dl>"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dt>list-item2</dt><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><ol><li>}list-item3</li></ol>" - comparing innerHTML
+PASS Backspace at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><ol><li>list-item3]</li></ol>" - comparing innerHTML
+PASS Backspace at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><ol><li>list-item3]</li></ol>" - comparing innerHTML
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dt>[]list-item2</dt><dd>list-item3</dd></dl>" - comparing innerHTML assert_equals: expected "<ol><li>list-item1list-item2</li></ol><dl><dd>list-item3</dd></dl>" but got "<ol><li>list-item1</li></ol><dl><dt>ist-item2</dt><dd>list-item3</dd></dl>"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dt>list-item2</dt><dd>}list-item3</dd></dl>" - comparing innerHTML
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dd>[]list-item2</dd></dl>" - comparing innerHTML assert_equals: expected "<ol><li>list-item1list-item2</li></ol>" but got "<ol><li>list-item1</li></ol><dl><dd>ist-item2</dd></dl>"
+PASS Backspace at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><ol><li>}list-item3</li></ol>" - comparing innerHTML
+PASS Backspace at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><ol><li>list-item3]</li></ol>" - comparing innerHTML
+PASS Backspace at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><ol><li>list-item3]</li></ol>" - comparing innerHTML
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dd>[]list-item2</dd><dt>list-item3</dt></dl>" - comparing innerHTML assert_equals: expected "<ol><li>list-item1list-item2</li></ol><dl><dt>list-item3</dt></dl>" but got "<ol><li>list-item1</li></ol><dl><dd>ist-item2</dd><dt>list-item3</dt></dl>"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dd>list-item2</dd><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Backspace at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><ol><li>}list-item3</li></ol>" - comparing innerHTML
+PASS Backspace at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><ol><li>list-item3]</li></ol>" - comparing innerHTML
+PASS Backspace at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><ol><li>list-item3]</li></ol>" - comparing innerHTML
+FAIL Backspace at "<ol><li>list-item1</li></ol><dl><dd>[]list-item2</dd><dd>list-item3</dd></dl>" - comparing innerHTML assert_equals: expected "<ol><li>list-item1list-item2</li></ol><dl><dd>list-item3</dd></dl>" but got "<ol><li>list-item1</li></ol><dl><dd>ist-item2</dd><dd>list-item3</dd></dl>"
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>[list-item1</li></ol><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Backspace at "<ol><li>list-item1[</li></ol><dl><dd>list-item2</dd><dd>}list-item3</dd></dl>" - comparing innerHTML
+

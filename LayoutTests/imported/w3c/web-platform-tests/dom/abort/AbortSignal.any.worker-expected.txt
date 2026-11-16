@@ -1,0 +1,4 @@
+
+PASS the AbortSignal.abort() static returns an already aborted signal
+PASS signal returned by AbortSignal.abort() should not fire abort event
+

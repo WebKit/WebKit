@@ -1,0 +1,4 @@
+
+PASS XRFrame tolerates incomplete plane detection updates - webgl
+PASS XRFrame tolerates incomplete plane detection updates - webgl2
+

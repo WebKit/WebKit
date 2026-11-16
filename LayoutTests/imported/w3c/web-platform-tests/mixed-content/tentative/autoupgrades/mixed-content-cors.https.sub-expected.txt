@@ -1,0 +1,5 @@
+
+PASS Cross-Origin audio should get upgraded even if CORS is set
+PASS Cross-Origin image should get upgraded even if CORS is set
+PASS Cross-Origin video should get upgraded even if CORS is set
+

@@ -1,0 +1,12 @@
+Typing in a scrolled text field or editable element does not trigger scroll anchoring adjustments, and scroll anchoring keeps working after typing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scroller.scrollTop is scrollTopBefore
+PASS scroller.scrollTop is scrollTopBefore
+PASS scroller.scrollTop is scrollTopBefore + 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

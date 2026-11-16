@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function gc() {
+    if (window.GCController)
+        GCController.collect();
+}
+
+let survivor, child, list;
+let result = 'PASS if no crash.';
+
+// The setup runs inside a function so the secondary document is not reachable from a
+// global once it returns, and can therefore be collected below.
+(function setup() {
+    let secondaryDocument = document.implementation.createHTMLDocument();
+    secondaryDocument.body.innerHTML = '<input id="i"><label for="i"></label>';
+
+    // One successful lookup registers the list for invalidation at the secondary document
+    // and leaves the index cache's WeakPtr to the <label> as its only valid state.
+    list = secondaryDocument.getElementById('i').labels;
+    if (!list[0])
+        result = 'FAIL: expected the labels list to find the <label>.';
+
+    // Disconnected elements keep the secondary document alive via its referencing node
+    // count, without keeping its JS wrapper reachable.
+    survivor = secondaryDocument.createElement('div');
+    child = secondaryDocument.createElement('span');
+})();
+
+// Destroys the <label>, so the index cache's WeakPtr nulls itself with no code running on
+// the node list. The list must still be considered registered at the document. This has to
+// happen in an earlier collection than the one that destroys the node list below.
+gc(); gc(); gc();
+
+// Destroys the node list, which has to unregister itself from the document here.
+list = null;
+gc(); gc(); gc();
+
+// Walks the document's node list registry. Used to dereference the freed node list.
+survivor.appendChild(child);
+
+document.body.textContent = result;
+</script>
+</body>
+</html>

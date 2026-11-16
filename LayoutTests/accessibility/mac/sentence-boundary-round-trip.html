@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+#wrapped { width: 9ch; font: 16px/1 monospace; }
+</style>
+</head>
+<body>
+
+<p id="broken">First sentence.<br>Second sentence.</p>
+<p id="wrapped">Third sentence. Fourth sentence.</p>
+
+<script>
+var output = "This test ensures that stepping to the next sentence end and then back to the previous sentence start lands on the start of the sentence the marker began on, from any position within that sentence. A sentence ended by a br element and a sentence that soft wraps across several lines are both covered, because a sentence boundary is not a line boundary.\n\n";
+
+function baseIndexOf(paragraphId)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    return paragraph.indexForTextMarker(paragraph.startTextMarkerForTextMarkerRange(paragraph.textMarkerRangeForElement(paragraph)));
+}
+
+function sentenceStartOffsetFrom(paragraphId, offset)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    var base = baseIndexOf(paragraphId);
+    var sentenceEnd = paragraph.nextSentenceEndTextMarkerForTextMarker(paragraph.textMarkerForIndex(base + offset));
+    return paragraph.indexForTextMarker(paragraph.previousSentenceStartTextMarkerForTextMarker(sentenceEnd)) - base;
+}
+
+function sentenceTextFrom(paragraphId, offset)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    var base = baseIndexOf(paragraphId);
+    var sentenceEnd = paragraph.nextSentenceEndTextMarkerForTextMarker(paragraph.textMarkerForIndex(base + offset));
+    var sentenceStart = paragraph.previousSentenceStartTextMarkerForTextMarker(sentenceEnd);
+    // A sentence range carries whatever separates it from the next one, a space or a line break.
+    return paragraph.stringForTextMarkerRange(paragraph.textMarkerRangeForMarkers(sentenceStart, sentenceEnd)).trim();
+}
+
+if (window.accessibilityController) {
+    output += "Sentences separated by a br element.\n";
+    output += expect("sentenceStartOffsetFrom('broken', 0)", "0");
+    output += expect("sentenceStartOffsetFrom('broken', 7)", "0");
+    output += expect("sentenceStartOffsetFrom('broken', 16)", "16");
+    output += expect("sentenceStartOffsetFrom('broken', 23)", "16");
+
+    output += "\nThe recovered range is the sentence, without the line break.\n";
+    output += expect("sentenceTextFrom('broken', 7)", "'First sentence.'");
+    output += expect("sentenceTextFrom('broken', 23)", "'Second sentence.'");
+
+    output += "\nSentences that soft wrap across lines.\n";
+    output += expect("sentenceStartOffsetFrom('wrapped', 0)", "0");
+    output += expect("sentenceStartOffsetFrom('wrapped', 7)", "0");
+    output += expect("sentenceStartOffsetFrom('wrapped', 16)", "16");
+    output += expect("sentenceStartOffsetFrom('wrapped', 23)", "16");
+
+    output += "\nThe recovered range spans the whole sentence, across the lines it wrapped onto.\n";
+    output += expect("sentenceTextFrom('wrapped', 7)", "'Third sentence.'");
+    output += expect("sentenceTextFrom('wrapped', 23)", "'Fourth sentence.'");
+
+    document.getElementById("broken").style.display = "none";
+    document.getElementById("wrapped").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

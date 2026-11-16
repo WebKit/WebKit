@@ -1,0 +1,30 @@
+<style>
+     canvas {
+         width: 340px;
+         height: 340px;
+     }
+ </style>
+ <body>
+    <h3>This tests the canvas repaints the filter bounding rect.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 340;
+        canvas.height = 340;
+
+        ctx.fillStyle = 'green';
+
+        ctx.filter = 'drop-shadow(-100px -100px 0 #666)';
+        ctx.fillRect(120, 120, 100, 100);
+
+        ctx.filter = 'drop-shadow(100px -100px 0 #666)';
+        ctx.fillRect(120, 120, 100, 100);
+
+        ctx.filter = 'drop-shadow(-100px 100px 0 #666)';
+        ctx.fillRect(120, 120, 100, 100);
+
+        ctx.filter = 'drop-shadow(100px 100px 0 #666)';
+        ctx.fillRect(120, 120, 100, 100);
+    </script>
+</body>

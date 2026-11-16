@@ -1,0 +1,7 @@
+before
+inserted
+inline
+after
+
+PASS Anchor selection descent into anonymous block boxes.
+

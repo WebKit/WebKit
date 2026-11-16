@@ -1,0 +1,8 @@
+
+PASS Multiple non-violated enforce trusted-types directives.
+PASS Multiple report-only trusted-types directives.
+PASS One violated report-only trusted-types directive followed by multiple enforce directives.
+PASS One violated enforce trusted-types directive followed by multiple report-only directives.
+PASS Mixing enforce and report-only policies with trusted-types directives
+PASS Mixing enforce and report-only policies with trusted-types directives (duplicate policy)
+

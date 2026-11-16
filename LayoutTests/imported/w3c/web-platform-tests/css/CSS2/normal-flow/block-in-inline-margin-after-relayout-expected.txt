@@ -1,0 +1,10 @@
+blockk
+line after
+after
+block
+line after
+after
+
+PASS A block in inline box's margin after does not extend past its container
+PASS Laying out only the block level child does not turn its margin after into the container's
+

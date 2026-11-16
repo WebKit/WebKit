@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="200">
+    <meta name="fuzzy" content="maxDifference=0-15; totalPixels=0-1599" />
+    <style>
+        svg {
+            border: 1px solid black;
+        }
+        text {
+            stroke: black;
+            stroke-width: 2;
+            stroke-linejoin: round;
+            font-weight: bold;
+            font-family: serif;
+            fill: green;
+        }
+    </style>
+    <defs>
+        <linearGradient id="g">
+            <stop offset="0%" stop-color="green"/>
+            <stop offset="100%" stop-color="green"/>
+        </linearGradient>
+        <clipPath id="textClip">
+            <text x="50%" y="20%" text-anchor="middle" font-size="25">
+                With Solid Fill
+            </text>
+            <text x="50%" y="80%" text-anchor="middle" font-size="25">
+                With Gradient Fill, And Paint Order
+            </text>
+        </clipPath>
+    </defs>
+    <text x="50%" y="20%" text-anchor="middle" font-size="25">
+        With Solid Fill
+    </text>
+    <text x="50%" y="50%" text-anchor="middle" font-size="25">
+        With Gradient Fill, No Paint Order
+    </text>
+    <text x="50%" y="80%" text-anchor="middle" font-size="25">
+        With Gradient Fill, And Paint Order
+    </text>
+    <rect width="100%" height="100%" fill="green" clip-path="url(#textClip)" />
+</svg>

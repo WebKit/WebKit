@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+.container {
+  outline: 1px solid black;
+}
+img {
+  display: block;
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+</style>
+<div class=container>
+  <span>
+    span start
+    <img src=""">
+    span end
+  </span>
+</div>

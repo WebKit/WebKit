@@ -1,0 +1,4 @@
+
+PASS Delete in empty paragraph shouldn't delete parent body and html elements even if they become empty by Backspace
+PASS Delete in empty paragraph shouldn't delete parent body and html elements even if they become empty by Delete
+

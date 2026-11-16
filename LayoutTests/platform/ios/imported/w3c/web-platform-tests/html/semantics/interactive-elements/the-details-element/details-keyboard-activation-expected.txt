@@ -1,0 +1,4 @@
+Activate me with the Space key
+
+FAIL Details activation with space bar assert_true: Space bar on summary should open details expected true got false
+

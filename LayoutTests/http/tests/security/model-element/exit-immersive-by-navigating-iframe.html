@@ -1,0 +1,10 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script>
+    if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+    addEventListener("message", (e) => {
+        alert("postMessage received: " + e.data);
+        testRunner.notifyDone();
+    });
+</script>
+<iframe src="http://localhost:8000/security/model-element/resources/first-iframe.html"></iframe>
+This test passes if it does not crash.

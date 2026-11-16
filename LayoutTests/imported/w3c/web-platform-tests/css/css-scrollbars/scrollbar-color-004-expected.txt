@@ -1,0 +1,5 @@
+Test scrollbar-color: vertical scrollbar
+themed
+
+PASS scrollbar-color yellow blue on body overrides ::-webkit-scrollbar
+

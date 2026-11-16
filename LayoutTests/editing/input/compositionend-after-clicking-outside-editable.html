@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="editable" contenteditable>Some text.</div>
+<div id="outside">Not editable.</div>
+<pre id="log"></pre>
+<script>
+let observed = [];
+for (const type of ["compositionstart", "compositionupdate", "compositionend"]) {
+    document.addEventListener(type, event => {
+        observed.push({ type: event.type, data: event.data, target: event.target.id || event.target.nodeName });
+    }, true);
+}
+
+function clickOutsideTheEditableElement() {
+    let rect = outside.getBoundingClientRect();
+    eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+test(() => {
+    assert_own_property(window, "textInputController", "this test needs textInputController to start a composition");
+    assert_own_property(window, "eventSender", "this test needs eventSender to click outside the editable element");
+
+    editable.focus();
+    getSelection().setPosition(editable.firstChild, editable.firstChild.length);
+    textInputController.setMarkedText("^", 1, 0);
+    assert_true(textInputController.hasMarkedText(), "the dead key should start a composition");
+
+    clickOutsideTheEditableElement();
+
+    log.textContent = observed.map(event => `${event.type} target=${event.target} data=${JSON.stringify(event.data)}`).join("\n")
+        + `\nactiveElement=${document.activeElement.id || document.activeElement.nodeName}`
+        + `\neditable.textContent=${JSON.stringify(editable.textContent)}`
+        + `\nhasMarkedText=${textInputController.hasMarkedText()}`;
+
+    let compositionEndEvents = observed.filter(event => event.type === "compositionend");
+    assert_equals(compositionEndEvents.length, 1, "a compositionend event should be fired when the composition is aborted by clicking outside the editable element");
+    assert_equals(compositionEndEvents[0].target, "editable", "compositionend should target the element the composition started on");
+    assert_equals(compositionEndEvents[0].data, "^", "compositionend data should be the composition text left behind in the document");
+}, "compositionend is fired on the editable element when a composition is aborted by clicking outside of it");
+</script>
+</body>
+</html>

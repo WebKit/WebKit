@@ -1,0 +1,4 @@
+This text should be green.
+
+PASS Selectors: Many attribute selectors, and one that is only set
+

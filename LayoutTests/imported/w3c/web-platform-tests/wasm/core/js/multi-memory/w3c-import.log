@@ -1,0 +1,55 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/address0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/address1.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/align0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/binary0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/data0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/data1.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/data_drop0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/exports0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/float_exprs0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/float_exprs1.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/float_memory0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/imports0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/imports1.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/imports2.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/imports3.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/imports4.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/linking0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/linking1.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/linking2.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/linking3.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/load0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/load1.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/load2.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory-multi.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_copy0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_copy1.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_fill0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_grow.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_init0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_size0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_size1.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_size2.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_size3.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_size_import.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_trap0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/memory_trap1.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/start0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/store0.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/store1.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/store2.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/multi-memory/traps0.wast.js

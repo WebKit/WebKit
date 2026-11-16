@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("AuditTestGroup");
+
+    function addPayloadTest({name, payload}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let object = await WI.AuditTestGroup.fromPayload(payload);
+
+                function replacer(key, value) {
+                    if (key === "supports")
+                        return `<version + ${value - WI.AuditTestBase.Version}>`;
+
+                    return value;
+                }
+                InspectorTest.log(object ? JSON.stringify(object, replacer, 2) : object);
+            },
+        });
+    }
+
+    let payloadTests = [
+        {
+            name: "AuditTestGroup.fromPayload.nullObject",
+            payload: null,
+        },
+        {
+            name: "AuditTestGroup.fromPayload.nonObject",
+            payload: "INVALID",
+        },
+        {
+            name: "AuditTestGroup.fromPayload.emptyObject",
+            payload: {},
+        },
+        {
+            name: "AuditTestGroup.fromPayload.invalidTopLevelMembers",
+            payload: {
+                type: null,
+                name: null,
+                tests: null,
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.missingSubMembers",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "missingSubMembers group name",
+                tests: [],
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.invalidSubMembers",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "invalidSubMembers group name",
+                tests: [
+                    null,
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.valid",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "valid group name",
+                tests: [
+                    {
+                        type: WI.AuditTestCase.TypeIdentifier,
+                        name: "valid test name",
+                        test: "valid test function",
+                    },
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.validWithInvalidOptionals",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "validWithInvalidOptionals group name",
+                description: null,
+                supports: WI.AuditTestBase.Version + 1,
+                setup: null,
+                tests: [
+                    {
+                        type: WI.AuditTestCase.TypeIdentifier,
+                        name: "validWithInvalidOptionals test name",
+                        description: null,
+                        supports: WI.AuditTestBase.Version + 2,
+                        setup: null,
+                        test: "validWithInvalidOptionals test function",
+                    },
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.validWithValidOptionals",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "validWithValidOptionals group name",
+                description: "validWithValidOptionals group description",
+                supports: WI.AuditTestBase.Version - 1,
+                setup: "validWithValidOptionals group setup",
+                tests: [
+                    {
+                        type: WI.AuditTestCase.TypeIdentifier,
+                        name: "validWithValidOptionals test name",
+                        description: "validWithValidOptionals test description",
+                        supports: WI.AuditTestBase.Version - 2,
+                        setup: "validWithValidOptionals test setup",
+                        test: "validWithValidOptionals test function",
+                    },
+                ],
+            },
+        },
+        {
+            name: "AuditTestGroup.fromPayload.validNested",
+            payload: {
+                type: WI.AuditTestGroup.TypeIdentifier,
+                name: "validNested group name",
+                description: "validNested group description",
+                supports: WI.AuditTestBase.Version - 1,
+                setup: "validNested group setup",
+                tests: [
+                    {
+                        type: WI.AuditTestGroup.TypeIdentifier,
+                        name: "validNested nested group name",
+                        description: "validNested nested group description",
+                        supports: WI.AuditTestBase.Version - 2,
+                        setup: "validNested nested group setup",
+                        tests: [
+                            {
+                                type: WI.AuditTestCase.TypeIdentifier,
+                                name: "validNested nested test name",
+                                description: "validNested nested test description",
+                                supports: WI.AuditTestBase.Version - 3,
+                                setup: "validNested nested test setup",
+                                test: "validNested nested test function",
+                            },
+                        ],
+                    },
+                    {
+                        type: WI.AuditTestCase.TypeIdentifier,
+                        name: "validNested test name",
+                        description: "validNested test description",
+                        supports: WI.AuditTestBase.Version - 4,
+                        setup: "validNested test setup",
+                        test: "validNested test function",
+                    },
+                ],
+            },
+        },
+    ];
+    payloadTests.forEach(addPayloadTest);
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Disabled.Constructor.Enabled",
+        description: "Check that `disabled` constructor option properly propagates.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ]);
+
+            InspectorTest.expectFalse(group.disabled, "Group should not be disabled.");
+            InspectorTest.expectFalse(group.tests[0].disabled, "Test1 should not be disabled.");
+            InspectorTest.expectFalse(group.tests[1].disabled, "Test2 should not be disabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Disabled.Constructor.Disabled",
+        description: "Check that `disabled` constructor option properly propagates.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ], {disabled: true});
+
+            InspectorTest.expectTrue(group.disabled, "Group should be disabled.");
+            InspectorTest.expectTrue(group.tests[0].disabled, "Test1 should be disabled.");
+            InspectorTest.expectTrue(group.tests[1].disabled, "Test2 should be disabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Disabled.ChangeGroup.Enabled",
+        description: "Check that `disabled` is propagated to tests when set on group.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ]);
+
+            InspectorTest.expectFalse(group.disabled, "Group should not be disabled.");
+            InspectorTest.expectFalse(group.tests[0].disabled, "Test1 should not be disabled.");
+            InspectorTest.expectFalse(group.tests[1].disabled, "Test2 should not be disabled.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking group as disabled...");
+
+            group.disabled = true;
+            InspectorTest.expectTrue(group.disabled, "Group should be disabled.");
+            InspectorTest.expectTrue(group.tests[0].disabled, "Test1 should be disabled.");
+            InspectorTest.expectTrue(group.tests[1].disabled, "Test2 should be disabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Disabled.ChangeGroup.DisabledGroup",
+        description: "Check that `disabled` is propagated to tests when set on group.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ], {disabled: true});
+
+            InspectorTest.expectTrue(group.disabled, "Group should be disabled.");
+            InspectorTest.expectTrue(group.tests[0].disabled, "Test1 should be disabled.");
+            InspectorTest.expectTrue(group.tests[1].disabled, "Test2 should be disabled.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking group as enabled...");
+
+            group.disabled = false;
+            InspectorTest.expectFalse(group.disabled, "Group should not be disabled.");
+            InspectorTest.expectFalse(group.tests[0].disabled, "Test1 should not be disabled.");
+            InspectorTest.expectFalse(group.tests[1].disabled, "Test2 should not be disabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Disabled.ChangeGroup.DisabledTests",
+        description: "Check that `disabled` is propagated to tests when set on group.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}", {disabled: true}),
+                new WI.AuditTestCase("Test2", "function() {}", {disabled: true}),
+            ]);
+
+            InspectorTest.expectTrue(group.disabled, "Group should be disabled.");
+            InspectorTest.expectTrue(group.tests[0].disabled, "Test1 should be disabled.");
+            InspectorTest.expectTrue(group.tests[1].disabled, "Test2 should be disabled.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking group as enabled...");
+
+            group.disabled = false;
+            InspectorTest.expectFalse(group.disabled, "Group should not be disabled.");
+            InspectorTest.expectFalse(group.tests[0].disabled, "Test1 should not be disabled.");
+            InspectorTest.expectFalse(group.tests[1].disabled, "Test2 should not be disabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Disabled.ChangeTests.Enabled",
+        description: "Check that `disabled` is propagated to group when set on tests.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ]);
+
+            InspectorTest.expectFalse(group.disabled, "Group should not be disabled.");
+            InspectorTest.expectFalse(group.tests[0].disabled, "Test1 should not be disabled.");
+            InspectorTest.expectFalse(group.tests[1].disabled, "Test2 should not be disabled.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking Test1 as disabled...");
+
+            group.tests[0].disabled = true;
+            InspectorTest.expectFalse(group.disabled, "Group should not be disabled.");
+            InspectorTest.expectTrue(group.tests[0].disabled, "Test1 should be disabled.");
+            InspectorTest.expectFalse(group.tests[1].disabled, "Test2 should not be disabled.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking Test2 as disabled...");
+
+            group.tests[1].disabled = true;
+            InspectorTest.expectTrue(group.disabled, "Group should be disabled.");
+            InspectorTest.expectTrue(group.tests[0].disabled, "Test1 should be disabled.");
+            InspectorTest.expectTrue(group.tests[1].disabled, "Test2 should be disabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Disabled.ChangeTests.DisabledGroup",
+        description: "Check that `disabled` is propagated to group when set on tests.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ], {disabled: true});
+
+            InspectorTest.expectTrue(group.disabled, "Group should be disabled.");
+            InspectorTest.expectTrue(group.tests[0].disabled, "Test1 should be disabled.");
+            InspectorTest.expectTrue(group.tests[1].disabled, "Test2 should be disabled.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking test as enabled 1...");
+
+            group.tests[0].disabled = false;
+            InspectorTest.expectFalse(group.disabled, "Group should not be disabled.");
+            InspectorTest.expectFalse(group.tests[0].disabled, "Test1 should not be disabled.");
+            InspectorTest.expectTrue(group.tests[1].disabled, "Test2 should be disabled.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking test as enabled 2...");
+
+            group.tests[1].disabled = false;
+            InspectorTest.expectFalse(group.disabled, "Group should not be disabled.");
+            InspectorTest.expectFalse(group.tests[0].disabled, "Test1 should not be disabled.");
+            InspectorTest.expectFalse(group.tests[1].disabled, "Test2 should not be disabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Disabled.ChangeTests.DisabledTests",
+        description: "Check that `disabled` is propagated to group when set on tests.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}", {disabled: true}),
+                new WI.AuditTestCase("Test2", "function() {}", {disabled: true}),
+            ]);
+
+            InspectorTest.expectTrue(group.disabled, "Group should be disabled.");
+            InspectorTest.expectTrue(group.tests[0].disabled, "Test1 should be disabled.");
+            InspectorTest.expectTrue(group.tests[1].disabled, "Test2 should be disabled.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking test as enabled 1...");
+
+            group.tests[0].disabled = false;
+            InspectorTest.expectFalse(group.disabled, "Group should not be disabled.");
+            InspectorTest.expectFalse(group.tests[0].disabled, "Test1 should not be disabled.");
+            InspectorTest.expectTrue(group.tests[1].disabled, "Test2 should be disabled.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking test as enabled 2...");
+
+            group.tests[1].disabled = false;
+            InspectorTest.expectFalse(group.disabled, "Group should not be disabled.");
+            InspectorTest.expectFalse(group.tests[0].disabled, "Test1 should not be disabled.");
+            InspectorTest.expectFalse(group.tests[1].disabled, "Test2 should not be disabled.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Supports.Constructor.Supported",
+        description: "Check that `supported` properly propagates with `supports` constructor option.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ]);
+
+            InspectorTest.expectTrue(group.supported, "Group should be supported.");
+            InspectorTest.expectTrue(group.tests[0].supported, "Test1 should be supported.");
+            InspectorTest.expectTrue(group.tests[1].supported, "Test2 should be supported.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Supports.Constructor.Unsupported",
+        description: "Check that `supported` properly propagates with `supports` constructor option.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ], {supports: WI.AuditTestBase.Version + 1});
+
+            InspectorTest.expectFalse(group.supported, "Group should not be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Supports.ChangeGroup.Supported",
+        description: "Check that `supported` properly propagates to tests when `supports` is set on group.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ]);
+
+            InspectorTest.expectTrue(group.supported, "Group should be supported.");
+            InspectorTest.expectTrue(group.tests[0].supported, "Test1 should be supported.");
+            InspectorTest.expectTrue(group.tests[1].supported, "Test2 should be supported.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking group as unsupported...");
+
+            group.supports = WI.AuditTestBase.Version + 1;
+            InspectorTest.expectFalse(group.supported, "Group should not be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Supports.ChangeGroup.UnsupportedGroup",
+        description: "Check that `supported` properly propagates to tests when `supports` is set on group.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ], {supports: WI.AuditTestBase.Version + 1});
+
+            InspectorTest.expectFalse(group.supported, "Group should not be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking group as supported...");
+
+            group.supports = NaN;
+            InspectorTest.expectTrue(group.supported, "Group should be supported.");
+            InspectorTest.expectTrue(group.tests[0].supported, "Test1 should be supported.");
+            InspectorTest.expectTrue(group.tests[1].supported, "Test2 should be supported.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Supports.ChangeGroup.UnsupportedTests",
+        description: "Check that `supported` properly propagates to tests when `supports` is set on group.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}", {supports: WI.AuditTestBase.Version + 1}),
+                new WI.AuditTestCase("Test2", "function() {}", {supports: WI.AuditTestBase.Version + 1}),
+            ]);
+
+            InspectorTest.expectFalse(group.supported, "Group should not be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking group as supported...");
+
+            group.supports = NaN;
+            InspectorTest.expectFalse(group.supported, "Group should not be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Supports.ChangeTests.Supported",
+        description: "Check that `supported` properly propagates to group when `supports` is set on tests.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ]);
+
+            InspectorTest.expectTrue(group.supported, "Group should be supported.");
+            InspectorTest.expectTrue(group.tests[0].supported, "Test1 should be supported.");
+            InspectorTest.expectTrue(group.tests[1].supported, "Test2 should be supported.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking Test1 as unsupported...");
+
+            group.tests[0].supports = WI.AuditTestBase.Version + 1;
+            InspectorTest.expectTrue(group.supported, "Group should be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectTrue(group.tests[1].supported, "Test2 should be supported.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking Test2 as unsupported...");
+
+            group.tests[1].supports = WI.AuditTestBase.Version + 1;
+            InspectorTest.expectFalse(group.supported, "Group should not be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Supports.ChangeTests.UnsupportedGroup",
+        description: "Check that `supported` properly propagates to group when `supports` is set on tests.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}"),
+                new WI.AuditTestCase("Test2", "function() {}"),
+            ], {supports: WI.AuditTestBase.Version + 1});
+
+            InspectorTest.expectFalse(group.supported, "Group should not be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking Test1 as supported...");
+
+            group.tests[0].supports = NaN;
+            InspectorTest.expectFalse(group.supported, "Group should not be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking Test2 as supported...");
+
+            group.tests[1].supports = NaN;
+            InspectorTest.expectFalse(group.supported, "Group should not be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditTestGroup.Supports.ChangeTests.UnsupportedTests",
+        description: "Check that `supported` properly propagates to group when `supports` is set on tests.",
+        async test() {
+            let group = new WI.AuditTestGroup("Group", [
+                new WI.AuditTestCase("Test1", "function() {}", {supports: WI.AuditTestBase.Version + 1}),
+                new WI.AuditTestCase("Test2", "function() {}", {supports: WI.AuditTestBase.Version + 1}),
+            ]);
+
+            InspectorTest.expectFalse(group.supported, "Group should not be supported.");
+            InspectorTest.expectFalse(group.tests[0].supported, "Test1 should not be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking Test1 as supported...");
+
+            group.tests[0].supports = NaN;
+            InspectorTest.expectTrue(group.supported, "Group should be supported.");
+            InspectorTest.expectTrue(group.tests[0].supported, "Test1 should be supported.");
+            InspectorTest.expectFalse(group.tests[1].supported, "Test2 should not be supported.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Marking Test2 as supported...");
+
+            group.tests[1].supports = NaN;
+            InspectorTest.expectTrue(group.supported, "Group should be supported.");
+            InspectorTest.expectTrue(group.tests[0].supported, "Test1 should be supported.");
+            InspectorTest.expectTrue(group.tests[1].supported, "Test2 should be supported.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the functions of WI.AuditTestGroup.</p>
+</body>
+</html>

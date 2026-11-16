@@ -1,0 +1,9 @@
+
+PASS src
+PASS location.href
+PASS location.assign
+PASS window.open
+PASS link click
+FAIL form submission assert_equals: history.length increases after normal navigation from  non-initial empty document expected 8 but got 7
+PASS initial about:blank => non-initial about:blank (via location.href) => normal HTTP navigation
+

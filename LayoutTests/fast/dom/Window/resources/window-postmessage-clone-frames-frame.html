@@ -1,0 +1,7 @@
+<script>
+var tests = [];
+window.onmessage = function (event) {
+    tests.push({event: event, eventData: event.data});
+    event.source.postMessage("blargh", "*");
+}
+</script>

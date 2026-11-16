@@ -1,0 +1,11 @@
+
+PASS :has(> .marked) on the old and new parents
+PASS :empty on the old and new parents when moving an element
+PASS :empty on the old and new parents when moving a Text node
+PASS :first-child on siblings in the old and new parents
+PASS :last-child on siblings in the old and new parents
+PASS :nth-child(2) on later siblings in the old and new parents
+PASS :nth-last-child(2) on earlier siblings in the old and new parents
+PASS .a + .b on the next siblings in the old and new parents
+PASS :first-child when reordering children of the same parent
+

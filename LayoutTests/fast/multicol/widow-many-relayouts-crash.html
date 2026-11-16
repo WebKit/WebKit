@@ -1,0 +1,40 @@
+<style>
+html {
+    font-size: 100ex;
+    widows: 2;
+}
+body {
+    block-size: 300em;
+    -webkit-column-axis: vertical;
+}
+a {
+    padding-right: 100%;
+}
+blockquote {
+    min-width: fit-content;
+}
+tr {
+    block-size: 300em;
+}
+span {
+    font-family: ui-serif;
+    padding-right: 80%;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+onload = () => {
+    let blockquote = document.createElement('blockquote');
+    let span = document.createElement('span');
+    blockquote.append(span);
+    span.append('\uA6F8\uD83D\uDC00擄');
+    span.append(document.createElement('tr'));
+    document.body.append(blockquote);
+    document.body.append(document.createElement('table'));
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('CreateLink', false, '#');
+    document.write("Test passes if it does not crash.");
+};
+</script>

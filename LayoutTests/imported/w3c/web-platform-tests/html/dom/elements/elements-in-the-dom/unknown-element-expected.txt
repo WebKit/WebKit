@@ -1,0 +1,7 @@
+
+PASS <applet> is an HTMLUnknownElement
+PASS <attachment> is an HTMLUnknownElement
+PASS <layer> is an HTMLUnknownElement
+PASS <nolayer> is an HTMLUnknownElement
+PASS <xxx> is an HTMLUnknownElement
+

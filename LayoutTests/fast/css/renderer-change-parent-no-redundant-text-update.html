@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="parent" style="display: block">existing</div>
+<script>
+description("A text child should not be part of the style update when its parent is already rebuilding its renderer (Change::Renderer), even when the parent's change set also contains other bits such as Change::NonInherited.");
+
+if (!window.internals)
+    testFailed("This test requires internals.lastStyleUpdateSize.");
+else {
+    var parent = document.getElementById("parent");
+
+    // Flush any pending style so the mutations below coalesce into a single, well-defined recalc.
+    document.body.offsetTop;
+
+    // NOTE: Do not log before measuring - that would mutate the DOM and end up in the next style update by itself!
+    var sizes = [];
+
+    // 1. Change the parent's display (-> Change::Renderer AND Change::NonInherited) while inserting a
+    //    brand new text child (-> the text has an invalid renderer). The parent renderer rebuild will
+    //    build the text renderer too, so the text must NOT get its own redundant TextUpdate.
+    //    Only the parent element belongs to the update: size == 1.
+    parent.style.display = "inline-block";
+    parent.appendChild(document.createTextNode("freshly inserted text"));
+    document.body.offsetTop;
+    sizes.push(internals.lastStyleUpdateSize);
+
+    // 2. Inserting a text child WITHOUT a renderer change on the parent must still update the text,
+    //    proving we only skip the text when the parent actually rebuilds its renderer.
+    //    Only the text belongs to the update: size == 1.
+    parent.appendChild(document.createTextNode("another inserted text"));
+    document.body.offsetTop;
+    sizes.push(internals.lastStyleUpdateSize);
+
+    // Remove the test subtree now that we have measured, so nothing renders into the text dump.
+    parent.remove();
+
+    shouldBe("sizes[0]", "1");
+    shouldBe("sizes[1]", "1");
+}
+</script>
+</body>
+</html>

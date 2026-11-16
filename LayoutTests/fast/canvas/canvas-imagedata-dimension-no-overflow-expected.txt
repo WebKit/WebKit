@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: Drawing canvas with MaxSize and getting ImageData from image
+CONSOLE MESSAGE: 0,255,0,255
+CONSOLE MESSAGE: Getting ImageData which overflows and outside of image
+CONSOLE MESSAGE: 0,0,0,0
+CONSOLE MESSAGE: Putting ImageData which overflows and outside of image
+CONSOLE MESSAGE: 0,0,0,0
+PASS data[0] is 0
+PASS data[1] is 255
+PASS data[2] is 0
+PASS data[3] is 255
+PASS data[0] is 0
+PASS data[1] is 0
+PASS data[2] is 0
+PASS data[3] is 0
+PASS data[0] is 0
+PASS data[1] is 0
+PASS data[2] is 0
+PASS data[3] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

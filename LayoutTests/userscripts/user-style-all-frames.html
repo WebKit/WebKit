@@ -1,0 +1,17 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    window.testRunner.addUserStyleSheet("#thinger { display:none; }", true);
+}
+</script>
+</head>
+<body>
+If any thingers appear on this page, the test has failed.
+<Div id="thinger">thinger</div>
+<iframe src="resources/frame1.html"></iframe>
+</body>
+</html>

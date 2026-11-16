@@ -1,0 +1,11 @@
+<script>
+var streamPromise = null;
+window.internals.withUserGesture(() => {
+    streamPromise = navigator.mediaDevices.getUserMedia({ video: true });
+});
+streamPromise
+    .then(stream => {
+        window.parent.postMessage('success', '*');
+        stream.getTracks().forEach(t => t.stop());
+    }).catch(error => { window.parent.postMessage(`fail (${error})`, '*'); });
+</script>

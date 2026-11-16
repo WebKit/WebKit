@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<style>
+ul { list-style-position: inside; }
+li { list-style: none; }
+.marker-content::marker { content: "X "; }
+</style>
+<ul>
+  <li style="list-style-type: square">gains a list-style-type</li>
+  <li class="marker-content">gains ::marker content</li>
+  <li style="list-style-image: linear-gradient(green, green)">gains a list-style-image</li>
+  <li class="marker-content">becomes a list item through an inline custom property</li>
+</ul>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function createXHR() {
+    let xhr = new XMLHttpRequest;
+    xhr.open("GET", location.href, true);
+    xhr.send();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.RequestMainURL");
+
+    suite.addTestCase({
+        name: "Network.RequestMainURL.XHR",
+        description: "Ensure an XMLHttpRequest for the main URL creates a new resource.",
+        async test() {
+            await Promise.all([
+                WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                InspectorTest.evaluateInPage(`createXHR()`),
+            ]);
+
+            let mainResource = WI.networkManager.mainFrame.mainResource;
+            let resources = Array.from(WI.networkManager.resourcesForURL(mainResource.url));
+            InspectorTest.expectEqual(resources.length, 2, "Should have two resources for the main URL.");
+            InspectorTest.expectEqual(resources[0], mainResource, "First resource should be main resource.");
+            InspectorTest.expectEqual(resources[1].type, WI.Resource.Type.XHR, "Second resource should be XHR.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that an XMLHttpRequest resource gives us JSON text even if it is marked as having blob content.</p>
+</body>
+</html>

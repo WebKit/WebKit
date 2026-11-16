@@ -1,0 +1,4 @@
+
+
+PASS An option removed by the parser doesn't let a nonce-less script in a selected option run via selectedcontent
+

@@ -1,0 +1,3 @@
+Test a particular example of broken markup that was making us ignore a charset declaration.
+
+Encoding: windows-1256 (should be windows-1256)

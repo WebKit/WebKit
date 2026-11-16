@@ -1,0 +1,34 @@
+
+PASS transition:all interpolates the same as transition:the-actual-property
+PASS transition:all interpolates the same as transition:the-actual-property 1
+PASS transition:all interpolates the same as transition:the-actual-property 2
+PASS transition:all interpolates the same as transition:the-actual-property 3
+PASS transition:all interpolates the same as transition:the-actual-property 4
+PASS transition:all interpolates the same as transition:the-actual-property 5
+PASS transition:all interpolates the same as transition:the-actual-property 6
+PASS transition:all interpolates the same as transition:the-actual-property 7
+PASS transition:all interpolates the same as transition:the-actual-property 8
+PASS transition:all interpolates the same as transition:the-actual-property 9
+PASS transition:all interpolates the same as transition:the-actual-property 10
+PASS transition:all interpolates the same as transition:the-actual-property 11
+PASS transition:all interpolates the same as transition:the-actual-property 12
+PASS transition:all interpolates the same as transition:the-actual-property 13
+PASS transition:all interpolates the same as transition:the-actual-property 14
+PASS transition:all interpolates the same as transition:the-actual-property 15
+PASS transition:all interpolates the same as transition:the-actual-property 16
+PASS transition:all interpolates the same as transition:the-actual-property 17
+PASS transition:all interpolates the same as transition:the-actual-property 18
+PASS transition:all interpolates the same as transition:the-actual-property 19
+PASS transition:all interpolates the same as transition:the-actual-property 20
+PASS transition:all interpolates the same as transition:the-actual-property 21
+PASS transition:all interpolates the same as transition:the-actual-property 22
+PASS transition:all interpolates the same as transition:the-actual-property 23
+PASS transition:all interpolates the same as transition:the-actual-property 24
+PASS transition:all interpolates the same as transition:the-actual-property 25
+PASS transition:all interpolates the same as transition:the-actual-property 26
+PASS transition:all interpolates the same as transition:the-actual-property 27
+PASS transition:all interpolates the same as transition:the-actual-property 28
+PASS transition:all interpolates the same as transition:the-actual-property 29
+PASS transition:all interpolates the same as transition:the-actual-property 30
+PASS transition:all interpolates the same as transition:the-actual-property 31
+

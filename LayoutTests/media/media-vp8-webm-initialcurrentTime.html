@@ -1,0 +1,23 @@
+<html>
+<head>
+<title>webm file with vp8</title>
+<script src="video-test.js"></script>
+<script>
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        let v = document.getElementsByTagName('video')[0];
+        v.src = "content/test-vp8.webm";
+        await waitFor(v, 'loadedmetadata');
+        testExpected(internals.privatePlayerCurrentTime(v), 0);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video/>
+</body>
+</html>

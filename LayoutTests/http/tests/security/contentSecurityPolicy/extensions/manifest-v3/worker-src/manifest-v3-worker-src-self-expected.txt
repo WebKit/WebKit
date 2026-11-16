@@ -1,0 +1,2 @@
+ALERT: PASS
+Test that CSP for manifest V3 extensions allows self for the worker-src directive. Test passes if we alert PASS with no error.

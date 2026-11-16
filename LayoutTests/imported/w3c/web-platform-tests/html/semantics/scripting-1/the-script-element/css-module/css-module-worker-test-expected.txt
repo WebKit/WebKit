@@ -1,0 +1,5 @@
+
+PASS A static import CSS Module within a web worker should not load and should not attempt to fetch the module.
+PASS A dynamic import CSS Module within a web worker should not load and should not attempt to fetch the module.
+PASS An attempt to load a CSS module as a worker should fail.
+

@@ -1,0 +1,18 @@
+This tests that the notifications for aria-relevant=removals are correct.
+
+Received announcement request:
+AnnouncementKey: Mariners{
+    AXIsLiveRegionRemoval = 1;
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Giants
+Cubs
+Orioles
+Tigers

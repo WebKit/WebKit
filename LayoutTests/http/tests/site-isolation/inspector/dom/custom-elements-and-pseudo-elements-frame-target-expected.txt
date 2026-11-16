@@ -1,0 +1,59 @@
+Tests that a cross-origin iframe's FrameDOMAgent dispatches DOM.customElementStateChanged, DOM.pseudoElementAdded, and DOM.pseudoElementRemoved to its Frame Target under Site Isolation, including multiple, repeated, and interleaved events.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.CustomAndPseudoElements
+-- Running test case: Setup
+PASS: Cross-origin iframe should be its own Frame Target.
+PASS: Frame target should have a document.
+PASS: Should find #host in the frame document.
+PASS: #host should start with no pseudo elements.
+
+-- Running test case: CustomElementStateChanged.TwoInSequence
+PASS: Should find <my-widget>.
+PASS: Should find <my-gadget>.
+PASS: <my-widget> should start 'waiting'.
+PASS: <my-gadget> should start 'waiting'.
+PASS: <my-widget> should receive at least one customElementStateChanged event.
+PASS: <my-gadget> should receive at least one customElementStateChanged event.
+PASS: No customElementStateChanged event should target an unrelated node.
+PASS: <my-widget> should become 'custom'.
+PASS: <my-gadget> should become 'custom'.
+
+-- Running test case: PseudoElements.BothCoexist
+PASS: Exactly two pseudoElementAdded events should arrive for #host.
+PASS: Each inserted node should be a pseudo element.
+PASS: Each inserted node should be a pseudo element.
+PASS: #host should track two pseudo elements.
+PASS: #host should track exactly ::before and ::after.
+PASS: #host should have a ::before node.
+PASS: #host should have an ::after node.
+PASS: ::before node should be typed Before.
+PASS: ::after node should be typed After.
+
+-- Running test case: PseudoElements.RemoveOneLeavesOther
+PASS: Precondition: ::before present.
+PASS: Precondition: ::after present.
+PASS: Exactly one pseudoElementRemoved event should fire.
+PASS: The removed node should be the ::before node, not ::after.
+PASS: #host should now track one pseudo element.
+PASS: Only ::after should remain.
+PASS: The surviving ::after should be the same node instance.
+PASS: ::before should be gone.
+
+-- Running test case: PseudoElements.RemoveRemaining
+PASS: Exactly one pseudoElementRemoved event should fire.
+PASS: #host should have no pseudo elements.
+PASS: pseudoElements map should be empty.
+
+-- Running test case: PseudoElements.AddRemoveReAddNoStaleNode
+PASS: First ::before should be present.
+PASS: ::before should be cleared after removal.
+PASS: The first ::before node should be marked destroyed.
+PASS: Second ::before should be present.
+PASS: Re-added ::before must be a fresh node, not the destroyed one.
+PASS: Re-added ::before should not be destroyed.
+PASS: #host should track exactly one pseudo element after re-add.
+PASS: The Before map entry should point at the fresh node.
+PASS: #host should end with no pseudo elements.
+

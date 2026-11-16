@@ -1,0 +1,6 @@
+Text content.
+
+PASS Check initial styleSheets length type
+PASS Change type from invalid type to valid type
+PASS Change type from valid type to invalid type
+

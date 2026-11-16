@@ -1,0 +1,32 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Navigator: original interface defined
+PASS Partial interface Navigator: valid exposure set
+PASS Partial interface Navigator: member names are unique
+PASS Partial interface Navigator[2]: member names are unique
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
+PASS AudioSession interface: existence and properties of interface object
+PASS AudioSession interface object length
+PASS AudioSession interface object name
+PASS AudioSession interface: existence and properties of interface prototype object
+PASS AudioSession interface: existence and properties of interface prototype object's "constructor" property
+PASS AudioSession interface: existence and properties of interface prototype object's @@unscopables property
+PASS AudioSession interface: attribute type
+PASS AudioSession interface: attribute state
+PASS AudioSession interface: attribute onstatechange
+PASS AudioSession must be primary interface of navigator.audioSession
+PASS Stringification of navigator.audioSession
+PASS AudioSession interface: navigator.audioSession must inherit property "type" with the proper type
+PASS AudioSession interface: navigator.audioSession must inherit property "state" with the proper type
+PASS AudioSession interface: navigator.audioSession must inherit property "onstatechange" with the proper type
+PASS Navigator interface: attribute audioSession
+PASS Navigator interface: navigator must inherit property "audioSession" with the proper type
+

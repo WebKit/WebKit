@@ -1,0 +1,10 @@
+
+PASS default AudioContext.sinkId should be the empty string.
+PASS setSinkId() with a valid device identifier and setting the same ID should succeed.
+PASS setSinkId() with AudioSinkOptions.type of "none" and setting the same option should succeed.
+PASS setSinkId() should fail with TypeError on an invalid AudioSinkOptions.type value.
+PASS setSinkId() should fail with NotFoundError on an invalid device identifier.
+PASS setSinkId() should fail with InvalidStateError when calling from a stopped AudioContext.
+PASS setSinkId() should fail with InvalidStateError when calling from a detached document.
+PASS pending setSinkId() should be rejected with InvalidStateError when AudioContext is closed.
+

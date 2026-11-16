@@ -1,0 +1,6 @@
+
+PASS callback interface with a constant
+PASS callback interface without a constant
+PASS non-callback interface with [LegacyNoInterfaceObject]
+PASS non-callback interface without [LegacyNoInterfaceObject]
+

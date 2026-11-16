@@ -1,0 +1,12 @@
+Each captured element containing a cross-site iframe gets its own image, and the transition waits for all of them before it starts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS firstState is "remote"
+PASS secondState is "remote"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

@@ -1,0 +1,5 @@
+
+PASS RTCOutboundRtpStreamStats exists after returning to stable
+PASS RTCOutboundRtpStreamStats exists per simulcast encoding
+PASS RTCInboundRtpStreamStats exists for early media
+

@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content" hidden="until-found">
+    <p>Revealed paragraph text.</p>
+</div>
+
+<script>
+var output = "This test ensures content revealed by programmatically removing hidden='until-found' becomes reachable by assistive technologies (and becomes unreachable again when re-hidden).\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    function revealedTextIsReachable() {
+        return dumpAXSearchTraversal(webArea).includes("Revealed paragraph text.");
+    }
+
+    var content = document.getElementById("content");
+
+    output += "While hidden='until-found', the revealed text should not be reachable:\n";
+    output += expect("revealedTextIsReachable()", "false");
+
+    setTimeout(async function() {
+        content.hidden = false;
+        output += "\nAfter programmatically removing hidden='until-found', the revealed text should be reachable:\n";
+        output += await expectAsync("revealedTextIsReachable()", "true");
+
+        content.hidden = "until-found";
+        output += "\nAfter programmatically re-applying hidden='until-found', the revealed text should not be reachable:\n";
+        output += await expectAsync("revealedTextIsReachable()", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

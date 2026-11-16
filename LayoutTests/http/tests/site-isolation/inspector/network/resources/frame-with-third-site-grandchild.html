@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<title>Frame with a third-site grandchild</title>
+<p>Child on the second site that embeds a grandchild on a third site.</p>
+<script>
+// Loaded on the second site (B). The main frame is on the first site (A), and the grandchild is on a
+// third site (C): main(A) -> child(B) -> grandchild(C).
+let iframe = document.createElement("iframe");
+iframe.src = "https://localhost:8443/site-isolation/inspector/network/resources/third-site-frame.html?grandchild";
+document.body.appendChild(iframe);
+</script>

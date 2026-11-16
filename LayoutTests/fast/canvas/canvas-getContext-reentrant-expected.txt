@@ -1,0 +1,33 @@
+getContext("2d") with reentrant getContext("2d"): outer=CanvasRenderingContext2D inner=CanvasRenderingContext2D
+getContext("2d") with reentrant getContext("bitmaprenderer"): outer=null inner=ImageBitmapRenderingContext
+getContext("2d") with reentrant getContext("webgl"): outer=null inner=WebGLRenderingContext
+getContext("2d") with reentrant getContext("webgl2"): outer=null inner=WebGL2RenderingContext
+getContext("bitmaprenderer") with reentrant getContext("2d"): outer=null inner=CanvasRenderingContext2D
+getContext("bitmaprenderer") with reentrant getContext("bitmaprenderer"): outer=ImageBitmapRenderingContext inner=ImageBitmapRenderingContext
+getContext("bitmaprenderer") with reentrant getContext("webgl"): outer=null inner=WebGLRenderingContext
+getContext("bitmaprenderer") with reentrant getContext("webgl2"): outer=null inner=WebGL2RenderingContext
+getContext("webgl") with reentrant getContext("2d"): outer=null inner=CanvasRenderingContext2D
+getContext("webgl") with reentrant getContext("bitmaprenderer"): outer=null inner=ImageBitmapRenderingContext
+getContext("webgl") with reentrant getContext("webgl"): outer=WebGLRenderingContext inner=WebGLRenderingContext
+getContext("webgl") with reentrant getContext("webgl2"): outer=null inner=WebGL2RenderingContext
+getContext("webgl2") with reentrant getContext("2d"): outer=null inner=CanvasRenderingContext2D
+getContext("webgl2") with reentrant getContext("bitmaprenderer"): outer=null inner=ImageBitmapRenderingContext
+getContext("webgl2") with reentrant getContext("webgl"): outer=null inner=WebGLRenderingContext
+getContext("webgl2") with reentrant getContext("webgl2"): outer=WebGL2RenderingContext inner=WebGL2RenderingContext
+OffscreenCanvas getContext("2d") with reentrant getContext("2d"): outer=OffscreenCanvasRenderingContext2D inner=OffscreenCanvasRenderingContext2D
+OffscreenCanvas getContext("2d") with reentrant getContext("bitmaprenderer"): outer=null inner=ImageBitmapRenderingContext
+OffscreenCanvas getContext("2d") with reentrant getContext("webgl"): outer=null inner=WebGLRenderingContext
+OffscreenCanvas getContext("2d") with reentrant getContext("webgl2"): outer=null inner=WebGL2RenderingContext
+OffscreenCanvas getContext("bitmaprenderer") with reentrant getContext("2d"): outer=null inner=OffscreenCanvasRenderingContext2D
+OffscreenCanvas getContext("bitmaprenderer") with reentrant getContext("bitmaprenderer"): outer=ImageBitmapRenderingContext inner=ImageBitmapRenderingContext
+OffscreenCanvas getContext("bitmaprenderer") with reentrant getContext("webgl"): outer=null inner=WebGLRenderingContext
+OffscreenCanvas getContext("bitmaprenderer") with reentrant getContext("webgl2"): outer=null inner=WebGL2RenderingContext
+OffscreenCanvas getContext("webgl") with reentrant getContext("2d"): outer=null inner=OffscreenCanvasRenderingContext2D
+OffscreenCanvas getContext("webgl") with reentrant getContext("bitmaprenderer"): outer=null inner=ImageBitmapRenderingContext
+OffscreenCanvas getContext("webgl") with reentrant getContext("webgl"): outer=WebGLRenderingContext inner=WebGLRenderingContext
+OffscreenCanvas getContext("webgl") with reentrant getContext("webgl2"): outer=null inner=WebGL2RenderingContext
+OffscreenCanvas getContext("webgl2") with reentrant getContext("2d"): outer=null inner=OffscreenCanvasRenderingContext2D
+OffscreenCanvas getContext("webgl2") with reentrant getContext("bitmaprenderer"): outer=null inner=ImageBitmapRenderingContext
+OffscreenCanvas getContext("webgl2") with reentrant getContext("webgl"): outer=null inner=WebGLRenderingContext
+OffscreenCanvas getContext("webgl2") with reentrant getContext("webgl2"): outer=WebGL2RenderingContext inner=WebGL2RenderingContext
+PASS if no crash.

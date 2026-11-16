@@ -1,0 +1,81 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>media-source-evict-ignorable-gap</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    // Samples every 100 ms, each 100 ms long, on trackID.
+    function samplesBetween(startMs, endMs, trackID) {
+        var samples = [];
+        for (var pts = startMs; pts < endMs; pts += 100)
+            samples.push(makeASample(pts, pts, 100, 1000, trackID, SAMPLE_FLAG.SYNC));
+        return concatenateSamples(samples);
+    }
+
+    function bufferedRanges() {
+        var str = '[ ';
+        var ranges = sourceBuffer.buffered;
+        for (var i = 0; i < ranges.length; i++) {
+            if (i)
+                str += ', ';
+            str += ranges.start(i) + '...' + ranges.end(i);
+        }
+        return str + ' ]';
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        source = new ManagedMediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        run('video.disableRemotePlayback = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        run("initSegment = makeAInit(20, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)])");
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Keep the buffer large enough that appending never triggers eviction.
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 1024 * 1024);
+
+        // [0, 2] then a 100 ms gap (< 125 ms mid-stream tolerance, bridged by
+        // playback) then [2.1, 5]: a single playable segment from currentTime.
+        // Then a 5 s real gap and [10, 12]: a segment after the playable range.
+        run('sourceBuffer.appendBuffer(samplesBetween(0, 2000, 1))');
+        await waitFor(sourceBuffer, 'updateend');
+        run('sourceBuffer.appendBuffer(samplesBetween(2100, 5000, 1))');
+        await waitFor(sourceBuffer, 'updateend');
+        run('sourceBuffer.appendBuffer(samplesBetween(10000, 12000, 1))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('bufferedRanges()', '[ 0...2, 2.1...5, 10...12 ]');
+
+        // currentTime = 0 sits in the bridged playable segment [0, 5].
+        run('internals.beginSimulatedMemoryPressure()');
+        await waitFor(sourceBuffer, 'bufferedchange');
+        run('internals.endSimulatedMemoryPressure()');
+
+        // The after-gap segment [10, 12] is evicted; the playable segment
+        // (both sub-ranges bridged by the 100 ms gap) is retained, not truncated.
+        testExpected('bufferedRanges()', '[ 0...2, 2.1...5 ]');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    This tests that memory-pressure eviction keeps a playable segment spanning a gap small enough to be ignored during playback, while still evicting data located after that segment.
+    <video controls></video>
+</body>
+</html>

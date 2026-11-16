@@ -1,0 +1,3 @@
+Test for bug 16731: Incorrect node type for whitespace when setting innerHTML in an XHTML document.
+
+SUCCESS

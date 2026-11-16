@@ -1,0 +1,8 @@
+abcdef
+
+
+FAIL Range.deleteContents() when "<p>abc[def</p><div><shadow-root><span>Inner]Text</span></shadow-root><span>UnassignedText</span></div>" The index is not in the allowed range.
+PASS Range.deleteContents() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>"
+PASS Range.deleteContents() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>": range.deleteContents() shouldn't delete the content in the shadow
+PASS Range.deleteContents() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>": range.deleteContents() shouldn't delete the content in the parent DOM
+

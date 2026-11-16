@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="host" style="width: 100px; height: 100px;"></div>
+<svg>
+    <defs>
+        <rect id="rect" width="50" height="100" fill="red" />
+    </defs>
+</svg>
+<template>
+    <svg viewbox="0 0 100 100" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect width="50" height="100" fill="green" />
+        <rect id="rect1" x="-100" width="25" height="100" fill="red" />
+        <rect id="rect2" x="-100" width="50" height="100" fill="green" />
+        <animate attributeName="x" from="0" to="50" dur="0.01s" fill="freeze" xlink:href="#rect1" />
+    </svg>
+</template>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const shadowRoot = host;//host.attachShadow({mode: 'closed'});
+shadowRoot.appendChild(document.querySelector('template').content.cloneNode(true));
+
+function waitForAnimation() {
+    return new Promise((resolve) => {
+         // 0.01s is 10ms. Wait for twice that time to be safe.
+        requestAnimationFrame(() => setTimeout(resolve, 20));
+    })
+}
+
+window.onload = async () => {
+    await waitForAnimation();
+    shadowRoot.querySelector('animate').setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#rect2');
+    shadowRoot.querySelector('animate').beginElement();
+    await waitForAnimation();
+    if (window.testRunner)
+        requestAnimationFrame(() => testRunner.notifyDone());
+}
+
+</script>
+</body>
+</html>

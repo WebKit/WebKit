@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Animating the "transform" property with a percent value in a single keyframe while also animating "height"</title>
+<style>
+
+div {
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    animation: anim 10s linear forwards;
+}
+
+/* The 0% keyframe is implicit so that the first frame of this animation, during which an accelerated
+   animation would be committed, uses the unanimated 10px height. From the second frame onwards the
+   animated values are constant, so this animation must render like the reference. The "to" keyframe
+   is the only one without a size-dependent transform. */
+@keyframes anim {
+    0.000000001%, 99.999999999% {
+        height: 200px;
+        transform: translateY(50%);
+    }
+    to {
+        height: 200px;
+        transform: translateY(0px);
+    }
+}
+
+</style>
+</head>
+<body>
+<div></div>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+(async function() {
+    await Promise.all(document.getAnimations().map(animation => animation.ready));
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+Tests FrameDOMAgent.getAccessibilityPropertiesForNode for nodes inside a cross-origin iframe.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.Accessibility
+-- Running test case: Setup
+PASS: Should find a cross-origin frame target.
+PASS: Should find iframe BODY.
+
+-- Running test case: Heading.RoleAndLevel
+PASS: AX object should exist for h1.
+PASS: Role should be 'heading'.
+PASS: headingLevel should be 1.
+
+-- Running test case: Button.RoleAndLabel
+PASS: AX object should exist for button.
+PASS: Role should be 'button'.
+PASS: Label should be the aria-label override.
+
+-- Running test case: Listbox.BusyAndLabel
+PASS: AX object should exist for listbox.
+PASS: Role should be 'listbox'.
+PASS: busy should be true.
+PASS: Label should be the aria-label override.
+
+-- Running test case: Input.Required
+PASS: AX object should exist for input.
+PASS: required should be true.
+
+-- Running test case: DynamicUpdate.AriaBusyReflectsLiveState
+PASS: Listbox starts busy.
+PASS: Listbox no longer reports busy after live mutation.
+
+-- Running test case: InvalidNodeId
+PASS: Unknown nodeId should reject.
+

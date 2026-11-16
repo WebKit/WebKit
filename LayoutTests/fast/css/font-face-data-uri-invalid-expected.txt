@@ -1,0 +1,3 @@
+Test for bug 85089: [Qt] ASSERT in FontCustomPlatformDataQt.cpp with invalid font in data URI
+
+This tests for an ASSERT when using @font-face with invalid font data

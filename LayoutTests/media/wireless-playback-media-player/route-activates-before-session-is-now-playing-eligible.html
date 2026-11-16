@@ -1,0 +1,41 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                video = document.createElement('video');
+                video.muted = true;
+                video.src = findMediaFile('video', '../content/test');
+                document.body.appendChild(video);
+
+                await waitFor(video, 'canplaythrough');
+
+                run(`video.play()`);
+                await waitFor(video, 'playing');
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+
+                run(`video.muted = false`);
+                await waitFor(video, 'webkitcurrentplaybacktargetiswirelesschanged');
+
+                testExpected('video.webkitCurrentPlaybackTargetIsWireless', true);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <p>Test that a MediaDeviceRoute which activates while no session is eligible to be the Now Playing
+        session is applied to a session that becomes eligible later.</p>
+    </body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS Should not have a default value for `supportsCouponCode`.
+PASS Should propagate `supportsCouponCode` if provided.
+

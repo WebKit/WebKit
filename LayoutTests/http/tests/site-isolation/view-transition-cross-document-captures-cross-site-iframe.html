@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true RemoteSnapshottingEnabled=true UseGPUProcessForDOMRenderingEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@view-transition { navigation: auto; }
+#withframe { view-transition-name: withframe; }
+iframe { width: 100px; height: 100px; border: none; }
+</style>
+<script>
+// Navigates to itself with a changed query parameter, and checks the capture in the second document.
+const isInitialPage = !location.search.includes("new");
+
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+function log(message)
+{
+    document.getElementById("result").textContent += message + "\n";
+}
+
+if (isInitialPage) {
+    onmessage = (event) => {
+        if (event.data == "onload")
+            requestAnimationFrame(() => requestAnimationFrame(() => location.replace(location.href + "?new")));
+    };
+} else {
+    addEventListener("pagereveal", (event) => {
+        const transition = event.viewTransition;
+        if (!transition) {
+            log("FAIL: no inbound view transition");
+            testRunner.notifyDone();
+            return;
+        }
+
+        transition.ready.then(() => {
+            log("Old capture state when ready: " + internals.viewTransitionOldCaptureState(document, "withframe"));
+            transition.skipTransition();
+            testRunner.notifyDone();
+        }, (error) => {
+            log("FAIL: the transition was skipped: " + error);
+            testRunner.notifyDone();
+        });
+    });
+}
+</script>
+</head>
+<body>
+<p>A cross-document view transition waits for an old state capture that includes a cross-site iframe to be assembled before it starts.</p>
+<div id="withframe"><iframe src="http://localhost:8000/site-isolation/resources/green-background.html"></iframe></div>
+<pre id="result"></pre>
+</body>
+</html>

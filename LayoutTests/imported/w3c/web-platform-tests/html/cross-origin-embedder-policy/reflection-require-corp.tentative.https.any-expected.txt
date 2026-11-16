@@ -1,0 +1,3 @@
+
+FAIL reflection-require-corp Can't find variable: crossOriginEmbedderPolicy
+

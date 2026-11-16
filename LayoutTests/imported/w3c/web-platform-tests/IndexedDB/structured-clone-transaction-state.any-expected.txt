@@ -1,0 +1,5 @@
+
+PASS Transaction inactive during structured clone in IDBObjectStore.add()
+PASS Transaction inactive during structured clone in IDBObjectStore.put()
+PASS Transaction inactive during structured clone in IDBCursor.update()
+

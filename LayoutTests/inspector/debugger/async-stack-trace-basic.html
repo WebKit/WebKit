@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/async-stack-trace-test.js"></script>
+<script>
+
+function triggerMicrotask(completion) {
+    queueMicrotask(function handleMicrotask() {
+        if (completion)
+            completion();
+        else
+            debugger;
+    });
+}
+
+function triggerNestedMicrotask() {
+    queueMicrotask(function handleMicrotask1() {
+        queueMicrotask(function handleMicrotask2() {
+            debugger;
+        });
+    });
+}
+
+function triggerRequestAnimationFrame(completion) {
+    requestAnimationFrame(function handleAnimationFrame() {
+        if (completion)
+            completion();
+        else
+            debugger;
+    });
+}
+
+function triggerNestedRequestAnimationFrame() {
+    requestAnimationFrame(function handleAnimationFrame1() {
+        requestAnimationFrame(function handleAnimationFrame2() {
+            debugger;
+        });
+    });
+}
+
+function triggerSetTimeout(completion) {
+    setTimeout(function handleTimeout() {
+        if (completion)
+            completion();
+        else
+            debugger;
+    });
+}
+
+function triggerNestedSetTimeout() {
+    setTimeout(function handleTimeout1() {
+        setTimeout(function handleTimeout2() {
+            debugger;
+        });
+    });
+}
+
+function triggerSetInterval(completion) {
+    let timer = setInterval(function handleInterval() {
+        clearInterval(timer);
+        if (completion)
+            completion();
+        else
+            debugger;
+    });
+}
+
+function triggerNestedSetInterval() {
+    let outerTimer = setInterval(function handleInterval1() {
+        clearInterval(outerTimer);
+        let innerTimer = setInterval(function handleInterval2() {
+            clearInterval(innerTimer);
+            debugger;
+        });
+    });
+}
+
+function triggerPostMessage(completion) {
+    let frame = document.createElement("iframe");
+    frame.srcdoc = `<script>window.parent.postMessage(42, "*");<\/script>`;
+    document.body.appendChild(frame);
+
+    window.addEventListener("message", function handleMessage() {
+        window.removeEventListener("message", handleMessage);
+        if (completion)
+            completion();
+        else
+            debugger;
+    });
+}
+
+function triggerCombined() {
+    triggerMicrotask(() => {
+        triggerRequestAnimationFrame(() => {
+            triggerSetTimeout(() => {
+                triggerSetInterval(() => {
+                    triggerPostMessage();
+                });
+            });
+        });
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("AsyncStackTrace.Basic");
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.Microtask",
+        expression: `triggerMicrotask()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.NestedMicrotask",
+        expression: `triggerNestedMicrotask()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.RequestAnimationFrame",
+        expression: `triggerRequestAnimationFrame()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.NestedRequestAnimationFrame",
+        expression: `triggerNestedRequestAnimationFrame()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.SetTimeout",
+        expression: `triggerSetTimeout()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.NestedSetTimeout",
+        expression: `triggerNestedSetTimeout()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.SetInterval",
+        expression: `triggerSetInterval()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.NestedSetInterval",
+        expression: `triggerNestedSetInterval()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.NestedSetInterval",
+        expression: `triggerNestedSetInterval()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.PostMessage",
+        expression: `triggerPostMessage()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.Combined",
+        expression: `triggerCombined()`,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for checking that async stack traces exist when pausing in asynchronous callbacks: requestAnimationFrame, setTimeout, setInterval, and postMessage.</p>
+</body>
+</html>

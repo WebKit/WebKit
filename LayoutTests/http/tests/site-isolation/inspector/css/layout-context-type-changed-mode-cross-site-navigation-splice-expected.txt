@@ -1,0 +1,55 @@
+Tests where a cross-origin iframe's document is spliced after a cross-site main-frame navigation while the Layout panel is open.
+
+
+
+== Running test suite: SiteIsolation.CSS.LayoutContextTypeChangedMode.CrossSiteNavigationSplice
+-- Running test case: SiteIsolation.CSS.LayoutContextTypeChangedMode.CrossSiteNavigationSplice.AllModeBeforeNavigation
+Changing `layoutContextTypeChangedMode` to `All`...
+Navigating the main frame cross-site...
+PASS: Before #container is expanded, the iframe's document should be pending or in the page tree.
+Expanding #container in the page tree...
+PASS: The page tree should have the <iframe>.
+PASS: The iframe's document should be in the page tree.
+PASS: The iframe's document should be spliced into the page tree's <iframe>.
+PASS: The page tree's <iframe> should have the frame document as its child.
+PASS: The Layout panel should list the iframe's #grid and #deep-grid.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.CSS.LayoutContextTypeChangedMode.CrossSiteNavigationSplice.AllModeAfterNavigation
+Navigating the main frame cross-site...
+Changing `layoutContextTypeChangedMode` to `All` after the navigation...
+PASS: Before #container is expanded, the iframe's document should be pending or in the page tree.
+Expanding #container in the page tree...
+PASS: The page tree should have the <iframe>.
+PASS: The iframe's document should be in the page tree.
+PASS: The iframe's document should be spliced into the page tree's <iframe>.
+PASS: The page tree's <iframe> should have the frame document as its child.
+PASS: The Layout panel should list the iframe's #grid and #deep-grid.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.CSS.LayoutContextTypeChangedMode.CrossSiteNavigationSplice.AllModeBeforeNavigationLateGrid
+Changing `layoutContextTypeChangedMode` to `All`...
+Navigating the main frame cross-site...
+Making #main-grid a grid after the iframe has loaded...
+PASS: Before #container is expanded, the iframe's document should be pending or in the page tree.
+Expanding #container in the page tree...
+PASS: The page tree should have the <iframe>.
+PASS: The iframe's document should be in the page tree.
+PASS: The iframe's document should be spliced into the page tree's <iframe>.
+PASS: The page tree's <iframe> should have the frame document as its child.
+PASS: The Layout panel should list the iframe's #grid and #deep-grid.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.CSS.LayoutContextTypeChangedMode.CrossSiteNavigationSplice.AllModeAfterNavigationLateGrid
+Navigating the main frame cross-site...
+Changing `layoutContextTypeChangedMode` to `All` after the navigation...
+Making #main-grid a grid after the iframe has loaded...
+PASS: Before #container is expanded, the iframe's document should be pending or in the page tree.
+Expanding #container in the page tree...
+PASS: The page tree should have the <iframe>.
+PASS: The iframe's document should be in the page tree.
+PASS: The iframe's document should be spliced into the page tree's <iframe>.
+PASS: The page tree's <iframe> should have the frame document as its child.
+PASS: The Layout panel should list the iframe's #grid and #deep-grid.
+-- Running test teardown.
+

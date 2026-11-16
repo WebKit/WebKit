@@ -1,0 +1,14 @@
+<style>
+div { font: 20px Times; writing-mode: vertical-rl; height: 300px; margin: 10px; }
+.combine { text-combine-upright: all; }
+</style>
+<!-- Combined text keeps its original content in the layout box. Content and combining change here after the text was laid out. -->
+<div>a<span id="content" class="combine">12</span>b</div>
+<div>a<span id="on">12</span>b</div>
+<div>a<span id="off" class="combine">12</span>b</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("content").firstChild.data = "34";
+document.getElementById("on").classList.add("combine");
+document.getElementById("off").classList.remove("combine");
+</script>

@@ -1,0 +1,3 @@
+
+PASS forward() in a detached window
+

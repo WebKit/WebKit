@@ -1,0 +1,6 @@
+This test checks that named grid areas are resolved per the specification.
+
+
+PASS .grid 1
+PASS .grid 2
+

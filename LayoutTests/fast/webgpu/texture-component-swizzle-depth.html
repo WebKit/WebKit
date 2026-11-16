@@ -1,0 +1,95 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+// https://gpuweb.github.io/gpuweb/#reading-depth-stencil
+// With the feature enabled a depth aspect reads as (V, 0, 0, 1), not Metal's own (V, V, V, 1).
+const shaderCode = `
+@group(0) @binding(0) var depthTexture: texture_2d<f32>;
+@group(0) @binding(1) var<storage, read_write> result: array<f32, 4>;
+
+@compute @workgroup_size(1)
+fn main()
+{
+    let texel = textureLoad(depthTexture, vec2u(0, 0), 0);
+    result[0] = texel.r;
+    result[1] = texel.g;
+    result[2] = texel.b;
+    result[3] = texel.a;
+}
+`;
+
+onload = async () => {
+    const adapter = await navigator.gpu.requestAdapter({});
+    const device = await adapter.requestDevice({ requiredFeatures: ['texture-component-swizzle'] });
+
+    const depthTexture = device.createTexture({
+        size: [1, 1],
+        format: 'depth32float',
+        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+
+    // 0.5 is exact in depth32float, so the readback can be compared exactly.
+    const clearEncoder = device.createCommandEncoder();
+    clearEncoder.beginRenderPass({
+        colorAttachments: [],
+        depthStencilAttachment: {
+            view: depthTexture.createView(),
+            depthClearValue: 0.5,
+            depthLoadOp: 'clear',
+            depthStoreOp: 'store',
+        },
+    }).end();
+    device.queue.submit([clearEncoder.finish()]);
+
+    const bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            { binding: 0, visibility: GPUShaderStage.COMPUTE, texture: { sampleType: 'unfilterable-float' } },
+            { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+        ],
+    });
+    const pipeline = device.createComputePipeline({
+        layout: device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] }),
+        compute: { module: device.createShaderModule({ code: shaderCode }) },
+    });
+
+    async function readThroughSwizzle(swizzle)
+    {
+        const storageBuffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+        const readbackBuffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+        const bindGroup = device.createBindGroup({
+            layout: bindGroupLayout,
+            entries: [
+                { binding: 0, resource: depthTexture.createView({ swizzle }) },
+                { binding: 1, resource: { buffer: storageBuffer } },
+            ],
+        });
+
+        const commandEncoder = device.createCommandEncoder();
+        const computePass = commandEncoder.beginComputePass({});
+        computePass.setPipeline(pipeline);
+        computePass.setBindGroup(0, bindGroup);
+        computePass.dispatchWorkgroups(1);
+        computePass.end();
+        commandEncoder.copyBufferToBuffer(storageBuffer, 0, readbackBuffer, 0, 16);
+        device.queue.submit([commandEncoder.finish()]);
+
+        await readbackBuffer.mapAsync(GPUMapMode.READ);
+        const values = [...new Float32Array(readbackBuffer.getMappedRange())].toString();
+        readbackBuffer.unmap();
+        return values;
+    }
+
+    globalThis.identity = await readThroughSwizzle('rgba');
+    shouldBeEqualToString('identity', '0.5,0,0,1');
+
+    // A user swizzle composes on top of the depth one, it does not replace it.
+    globalThis.swapped = await readThroughSwizzle('gr01');
+    shouldBeEqualToString('swapped', '0,0.5,0,1');
+
+    globalThis.alphaBroadcast = await readThroughSwizzle('aaaa');
+    shouldBeEqualToString('alphaBroadcast', '1,1,1,1');
+
+    finishJSTest();
+};
+</script>

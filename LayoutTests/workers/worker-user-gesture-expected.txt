@@ -1,0 +1,10 @@
+Passes a User Gesture through postMessage() to a worker context; press any key, click, or tap to continue.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS User Gesture was propagated through postMessage and back.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

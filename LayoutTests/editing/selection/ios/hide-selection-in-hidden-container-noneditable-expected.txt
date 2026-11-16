@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: 1. Long press to select.
+CONSOLE MESSAGE: 2. Wait for selection to appear.
+CONSOLE MESSAGE: 3. Change hidden container width/height to 0.
+CONSOLE MESSAGE: 4. Wait for selection to disappear.
+CONSOLE MESSAGE: 5. Ensure text is still selected.
+Verifies that the selection does not appear if it's inside an empty overflow hidden container.On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS Selection appeared after long press
+PASS Waited for selection to disappear after making container empty
+PASS getSelection().type is "Range"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

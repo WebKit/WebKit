@@ -1,0 +1,56 @@
+html5lib parser tests
+
+
+PASS <!doctype html></head> <head>
+PASS <!doctype html><form><div></form><div>
+PASS <!doctype html><title>&amp;</title>
+PASS <!doctype html><title><!--&amp;--></title>
+PASS <!doctype>
+PASS <!---x
+PASS <body>\n<div> (innerHTML in div)
+PASS <frameset></frameset>\nfoo
+PASS <frameset></frameset>\n<noframes>
+PASS <frameset></frameset>\n<div>
+PASS <frameset></frameset>\n</html>
+PASS <frameset></frameset>\n</div>
+PASS <form><form>
+PASS <button><button>
+PASS <table><tr><td></th>
+PASS <table><caption><td>
+PASS <table><caption><div>
+PASS </caption><div> (innerHTML in caption)
+PASS <table><caption><div></caption>
+PASS <table><caption></table>
+PASS </table><div> (innerHTML in caption)
+PASS <table><caption></body></col></colgroup></html></tbody></td></tfoot></th></thead></tr>
+PASS <table><caption><div></div>
+PASS <table><tr><td></body></caption></col></colgroup></html>
+PASS </table></tbody></tfoot></thead></tr><div> (innerHTML in td)
+PASS <table><colgroup>foo
+PASS foo<col> (innerHTML in colgroup)
+PASS <table><colgroup></col>
+PASS <frameset><div>
+PASS </frameset><frame> (innerHTML in frameset)
+PASS <frameset></div>
+PASS </body><div> (innerHTML in body)
+PASS <table><tr><div>
+PASS </tr><td> (innerHTML in tr)
+PASS </tbody></tfoot></thead><td> (innerHTML in tr)
+PASS <table><tr><div><td>
+PASS <caption><col><colgroup><tbody><tfoot><thead><tr> (innerHTML in tbody)
+PASS <table><tbody></thead>
+PASS </table><tr> (innerHTML in tbody)
+PASS <table><tbody></body></caption></col></colgroup></html></td></th></tr>
+PASS <table><tbody></div>
+PASS <table><table>
+PASS <table></body></caption></col></colgroup></html></tbody></td></tfoot></th></thead></tr>
+PASS </table><tr> (innerHTML in table)
+PASS <body></body></html> (innerHTML in html)
+PASS <html><frameset></frameset></html>
+PASS <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html></html>
+PASS <param><frameset></frameset>
+PASS <source><frameset></frameset>
+PASS <track><frameset></frameset>
+PASS </html><frameset></frameset>
+PASS </body><frameset></frameset>
+

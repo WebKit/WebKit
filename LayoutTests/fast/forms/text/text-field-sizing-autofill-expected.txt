@@ -1,0 +1,6 @@
+
+
+PASS An autofilled text input should have fixed field sizing
+PASS An autofilled search input should have fixed field sizing
+PASS An autofilled number input should have fixed field sizing
+

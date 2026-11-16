@@ -1,0 +1,14 @@
+There should be no red areas:
+Table with one cell
+
+table cell
+Empty table with caption
+
+caption
+Table with caption and cell
+
+caption
+table cell
+
+PASS <table> grid items should fill their grid area
+

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<!-- U+2029 PARAGRAPH SEPARATOR has UAX#14 line breaking class BK and is a forced line break
+     regardless of white-space (CSS Text Level 3 §5.1).
+     All cases use Ahem 10px with line-height: 10px for exact measurements. -->
+
+<!-- white-space: normal — U+2029 still forces a line break (BK class, unconditional). -->
+<div id="normal" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: normal;"></div>
+
+<!-- white-space: pre -->
+<div id="pre" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: pre;"></div>
+
+<!-- white-space: pre-wrap -->
+<div id="pre-wrap" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: pre-wrap;"></div>
+
+<!-- white-space: pre-line -->
+<div id="pre-line" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: pre-line;"></div>
+
+<!-- white-space: nowrap -->
+<div id="nowrap" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: nowrap;"></div>
+
+<!-- Multiple consecutive U+2029 produce multiple line breaks. -->
+<div id="multi" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: normal;"></div>
+
+<!-- U+2029 at start and end of text. -->
+<div id="edges" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: normal;"></div>
+
+<!-- U+2029 inside a span — the inline box should not prevent the break. -->
+<div id="in-span" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: normal;"></div>
+
+<!-- Mixed U+2028 and U+2029 — both force line breaks. -->
+<div id="mixed" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: normal;"></div>
+
+<script>
+description("U+2029 PARAGRAPH SEPARATOR is a forced line break in all white-space modes (UAX#14 class BK, CSS Text Level 3 §5.1).");
+
+var ps = "\u2029";
+var ls = "\u2028";
+
+document.getElementById("normal").textContent = "a" + ps + "b";
+document.getElementById("pre").textContent = "a" + ps + "b";
+document.getElementById("pre-wrap").textContent = "a" + ps + "b";
+document.getElementById("pre-line").textContent = "a" + ps + "b";
+document.getElementById("nowrap").textContent = "a" + ps + "b";
+document.getElementById("multi").textContent = "a" + ps + ps + "b";
+document.getElementById("edges").textContent = ps + "a" + ps;
+document.getElementById("in-span").innerHTML = "<span>a" + ps + "b</span>";
+document.getElementById("mixed").textContent = "a" + ls + "b" + ps + "c";
+
+// U+2029 forces a line break unconditionally — two lines (20px) in all white-space modes.
+shouldBe("document.getElementById('normal').offsetHeight", "20");
+shouldBe("document.getElementById('pre').offsetHeight", "20");
+shouldBe("document.getElementById('pre-wrap').offsetHeight", "20");
+shouldBe("document.getElementById('pre-line').offsetHeight", "20");
+shouldBe("document.getElementById('nowrap').offsetHeight", "20");
+
+// Two consecutive U+2029: three lines.
+shouldBe("document.getElementById('multi').offsetHeight", "30");
+
+// U+2029 at start and end: empty line + "a" = 2 lines (trailing break doesn't start a new line).
+shouldBe("document.getElementById('edges').offsetHeight", "20");
+
+// U+2029 inside a span still forces a break.
+shouldBe("document.getElementById('in-span').offsetHeight", "20");
+
+// U+2028 + U+2029: "a", "b", "c" = three lines.
+shouldBe("document.getElementById('mixed').offsetHeight", "30");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

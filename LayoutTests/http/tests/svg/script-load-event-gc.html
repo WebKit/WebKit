@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script src='/js-test-resources/js-test.js'></script>
+<script>
+  description('garbage collect SVG script elements before the load events are dispatched');
+  jsTestIsAsync = true;
+  onload = async () => {
+      let promises = Array(10).fill().map(() => 
+          new Promise(resolve => {
+              var s = document.createElementNS('http://www.w3.org/2000/svg', 'script');
+              s.setAttribute('href', '/resources/slow-script.pl?delay=1000');
+              s.onload = () => resolve('onload');
+              document.body.appendChild(s);
+          }));
+      await new Promise(resolve => setTimeout(resolve, 100));
+      document.querySelectorAll('script').forEach(i => i.remove());
+      gc();
+      for (const promise of promises)
+          debug(await promise);
+      finishJSTest();
+  }
+</script>

@@ -1,0 +1,14 @@
+uniform half4 colorGreen, colorRed;
+
+inline half4 green() {
+    half4 x = colorGreen;
+    return x;
+}
+
+half4 main(float2 coords) {
+    half4 result = colorRed;
+    while (result != colorGreen)
+        result = green();
+
+    return result;
+}

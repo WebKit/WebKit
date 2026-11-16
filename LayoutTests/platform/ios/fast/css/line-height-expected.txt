@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 54x18
+          text run at (0,0) width 54: "Test for "
+        RenderInline {A} at (53,0) size 121x18 [color=#0000EE]
+          RenderText {#text} at (53,0) size 121x18
+            text run at (53,0) width 121: "Bugzilla Bug 9934"
+        RenderText {#text} at (173,0) size 463x18
+          text run at (173,0) width 463: " Selecting text in text field with {line-height:100%} causes it to bounce."
+      RenderBlock {DIV} at (0,18) size 784x19
+        RenderTextControl {INPUT} at (0,0) size 154x19 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBlock {DIV} at (0,37) size 784x36
+        RenderText {#text} at (0,0) size 750x36
+          text run at (0,0) width 586: "Select the text in the text field using horizontal mouse movements, then drag up and down. "
+          text run at (585,0) width 165: "The text should not move"
+          text run at (0,18) width 64: "vertically."
+layer at (14,29) size 142x13
+  RenderBlock {DIV} at (6,2) size 142x14
+    RenderText {#text} at (0,-1) size 68x15
+      text run at (0,0) width 68: "Lorem Ipsum"

@@ -1,0 +1,21 @@
+<html>
+<head>
+<style>
+    p.complex { text-size: 20pt; text-rendering: geometricPrecision; }
+    p.solidshadow { text-shadow: green 5px 5px 0px; }
+    p.shadow { text-shadow: green 5px 5px 2px; }
+</style>
+</head>
+<body>
+<div>
+<p>This test verifies that the text-shadow CSS property works properly for complex text</p>
+<p>The following text should have no shadow:</p>
+<p class="complex">A B C D E F G H I J K L M N O P Q R S T U V X Y Z</p>
+<p>The following text should have a green solid shadow:</p>
+<p class="complex solidshadow">A B C D E F G H I J K L M N O P Q R S T U V X Y Z</p>
+<p>The following text should be rendered with a green shadow with a blur radius of 2:</p>
+<p class="complex shadow">A B C D E F G H I J K L M N O P Q R S T U V X Y Z</p>
+</div>
+
+</body>
+</html>

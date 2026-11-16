@@ -1,0 +1,15 @@
+
+Tests that navigating a frame replaces its page execution context.
+
+
+== Running test suite: Frame.ExecutionContextAfterNavigation
+-- Running test case: Frame.ExecutionContextAfterNavigation.ReplacePreviousContext
+PASS: The test page should have one subframe.
+PASS: The subframe should have an initial page execution context.
+PASS: Evaluation should use the initial page execution context.
+PASS: The navigated frame should have a new execution context identifier.
+PASS: The new execution context should become the page execution context.
+PASS: The previous execution context should no longer belong to the frame.
+PASS: The new execution context should belong to the frame.
+PASS: Evaluation should use the new page execution context.
+

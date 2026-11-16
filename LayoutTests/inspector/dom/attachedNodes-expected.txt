@@ -1,0 +1,118 @@
+Tests for the DOMManager.attachedNodes.
+
+
+== Running test suite: DOM.attachedNodes
+-- Running test case: DOM.attachedNodes.Unfiltered
+Dumping nodes:
+  #document
+  html
+  html
+  head
+  script
+  script
+  [text node]
+  style
+  [text node]
+  body
+  p#test-description
+  [text node]
+  div#a
+  ::before
+  div#a1
+  div#a2
+  div#a3
+  ::after
+  div#b
+  div#b1
+  div#b2
+  div#b3
+
+-- Running test case: DOM.attachedNodes.Filtered
+Dumping nodes:
+  div#a
+  div#a1
+  div#a2
+  div#a3
+  div#b
+  div#b1
+  div#b2
+  div#b3
+
+-- Running test case: DOM.attachedNodes.DetachedNode
+Creating detached node...
+Created detached node: div#script-created-node
+Dumping nodes:
+  #document
+  html
+  html
+  head
+  script
+  script
+  [text node]
+  style
+  [text node]
+  body
+  p#test-description
+  [text node]
+  div#a
+  ::before
+  div#a1
+  div#a2
+  div#a3
+  ::after
+  div#b
+  div#b1
+  div#b2
+  div#b3
+Attaching node to DOM tree...
+DOM node attached to tree.
+Dumping nodes:
+  #document
+  html
+  html
+  head
+  script
+  script
+  [text node]
+  style
+  [text node]
+  body
+  p#test-description
+  [text node]
+  div#a
+  ::before
+  div#script-created-node
+  div#a1
+  div#a2
+  div#a3
+  ::after
+  div#b
+  div#b1
+  div#b2
+  div#b3
+Detaching node from DOM tree...
+DOM node detached from tree.
+Dumping nodes:
+  #document
+  html
+  html
+  head
+  script
+  script
+  [text node]
+  style
+  [text node]
+  body
+  p#test-description
+  [text node]
+  div#a
+  ::before
+  div#a1
+  div#a2
+  div#a3
+  ::after
+  div#b
+  div#b1
+  div#b2
+  div#b3
+

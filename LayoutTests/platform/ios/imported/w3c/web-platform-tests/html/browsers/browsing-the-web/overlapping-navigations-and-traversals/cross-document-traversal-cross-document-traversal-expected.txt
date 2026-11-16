@@ -1,0 +1,6 @@
+
+PASS cross-document traversals in opposite directions: the result is going nowhere
+PASS cross-document traversals in opposite directions, second traversal invalid at queuing time but valid at the time it is run: the result is going nowhere
+FAIL cross-document traversals in the same (back) direction: the result is going -2 with only one load event assert_equals: first load event must be going back expected "?1" but got "?2"
+FAIL cross-document traversals in the same (forward) direction: the result is going +2 with only one load event assert_equals: first load event must be going forward expected "?3" but got "?2"
+

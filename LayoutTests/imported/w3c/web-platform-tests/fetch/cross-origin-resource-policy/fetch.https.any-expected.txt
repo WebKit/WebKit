@@ -1,0 +1,11 @@
+
+PASS Same-origin fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header.
+PASS Same-origin fetch with a 'Cross-Origin-Resource-Policy: same-site' response header.
+PASS Cross-origin cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header.
+PASS Cross-origin cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header.
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header.
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header.
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header after a redirection.
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header after a cross-origin redirection.
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' redirect response header.
+

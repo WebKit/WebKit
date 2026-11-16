@@ -1,0 +1,4 @@
+
+
+PASS Intersection Observer: root margin is applied when observer is in a same-origin iframe, and page is zoomed
+

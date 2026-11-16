@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/simpleSourcedScript.js because it does not appear in the script-src directive of the Content Security Policy.
+
+PASS An uppercase SCRIPT-SRC directive still applies strict-dynamic, so a parser-inserted script is blocked.
+

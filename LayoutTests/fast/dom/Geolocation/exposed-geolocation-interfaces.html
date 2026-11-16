@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Checks that the Geolocation interfaces are exposed and that their name is correct.");
+
+const windowProperties = Object.getOwnPropertyNames(window);
+const expectedProperties = ["Geolocation", "GeolocationCoordinates", "GeolocationPosition", "GeolocationPositionError"];
+
+for (let expectedProperty of expectedProperties)
+  shouldBeTrue("windowProperties.indexOf('" + expectedProperty + "') >= 0");
+</script>
+</body>
+</html>

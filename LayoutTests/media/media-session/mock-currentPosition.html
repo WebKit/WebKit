@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-currentPosition</title>
+    <script src="../video-test.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        if (!window.internals) {
+            failTest('This test requires Internals');
+            return;
+        }
+
+        consoleWrite('Test that there is no current position before positionState has been set.')
+        run('navigator.mediaSession.setPositionState(null)');
+        testDOMException('internals.currentMediaSessionPosition(navigator.mediaSession)', "DOMException.INVALID_STATE_ERR");
+
+        consoleWrite('');
+        consoleWrite('Test that current position does not advance when session is "paused".')
+        run('navigator.mediaSession.playbackState = "paused"');
+        run('navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, position: 0 })');
+        testExpected('internals.currentMediaSessionPosition(navigator.mediaSession)', 0);
+        consoleWrite('sleeping for 100ms');
+        await sleepFor(100);
+        testExpected('internals.currentMediaSessionPosition(navigator.mediaSession)', 0);
+
+        consoleWrite('');
+        consoleWrite('Test that current position does advance when session is "playing".');
+        run('navigator.mediaSession.playbackState = "playing"');
+        consoleWrite('sleeping for 100ms');
+        await sleepFor(100);
+        testExpected('internals.currentMediaSessionPosition(navigator.mediaSession)', 0, '>');
+
+        consoleWrite('');
+        consoleWrite('Test that currentPosition does not move < 0 when playing backwards.')
+        run('navigator.mediaSession.setPositionState({ duration: 1, playbackRate: -100, position: 1 })');
+        consoleWrite('sleeping for 100ms');
+        await sleepFor(100);
+        testExpected('internals.currentMediaSessionPosition(navigator.mediaSession)', 0);
+
+        consoleWrite('');
+        consoleWrite('Test that currentPosition does not advance > duration when playing forwards.')
+        run('navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 100, position: 0 })');
+        consoleWrite('sleeping for 100ms');
+        await sleepFor(100);
+        testExpected('internals.currentMediaSessionPosition(navigator.mediaSession)', 1);
+        endTest();
+    }, {once: true});
+    </script>
+</head>
+<body>
+
+</body>
+</html>

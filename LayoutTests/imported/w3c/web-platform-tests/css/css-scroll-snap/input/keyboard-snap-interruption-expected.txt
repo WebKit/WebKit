@@ -1,0 +1,3 @@
+
+FAIL Interrupting a snap animation with another key press targeting the same node preserves snapping destination assert_less_than: Scroll should not have finished yet expected a number less than 600 but got 600
+

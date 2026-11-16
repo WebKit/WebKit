@@ -1,0 +1,4 @@
+Old content
+
+PASS <template for> in innerHTML should not patch outer element
+

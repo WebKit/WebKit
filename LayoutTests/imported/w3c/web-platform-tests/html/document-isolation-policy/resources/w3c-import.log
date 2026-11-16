@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/back-forward-cache-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/blob-creator-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/common.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/fetch-and-create-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/header-parsing-frame.py
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/history-traversal-parent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/nothing-cross-origin-corp.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/nothing-cross-origin-corp.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/nothing-no-corp.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/redirect_none_to_credentialless.py
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/report.py
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/reporting-empty-frame-multiple-headers.html.asis
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/reporting-empty-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/reporting-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/respond-with-fetch-sw.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/shared-worker-fetch.js.py
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/shared-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/sw-store-to-cache-storage.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/sw.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/worker-support.js

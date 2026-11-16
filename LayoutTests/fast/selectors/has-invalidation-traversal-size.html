@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* Subject :has() with child combinator and compound peer */
+.c1:has(> .trigger) > .target { color: green; }
+/* Subject :has() with descendant combinator and compound peer */
+.c2:has(.trigger) > .target { color: green; }
+/* Subject :has() without compound peer (uses unique trigger3 class to avoid leaking invalidations to other subtests via shared class "trigger" key) */
+:has(> .trigger3) > .target { color: green; }
+/* :has() in non-subject position with compound peer */
+.c4:has(> .trigger) .target { color: green; }
+/* :has() with sibling combinator */
+.c5:has(+ .trigger) { color: green; }
+/* :has() with :is() wrapping */
+.c6:has(:is(.trigger + .other)) > .target { color: green; }
+/* Non-subject :has() with descendant — scope-bounded traversal */
+.c7:has(.trigger) .target { color: green; }
+/* :has() inside :not() with compound peer */
+.c8:not(:has(.trigger)) .target { color: green; }
+/* :has() inside :is() with compound peer */
+.c9:is(:has(.trigger)) .target { color: green; }
+/* :has() inside :is() with complex selector and compound peer */
+.c10:is(.other :has(.trigger)) .target { color: green; }
+/* Non-subject (Parent, DirectSibling): bearer has direct next sibling */
+.c11:has(+ .trigger11) > .target { color: green; }
+/* Non-subject (Parent, IndirectSibling): bearer has any later sibling */
+.c12:has(~ .trigger12) > .target { color: green; }
+/* Non-subject (Ancestor, DirectSibling): subject is descendant of bearer */
+.c13:has(+ .trigger13) .target { color: green; }
+/* Non-subject (Ancestor, IndirectSibling): subject is descendant of bearer */
+.c14:has(~ .trigger14) .target { color: green; }
+/* Non-subject (Parent, SiblingChild): bearer ~ .other > .trigger */
+.c15:has(~ .other15 > .trigger15) > .target { color: green; }
+/* Non-subject (Parent, SiblingDescendant): bearer ~ .other .trigger */
+.c16:has(~ .other16 .trigger16) > .target { color: green; }
+/* Non-subject (Ancestor, SiblingChild): subject is descendant of bearer */
+.c17:has(~ .other17 > .trigger17) .target { color: green; }
+/* Non-subject (Ancestor, SiblingDescendant): subject is descendant of bearer */
+.c18:has(~ .other18 .trigger18) .target { color: green; }
+/* :has() inside :is() with compound peers at both levels - scope merges to .c19.other */
+.c19:is(.other:has(.trigger)) .target { color: green; }
+/* :has() inside :is() with type selector in inner compound - inner skipped, scope stays .c20 */
+.c20:is(div:has(.trigger)) .target { color: green; }
+/* :has() inside :is() with type selector in outer compound and class peer in inner */
+.c21 div:is(.other:has(.trigger)) .target { color: green; }
+/* Scope selector has no matching ancestor - invalidation is skipped entirely */
+.c22:has(.trigger22) .target { color: green; }
+/* Scope-bounded traversal for id change invalidation */
+.c23:has(#trigger23) .target { color: green; }
+/* Scope-bounded traversal for attribute change invalidation */
+.c24:has([data-trigger24]) .target { color: green; }
+/* Scope-bounded traversal for pseudo-class change invalidation */
+.c25:has(:checked) .target { color: green; }
+/* Scope-bounded class change with matching ancestor - bounded to .c26 subtree */
+.c26:has(.trigger26) .target { color: green; }
+/* Scope-bounded attribute change with matching ancestor - bounded to .c28 subtree */
+.c28:has([data-trigger28]) .target { color: green; }
+/* Scope-bounded pseudo-class change with matching ancestor - bounded to .c29 subtree */
+.c29:has(:checked) .target { color: green; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<pre id="log"></pre>
+<div id="tests"></div>
+<script>
+function log(message) {
+    document.getElementById("log").textContent += message + "\n";
+}
+
+function makeTree(containerClass, childCount, wrapperClass) {
+    var container = document.createElement("div");
+    if (containerClass)
+        container.className = containerClass;
+    container.id = "container";
+    for (var i = 0; i < childCount; i++) {
+        var child = document.createElement("div");
+        child.className = "other";
+        container.appendChild(child);
+    }
+    var target = document.createElement("div");
+    target.className = "target";
+    container.appendChild(target);
+    var root = container;
+    if (wrapperClass) {
+        var wrapper = document.createElement("div");
+        wrapper.className = wrapperClass;
+        wrapper.appendChild(container);
+        root = wrapper;
+    }
+    document.getElementById("tests").appendChild(root);
+    return container;
+}
+
+function runTest(description, containerClass, mutate, expectGreen, options) {
+    options = options || {};
+    var container = makeTree(containerClass, 5, options.wrapperClass);
+    var mutateTarget = options.setup ? options.setup(container) : container;
+    document.body.offsetHeight;
+
+    internals.resetStyleInvalidationTraversalCount();
+
+    mutate(mutateTarget);
+
+    document.body.offsetHeight;
+
+    var count = internals.styleInvalidationTraversalCount;
+    var target = container.querySelector(".target");
+    var color = target ? getComputedStyle(target).color : "";
+    var passed = expectGreen ? color === "rgb(0, 128, 0)" : color !== "rgb(0, 128, 0)";
+
+    log(description);
+    log("  Traversal count: " + count);
+    if (!passed)
+        log("  FAIL: unexpected color " + color);
+
+    var tests = document.getElementById("tests");
+    while (tests.firstChild)
+        tests.firstChild.remove();
+}
+
+runTest(":has(> .trigger) with compound peer .c1", "c1", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.appendChild(trigger);
+}, true);
+
+runTest(":has(.trigger) with compound peer .c2", "c2", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.firstElementChild.appendChild(trigger);
+}, true);
+
+runTest(":has(> .trigger3) without compound peer", null, function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger3";
+    container.appendChild(trigger);
+}, true);
+
+runTest(":has(> .trigger) in non-subject position with compound peer .c4", "c4", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.appendChild(trigger);
+}, true);
+
+runTest(":has(+ .trigger) with compound peer .c5", "c5", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.parentNode.insertBefore(trigger, container.nextSibling);
+}, true);
+
+runTest(":has(:is(.trigger + .other)) with compound peer .c6", "c6", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.insertBefore(trigger, container.querySelector(".other"));
+}, true);
+
+runTest(":has(.trigger) non-subject with scope-bounded traversal .c7", "c7", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.appendChild(trigger);
+}, true);
+
+runTest(":not(:has(.trigger)) inside :not() with compound peer .c8", "c8", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.appendChild(trigger);
+}, false);
+
+runTest(":is(:has(.trigger)) inside :is() with compound peer .c9", "c9", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.appendChild(trigger);
+}, true);
+
+runTest(":is(.other :has(.trigger)) inside :is() with complex selector and compound peer .c10", "c10", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.appendChild(trigger);
+}, true, { wrapperClass: "other" });
+
+runTest("(Parent, DirectSibling) .c11:has(+ .trigger11) > .target", "c11", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger11";
+    container.parentNode.insertBefore(trigger, container.nextSibling);
+}, true);
+
+runTest("(Parent, IndirectSibling) .c12:has(~ .trigger12) > .target", "c12", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger12";
+    container.parentNode.appendChild(trigger);
+}, true);
+
+runTest("(Ancestor, DirectSibling) .c13:has(+ .trigger13) .target", "c13", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger13";
+    container.parentNode.insertBefore(trigger, container.nextSibling);
+}, true);
+
+runTest("(Ancestor, IndirectSibling) .c14:has(~ .trigger14) .target", "c14", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger14";
+    container.parentNode.appendChild(trigger);
+}, true);
+
+function setupFollowingOther(otherClass) {
+    return function(container) {
+        var other = document.createElement("div");
+        other.className = otherClass;
+        other.appendChild(document.createElement("div"));
+        container.parentNode.insertBefore(other, container.nextSibling);
+        return other;
+    };
+}
+
+runTest("(Parent, SiblingChild) .c15:has(~ .other15 > .trigger15) > .target", "c15", function(other) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger15";
+    other.appendChild(trigger);
+}, true, { setup: setupFollowingOther("other15") });
+
+runTest("(Parent, SiblingDescendant) .c16:has(~ .other16 .trigger16) > .target", "c16", function(other) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger16";
+    other.firstElementChild.appendChild(trigger);
+}, true, { setup: setupFollowingOther("other16") });
+
+runTest("(Ancestor, SiblingChild) .c17:has(~ .other17 > .trigger17) .target", "c17", function(other) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger17";
+    other.appendChild(trigger);
+}, true, { setup: setupFollowingOther("other17") });
+
+runTest("(Ancestor, SiblingDescendant) .c18:has(~ .other18 .trigger18) .target", "c18", function(other) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger18";
+    other.firstElementChild.appendChild(trigger);
+}, true, { setup: setupFollowingOther("other18") });
+
+runTest(":is(.other:has(.trigger)) with merged scope .c19.other", "c19 other", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.appendChild(trigger);
+}, true, { wrapperClass: "c19" });
+
+runTest(":is(div:has(.trigger)) with type in inner compound - scope stays .c20", "c20", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.appendChild(trigger);
+}, true);
+
+runTest(".c21 div:is(.other:has(.trigger)) with type in outer compound", "other", function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger";
+    container.appendChild(trigger);
+}, true, { wrapperClass: "c21" });
+
+runTest(".c22:has(.trigger22) .target with no .c22 ancestor - skip invalidation", null, function(container) {
+    var trigger = document.createElement("div");
+    trigger.className = "trigger22";
+    container.appendChild(trigger);
+}, false);
+
+runTest(".c22:has(.trigger22) .target class toggle with no .c22 ancestor - skip invalidation", null, function(existing) {
+    existing.className = "trigger22";
+}, false, { setup: function(container) {
+    // Pre-insert a class-less element; toggling .trigger22 on it exercises ClassChangeInvalidation
+    // without triggering invalidation from removing another class (like .other) used elsewhere.
+    var existing = document.createElement("div");
+    container.appendChild(existing);
+    return existing;
+} });
+
+runTest(".c23:has(#trigger23) .target id toggle with no .c23 ancestor - skip invalidation", null, function(existing) {
+    existing.id = "trigger23";
+}, false, { setup: function(container) {
+    var existing = document.createElement("div");
+    container.appendChild(existing);
+    return existing;
+} });
+
+runTest(".c24:has([data-trigger24]) .target attribute toggle with no .c24 ancestor - skip invalidation", null, function(existing) {
+    existing.setAttribute("data-trigger24", "");
+}, false, { setup: function(container) {
+    var existing = document.createElement("div");
+    container.appendChild(existing);
+    return existing;
+} });
+
+runTest(".c25:has(:checked) .target pseudo-class toggle with no .c25 ancestor - skip invalidation", null, function(existing) {
+    existing.checked = true;
+}, false, { setup: function(container) {
+    var existing = document.createElement("input");
+    existing.type = "checkbox";
+    container.appendChild(existing);
+    return existing;
+} });
+
+// The following cases exercise the same *ChangeInvalidation entry points when the scope
+// selector does match an ancestor. Without scope wired these would traverse document-wide;
+// with scope they are bounded to the .c26/28/29 subtree.
+runTest(".c26:has(.trigger26) .target class toggle with .c26 ancestor - bounded invalidation", "c26", function(existing) {
+    existing.className = "trigger26";
+}, true, { setup: function(container) {
+    var existing = document.createElement("div");
+    container.appendChild(existing);
+    return existing;
+} });
+
+runTest(".c28:has([data-trigger28]) .target attribute toggle with .c28 ancestor - bounded invalidation", "c28", function(existing) {
+    existing.setAttribute("data-trigger28", "");
+}, true, { setup: function(container) {
+    var existing = document.createElement("div");
+    container.appendChild(existing);
+    return existing;
+} });
+
+runTest(".c29:has(:checked) .target pseudo-class toggle with .c29 ancestor - bounded invalidation", "c29", function(existing) {
+    existing.checked = true;
+}, true, { setup: function(container) {
+    var existing = document.createElement("input");
+    existing.type = "checkbox";
+    container.appendChild(existing);
+    return existing;
+} });
+</script>
+</script>
+</body>
+</html>

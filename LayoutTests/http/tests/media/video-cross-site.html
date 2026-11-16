@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>media file redirects to another site</title>
+        <script src=../../media-resources/video-test.js></script>
+        <script>
+            function loadedmetadata(evt) 
+            {
+                failTest("ERROR: allowed cross-site video load!");
+                consoleWrite("");
+                endTest();
+            }
+
+            function error(evt)
+            {
+                logResult(true, "SUCCESS: denied cross-site video load.");
+                consoleWrite("");
+                endTest();
+            }
+
+            function start() 
+            {
+                findMediaElement();
+
+                waitForEvent('loadedmetadata', loadedmetadata);
+                waitForEvent("error", error);
+                waitForEvent("loadstart");
+                testExpected("video.error", null);
+
+                video.src = "http://127.0.0.1:8000/media/resources/cross-site-reference.mov";
+            }
+        </script>
+    </head>
+    <body>
+        <video controls></video>
+        <p>Video with cross-site reference should not load.</p>
+        <script>start()</script>
+    </body>
+</html>
+

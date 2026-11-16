@@ -1,0 +1,7 @@
+
+
+PASS Panning outside the <model> in a same-site iframe does not rotate it
+PASS Panning the <model> in a same-site iframe rotates it
+PASS Panning outside the <model> in a cross-site iframe does not rotate it
+PASS Panning the <model> in a cross-site iframe rotates it
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `error` to `PaymentRequestUpdateEvent.prototype.updateWith`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+user_activation_test((test) => new Promise((resolve, reject) => {
+    let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        try {
+            event.updateWith({error: "Test"});
+        } catch {
+            assert_unreached("Should not throw when `total` is not provided.");
+        }
+        request.abort().then(resolve, reject);
+    });
+    request.show().catch(() => { /* ignore abort */ });
+}), "Calling `updateWith` inside `shippingaddresschange` without a `total` should not throw.");
+
+done();
+</script>
+

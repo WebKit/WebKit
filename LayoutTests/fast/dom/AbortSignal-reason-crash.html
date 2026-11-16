@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests accessing the reason of a newly created AbortSignal.");
+
+shouldBeUndefined("new AbortController().signal.reason");
+</script>
+</body>
+</html>

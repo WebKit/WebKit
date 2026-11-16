@@ -1,0 +1,10 @@
+
+PASS: Protocol name compare is case insensitive!
+
+
+--------
+Frame: 'aFrame'
+--------
+PASS: Protocol name compare is case insensitive!
+
+Inner iframe.

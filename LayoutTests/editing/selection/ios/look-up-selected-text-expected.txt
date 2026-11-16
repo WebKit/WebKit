@@ -1,0 +1,10 @@
+Verifies that tapping 'Look Up' in the edit menu does not cause a crash or hang. To manually run the test, select 'Apple' below and select 'Look Up' in the edit menu.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Tapped 'Look Up'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Apple

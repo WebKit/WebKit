@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/util.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+description("Spell check suggestions should not be populated when user selects a part of misspelling. "
+    + "To test manually, type 'wellcome home.' select 'llco', and context-click on the selection. "
+    + "The test suceeds when the context menu has no spell check suggestions.");
+
+initSpellTest("destination", "wellcome home.", function(textNode) {
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "");
+
+    // Context click on 'wellcome' to show the context menu.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuItemsWithSpellingSuggestions = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    // Select the text "llco".
+    var subWordRange = document.createRange();
+    subWordRange.setStart(textNode, 2);
+    subWordRange.setEnd(textNode, 6);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(subWordRange);
+
+    shouldBeEqualToString("window.getSelection().toString()", "llco");
+
+    // Context click on 'llco' to show the context menu.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuItemsWithoutSpellingSuggestions = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    shouldBeEqualToString("window.getSelection().toString()", "llco");
+    shouldBeTrue("contextMenuItemsWithoutSpellingSuggestions < contextMenuItemsWithSpellingSuggestions");
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", finishJSTest);
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

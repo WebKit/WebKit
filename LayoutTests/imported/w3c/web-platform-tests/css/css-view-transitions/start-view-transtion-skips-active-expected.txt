@@ -1,0 +1,3 @@
+
+PASS Synchronously starting a view transition skips the previously active  transition.
+

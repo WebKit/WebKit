@@ -1,0 +1,3 @@
+Test for bug 15650: XML attribute nodes are not importable.
+
+SUCCESS

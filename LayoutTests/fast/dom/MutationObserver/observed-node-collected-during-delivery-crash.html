@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("An observed node must stay alive for as long as MutationObserver::deliver() keeps its registration alive.");
+jsTestIsAsync = true;
+
+function callback(records, observer)
+{
+    // deliver() dropped the transient registration that kept div alive, but still holds the
+    // registration. disconnect() and gc() both dereference its reference to div.
+    observer.disconnect();
+    gc();
+    testPassed("did not crash");
+    finishJSTest();
+}
+
+let observer = new MutationObserver(callback);
+
+let div = document.createElement("div");
+let span = div.appendChild(document.createElement("span"));
+observer.observe(div, {attributes: true, subtree: true});
+div.removeChild(span); // Creates a transient registration for span, which keeps div alive.
+div = null;
+gc(); // Collects div's wrapper, leaving the registration as div's only owner.
+span.setAttribute("foo", "bar"); // Enqueues a record targeting span, not div.
+</script>
+</body>
+</html>

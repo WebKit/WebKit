@@ -1,0 +1,16 @@
+<style>
+img {
+  height: 20px;
+  width: 100px;
+  max-width: 100%; /* this is to trigger legacy preferred width computation */
+
+  margin-left: -10px;
+  background-color: green;
+}
+
+div {
+  width: max-content;
+  font-family: Ahem;
+}
+</style>
+<div><img>PASS if content does not wrap.</div>

@@ -1,0 +1,6 @@
+
+PASS e.style['animation-composition'] = "auto" should not set the property value
+PASS e.style['animation-composition'] = "add replace" should not set the property value
+PASS e.style['animation-composition'] = "add, initial" should not set the property value
+PASS e.style['animation-composition'] = "initial, add" should not set the property value
+

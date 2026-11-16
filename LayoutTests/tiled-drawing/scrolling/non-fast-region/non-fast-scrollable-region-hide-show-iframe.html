@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="resources/wheel-handler-region-helper.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    async function doTest()
+    {
+        var frame = document.getElementById('frame');
+
+        await UIHelper.renderingUpdate();
+        var output = 'before: ';
+        output += nonFastScrollableRects();
+        
+        frame.style.display = 'none';
+        
+        await UIHelper.renderingUpdate();
+        output += '\nafter hide: ';
+        output += nonFastScrollableRects();
+        
+        setTimeout(async () => {
+            frame.style.display = 'inline';
+
+            await UIHelper.renderingUpdate();
+            output += '\nafter show: ';
+            output += nonFastScrollableRects();
+
+            document.getElementById('output').textContent = output;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }
+    window.addEventListener('load', doTest, false);
+</script>
+</head>
+<body>
+<iframe id="frame" srcdoc="<html><body style='width:1000px;height:1000px;'></body></html>"></iframe>
+<pre id="output"></pre>
+</body>
+</html>
+

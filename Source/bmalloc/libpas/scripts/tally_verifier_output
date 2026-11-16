@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+
+class ObjectKind
+    attr_reader :name, :kind, :heap
+    
+    def initialize(name, kind, heap)
+        @name = name
+        @kind = kind
+        @heap = heap
+    end
+    
+    def hash
+        @name.hash + @kind.hash + @heap.hash
+    end
+    
+    def eql?(other)
+        @name == other.name and @kind == other.kind and @heap == other.heap
+    end
+    
+    def to_s
+        "#{@heap}:#{@kind}:#{@name}"
+    end
+end
+
+$sizeHistogram = {}
+$currentHeap = nil
+
+$stdin.each_line {
+    | line |
+    line.chomp!
+    case line
+    when "bootstrap_free_heap:", "utility_heap:"
+        $currentHeap = line.chop
+    when /^    0x([0-9a-f]+)\.\.\.0x([0-9a-f]+): ([^,]+), size = ([0-9]+), kind = (.*)/
+        objectKind = ObjectKind.new($3, $5, $currentHeap)
+        size = $4.to_i
+        $sizeHistogram[objectKind] = 0 unless $sizeHistogram[objectKind]
+        $sizeHistogram[objectKind] += size
+    end
+}
+
+$sizeHistogram.keys.sort {
+    | a, b |
+    $sizeHistogram[b] <=> $sizeHistogram[a]
+}.each {
+    | key |
+    puts "#{key}: #{$sizeHistogram[key]}"
+}
+
+
+

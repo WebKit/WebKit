@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<button id="explicit-contents-button"><child-slot>slotted label</child-slot></button>
+<button id="default-contents-button"><child-slot></child-slot></button>
+
+<script>
+class ChildSlot extends HTMLElement {
+    constructor() {
+        super();
+        const root = this.attachShadow({ mode: "open" });
+        root.innerHTML = `<div><slot>default label</slot></div>`;
+    }
+}
+customElements.define("child-slot", ChildSlot);
+
+let output = "This test ensures that we compute the correct accessible name when the default contents of a slot are used.\n\n";
+if (window.accessibilityController) {
+    output += `${platformTextAlternatives(accessibilityController.accessibleElementById("explicit-contents-button"))}\n\n`;
+    output += `${platformTextAlternatives(accessibilityController.accessibleElementById("default-contents-button"))}\n`;
+    debug(output);
+}
+</script>
+</body>
+</html>
+

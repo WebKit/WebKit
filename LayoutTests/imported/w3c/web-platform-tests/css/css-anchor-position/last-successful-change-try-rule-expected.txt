@@ -1,0 +1,5 @@
+
+PASS Starts rendering with --try
+PASS No successful position, keep --try
+PASS No successful position, last successful invalidated by @position-try change
+

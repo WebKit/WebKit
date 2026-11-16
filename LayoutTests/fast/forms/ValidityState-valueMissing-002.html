@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<title>required and basic valueMissing 2</title>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div id=parent>
+<input id="input" name="victim" value="something" required/>
+<textarea id="textarea" name="victim" required>something</textarea>
+<select id="select-with-placeholder" name="victim" required>
+  <option value="" />
+  <option value="X" selected>X</option>
+</select>
+<select id="select-without-placeholder" name="victim" required>
+  <option value="X" selected>X</option>
+  <option value="" />
+</select>
+<select id="select-with-fake-placeholder-size2" name="victim" size="2" required>
+  <option value="" />
+  <option value="X" selected>X</option>
+</select>
+<select id="select-without-fake-placeholder-size2" name="victim" size="2" required>
+  <option value="X" selected>X</option>
+  <option value="" />
+</select>
+<select id="select-with-fake-placeholder-multiple" name="victim" multiple required>
+  <option value="" />
+  <option value="X" selected>X</option>
+</select>
+<select id="select-without-fake-placeholder-multiple" name="victim" multiple required>
+  <option value="X" selected>X</option>
+  <option value="" />
+</select>
+<select id="select-with-fake-placeholder-size2-multiple" name="victim" multiple size="2" required>
+  <option value="" />
+  <option value="X" selected>X</option>
+</select>
+<select id="select-without-fake-placeholder-size2-multiple" name="victim" multiple size="2" required>
+  <option value="X" selected>X</option>
+  <option value="" />
+</select>
+<select id=select-selecting-by-key required>
+  <option value="" selected/>
+  <option>a</option>
+</select>
+<select id=select-selecting-by-key-2 required>
+  <option value="" selected/>
+  <option accesskey="1">a</option>
+</select>
+</div>
+<script language="JavaScript" type="text/javascript">
+    function valueMissingFor(id) {
+        return document.getElementById(id).validity.valueMissing;
+    }
+
+    description("This test checks validity.valueMissing with some values or options with some values selected.");
+
+    shouldBeFalse('valueMissingFor("input")');
+    shouldBeFalse('valueMissingFor("textarea")');
+    shouldBeFalse('valueMissingFor("select-with-placeholder")');
+    shouldBeFalse('valueMissingFor("select-without-placeholder")');
+    shouldBeFalse('valueMissingFor("select-with-fake-placeholder-size2")');
+    shouldBeFalse('valueMissingFor("select-without-fake-placeholder-size2")');
+    shouldBeFalse('valueMissingFor("select-with-fake-placeholder-multiple")');
+    shouldBeFalse('valueMissingFor("select-without-fake-placeholder-multiple")');
+    shouldBeFalse('valueMissingFor("select-with-fake-placeholder-size2-multiple")');
+    shouldBeFalse('valueMissingFor("select-without-fake-placeholder-size2-multiple")');
+
+    // Need to use eventSender instead of initKeyboardEvent() because we can't
+    // make an event which returns a correct value for keyCode by initKeyboardEvent().
+    if (window.eventSender) {
+        debug("Updating valueMissing state by a key input:")
+        // Select by type-ahead.
+        var select = document.getElementById("select-selecting-by-key");
+        shouldBeTrue('valueMissingFor("select-selecting-by-key")');
+        select.focus();
+        eventSender.keyDown("a");
+        shouldBe('select.value', '"a"');
+        shouldBeFalse('valueMissingFor("select-selecting-by-key")');
+
+        // Select by accesskey.
+        select = document.getElementById("select-selecting-by-key-2");
+        shouldBeTrue('valueMissingFor("select-selecting-by-key-2")');
+        select.focus();
+        var modifiers;
+        if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+            modifiers = ['ctrlKey', 'altKey'];
+        else
+            modifiers = ['altKey'];
+        eventSender.keyDown("1", modifiers);
+        shouldBe('select.value', '"a"');
+        shouldBeFalse('valueMissingFor("select-selecting-by-key-2")');
+    } else {
+        debug('There are tests using eventSender.');
+    }
+
+    document.body.removeChild(document.getElementById('parent'));
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+(repaint rects
+  (rect 96 96 108 108)
+)
+

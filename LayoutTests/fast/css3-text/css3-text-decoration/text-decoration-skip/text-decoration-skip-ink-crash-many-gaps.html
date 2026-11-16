@@ -1,0 +1,11 @@
+This tests for a crash that occurred in InlineTextBoxes with lots of underline breaks due to text-decoration-skip: ink.
+<map id="map" style="-webkit-text-decoration-skip:ink; box-decoration edges;text-underline:dotted rgb(109,208,61) skip-white-space auto;"></map>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    for (i=0;i<440;i++) {
+        document.getElementById("map").appendChild(document.createTextNode(']3MmP`3R'));
+    }
+    document.normalize();
+    document.body.style.textDecoration="underline";
+</script>

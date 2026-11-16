@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li {
+    background-color: rgb(1, 2, 3);
+}
+li+li~li+li~li+li {
+    color: red;
+}
+li+li~li+li {
+    color: blue;
+}
+</style>
+</head>
+<body>
+<div style="display:none">
+    <ul id=targetTree>
+        <li class=first></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+        <li class=target></li>
+    </ul>
+</div>
+</body>
+<script>
+description('Test very long backtracking of a direct adjacent chain.');
+
+shouldBe('document.querySelectorAll("li+li~li+li").length', '38');
+shouldBe('document.querySelectorAll("li+li~li+li~li+li").length', '36');
+shouldBe('document.querySelectorAll("li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li").length', '20');
+
+var allItems = document.getElementById('targetTree').querySelectorAll('li');
+var coloredCount = 0;
+for (var i = 0; i < allItems.length; ++i) {
+    if (getComputedStyle(allItems[i]).backgroundColor === 'rgb(1, 2, 3)')
+        coloredCount++;
+}
+
+shouldBe('allItems.length', '41');
+shouldBe('coloredCount', '20');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

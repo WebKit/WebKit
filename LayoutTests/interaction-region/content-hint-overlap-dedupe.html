@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    #interactive {
+        background: blue;
+    }
+    .rect {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 400px;
+        height: 300px;
+        opacity: 0.5;
+    }
+    span {
+        position: absolute;
+        top: 200px;
+        left: 100px;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<section id="test">
+    <a href="#">
+        <div id="interactive" class="rect"></div>
+        <img src="../fast/media/resources/apple_logo_big.jpg" alt="apple logo" class="rect" />
+        <span>link</span>
+    </a>
+    <div id="counter"></div>
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+
+    // Re-render.
+    for (var i = 0; i <= 3; i++) {
+        document.getElementById("counter").textContent = i;
+        await UIHelper.animationFrame();
+        await UIHelper.ensureStablePresentationUpdate();
+    }
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById('test').remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
+

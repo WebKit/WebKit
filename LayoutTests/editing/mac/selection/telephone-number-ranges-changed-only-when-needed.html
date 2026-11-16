@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script>
+internals.settings.setTelephoneNumberParsingEnabled(true);
+</script>
+</head>
+<body>
+<p id="text">Call (408) 996-1010 tomorrow.</p>
+<div id="other"></div>
+<script>
+const phoneNumber = "(408) 996-1010";
+
+let renderingUpdateCount = 0;
+
+async function renderingUpdates(count)
+{
+    for (let i = 0; i < count; ++i) {
+        other.style.width = `${++renderingUpdateCount}px`;
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+}
+
+function selectPhoneNumber(textNode)
+{
+    const start = textNode.data.indexOf(phoneNumber);
+    textNode.ownerDocument.getSelection().setBaseAndExtent(textNode, start, textNode, start + phoneNumber.length);
+}
+
+promise_test(async () => {
+    await renderingUpdates(2);
+    let count = internals.telephoneNumberRangesChangedCount();
+    await renderingUpdates(5);
+    assert_equals(internals.telephoneNumberRangesChangedCount(), count, "rendering updates without a selection shouldn't notify");
+
+    selectPhoneNumber(text.firstChild);
+    await renderingUpdates(2);
+    assert_greater_than(internals.telephoneNumberRangesChangedCount(), count, "selecting a telephone number should notify");
+
+    count = internals.telephoneNumberRangesChangedCount();
+    getSelection().removeAllRanges();
+    await renderingUpdates(2);
+    assert_greater_than(internals.telephoneNumberRangesChangedCount(), count, "clearing a selection containing a telephone number should notify");
+
+    count = internals.telephoneNumberRangesChangedCount();
+    await renderingUpdates(5);
+    assert_equals(internals.telephoneNumberRangesChangedCount(), count, "rendering updates after the selection is cleared shouldn't notify");
+}, "Telephone number ranges are only reported as changed when a document's selected telephone numbers could have changed");
+
+promise_test(async () => {
+    const iframe = document.createElement("iframe");
+    iframe.srcdoc = `<p>Call ${phoneNumber} tomorrow.</p>`;
+    await new Promise(resolve => {
+        iframe.onload = resolve;
+        document.body.appendChild(iframe);
+    });
+
+    let count = internals.telephoneNumberRangesChangedCount();
+    selectPhoneNumber(iframe.contentDocument.querySelector("p").firstChild);
+    await renderingUpdates(2);
+    assert_greater_than(internals.telephoneNumberRangesChangedCount(), count, "selecting a telephone number in the iframe should notify");
+
+    count = internals.telephoneNumberRangesChangedCount();
+    iframe.remove();
+    assert_greater_than(internals.telephoneNumberRangesChangedCount(), count, "destroying a document with selected telephone numbers should notify");
+}, "Destroying a document with selected telephone numbers reports the ranges as changed");
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+    <title>AudioDecoder decodes flac with more than 2 channels</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// 5.1 flac, fixed block size of 4608 frames. The description is the "fLaC" marker followed by the metadata blocks.
+const FLAC_5_1_DATA = {
+    src: 'resources/sfx-5.1.flac',
+    config: {
+        codec: 'flac',
+        sampleRate: 48000,
+        numberOfChannels: 6,
+        description: { offset: 0, size: 8330 },
+    },
+    chunks: [
+        { offset: 8330, size: 7675 }, { offset: 16005, size: 7668 },
+        { offset: 23673, size: 7669 }, { offset: 31342, size: 7691 },
+        { offset: 39033, size: 7721 }, { offset: 46754, size: 7675 },
+        { offset: 54429, size: 7668 }, { offset: 62097, size: 7669 },
+        { offset: 69766, size: 7691 }, { offset: 77457, size: 7721 },
+        { offset: 85178, size: 3450 }
+    ],
+    duration: 96000
+};
+
+function view(buffer, { offset, size })
+{
+    return new Uint8Array(buffer, offset, size);
+}
+
+let CONFIG = null;
+let CHUNKS = null;
+promise_setup(async () => {
+    const buf = await (await fetch(FLAC_5_1_DATA.src)).arrayBuffer();
+    CONFIG = { ...FLAC_5_1_DATA.config, description: view(buf, FLAC_5_1_DATA.config.description) };
+    CHUNKS = FLAC_5_1_DATA.chunks.map((chunk, i) => new EncodedAudioChunk({
+        type: 'key',
+        timestamp: i * FLAC_5_1_DATA.duration,
+        duration: FLAC_5_1_DATA.duration,
+        data: view(buf, chunk)
+    }));
+});
+
+promise_test(async () => {
+    const support = await AudioDecoder.isConfigSupported(CONFIG);
+    assert_true(support.supported);
+}, 'Flac with 6 channels and a description is supported');
+
+promise_test(async () => {
+    const outputs = [];
+    let error;
+    const decoder = new AudioDecoder({
+        output: audioData => {
+            outputs.push({ numberOfChannels: audioData.numberOfChannels, sampleRate: audioData.sampleRate });
+            audioData.close();
+        },
+        error: e => error = e
+    });
+    decoder.configure(CONFIG);
+    CHUNKS.forEach(chunk => decoder.decode(chunk));
+    await decoder.flush().catch(() => { });
+    decoder.close();
+
+    assert_equals(error?.message, undefined, 'decoding succeeds');
+    assert_equals(outputs.length, CHUNKS.length, 'outputs');
+    outputs.forEach((output, i) => {
+        assert_equals(output.numberOfChannels, 6, `output ${i} numberOfChannels`);
+        assert_equals(output.sampleRate, 48000, `output ${i} sampleRate`);
+    });
+}, 'Decoding flac with 6 channels');
+</script>
+</body>
+</html>

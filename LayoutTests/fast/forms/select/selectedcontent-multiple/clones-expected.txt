@@ -1,0 +1,9 @@
+
+PASS Every option in the list of options is cloned, including the option element itself
+PASS A clone is selected when its option is
+PASS Clones are not options of the select
+PASS The id of an option is cloned too, so getElementById() finds the clone first
+PASS Inserting a select element clones its options into its selectedcontent element
+PASS A selectedcontent element that comes after the options clones them too
+PASS Each selectedcontent element gets its own clones, whose selectedness does not come from the selected attribute
+

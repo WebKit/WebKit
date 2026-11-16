@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, interactive-widget=overlays-content"/>
+    <style>
+        input {
+            width: 400px;
+            height: 50px;
+        }
+    </style>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input" type="text">
+    <script>
+        jsTestIsAsync = true;
+        addEventListener("load", async () => {
+            let textField = document.querySelector("input");
+
+            window.initialVisualViewport = internals.visualViewportRect();
+
+            await UIHelper.activateElement(textField);
+            await UIHelper.waitForKeyboardToShow();
+            await UIHelper.ensurePresentationUpdate();
+
+            window.layoutViewportBeforeRotations = internals.layoutViewportRect();
+            window.visualViewportBeforeRotations = internals.visualViewportRect();
+            debug("\nBefore rotation:");
+
+            shouldBeTrue('window.visualViewportBeforeRotations.width == window.initialVisualViewport.width');
+            shouldBeTrue('window.visualViewportBeforeRotations.height == window.initialVisualViewport.height');
+
+            await UIHelper.rotateDevice("landscape-right", true);
+            await UIHelper.ensurePresentationUpdate();
+            window.layoutViewportAfterLandscapeRotation = internals.layoutViewportRect();
+            window.visualViewportAfterLandscapeRotation = internals.visualViewportRect();
+            debug("\nAfter rotation to landscape:");
+
+            shouldBeTrue('window.visualViewportAfterLandscapeRotation.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewportAfterLandscapeRotation.height == internals.layoutViewportRect().height');
+
+            debug("\nVisual viewport's height should be smaller than portrait mode's visual viewport height:");
+
+            shouldBeTrue('window.visualViewportAfterLandscapeRotation.height < window.visualViewportBeforeRotations.height');
+
+            // Dismiss the keyboard.
+            textField.blur();
+            await UIHelper.waitForKeyboardToHide();
+            await UIHelper.ensurePresentationUpdate();
+            debug("\nAfter keyboard dismissal while still in landscape mode:");
+
+            shouldBeTrue('internals.visualViewportRect().height == internals.layoutViewportRect().height');
+            shouldBeTrue('internals.visualViewportRect().height == window.visualViewportAfterLandscapeRotation.height');
+
+            await UIHelper.rotateDevice("portrait", true);
+            await UIHelper.ensurePresentationUpdate();
+            debug("\nAfter rotation back to portrait:");
+
+            shouldBeTrue('window.visualViewportBeforeRotations.height == internals.layoutViewportRect().height');
+            shouldBeTrue('internals.visualViewportRect().height > window.visualViewportAfterLandscapeRotation.height');
+
+            finishJSTest();
+        });
+    </script>
+</body>
+
+</html>

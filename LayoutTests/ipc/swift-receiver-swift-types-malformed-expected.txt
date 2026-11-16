@@ -1,0 +1,3 @@
+
+PASS Malformed messages to a receiver taking Swift types are rejected.
+

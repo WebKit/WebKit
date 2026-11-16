@@ -1,0 +1,4 @@
+
+PASS Codecs get filtered by direction for sendonly
+PASS Codecs get filtered by direction for recvonly
+

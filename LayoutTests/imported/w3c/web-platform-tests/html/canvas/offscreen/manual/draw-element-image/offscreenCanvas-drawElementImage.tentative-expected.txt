@@ -1,0 +1,4 @@
+
+FAIL OffscreenCanvas.drawElementImage should draw an ElementImage promise_test: Unhandled rejection with value: object "TypeError: canvas.getElementImageDefaultSize is not a function. (In 'canvas.getElementImageDefaultSize(elementImage)', 'canvas.getElementImageDefaultSize' is undefined)"
+FAIL Passing an Element to OffscreenCanvas methods on the main thread throws InvalidStateError assert_throws_dom: getElementImageDefaultSize with Element on OffscreenCanvas should throw InvalidStateError function "() => offscreen.getElementImageDefaultSize(child)" threw object "TypeError: offscreen.getElementImageDefaultSize is not a function. (In 'offscreen.getElementImageDefaultSize(child)', 'offscreen.getElementImageDefaultSize' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+

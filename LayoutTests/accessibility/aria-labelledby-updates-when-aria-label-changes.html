@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<section id="text-section" aria-labelledby="text-ref">
+    <p id="text-ref">Text name</p>
+</section>
+
+<section id="label-section" aria-labelledby="label-ref">
+    <p id="label-ref" role="img" aria-label="Aria name">Visual content</p>
+</section>
+
+<script>
+var output = "This test ensures an aria-labelledby reference recomputes its accessible name when the referenced element's name changes via aria-label, not just via text content.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var textSection = accessibilityController.accessibleElementById("text-section");
+    var labelSection = accessibilityController.accessibleElementById("label-section");
+
+    output += expect("platformValueForW3CName(textSection)", "'Text name'");
+    output += expect("platformValueForW3CName(labelSection)", "'Aria name'");
+
+    document.getElementById("text-ref").textContent = "New text name";
+    document.getElementById("label-ref").setAttribute("aria-label", "New aria name");
+
+    setTimeout(async function() {
+        output += await expectAsync("platformValueForW3CName(textSection)", "'New text name'");
+        output += await expectAsync("platformValueForW3CName(labelSection)", "'New aria name'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

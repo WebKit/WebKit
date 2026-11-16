@@ -1,0 +1,6 @@
+2d.text.measure.text-clusters-position.tentative
+Test that TextMetrics::getTextClusters() returns clusters that are positioned according to the target align and baseline passed as options.
+Actual output:
+
+FAIL Test that TextMetrics::getTextClusters() returns clusters that are positioned according to the target align and baseline passed as options. promise_test: Unhandled rejection with value: object "TypeError: tm.getTextClusters is not a function. (In 'tm.getTextClusters({align: 'left'})', 'tm.getTextClusters' is undefined)"
+

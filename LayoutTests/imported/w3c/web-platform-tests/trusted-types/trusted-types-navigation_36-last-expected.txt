@@ -1,0 +1,3 @@
+
+PASS Navigate a window via form-submission with javascript:-urls w/ a default policy making the URL invalid in report-only mode.
+

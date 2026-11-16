@@ -1,0 +1,325 @@
+/*
+ * This file is part of the select element renderer in WebCore.
+ *
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
+ *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "config.h"
+#include "RenderMenuList.h"
+
+#include "CSSFontSelector.h"
+#include "ColorBlending.h"
+#include "DocumentInlines.h"
+#include "DocumentPage.h"
+#include "ElementInlines.h"
+#include "HTMLOptionElement.h"
+#include "HTMLSelectElement.h"
+#include "HTMLSelectedContentElement.h"
+#include "LayoutIntegrationLineLayout.h"
+#include "LocalizedStrings.h"
+#include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
+#include "PlatformRenderTheme.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderElementStyleInlines.h"
+#include "RenderElementInlines.h"
+#include "RenderObjectInlines.h"
+#include "RenderText.h"
+#include "RenderTheme.h"
+#include "StyleComputedStyle+SettersInlines.h"
+#include "TextRun.h"
+#include <math.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMenuList);
+
+RenderMenuList::RenderMenuList(HTMLSelectElement& element, Style::ComputedStyle&& style)
+    : RenderFlexibleBox(Type::MenuList, element, WTF::move(style))
+    , m_needsOptionsWidthUpdate(true)
+    , m_optionsWidth(0)
+{
+    ASSERT(isRenderMenuList());
+}
+
+RenderMenuList::~RenderMenuList() = default;
+
+NODELETE HTMLSelectElement& RenderMenuList::selectElement() const
+{
+    return downcast<HTMLSelectElement>(nodeForNonAnonymous());
+}
+
+void RenderMenuList::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+
+    bool fontChanged = !oldStyle || !oldStyle->fontCascadeEqual(protect(style()));
+    if (fontChanged) {
+        updateOptionsWidth();
+        m_needsOptionsWidthUpdate = false;
+    }
+}
+
+static bool hasSelectedContent(ContainerNode& button)
+{
+    for (Node* node = button.firstChild(); node; node = NodeTraversal::next(*node, &button)) {
+        if (is<HTMLSelectedContentElement>(*node))
+            return true;
+    }
+    return false;
+}
+
+void RenderMenuList::updateOptionsWidth()
+{
+    float maxOptionWidth = 0;
+    float widthWithoutOptions = 0;
+    Ref select = selectElement();
+
+    CheckedRef style = this->style();
+    auto measure = [&](const String& text) {
+        auto transformed = applyTextTransform(style, text);
+        if (transformed.isEmpty())
+            return;
+        CheckedRef font = style->fontCascade();
+        auto run = RenderBlock::constructTextRun(transformed, style);
+        maxOptionWidth = std::max(maxOptionWidth, font->width(run));
+    };
+
+    if (RefPtr button = select->buttonElement()) {
+        measure(select->buttonLabelText(""_s));
+        if (hasSelectedContent(*button)) {
+            for (auto& item : select->listItems()) {
+                if (RefPtr option = dynamicDowncast<HTMLOptionElement>(item.get()))
+                    measure(select->buttonLabelText(option->textIndentedToRespectGroupLabel()));
+            }
+        }
+    } else {
+        for (auto& item : select->listItems()) {
+            if (RefPtr option = dynamicDowncast<HTMLOptionElement>(item.get()))
+                measure(option->textIndentedToRespectGroupLabel());
+        }
+    }
+
+    // https://html.spec.whatwg.org/#width-of-the-select's-labels
+    if (select->multiple()) {
+        CheckedRef font = style->fontCascade();
+        // A button shows the count in place of its selectedcontent elements, see HTMLSelectElement::buttonText().
+        bool countReplacesSelectedContent = select->buttonElement() && select->updatesSelectedContent();
+        auto countTextWidth = [&](unsigned count) {
+            auto text = htmlSelectMultipleItems(count);
+            if (countReplacesSelectedContent)
+                text = select->buttonLabelText(text);
+            auto run = RenderBlock::constructTextRun(applyTextTransform(style, text), style);
+            return font->width(run);
+        };
+        widthWithoutOptions = countTextWidth(0);
+        maxOptionWidth = std::max(maxOptionWidth, widthWithoutOptions);
+        // One selected option shows its own label, and with proportional digits any other count can be the widest.
+        unsigned optionCount = select->length();
+        for (unsigned count = 2; count <= optionCount; ++count)
+            maxOptionWidth = std::max(maxOptionWidth, countTextWidth(count));
+    }
+
+    int width = static_cast<int>(ceilf(maxOptionWidth));
+    int roundedWidthWithoutOptions = static_cast<int>(ceilf(widthWithoutOptions));
+    if (m_optionsWidth == width && m_widthWithoutOptions == roundedWidthWithoutOptions)
+        return;
+
+    m_optionsWidth = width;
+    m_widthWithoutOptions = roundedWidthWithoutOptions;
+    if (parent())
+        setNeedsLayoutAndInvalidateContentLogicalWidths();
+}
+
+void RenderMenuList::updateFromElement()
+{
+    if (m_needsOptionsWidthUpdate) {
+        updateOptionsWidth();
+        m_needsOptionsWidthUpdate = false;
+    }
+#if PLATFORM(IOS_FAMILY)
+    // iOS border-radius hack.
+    setNeedsLayout();
+#endif
+}
+
+LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) const
+{
+    auto internalPadding = theme().popupInternalPaddingBox(protect(style()));
+    auto zoom = style().usedZoomForLength();
+
+    float paddingBoxTop = 0;
+    float paddingBoxBottom = 0;
+    float paddingBoxLeft = 0;
+    float paddingBoxRight = 0;
+
+    if (auto top = internalPadding.top().tryFixed())
+        paddingBoxTop = top->resolveZoom(zoom);
+    if (auto bottom = internalPadding.bottom().tryFixed())
+        paddingBoxBottom = bottom->resolveZoom(zoom);
+    if (auto left = internalPadding.left().tryFixed())
+        paddingBoxLeft = left->resolveZoom(zoom);
+    if (auto right = internalPadding.right().tryFixed())
+        paddingBoxRight = right->resolveZoom(zoom);
+
+    LayoutRect clipRect(additionalOffset.x() + borderLeft() + paddingLeft() + paddingBoxLeft,
+        additionalOffset.y() + borderTop() + paddingTop() + paddingBoxTop,
+        contentBoxWidth() - paddingBoxLeft - paddingBoxRight,
+        contentBoxHeight() - paddingBoxTop - paddingBoxBottom);
+    return clipRect;
+}
+
+std::pair<LayoutUnit, LayoutUnit> RenderMenuList::computeIntrinsicLogicalWidths() const
+{
+    if (style().fieldSizing() == FieldSizing::Content)
+        return RenderFlexibleBox::computeIntrinsicLogicalWidths();
+
+    CheckedRef style = this->style();
+    auto minimumSize = LayoutUnit { theme().minimumMenuListSize(style) };
+    auto maxLogicalWidth = std::max(LayoutUnit { shouldApplySizeContainment() ? m_widthWithoutOptions : m_optionsWidth }, minimumSize);
+
+    auto internalPadding = theme().popupInternalPaddingBox(style);
+    if (auto start = internalPadding.start(writingMode()).tryFixed())
+        maxLogicalWidth += LayoutUnit(start->resolveZoom(style->usedZoomForLength()));
+    if (auto end = internalPadding.end(writingMode()).tryFixed())
+        maxLogicalWidth += LayoutUnit(end->resolveZoom(style->usedZoomForLength()));
+
+    if (shouldApplySizeOrInlineSizeContainment()) {
+        if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth())
+            maxLogicalWidth = logicalWidth.value();
+    }
+
+    auto& logicalWidth = style->logicalWidth();
+    auto minLogicalWidth = LayoutUnit { };
+    if (logicalWidth.isCalculated())
+        minLogicalWidth = std::max(0_lu, Style::evaluate<LayoutUnit>(logicalWidth, 0_lu, style->usedZoomForLength()));
+    else if (!logicalWidth.isPercent())
+        minLogicalWidth = maxLogicalWidth;
+
+    return { minLogicalWidth, maxLogicalWidth };
+}
+
+std::pair<LayoutUnit, LayoutUnit> RenderMenuList::computeIntrinsicLogicalWidthContributions()
+{
+    if (style().fieldSizing() == FieldSizing::Content)
+        return RenderFlexibleBox::computeIntrinsicLogicalWidthContributions();
+
+    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
+        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth(), LayoutUnit { fixedLogicalWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
+        return { logicalWidth, logicalWidth };
+    }
+
+    auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+    auto& logicalWidth = style().logicalWidth();
+    if (logicalWidth.isCalcSize() && (logicalWidth.isMinContent() || logicalWidth.isMaxContent())) {
+        // A calc-size() contributes the result of its calculation, not the size of its basis.
+        auto keywordLogicalWidth = logicalWidth.isMaxContent() ? maxContentLogicalWidth : minContentLogicalWidth;
+        auto calcSizeLogicalWidth = resolveCalcSizeLogicalWidth(logicalWidth.calcSize(), keywordLogicalWidth, 0_lu);
+        return { calcSizeLogicalWidth, calcSizeLogicalWidth };
+    }
+    return { minContentLogicalWidth, maxContentLogicalWidth };
+}
+
+
+void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackgroundColor, bool& itemHasCustomBackgroundColor) const
+{
+    Ref select = selectElement();
+    const auto& listItems = select->listItems();
+    if (listIndex >= listItems.size()) {
+        itemBackgroundColor = protect(style())->visitedDependentUsedBackgroundColorApplyingColorFilter();
+        itemHasCustomBackgroundColor = false;
+        return;
+    }
+    RefPtr element = listItems[listIndex].get();
+
+    Color backgroundColor;
+    if (CheckedPtr style = element->computedStyleForEditability())
+        backgroundColor = style->visitedDependentUsedBackgroundColorApplyingColorFilter();
+
+    itemHasCustomBackgroundColor = backgroundColor.isValid() && backgroundColor.isVisible();
+    // If the item has an opaque background color, return that.
+    if (backgroundColor.isOpaque()) {
+        itemBackgroundColor = backgroundColor;
+        return;
+    }
+
+    // Otherwise, the item's background is overlayed on top of the menu background.
+    backgroundColor = blendSourceOver(protect(style())->visitedDependentUsedBackgroundColorApplyingColorFilter(), backgroundColor);
+    if (backgroundColor.isOpaque()) {
+        itemBackgroundColor = backgroundColor;
+        return;
+    }
+
+    // If the menu background is not opaque, then add an opaque white background behind.
+    itemBackgroundColor = blendSourceOver(Color::white, backgroundColor);
+}
+
+#if PLATFORM(WIN)
+const int endOfLinePadding = 2;
+
+LayoutUnit RenderMenuList::clientPaddingLeft() const
+{
+    if ((style().usedAppearance() == StyleAppearance::Menulist || style().usedAppearance() == StyleAppearance::MenulistButton) && writingMode().isBidiRTL()) {
+        // For these appearance values, the theme applies padding to leave room for the
+        // drop-down button. But leaving room for the button inside the popup menu itself
+        // looks strange, so we return a small default padding to avoid having a large empty
+        // space appear on the side of the popup menu.
+        return endOfLinePadding;
+    }
+    // If the appearance isn't MenulistPart, then the select is styled (non-native), so
+    // we want to return the user specified padding.
+    return paddingLeft();
+}
+
+LayoutUnit RenderMenuList::clientPaddingRight() const
+{
+    if ((style().usedAppearance() == StyleAppearance::Menulist || style().usedAppearance() == StyleAppearance::MenulistButton) && style().writingMode().isBidiLTR())
+        return endOfLinePadding;
+
+    return paddingRight();
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+void RenderMenuList::layout()
+{
+    RenderFlexibleBox::layout();
+
+    // Ideally, we should not be adjusting styles during layout. However, for a
+    // pill-shaped appearance, the horizontal border radius is dependent on the
+    // computed height of the box. This means that the appearance cannot be declared
+    // prior to layout, since CSS only allows the horizontal border radius to be
+    // dependent on the computed width of the box.
+    //
+    // Ignoring the style's border radius and forcing a pill-shaped appearance at
+    // paint time is not an option, since focus rings and tap highlights will not
+    // use the correct border radius. Consequently, we need to adjust the border
+    // radius here.
+    //
+    // Note that similar adjustments are made in RenderSliderThumb, RenderButton
+    // and RenderTextControlSingleLine.
+    RenderThemeIOS::adjustRoundBorderRadius(protect(mutableStyle()), *this);
+}
+#endif
+
+}

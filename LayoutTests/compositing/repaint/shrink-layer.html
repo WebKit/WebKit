@@ -1,0 +1,25 @@
+<html>
+<head>
+    <title>Test for bug 62243</title>
+    <style type="text/css">
+        #ruler {
+            -webkit-transform: translateZ(0);
+            border-bottom: 10px solid black;
+            width: 550px;
+            height: 500px;
+        }
+    </style>
+    <script src="../../fast/repaint/resources/repaint.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+        function repaintTest()
+        {
+            document.getElementById("ruler").style.height = "450px";
+        }
+    </script>
+</head>
+<body onload="runRepaintTest()">
+    <div id="ruler">
+</body>
+</html>

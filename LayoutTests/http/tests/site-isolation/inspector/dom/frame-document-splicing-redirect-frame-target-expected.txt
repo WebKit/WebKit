@@ -1,0 +1,12 @@
+Test that a frame target's document is spliced under its <iframe> when the <iframe>'s src redirected cross-origin.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDocumentSplicing.Redirect
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.Redirect.CrossOriginRedirect
+PASS: Should find the cross-origin frame target.
+PASS: Should find the page's <iframe>.
+PASS: The <iframe>'s src should differ from the frame's document URL.
+PASS: The frame's document should be spliced into the <iframe>.
+PASS: The frame's document should be in the page tree.
+

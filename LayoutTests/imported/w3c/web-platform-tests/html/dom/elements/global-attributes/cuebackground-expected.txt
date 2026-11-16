@@ -1,0 +1,25 @@
+
+PASS "cuebackground" attribute in HTML defaults to false
+PASS Boolean attributes should be case-insensitive
+PASS Setting "cuebackground" attribute in HTML should set the property to true
+PASS Getting a present "cuebackground" attribute should return the attribute value
+PASS Setting "cuebackground" attribute using setAttribute should set the property to true
+PASS Setting the 'cuebackground' to true should set its value to empty string
+PASS Toggling "cuebackground" attribute should result in the correct value
+PASS Cloning an element should preserve the boolean attribute
+PASS Boolean attribute should work correctly on dynamically created elements
+PASS Removing "cuebackground" attribute using removeAttribute should set the property to false
+PASS Setting "cuebackground" property via JavaScript should reflect the correct boolean value
+PASS Setting "cue" property via JavaScript should reflect in the content attribute
+PASS Setting "cuebackground" property in JavaScript with truthy value (boolean true) should set the property to true
+PASS Setting "cuebackground" property in JavaScript with truthy value (number 1) should set the property to true
+PASS Setting "cuebackground" property in JavaScript with truthy value (string true) should set the property to true
+PASS Setting "cuebackground" property in JavaScript with truthy value (object [object Object]) should set the property to true
+PASS Setting "cuebackground" property in JavaScript with truthy value (object ) should set the property to true
+PASS Setting "cuebackground" property in JavaScript with truthy value (string any-non-empty-string) should set the property to true
+PASS Setting "cuebackground" property in JavaScript with falsy value (false) should set the property to false
+PASS Setting "cuebackground" property in JavaScript with falsy value (0) should set the property to false
+PASS Setting "cuebackground" property in JavaScript with falsy value () should set the property to false
+PASS Setting "cuebackground" property in JavaScript with falsy value (null) should set the property to false
+PASS Setting "cuebackground" property in JavaScript with falsy value (undefined) should set the property to false
+

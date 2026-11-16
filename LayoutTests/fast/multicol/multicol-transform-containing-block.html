@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<style>
+    #pos {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+
+    .multicol {
+        -webkit-column-count: 2;
+        height: 300px;
+    }
+
+    #transformed {
+        background: red;
+        width: 10px;
+        height: 10px;
+    }
+
+    .update {
+        -webkit-transform: rotate(-10deg);
+    }
+
+    .parent {
+        height: 400px;
+    }
+
+    .container {
+        padding: 50px;
+        margin: 20px;
+    }
+</style>
+<body>
+<div class="multicol parent">
+    <div id="change" class="container">
+        <div class="multicol">
+            <div>Static</div>
+            <div>Static</div>
+            <div>Static</div>
+            <div id="pos">Positioned</div>
+            <div>Static</div>
+            <div>Static</div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    document.body.offsetTop;
+    document.getElementById("change").className += " update";
+    document.body.offsetTop;
+    document.body.innerHTML = "Test for b135563. It should not crash or assert.";
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that an IntersectionObserver in a remote frame does not leak its document when the frame is removed before the first observation is delivered.");
+jsTestIsAsync = true;
+
+window.addEventListener("message", event => {
+    if (event.data.passed)
+        testPassed(event.data.message);
+    else
+        testFailed(event.data.message);
+    finishJSTest();
+});
+</script>
+<body>
+<iframe src="http://localhost:8000/site-isolation/intersection-observer/resources/remote-observer-document-leak-frame.html"></iframe>
+</body>

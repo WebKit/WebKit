@@ -1,0 +1,30 @@
+Make sure that getBufferSubData() doesn't work on WebGL 1 contexts
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS receiver[0] is fullArrayView[0]
+PASS receiver[1] is fullArrayView[1]
+PASS receiver[2] is fullArrayView[2]
+PASS receiver[3] is fullArrayView[3]
+PASS receiver[4] is fullArrayView[4]
+PASS receiver[5] is fullArrayView[5]
+PASS receiver[6] is fullArrayView[6]
+PASS receiver[7] is fullArrayView[7]
+PASS receiver[8] is fullArrayView[8]
+PASS receiver[9] is fullArrayView[9]
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getBufferSubData(context.ARRAY_BUFFER, 0, receiver, 0, 10) threw exception TypeError: context.getBufferSubData is not a function. (In 'context.getBufferSubData(context.ARRAY_BUFFER, 0, receiver, 0, 10)', 'context.getBufferSubData' is undefined).
+PASS context.getError() is context.NO_ERROR
+PASS context is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

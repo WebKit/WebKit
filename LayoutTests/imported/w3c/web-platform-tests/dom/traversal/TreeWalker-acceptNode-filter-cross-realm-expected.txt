@@ -1,0 +1,16 @@
+
+
+FAIL NodeFilter is cross-realm plain object without 'acceptNode' property assert_throws_js: function "() => { walker.firstChild(); }" threw object "TypeError: 'acceptNode' property of callback interface should be callable" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL NodeFilter is cross-realm plain object with non-callable 'acceptNode' property assert_throws_js: function "() => { walker.firstChild(); }" threw object "TypeError: 'acceptNode' property of callback interface should be callable" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL NodeFilter is cross-realm plain object with revoked Proxy as 'acceptNode' property assert_throws_js: function "() => { walker.firstChild(); }" threw object "TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL NodeFilter is cross-realm non-callable revoked Proxy assert_throws_js: function "() => { walker.firstChild(); }" threw object "TypeError: Proxy has already been revoked. No more operations are allowed to be performed on it" ("TypeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS NodeFilter is cross-realm callable revoked Proxy
+

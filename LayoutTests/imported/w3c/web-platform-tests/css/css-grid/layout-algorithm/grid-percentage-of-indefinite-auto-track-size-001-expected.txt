@@ -1,0 +1,23 @@
+This test checks that percentages of indefinite sizes are treated as min-content (for the min track sizing function) or max-content (for the max track sizing function).
+
+XXX
+XXX
+XXX
+XX XX
+XXX
+XX XX
+XXXX
+X
+XXXX
+X
+XXX
+XX XX
+XXXX
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+

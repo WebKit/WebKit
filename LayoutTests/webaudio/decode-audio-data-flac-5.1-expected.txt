@@ -1,0 +1,12 @@
+Test that decoding a 5.1 flac file returns the channels in Web Audio order
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Successfully decoded content
+PASS Decoding returned 6 channels.
+PASS Channels are in Web Audio order: FL,FR,FC,LFE,BL,BR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+:link { color: green; }
+:visited { color: orange; }
+</style>
+</head>
+<body>
+<iframe src="resources/dummy.html?redirect=http://example.com/" style="display:none"></iframe>
+
+<p>These two links should be different colors (green and orange):</p>
+<p>
+<a href="http://madeup.site.com" id="one">One (unvisited)</a>
+<a href="resources/dummy.html?redirect=http://example.com/" id="two">Two (visited)</a>
+</p>
+<script>
+jsTestIsAsync = true;
+
+description("A relative link whose URL contains '://' in the query should still be colored as visited after the same URL is visited. See https://bugs.webkit.org/show_bug.cgi?id=13755");
+
+if (window.testRunner)
+    window.testRunner.keepWebHistory();
+
+onload = function() {
+    if (!window.internals)
+        return;
+    // 'one' is an unvisited baseline. 'two' points at the same relative URL the
+    // hidden iframe navigated to, so it should be styled as :visited.
+    firstStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById('one'));
+    secondStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById('two'));
+    shouldBecomeDifferent('firstStyle.color', 'secondStyle.color', finishJSTest);
+};
+</script>
+</body>
+</html>

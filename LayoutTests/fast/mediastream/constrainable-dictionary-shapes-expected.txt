@@ -1,0 +1,6 @@
+
+PASS DoubleRange/ULongRange capability values have spec-mandated shapes
+PASS ConstrainDoubleRange/ConstrainULongRange round-trip exact/ideal members
+PASS ConstrainDOMStringParameters: exact/ideal accept DOMString or sequence<DOMString>
+PASS ConstrainBooleanOrDOMStringParameters: exact/ideal accept boolean or DOMString
+

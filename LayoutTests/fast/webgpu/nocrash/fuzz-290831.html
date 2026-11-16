@@ -1,0 +1,176 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let promise0 = navigator.gpu.requestAdapter({});
+let promise1 = navigator.gpu.requestAdapter({});
+let adapter0 = await navigator.gpu.requestAdapter({powerPreference: 'high-performance'});
+let device0 = await adapter0.requestDevice({
+  requiredLimits: {
+    maxStorageBuffersPerShaderStage: 8,
+    minStorageBufferOffsetAlignment: 256,
+    minUniformBufferOffsetAlignment: 256,
+    maxUniformBufferBindingSize: 57725788,
+    maxStorageBufferBindingSize: 134623271,
+  },
+});
+// START
+ let veryExplicitBindGroupLayout0 = device0.createBindGroupLayout({
+               entries: [     {
+          binding: 19, visibility: GPUShaderStage.FRAGMENT, sampler: {
+   }
+          }
+            ,     {
+                 binding: 200,       visibility: GPUShaderStage.FRAGMENT,       buffer: {
+         type: 'storage', }
+          ,     }
+            ,     {
+                 binding: 219,       visibility: GPUShaderStage.FRAGMENT,       buffer: {
+         type: 'storage', }
+          ,     }
+            ,   ], }
+              );
+               let pipelineLayout1 = device0.createPipelineLayout({
+            bindGroupLayouts: [veryExplicitBindGroupLayout0]}
+              );
+               try {
+             }
+               catch {
+            }
+               let shaderModule0 = device0.createShaderModule({
+               code: ` ;
+             struct VertexOutput0 {
+             @location(11) @interpolate(linear) location_11: vec2h,   @location(13) location_13: f16,   @location(8) location_8: f32,   @location(5) @interpolate(flat, sample) location_5: vec4i,   @location(15) @interpolate(flat, either) location_15: vec2u,   @location(6) @interpolate(perspective) location_6: vec2f,   @location(9) location_9: vec2f,   @location(12) location_12: f16,   @builtin(position) position: vec4f,   @location(7) location_7: vec4h, }
+             @vertex fn vertex0(@location(11) location_11: vec2i) -> VertexOutput0 {
+             var out: VertexOutput0;
+             return out;
+           }
+            `, }
+              );
+               let shaderModule1 = device0.createShaderModule({
+               code: ` ;
+             struct T3 {
+             @size(64) f0: array<f16, 2>,   @align(64) @size(896) f1: array<T1, 9>, }
+             @group(0) @binding(200) var<storage, read_write> buffer11: array<array<VertexInput2, 192>>;
+             struct FragmentInput5 {
+             @location(12) location_12: f16,   @location(13) location_13: f16}
+             struct FragmentInput1 {
+             @location(15) @interpolate(flat, either) location_15: vec2u}
+             struct FragmentInput4 {
+             @location(9) location_9: vec2f,   @location(5) @interpolate(flat, sample) location_5: vec4i}
+             @group(0) @binding(219) var<storage, read_write> buffer12: T3;
+             struct VertexInput2 {
+             @location(11) location_11: u32,   @location(9) location_9: vec2f,   @location(2) @interpolate(flat) location_2: f16,   @builtin(instance_index) instance_index: u32}
+             fn fn0(a0: ptr<storage, f16, read_write>, a1: VertexInput1) {
+             buffer12 = T3(array(buffer12.f0[1], buffer12.f0[1]), array(T1(array(buffer12.f0[1])), T1(array(buffer12.f0[1])), T1(array(buffer12.f0[1])), T1(array(buffer12.f0[1])), T1(array(buffer12.f0[1])), T1(array(buffer12.f0[1])), T1(array(buffer12.f0[1])), T1(array(buffer12.f0[1])), T1(array(buffer12.f0[1]))));
+             buffer12 = T3();
+             buffer12 = T3(array((buffer12).f1[8].f0[unconst_u32(497912551)], (buffer12).f1[8].f0[unconst_u32(497912551)]), array(T1(array((buffer12).f1[8].f0[unconst_u32(497912551)])), T1(array((buffer12).f1[8].f0[unconst_u32(497912551)])), T1(array((buffer12).f1[8].f0[unconst_u32(497912551)])), T1(array((buffer12).f1[8].f0[unconst_u32(497912551)])), T1(array((buffer12).f1[8].f0[unconst_u32(497912551)])), T1(array((buffer12).f1[8].f0[unconst_u32(497912551)])), T1(array((buffer12).f1[8].f0[unconst_u32(497912551)])), T1(array((buffer12).f1[8].f0[unconst_u32(497912551)])), T1(array((buffer12).f1[8].f0[unconst_u32(497912551)]))));
+             for (var jj92=0u;
+           jj92<11;
+           ) {
+         }
+           }
+             struct FragmentOutput1 {
+             @location(0) location_0: vec4f,   @builtin(frag_depth) frag_depth: f32,   @location(1) location_1: vec2i,   @location(7) location_7: u32}
+             fn unconst_u32(v: u32) -> u32 {
+           return v;
+           }
+             struct T1 {
+             @size(92) f0: array<f16, 1>}
+             struct FragmentInput2 {
+             @location(7) location_7: vec4h,   @location(6) @interpolate(perspective) location_6: vec2f}
+             struct FragmentInput3 {
+             @location(8) location_8: f32}
+             struct VertexInput1 {
+             @location(0) location_0: vec4u,   @location(7) location_7: vec4i,   @builtin(vertex_index) vertex_index: u32}
+             @fragment fn fragment1(a0: FragmentInput1, @location(11) location_11: vec2h, a2: FragmentInput2, a3: FragmentInput3, a4: FragmentInput4, a5: FragmentInput5) -> FragmentOutput1 {
+             var out: FragmentOutput1;
+             fn0(&(buffer11)[(372667608)][191].location_2, VertexInput1(vec4u(u32(buffer11[(2140220020)][191].location_2)), vec4i(i32(buffer11[(2140220020)][191].location_2)), u32(buffer11[(2140220020)][191].location_2)));
+             return out;
+           }
+            `}
+              );
+               device0.createRenderPipeline({
+               layout: pipelineLayout1,   fragment: {
+          module: shaderModule1, targets: [      ]}
+            ,   depthStencil: {
+               format: 'depth24plus',     depthWriteEnabled: false,     stencilReadMask: 56029197,     depthBias: 1000617211,     depthBiasSlopeScale: 941.703219423583,     depthBiasClamp: 93.1958379297438}
+            ,   vertex: {
+               module: shaderModule0,     buffers: [       {
+                 arrayStride: 20,         stepMode: 'instance',         attributes: [{
+      format: 'sint32x2', offset: 0, shaderLocation: 11}
+        ]}
+          ]}
+            }
+              );
+               try {
+             }
+               catch {
+            }
+               promise5 = device0.queue.onSubmittedWorkDone();
+               try {
+               await promise5}
+               catch {
+            }
+               }
+               function window1() {
+               }
+               async function window2() {
+// END
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0(), window1(), window2() ];
+  debug('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  debug('Pass')
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.notifyDone();
+};
+</script>

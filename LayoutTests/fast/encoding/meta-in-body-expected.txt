@@ -1,0 +1,2 @@
+PASS: ISO-2022-JP
+This test checks that the charset sniffer scans at least 1024 bytes of data to find a meta tag, even if it is not in the head section.

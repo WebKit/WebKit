@@ -1,0 +1,3 @@
+
+PASS :scope does not match in shadow root
+

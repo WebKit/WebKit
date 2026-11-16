@@ -1,0 +1,9 @@
+
+PASS truthy values
+PASS false is a falsy value
+PASS 0 is a falsy value
+PASS empty string is a falsy value
+PASS null is a falsy value
+PASS undefined is a falsy value
+PASS NaN is a falsy value
+

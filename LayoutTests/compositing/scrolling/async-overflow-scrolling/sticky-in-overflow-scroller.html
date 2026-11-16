@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    padding: 0;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+.scroller {
+    width: 640px;
+    height: 480px;
+    box-sizing: border-box;
+    line-height: 1.8em;
+    background-color: white;
+    outline: none;
+    margin: 1em auto;
+    display: block;
+    overflow: scroll;
+}
+
+.sticky {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    z-index: -1;
+    background-color: tomato;
+    position: sticky;
+}
+
+.vertical-space {
+    width: 100%;
+    height: 400px;
+}
+</style>
+</head>
+<body>
+    <div class="scroller">
+        <div class="vertical-space"></div>
+        <header class="sticky"></header>
+        <div class="vertical-space"></div>
+    </div>
+    <script>
+    window.testRunner?.waitUntilDone();
+    addEventListener("load", async () => {
+        await UIHelper.renderingUpdate();
+        document.querySelector(".sticky").style.zIndex = 1;
+        window.testRunner?.notifyDone();
+    });
+    </script>
+</body>
+</html>

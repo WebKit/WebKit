@@ -1,0 +1,48 @@
+# Context:
+machine_counts:
+  - model: Mac16,10
+    count: 10
+  - model: Mac14,3
+    count: 10
+names:
+  $map: {$eval: "range(100, 120)"}
+  each(i): bot${i}
+versions:
+  macos:
+    [Tahoe, Sequoia, Sonoma]
+build_types: [Release, Debug]
+---
+workers:
+  $flatten:
+    $map: {$eval: machine_counts}
+    each(entry):
+      $map: {$eval: "range(0, entry.count)"}
+      each(n):
+        name: {$eval: pop(names)}
+        model: {$eval: entry.model}
+
+builders:
+  $flatten:
+    $map: {$eval: versions.macos}
+    each(version):
+      $map: {$eval: build_types}
+      each(build_type):
+        name: Apple-${version}-${build_type}-Build
+        factory: BuildFactory
+        platform: mac-${lowercase(version)}
+        configuration: {$eval: lowercase(build_type)}
+        architectures: [x86_64, arm64]
+        workernames:
+          - $if: "build_type == 'Debug'"
+            then: {$eval: "pop(workers, \"model == 'Mac16,10'\").name"}
+            else: {$eval: "pop(workers, \"model == 'Mac14,3'\").name"}
+          - $if: "build_type == 'Debug'"
+            then: {$eval: "pop(workers, \"model == 'Mac16,10'\").name"}
+            else: {$eval: "pop(workers, \"model == 'Mac14,3'\").name"}
+          - $if: "build_type == 'Debug'"
+            then: {$eval: "pop(workers, \"model == 'Mac16,10'\").name"}
+            else: {$eval: "pop(workers, \"model == 'Mac14,3'\").name"}
+
+unused-workers:
+  $map: {$eval: workers}
+  each(w): {$eval: w.name}

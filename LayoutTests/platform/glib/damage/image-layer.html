@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      img {
+          position: absolute;
+          will-change: transform;
+          opacity: 0;
+      }
+      #a {
+          left: 10px;
+          top: 10px;
+      }
+      #b {
+          left: 200px;
+          top: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <img id="a" class="hidden" src="content/simple_image.png">
+    <img id="b" class="hidden" src="content/simple_image.png">
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              document.getElementById('a').style.opacity = 1;
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertRectsEq(damage.rects, [[10, 10, 150, 150]]);
+          },
+          () => {
+              document.getElementById('b').style.opacity = 1;
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertRectsEq(damage.rects, [[200, 200, 150, 150]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('video/mp4; codecs="avc1.4d401e"'))
+RUN(sourceBuffer.appendBuffer(MP4.concat(init, segment1)))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(segment2a))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(segment2b))
+EVENT(updateend)
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({100/1000 = 0.100000}), flags(9), presentationSize(640.000000x480.000000)}
+{PTS({100/1000 = 0.100000}), DTS({100/1000 = 0.100000}), duration({101/1000 = 0.101000}), flags(8), presentationSize(640.000000x480.000000)}
+{PTS({200/1000 = 0.200000}), DTS({200/1000 = 0.200000}), duration({120/1000 = 0.120000}), flags(9), presentationSize(640.000000x480.000000)}
+{PTS({400/1000 = 0.400000}), DTS({400/1000 = 0.400000}), duration({100/1000 = 0.100000}), flags(9), presentationSize(640.000000x480.000000)}
+EXPECTED (sampleAt200Found == 'true') OK
+EXPECTED (hasSeg2Duration == 'true') OK
+END OF TEST
+

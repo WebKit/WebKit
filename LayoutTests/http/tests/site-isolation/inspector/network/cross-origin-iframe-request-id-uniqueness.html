@@ -1,0 +1,91 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../../../inspector/resources/stable-id-map.js"></script>
+<script>
+let iframeA;
+let iframeB;
+
+function addIFrameA() {
+    iframeA = document.createElement("iframe");
+    iframeA.src = "http://127.0.0.1:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html";
+    iframeA.addEventListener("load", () => iframeA.contentWindow.postMessage({type: "TriggerFetch"}, "*"));
+    document.body.appendChild(iframeA);
+}
+
+function addIFrameB() {
+    iframeB = document.createElement("iframe");
+    iframeB.src = "http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html";
+    iframeB.addEventListener("load", () => iframeB.contentWindow.postMessage({type: "TriggerFetch"}, "*"));
+    document.body.appendChild(iframeB);
+}
+
+function test() {
+    // The iframe page (iframe-with-fetch.html) listens for a "TriggerFetch" postMessage and
+    // performs `fetch("data.json?<random>")`. The parent registers the postMessage trigger
+    // on the iframe's `load` event so the fetch fires once the iframe is fully loaded.
+    //
+    // The inspector-side test waits for the resulting `Frame.ResourceWasAdded` events; we
+    // pick up the two distinct data.json fetches by URL and verify that their request IDs
+    // are unique. This deliberately avoids the FrameTarget/RuntimeAgent.evaluate path,
+    // which has historical races with non-deterministic event ordering between
+    // TargetAdded / DidCommitProvisionalTarget / ExecutionContextAdded under SI.
+    function waitForFetchResource(label) {
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource || !resource.url || !resource.url.includes("data.json"))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.RequestIdUniqueness");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.RequestIdsAreUnique",
+        description: "Network request IDs from different cross-origin iframes should not collide.",
+        async test() {
+            // Trigger and wait for iframe A's fetch.
+            let resourcePromiseA = waitForFetchResource("A");
+            InspectorTest.evaluateInPage("addIFrameA()");
+            let resourceA = await resourcePromiseA;
+
+            // Trigger and wait for iframe B's fetch.
+            let resourcePromiseB = waitForFetchResource("B");
+            InspectorTest.evaluateInPage("addIFrameB()");
+            let resourceB = await resourcePromiseB;
+
+            InspectorTest.expectThat(resourceA instanceof WI.Resource, "First resource should be created.");
+            InspectorTest.expectThat(resourceB instanceof WI.Resource, "Second resource should be created.");
+
+            // Wait for both to finish loading.
+            if (!resourceA.finished && !resourceA.failed)
+                await resourceA.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+            if (!resourceB.finished && !resourceB.failed)
+                await resourceB.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+            InspectorTest.expectThat(resourceA.finished, "First resource should finish loading.");
+            InspectorTest.expectThat(resourceB.finished, "Second resource should finish loading.");
+
+            // The key assertion: request IDs must be distinct.
+            let requestIdMap = new StableIdMap;
+            let requestIdA = resourceA.requestIdentifier;
+            let requestIdB = resourceB.requestIdentifier;
+            InspectorTest.expectThat(requestIdA, "First resource should have a request ID.");
+            InspectorTest.expectThat(requestIdB, "Second resource should have a request ID.");
+            InspectorTest.expectNotEqual(requestIdMap.get(requestIdA), requestIdMap.get(requestIdB), "Request IDs from different cross-origin iframes should be unique.");
+            InspectorTest.log(`Request ID A: ${requestIdMap.get(requestIdA)}`);
+            InspectorTest.log(`Request ID B: ${requestIdMap.get(requestIdB)}`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that network request IDs from fetches in different cross-origin iframes are unique and do not collide.</p>
+</body>

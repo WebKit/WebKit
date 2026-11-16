@@ -1,0 +1,13 @@
+
+Harness Error (FAIL), message = Test named 'drawElementImage on worker dispatches elementgeometryupdate and updates element transform by default' specified 1 'cleanup' function, and 1 failed.
+
+FAIL drawElementImage on worker dispatches elementgeometryupdate and updates element transform by default promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+NOTRUN drawElementImage on worker updates element transform with explicit {preserveElementGeometry: false}
+NOTRUN drawElementImage on worker does not update element transform with {preserveElementGeometry: true}
+NOTRUN Multiple drawElementImage calls in same worker turn batch into a single elementgeometryupdate event
+NOTRUN clearElementGeometry on worker clears geometry and dispatches elementgeometryupdate event
+NOTRUN drawElementImage on worker accounts for non-zero sx and sy offset
+NOTRUN drawElementImage on worker element transform does not include CSS transform on the element
+NOTRUN drawElementImage on worker element transform accounts for canvas CSS pixel scale
+NOTRUN drawElementImage on worker element transform accounts for offscreen pixel scale, zoom, CTM, and dx/dy
+

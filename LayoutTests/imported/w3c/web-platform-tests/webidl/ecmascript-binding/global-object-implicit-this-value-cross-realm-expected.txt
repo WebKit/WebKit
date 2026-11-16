@@ -1,0 +1,8 @@
+
+PASS Cross-realm global object's getter throws when called on incompatible object
+PASS Cross-realm global object's setter throws when called on incompatible object
+PASS Cross-realm global object's operation throws when called on incompatible object
+PASS Cross-realm global object's getter called on null / undefined
+PASS Cross-realm global object's setter called on null / undefined
+PASS Cross-realm global object's operation called on null / undefined
+

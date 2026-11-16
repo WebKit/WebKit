@@ -1,0 +1,4 @@
+
+
+PASS Trusted Types CSP directives don't affect the behavior of sandboxed page without allow-scripts.
+

@@ -1,0 +1,15 @@
+Tests that an animated image is paused in an out-of-process subframe that leaves the viewport
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Scrolling the frame into view.
+PASS imageIsAnimating became "true"
+Scrolling the frame out of view.
+PASS imageIsAnimating became "false"
+Scrolling the frame back into view.
+PASS imageIsAnimating became "true"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

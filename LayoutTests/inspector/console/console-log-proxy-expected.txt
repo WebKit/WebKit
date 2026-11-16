@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: [object Proxy]
+CONSOLE MESSAGE: 0
+CONSOLE MESSAGE: [object Proxy]
+CONSOLE MESSAGE: 1
+Tests for the console.log with Proxy objects.
+
+
+== Running test suite: console.log.proxy
+-- Running test case: BasicProxyLog
+PASS: Logging Proxy objects should not have triggered get trap.
+
+-- Running test case: AvoidTrapWhenCheckingConsoleRepeat
+PASS: Logging Proxy objects and primitives should not have triggered get trap.
+

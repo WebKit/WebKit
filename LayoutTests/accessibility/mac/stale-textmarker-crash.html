@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content1" role="group">
+<div id="content2">
+<iframe src="data:text/html,
+    <body>
+        <input type='search' id='field' placeholder=''>">
+</iframe>
+</div>
+</div>
+
+<script>
+let output = "This tests that using an old text marker that references a removed container node won't crash.\n\n";
+window.jsTestIsAsync = true;
+
+setTimeout(async () => {
+    // Retrieve a marker for the search field in the iframe.
+    field = null;
+    await waitFor(() => {
+        return field = accessibilityController.accessibleElementById("field");
+    });
+    let range = field.textMarkerRangeForElement(field);
+    marker = field.startTextMarkerForTextMarkerRange(range);
+    output += expect("field.isTextMarkerValid(marker)", "true");
+
+    // Remove the iframe and the field inside and then force GC.
+    document.getElementById("content2").innerHTML = "";
+    gc();
+
+    content1 = accessibilityController.accessibleElementById("content1");
+    // Don't crash accessing the text marker that references a stale Node.
+    let index = content1.indexForTextMarker(marker);
+    output += await expectAsync("content1.isTextMarkerValid(marker)", "false");
+
+    debug(output);
+    finishJSTest();
+}, 0);
+</script>
+</body>
+</html>

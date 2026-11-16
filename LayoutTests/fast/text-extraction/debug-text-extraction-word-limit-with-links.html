@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p>one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen <a href="https://webkit.org">sixteen seventeen</a> eighteen nineteen twenty</p>
+<p>alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi omicron pi rho sigma tau upsilon</p>
+<p>short text <a href="https://example.com">with a link</a> and then a bunch of text afterwards foo bar baz</p>
+
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        normalize: true,
+        includeRects: false,
+        includeURLs: true,
+        nodeIdentifierInclusion: "none",
+        eventListenerCategories: ["none"],
+        includeAccessibilityAttributes: false,
+        outputFormat: "markdown",
+        wordLimit: 6
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

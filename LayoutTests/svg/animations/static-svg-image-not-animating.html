@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<img id="static" src="resources/noAnimation.svg">
+<img id="animated" src="resources/smilAnimation.svg">
+<script>
+description("Tests that an SVG image with no animations does not report that it is animating.");
+jsTestIsAsync = true;
+
+onload = function() {
+    staticImage = document.getElementById("static");
+    animatedImage = document.getElementById("animated");
+
+    shouldBecomeEqual("internals.isImageAnimating(animatedImage)", "true", function() {
+        shouldBeFalse("internals.isImageAnimating(staticImage)");
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

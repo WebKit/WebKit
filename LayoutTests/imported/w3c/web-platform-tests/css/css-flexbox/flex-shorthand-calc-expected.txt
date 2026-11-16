@@ -1,0 +1,6 @@
+
+PASS e.style['flex'] = "sign(1em - 1px) sibling-index()" should set flex-basis
+PASS e.style['flex'] = "sign(1em - 1px) sibling-index()" should set flex-grow
+PASS e.style['flex'] = "sign(1em - 1px) sibling-index()" should set flex-shrink
+PASS e.style['flex'] = "sign(1em - 1px) sibling-index()" should not set unrelated longhands
+

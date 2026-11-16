@@ -1,0 +1,9 @@
+
+PASS Property scroll-snap-align value 'none'
+PASS Property scroll-snap-align value 'start'
+PASS Property scroll-snap-align value 'end'
+PASS Property scroll-snap-align value 'center'
+PASS Property scroll-snap-align value 'start none'
+PASS Property scroll-snap-align value 'center end'
+PASS Property scroll-snap-align value 'start start'
+

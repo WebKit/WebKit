@@ -1,0 +1,18 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px">
+    <g style="transform-box: fill-box; transform-origin: center; transform: scale(2)"><rect id="target" x="50" y="50" width="20" height="20" fill="green"/></g>
+</svg>
+<script>
+    // The bounding box of the group moves without changing its size, so the transform of the group stays the same, but its content moves. The old and the new area are repainted.
+    function repaintTest() {
+        document.getElementById("target").setAttribute("x", "100");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

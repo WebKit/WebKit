@@ -1,0 +1,14 @@
+
+
+
+(repaint rects
+  (rect 5 41 790 24)
+  (rect 8 44 784 18)
+  (rect 5 47 790 18)
+  (rect 5 44 790 3)
+  (rect 5 23 8 24)
+  (rect 8 26 2 18)
+  (rect 5 41 8 24)
+  (rect 8 44 2 18)
+)
+

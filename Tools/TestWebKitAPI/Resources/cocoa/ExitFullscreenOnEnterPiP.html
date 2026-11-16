@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    window.addEventListener('load', event => {
+        let video = document.querySelector('video');
+        video.addEventListener('playing', event => {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage('playing');
+            } catch (e) { }
+        });
+    }, {once: true});
+    </script>
+</head>
+<button id="enter-video-fullscreen" onclick="document.querySelector('video').webkitEnterFullscreen()">enter video fullscreen</button>
+<button id="enter-element-fullscreen" onclick="document.querySelector('#target').webkitRequestFullscreen()">enter element fullscreen</button>
+<button id="enter-pip" onclick="document.querySelector('video').webkitSetPresentationMode('picture-in-picture')">enter pip</button>
+<button id="exit-pip" onclick="document.querySelector('video').webkitSetPresentationMode('inline')">exit pip</button>
+<button id="play" onclick="document.querySelector('video').play()">play video</button>
+<body>
+    <div id="target">
+        <video id="video" playsinline src="test.mp4" />
+    </div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input id="number-input-invalid" type="number" value="abc">
+<input id="number-input-valid" type="number" value="10">
+
+<input id="url-input-invalid" type="url" value="abc">
+<input id="url-input-valid" type="url" value="http://abc.com">
+
+<input id="email-input-invalid" type="email" value="abc">
+<input id="email-input-valid" type="email" value="abc@abc.com">
+
+<script>
+    description("This tests that we are exposing correct invalid status for different types.");
+
+    var input;
+    function expectAXInvalid(id, expectedValue) {
+        input = accessibilityController.accessibleElementById(id);
+        shouldBe("input.stringAttributeValue('AXInvalid')", `'${expectedValue}'`);
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        debug("Testing #number-input-valid");
+        expectAXInvalid("number-input-valid", false);
+
+        debug("Testing #url-input-invalid");
+        expectAXInvalid("url-input-invalid", true);
+
+        debug("Testing #url-input-valid");
+        expectAXInvalid("url-input-valid", false);
+
+        debug("Testing #email-input-invalid");
+        expectAXInvalid("email-input-invalid", true);
+
+        debug("Testing #email-input-valid");
+        expectAXInvalid("email-input-valid", false);
+
+        setTimeout(async function() {
+            debug("Testing #number-input-invalid");
+            // For <input type="number" value="abc"> inputs, the initial .value is empty
+            // because the attribute value is not a valid floating-point number per spec.
+            // We send user input (such as "-" or "e") to trigger an invalid intermediate state
+            // and verify that AXInvalid becomes true accordingly.
+
+            // Typing "a" should be rejected by the input entirely and must not alter its value or state.
+            // As a result, AXInvalid should remain false because the input is still empty and no invalid user input was accepted.
+            document.getElementById("number-input-invalid").focus();
+            eventSender.keyDown("a");
+            await waitFor(() => {
+                input = accessibilityController.accessibleElementById("number-input-invalid");
+                return input && input.stringAttributeValue("AXInvalid") === "false";
+            });
+            expectAXInvalid("number-input-invalid", false);
+
+            // Typing "e" is allowed as part of scientific notation (e.g. "1e-3"),
+            // but without valid digits before and after, it results in an invalid intermediate state.
+            // AXInvalid should become true accordingly.
+            document.getElementById("number-input-invalid").focus();
+            eventSender.keyDown("e");
+            await waitFor(() => {
+                input = accessibilityController.accessibleElementById("number-input-invalid");
+                return input && input.stringAttributeValue("AXInvalid") === "true";
+            });
+            expectAXInvalid("number-input-invalid", true);
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("SearchUtilities");
+
+    function expectMatches(query, text, expected, {caseSensitive, regularExpression} = {}) {
+        let regex = WI.SearchUtilities.searchRegExpForString(query, {caseSensitive, regularExpression});
+        let matches = [];
+        WI.SearchUtilities.forEachMatch(regex, text, (match) => {
+            matches.push(`${match.index}:${match[0]}`);
+        });
+        InspectorTest.expectShallowEqual(matches, expected, `Searching for ${JSON.stringify(query)}${regularExpression ? " (regular expression)" : ""}${caseSensitive ? " (case sensitive)" : ""} in ${JSON.stringify(text)} should find ${JSON.stringify(expected)}.`);
+    }
+
+    suite.addTestCase({
+        name: "SearchUtilities.forEachMatch.Literal",
+        test() {
+            expectMatches("ab", "abcAB", ["0:ab", "3:AB"]);
+            expectMatches("ab", "abcAB", ["0:ab"], {caseSensitive: true});
+            expectMatches("ab", "xyz", []);
+            expectMatches("ab", "", []);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SearchUtilities.forEachMatch.GlobWithText",
+        test() {
+            expectMatches("a*c", "abc xyz", ["0:abc"]);
+            expectMatches("a\\*c", "abc a*c", ["4:a*c"]);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SearchUtilities.forEachMatch.ReusedRegex",
+        test() {
+            let regex = WI.SearchUtilities.searchRegExpForString("bar", {});
+            for (let [text, expected] of [["foo bar", ["4:bar"]], ["bar foo bar", ["0:bar", "8:bar"]]]) {
+                let matches = [];
+                WI.SearchUtilities.forEachMatch(regex, text, (match) => {
+                    matches.push(`${match.index}:${match[0]}`);
+                });
+                InspectorTest.expectShallowEqual(matches, expected, `Reusing the regular expression for "bar" in ${JSON.stringify(text)} should find ${JSON.stringify(expected)}.`);
+            }
+        },
+    });
+
+    // Each of the following queries produces a regular expression that can match an empty string.
+
+    suite.addTestCase({
+        name: "SearchUtilities.forEachMatch.GlobAsterisk",
+        test() {
+            expectMatches("*", "<script>/** license */<\/script>", ["0:<script>/** license */<\/script>"]);
+            expectMatches("*", "line1\nline2", ["0:line1", "6:line2"]);
+            expectMatches("*", "\n", []);
+            expectMatches("*", "", []);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SearchUtilities.forEachMatch.GlobDoubleAsterisk",
+        test() {
+            expectMatches("**", "<script>/** license */<\/script>", ["0:<script>/** license */<\/script>"]);
+            expectMatches("**", "line1\rline2", ["0:line1", "6:line2"]);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SearchUtilities.forEachMatch.RegularExpressionMatchingEmptyString",
+        test() {
+            expectMatches("a*", "baab", ["1:aa"], {regularExpression: true});
+            expectMatches("^", "abc", [], {regularExpression: true});
+            expectMatches("\\b", "ab cd", [], {regularExpression: true});
+            expectMatches("x?", "", [], {regularExpression: true});
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for WI.SearchUtilities.</p>
+</body>
+</html>

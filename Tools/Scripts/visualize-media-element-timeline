@@ -1,0 +1,983 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""
+media-timeline: Visualize HTMLMediaElement playback from WebKit logs.
+
+Usage:
+    log stream --style ndjson --predicate 'subsystem == "com.apple.WebKit" AND category == "Media"' | visualize-media-element-timeline > output.html
+
+    # Or from a saved log file:
+    cat saved-logs.ndjson | visualize-media-element-timeline > output.html
+
+    # Or read from a file directly:
+    visualize-media-element-timeline --input saved-logs.ndjson > output.html
+"""
+
+import argparse
+import json
+import re
+import sys
+from datetime import datetime, timedelta, timezone
+from html import escape
+
+
+# ---------------------------------------------------------------------------
+# Constants
+# ---------------------------------------------------------------------------
+
+READY_STATES = [
+    "HAVE_NOTHING",
+    "HAVE_METADATA",
+    "HAVE_CURRENT_DATA",
+    "HAVE_FUTURE_DATA",
+    "HAVE_ENOUGH_DATA",
+]
+
+NETWORK_STATES = [
+    "NETWORK_EMPTY",
+    "NETWORK_IDLE",
+    "NETWORK_LOADING",
+    "NETWORK_NO_SOURCE",
+]
+
+
+# ---------------------------------------------------------------------------
+# Log parsing
+# ---------------------------------------------------------------------------
+
+# Matches: WebContent[PID]: ClassName::method(hexIdentifier) optional tail
+MESSAGE_RE = re.compile(
+    r"WebContent\[(\d+)\]:\s+"       # WebContent PID
+    r"(\w+)"                          # class name
+    r"::"                             # separator
+    r"(\w+)"                          # method name
+    r"\(([0-9A-Fa-f]+)\)"            # hex identifier
+    r"(.*)"                           # rest of the message
+)
+
+
+# Matches: "new state = HAVE_METADATA, current state = HAVE_NOTHING" (with optional ", tracks ready = N")
+STATE_CHANGE_RE = re.compile(
+    r"new state = (\S+),\s+current state = (\S+)"
+)
+
+
+def parse_timestamp(ts_str):
+    """Parse the timestamp string from log stream JSON.
+
+    Format: '2026-03-18 09:43:36.272496-0700'
+    """
+    # Python's %z wants +/-HHMM (no colon), which matches the log format.
+    return datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S.%f%z")
+
+
+def parse_event_message(message):
+    """Extract structured fields from an eventMessage string.
+
+    Returns a dict with keys: webcontent_pid, class_name, method, identifier, tail
+    or None if the message doesn't match the expected pattern.
+    """
+    m = MESSAGE_RE.match(message)
+    if not m:
+        return None
+    return {
+        "webcontent_pid": int(m.group(1)),
+        "class_name": m.group(2),
+        "method": m.group(3),
+        "identifier": m.group(4).upper(),
+        "tail": m.group(5).strip(),
+    }
+
+
+def read_log_entries(stream):
+    """Read newline-delimited JSON log entries from a stream.
+
+    Yields (timestamp, parsed_message, raw_entry) tuples for entries that
+    match our expected format.
+    """
+    for line in stream:
+        line = line.strip()
+        if not line:
+            continue
+
+        try:
+            entry = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+
+        if entry.get("subsystem") != "com.apple.WebKit":
+            continue
+        if entry.get("category") != "Media":
+            continue
+
+        event_message = entry.get("eventMessage", "")
+        parsed = parse_event_message(event_message)
+        if not parsed:
+            continue
+
+        try:
+            ts = parse_timestamp(entry["timestamp"])
+        except (KeyError, ValueError):
+            continue
+
+        yield ts, parsed, entry
+
+
+# ---------------------------------------------------------------------------
+# Object model
+# ---------------------------------------------------------------------------
+
+class MediaElement:
+    """Represents a single HTMLMediaElement instance identified by (PID, hex id).
+
+    Collects events from HTMLMediaElement and all associated objects that share
+    the same log identifier (MediaPlayerPrivateAVFoundationObjC,
+    VideoLayerManagerObjC, etc.).
+    """
+
+    def __init__(self, webcontent_pid, identifier):
+        self.webcontent_pid = webcontent_pid
+        self.identifier = identifier
+        self.events = []  # list of (timestamp, class_name, method, tail)
+        self.class_names = set()
+
+    @property
+    def key(self):
+        return (self.webcontent_pid, self.identifier)
+
+    @property
+    def label(self):
+        return f"HTMLMediaElement({self.identifier}) [WC:{self.webcontent_pid}]"
+
+    def add_event(self, timestamp, class_name, method, tail):
+        self.events.append((timestamp, class_name, method, tail))
+        self.class_names.add(class_name)
+
+    def play_pause_intervals(self):
+        """Compute play/pause intervals from the event log.
+
+        Returns a list of dicts:
+            { "start": datetime, "end": datetime | None, "complete": bool }
+
+        An interval with end=None means playback was still active at end of log.
+        """
+        intervals = []
+        current_play = None
+
+        for ts, class_name, method, _tail in sorted(self.events, key=lambda e: e[0]):
+            if class_name != "HTMLMediaElement":
+                continue
+            if method == "play":
+                if current_play is None:
+                    current_play = ts
+            if method == "pause":
+                if current_play is not None:
+                    intervals.append({"start": current_play, "end": ts, "complete": True})
+                    current_play = None
+
+        # Unclosed interval
+        if current_play is not None:
+            intervals.append({"start": current_play, "end": None, "complete": False})
+
+        return intervals
+
+    def _state_spans(self, method_name):
+        """Compute time spans for a state-change method (setReadyState or setNetworkState).
+
+        Returns a list of dicts:
+            { "state": str, "start": datetime, "end": datetime | None }
+        """
+        transitions = []
+        for ts, class_name, method, tail in sorted(self.events, key=lambda e: e[0]):
+            if class_name != "HTMLMediaElement" or method != method_name:
+                continue
+            m = STATE_CHANGE_RE.search(tail)
+            if not m:
+                continue
+            new_state = m.group(1)
+            transitions.append((ts, new_state))
+
+        if not transitions:
+            return []
+
+        spans = []
+        for i, (ts, state) in enumerate(transitions):
+            if i + 1 < len(transitions):
+                end = transitions[i + 1][0]
+            else:
+                end = None
+            spans.append({"state": state, "start": ts, "end": end})
+        return spans
+
+    def ready_state_spans(self):
+        return self._state_spans("setReadyState")
+
+    def network_state_spans(self):
+        return self._state_spans("setNetworkState")
+
+    def configuration_spans(self):
+        """Compute time spans for configuration changes from mediaPlayerCharacteristicChanged.
+
+        Returns a list of dicts:
+            { "config": str, "start": datetime, "end": datetime | None }
+        """
+        transitions = []
+        for ts, class_name, method, tail in sorted(self.events, key=lambda e: e[0]):
+            if class_name != "HTMLMediaElement" or method != "mediaPlayerCharacteristicChanged":
+                continue
+            config = tail.strip() if tail.strip() else "unknown"
+            # Only record if configuration actually changed
+            if transitions and transitions[-1][1] == config:
+                continue
+            transitions.append((ts, config))
+
+        if not transitions:
+            return []
+
+        spans = []
+        for i, (ts, config) in enumerate(transitions):
+            if i + 1 < len(transitions):
+                end = transitions[i + 1][0]
+            else:
+                end = None
+            spans.append({"config": config, "start": ts, "end": end})
+        return spans
+
+
+def build_elements(log_stream):
+    """Read a log stream and build MediaElement objects.
+
+    Returns (elements_dict, global_start, global_end).
+    """
+    elements = {}  # (pid, identifier) -> MediaElement
+    global_start = None
+    global_end = None
+
+    try:
+        for ts, parsed, _raw in read_log_entries(log_stream):
+            key = (parsed["webcontent_pid"], parsed["identifier"])
+            if key not in elements:
+                elements[key] = MediaElement(parsed["webcontent_pid"], parsed["identifier"])
+
+            elements[key].add_event(ts, parsed["class_name"], parsed["method"], parsed["tail"])
+
+            if global_start is None or ts < global_start:
+                global_start = ts
+            if global_end is None or ts > global_end:
+                global_end = ts
+    except KeyboardInterrupt:
+        print(f"Interrupted — generating timeline from {len(elements)} element(s).", file=sys.stderr)
+
+    return elements, global_start, global_end
+
+
+# ---------------------------------------------------------------------------
+# HTML generation helpers
+# ---------------------------------------------------------------------------
+
+def timestamp_to_ms_offset(ts, origin):
+    """Convert a timestamp to milliseconds relative to origin."""
+    delta = ts - origin
+    return delta.total_seconds() * 1000
+
+
+def format_time(ts):
+    """Format a timestamp for display."""
+    return ts.strftime("%H:%M:%S.%f")[:-3]
+
+
+def state_to_css_class(state):
+    """Convert a state name like HAVE_METADATA to a CSS class like havemetadata."""
+    return state.lower().replace("_", "")
+
+
+def render_marker(ev):
+    """Render an event marker as HTML."""
+    cls = "other"
+    if ev["method"] == "play":
+        cls = "play"
+    if ev["method"] == "pause":
+        cls = "pause"
+
+    tail_html = ""
+    if ev["tail"]:
+        tail_html = f'<br>{escape(ev["tail"])}'
+
+    return (
+        f'<div class="event-marker {cls}" style="left:{ev["offset_pct"]:.4f}%">'
+        f'<div class="marker-tooltip">'
+        f'<span class="tooltip-class">{escape(ev["class_name"])}::</span>'
+        f'<span class="tooltip-method">{escape(ev["method"])}</span> '
+        f'<span class="tooltip-time">{escape(ev["time"])}</span>'
+        f'{tail_html}'
+        f'</div></div>'
+    )
+
+
+def render_lane(css_class, events, interval_bars=None):
+    """Render a lane with optional interval bars and event markers."""
+    parts = [f'<div class="{css_class}">']
+
+    if interval_bars:
+        for iv in interval_bars:
+            complete_cls = "complete" if iv["complete"] else "ongoing"
+            label = iv["duration"] if iv["width_pct"] > 3 else ""
+            tooltip_html = (
+                f'<div class="interval-tooltip">'
+                f'<strong>{"Playing" if iv["complete"] else "Playing (ongoing)"}</strong><br>'
+                f'{escape(iv["start_time"])} \u2192 {escape(iv["end_time"])}<br>'
+                f'Duration: {escape(iv["duration"])}'
+                f'</div>'
+            )
+            parts.append(
+                f'<div class="interval {complete_cls}" '
+                f'style="left:{iv["start_pct"]:.4f}%;width:{max(iv["width_pct"], 0.1):.4f}%">'
+                f'{escape(label)}{tooltip_html}</div>'
+            )
+
+    for ev in events:
+        parts.append(render_marker(ev))
+
+    parts.append('</div>')
+    return '\n'.join(parts)
+
+
+def render_state_lane(label, spans):
+    """Render a state lane row (readyState or networkState)."""
+    parts = [
+        f'<div class="row detail-row">',
+        f'<div class="row-label state-label">{escape(label)}</div>',
+        f'<div class="row-track"><div class="lane state-lane">',
+    ]
+    for sp in spans:
+        css_cls = state_to_css_class(sp["state"])
+        label = sp["duration"] if sp["width_pct"] > 3 else ""
+        parts.append(
+            f'<div class="state-span {css_cls}" '
+            f'style="left:{sp["start_pct"]:.4f}%;width:{max(sp["width_pct"], 0.1):.4f}%">'
+            f'{escape(label)}'
+            f'<div class="state-tooltip">'
+            f'<strong>{escape(sp["state"])}</strong><br>'
+            f'{escape(sp["start_time"])} \u2192 {escape(sp["end_time"])}<br>'
+            f'Duration: {escape(sp["duration"])}'
+            f'</div></div>'
+        )
+    parts.append('</div></div></div>')
+    return '\n'.join(parts)
+
+
+def render_config_lane(spans):
+    """Render a configuration changes lane row."""
+    parts = [
+        '<div class="row detail-row">',
+        '<div class="row-label state-label">configuration</div>',
+        '<div class="row-track"><div class="lane config-lane">',
+    ]
+    for sp in spans:
+        label = sp["duration"] if sp["width_pct"] > 3 else ""
+        parts.append(
+            f'<div class="config-span" '
+            f'style="left:{sp["start_pct"]:.4f}%;width:{max(sp["width_pct"], 0.1):.4f}%">'
+            f'{escape(label)}'
+            f'<div class="config-tooltip">'
+            f'<strong>{escape(sp["config"])}</strong><br>'
+            f'{escape(sp["start_time"])} \u2192 {escape(sp["end_time"])}<br>'
+            f'Duration: {escape(sp["duration"])}'
+            f'</div></div>'
+        )
+    parts.append('</div></div></div>')
+    return '\n'.join(parts)
+
+
+def render_tick(pct, label):
+    """Render a single tick mark."""
+    return f'<div class="tick" style="left:{pct:.4f}%">{escape(label)}</div>'
+
+
+# ---------------------------------------------------------------------------
+# HTML generation
+# ---------------------------------------------------------------------------
+
+def generate_html(elements, global_start, global_end):
+    """Generate a self-contained HTML timeline visualization."""
+    if global_start is None or global_end is None:
+        return "<html><body><p>No HTMLMediaElement events found in log.</p></body></html>"
+
+    # Add a small margin to the time range
+    margin = timedelta(milliseconds=500)
+    range_start = global_start - margin
+    range_end = global_end + margin
+    total_ms = timestamp_to_ms_offset(range_end, range_start)
+    if total_ms <= 0:
+        total_ms = 1000  # minimum 1 second range
+
+    start_label = format_time(global_start)
+    end_label = format_time(global_end)
+
+    # At 1x zoom, the viewport represents 5 minutes of data or the full duration,
+    # whichever is shorter.
+    five_minutes_ms = 5 * 60 * 1000
+    base_width_pct = (total_ms / min(total_ms, five_minutes_ms)) * 100
+
+    # --- Build the body HTML pieces ---
+    body_parts = []
+
+    # Legend
+    has_ready = False
+    has_network = False
+    for key in sorted(elements.keys()):
+        elem = elements[key]
+        if elem.ready_state_spans():
+            has_ready = True
+        if elem.network_state_spans():
+            has_network = True
+
+    if has_ready or has_network:
+        legend_parts = ['<div class="legend">']
+        if has_ready:
+            legend_parts.append('<div class="legend-group">')
+            legend_parts.append('<span class="legend-group-title">readyState:</span>')
+            for state in READY_STATES:
+                css_cls = state_to_css_class(state)
+                display = state.replace("HAVE_", "")
+                legend_parts.append(
+                    f'<span class="legend-item">'
+                    f'<span class="legend-swatch {css_cls}"></span>'
+                    f'{escape(display)}</span>'
+                )
+            legend_parts.append('</div>')
+        if has_network:
+            legend_parts.append('<div class="legend-group">')
+            legend_parts.append('<span class="legend-group-title">networkState:</span>')
+            for state in NETWORK_STATES:
+                css_cls = state_to_css_class(state)
+                display = state.replace("NETWORK_", "")
+                legend_parts.append(
+                    f'<span class="legend-item">'
+                    f'<span class="legend-swatch {css_cls}"></span>'
+                    f'{escape(display)}</span>'
+                )
+            legend_parts.append('</div>')
+        legend_parts.append('</div>')
+        body_parts.append('\n'.join(legend_parts))
+
+    # Time axis ticks
+    target_ticks = 10
+    raw_interval = total_ms / target_ticks
+    nice_intervals = [1, 2, 5, 10, 20, 50, 100, 200, 500,
+                      1000, 2000, 5000, 10000, 20000, 30000, 60000, 120000, 300000, 600000]
+    tick_interval = nice_intervals[-1]
+    for ni in nice_intervals:
+        if ni >= raw_interval:
+            tick_interval = ni
+            break
+
+    tick_parts = []
+    ms = 0
+    while ms <= total_ms:
+        pct = (ms / total_ms) * 100
+        ts = range_start + timedelta(milliseconds=ms)
+        tick_parts.append(render_tick(pct, format_time(ts)))
+        ms += tick_interval
+
+    time_axis_html = (
+        '<div class="time-axis">'
+        '<div class="axis-label"></div>'
+        '<div class="axis-track" id="axis-track">'
+        + '\n'.join(tick_parts) +
+        '</div></div>'
+    )
+
+    # Element rows
+    element_rows = []
+    for key in sorted(elements.keys()):
+        elem = elements[key]
+        intervals = elem.play_pause_intervals()
+
+        event_markers = []
+        for ts, class_name, method, tail in sorted(elem.events, key=lambda e: e[0]):
+            offset_pct = (timestamp_to_ms_offset(ts, range_start) / total_ms) * 100
+            event_markers.append({
+                "offset_pct": offset_pct,
+                "class_name": class_name,
+                "method": method,
+                "time": format_time(ts),
+                "tail": tail,
+            })
+
+        interval_bars = []
+        for iv in intervals:
+            start_pct = (timestamp_to_ms_offset(iv["start"], range_start) / total_ms) * 100
+            if iv["end"] is not None:
+                end_pct = (timestamp_to_ms_offset(iv["end"], range_start) / total_ms) * 100
+            else:
+                end_pct = (timestamp_to_ms_offset(range_end, range_start) / total_ms) * 100
+
+            duration_str = ""
+            if iv["end"] is not None:
+                duration = iv["end"] - iv["start"]
+                duration_str = f"{duration.total_seconds():.3f}s"
+            else:
+                elapsed = (range_end - iv["start"]).total_seconds()
+                duration_str = f">{elapsed:.3f}s"
+
+            interval_bars.append({
+                "start_pct": start_pct,
+                "width_pct": end_pct - start_pct,
+                "complete": iv["complete"],
+                "start_time": format_time(iv["start"]),
+                "end_time": format_time(iv["end"]) if iv["end"] else "\u2014",
+                "duration": duration_str,
+            })
+
+        sub_classes = sorted(elem.class_names - {"HTMLMediaElement"})
+        main_events = [ev for ev in event_markers if ev["class_name"] == "HTMLMediaElement"]
+
+        ready_spans = []
+        for span in elem.ready_state_spans():
+            start_pct = (timestamp_to_ms_offset(span["start"], range_start) / total_ms) * 100
+            if span["end"] is not None:
+                end_pct = (timestamp_to_ms_offset(span["end"], range_start) / total_ms) * 100
+                duration_str = f"{(span['end'] - span['start']).total_seconds():.3f}s"
+            else:
+                end_pct = (timestamp_to_ms_offset(range_end, range_start) / total_ms) * 100
+                duration_str = f">{(range_end - span['start']).total_seconds():.3f}s"
+            ready_spans.append({
+                "state": span["state"],
+                "start_pct": start_pct,
+                "width_pct": end_pct - start_pct,
+                "start_time": format_time(span["start"]),
+                "end_time": format_time(span["end"]) if span["end"] else "\u2014",
+                "duration": duration_str,
+            })
+
+        network_spans = []
+        for span in elem.network_state_spans():
+            start_pct = (timestamp_to_ms_offset(span["start"], range_start) / total_ms) * 100
+            if span["end"] is not None:
+                end_pct = (timestamp_to_ms_offset(span["end"], range_start) / total_ms) * 100
+                duration_str = f"{(span['end'] - span['start']).total_seconds():.3f}s"
+            else:
+                end_pct = (timestamp_to_ms_offset(range_end, range_start) / total_ms) * 100
+                duration_str = f">{(range_end - span['start']).total_seconds():.3f}s"
+            network_spans.append({
+                "state": span["state"],
+                "start_pct": start_pct,
+                "width_pct": end_pct - start_pct,
+                "start_time": format_time(span["start"]),
+                "end_time": format_time(span["end"]) if span["end"] else "\u2014",
+                "duration": duration_str,
+            })
+
+        # Configuration spans
+        config_spans = []
+        for span in elem.configuration_spans():
+            start_pct = (timestamp_to_ms_offset(span["start"], range_start) / total_ms) * 100
+            if span["end"] is not None:
+                end_pct = (timestamp_to_ms_offset(span["end"], range_start) / total_ms) * 100
+            else:
+                end_pct = (timestamp_to_ms_offset(range_end, range_start) / total_ms) * 100
+            if span["end"] is not None:
+                duration = span["end"] - span["start"]
+                duration_str = f"{duration.total_seconds():.3f}s"
+            else:
+                duration_str = f">{(range_end - span['start']).total_seconds():.3f}s"
+            config_spans.append({
+                "config": span["config"],
+                "start_pct": start_pct,
+                "width_pct": end_pct - start_pct,
+                "start_time": format_time(span["start"]),
+                "end_time": format_time(span["end"]) if span["end"] else "\u2014",
+                "duration": duration_str,
+            })
+
+        has_details = bool(sub_classes) or bool(ready_spans) or bool(network_spans) or bool(config_spans)
+        has_play = any(ev["method"] == "play" and ev["class_name"] == "HTMLMediaElement" for ev in event_markers)
+        extra_classes = " no-play" if not has_play else ""
+
+        # Main row HTML
+        main_lane_html = render_lane("lane", main_events, interval_bars)
+        main_row_html = (
+            f'<div class="row">'
+            f'<div class="row-label" title="{escape(elem.label, quote=True)}">{escape(elem.label)}</div>'
+            f'<div class="row-track">{main_lane_html}</div>'
+            f'</div>'
+        )
+
+        if has_details:
+            detail_parts = []
+
+            for cls in sub_classes:
+                cls_events = [ev for ev in event_markers if ev["class_name"] == cls]
+                sub_lane_html = render_lane("lane sublane", cls_events)
+                detail_parts.append(
+                    f'<div class="row detail-row">'
+                    f'<div class="row-label">{escape(cls)}</div>'
+                    f'<div class="row-track">{sub_lane_html}</div>'
+                    f'</div>'
+                )
+
+            if ready_spans:
+                detail_parts.append(render_state_lane("readyState", ready_spans))
+            if network_spans:
+                detail_parts.append(render_state_lane("networkState", network_spans))
+            if config_spans:
+                detail_parts.append(render_config_lane(config_spans))
+
+            element_rows.append(
+                f'<details class="element-group{extra_classes}">'
+                f'<summary>{main_row_html}</summary>'
+                + '\n'.join(detail_parts) +
+                f'</details>'
+            )
+        else:
+            element_rows.append(
+                f'<div class="element-group-nodetails{extra_classes}">{main_row_html}</div>'
+            )
+
+    body_parts.append(
+        '<div class="timeline-scroll" id="timeline-scroll">'
+        f'<div class="timeline-inner" id="timeline-inner" style="width:{base_width_pct:.2f}%">'
+        + time_axis_html + '\n'
+        + '\n'.join(element_rows)
+        + '</div></div>'
+    )
+
+    body_html = '\n'.join(body_parts)
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HTMLMediaElement Timeline</title>
+<style>
+* {{ margin: 0; padding: 0; box-sizing: border-box; }}
+body {{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    padding: 20px;
+}}
+h1 {{ font-size: 18px; font-weight: 600; margin-bottom: 4px; color: #ffffff; }}
+.subtitle {{ font-size: 13px; color: #888; margin-bottom: 12px; }}
+.controls {{
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+}}
+.controls label {{ font-size: 12px; color: #aaa; }}
+.controls input[type="range"] {{ width: 200px; accent-color: #2ecc71; }}
+.controls .zoom-value {{
+    font-size: 12px; color: #ccc;
+    font-family: "SF Mono", Menlo, Consolas, monospace; min-width: 36px;
+}}
+.controls button {{
+    background: #2c2c4a; border: 1px solid #555; border-radius: 4px;
+    color: #ccc; padding: 3px 10px; font-size: 11px; cursor: pointer;
+}}
+.controls button:hover {{ background: #3c3c5a; }}
+.legend {{ display: flex; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }}
+.legend-group {{ display: flex; align-items: center; gap: 8px; }}
+.legend-group-title {{ font-size: 11px; color: #999; font-weight: 600; margin-right: 4px; }}
+.legend-item {{ display: flex; align-items: center; gap: 4px; font-size: 10px; color: #aaa; }}
+.legend-swatch {{ width: 12px; height: 12px; border-radius: 2px; display: inline-block; }}
+
+/* Scrollable timeline area */
+.timeline-scroll {{ overflow-x: auto; overflow-y: visible; position: relative; direction: rtl; }}
+.timeline-inner {{ position: relative; direction: ltr; }}
+
+/* Rows */
+.row {{ display: flex; min-height: 28px; margin-bottom: 1px; }}
+.row-label {{
+    width: 330px; min-width: 330px; padding-right: 10px;
+    font-size: 12px; font-family: "SF Mono", Menlo, Consolas, monospace;
+    color: #ccc; text-align: right; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+    display: flex; align-items: center; justify-content: flex-end;
+    position: sticky; left: 0; background: #1a1a2e; z-index: 3;
+}}
+.row-track {{ flex: 1; position: relative; min-width: 0; }}
+
+/* Time axis */
+.time-axis {{ display: flex; min-height: 30px; border-bottom: 1px solid #444; margin-bottom: 8px; }}
+.time-axis .axis-label {{
+    width: 330px; min-width: 330px;
+    position: sticky; left: 0; background: #1a1a2e; z-index: 3;
+}}
+.time-axis .axis-track {{ flex: 1; position: relative; min-width: 0; }}
+.tick {{
+    position: absolute; bottom: 0; transform: translateX(-50%);
+    font-size: 10px; color: #888; white-space: nowrap;
+}}
+.tick::before {{
+    content: ""; position: absolute; bottom: -1px; left: 50%;
+    width: 1px; height: 6px; background: #555;
+}}
+
+/* Details/summary disclosure */
+.element-group {{ margin-bottom: 2px; }}
+.element-group > summary {{
+    list-style: none; cursor: pointer;
+}}
+.element-group > summary::-webkit-details-marker {{ display: none; }}
+.element-group > summary > .row > .row-label::before {{
+    content: "\\25b6"; font-size: 9px; color: #666; margin-right: 6px;
+    flex-shrink: 0; display: inline-block;
+}}
+.element-group[open] > summary > .row > .row-label::before {{
+    content: "\\25bc";
+}}
+.element-group-nodetails {{ margin-bottom: 2px; }}
+
+/* Detail rows */
+.detail-row .row-label {{ font-size: 10px; color: #777; }}
+.detail-row .row-label.state-label {{
+    font-size: 9px; color: #666; text-transform: uppercase; letter-spacing: 0.5px;
+}}
+
+/* Lane styles */
+.lane {{
+    position: relative; height: 28px; background: #22223a;
+    border-radius: 4px;
+}}
+.sublane {{ height: 20px; background: #1e1e34; }}
+.state-lane {{ height: 14px; background: #1a1a2e; border-radius: 2px; }}
+
+/* Configuration lane */
+.config-lane {{
+    height: 20px; background: #1e1e2e; border-radius: 2px;
+    position: relative;
+}}
+.config-span {{
+    position: absolute; top: 2px; height: 16px; border-radius: 3px;
+    background: rgba(155, 89, 182, 0.6); cursor: default;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    white-space: nowrap;
+}}
+.config-span .config-tooltip {{
+    display: none; position: absolute; bottom: 24px; left: 50%;
+    transform: translateX(-50%); background: #2c2c4a; border: 1px solid #555;
+    border-radius: 4px; padding: 4px 8px; font-size: 10px; white-space: nowrap;
+    z-index: 100; color: #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    pointer-events: none;
+}}
+.config-span:hover .config-tooltip {{ display: block; }}
+
+/* Intervals */
+.interval {{
+    position: absolute; top: 4px; height: 20px; border-radius: 3px;
+    cursor: default;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    white-space: nowrap;
+}}
+.interval.complete {{ background: linear-gradient(135deg, #2ecc71, #27ae60); }}
+.interval.ongoing {{
+    background: repeating-linear-gradient(-45deg, #27ae60, #27ae60 5px, #2ecc71 5px, #2ecc71 10px);
+}}
+.interval .interval-tooltip {{
+    display: none; position: absolute; bottom: 24px; left: 50%;
+    transform: translateX(-50%); background: #2c2c4a; border: 1px solid #555;
+    border-radius: 4px; padding: 6px 10px; font-size: 11px; white-space: nowrap;
+    z-index: 100; color: #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    pointer-events: none;
+}}
+.interval:hover .interval-tooltip {{ display: block; }}
+
+/* Event markers */
+.event-marker {{
+    position: absolute; top: 0; width: 2px; height: 100%;
+    cursor: default;
+}}
+.event-marker:hover {{  }}
+.event-marker.play {{ background: #2ecc71; }}
+.event-marker.pause {{ background: #e74c3c; }}
+.event-marker.other {{ background: #f39c12; }}
+.event-marker .marker-tooltip {{
+    display: none; position: absolute; bottom: 32px; left: 50%;
+    transform: translateX(-50%); background: #2c2c4a; border: 1px solid #555;
+    border-radius: 4px; padding: 6px 10px; font-size: 11px; white-space: nowrap;
+    z-index: 100; color: #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    pointer-events: none;
+}}
+.event-marker:hover .marker-tooltip {{ display: block; }}
+.tooltip-class {{ color: #9b9bff; font-size: 10px; }}
+.tooltip-method {{ font-weight: 600; }}
+.tooltip-time {{ color: #aaa; margin-left: 6px; }}
+
+/* State spans */
+.state-span {{
+    position: absolute; top: 0; height: 100%; border-radius: 2px;
+    cursor: default; background: rgba(136, 136, 136, 0.85);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+    white-space: nowrap;
+}}
+.state-span.havenothing, .legend-swatch.havenothing {{ background: rgba(85, 85, 85, 0.85); }}
+.state-span.havemetadata, .legend-swatch.havemetadata {{ background: rgba(127, 140, 141, 0.85); }}
+.state-span.havecurrentdata, .legend-swatch.havecurrentdata {{ background: rgba(212, 172, 13, 0.85); }}
+.state-span.havefuturedata, .legend-swatch.havefuturedata {{ background: rgba(41, 128, 185, 0.85); }}
+.state-span.haveenoughdata, .legend-swatch.haveenoughdata {{ background: rgba(39, 174, 96, 0.85); }}
+.state-span.networkempty, .legend-swatch.networkempty {{ background: rgba(85, 85, 85, 0.85); }}
+.state-span.networkidle, .legend-swatch.networkidle {{ background: rgba(127, 140, 141, 0.85); }}
+.state-span.networkloading, .legend-swatch.networkloading {{ background: rgba(41, 128, 185, 0.85); }}
+.state-span.networknosource, .legend-swatch.networknosource {{ background: rgba(192, 57, 43, 0.85); }}
+.state-span .state-tooltip {{
+    display: none; position: absolute; bottom: 18px; left: 50%;
+    transform: translateX(-50%); background: #2c2c4a; border: 1px solid #555;
+    border-radius: 4px; padding: 4px 8px; font-size: 10px; white-space: nowrap;
+    z-index: 100; color: #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    pointer-events: none;
+}}
+.state-span:hover .state-tooltip {{ display: block; }}
+
+.no-events {{ text-align: center; padding: 40px; color: #888; font-size: 14px; }}
+.filters {{
+    margin-bottom: 12px; font-size: 12px; color: #aaa;
+}}
+.filters summary {{
+    cursor: pointer; color: #999; font-size: 12px; margin-bottom: 6px;
+}}
+.filters label {{
+    display: block; margin: 4px 0 4px 16px; cursor: pointer;
+}}
+</style>
+</head>
+<body>
+<h1>HTMLMediaElement Playback Timeline</h1>
+<div class="subtitle">Range: {start_label} \u2014 {end_label}</div>
+
+<div class="controls">
+<label>Zoom:</label>
+<input type="range" id="zoom-slider" min="-100" max="100" step="1" value="0">
+<span class="zoom-value" id="zoom-value">1x</span>
+<button id="zoom-reset">Reset</button>
+</div>
+
+<details class="filters">
+<summary>Filters</summary>
+<label><input type="checkbox" id="filter-no-play" checked> Hide non-playing elements</label>
+</details>
+
+<style id="filter-styles">.no-play {{ display: none; }}</style>
+
+{body_html}
+
+<script>
+const innerEl = document.getElementById("timeline-inner");
+const scrollEl = document.getElementById("timeline-scroll");
+const slider = document.getElementById("zoom-slider");
+const zoomValue = document.getElementById("zoom-value");
+const resetBtn = document.getElementById("zoom-reset");
+const baseWidthPct = {base_width_pct:.2f};
+
+function sliderToZoom(val) {{
+    // Maps slider range [-100, 100] to zoom [1/50, 50] on a log scale.
+    // val=0 -> 1x, val=100 -> 50x, val=-100 -> 1/50x
+    return Math.pow(50, val / 100);
+}}
+
+function formatZoom(zoom) {{
+    if (zoom >= 1) return zoom.toFixed(1) + "x";
+    return "1/" + (1 / zoom).toFixed(1) + "x";
+}}
+
+function applyZoom(zoom) {{
+    zoomValue.textContent = formatZoom(zoom);
+
+    // In RTL scroll (WebKit): scrollLeft is 0 at right edge, negative going left.
+    // The visible left edge in content coordinates:
+    //   visibleLeft = scrollWidth - clientWidth + scrollLeft
+    const oldWidth = innerEl.scrollWidth;
+    const viewportWidth = scrollEl.clientWidth;
+    const visibleLeft = oldWidth - viewportWidth + scrollEl.scrollLeft;
+    const centerFrac = oldWidth > 0 ? (visibleLeft + viewportWidth / 2) / oldWidth : 0.5;
+
+    innerEl.style.width = (baseWidthPct * zoom) + "%";
+
+    // Restore center: set scrollLeft so centerFrac stays in the middle.
+    // visibleLeft = centerFrac * newWidth - viewportWidth / 2
+    // scrollLeft = visibleLeft - (newWidth - viewportWidth)
+    const newWidth = innerEl.scrollWidth;
+    const newVisibleLeft = centerFrac * newWidth - viewportWidth / 2;
+    scrollEl.scrollLeft = newVisibleLeft - (newWidth - viewportWidth);
+}}
+
+const filterStyles = document.getElementById("filter-styles");
+const filterNoPlay = document.getElementById("filter-no-play");
+
+function updateFilters() {{
+    let rules = "";
+    if (filterNoPlay.checked)
+        rules += ".no-play {{ display: none; }}\\n";
+    filterStyles.textContent = rules;
+}}
+
+filterNoPlay.addEventListener("change", updateFilters);
+
+slider.addEventListener("input", function() {{
+    applyZoom(sliderToZoom(parseFloat(this.value)));
+}});
+resetBtn.addEventListener("click", function() {{
+    slider.value = "0";
+    applyZoom(1);
+    scrollEl.scrollLeft = 0;
+}});
+</script>
+</body>
+</html>"""
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Visualize HTMLMediaElement playback timelines from WebKit logs.",
+        epilog="Pipe log stream output: log stream --style ndjson --predicate "
+               "'subsystem == \"com.apple.WebKit\" AND category == \"Media\"' "
+               "| visualize-media-element-timeline > output.html",
+    )
+    parser.add_argument(
+        "--input", "-i",
+        type=str,
+        default=None,
+        help="Read logs from a file instead of stdin.",
+    )
+    args = parser.parse_args()
+
+    if args.input:
+        with open(args.input, "r") as f:
+            elements, global_start, global_end = build_elements(f)
+    else:
+        elements, global_start, global_end = build_elements(sys.stdin)
+
+    html = generate_html(elements, global_start, global_end)
+    sys.stdout.write(html)
+
+
+if __name__ == "__main__":
+    main()

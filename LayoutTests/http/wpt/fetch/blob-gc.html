@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Blob and GC</title>
+    <meta name="help" href="https://fetch.spec.whatwg.org/#request">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="../resources/gc.js"></script>
+  </head>
+  <body>
+    <script>
+async function createBlobAndGetURL()
+{
+    const blob = new Blob([new ArrayBuffer(1024)]);
+    const url = internals.blobInternalURL(blob);
+    assert_true(await internals.isBlobInternalURLRegistered(url));
+    return url;
+}
+
+promise_test(async () => {
+    if (!window.internals)
+        return Promise.reject("no internals");
+
+    const url = await createBlobAndGetURL();
+    let counter = 0;
+    do {
+       gc();
+       await new Promise(resolve => setTimeout(resolve, 50));
+    } while (await internals.isBlobInternalURLRegistered(url) && counter++ < 100)
+
+    assert_false(await internals.isBlobInternalURLRegistered(url));
+}, "A GCed blob should get unregistered");
+    </script>
+  </body>
+</html>

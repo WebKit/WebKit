@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - ResourceTiming for revalidation requests</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.sub.js"></script>
+<script src="resources/rt-revalidate-utilities.sub.js"></script>
+</head>
+<body>
+<h1>Resource Timing: ResourceTiming for revalidation requests</h1>
+<div id="log"></div>
+<script>
+// Same Origin (revalidation request).
+
+let sameOriginURL = createRevalidationURL({tao: true, crossOrigin: false});
+
+promise_test(function(t) {
+    let promise = observeResources(1).then(([entry]) => {
+        assertAlways(entry);
+        assertAllowedTimingData(entry);
+    });
+    makeRequest(sameOriginURL);
+    return promise;
+}, "Same Origin network load");
+
+promise_test(function(t) {
+    let promise = observeResources(1).then(([entry]) => {
+        assertAlways(entry);
+        assertAllowedTimingData(entry);
+    });
+    makeRequest(sameOriginURL, true);
+    return promise;
+}, "Same Origin revalidation load");
+</script>
+</body>
+</html>

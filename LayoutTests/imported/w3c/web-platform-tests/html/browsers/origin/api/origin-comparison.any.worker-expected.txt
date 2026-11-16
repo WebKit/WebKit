@@ -1,0 +1,6 @@
+
+PASS Comparison of `new Origin()` opaque origins.
+PASS Comparison of tuple origins.
+PASS Comparisons are schemeful.
+PASS Comparison of `Origin.from(<url-string>)` opaque origins.
+

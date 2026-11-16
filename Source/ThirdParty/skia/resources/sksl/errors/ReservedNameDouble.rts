@@ -1,0 +1,5 @@
+int double;
+
+/*%%*
+name 'double' is reserved
+*%%*/

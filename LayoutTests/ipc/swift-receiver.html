@@ -1,0 +1,28 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that a Swift receiver handles a message.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ipc.js"></script>
+<body>
+<script>
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    IPC.addTesterReceiver('UI');
+    try {
+        let result = await IPC.sendWithPromisedReply('UI', 0, IPC.messages.IPCTester_SendAsyncMessageToReceiverRequestingReply.name, [{type: 'int32_t', value: 42}]);
+        if (result.arguments[1].value) {
+            // Swift handled this, and should have added 3
+            assert_equals(result.arguments[0].value, 45);
+        } else {
+            // C++ handled this, and should have added 2
+            assert_equals(result.arguments[0].value, 44);
+        }
+    } finally {
+        IPC.removeTesterReceiver('UI');
+    }
+    done();
+}, "IPC message delivered OK to Swift (or C++).");
+</script>
+</body>

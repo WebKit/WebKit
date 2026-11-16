@@ -1,0 +1,10 @@
+Tests that History API navigations triggered from a navigate event listener are rate-limited, so they cannot create an infinite navigation loop
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigateEventCount is 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

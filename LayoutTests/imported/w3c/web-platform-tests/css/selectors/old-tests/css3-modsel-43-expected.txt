@@ -1,0 +1,9 @@
+This paragraph should have a green background
+
+This paragraph should have a green background
+
+This paragraph should be unstyled.
+
+
+PASS Descendant combinator
+

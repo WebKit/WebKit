@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Tests that a non-fill-forwards animation doesn't cause stacking context once finished.</title>
+    <style>
+        .box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100px;
+            width: 100px;
+        }
+        
+        #animating {
+            animation: move 0.1s 1;
+            background-color: orange;
+        }
+
+        @keyframes move {
+            from { transform: translateX(400px); }
+            to   { transform: none }
+        }
+
+        .behind {
+            background-color: blue;
+            top: 50px;
+            left: 50px;
+            z-index: 1;
+        }
+
+        .front {
+            top: 25px;
+            left: 25px;
+            background-color: green;
+            z-index: 2;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        
+        window.addEventListener('load', function() {
+            document.getElementById('animating').addEventListener('animationend', function() {
+                // Wait until filling forwards.
+                window.setTimeout(function() {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 0);
+            })
+        }, false);
+    </script>
+</head>
+<body>
+
+<div class="behind box"></div>
+<div id="animating" class="box">
+    <div class="front box"></div>
+</div>
+
+</body>
+</html>

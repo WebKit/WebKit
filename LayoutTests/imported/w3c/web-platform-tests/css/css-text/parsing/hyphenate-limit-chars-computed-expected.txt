@@ -1,0 +1,13 @@
+
+PASS Property hyphenate-limit-chars value 'auto'
+PASS Property hyphenate-limit-chars value 'auto auto'
+PASS Property hyphenate-limit-chars value 'auto auto auto'
+PASS Property hyphenate-limit-chars value '5'
+PASS Property hyphenate-limit-chars value '5 2'
+PASS Property hyphenate-limit-chars value '5 2 3'
+PASS Property hyphenate-limit-chars value '5 2 calc(3.1)'
+PASS Property hyphenate-limit-chars value 'auto 2'
+PASS Property hyphenate-limit-chars value 'auto 2 2'
+PASS Property hyphenate-limit-chars value 'auto 2 auto'
+PASS Property hyphenate-limit-chars value 'auto auto 2'
+

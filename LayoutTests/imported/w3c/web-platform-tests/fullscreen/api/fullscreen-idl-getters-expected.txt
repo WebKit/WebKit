@@ -1,0 +1,5 @@
+
+PASS IDL getters return null/false when not fullscreen
+PASS IDL getters reflect fullscreen state through enter and exit
+PASS simple fullscreen document: top layer has exactly one fullscreen element while entered
+

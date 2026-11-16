@@ -1,0 +1,4 @@
+
+PASS Sanity check
+PASS Set border as 1px solid black
+

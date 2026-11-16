@@ -1,0 +1,25 @@
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        function runTest()
+        {
+            if (!window.accessibilityController || !window.testRunner)
+                return;
+            shouldBe('accessibilityController.focusedElement.parentElement().role', '"AXRole: document"');
+            shouldBeTrue('accessibilityController.focusedElement.parentElement().isEnabled');
+        }
+    </script>
+    <body onload="runTest()">
+        This tests that the enabled state of the document is true.
+
+        <br><br>
+
+        Bug #67974: <a href="https://bugs.webkit.org/show_bug.cgi?id=67974">MSAA: WebKit reports the document state as disabled</a>
+
+        <br><br>
+
+        This test must be run inside of DumpRenderTree.
+
+        <p id="console"></p>
+    </body>
+</html>

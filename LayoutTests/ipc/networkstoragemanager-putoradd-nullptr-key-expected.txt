@@ -1,0 +1,2 @@
+This test passes if the Network process does not crash when receiving a PutOrAdd message with an IDBKeyData using the std::nullptr_t variant (the empty sentinel of IDBKeyDataHashTraits).
+PASS

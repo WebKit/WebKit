@@ -1,0 +1,121 @@
+Test the basic cases of style update for attribute selectors for HTML.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state does not match anything, there are no attributes on the targets.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Adding "data-æøå", the background-color should match.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Removing "data-æøå", the background-color should no longer match.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Adding "DATA-æøå", the background-color should match because the document is HTML and has case-insensitive attribute matching.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Removing "DATA-æøå", the background-color should no longer match.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Adding "DATA-æøå", the background-color should match because the document is HTML and has case-insensitive attribute matching.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Adding "data-ÆØÅ", the fill-opacity should match.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Removing "data-ÆØÅ", the fill-opacity should no longer match.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Adding "dAta-ÆØÅ", the fill-opacity should match because the document is HTML and has case-insensitive attribute matching.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Removing "dAta-ÆØÅ", the fill-opacity should no longer match.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "1"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Adding "Data-ÆØÅ", the fill-opacity should match because the document is HTML and has case-insensitive attribute matching.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Adding "data-Æøå", the color should match.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(4, 5, 6)"
+Removing "data-Æøå", the color should no longer match.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Adding "Data-Æøå", the color should match because the document is HTML and has case-insensitive attribute matching.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(4, 5, 6)"
+Removing "Data-Æøå", the color should no longer match.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
+Adding "DATA-Æøå", the color should match because the document is HTML and has case-insensitive attribute matching.
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity is "0.5"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(4, 5, 6)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

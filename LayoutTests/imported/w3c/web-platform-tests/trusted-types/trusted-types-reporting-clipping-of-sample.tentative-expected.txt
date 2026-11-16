@@ -1,0 +1,10 @@
+
+PASS Clipping of violation sample for createPolicy(𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆)
+PASS Clipping of violation sample for Element.innerHTML = "𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆𝐆"
+FAIL Clipping of violation sample for createPolicy(H𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇) assert_equals: expected "H𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇" but got "H𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇U+d835"
+FAIL Clipping of violation sample for Element.innerHTML = "H𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇" assert_equals: expected "Element innerHTML|H𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇" but got "Element innerHTML|H𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇𝐇U+d835"
+PASS Clipping of violation sample for createPolicy(𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈I)
+PASS Clipping of violation sample for Element.innerHTML = "𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈𝐈I"
+PASS Clipping of violation sample for createPolicy(𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉)
+PASS Clipping of violation sample for Element.innerHTML = "𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉𝐉"
+

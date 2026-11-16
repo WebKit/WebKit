@@ -1,0 +1,22 @@
+load("//bazel:skia_rules.bzl", "skia_objc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_objc_library(
+    name = "ganesh_metal_test_context",
+    testonly = True,
+    srcs = [
+        "MtlTestContext.h",
+        "MtlTestContext.mm",
+    ],
+    visibility = ["//tools/ganesh:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/gpu/ganesh/mtl:ganesh_metal_TEST_UTIL",
+        "//tools/ganesh:common_ganesh_utils",
+    ],
+)

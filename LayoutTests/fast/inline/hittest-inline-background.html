@@ -1,0 +1,15 @@
+<style>
+#child {
+  pointer-events: none;
+}
+.container {
+  position: relative;
+}
+</style>
+<div class=container><a href="https://www.apple.com/" id=link><div id=child>PASS if click takes you to apple.com</div></a></div>
+<pre id=log></pre>
+<script>
+window.testRunner?.dumpAsText();
+const id = document.elementFromPoint(child.offsetLeft + 10, child.offsetTop+ 10).id;
+log.textContent = id ? id : "FAIL";
+</script>

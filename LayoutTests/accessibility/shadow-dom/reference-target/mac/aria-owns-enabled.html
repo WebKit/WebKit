@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../../../../resources/accessibility-helper.js"></script>
+    <script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="group" role="group" aria-owns="shadow-host">
+    <span id="light-span" role="button">Item 1</span>
+</div>
+
+<!-- The role is present to ensure this element is not ignored for accessibility. -->
+<fancy-span id="shadow-host" role="button">
+    <template shadowrootmode="closed" shadowrootreferencetarget="inner-span">
+        <span id="inner-span" role="button">Inner span</span>
+    </template>
+</fancy-span>
+
+<script>
+description("Reference target does not support aria-owns, i.e.,the ownership is not forwarded to the referenced element.");
+
+var group = accessibilityController.accessibleElementById("group");
+
+let output = expect("group.isAttributeSupported('AXOwns')", "true");
+output += expect("group.childrenCount", "2");
+
+output += expect("group.ariaOwnsElementAtIndex(0).domIdentifier", "'inner-span'");
+output += expect("group.childAtIndex(1).domIdentifier", "'inner-span'");
+
+debug(output);
+</script>
+</body>
+</html>

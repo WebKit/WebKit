@@ -1,0 +1,44 @@
+<style>
+body {
+  margin: 0px;
+  font-family: Ahem;
+}
+
+div {
+  line-height: 40px; 
+}
+
+img {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: green;
+}
+</style>
+<!-- out-of-flow boxes with static positioning in IFC -->
+<div>text</div>
+<div>text</div>
+<div>text</div>
+<div>text</div>
+<div><span></span>text</div>
+<div><span><span></span></span>text</div>
+<div><span>text</span>text</div>
+<div><span>text</span>text</div>
+<div><br></div>
+<div><br>text</div>
+<div><br><br></div>
+<div>text<br></div>
+<div>text<br></div>
+<img style="left: 0px; top: 0px;">
+<img style="left: 0px; top: 40px;">
+<img style="left: 64px; top: 80px;">
+<img style="left: 0px; top: 120px;"><img style="left: 64px; top: 120px;">
+<img style="left: 0px; top: 160px;"><img style="left: 64px; top: 160px;">
+<img style="left: 0px; top: 200px;"><img style="left: 64px; top: 200px;">
+<img style="left: 64px; top: 240px;"><img style="left: 128px; top: 240px;">
+<img style="left: 64px; top: 280px;"><img style="left: 128px; top: 280px;">
+<img style="left: 0px; top: 360px;">
+<img style="left: 64px; top: 400px;">
+<img style="left: 0px; top: 520px;">
+<img style="left: 0px; top: 560px;">
+<img style="left: 0px; top: 600px;">

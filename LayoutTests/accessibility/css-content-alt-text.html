@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.alt-text-1 {
+    content: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='12' fill='yellow'/></svg>") / "alt-text-1";
+}
+
+.alt-text-2 {
+    content: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='12' fill='purple'/></svg>") / "alt-text-2";
+}
+</style>
+</head>
+<body>
+
+<span id="custom-image" class="alt-text-1"></span>
+<button id="button" class="alt-text-1">Press</button>
+
+<script>
+var output = "This test ensures we represent alt text provided by the CSS `content` property correctly.\n\n";
+
+function platformTextForId(id) {
+    return `${platformTextAlternatives(accessibilityController.accessibleElementById(id))}\n\n`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += platformTextForId("button");
+    output += platformTextForId("custom-image");
+
+    var newPlatformText;
+    document.getElementById("button").setAttribute("class", "alt-text-2");
+    document.getElementById("custom-image").setAttribute("class", "alt-text-2");
+    setTimeout(async function() {
+        await waitFor(() => {
+            newPlatformText = platformTextForId("button");
+            return newPlatformText && newPlatformText.includes("alt-text-2");
+        });
+        output += newPlatformText;
+
+        await waitFor(() => {
+            newPlatformText = platformTextForId("custom-image");
+            return newPlatformText && newPlatformText.includes("alt-text-2");
+        });
+        output += newPlatformText;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

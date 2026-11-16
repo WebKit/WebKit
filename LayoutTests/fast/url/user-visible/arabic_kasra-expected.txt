@@ -1,0 +1,11 @@
+Test IDN behavior for Arabic Kasra letter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test('https://xn--apple-gkh.com/') is 'https://xn--apple-gkh.com/'
+PASS test('http://xn--google-yri.com/') is 'http://xn--google-yri.com/'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

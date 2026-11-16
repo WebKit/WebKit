@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests overriding Promise object in cancel callback of ReadableStream.<br>
+WebKit should not crash or hit any assertions under ASAN, and you should see PASS below.</p>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function FakePromise(executor) {
+    executor(() => {}, () => {}); // satisfy resolve/reject callability checks
+    return 0; // construct() returns this object
+}
+
+const readableStream = new ReadableStream({
+    cancel(reason) {
+        // Fire m_promiseSpeciesWatchpointSet *here*, after all setup .@then calls are done
+        let didCall = false;
+        Object.defineProperty(Promise, Symbol.species, {
+            configurable: true,
+            get() {
+                if (!didCall) {
+                    didCall = true;
+                    return FakePromise;
+                }
+                return undefined; // fall back to %Promise% for every other .then
+            }
+        });
+        return new Promise(() => {}); // genuine pending JSPromise (passes through promiseResolve unchanged)
+    }
+});
+
+const writableStream = new WritableStream();
+const writer  = writableStream.getWriter();
+writer.close(); // sets @closeRequest => closeQueuedOrInFlight()==true, state still 'writable'
+writer.releaseLock(); // unlocks => destination.locked()==false
+
+readableStream.pipeTo(writableStream).catch(() => {}); // synchronous path to closingMustBePropagatedBackward -> jsCast -> performPromiseThen on 0
+
+document.write('PASS');
+</script>
+</body>
+</html>

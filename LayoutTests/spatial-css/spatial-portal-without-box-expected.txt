@@ -1,0 +1,5 @@
+
+
+PASS A <model> inside an inline spatial: portal renders standalone
+PASS A <model> inside a display: contents spatial: portal renders standalone
+

@@ -1,0 +1,48 @@
+Tests for LocalResourceOverride being mapped to a directory.
+
+
+== Running test suite: LocalResourceOverride
+-- Running test case: LocalResourceOverride.MappedToDirectory.Valid
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/(.+)
+Linking to file...
+Triggering load...
+PASS: Resource Loaded.
+Resource status code: 200
+Resource status text: OK
+Resource MIME: text/plain
+Resource Content: 'PASS: Should load from file.'
+
+-- Running test case: LocalResourceOverride.MappedToDirectory.MappedFileChanged
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/(.+)
+Linking to file...
+Triggering load...
+PASS: Resource Loaded.
+Resource status code: 200
+Resource status text: OK
+Resource MIME: text/plain
+Resource Content: 'PASS: Should load from file.'
+
+-- Running test case: LocalResourceOverride.MappedToDirectory.MappedFileDeleted
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/(.+)
+Linking to file...
+Triggering load...
+WARN: Local Override: could not load “DOES NOT EXIST”
+PASS: Resource Loaded.
+Resource status code: 200
+Resource status text: OK
+Resource MIME: text/plain
+Resource Content: 'default override.txt content
+'
+
+-- Running test case: LocalResourceOverride.MappedToDirectory.Invalid
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/(.+)
+Linking to file...
+Triggering load...
+WARN: Local Override: could not load “DOES NOT EXIST”
+PASS: Resource Loaded.
+Resource status code: 200
+Resource status text: OK
+Resource MIME: text/plain
+Resource Content: 'default override.txt content
+'
+

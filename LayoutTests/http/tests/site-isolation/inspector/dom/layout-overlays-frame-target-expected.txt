@@ -1,0 +1,78 @@
+Tests that a cross-origin iframe's FrameDOMAgent accepts the DOM grid and flex overlay commands.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameLayoutOverlays
+-- Running test case: ShowAndHideGridOverlay
+PASS: Should find the frame target for grid-overlay-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: Should get a nodeId for '#target'.
+PASS: DOM.showGridOverlay should be accepted by the frame target.
+PASS: DOM.hideGridOverlay should be accepted by the frame target.
+
+-- Running test case: ShowAndHideFlexOverlay
+PASS: Should find the frame target for flex-overlay-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: Should get a nodeId for '#target'.
+PASS: DOM.showFlexOverlay should be accepted by the frame target.
+PASS: DOM.hideFlexOverlay should be accepted by the frame target.
+
+-- Running test case: HideOverlayWithoutNodeIdClearsAll
+PASS: Should find the frame target for grid-overlay-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: DOM.hideGridOverlay with no nodeId should be accepted.
+PASS: DOM.hideFlexOverlay with no nodeId should be accepted.
+
+-- Running test case: HideOverlayForNeverShownNode
+PASS: Should find the frame target for grid-overlay-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: Should get a nodeId for '#not-grid'.
+PASS: DOM.hideGridOverlay for a node with no overlay should be accepted.
+
+-- Running test case: ShowGridOverlayRejectsInvalidNodeId
+PASS: Should find the frame target for grid-overlay-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: DOM.showGridOverlay should reject an unbound nodeId.
+PASS: DOM.hideGridOverlay should reject an unbound nodeId.
+
+-- Running test case: OverlayPersistsAcrossScroll
+PASS: Should find the frame target for grid-overlay-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: DOM.showGridOverlay should be accepted before scrolling.
+PASS: DOM.showGridOverlay should be accepted while the frame is scrolled.
+
+-- Running test case: GridAndFlexOverlaysLiveInSeparateProcesses
+PASS: Should find the frame target for grid-overlay-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: Should find the frame target for flex-overlay-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: The two frames should have distinct targets.
+PASS: Grid overlay should be accepted in the grid frame.
+PASS: Flex overlay should be accepted in the flex frame while the grid overlay is live.
+PASS: Clearing the grid frame's overlays should be accepted.
+PASS: The flex frame's overlay should still be addressable afterwards.
+
+-- Running test case: OverlayTornDownOnFrameNavigation
+PASS: Should find the frame target for flex-overlay-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: A nodeId from before navigation should no longer resolve.
+PASS: Clearing all overlays after navigation should be accepted.
+

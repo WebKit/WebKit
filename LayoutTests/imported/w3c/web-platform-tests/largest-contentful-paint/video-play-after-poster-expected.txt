@@ -1,0 +1,4 @@
+
+
+PASS Video with poster should not emit a second LCP entry after playing.
+

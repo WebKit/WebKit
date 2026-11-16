@@ -1,0 +1,145 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/sdp_integration_fuzzer.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/sdp_integration_fuzzer.cc
+index e39e89f6c616..19c8be014b4f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/sdp_integration_fuzzer.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/test/fuzzers/sdp_integration_fuzzer.cc
+@@ -10,8 +10,14 @@
+ 
+ #include <stddef.h>
+ #include <stdint.h>
++#ifdef WEBRTC_WEBKIT_BUILD
++#include <stdlib.h>
++#endif
+ 
+ #include "absl/strings/string_view.h"
++#ifdef WEBRTC_WEBKIT_BUILD
++#include "api/jsep.h"
++#endif
+ #include "pc/test/integration_test_helpers.h"
+ 
+ namespace webrtc {
+@@ -21,7 +27,11 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
+   FuzzerTest()
+       : PeerConnectionIntegrationBaseTest(SdpSemantics::kUnifiedPlan) {}
+ 
++#ifdef WEBRTC_WEBKIT_BUILD
++  void RunNegotiateCycle(SdpType sdpType, absl::string_view message) {
++#else
+   void RunNegotiateCycle(absl::string_view message) {
++#endif
+     CreatePeerConnectionWrappers();
+     // Note - we do not do test.ConnectFakeSignaling(); all signals
+     // generated are discarded.
+@@ -29,9 +39,14 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
+     auto srd_observer =
+         rtc::make_ref_counted<FakeSetRemoteDescriptionObserver>();
+ 
++#ifdef WEBRTC_WEBKIT_BUILD
++    std::unique_ptr<SessionDescriptionInterface> sdp(
++        CreateSessionDescription(sdpType, std::string(message)));
++#else
+     SdpParseError error;
+     std::unique_ptr<SessionDescriptionInterface> sdp(
+         CreateSessionDescription("offer", std::string(message), &error));
++#endif
+     caller()->pc()->SetRemoteDescription(std::move(sdp), srd_observer);
+     // Wait a short time for observer to be called. Timeout is short
+     // because the fuzzer should be trying many branches.
+@@ -44,8 +57,10 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
+       caller()->pc()->SetLocalDescription(sld_observer);
+       EXPECT_TRUE_WAIT(sld_observer->called(), 100);
+     }
++#if !defined(WEBRTC_WEBKIT_BUILD)
+     // If there is an EXPECT failure, die here.
+     RTC_CHECK(!HasFailure());
++#endif // !defined(WEBRTC_WEBKIT_BUILD)
+   }
+ 
+   // This test isn't using the test definition macros, so we have to
+@@ -56,13 +71,53 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
+ };
+ 
+ void FuzzOneInput(const uint8_t* data, size_t size) {
++#ifdef WEBRTC_WEBKIT_BUILD
++  uint8_t* newData = const_cast<uint8_t*>(data);
++  size_t newSize = size;
++  uint8_t type = 0;
++
++  if (const char* var = getenv("SDP_TYPE")) {
++    if (size > 16384) {
++      return;
++    }
++    type = atoi(var);
++  } else {
++    if (size < 1 || size > 16385) {
++      return;
++    }
++    type = data[0];
++    newSize = size - 1;
++    newData = reinterpret_cast<uint8_t*>(malloc(newSize));
++    if (!newData)
++      return;
++    memcpy(newData, &data[1], newSize);
++  }
++
++  SdpType sdpType = SdpType::kOffer;
++  switch (type % 4) {
++    case 0: sdpType = SdpType::kOffer; break;
++    case 1: sdpType = SdpType::kPrAnswer; break;
++    case 2: sdpType = SdpType::kAnswer; break;
++    case 3: sdpType = SdpType::kRollback; break;
++  }
++#else
+   if (size > 16384) {
+     return;
+   }
++#endif
+ 
+   FuzzerTest test;
++#ifdef WEBRTC_WEBKIT_BUILD
++  test.RunNegotiateCycle(
++      sdpType,
++      absl::string_view(reinterpret_cast<const char*>(newData), newSize));
++
++  if (newData != data)
++      free(newData);
++#else
+   test.RunNegotiateCycle(
+       absl::string_view(reinterpret_cast<const char*>(data), size));
++#endif
+ }
+ 
+ }  // namespace webrtc
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/test/gmock.h b/Source/ThirdParty/libwebrtc/Source/webrtc/test/gmock.h
+index f137d080a4b3..2d4e26eb9738 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/test/gmock.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/test/gmock.h
+@@ -14,7 +14,11 @@
+ #include "rtc_base/ignore_wundef.h"
+ 
+ RTC_PUSH_IGNORING_WUNDEF()
++#ifdef WEBRTC_WEBKIT_BUILD
++#include <gmock/gmock.h>
++#else
+ #include "testing/gmock/include/gmock/gmock.h"
++#endif // WEBRTC_WEBKIT_BUILD
+ RTC_POP_IGNORING_WUNDEF()
+ 
+ #endif  // TEST_GMOCK_H_
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/test/gtest.h b/Source/ThirdParty/libwebrtc/Source/webrtc/test/gtest.h
+index fa4396420e4f..c4d9d1582e4c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/test/gtest.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/test/gtest.h
+@@ -14,8 +14,13 @@
+ #include "rtc_base/ignore_wundef.h"
+ 
+ RTC_PUSH_IGNORING_WUNDEF()
++#ifdef WEBRTC_WEBKIT_BUILD
++#include <gtest/gtest-spi.h>
++#include <gtest/gtest.h>
++#else
+ #include "testing/gtest/include/gtest/gtest-spi.h"
+ #include "testing/gtest/include/gtest/gtest.h"
++#endif // WEBRTC_WEBKIT_BUILD
+ RTC_POP_IGNORING_WUNDEF()
+ 
+ // GTEST_HAS_DEATH_TEST is set to 1 when death tests are supported, but appears

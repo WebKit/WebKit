@@ -1,0 +1,3 @@
+
+PASS Test that invalid module specifier leads to TypeError on window.
+

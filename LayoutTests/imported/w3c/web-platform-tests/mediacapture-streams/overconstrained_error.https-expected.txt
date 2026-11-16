@@ -1,0 +1,4 @@
+
+FAIL Error of OverconstrainedError type inherit from DOMException assert_unreached: applyConstraints should have failed Reached unreachable code
+PASS OverconstrainedError class inherits from DOMException
+

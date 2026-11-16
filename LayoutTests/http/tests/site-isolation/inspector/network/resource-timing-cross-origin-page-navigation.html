@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function navigateCrossOrigin() {
+    location.hostname = location.hostname === "127.0.0.1" ? "localhost" : "127.0.0.1";
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.ResourceTiming.CrossOriginPageNavigation");
+
+    suite.addTestCase({
+        name: "SiteIsolation.ResourceTiming.CrossOriginPageNavigation.MissingRequestTiming",
+        description: "Resources loaded by a provisional frame target may finish without request timing data.",
+        async test() {
+            let finishedTimingData = [];
+            let listener = WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFinish, (event) => {
+                let timingData = event.target.timingData;
+                if (timingData)
+                    finishedTimingData.push(timingData);
+            });
+
+            let pageLoadedPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            InspectorTest.deferOutputUntilTestPageIsReloaded();
+            InspectorTest.evaluateInPage(`navigateCrossOrigin()`);
+            await pageLoadedPromise;
+
+            WI.Resource.removeEventListener(WI.Resource.Event.LoadingDidFinish, listener);
+
+            let timingData = finishedTimingData.find((item) => isNaN(item.startTime) && isNaN(item.requestStart) && !isNaN(item.responseEnd));
+            InspectorTest.expectThat(!!timingData, "A resource should finish with a response end time when request timing data is unavailable.");
+            if (!timingData)
+                return;
+
+            InspectorTest.expectTrue(isNaN(timingData.startTime), "Start time should be unavailable.");
+            InspectorTest.expectTrue(isNaN(timingData.requestStart), "Request start time should be unavailable.");
+            InspectorTest.expectFalse(isNaN(timingData.responseEnd), "Response end time should remain available.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests resource timing for a cross-origin page navigation under site isolation.</p>
+</body>
+

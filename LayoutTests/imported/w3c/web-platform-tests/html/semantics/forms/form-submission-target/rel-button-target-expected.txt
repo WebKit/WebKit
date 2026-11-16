@@ -1,0 +1,9 @@
+
+PASS <form rel=""> with <button formtarget>
+PASS <form rel="noopener"> with <button formtarget>
+PASS <form rel="noreferrer"> with <button formtarget>
+PASS <form rel="opener"> with <button formtarget>
+PASS <form rel="noopener noreferrer"> with <button formtarget>
+PASS <form rel="noreferrer opener"> with <button formtarget>
+PASS <form rel="opener noopener"> with <button formtarget>
+

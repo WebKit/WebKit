@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            span.empty {
+                display: inline-block;
+                width: 100%;
+                font-size: 40px;
+            }
+
+            span.empty:before {
+                content: "!";
+            }
+        </style>
+        <script src="../../resources/dump-as-markup.js"></script>
+        <script>
+        addEventListener("DOMContentLoaded", () => {
+            document.designMode = "on";
+            Markup.description("This test verifies that the selection can be moved forwards and backwards through empty inline-block containers that span the full width of the document. To manually test, use arrow keys or click before each exclamation mark to verify that the selection can be moved into each inline-block span element.");
+
+            getSelection().setPosition(document.getElementById("start"));
+            Markup.dump("container", "Initial caret position");
+
+            getSelection().modify("move", "backward", "character");
+            Markup.dump("container", "Move backward");
+
+            getSelection().modify("move", "backward", "character");
+            Markup.dump("container", "Move backward again");
+
+            getSelection().modify("move", "forward", "character");
+            Markup.dump("container", "Move forward");
+
+            getSelection().modify("move", "forward", "character");
+            Markup.dump("container", "Move forward again");
+        });
+        </script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="container">
+            <a>
+                <span class="empty"> </span>
+                <span class="empty"> </span>
+            </a>
+            <div>
+                <span class="empty" id="start"> </span>
+            </div>
+        </div>
+    </body>
+</html>

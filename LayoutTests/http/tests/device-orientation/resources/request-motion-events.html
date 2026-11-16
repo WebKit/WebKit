@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+addEventListener("devicemotion", () => {});
+
+internals.withUserGesture(() => {
+    DeviceMotionEvent.requestPermission().then((result) => {
+        top.postMessage(result, "*");
+    });
+});
+</script>
+</body>
+</html>

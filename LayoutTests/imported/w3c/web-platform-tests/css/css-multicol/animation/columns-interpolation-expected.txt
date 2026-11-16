@@ -1,0 +1,386 @@
+
+PASS CSS Transitions: property <columns> from [200px 10] to [100px 20] at (-1) should be [300px 1]
+PASS CSS Transitions: property <columns> from [200px 10] to [100px 20] at (-0.5) should be [250px 5]
+PASS CSS Transitions: property <columns> from [200px 10] to [100px 20] at (0) should be [200px 10]
+PASS CSS Transitions: property <columns> from [200px 10] to [100px 20] at (0.5) should be [150px 15]
+PASS CSS Transitions: property <columns> from [200px 10] to [100px 20] at (1) should be [100px 20]
+PASS CSS Transitions with transition: all: property <columns> from [200px 10] to [100px 20] at (-1) should be [300px 1]
+PASS CSS Transitions with transition: all: property <columns> from [200px 10] to [100px 20] at (-0.5) should be [250px 5]
+PASS CSS Transitions with transition: all: property <columns> from [200px 10] to [100px 20] at (0) should be [200px 10]
+PASS CSS Transitions with transition: all: property <columns> from [200px 10] to [100px 20] at (0.5) should be [150px 15]
+PASS CSS Transitions with transition: all: property <columns> from [200px 10] to [100px 20] at (1) should be [100px 20]
+PASS CSS Animations: property <columns> from [200px 10] to [100px 20] at (-1) should be [300px 1]
+PASS CSS Animations: property <columns> from [200px 10] to [100px 20] at (-0.5) should be [250px 5]
+PASS CSS Animations: property <columns> from [200px 10] to [100px 20] at (0) should be [200px 10]
+PASS CSS Animations: property <columns> from [200px 10] to [100px 20] at (0.5) should be [150px 15]
+PASS CSS Animations: property <columns> from [200px 10] to [100px 20] at (1) should be [100px 20]
+PASS Web Animations: property <columns> from [200px 10] to [100px 20] at (-1) should be [300px 1]
+PASS Web Animations: property <columns> from [200px 10] to [100px 20] at (-0.5) should be [250px 5]
+PASS Web Animations: property <columns> from [200px 10] to [100px 20] at (0) should be [200px 10]
+PASS Web Animations: property <columns> from [200px 10] to [100px 20] at (0.5) should be [150px 15]
+PASS Web Animations: property <columns> from [200px 10] to [100px 20] at (1) should be [100px 20]
+FAIL CSS Transitions: property <columns> from neutral to [100px / 200px] at (-1) should be [300px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from neutral to [100px / 200px] at (-0.5) should be [250px / 50px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from neutral to [100px / 200px] at (0) should be [200px / 100px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from neutral to [100px / 200px] at (0.5) should be [150px / 150px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from neutral to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from neutral to [100px / 200px] at (-1) should be [300px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from neutral to [100px / 200px] at (-0.5) should be [250px / 50px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from neutral to [100px / 200px] at (0) should be [200px / 100px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from neutral to [100px / 200px] at (0.5) should be [150px / 150px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from neutral to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from neutral to [100px / 200px] at (-1) should be [300px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from neutral to [100px / 200px] at (-0.5) should be [250px / 50px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from neutral to [100px / 200px] at (0) should be [200px / 100px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from neutral to [100px / 200px] at (0.5) should be [150px / 150px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from neutral to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from neutral to [100px / 200px] at (-1) should be [300px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from neutral to [100px / 200px] at (-0.5) should be [250px / 50px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from neutral to [100px / 200px] at (0) should be [200px / 100px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from neutral to [100px / 200px] at (0.5) should be [150px / 150px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from neutral to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [1000px / 500px] to [100px / 200px] at (-1) should be [1900px / 800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [1000px / 500px] to [100px / 200px] at (-0.5) should be [1450px / 650px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [1000px / 500px] to [100px / 200px] at (0) should be [1000px / 500px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [1000px / 500px] to [100px / 200px] at (0.5) should be [550px / 350px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [1000px / 500px] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [1000px / 500px] to [100px / 200px] at (-1) should be [1900px / 800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [1000px / 500px] to [100px / 200px] at (-0.5) should be [1450px / 650px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [1000px / 500px] to [100px / 200px] at (0) should be [1000px / 500px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [1000px / 500px] to [100px / 200px] at (0.5) should be [550px / 350px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [1000px / 500px] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [1000px / 500px] to [100px / 200px] at (-1) should be [1900px / 800px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [1000px / 500px] to [100px / 200px] at (-0.5) should be [1450px / 650px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [1000px / 500px] to [100px / 200px] at (0) should be [1000px / 500px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [1000px / 500px] to [100px / 200px] at (0.5) should be [550px / 350px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [1000px / 500px] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [1000px / 500px] to [100px / 200px] at (-1) should be [1900px / 800px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [1000px / 500px] to [100px / 200px] at (-0.5) should be [1450px / 650px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [1000px / 500px] to [100px / 200px] at (0) should be [1000px / 500px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [1000px / 500px] to [100px / 200px] at (0.5) should be [550px / 350px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [1000px / 500px] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [10 / 100px] to [20 / 200px] at (-0.5) should be [5 / 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [10 / 100px] to [20 / 200px] at (0) should be [10 / 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [10 / 100px] to [20 / 200px] at (0.5) should be [15 / 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [10 / 100px] to [20 / 200px] at (1) should be [20 / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [10 / 100px] to [20 / 200px] at (-0.5) should be [5 / 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [10 / 100px] to [20 / 200px] at (0) should be [10 / 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [10 / 100px] to [20 / 200px] at (0.5) should be [15 / 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [10 / 100px] to [20 / 200px] at (1) should be [20 / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [10 / 100px] to [20 / 200px] at (-0.5) should be [5 / 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [10 / 100px] to [20 / 200px] at (0) should be [10 / 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [10 / 100px] to [20 / 200px] at (0.5) should be [15 / 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [10 / 100px] to [20 / 200px] at (1) should be [20 / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [10 / 100px] to [20 / 200px] at (-0.5) should be [5 / 50px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [10 / 100px] to [20 / 200px] at (0) should be [10 / 100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [10 / 100px] to [20 / 200px] at (0.5) should be [15 / 150px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [10 / 100px] to [20 / 200px] at (1) should be [20 / 200px] assert_true: 'from' value should be supported expected true got false
+PASS CSS Transitions: property <columns> from [10 100px] to [20 200px] at (-0.5) should be [5 50px]
+PASS CSS Transitions: property <columns> from [10 100px] to [20 200px] at (0) should be [10 100px]
+PASS CSS Transitions: property <columns> from [10 100px] to [20 200px] at (0.5) should be [15 150px]
+PASS CSS Transitions: property <columns> from [10 100px] to [20 200px] at (1) should be [20 200px]
+PASS CSS Transitions with transition: all: property <columns> from [10 100px] to [20 200px] at (-0.5) should be [5 50px]
+PASS CSS Transitions with transition: all: property <columns> from [10 100px] to [20 200px] at (0) should be [10 100px]
+PASS CSS Transitions with transition: all: property <columns> from [10 100px] to [20 200px] at (0.5) should be [15 150px]
+PASS CSS Transitions with transition: all: property <columns> from [10 100px] to [20 200px] at (1) should be [20 200px]
+PASS CSS Animations: property <columns> from [10 100px] to [20 200px] at (-0.5) should be [5 50px]
+PASS CSS Animations: property <columns> from [10 100px] to [20 200px] at (0) should be [10 100px]
+PASS CSS Animations: property <columns> from [10 100px] to [20 200px] at (0.5) should be [15 150px]
+PASS CSS Animations: property <columns> from [10 100px] to [20 200px] at (1) should be [20 200px]
+PASS Web Animations: property <columns> from [10 100px] to [20 200px] at (-0.5) should be [5 50px]
+PASS Web Animations: property <columns> from [10 100px] to [20 200px] at (0) should be [10 100px]
+PASS Web Animations: property <columns> from [10 100px] to [20 200px] at (0.5) should be [15 150px]
+PASS Web Animations: property <columns> from [10 100px] to [20 200px] at (1) should be [20 200px]
+FAIL CSS Transitions: property <columns> from [10 100px / auto] to [20 200px / auto] at (-0.5) should be [5 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [10 100px / auto] to [20 200px / auto] at (0) should be [10 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [10 100px / auto] to [20 200px / auto] at (0.5) should be [15 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [10 100px / auto] to [20 200px / auto] at (1) should be [20 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [10 100px / auto] to [20 200px / auto] at (-0.5) should be [5 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [10 100px / auto] to [20 200px / auto] at (0) should be [10 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [10 100px / auto] to [20 200px / auto] at (0.5) should be [15 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [10 100px / auto] to [20 200px / auto] at (1) should be [20 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [10 100px / auto] to [20 200px / auto] at (-0.5) should be [5 50px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [10 100px / auto] to [20 200px / auto] at (0) should be [10 100px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [10 100px / auto] to [20 200px / auto] at (0.5) should be [15 150px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [10 100px / auto] to [20 200px / auto] at (1) should be [20 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [10 100px / auto] to [20 200px / auto] at (-0.5) should be [5 50px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [10 100px / auto] to [20 200px / auto] at (0) should be [10 100px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [10 100px / auto] to [20 200px / auto] at (0.5) should be [15 150px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [10 100px / auto] to [20 200px / auto] at (1) should be [20 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [inherit] to [200px / 900px] at (-0.5) should be [0px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [inherit] to [200px / 900px] at (-0.2) should be [20px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [inherit] to [200px / 900px] at (-0.1) should be [35px / 20px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [inherit] to [200px / 900px] at (0) should be [50px / 100px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [inherit] to [200px / 900px] at (0.5) should be [125px / 500px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [inherit] to [200px / 900px] at (1) should be [200px / 900px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [inherit] to [200px / 900px] at (-0.5) should be [0px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [inherit] to [200px / 900px] at (-0.2) should be [20px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [inherit] to [200px / 900px] at (-0.1) should be [35px / 20px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [inherit] to [200px / 900px] at (0) should be [50px / 100px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [inherit] to [200px / 900px] at (0.5) should be [125px / 500px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [inherit] to [200px / 900px] at (1) should be [200px / 900px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [inherit] to [200px / 900px] at (-0.5) should be [0px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [inherit] to [200px / 900px] at (-0.2) should be [20px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [inherit] to [200px / 900px] at (-0.1) should be [35px / 20px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [inherit] to [200px / 900px] at (0) should be [50px / 100px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [inherit] to [200px / 900px] at (0.5) should be [125px / 500px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [inherit] to [200px / 900px] at (1) should be [200px / 900px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [inherit] to [200px / 900px] at (-0.5) should be [0px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [inherit] to [200px / 900px] at (-0.2) should be [20px / 0px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [inherit] to [200px / 900px] at (-0.1) should be [35px / 20px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [inherit] to [200px / 900px] at (0) should be [50px / 100px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [inherit] to [200px / 900px] at (0.5) should be [125px / 500px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [inherit] to [200px / 900px] at (1) should be [200px / 900px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px / 200px] at (-0.3) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px / 200px] at (0) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px / 200px] at (0.3) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px / 200px] at (-0.3) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px / 200px] at (0) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px / 200px] at (0.3) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [initial] to [100px / 200px] at (-0.3) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [initial] to [100px / 200px] at (0) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [initial] to [100px / 200px] at (0.3) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [initial] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [initial] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [initial] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [initial] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [initial] to [100px / 200px] at (-0.3) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [initial] to [100px / 200px] at (0) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [initial] to [100px / 200px] at (0.3) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [initial] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [initial] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [initial] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [initial] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [initial] to [100px / 200px] at (-0.3) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [initial] to [100px / 200px] at (0) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [initial] to [100px / 200px] at (0.3) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [initial] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [initial] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [initial] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [initial] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [initial] to [100px / 200px] at (-0.3) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [initial] to [100px / 200px] at (0) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [initial] to [100px / 200px] at (0.3) should be [initial] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [initial] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [initial] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [initial] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [initial] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px] at (-0.3) should be [initial]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px] at (0) should be [initial]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px] at (0.3) should be [initial]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px] at (0.5) should be [100px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px] at (0.6) should be [100px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px] at (1) should be [100px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [100px] at (1.5) should be [100px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px] at (-0.3) should be [initial]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px] at (0) should be [initial]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px] at (0.3) should be [initial]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px] at (0.5) should be [100px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px] at (0.6) should be [100px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px] at (1) should be [100px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [100px] at (1.5) should be [100px]
+PASS CSS Transitions: property <columns> from [initial] to [100px] at (-0.3) should be [100px]
+PASS CSS Transitions: property <columns> from [initial] to [100px] at (0) should be [100px]
+PASS CSS Transitions: property <columns> from [initial] to [100px] at (0.3) should be [100px]
+PASS CSS Transitions: property <columns> from [initial] to [100px] at (0.5) should be [100px]
+PASS CSS Transitions: property <columns> from [initial] to [100px] at (0.6) should be [100px]
+PASS CSS Transitions: property <columns> from [initial] to [100px] at (1) should be [100px]
+PASS CSS Transitions: property <columns> from [initial] to [100px] at (1.5) should be [100px]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [100px] at (-0.3) should be [100px]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [100px] at (0) should be [100px]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [100px] at (0.3) should be [100px]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [100px] at (0.5) should be [100px]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [100px] at (0.6) should be [100px]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [100px] at (1) should be [100px]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [100px] at (1.5) should be [100px]
+PASS CSS Animations: property <columns> from [initial] to [100px] at (-0.3) should be [initial]
+PASS CSS Animations: property <columns> from [initial] to [100px] at (0) should be [initial]
+PASS CSS Animations: property <columns> from [initial] to [100px] at (0.3) should be [initial]
+PASS CSS Animations: property <columns> from [initial] to [100px] at (0.5) should be [100px]
+PASS CSS Animations: property <columns> from [initial] to [100px] at (0.6) should be [100px]
+PASS CSS Animations: property <columns> from [initial] to [100px] at (1) should be [100px]
+PASS CSS Animations: property <columns> from [initial] to [100px] at (1.5) should be [100px]
+PASS Web Animations: property <columns> from [initial] to [100px] at (-0.3) should be [initial]
+PASS Web Animations: property <columns> from [initial] to [100px] at (0) should be [initial]
+PASS Web Animations: property <columns> from [initial] to [100px] at (0.3) should be [initial]
+PASS Web Animations: property <columns> from [initial] to [100px] at (0.5) should be [100px]
+PASS Web Animations: property <columns> from [initial] to [100px] at (0.6) should be [100px]
+PASS Web Animations: property <columns> from [initial] to [100px] at (1) should be [100px]
+PASS Web Animations: property <columns> from [initial] to [100px] at (1.5) should be [100px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [10] at (-0.3) should be [initial]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [10] at (0) should be [initial]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [10] at (0.3) should be [initial]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [10] at (0.5) should be [10]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [10] at (0.6) should be [10]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [10] at (1) should be [10]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [initial] to [10] at (1.5) should be [10]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [10] at (-0.3) should be [initial]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [10] at (0) should be [initial]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [10] at (0.3) should be [initial]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [10] at (0.5) should be [10]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [10] at (0.6) should be [10]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [10] at (1) should be [10]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [initial] to [10] at (1.5) should be [10]
+PASS CSS Transitions: property <columns> from [initial] to [10] at (-0.3) should be [10]
+PASS CSS Transitions: property <columns> from [initial] to [10] at (0) should be [10]
+PASS CSS Transitions: property <columns> from [initial] to [10] at (0.3) should be [10]
+PASS CSS Transitions: property <columns> from [initial] to [10] at (0.5) should be [10]
+PASS CSS Transitions: property <columns> from [initial] to [10] at (0.6) should be [10]
+PASS CSS Transitions: property <columns> from [initial] to [10] at (1) should be [10]
+PASS CSS Transitions: property <columns> from [initial] to [10] at (1.5) should be [10]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [10] at (-0.3) should be [10]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [10] at (0) should be [10]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [10] at (0.3) should be [10]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [10] at (0.5) should be [10]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [10] at (0.6) should be [10]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [10] at (1) should be [10]
+PASS CSS Transitions with transition: all: property <columns> from [initial] to [10] at (1.5) should be [10]
+PASS CSS Animations: property <columns> from [initial] to [10] at (-0.3) should be [initial]
+PASS CSS Animations: property <columns> from [initial] to [10] at (0) should be [initial]
+PASS CSS Animations: property <columns> from [initial] to [10] at (0.3) should be [initial]
+PASS CSS Animations: property <columns> from [initial] to [10] at (0.5) should be [10]
+PASS CSS Animations: property <columns> from [initial] to [10] at (0.6) should be [10]
+PASS CSS Animations: property <columns> from [initial] to [10] at (1) should be [10]
+PASS CSS Animations: property <columns> from [initial] to [10] at (1.5) should be [10]
+PASS Web Animations: property <columns> from [initial] to [10] at (-0.3) should be [initial]
+PASS Web Animations: property <columns> from [initial] to [10] at (0) should be [initial]
+PASS Web Animations: property <columns> from [initial] to [10] at (0.3) should be [initial]
+PASS Web Animations: property <columns> from [initial] to [10] at (0.5) should be [10]
+PASS Web Animations: property <columns> from [initial] to [10] at (0.6) should be [10]
+PASS Web Animations: property <columns> from [initial] to [10] at (1) should be [10]
+PASS Web Animations: property <columns> from [initial] to [10] at (1.5) should be [10]
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [auto] to [100px / 200px] at (-0.3) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [auto] to [100px / 200px] at (0) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [auto] to [100px / 200px] at (0.3) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [auto] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [auto] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [auto] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [auto] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [auto] to [100px / 200px] at (-0.3) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [auto] to [100px / 200px] at (0) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [auto] to [100px / 200px] at (0.3) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [auto] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [auto] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [auto] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [auto] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [auto] to [100px / 200px] at (-0.3) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [auto] to [100px / 200px] at (0) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [auto] to [100px / 200px] at (0.3) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [auto] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [auto] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [auto] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [auto] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [auto] to [100px / 200px] at (-0.3) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [auto] to [100px / 200px] at (0) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [auto] to [100px / 200px] at (0.3) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [auto] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [auto] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [auto] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [auto] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [auto] to [100px / 200px] at (-0.3) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [auto] to [100px / 200px] at (0) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [auto] to [100px / 200px] at (0.3) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [auto] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [auto] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [auto] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [auto] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [auto] to [100px / 200px] at (-0.3) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [auto] to [100px / 200px] at (0) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [auto] to [100px / 200px] at (0.3) should be [auto] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [auto] to [100px / 200px] at (0.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [auto] to [100px / 200px] at (0.6) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [auto] to [100px / 200px] at (1) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [auto] to [100px / 200px] at (1.5) should be [100px / 200px] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [100px / 200px] to [auto] at (-0.3) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [100px / 200px] to [auto] at (0) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [100px / 200px] to [auto] at (0.3) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [100px / 200px] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [100px / 200px] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [100px / 200px] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <columns> from [100px / 200px] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [100px / 200px] to [auto] at (-0.3) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [100px / 200px] to [auto] at (0) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [100px / 200px] to [auto] at (0.3) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [100px / 200px] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [100px / 200px] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [100px / 200px] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [100px / 200px] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [100px / 200px] to [auto] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [100px / 200px] to [auto] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [100px / 200px] to [auto] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [100px / 200px] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [100px / 200px] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [100px / 200px] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <columns> from [100px / 200px] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [100px / 200px] to [auto] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [100px / 200px] to [auto] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [100px / 200px] to [auto] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [100px / 200px] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [100px / 200px] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [100px / 200px] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <columns> from [100px / 200px] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [100px / 200px] to [auto] at (-0.3) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [100px / 200px] to [auto] at (0) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [100px / 200px] to [auto] at (0.3) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [100px / 200px] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [100px / 200px] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [100px / 200px] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <columns> from [100px / 200px] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [100px / 200px] to [auto] at (-0.3) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [100px / 200px] to [auto] at (0) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [100px / 200px] to [auto] at (0.3) should be [100px / 200px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [100px / 200px] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [100px / 200px] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [100px / 200px] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <columns> from [100px / 200px] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [inherit] to [auto] at (-0.3) should be [inherit]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [inherit] to [auto] at (0) should be [inherit]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [inherit] to [auto] at (0.3) should be [inherit]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [inherit] to [auto] at (0.5) should be [auto]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [inherit] to [auto] at (0.6) should be [auto]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [inherit] to [auto] at (1) should be [auto]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <columns> from [inherit] to [auto] at (1.5) should be [auto]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [inherit] to [auto] at (-0.3) should be [inherit]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [inherit] to [auto] at (0) should be [inherit]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [inherit] to [auto] at (0.3) should be [inherit]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [inherit] to [auto] at (0.5) should be [auto]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [inherit] to [auto] at (0.6) should be [auto]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [inherit] to [auto] at (1) should be [auto]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <columns> from [inherit] to [auto] at (1.5) should be [auto]
+PASS CSS Transitions: property <columns> from [inherit] to [auto] at (-0.3) should be [auto]
+PASS CSS Transitions: property <columns> from [inherit] to [auto] at (0) should be [auto]
+PASS CSS Transitions: property <columns> from [inherit] to [auto] at (0.3) should be [auto]
+PASS CSS Transitions: property <columns> from [inherit] to [auto] at (0.5) should be [auto]
+PASS CSS Transitions: property <columns> from [inherit] to [auto] at (0.6) should be [auto]
+PASS CSS Transitions: property <columns> from [inherit] to [auto] at (1) should be [auto]
+PASS CSS Transitions: property <columns> from [inherit] to [auto] at (1.5) should be [auto]
+PASS CSS Transitions with transition: all: property <columns> from [inherit] to [auto] at (-0.3) should be [auto]
+PASS CSS Transitions with transition: all: property <columns> from [inherit] to [auto] at (0) should be [auto]
+PASS CSS Transitions with transition: all: property <columns> from [inherit] to [auto] at (0.3) should be [auto]
+PASS CSS Transitions with transition: all: property <columns> from [inherit] to [auto] at (0.5) should be [auto]
+PASS CSS Transitions with transition: all: property <columns> from [inherit] to [auto] at (0.6) should be [auto]
+PASS CSS Transitions with transition: all: property <columns> from [inherit] to [auto] at (1) should be [auto]
+PASS CSS Transitions with transition: all: property <columns> from [inherit] to [auto] at (1.5) should be [auto]
+PASS CSS Animations: property <columns> from [inherit] to [auto] at (-0.3) should be [inherit]
+PASS CSS Animations: property <columns> from [inherit] to [auto] at (0) should be [inherit]
+PASS CSS Animations: property <columns> from [inherit] to [auto] at (0.3) should be [inherit]
+PASS CSS Animations: property <columns> from [inherit] to [auto] at (0.5) should be [auto]
+PASS CSS Animations: property <columns> from [inherit] to [auto] at (0.6) should be [auto]
+PASS CSS Animations: property <columns> from [inherit] to [auto] at (1) should be [auto]
+PASS CSS Animations: property <columns> from [inherit] to [auto] at (1.5) should be [auto]
+PASS Web Animations: property <columns> from [inherit] to [auto] at (-0.3) should be [inherit]
+PASS Web Animations: property <columns> from [inherit] to [auto] at (0) should be [inherit]
+PASS Web Animations: property <columns> from [inherit] to [auto] at (0.3) should be [inherit]
+PASS Web Animations: property <columns> from [inherit] to [auto] at (0.5) should be [auto]
+PASS Web Animations: property <columns> from [inherit] to [auto] at (0.6) should be [auto]
+PASS Web Animations: property <columns> from [inherit] to [auto] at (1) should be [auto]
+PASS Web Animations: property <columns> from [inherit] to [auto] at (1.5) should be [auto]
+

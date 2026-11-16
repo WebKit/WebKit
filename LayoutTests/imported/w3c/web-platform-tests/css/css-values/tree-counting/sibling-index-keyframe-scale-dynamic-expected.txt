@@ -1,0 +1,4 @@
+
+PASS Initially, the sibling-index() is 3 for #target
+PASS Removing a preceding sibling of #target reduces the sibling-index()
+

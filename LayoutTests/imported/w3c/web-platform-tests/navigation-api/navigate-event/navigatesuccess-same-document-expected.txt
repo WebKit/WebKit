@@ -1,0 +1,3 @@
+
+PASS navigatesuccess fires for a same-document navigation
+

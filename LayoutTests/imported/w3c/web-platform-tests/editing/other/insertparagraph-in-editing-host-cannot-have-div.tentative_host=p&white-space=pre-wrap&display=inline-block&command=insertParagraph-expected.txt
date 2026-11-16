@@ -1,0 +1,13 @@
+a
+b
+
+PASS <p contenteditable style="display:inline-block; white-space:pre-wrap">a[]b</p>
+PASS <p contenteditable style="display:inline-block; white-space:pre-wrap"><span style="white-space:normal">a[]b</span></p>
+PASS <p contenteditable style="display:inline-block; white-space:pre-wrap"><span style="white-space:normal"><span style="white-space:pre-wrap">a[]b</span></span></p>
+PASS <p contenteditable style="display:inline-block; white-space:pre-wrap"><span style="display:block;white-space:normal">a[]b</span></p>
+PASS <p contenteditable style="display:inline-block; white-space:pre-wrap"><div>a[]b</div></p>
+PASS <p contenteditable style="display:inline-block; white-space:pre-wrap"><div style="display:inline">a[]b</div></p>
+PASS <p contenteditable style="display:inline-block; white-space:pre-wrap"><div style="display:inline-block">a[]b</div></p>
+PASS <p contenteditable style="display:inline-block; white-space:pre-wrap"><div style="display:inline;white-space:normal">a[]b</div></p>
+PASS <p contenteditable style="display:inline-block; white-space:pre-wrap"><div style="display:inline-block;white-space:normal">a[]b</div></p>
+

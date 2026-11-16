@@ -1,0 +1,10 @@
+Test for DOM.willDestroyDOMNode.
+
+
+== Running test suite: DOM.willDestroyDOMNode
+-- Running test case: DOM.willDestroyDOMNode.CreateDeleteAndGCDetachedNode
+Creating new detached DOM node.
+Requesting DOM node in order to receive future events.
+Releasing node and then triggering garbage collection while awaiting `DOM.willDestroyDOMNode` event.
+Received event `DOM.willDestoryDOMNode` after garbage collection.
+

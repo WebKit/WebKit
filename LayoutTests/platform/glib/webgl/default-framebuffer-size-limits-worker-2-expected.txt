@@ -1,0 +1,37 @@
+Tests that an OffscreenCanvas in a worker resized larger than the implementation limits gets a drawing buffer clamped to the limits, without errors or a context loss, and that the clamped drawing buffer renders and is read with the clamped size. Part 2 of 4.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: resources/default-framebuffer-size-limits-worker.js#2-4
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: false
+FAIL [Worker] Unable to create the context.
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: true
+FAIL [Worker] Unable to create the context.
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: true
+FAIL [Worker] Unable to create the context.
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: false
+FAIL [Worker] Unable to create the context.
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: false
+FAIL [Worker] Unable to create the context.
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: true
+FAIL [Worker] Unable to create the context.
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: true, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: true
+FAIL [Worker] Unable to create the context.
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, antialias: false, preserveDrawingBuffer: false, depth: true, stencil: false
+FAIL [Worker] Unable to create the context.
+[Worker]
+[Worker] OffscreenCanvas, WebGL 1, alpha: false, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: false
+FAIL [Worker] Unable to create the context.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

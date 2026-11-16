@@ -1,0 +1,8 @@
+test nested
+
+PASS triggers selectionchange event on setBaseAndExtent
+PASS triggers selectionchange event on selectAllChildren
+PASS triggers selectionchange event on removeAllRanges
+PASS triggers selectionchange event on collapseToStart
+PASS triggers selectionchange event on collapseToEnd
+

@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true MockVolumetricSceneEnabled=true UsesBackForwardCache=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<script src="resources/volumetric-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+</head>
+<body>
+<div id="portal" class="portal"><model><source src="../resources/cube.usdz"></model></div>
+<div id="console"></div>
+<script>
+jsTestIsAsync = true;
+internals.disableModelLoadDelaysForTesting();
+
+let portal;
+let volumetricChangeCount = 0;
+
+window.addEventListener("pageshow", async event => {
+    if (!event.persisted)
+        return;
+
+    debug("Restored from the back/forward cache.");
+    shouldBeEqualToString("presentationMode(portal)", "inline");
+    shouldBeFalse("portal.inVolumetricScene");
+    await shouldBecomeEqual("volumetricChangeCount", "2");
+
+    try {
+        await requestVolumetricScene(portal);
+        shouldBeEqualToString("presentationMode(portal)", "volumetric");
+        testPassed("Re-entered a volumetric scene after restoring from the back/forward cache.");
+    } catch (error) {
+        testFailed("Could not re-enter a volumetric scene after restore: " + error);
+    }
+
+    portal.exitVolumetricScene();
+    await shouldBecomeEqual("presentationMode(portal)", "'inline'");
+
+    finishJSTest();
+});
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    description("A portal presented in a volumetric scene should return inline when its page is restored from the back/forward cache, so it is not stuck presenting a scene that was dismissed.");
+
+    portal = document.getElementById("portal");
+    portal.addEventListener("volumetricchange", () => ++volumetricChangeCount);
+    await portal.querySelector("model").ready;
+
+    await requestVolumetricScene(portal);
+    shouldBeEqualToString("presentationMode(portal)", "volumetric");
+
+    debug("Navigating away to place the page in the back/forward cache.");
+    window.location.href = "../resources/go-back-on-load.html";
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+
+FAIL characters are not dropped when type changes to password during keypress assert_equals: expected "xyz" but got ""
+

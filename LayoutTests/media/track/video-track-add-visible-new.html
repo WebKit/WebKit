@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../content/test")');
+        await waitFor(video, 'canplay');
+        run('track = video.addTextTrack("subtitles")');
+        run('track.mode = "showing"');
+        run('cue = new VTTCue(0, video.duration, "cue text")');
+        run('track.addCue(cue)');
+        
+        // Start playback to activate text tracks
+        video.currentTime = 0.1;
+        await video.play();
+        
+        // Check if text appears anywhere in shadow DOM (not just controls container)
+        await testExpectedEventually('internals.shadowRoot(video).textContent.includes("cue text")', true);
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video muted controls></video>
+</body>
+</html>

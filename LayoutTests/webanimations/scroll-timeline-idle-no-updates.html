@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@keyframes color-progress {
+    from { background-color: rgb(0, 0, 0); }
+    to { background-color: rgb(0, 0, 200); }
+}
+.scroller {
+    width: 100px;
+    height: 100px;
+    background-color: rgb(255, 0, 0);
+    animation: color-progress linear both;
+    animation-timeline: scroll(self);
+}
+.scroller.zero-range {
+    overflow: hidden; /* not scrollable: the scroll timeline's current time is unresolved */
+}
+.scroller.scrollable {
+    overflow: scroll;
+}
+.scroller.scrollable > div {
+    height: 300px;
+}
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script>
+
+// background-color is not an accelerated property, so these effects take the
+// main-thread invalidation path in KeyframeEffect::animationDidTick().
+
+const numberOfFrames = 10;
+const frameDuration = 1000 / 60;
+
+function sleep(duration) {
+    return new Promise(resolve => setTimeout(resolve, duration));
+}
+
+function createScroller(t, kind) {
+    const scroller = createDiv(t);
+    scroller.className = `scroller ${kind}`;
+    if (kind == "scrollable")
+        scroller.appendChild(document.createElement("div"));
+    return scroller;
+}
+
+// Wait using timers, not requestAnimationFrame, since requesting animation frames
+// would itself schedule rendering updates.
+async function styleRecalcsWhileIdle() {
+    internals.startTrackingStyleRecalcs();
+    await sleep(numberOfFrames * frameDuration);
+    return internals.styleRecalcCount();
+}
+
+promise_test(async t => {
+    const scroller = createScroller(t, "zero-range");
+    const animation = scroller.getAnimations()[0];
+    assert_true(!!animation, "the scroll-driven animation exists");
+    assert_equals(animation.timeline.currentTime, null, "the timeline's current time is unresolved");
+
+    // The animation remains pending while its timeline's current time is unresolved,
+    // so its ready promise cannot be used here. Its effect is not in effect, so the
+    // computed style is the base value.
+    await sleep(2 * frameDuration);
+    assert_true(animation.pending, "the animation is pending");
+    assert_equals(getComputedStyle(scroller).backgroundColor, "rgb(255, 0, 0)", "the base value applies");
+
+    assert_equals(await styleRecalcsWhileIdle(), 0, "style recalcs while idle");
+}, "A scroll-driven animation whose timeline's current time is unresolved does not update style while idle.");
+
+promise_test(async t => {
+    const scroller = createScroller(t, "scrollable");
+    const animation = scroller.getAnimations()[0];
+    await animation.ready;
+    assert_equals(getComputedStyle(scroller).backgroundColor, "rgb(0, 0, 0)", "progress is 0 at scroll offset 0");
+
+    assert_equals(await styleRecalcsWhileIdle(), 0, "style recalcs while idle");
+}, "A scroll-driven animation whose scroller does not move does not update style while idle.");
+
+promise_test(async t => {
+    const scroller = createScroller(t, "scrollable");
+    const animation = scroller.getAnimations()[0];
+    await animation.ready;
+    assert_equals(getComputedStyle(scroller).backgroundColor, "rgb(0, 0, 0)", "progress is 0 at scroll offset 0");
+
+    // Scrolling must still update the animated style.
+    const scrollRange = scroller.scrollHeight - scroller.clientHeight;
+    scroller.scrollTop = scrollRange / 2;
+    await waitForNextFrame();
+    assert_equals(getComputedStyle(scroller).backgroundColor, "rgb(0, 0, 100)", "progress is 0.5 at half the scroll range");
+
+    scroller.scrollTop = scrollRange;
+    await waitForNextFrame();
+    assert_equals(getComputedStyle(scroller).backgroundColor, "rgb(0, 0, 200)", "progress is 1 at the end of the scroll range");
+}, "A scroll-driven animation whose scroller moves updates its animated style.");
+
+</script>
+</body>
+</html>

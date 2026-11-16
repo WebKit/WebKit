@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/breakpoint-detach-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.BreakpointActionDetach");
+
+    let crossOriginTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.BreakpointActionDetach.Setup",
+        description: "Find the cross-origin frame target.",
+        async test() {
+            crossOriginTarget = await frameTargetForURLContaining("breakpoint-action-detach-frame.html");
+            InspectorTest.expectNotNull(crossOriginTarget, "Should find the cross-origin frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.BreakpointActionDetach.RemainingActionsAbandoned",
+        description: "Disconnecting a frame target from inside a breakpoint action should abandon the remaining actions and leave the frame running.",
+        async test() {
+            await setBreakpointInFrameScript(crossOriginTarget, {
+                actions: [
+                    {type: "evaluate", data: "firstBreakpointAction()"},
+                    {type: "evaluate", data: "secondBreakpointAction()"},
+                ],
+            });
+
+            await InspectorTest.evaluateInPage("runFunctionWithBreakpointInFrame()");
+
+            await waitForExpressionInTarget(WI.assumingMainTarget(), `messagesFromFrameJoined().includes("execution continued")`);
+
+            let messages = await InspectorTest.evaluateInPage("messagesFromFrameJoined()");
+            InspectorTest.log(messages);
+
+            InspectorTest.expectFalse(messages.includes("second breakpoint action ran"), "Breakpoint actions after the disconnecting one should not run.");
+            InspectorTest.expectThat(messages.includes("execution continued after the breakpoint"), "Frame should keep executing instead of staying paused.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that disconnecting a cross-origin iframe's inspector target from inside one of its breakpoint actions abandons the remaining actions and lets the frame keep running.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/breakpoint-action-detach-frame.html"></iframe>
+</body>

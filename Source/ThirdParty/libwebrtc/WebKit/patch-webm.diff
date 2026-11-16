@@ -1,0 +1,29 @@
+commit 98958715c029f15a90ce374ef3555021d3b70ef7
+Author: David Kilzer <ddkilzer@apple.com>
+Date:   Mon Jul 10 17:11:41 2023 -0700
+
+    Define WEBM_FUZZER_BYTE_ELEMENT_SIZE_LIMIT with ENABLE_LIBFUZZER
+    https://bugs.webkit.org/show_bug.cgi?id=259082
+    <rdar://112046123>
+    
+    Reviewed by NOBODY (OOPS!).
+    
+    * Source/ThirdParty/libwebrtc/Source/third_party/libwebm/webm_parser/src/byte_parser.h:
+    - Set WEBM_FUZZER_BYTE_ELEMENT_SIZE_LIMIT to 4 MB if it's not defined
+      and ENABLE_LIBFUZZER is defined to 1.
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/libwebm/webm_parser/src/byte_parser.h b/Source/ThirdParty/libwebrtc/Source/third_party/libwebm/webm_parser/src/byte_parser.h
+index f2ed3cb4b9cc..245863ef869c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/third_party/libwebm/webm_parser/src/byte_parser.h
++++ b/Source/ThirdParty/libwebrtc/Source/third_party/libwebm/webm_parser/src/byte_parser.h
+@@ -20,6 +20,10 @@
+ #include "webm/reader.h"
+ #include "webm/status.h"
+ 
++#if defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && !defined(WEBM_FUZZER_BYTE_ELEMENT_SIZE_LIMIT)
++#define WEBM_FUZZER_BYTE_ELEMENT_SIZE_LIMIT (4 * 1024 * 1024)
++#endif
++
+ namespace webm {
+ 
+ // Parses an EBML string (UTF-8 and ASCII) or binary element from a byte stream.

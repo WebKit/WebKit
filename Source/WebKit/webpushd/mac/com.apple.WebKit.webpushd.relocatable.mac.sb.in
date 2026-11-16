@@ -1,0 +1,300 @@
+; Copyright (C) 2024 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+;    notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+;    notice, this list of conditions and the following disclaimer in the
+;    documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+(version 1)
+(deny default (with partial-symbolication))
+(deny nvram*)
+(allow system-audit file-read-metadata)
+
+;; Silence spurious logging due to rdar://20117923 and rdar://72366475
+(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
+
+#include "Shared/Sandbox/preferences.sb"
+
+#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
+#include <WebKitAdditions/SystemContentSandbox-macos.defs>
+#endif
+
+;;; Allow registration of per-pid services.
+(allow mach-register (local-name-prefix ""))
+
+;;; Allow read access to standard system paths.
+(allow file-read*
+    (require-all (file-mode #o0004)
+    (require-any (subpath "/Library/Filesystems/NetFSPlugins")
+    (subpath "/Library/Apple/System")
+    (subpath "/Library/Preferences/Logging")      ; Logging Rethink
+    (subpath "/System")
+    (subpath "/private/var/db/timezone")
+    (subpath "/usr/lib")
+    (subpath "/usr/share"))))
+
+;;; Allow reading internal profiles on development builds
+(allow file-read*
+    (require-all (file-mode #o0004)
+    (subpath "/AppleInternal/Library/Preferences/Logging")
+    (system-attribute apple-internal)))
+
+;;; Allow mapping of system frameworks + dylibs
+(allow file-map-executable
+    (subpath "/Library/Apple/System/Library/Frameworks")
+    (subpath "/Library/Apple/System/Library/PrivateFrameworks")
+    (subpath "/System/Library/Frameworks")
+    (subpath "/System/Library/PrivateFrameworks")
+    (subpath "/usr/lib")
+    (subpath "/usr/appleinternal/lib") ;; <rdar://problem/72317112>
+)
+
+(allow file-read-metadata
+    (literal "/etc")
+    (literal "/tmp")
+    (literal "/var")
+    (literal "/private/etc/localtime"))
+
+
+;;; Allow access to standard special files.
+(allow file-read*
+    (literal "/dev/autofs_nowait")
+    (literal "/dev/random")
+    (literal "/dev/urandom")
+    (literal "/private/etc/master.passwd")
+    (literal "/private/etc/passwd"))
+
+(allow file-read*
+       file-write-data
+    (literal "/dev/null")
+    (literal "/dev/zero"))
+
+(allow file-read*
+       file-write-data
+       file-ioctl
+    (literal "/dev/dtracehelper"))
+
+;;; process-info* defaults to allow; deny it and then allow operations we actually need.
+(deny process-info*)
+(allow process-info-dirtycontrol (target self))
+(allow process-info-pidinfo)
+(allow process-info-setcontrol (target self))
+(allow process-codesigning-status*)
+
+(deny sysctl*)
+(allow sysctl-read
+    (sysctl-name
+        "hw.activecpu" ;; <rdar://problem/56795575>
+        "hw.availcpu"
+        "hw.byteorder"
+        "hw.busfrequency"
+        "hw.busfrequency_max"
+        "hw.cacheconfig" ;; <rdar://problem/78213563>
+        "hw.cachelinesize" ;; <rdar://problem/56795575>
+        "hw.cachesize" ;; <rdar://problem/78213563>
+        "hw.cpufrequency"
+        "hw.cpufrequency_max"
+        "hw.cpusubfamily"
+        "hw.cputhreadtype"
+        "hw.cputype"
+        "hw.l1dcachesize" ;; <rdar://problem/56795575>
+        "hw.l1icachesize" ;; <rdar://problem/56795575>
+        "hw.l2cachesize" ;; <rdar://problem/56795575>
+        "hw.l3cachesize" ;; <rdar://problem/56795575>
+        "hw.logicalcpu" ;; <rdar://problem/56795575>
+        "hw.logicalcpu_max" ;; <rdar://problem/56795575>
+        "hw.machine"
+        "hw.memsize"
+        "hw.model"
+        "hw.ncpu"
+        "hw.nperflevels" ;; <rdar://problem/76783596>
+        "hw.pagesize" ;; <rdar://problem/76783596>
+        "hw.pagesize_compat" ;; <rdar://problem/76783596>
+        "hw.physicalcpu" ;; <rdar://problem/58416475>
+        "hw.physicalcpu_max" ;; <rdar://problem/58416475>
+        "hw.tbfrequency"
+        "hw.tbfrequency_compat"
+        "hw.vectorunit"
+        "kern.bootargs" ;; <rdar://problem/47738015>
+        "kern.boottime"
+        "kern.hostname"
+        "kern.hv_vmm_present"
+        "kern.maxfilesperproc"
+        "kern.memorystatus_level"
+        "kern.osproductversion" ;; <rdar://problem/51756739>
+        "kern.osrelease"
+        "kern.ostype"
+        "kern.osvariant_status"
+        "kern.osversion"
+        "kern.safeboot"
+        "kern.tcsm_enable"
+        "kern.tcsm_available"
+        "kern.version"
+        "kern.willshutdown"
+        "machdep.cpu.brand_string"
+        "security.mac.sandbox.sentinel"
+        "vm.footprint_suspend"
+        "vm.malloc_ranges") ;; <rdar://problem/105161083>
+    (sysctl-name-prefix "net.routetable")
+    (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
+    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
+)
+
+(deny sysctl-read (with no-report)
+    (sysctl-name "sysctl.proc_translated"))
+
+(allow sysctl-write
+    (sysctl-name
+        "kern.tcsm_enable"))
+
+(deny mach-lookup (xpc-service-name-prefix ""))
+
+;; Utility functions for home directory relative path filters
+(define (home-regex home-relative-regex)
+  (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
+
+(define (home-subpath home-relative-subpath)
+  (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
+
+(define (home-literal home-relative-literal)
+  (literal (string-append (param "HOME_DIR") home-relative-literal)))
+
+(define (home-prefix home-relative-prefix)
+  (prefix (string-append (param "HOME_DIR") home-relative-prefix)))
+
+(define (allow-read-directory-and-issue-read-extensions path)
+    (if path
+        (begin
+            (allow file-read* (subpath path))
+            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path))))))
+
+;; Read-only preferences and data
+(allow file-read*
+    ;; Basic system paths
+    (subpath "/Library/Frameworks")
+    (subpath "/Library/Managed Preferences")
+    (regex #"^/private/etc/(hosts|group|passwd)$")
+
+    ;; System and user preferences
+    (home-literal "/.CFUserTextEncoding"))
+
+(allow file-read-data
+    (literal "/usr/local/lib/log")) ; <rdar://problem/36629495>
+
+;; Preferences support
+(shared-preferences-read
+    "com.apple.LaunchServices"
+    "com.apple.crypto")
+
+(allow-reading-global-preferences)
+
+;; On-disk WebKit2 framework location, to account for debug installations outside of /System/Library/Frameworks,
+;; and to allow issuing extensions.
+(allow file-read*
+    (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
+
+; FIXME: This is needed for some security framework calls (that use non-CFPreferences readers)
+(allow file-read-data
+    (literal "/Library/Preferences/com.apple.security.plist")
+    (home-subpath "/Library/Preferences/com.apple.security.plist"))
+
+#if USE(SYSTEM_CONTENT_PATH)
+(map allow-read-directory-and-issue-read-extensions
+    read-directory-and-issue-read-extension-secondary-paths)
+#endif
+
+;; Various services required by AppKit and other frameworks
+(allow mach-lookup
+    (with telemetry)
+    (global-name "com.apple.SystemConfiguration.configd"))
+
+(allow mach-lookup
+    (global-name "com.apple.logd")
+    (global-name "com.apple.logd.events")
+    (global-name-prefix "com.apple.distributed_notifications"))
+
+(deny mach-lookup (with no-log)
+    (global-name "com.apple.CoreServices.coreservicesd")
+    (global-name "com.apple.DiskArbitration.diskarbitrationd")
+    (global-name "com.apple.ViewBridgeAuxiliary")
+    (global-name "com.apple.system.opendirectoryd.membership"))
+
+(deny file-write-create (vnode-type SYMLINK))
+
+;; Reserve a namespace for additional protected extended attributes.
+(deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
+
+;; Analytics.
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.analyticsd")
+        (global-name "com.apple.diagnosticd")))
+
+;; Daemon prefs.
+(allow user-preference-read user-preference-write
+    (preference-domain "com.apple.webkit.webpushd.relocatable"))
+
+;; Push notification registration.
+(allow mach-lookup
+    (global-name "com.apple.apsd")
+    (global-name "com.apple.windowserver.active")) ;; for -[APSSystemUser isLoggedIn]
+
+;; Allow webpushd to launch UI processes in response to a push via LaunchServices.
+(allow lsopen)
+
+(allow mach-lookup
+    (global-name "com.apple.coreservices.launchservicesd")
+    (global-name "com.apple.coreservices.quarantine-resolver")
+    (global-name "com.apple.lsd.mapdb"))
+
+(allow user-preference-read
+    (preference-domain
+         "com.apple.inputmethodkit"
+         "com.apple.inputsources"
+         "com.apple.LaunchServices"
+         "kCFPreferencesAnyApplication"))
+
+;; We might need to create ~/Library/WebKit and ~/Library/WebKit/WebPush on a clean install.
+(allow file-write-create
+    (require-all (vnode-type DIRECTORY) (home-literal "/Library/WebKit"))
+    (require-all (vnode-type DIRECTORY) (home-literal "/Library/WebKit/WebPush")))
+
+;; Push database.
+(allow file*
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.relocatable.db")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.relocatable.db-shm")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.relocatable.db-wal")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.relocatable.db-lock")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.relocatable.db-journal"))
+
+;; Let SQLite open the parent directory of the database for fsync purposes.
+(allow file-read-data (require-all (vnode-type DIRECTORY) (home-prefix "/Library/WebKit/WebPush")))
+
+;; SQLite might spill large transactions to TMPDIR.
+(allow file-write*
+    (subpath (param "DARWIN_USER_TEMP_DIR"))
+    (subpath (param "DARWIN_USER_CACHE_DIR")))
+
+(allow file-read* file-write*
+    (with telemetry)
+    (mount-relative-regex #"^/\.TemporaryItems/"))
+
+;;; Allow interfacing with UNUserNotificationCenter
+(allow mach-lookup
+    (global-name "com.apple.usernotifications.listener"))

@@ -1,0 +1,40 @@
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+var canvas = document.createElement('canvas');
+var ctx = canvas.getContext('2d');
+canvas.width = 8192;
+canvas.height = 8190;
+ctx.fillStyle ='rgba(0, 255, 0, 1)';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+var result = ctx.getImageData(0, 0, 1, 1);
+var data = result.data;
+console.log('Drawing canvas with MaxSize and getting ImageData from image');
+console.log(data);
+shouldBe("data[0]", "0");
+shouldBe("data[1]", "255");
+shouldBe("data[2]", "0");
+shouldBe("data[3]", "255");
+console.log('Getting ImageData which overflows and outside of image');
+var result = ctx.getImageData(1, 2147483647, 1, 1);
+var data = result.data;
+console.log(data);
+shouldBe("data[0]", "0");
+shouldBe("data[1]", "0");
+shouldBe("data[2]", "0");
+shouldBe("data[3]", "0");
+// should not timeout either:
+console.log('Putting ImageData which overflows and outside of image');
+ctx.putImageData(result, 1, 2147483647);
+result = ctx.getImageData(2147483646, 1, 1, 1);
+data = result.data;
+console.log(data);
+shouldBe("data[0]", "0");
+shouldBe("data[1]", "0");
+shouldBe("data[2]", "0");
+shouldBe("data[3]", "0");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

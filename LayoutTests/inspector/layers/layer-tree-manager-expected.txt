@@ -1,0 +1,13 @@
+Tests for LayerTreeManager.
+
+
+== Running test suite: LayerTreeManager
+-- Running test case: LayerTreeManager.layersForNode.root
+PASS: Returned array should include all layers.
+PASS: Array elements should be Layer instances.
+
+-- Running test case: LayerTreeManager.layerTreeMutations.overlappingNodeIds
+PASS: Preserved layers should be correct.
+PASS: Added layers should be correct.
+PASS: Removed layers should be correct.
+

@@ -1,0 +1,3 @@
+
+PASS Class selector with escaped exclamation mark should parse correctly
+

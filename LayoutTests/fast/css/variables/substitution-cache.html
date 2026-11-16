@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<style>
+@property --registered-length {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+#container {
+    --color: green;
+    --width: 2px;
+    --registered-length: 2em;
+}
+.item {
+    border: var(--width) solid var(--color);
+    margin: var(--registered-length) var(--width);
+    padding-inline: var(--width) var(--missing, 7px);
+    font-size: 10px;
+}
+.override {
+    --color: blue;
+}
+.large {
+    font-size: 20px;
+}
+#container.large-registered-length {
+    --registered-length: 3em;
+}
+.fallback {
+    --missing: 9px;
+}
+.vertical {
+    writing-mode: vertical-lr;
+}
+</style>
+<div id="container">
+    <div class="item" id="a"></div>
+    <div class="item" id="b"></div>
+    <div class="item override" id="c"></div>
+    <div class="item fallback" id="d"></div>
+    <div class="item vertical" id="e"></div>
+</div>
+<script>
+function computed(id, property) {
+    return getComputedStyle(document.getElementById(id)).getPropertyValue(property);
+}
+
+test(() => {
+    for (const id of ["a", "b", "d", "e"])
+        assert_equals(computed(id, "border-top-color"), "rgb(0, 128, 0)", id);
+    assert_equals(computed("c", "border-top-color"), "rgb(0, 0, 255)");
+    assert_equals(computed("b", "border-left-width"), "2px");
+}, "Siblings sharing a shorthand var() substitution");
+
+test(() => {
+    assert_equals(computed("a", "padding-right"), "7px");
+    assert_equals(computed("d", "padding-right"), "9px");
+    assert_equals(computed("e", "padding-bottom"), "7px");
+    assert_equals(computed("e", "padding-top"), "2px");
+}, "Fallbacks and logical longhands");
+
+test(() => {
+    // The registered length is computed on #container, so it is the same object everywhere.
+    assert_equals(computed("a", "margin-top"), "32px");
+    document.getElementById("a").classList.add("large");
+    assert_equals(computed("a", "margin-top"), "32px");
+    document.getElementById("container").classList.add("large-registered-length");
+    assert_equals(computed("a", "margin-top"), "48px");
+    assert_equals(computed("b", "margin-top"), "48px");
+}, "Registered custom properties");
+
+test(() => {
+    const container = document.getElementById("container");
+    container.style.setProperty("--color", "red");
+    assert_equals(computed("a", "border-top-color"), "rgb(255, 0, 0)");
+    assert_equals(computed("c", "border-top-color"), "rgb(0, 0, 255)");
+    container.style.setProperty("--color", "green");
+    assert_equals(computed("a", "border-top-color"), "rgb(0, 128, 0)");
+    container.style.setProperty("--width", "5px");
+    assert_equals(computed("b", "border-bottom-width"), "5px");
+    assert_equals(computed("b", "margin-left"), "5px");
+}, "Changing a referenced custom property");
+
+test(() => {
+    const d = document.getElementById("d");
+    d.classList.remove("fallback");
+    assert_equals(computed("d", "padding-right"), "7px");
+    d.style.setProperty("--missing", "11px");
+    assert_equals(computed("d", "padding-right"), "11px");
+}, "Switching between a value and its fallback");
+</script>

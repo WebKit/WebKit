@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test rejection handled event.');
+
+window.jsTestIsAsync = true;
+
+window.error = null;
+window.handled = null;
+window.promise = null;
+window.reason = null;
+
+window.onunhandledrejection = function (e) {
+    error = e;
+    shouldBe(`error.type`, `"unhandledrejection"`);
+    shouldBe(`error.cancelable`, `true`);
+    shouldBe(`error.promise`, `promise`);
+    shouldBe(`error.reason`, `"ERROR"`);
+    setTimeout(function () {
+        promise.catch(function (r) {
+            window.reason = r;
+            shouldBe(`reason`, `"ERROR"`);
+        });
+    }, 0);
+    return false;
+};
+
+window.onrejectionhandled = function (e) {
+    window.handled = e;
+    shouldBe(`handled.type`, `"rejectionhandled"`);
+    shouldBe(`handled.cancelable`, `false`);
+    shouldBe(`handled.promise`, `promise`);
+    shouldBe(`handled.reason`, `"ERROR"`);
+    finishJSTest();
+};
+
+window.promise = Promise.reject("ERROR");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

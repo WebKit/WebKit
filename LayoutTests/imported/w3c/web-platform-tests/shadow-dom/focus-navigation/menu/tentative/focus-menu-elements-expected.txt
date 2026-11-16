@@ -1,0 +1,4 @@
+More commands Command B Command C Command A1 Command A2
+
+FAIL Should focus on menuitems in menubar only. assert_true: Failed to focus A expected true got false
+

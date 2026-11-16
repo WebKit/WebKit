@@ -1,0 +1,3 @@
+
+PASS an element with autofocus content attribute in a shadow tree should not automatically get focus
+

@@ -1,0 +1,10 @@
+ 	 
+ 	 
+ 	 
+ 	 
+
+PASS Cell with max-width smaller than width is clamped
+PASS Cell with max-width larger than width is not affected
+PASS Cell with max-width equal to width is not affected
+PASS Cell without max-width is not affected
+

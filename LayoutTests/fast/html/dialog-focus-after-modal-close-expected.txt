@@ -1,0 +1,6 @@
+
+
+PASS show() runs the dialog focusing steps after a showModal()/close() cycle
+PASS dialog contents are focusable after a showModal()/close() cycle
+PASS repeated showModal()/close() cycles keep the dialog contents focusable
+

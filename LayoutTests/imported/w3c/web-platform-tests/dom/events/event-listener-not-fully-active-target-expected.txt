@@ -1,0 +1,18 @@
+
+PASS EventTarget created in a removed iframe
+PASS EventTarget created in a removed iframe, with an event from that iframe
+PASS EventTarget created in a removed iframe, with a listener added after removal
+PASS dispatchEvent() on an EventTarget in a removed iframe returns true
+PASS Dispatch still happens for an EventTarget in a removed iframe, only the listeners are skipped
+PASS handleEvent is not looked up for an EventTarget in a removed iframe
+PASS Removing the iframe from within a listener skips the remaining listeners on the same target
+PASS Removing the iframe during the capture phase skips the remaining objects in the event path
+PASS Window of a removed iframe
+PASS Document of a removed iframe
+PASS Element of a removed iframe
+PASS Event handler IDL attribute on an element in a removed iframe
+PASS Compiled event handler content attribute on an element in a removed iframe
+FAIL AbortSignal from a removed iframe is still aborted assert_true: expected true got false
+PASS Abort listeners on an AbortSignal from a removed iframe do not run
+PASS It is the target's global that matters, not the event's
+

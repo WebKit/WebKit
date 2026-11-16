@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-tab id="custom-tab-1"></custom-tab>
+<div class="control">Panel 1</div>
+<div class="control">Panel 2</div>
+<custom-tab id="custom-tab-2" aria-controls="panel3"></custom-tab>
+<div id="panel3" class="control">Panel 3</div>
+<div id="panel4" class="control">Panel 4</div>
+<script>
+
+customElements.define('custom-tab', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'tab';
+        internals.ariaControlsElements = Array.from(document.querySelectorAll('.control'));
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    function labelForControl(control) {
+        if (accessibilityController.platformName == "mac")
+            return control.childAtIndex(0).stringValue;
+        return control.stringValue;
+    }
+    shouldBeEqualToString('labelForControl(accessibilityController.accessibleElementById("custom-tab-1").ariaControlsElementAtIndex(0))', 'AXValue: Panel 1');
+    shouldBeEqualToString('labelForControl(accessibilityController.accessibleElementById("custom-tab-1").ariaControlsElementAtIndex(1))', 'AXValue: Panel 2');
+    shouldBeEqualToString('labelForControl(accessibilityController.accessibleElementById("custom-tab-2").ariaControlsElementAtIndex(0))', 'AXValue: Panel 3');
+    shouldBe('accessibilityController.accessibleElementById("custom-tab-2").ariaControlsElementAtIndex(1)', 'null');
+}
+
+</script>
+</body>
+</html>

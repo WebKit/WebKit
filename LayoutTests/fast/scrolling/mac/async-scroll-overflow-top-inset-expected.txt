@@ -1,0 +1,20 @@
+
+Test scroll outside top left corner
+PASS overflowScrollEventCount is 0
+PASS windowScrollEventCount > 0 is true
+
+Test scroll inside top left corner
+PASS overflowScrollEventCount > 0 is true
+PASS windowScrollEventCount is 0
+
+Test scroll outside bottom right corner
+PASS overflowScrollEventCount is 0
+PASS windowScrollEventCount > 0 is true
+
+Test scroll inside bottom right corner
+PASS overflowScrollEventCount > 0 is true
+PASS windowScrollEventCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

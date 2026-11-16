@@ -1,0 +1,16 @@
+
+PASS :number_of_dynamic_buffers_exceeds_the_maximum_value:
+PASS :number_of_bind_group_layouts_exceeds_the_maximum_value:
+PASS :bind_group_layouts,device_mismatch:
+PASS :bind_group_layouts,null_bind_group_layouts:
+PASS :bind_group_layouts,create_pipeline_with_null_bind_group_layouts:
+PASS :bind_group_layouts,set_pipeline_with_null_bind_group_layouts:
+PASS :immediate_data_size:immediateSize=0
+PASS :immediate_data_size:immediateSize=4
+PASS :immediate_data_size:immediateSize="max"
+PASS :immediate_data_size:immediateSize=1
+PASS :immediate_data_size:immediateSize=2
+PASS :immediate_data_size:immediateSize=3
+PASS :immediate_data_size:immediateSize=5
+PASS :immediate_data_size:immediateSize="exceedLimit"
+

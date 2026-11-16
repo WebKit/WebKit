@@ -1,0 +1,39 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// Each round loads a cross-site frame that creates subframes continuously, then removes the
+// <iframe> element hosting it from this process. The UI process can dispatch a DidCreateSubframe
+// message from the cross-site process before it dispatches the DidDestroyFrame message this
+// process sent when the <iframe> was removed, and then asks this process to create a remote frame
+// whose parent frame it has already destroyed.
+const rounds = 25;
+let round = 0;
+
+function nextRound()
+{
+    if (++round > rounds) {
+        document.body.textContent = "PASS if no crash";
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    let frame = document.createElement("iframe");
+    frame.src = "http://localhost:8000/site-isolation/resources/create-subframes-repeatedly.html";
+    window.addEventListener("message", function listener(event) {
+        if (event.data != "creating")
+            return;
+        window.removeEventListener("message", listener);
+        frame.remove();
+        setTimeout(nextRound, 0);
+    });
+    document.body.appendChild(frame);
+}
+
+onload = nextRound;
+</script>
+<body></body>

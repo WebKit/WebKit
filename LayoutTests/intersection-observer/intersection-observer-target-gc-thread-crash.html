@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="tails"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const NFDIV = 1024;    // divs per wave
+const NWALK = 4;       // walker observers per wave
+const NSLICE = 2;      // pin observers (cascades) per wave
+const NWAVES = 6;      // total waves before finishing
+const RIPE_MS = 400;   // delay between a wave's birth and its first cascade
+const STEP_MS = 250;   // delay between a wave's cascades
+const WAVE_MS = 700;   // delay between waves
+
+const tailsBox = document.getElementById("tails");
+window.__implPin = document.implementation;
+const keep = [];
+
+function makeWave()
+{
+    const frameless = document.implementation.createHTMLDocument("");
+    const divs = new Array(NFDIV);
+    for (let i = 0; i < NFDIV; ++i)
+        divs[i] = frameless.body.appendChild(frameless.createElement("div"));
+
+    for (let w = 0; w < NWALK; ++w) {
+        const tail = tailsBox.appendChild(document.createElement("div"));
+        keep.push(tail);
+        const walker = new IntersectionObserver(() => { });
+        for (let i = NFDIV - 1; i >= 0; --i)
+            walker.observe(divs[i]);
+        walker.observe(tail);
+    }
+
+    const sliceSize = NFDIV / NSLICE;
+    const pins = [];
+    for (let j = 0; j < NSLICE; ++j) {
+        const pin = new IntersectionObserver(() => { });
+        for (let i = j * sliceSize; i < (j + 1) * sliceSize; ++i)
+            pin.observe(divs[i]);
+        pins.push(pin);
+    }
+    return { pins, born: performance.now(), fired: 0 };
+}
+
+let waves = [makeWave()];
+let wavesMade = 1;
+let lastWave = performance.now();
+
+const ballast = [];
+for (let i = 0; i < 30000; ++i)
+    ballast.push({ i, s: "b" + (i & 1023) });
+
+function step()
+{
+    const now = performance.now();
+
+    for (const wave of waves) {
+        while (wave.fired < NSLICE && (now - wave.born) >= RIPE_MS + wave.fired * STEP_MS) {
+            const pin = wave.pins[wave.fired++];
+            const burst = [];
+            for (let i = 0; i < 200000; ++i)
+                burst.push({ x: i, y: [i] });
+            const tail = tailsBox.appendChild(document.createElement("div"));
+            keep.push(tail);
+            pin.observe(tail);
+        }
+    }
+
+    waves = waves.filter(wave => wave.fired < NSLICE);
+    if (now - lastWave >= WAVE_MS && wavesMade < NWAVES) {
+        lastWave = now;
+        ++wavesMade;
+        waves.push(makeWave());
+    }
+
+    if (!waves.length && wavesMade >= NWAVES) {
+        document.body.appendChild(document.createTextNode("PASS did not crash"));
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    const garbage = [];
+    for (let i = 0; i < 20000; ++i)
+        garbage.push({ a: i, b: [i, now] });
+
+    setTimeout(step, 50);
+}
+step();
+</script>
+</body>
+</html>

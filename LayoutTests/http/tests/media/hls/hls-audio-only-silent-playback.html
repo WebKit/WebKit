@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>hls-audio-only-silent-playback</title>
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+    async function testPlaybackAdvances() {
+        run('video.src = "../resources/hls/french/prog_index.m3u8"');
+        await waitFor(video, 'canplay');
+        run('video.play()');
+        while (video.currentTime <= 0)
+            await waitFor(video, 'timeupdate', true);
+        testExpected('video.currentTime', 0, '>');
+        run('video.pause()');
+    }
+
+    window.addEventListener('load', async event => {
+        consoleWrite('Muted:');
+        video = document.getElementById('muted');
+        run('video.muted = true');
+        await testPlaybackAdvances();
+
+        consoleWrite('');
+        consoleWrite('Volume zero:');
+        video = document.getElementById('volume-zero');
+        run('video.volume = 0');
+        await testPlaybackAdvances();
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video id="muted"></video>
+    <video id="volume-zero"></video>
+</body>
+</html>

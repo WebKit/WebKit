@@ -1,0 +1,8 @@
+This tests that autofilling obscured inputs is considered as user interaction with the site.
+
+PASS 127.0.0.1 did not have user interaction
+PASS 127.0.0.1 had user interaction
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

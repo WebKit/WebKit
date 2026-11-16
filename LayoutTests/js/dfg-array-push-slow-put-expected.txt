@@ -1,0 +1,11 @@
+Tests that defining a setter on the Array prototype works with ArrayPush.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo().join(",") is "0,1,2,,4" on all iterations including after DFG tier-up.
+PASS ouches is numRuns
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

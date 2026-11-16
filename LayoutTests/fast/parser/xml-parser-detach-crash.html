@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+Test passes if it does not crash.
+<script src="../../resources/gc.js"></script>
+<script>
+  testRunner?.dumpAsText();
+  var doc = new DOMParser().parseFromString("<svg xmlns='http://www.w3.org/2000/svg'><glypRef xlink:href='#foo' ></svg>", "application/xml");
+  doc.documentElement.innerHTML = "foo";
+  gc();
+</script>
+</html>

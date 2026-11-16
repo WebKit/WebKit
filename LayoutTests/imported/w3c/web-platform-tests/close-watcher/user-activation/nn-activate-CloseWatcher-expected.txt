@@ -1,0 +1,3 @@
+
+PASS Create two CloseWatchers without user activation; send user activation
+

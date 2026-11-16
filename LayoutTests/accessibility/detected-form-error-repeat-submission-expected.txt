@@ -1,0 +1,19 @@
+This tests that submitting again without fixing anything keeps the messages already paired with their fields, and drops only the ones the page has taken away. A message that is already on screen is not written again, so there is no change to rediscover it by, and treating each attempt as a clean slate would lose it.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: errorMessageText(axElement('destination')) === 'Please enter a valid destination.'
+document.getElementById('destination').value = 'SFO';
+document.getElementById('submit').click();
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('destination')) === 'no error messages'
+PASS: axElement('destination').stringAttributeValue('AXInvalid') === 'false'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+To
+Search

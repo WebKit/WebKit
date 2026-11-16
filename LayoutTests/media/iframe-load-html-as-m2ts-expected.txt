@@ -1,0 +1,4 @@
+
+EXPECTED (frame.contentDocument.readyState == 'complete') OK
+END OF TEST
+

@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 247x19
+          text run at (0,0) width 247: "Tables: both lines should be 1 pixel thick."
+        RenderBR {BR} at (247,15) size 0x0
+        RenderBR {BR} at (0,20) size 0x19
+      RenderTable {TABLE} at (0,40) size 37x5
+        RenderTableSection {TBODY} at (0,0) size 37x5
+          RenderTableRow {TR} at (0,2) size 37x1
+            RenderTableCell {TD} at (2,2) size 31x1 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 30x1
+            RenderTableCell {TD} at (35,2) size 0x0 [r=0 c=1 rs=1 cs=1]
+      RenderBlock (anonymous) at (0,45) size 784x20
+        RenderBR {BR} at (0,0) size 0x19
+      RenderTable {TABLE} at (0,65) size 34x5
+        RenderTableSection {TBODY} at (0,0) size 34x5
+          RenderTableRow {TR} at (0,2) size 34x1
+            RenderTableCell {TD} at (2,2) size 30x1 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 30x1
+      RenderBlock (anonymous) at (0,70) size 784x192
+        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,20) size 0x19
+        RenderBR {BR} at (0,40) size 0x19
+        RenderText {#text} at (0,60) size 379x19
+          text run at (0,60) width 208: "2 texts, FACE=\"Arial, Helvetica\", "
+          text run at (208,60) width 171: "1st at size=0, 2nd at size=-4"
+        RenderBR {BR} at (379,75) size 0x0
+        RenderBR {BR} at (0,80) size 0x19
+        RenderInline {FONT} at (0,0) size 104x26
+          RenderText {#text} at (0,100) size 104x13
+            text run at (0,100) width 104: "Detonator 3.53 Drivers"
+          RenderBR {BR} at (104,110) size 0x0
+          RenderText {#text} at (0,113) size 78x13
+            text run at (0,113) width 78: "Available NOW! "
+        RenderBR {BR} at (78,123) size 0x0
+        RenderBR {BR} at (0,126) size 0x19
+        RenderInline {FONT} at (0,0) size 104x26
+          RenderText {#text} at (0,146) size 104x13
+            text run at (0,146) width 104: "Detonator 3.53 Drivers"
+          RenderBR {BR} at (104,156) size 0x0
+          RenderText {#text} at (0,159) size 78x13
+            text run at (0,159) width 78: "Available NOW! "
+        RenderBR {BR} at (78,169) size 0x0
+        RenderBR {BR} at (0,172) size 0x19

@@ -1,0 +1,75 @@
+/*
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "PublicSuffixStore.h"
+
+#include <libpsl.h>
+#include <wtf/URL.h>
+#include <wtf/text/UTF8CStringView.h>
+
+namespace WebCore {
+
+bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
+{
+    if (domain.isEmpty())
+        return false;
+
+    const psl_ctx_t* psl = psl_builtin();
+    ASSERT(psl);
+    bool ret = psl_is_public_suffix2(psl, domain.toStringWithoutCopying().convertToLowercaseWithoutLocale().utf8().legacyCStringPointer(), PSL_TYPE_ANY | PSL_TYPE_NO_STAR_RULE);
+    return ret;
+}
+
+static String topPrivatelyControlledDomainInternal(const psl_ctx_t* psl, UTF8CStringView domain)
+{
+    // psl_registerable_domain returns a pointer to domain's data or null if there is no private domain
+    if (const char* topPrivateDomain = psl_registrable_domain(psl, domain.utf8()))
+        return String::fromLatin1(topPrivateDomain);
+    return String();
+}
+
+String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain) const
+{
+    if (platformIsPublicSuffix(domain))
+        return String();
+
+    // This function is expected to work with the format used by cookies, so skip any leading dots.
+    auto domainUTF8 = domain.utf8();
+    auto characters = domainUTF8.span();
+
+    unsigned position = 0;
+    while (position < characters.size() && characters[position] == u8'.')
+        position++;
+
+    if (position == characters.size())
+        return String();
+
+    const psl_ctx_t* psl = psl_builtin();
+    ASSERT(psl);
+    return topPrivatelyControlledDomainInternal(psl, UTF8CStringView::fromUTF8(domainUTF8.spanIncludingNullTerminator().subspan(position)));
+}
+
+} // namespace WebCore

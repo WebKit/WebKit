@@ -1,0 +1,16 @@
+This test ensures that an indeterminate value is properly reported for native and ARIA progress elements.
+
+PASS: accessibilityController.accessibleElementById('native-progress').isIndeterminate === false
+PASS: accessibilityController.accessibleElementById('aria-progress').isIndeterminate === false
+document.getElementById('native-progress').removeAttribute('value')
+document.getElementById('aria-progress').removeAttribute('aria-valuenow')
+PASS: accessibilityController.accessibleElementById('native-progress').isIndeterminate === true
+PASS: accessibilityController.accessibleElementById('aria-progress').isIndeterminate === true
+document.getElementById('aria-progress').setAttribute('role', 'group')
+PASS: accessibilityController.accessibleElementById('aria-progress').isIndeterminate === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

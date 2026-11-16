@@ -1,0 +1,6 @@
+
+FAIL Sanity check assert_true: expected true got false
+PASS Color with upper cased letter
+PASS Color with upper cased kelvin sign
+PASS Color with inherit keyword, with system color applied to parent
+

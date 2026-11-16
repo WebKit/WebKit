@@ -1,0 +1,28 @@
+
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureToStartAudiblePlaybackWhenHidden"))
+RUN(internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 0))
+RUN(source = new MediaSource())
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Appending 10s of data
+RUN(video.play())
+Promise resolved OK
+RUN(testRunner.setPageVisibility("hidden"))
+RUN(video.volume = 0.5)
+EXPECTED (video.paused == 'false') OK
+RUN(video.muted = true)
+RUN(video.muted = false)
+EXPECTED (video.paused == 'false') OK
+RUN(video.play())
+Promise resolved OK
+Removing buffered data ahead of the current position to force a rebuffer
+RUN(sourceBuffer.remove(video.currentTime + 0.5, source.duration))
+EVENT(waiting)
+Appending more data
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

@@ -1,0 +1,23 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS new RTCPeerConnection() should have default iceTransportPolicy all
+PASS new RTCPeerConnection({ iceTransportPolicy: undefined }) should have default iceTransportPolicy all
+PASS new RTCPeerConnection({ iceTransportPolicy: 'all' }) should succeed
+PASS new RTCPeerConnection({ iceTransportPolicy: 'relay' }) should succeed
+PASS setConfiguration({ iceTransportPolicy: 'relay' }) with initial iceTransportPolicy all should succeed
+PASS setConfiguration({ iceTransportPolicy: 'all' }) with initial iceTransportPolicy relay should succeed
+PASS setConfiguration({}) with initial iceTransportPolicy relay should set new value to all
+PASS new RTCPeerConnection(config) - with invalid iceTransportPolicy should throw TypeError
+PASS setConfiguration(config) - with invalid iceTransportPolicy should throw TypeError
+PASS new RTCPeerConnection(config) - with none iceTransportPolicy should throw TypeError
+PASS setConfiguration(config) - with none iceTransportPolicy should throw TypeError
+PASS new RTCPeerConnection(config) - with null iceTransportPolicy should throw TypeError
+PASS setConfiguration(config) - with null iceTransportPolicy should throw TypeError
+PASS iceTransportPolicy "relay" on offerer should prevent candidate gathering
+PASS iceTransportPolicy "relay" on answerer should prevent candidate gathering
+TIMEOUT Changing iceTransportPolicy from "all" to "relay" causes an ICE restart which should fail, with no new candidates Test timed out
+NOTRUN Changing iceTransportPolicy from "relay" to "all" causes an ICE restart which should succeed
+NOTRUN Changing iceTransportPolicy from "all" to "relay", and back to "all" prompts an ICE restart
+NOTRUN Changing iceTransportPolicy from "all" to "relay" on the answerer has no effect on a subsequent offer/answer
+

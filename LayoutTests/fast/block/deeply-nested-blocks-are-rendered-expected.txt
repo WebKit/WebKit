@@ -1,0 +1,11 @@
+Block boxes nested below the render tree depth limit should all get renderers. Only inline formatting contexts nested inside each other are limited further.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll('.block').length is 400
+PASS innermost.getClientRects().length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

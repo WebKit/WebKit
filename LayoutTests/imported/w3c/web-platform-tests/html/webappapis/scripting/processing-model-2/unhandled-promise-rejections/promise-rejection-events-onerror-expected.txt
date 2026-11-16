@@ -1,0 +1,3 @@
+
+PASS Throwing inside an unhandledrejection handler invokes the error handler.
+

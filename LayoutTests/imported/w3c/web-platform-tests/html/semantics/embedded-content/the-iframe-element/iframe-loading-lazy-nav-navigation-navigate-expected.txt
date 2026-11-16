@@ -1,0 +1,4 @@
+
+
+FAIL Navigating iframe loading='lazy' before it is loaded: navigation.navigate Error: assert_equals: expected "http://web-platform.test:8800/html/semantics/embedded-content/the-iframe-element/support/blank.htm?nav" but got "http://web-platform.test:8800/html/semantics/embedded-content/the-iframe-element/support/blank.htm?src"
+

@@ -1,0 +1,4 @@
+
+PASS CSS.Hz() produces hz frequency
+PASS CSS.kHz() produces khz frequency
+

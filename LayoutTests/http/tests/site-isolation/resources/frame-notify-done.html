@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<head>
+<script>
+function finish()
+{
+    // The timeout here is to try to force this call to notifyDone to run after
+    // the main frame has finished loading. Then, we can verify that calls to
+    // notifyDone from remote processes will not lead to a test timeout.
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 30);
+}
+</script>
+</head>
+<body onload="finish()">
+<p>I am a simple document that calls notifyDone when done loading.</p>
+</body>

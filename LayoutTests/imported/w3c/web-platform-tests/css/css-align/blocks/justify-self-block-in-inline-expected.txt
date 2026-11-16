@@ -1,0 +1,7 @@
+wide inline-block
+block-in-inline
+inline-block
+
+PASS .block-in-inline 1
+PASS .block-in-inline 2
+

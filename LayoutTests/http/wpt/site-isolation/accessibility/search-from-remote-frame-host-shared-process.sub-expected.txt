@@ -1,0 +1,27 @@
+Tests searches that use the element hosting an out-of-process frame as the start element,
+with two cross-site iframes that share one Web process.
+
+PASS: framePIDs.One === framePIDs.Two === true
+PASS: framePIDs.One !== mainFramePID === true
+PASS: frameHosts.length === 2
+
+Receiver and start are both the host, so there is nothing to return:
+PASS: search(hostOne, hostOne, true, anyType, true, 1) === '[]'
+PASS: search(hostOne, hostOne, false, anyType, true, 1) === '[]'
+PASS: search(hostTwo, hostTwo, true, anyType, true, 1) === '[]'
+PASS: search(hostTwo, hostTwo, false, anyType, true, 1) === '[]'
+
+With no start element, each host still searches its frame:
+PASS: search(hostOne, null, true, anyType, true, 1) === '[AXGroup]'
+PASS: search(hostTwo, null, true, anyType, true, 1) === '[AXGroup]'
+
+With the hosts' container as the receiver, the search moves past each frame:
+PASS: search(webArea, hostOne, false, anyType, true, 1) === '[AXButton "Before"]'
+PASS: search(webArea, hostOne, true, anyType, true, 1) === '[AXButton "Between"]'
+PASS: search(webArea, hostTwo, false, anyType, true, 1) === '[AXButton "Between"]'
+PASS: search(webArea, hostTwo, true, anyType, true, 1) === '[AXButton "After"]'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before   Between  After

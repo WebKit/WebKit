@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Site-specific quirks matrix</title>
+</head>
+<body>
+<pre id="output"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const urls = [
+    // Controls. Any quirk appearing under these is a leak onto unrelated sites, so they come first:
+    // a regression here should be the first thing visible in the diff.
+    "https://www.example.com/",
+    "https://webkit.org/",
+    // Prefix/suffix near misses. The registrable domain here is attacker.com and notamazon.com, so
+    // neither should pick up Amazon's quirks.
+    "https://amazon.com.attacker.com/",
+    "https://www.notamazon.com/",
+    // The same near misses for the YouTube and Google CNAME cloaking cookie cap exemption.
+    "https://youtube.com.attacker.com/",
+    "https://www.notyoutube.com/",
+    "https://www.notgoogle.com/",
+
+    "https://www.365scores.com/",
+    "https://actesting.org/",
+    "https://www.affirm.com/",
+    "https://www.airindiaexpress.com/",
+    "https://www.amazon.com/",
+    "https://sub.amazon.com/",
+    "https://www.amazon.co.uk/",
+    "https://amazon.design/",
+    "https://www.apple.com/",
+    "https://as.com/",
+    "https://www.att.com/",
+    "https://www.baidu.com/",
+    // The Baidu quirk is scoped to www.baidu.com, so the apex and other subdomains must not pick it up.
+    "https://baidu.com/",
+    "https://tieba.baidu.com/",
+    "https://www.notbaidu.com/",
+    "https://www.bbc.co.uk/",
+    "https://www.bbc.com/",
+    "https://codepen.io/",
+    // handleCodepenQuirks compares host() == "codepen.io" exactly, so the www form does not match.
+    "https://www.codepen.io/",
+    "https://www.bankofamerica.com/",
+    "https://www.bestbuy.com/",
+    "https://www.bing.com/",
+    "https://bungalow.com/",
+    "https://www.capitalgroup.com/",
+    "https://www.cbssports.com/",
+    "https://chatgpt.com/",
+    "https://www.cnn.com/",
+    "https://configurator.audi.com/",
+    "https://www.digitaltrends.com/",
+    "https://discord.com/",
+    "https://store.steampowered.com/",
+    "https://www.crunchyroll.com/",
+    "https://digits.t-mobile.com/",
+    "https://www.t-mobile.com/",
+    "https://www.descript.com/",
+    "https://www.dictionary.com/",
+    "https://www.disneyplus.com/",
+    "https://englishtest.duolingo.com/",
+    "https://englishtest.duolingo.cn/",
+    // The Duolingo quirk is scoped to englishtest.duolingo.com and .cn, so the apex, other subdomains and look-alike
+    // hosts must not pick it up.
+    "https://www.duolingo.com/",
+    "https://duolingo.com/",
+    "https://www.duolingo.cn/",
+    "https://englishtest.duolingo.com.attacker.com/",
+    "https://notenglishtest.duolingo.com/",
+    "https://www.ea.com/",
+    "https://www.espn.com/",
+    "https://www.facebook.com/",
+    "https://www.forbes.com/",
+    "https://gizmodo.com/",
+    "https://play.geforcenow.com/",
+    "https://www.goodreads.com/",
+    "https://www.google.com/",
+    // pathIs("/search") is exact, so the results page picks up the panel-anchor quirk and a
+    // deeper path under /search does not. webkit.org/b/323851
+    "https://www.google.com/search",
+    "https://www.google.com/search/howsearchworks",
+    // anyTopLevelDomain, so the ccTLD results pages match too.
+    "https://www.google.co.jp/search",
+    // pathStartsWithComponent("maps"), so the bare path that Maps first serves matches, as do
+    // deeper paths, but a longer first path component does not.
+    "https://www.google.com/maps",
+    "https://www.google.com/maps/",
+    "https://www.google.com/maps/@37.33,-122.01,15z",
+    "https://www.google.com/mapsearch",
+    "https://maps.google.com/maps/",
+    "https://docs.google.com/",
+    "https://translate.google.com/",
+    "https://mail.google.com/",
+    // handleGoogleQuirks branches on host for these two; neither branch was previously exercised.
+    "https://sites.google.com/",
+    "https://meet.google.com/",
+    // The dispatch key is domainWithoutPublicSuffix(), so Google ccTLDs share the handler.
+    "https://www.google.co.uk/",
+    "https://www.hbomax.com/",
+    // handleHBOMaxQuirks has a host == "play.hbomax.com" branch distinct from the domain-wide one.
+    "https://play.hbomax.com/",
+    // Expedia Group: one registrable domain per dispatch-map key, since they all share a handler.
+    "https://www.carrentals.com/",
+    "https://www.cheaptickets.com/",
+    "https://www.chess.com/",
+    "https://www.ebookers.de/",
+    "https://www.expedia.com/",
+    // isExpediaGroupRegistrableDomain() matches "expedia."/"ebookers." by prefix but lists the rest
+    // explicitly, so the ccTLD variants exercise a different code path than the .com forms above.
+    "https://www.expedia.fr/",
+    "https://www.hoteis.com/",
+    "https://www.hoteles.com/",
+    "https://www.hotels.com/",
+    "https://www.mrjet.se/",
+    "https://www.orbitz.com/",
+    "https://www.travelocity.com/",
+    "https://www.travelocity.ca/",
+    "https://www.wotif.com/",
+    "https://www.wotif.co.nz/",
+    "https://www.hulu.com/",
+    "https://www.icloud.com/",
+    "https://www.iheart.com/",
+    "https://www.imdb.com/",
+    "https://www.instagram.com/",
+    "https://invideo.io/",
+    "https://www.linkedin.com/",
+    "https://outlook.live.com/",
+    // Outlook on the web is also served from these hosts, which share only some of outlook.live.com's quirks.
+    "https://outlook.office.com/",
+    "https://outlook.office365.com/",
+    "https://outlook.cloud.microsoft/",
+    // handleLiveQuirks applies some quirks to every live.com host and others only to these three,
+    // including a PLATFORM(MAC) one for onedrive. The bare host is the non-Outlook baseline.
+    "https://live.com/",
+    "https://onedrive.live.com/",
+    "https://officeapps.live.com/",
+    "https://www.openrice.com/",
+    "https://www.notopenrice.com/",
+    "https://madisoncity.k12.al.us/",
+    "https://mailchimp.com/",
+    "https://www.marcus.com/",
+    "https://jalopnik.com/",
+    "https://kotaku.com/",
+    "https://medium.com/",
+    "https://www.microsoft.com/",
+    "https://microsoft.com/",
+    "https://m365.cloud.microsoft/",
+    "https://cloud.microsoft/",
+    "https://safe.menlosecurity.com/",
+    "https://www.menlosecurity.com/",
+    "https://www.messenger.com/",
+    "https://www.netflix.com/",
+    "https://www.nba.com/",
+    "https://www.nfl.com/",
+    "https://www.nhl.com/",
+    "https://www.nytimes.com/",
+    "https://www.pandora.com/",
+    "https://www.pinterest.com/",
+    "https://www.playstation.com/",
+    "https://my.playstation.com/",
+    "https://www.premierleague.com/",
+    "https://www.ralphlauren.com/",
+    "https://www.reddit.com/",
+    "https://www.scribd.com/",
+    "https://www.sfusd.edu/",
+    "https://app.slack.com/",
+    "https://www.sharepoint.com/",
+    "https://soundcloud.com/",
+    "https://soylent.com/",
+    "https://open.spotify.com/",
+    "https://www.spotify.com/",
+    "https://ceac.state.gov/",
+    // handleCEACStateGovQuirks also accepts any *.ceac.state.gov host, but not state.gov itself.
+    "https://sub.ceac.state.gov/",
+    "https://www.state.gov/",
+    "https://www.theguardian.com/",
+    "https://www.thesaurus.com/",
+    "https://www.thetimes.com/",
+    "https://www.tiktok.com/",
+    "https://trix-editor.org/",
+    "https://www.twitch.tv/",
+    "https://tympanus.net/",
+    "https://www.victoriassecret.com/",
+    "https://vimeo.com/",
+    "https://www.walmart.com/",
+    "https://en.wikipedia.org/",
+    "https://weather.com/",
+    "https://www.webex.com/",
+    "https://www.weebly.com/",
+    "https://workspaces.xyz/",
+    "https://wpdevelopment.ca/",
+    "https://x.com/",
+    // Not a dispatch key either: the key for handleTwitterXQuirks is "x", so the legacy domain never
+    // even reaches the handler.
+    "https://twitter.com/",
+    "https://www.yahoo.com/",
+    "https://news.ycombinator.com/",
+    "https://ycombinator.com/",
+    "https://www.yelp.com/",
+    "https://www.youtube.com/",
+    // Not a dispatch key: domainWithoutPublicSuffix() yields "youtube-nocookie", so this only ever
+    // picks up quirks as an embedded frame, which this test cannot reach.
+    "https://www.youtube-nocookie.com/",
+    "https://www.zillow.com/",
+    "https://www.zomato.com/",
+    "https://zoom.us/",
+    "https://www.dailymail.co.uk/",
+    "https://claude.ai/",
+    "https://claude.com/",
+];
+
+// These are gated on ENABLE(TOUCH_EVENTS) or ENABLE(IOS_TOUCH_EVENTS), which on iOS depend on the SDK, so they are
+// left out here and checked by the TouchEventQuirksFollowTheirBuildConditions API test instead.
+const touchEventGatedQuirks = new Map([
+    ["https://www.linkedin.com/", ["ShouldAllowNativeTapsOnMediaElementsQuirk"]],
+    ["https://outlook.live.com/", ["ShouldPreventTouchMoveDispatchQuirk"]],
+    ["https://www.netflix.com/", ["ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick"]],
+    ["https://soylent.com/", ["ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick"]],
+    ["https://www.yahoo.com/", ["ShouldPreventTouchEndDispatchQuirk"]],
+]);
+
+let output = "";
+if (!window.internals)
+    output = "FAIL: this test requires window.internals.\n";
+else {
+    for (const url of urls) {
+        internals.setTopDocumentURLForQuirks(url);
+        const excluded = touchEventGatedQuirks.get(url) ?? [];
+        const active = internals.activeQuirks().filter(quirk => !excluded.includes(quirk.split("\n")[0]));
+        output += url + "\n";
+        for (const name of active.length ? active : ["(none)"])
+            output += "    " + name.replaceAll("\n", "\n    ") + "\n";
+    }
+}
+document.getElementById("output").textContent = output;
+</script>
+

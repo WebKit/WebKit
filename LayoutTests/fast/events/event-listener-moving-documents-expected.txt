@@ -1,0 +1,12 @@
+Moving an event listener between documents should keep it active
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addedCalls is 1
+PASS addedCalls is 2
+PASS removedCalls is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

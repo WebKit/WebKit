@@ -1,0 +1,658 @@
+<!--
+ Copyright (C) 2019 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <title>JetStream 2 In-Depth Analysis</title>
+
+    <link rel="stylesheet" href="JetStream.css">
+
+</head>
+<body>
+<h1 class="logo">
+    <div id="jetstreams">
+        <a href="index.html" class="logo-image">JetStream 2</a>
+    </div>
+</h1>
+<main>
+    <article>
+        <h2>In-Depth Analysis</h2>
+
+        <p>
+        JetStream 2 combines together a variety of JavaScript and Web Assembly benchmarks, covering a variety of
+        advanced workloads and programming techniques, and reports a single score that
+        balances them using a geometric mean.
+        </p>
+
+        <p>
+        Each benchmark measures a distinct workload, and no single optimization
+        technique is sufficient to speed up all benchmarks. Some benchmarks demonstrate tradeoffs, and
+        aggressive or specialized optimizations for one benchmark might make another benchmark slower.
+        JetStream 2 rewards browsers that start up quickly, execute code quickly, and continue running smoothly.
+        </p>
+
+        <p>
+        Each benchmark in JetStream 2 computes its own individual score. JetStream 2 weighs each
+        benchmark equally, taking the geometric mean over each individual benchmark's score to compute
+        the overall JetStream 2 score.
+        </p>
+
+        <p>
+        It's not enough to just measure the total running time of a workload.
+        Browsers may perform differently for the same JavaScript workload depending on how many times it
+        has run. For example, garbage collection runs periodically, making some iterations take longer than
+        others. Code that runs repeatedly gets optimized by the browser, so the first iteration
+        of any workload is usually more expensive than the rest.
+        </p>
+
+        <p>
+        For most of the JavaScript benchmarks in JetStream 2, individual scores
+        equally weigh startup performance, worst case performance, and average case
+        performance. These three metrics are crucial to running performant JavaScript
+        in the browser. Fast startup times lead browsers to loading pages more quickly. Good
+        worst case performance ensures web applications can run without hiccups. Fast average
+        case performance makes it so that the most advanced web applications can run at all.
+        </p>
+
+        <p>
+        For JetStream 2's Web Assembly benchmarks, individual scores equally weigh startup time and
+        total execution time. An important component of JetStream 1 were the asm.js subset of benchmarks. With the release
+        of Web Assembly, the importance of asm.js has lessened since many users of asm.js are
+        now using Web Assembly. JetStream 2 has converted many of the asm.js benchmarks from
+        JetStream 1 into Web Assembly.
+        </p>
+
+        <p>
+        All but one of JetStream'2 JavaScript benchmarks run for N iterations, where
+        N is usually 120. JetStream 2 reports the startup score as the time it takes to run the first iteration.
+        The worst case score is the average of the worst M iterations, excluding the first iteration.
+        M is always less than N, and is usually 4. The average case score is the average
+        of all but the first iteration. These three scores are weighed equally using the geometric
+        mean.
+        </p>
+
+        <p>
+        JetStream 2 also includes a JavaScript benchmark named WSL. WSL is an implementation of a
+        GPU shading language written in JavaScript. WSL does not use the above mechanism for scoring
+        because it has a long running time. Instead, the WSL benchmark computes its score as the
+        geometric mean over two metrics: the time it takes to compile the WSL standard library, and the time
+        it takes to run through the WSL specification test suite.
+        </p>
+
+        <p>
+        JetStream 2 includes parts of these benchmark suites that came before it: <a href="https://webkit.org/perf/sunspider/sunspider.html">SunSpider</a>,
+        <a href="https://developers.google.com/octane/">Octane 2</a>, <a href="https://browserbench.org/JetStream1.1/">JetStream 1</a>,
+        <a href="https://browserbench.org/ARES-6/">ARES-6</a>, and <a href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>.
+        JetStream 2 also includes new benchmarks inspired by <a href="https://krakenbenchmark.mozilla.org">Kraken</a>.
+        JetStream 2 also includes a new set of benchmarks that measure the performance of Web Assembly, Web Workers,
+        Promises, async iteration, unicode regular expressions, and JavaScript parsing.
+        </p>
+
+        <p>
+        Note that scores from JetStream 2 are not comparable to scores to other versions
+        of any JetStream benchmark.
+        </p>
+
+        <h3>
+        JetStream 2 has 64 subtests:
+        </h3>
+
+        <dl>
+
+        <dt id="WSL">WSL</dt>
+        <dd>
+         WSL is an implementation of a GPU shading language written in JavaScript.
+         WSL measures the time it takes to compile the WSL standard library and the time
+         it takes to run through the WSL specification test suite.
+         Source code: <a href="WSL">WSL</a>
+        </dd>
+
+        <dt id="UniPoker">UniPoker</dt>
+        <dd>
+         UniPoker is a 5 card stud poker simulation using the Unicode playing card code points, U+1F0A1..U+1F0DE,
+         as the card representation in code. Scoring of hands is done with three regular expressions, one to check
+         for a flush, one to check for straights, and one to check for pairs, three of a kind, and four of a kind.
+         Source code: <a href="RexBench/UniPoker/poker.js">poker.js</a>
+        </dd>
+
+        <dt id="uglify-js-wtb">uglify-js-wtb</dt>
+        <dd>
+         <a href="https://github.com/mishoo/UglifyJS2">UglifyJS</a> is a JavaScript parser, minifier, compressor, and beautifier toolkit. It is commonly
+         used to minimize JavaScript bundles.
+         This benchmark runs UglifyJS on test JavaScript programs.
+         This benchmark stresses string manipulation and regular expression performance.
+         A similar version of this benchmark was previously published in the Web Tooling Benchmark.
+         Source code: <a href="web-tooling-benchmark/browser.js">uglify.js</a>
+        </dd>
+
+        <dt id="typescript">typescript</dt>
+        <dd>
+         Tests how quickly Microsoft's <a href="http://www.typescriptlang.org">TypeScript</a> compiler can
+         compile itself. More than anything else, this tests how quickly a JavaScript runtime can optimize
+         a large pile of code.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/typescript.js">typescript.js</a>
+        </dd>
+
+        <dt id="tsf-wasm">tsf-wasm</dt>
+        <dd>
+         Runs Filip Pizlo's &mdash; of the WebKit team &mdash; implementation of a <a href="http://www.filpizlo.com/tsf/"> Typed Stream Format </a>
+         in Web Assembly. The original code is compiled from C to Web Assembly using <a href="https://emscripten.org">Emscripten</a>.
+         Source code: <a href="wasm/TSF">TSF</a>
+        </dd>
+
+        <dt id="tagcloud-SP">tagcloud-SP</dt>
+        <dd>
+         Parses JSON and generates markup for a <a href="http://en.wikipedia.org/wiki/Tag_cloud">tag
+         cloud</a> view of the data. Written by Maciej Stachowiak of the WebKit team. Exercises string
+         parsing and manipulation. A similar version of this benchmark was originally published in SunSpider.
+         Source code: <a href="SunSpider/tagcloud.js">tagcloud.js</a>
+        </dd>
+
+        <dt id="string-unpack-code-SP">string-unpack-code-SP</dt>
+        <dd>
+         This benchmark unpacks various minified JavaScript libraries. It stresses the speed of various string manipulation
+         operations.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/string-unpack-code.js">string-unpack-code.js</a>
+        </dd>
+
+        <dt id="stanford-crypto-sha256">stanford-crypto-sha256</dt>
+        <dd>
+         Measures the performance of the <a href="https://en.wikipedia.org/wiki/SHA-2">SHA256</a> hashing algorithm as implemented by the <a href="https://crypto.stanford.edu/sjcl/">Stanford JavaScript Crypto Library</a>. This benchmark stresses numeric analysis and array access.
+         This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+         Source code: <a href="SeaMonster/stanford-crypto-sha256.js">stanford-crypto-sha256.js</a>
+        </dd>
+
+        <dt id="stanford-crypto-pbkdf2">stanford-crypto-pbkdf2</dt>
+        <dd>
+         Measures the performance of the <a href="https://en.wikipedia.org/wiki/PBKDF2">PBKDF2</a> hashing algorithm as implemented by the <a href="https://crypto.stanford.edu/sjcl/">Stanford JavaScript Crypto Library</a>. This benchmark stresses numeric analysis and array access.
+         This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+         Source code: <a href="SeaMonster/stanford-crypto-pbkdf2.js">stanford-crypto-pbkdf2.js</a>
+        </dd>
+
+        <dt id="stanford-crypto-aes">stanford-crypto-aes</dt>
+        <dd>
+        Measures the performance of the <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard">AES</a> hashing algorithm as implemented by the <a href="https://crypto.stanford.edu/sjcl/">Stanford JavaScript Crypto Library</a>. This benchmark stresses numeric analysis and array access.
+         This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+         Source code: <a href="SeaMonster/stanford-crypto-aes.js">stanford-crypto-aes.js</a>
+        </dd>
+
+        <dt id="splay">splay</dt>
+        <dd>
+          Tests the manipulation of <a href="http://en.wikipedia.org/wiki/Splay_tree">splay trees</a>
+          represented using plain JavaScript objects. This benchmark stresses the performance of the garbage collector.
+          A similar version of this benchmark was previously published in Octane version 2.
+          Source code: <a href="Octane/splay.js">splay.js</a>
+        </dd>
+
+        <dt id="segmentation">segmentation</dt>
+        <dd>
+         Uses Web Workers to parallelize the computation of a <a href="https://en.wikipedia.org/wiki/Time-series_segmentation">
+         time series segmentation</a> algorithm over a sample data set. This code is adapted from an algorithm used in the <a href="https://perf.webkit.org/v3/">
+         WebKit performance dashboard.</a>
+         Source code: <a href="worker/segmentation.js">segmentation.js</a>
+        </dd>
+
+        <dt id="richards">richards</dt>
+        <dd>
+         Martin Richard's <a href="http://www.cl.cam.ac.uk/~mr10/Bench.html">system language
+         benchmark</a> ported to JavaScript. Tests object property access performance.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/richards.js">richards.js</a>
+        </dd>
+
+        <dt id="richards-wasm">richards-wasm</dt>
+        <dd>
+         Martin Richard's <a href="http://www.cl.cam.ac.uk/~mr10/Bench.html">system language
+         benchmark</a> compiled to a hybrid of Web Assembly and JavaScript. It stresses how quickly
+         JavaScript can call into Web Assembly code.
+         Source code: <a href="wasm/richards.c">richards.c</a>, <a href="wasm/richards.js">richards.js</a>
+        </dd>
+
+        <dt id="regexp">regexp</dt>
+        <dd>
+         Collection of regular expressions found by the V8 team in 2010, curated into a benchmark.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/regexp.js">regexp.js</a>
+        </dd>
+
+        <dt id="regex-dna-SP">regex-dna-SP</dt>
+        <dd>
+         Regular-expression-based solution to DNA manipulation from
+         <a href="https://en.wikipedia.org/wiki/The_Computer_Language_Benchmarks_Game">The Great Computer Language Shootout</a>,
+         contributed by Jesse Millikan.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/regex-dna.js">regex-dna.js</a>
+        </dd>
+
+        <dt id="raytrace">raytrace</dt>
+        <dd>
+        <a href="https://en.wikipedia.org/wiki/Ray_tracing_(graphics)">Ray tracer</a> written in JavaScript using prototype.js. Tests object construction performance
+         and floating point math.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/raytrace.js">raytrace.js</a>
+        </dd>
+
+        <dt id="quicksort-wasm">quicksort-wasm</dt>
+        <dd>
+         Quicksort benchmark, compiled to Web Assembly with <a href="https://emscripten.org">Emscripten</a>.
+         The original C version of this benchmark was previously published in the LLVM test suite.
+         Source code: <a href="wasm/quicksort.c">quicksort.c</a>, <a href="wasm/quicksort.js">quicksort.js</a>
+        </dd>
+
+        <dt id="prepack-wtb">prepack-wtb</dt>
+        <dd>
+        <a href="https://prepack.io">Prepack</a> is a tool that optimizes JavaScript source code by performing computations at compile
+         time instead of run time where possible.
+         This benchmark runs Prepack on test JavaScript programs.
+         This benchmark stresses string manipulation and regular expression performance.
+         A similar version of this benchmark was previously published in the Web Tooling Benchmark.
+         Source code: <a href="web-tooling-benchmark/browser.js">prepack.js</a>
+        </dd>
+
+        <dt id="pdfjs">pdfjs</dt>
+        <dd>
+         Mozilla's <a href="http://mozilla.github.io/pdf.js/">PDF reader written in JavaScript</a>.
+         This benchmark emphasizes array manipulation and bit operations.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/pdfjs.js">pdfjs.js</a>
+        </dd>
+
+        <dt id="OfflineAssembler">OfflineAssembler</dt>
+        <dd>
+        Offline Assembler is the lexer, parser, and AST layer of the offline assembler for <a href="https://trac.webkit.org/wiki/JavaScriptCore">JavaScriptCore</a>.
+         It has been ported to JavaScript from the original Ruby implementation. This test stresses regular expression
+         performance.
+         Source code: <a href="RexBench/OfflineAssembler/parser.js">OfflineAssembler.js</a>
+        </dd>
+
+        <dt id="octane-zlib">octane-zlib</dt>
+        <dd>
+         A benchmark based on compiling <a href="http://zlib.net">zlib</a> to JavaScript using
+         <a href="https://emscripten.org">Emscripten</a>. Based on the
+         <a href="https://github.com/kripken/emscripten/tree/master/tests/zlib">zlib emscripten test</a>
+         but modified to restrict code caching opportunities.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/zlib.js">zlib.js</a>
+        </dd>
+
+        <dt id="octane-code-load">octane-code-load</dt>
+        <dd>
+         Test of code load speed of the jQuery and Closure libraries. Because this test allows
+         caching, this is representative of revisiting the same website.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/code-first-load.js">code-load.js</a>
+        </dd>
+
+        <dt id="navier-stokes">navier-stokes</dt>
+        <dd>
+         Fluid simulation written by <a href="https://nerget.com">Oliver Hunt</a>. Emphasizes floating point array performance.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/navier-stokes.js">navier-stokes.js</a>
+        </dd>
+
+        <dt id="n-body-SP">n-body-SP</dt>
+        <dd>
+         Classic solar system simulation benchmark from
+         <a href="https://en.wikipedia.org/wiki/The_Computer_Language_Benchmarks_Game">The Great Computer Language Shootout</a>,
+         contributed by Isaac Guy. Tests math and object access performance.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/n-body.js">n-body.js</a>
+        </dd>
+
+        <dt id="multi-inspector-code-load">multi-inspector-code-load</dt>
+        <dd>
+         Measures the repeated parsing of a modern JavaScript code base: WebKit's Web Inspector.
+         Because this test allows caching, this is representative of revisiting the same website.
+         Source code: <a href="code-load/code-multi-load.js">code-multi-load.js</a>
+        </dd>
+
+        <dt id="ML">ML</dt>
+        <dd>
+         ML is an implementation of a <a href="https://en.wikipedia.org/wiki/Feedforward_neural_network"> feedforward neural network.</a>
+         The benchmark trains several networks using different <a href="https://en.wikipedia.org/wiki/Activation_function">activation functions</a>
+         and several sample data sets. ML makes heavy use of classes. It relies on the ml-matrix library and does non-trivial matrix math.
+         This benchmark was previously published in ARES-6.
+         Source code: <a href="ARES-6/ml">ML</a>
+        </dd>
+
+        <dt id="mandreel">mandreel</dt>
+        <dd>
+         Tests the <a href="http://bulletphysics.org/">Bullet</a> physics engine.
+         The physics engine is compiled to JavaScript with <a href="http://www.mandreel.com">Mandreel</a>.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/mandreel.js">mandreel.js</a>
+        </dd>
+
+        <dt id="lebab-wtb">lebab-wtb</dt>
+        <dd>
+         <a href="https://github.com/lebab/lebab">Lebab</a> transpiles ES5 code into ES6/ES7.
+         This benchmark runs Lebab on test JavaScript programs.
+         This benchmark stresses string manipulation and regular expression performance.
+         A similar version of this benchmark was previously published in the Web Tooling Benchmark.
+         Source code: <a href="web-tooling-benchmark/browser.js">lebab.js</a>
+        </dd>
+
+        <dt id="json-stringify-inspector">json-stringify-inspector</dt>
+        <dd>
+         Measures JSON.stringify performance on a set of objects that WebKit's Web Inspector
+         stringifies when communicating between the UI and web pages.
+         This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+         Source code: <a href="SeaMonster/json-stringify-inspector.js">json-stringify-inspector.js</a>
+        </dd>
+
+        <dt id="json-parse-inspector">json-parse-inspector</dt>
+        <dd>
+         Measures JSON.parse performance on a set of objects that WebKit's Web Inspector
+         parses when communicating between the UI and web pages.
+         This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+         Source code: <a href="SeaMonster/json-parse-inspector.js">json-parse-inspector.js</a>
+        </dd>
+
+        <dt id="jshint-wtb">jshint-wtb</dt>
+        <dd>
+         <a href="https://jshint.com">JSHint</a> is a static analysis tool that warns about errors
+        and potential problems in JavaScript programs.
+         This benchmark runs JSHint on test JavaScript programs.
+         This benchmark stresses string manipulation and regular expression performance.
+         A similar version of this benchmark was previously published in the Web Tooling Benchmark.
+         Source code: <a href="web-tooling-benchmark/browser.js">jshint.js</a>
+        </dd>
+
+        <dt id="HashSet-wasm">HashSet-wasm</dt>
+        <dd>
+         A Web Assembly benchmark replaying a set of hash table operations performed in WebKit when loading
+         a web page. This benchmark was compiled from C++ to Web Assembly using <a href="https://emscripten.org">Emscripten</a>.
+         Source code: <a href="wasm/HashSet.cpp">HashSet.cpp</a>, <a href="wasm/HashSet.js">HashSet.js</a>
+        </dd>
+
+        <dt id="hash-map">hash-map</dt>
+        <dd>
+         Apache Harmony java.util.HashMap implementation ported to JavaScript and benchmarked by
+         doing hash table insertions, queries, and then iterating the associated entrySet. Tests
+         object-oriented JavaScript idioms and object construction. A similar JavaScript version
+         of this benchmark was originally published as part of the WebKit test suite.
+         Source code: <a href="simple/hash-map.js">hash-map.js</a>
+        </dd>
+
+        <dt id="gcc-loops-wasm">gcc-loops-wasm</dt>
+        <dd>
+         Example loops used to tune the GCC and LLVM vectorizers, compiled to Web Assembly with
+         <a href="https://emscripten.org">Emscripten</a>. The original C++ version of this benchmark was previously published in the LLVM test suite.
+         Source code: <a href="wasm/gcc-loops.cpp">gcc-loops.cpp</a>, <a href="wasm/gcc-loops.js">gcc-loops.js</a>
+        </dd>
+
+        <dt id="gbemu">gbemu</dt>
+        <dd>
+         Gameboy emulator written in JavaScript. Tests typed array and
+         property access performance.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/gbemu-part1.js">gbemu-part1.js</a>, <a href="Octane/gbemu-part2.js">gbemu-part2.js</a>
+        </dd>
+
+        <dt id="gaussian-blur">gaussian-blur</dt>
+        <dd>
+         Tests the performance of a JavaScript implementation of <a href="https://en.wikipedia.org/wiki/Gaussian_blur">gaussian
+         blur</a> on a test image. Tests numeric analysis speed and uses typed arrays.
+         This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+         Source code: <a href="SeaMonster/gaussian-blur.js">gaussian-blur.js</a>
+        </dd>
+
+        <dt id="float-mm.c">float-mm.c</dt>
+        <dd>
+         Floating point matrix multiply benchmark, compiled to JavaScript with <a href="https://emscripten.org">Emscripten</a>.
+         The original C version of this benchmark was previously published in the LLVM test suite.
+         Source code: <a href="simple/float-mm.c">float-mm.c</a>, <a href="simple/float-mm.c.js">float-mm.c.js</a>
+        </dd>
+
+        <dt id="FlightPlanner">FlightPlanner</dt>
+        <dd>
+          Flight Planner is a benchmark taken from a flight management web application.
+          Flight Planner parses aircraft flight plans and computes distance, courses, and elapsed times for legs of flight plans.
+          It uses FAA data for airports, navigation aids, and airways. The flight management app was originally written to help
+          compete in a flying proficiency event. It stresses regular expression performance.
+         Source code: <a href="RexBench/FlightPlanner/flight_planner.js">flight_planner.js</a>
+        </dd>
+
+        <dt id="first-inspector-code-load">first-inspector-code-load</dt>
+        <dd>
+         Measures the first-time parsing of a modern JavaScript code base: WebKit's Web Inspector.
+         This models the parsing time of visiting a web site for the first time.
+         Source code: <a href="code-load/code-first-load.js">code-first-load.js</a>
+        </dd>
+
+        <dt id="espree-wtb">espree-wtb</dt>
+        <dd>
+        <a href="https://github.com/eslint/espree">Espree</a> is a JavaScript parser written in JavaScript.
+         This benchmark runs Espree on test JavaScript programs.
+         This benchmark stresses string manipulation and regular expression performance.
+         A similar version of this benchmark was previously published in the Web Tooling Benchmark.
+         Source code: <a href="web-tooling-benchmark/browser.js">espree.js</a>
+        </dd>
+
+        <dt id="earley-boyer">earley-boyer</dt>
+        <dd>
+         Tests two classic Scheme benchmarks translated to JavaScript using scheme2js. The first
+         benchmark is Earley, is a chart parser algorithm created by Jay Earley. The second is
+         Boyer, a logic programming benchmark by Bob Boyer. Measures variadic functions and object
+         construction.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/earley-boyer.js">earley-boyer.js</a>
+        </dd>
+
+        <dt id="delta-blue">delta-blue</dt>
+        <dd>
+         The classic DeltaBlue benchmark derived from a Smalltalk implementation by Maloney and
+         Wolczko. Tests devirtualization of JavaScript code that uses an idiomatic class hierarchy
+         construction.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/deltablue.js">deltablue.js</a>
+        </dd>
+
+        <dt id="date-format-xparb-SP">date-format-xparb-SP</dt>
+        <dd>
+         Sophisticated date formatting and parsing library test, based on code by Barin Schwartz.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/date-format-xparb.js">date-format-xparb.js</a>
+        </dd>
+
+        <dt id="date-format-tofte-SP">date-format-tofte-SP</dt>
+        <dd>
+         Date and time formatting test, based on code by Svend Tofte. Involves an interesting use
+         of <code>eval</code> and also covers string manipulation and JavaScript library functions.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/date-format-tofte.js">date-format-tofte.js</a>
+        </dd>
+
+        <dt id="crypto-sha1-SP">crypto-sha1-SP</dt>
+        <dd>
+         <a href="http://en.wikipedia.org/wiki/Sha1">SHA-1</a> implementation in JavaScript by
+         Paul Johnston and others. Tests interesting integer math idioms.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/crypto-sha1.js">crypto-sha1.js</a>
+        </dd>
+
+        <dt id="crypto-md5-SP">crypto-md5-SP</dt>
+        <dd>
+         <a href="http://en.wikipedia.org/wiki/Md5">MD5</a> implementation in JavaScript by
+         Paul Johnston and others. Tests interesting integer math idioms.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/crypto-md5.js">crypto-md5.js</a>
+        </dd>
+
+        <dt id="crypto-aes-SP">crypto-aes-SP</dt>
+        <dd>
+         <a href="http://en.wikipedia.org/wiki/Advanced_Encryption_Standard"> AES</a> implementation
+         in JavaScript by Chris Veness. A newer version can be
+         found <a href="http://www.movable-type.co.uk/scripts/aes.html">here</a>. Tests integer math.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/crypto-aes.js">crypto-aes.js</a>
+        </dd>
+
+        <dt id="crypto">crypto</dt>
+        <dd>
+         RSA cypher implemented in JavaScript by Tom Wu. Tests integer math and arrays.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/crypto.js">crypto.js</a>
+        </dd>
+
+        <dt id="coffeescript-wtb">coffeescript-wtb</dt>
+        <dd>
+         <a href="http://coffeescript.org/">CoffeeScript</a> is a programming language that attempts to expose the
+         good parts of JavaScript in a simple way.
+         This benchmark tests the CoffeeScript compiler on test programs.
+         This benchmark stresses string manipulation and regular expression performance.
+         A similar version of this benchmark was previously published in the Web Tooling Benchmark.
+         Source code: <a href="web-tooling-benchmark/browser.js">coffeescript.js</a>
+        </dd>
+
+        <dt id="chai-wtb">chai-wtb</dt>
+        <dd>
+         <a href="http://chaijs.com/">Chai</a> is a <a href="https://codeutopia.net/blog/2015/03/01/unit-testing-tdd-and-bdd/">BDD / TDD</a> assertion library for
+         node.js and the browser. It is commonly used to write unit and integration tests.
+         A similar version of this benchmark was previously published in the Web Tooling Benchmark.
+         Source code: <a href="web-tooling-benchmark/browser.js">chai.js</a>
+        </dd>
+
+        <dt id="cdjs">cdjs</dt>
+        <dd>
+         JavaScript implementation of the <a href="https://www.cs.purdue.edu/sss/projects/cdx/">CDx collision detection
+         benchmark</a>. Measures the performance of over 200 collision detection runs.
+         Source code: <a href="cdjs">cdjs</a>
+        </dd>
+
+        <dt id="box2d">box2d</dt>
+        <dd>
+         The Box2D physics engine <a href="https://code.google.com/p/box2dweb/">ported to JavaScript</a>. Tests floating
+         point math and data structures.
+         A similar version of this benchmark was previously published in Octane version 2.
+         Source code: <a href="Octane/box2d.js">box2d.js</a>
+        </dd>
+
+        <dt id="bomb-workers">bomb-workers</dt>
+        <dd>
+         Tests running various subtests of the SunSpider benchmark in parallel using Web Workers.
+         Stresses the browser's ability to run JavaScript code in parallel.
+         Source code: <a href="worker/bomb.js">bomb.js</a>
+        </dd>
+
+        <dt id="Basic">Basic</dt>
+        <dd>
+         Basic is an ES2015 implementation of the <a href="http://www.ecma-international.org/publications/files/ECMA-ST-WITHDRAWN/ECMA-55,%201st%20Edition,%20January%201978.pdf">ECMA-55 BASIC standard</a>.
+         Basic stresses performance of generator functions, classes, Map, and WeakMap.
+         The benchmark runs a handful of simple programs, the most complex of which finds prime numbers.
+         This benchmark was previously published in ARES-6.
+         Source code: <a href="ARES-6/Basic">Basic</a>
+        </dd>
+
+        <dt id="base64-SP">base64-SP</dt>
+        <dd>
+         Base64 encoder/decoder written in JavaScript, originally from the Mozilla XML-RPC client component.
+         Tests string manipulation.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/base64.js">base64.js</a>
+        </dd>
+
+        <dt id="babylon-wtb">babylon-wtb</dt>
+        <dd>
+         <a href="https://github.com/babel/babel/tree/master/packages/babel-parser">Babylon</a> is the frontend for the Babel transpiler.
+         It is a JavaScript parser written in JavaScript. It computes the Abstract Syntax Tree of the input JavaScript program.
+         This benchmark runs Babylon on test JavaScript programs.
+         This benchmark stresses string manipulation and regular expression performance.
+         A similar version of this benchmark was previously published in the Web Tooling Benchmark.
+         Source code: <a href="web-tooling-benchmark/browser.js">babylon.js</a>
+        </dd>
+
+        <dt id="Babylon">Babylon</dt>
+        <dd>
+         <a href="https://github.com/babel/babylon">Babylon</a> is an implementation of a parser for the JavaScript language.
+         Babylon is the parser used in the <a href="https://babeljs.io/">Babel</a> JavaScript transpiler. The benchmark runs the
+         Babylon parser on four different JavaScript sources. Babylon makes heavy use of classes, does non trivial string processing,
+         and creates non-trivial object graphs.
+         This benchmark was previously published in ARES-6.
+         Source code: <a href="ARES-6/Babylon">Babylon</a>
+        </dd>
+
+        <dt id="async-fs">async-fs</dt>
+        <dd>
+         This is an implementation of a mock file system that stresses the performance of DataView, Promises, and async
+         iteration. The benchmark simulates adding and removing files, and swapping the byte order of existing files.
+         Source code: <a href="simple/file-system.js">async-fs.js</a>
+        </dd>
+
+        <dt id="Air">Air</dt>
+        <dd>
+         Air is an ES2015 port of the <a href="https://webkit.org/blog/5852/introducing-the-b3-jit-compiler/">WebKit B3 JIT</a>'s <a href="https://trac.webkit.org/changeset/201783">Air::allocateStack phase</a>.
+         This code is a heavy user of Map, Set, classes, spread, and for-of. The benchmark runs allocateStack on hot function
+         bodies from other popular JavaScript benchmarks. This benchmark was previously published in ARES-6.
+         Source code: <a href="ARES-6/Air">Air</a>
+        </dd>
+
+        <dt id="ai-astar">ai-astar</dt>
+        <dd>
+         This benchmark runs a JavaScript implementation of the <a href="https://en.wikipedia.org/wiki/A*_search_algorithm">A*</a> search algorithm
+         written by <a href="https://briangrinstead.com/blog/">Brian Grinstead</a>.
+         This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+         Source code: <a href="SeaMonster/ai-astar.js">ai-astar.js</a>
+        </dd>
+
+        <dt id="acorn-wtb">acorn-wtb</dt>
+        <dd>
+         <a href="https://github.com/ternjs/acorn">Acorn</a> is a JavaScript parser written in JavaScript.
+         This benchmark runs Acorn on test JavaScript programs.
+         This benchmark stresses string manipulation and regular expression performance.
+         A similar version of this benchmark was previously published in the Web Tooling Benchmark.
+         Source code: <a href="web-tooling-benchmark/browser.js">acorn.js</a>
+        </dd>
+
+        <dt id="3d-raytrace-SP">3d-raytrace-SP</dt>
+        <dd>
+        Simple raytracer written by <a href="https://nerget.com">Oliver Hunt</a>.
+         Tests arrays and floating-point math in relatively short-running code.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/3d-raytrace.js">3d-raytrace.js</a>
+        </dd>
+
+        <dt id="3d-cube-SP">3d-cube-SP</dt>
+        <dd>
+         3D cube rotation benchmark by Simon Speich. The original can be found
+         on <a href="http://www.speich.net/computer/moztesting/3d.htm">Simon's
+         web page</a>. Tests arrays and floating-point math in relatively
+         short-running code.
+         A similar version of this benchmark was previously published in SunSpider.
+         Source code: <a href="SunSpider/3d-cube.js">3d-cube.js</a>
+        </dd>
+
+        </dl>
+
+        <p><a href="index.html" class="button">&larr; Return to Tests</a></p>
+    </article>
+
+</main>
+</body>
+</html>

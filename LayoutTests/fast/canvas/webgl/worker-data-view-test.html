@@ -1,0 +1,31 @@
+<html>
+<head>
+<script>
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+function runTest()
+{
+    log("Test DataView in worker.");
+
+    var worker = new Worker("resources/worker-data-view-test.js");
+    worker.onmessage = function(event) {
+        log(event.data);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+    worker.postMessage("start");
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body onload="runTest()">
+<pre id='console'></pre>
+</body>
+</html>

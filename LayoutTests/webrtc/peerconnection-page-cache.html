@@ -1,0 +1,65 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<video id="video" autoplay=""></video>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="routines.js"></script>
+<script>
+t = async_test();
+
+async function waitForConnectionState(pc, state)
+{
+    if (pc.connectionState === state)
+       return;
+    let resolveCallback;
+    const promise = new Promise((resolve, reject) => {
+        resolveCallback = resolve;
+        setTimeout(() => reject('did not go to state ' + state), 15000);
+    });
+    pc.onconnectionstatechange = () => {
+        if (pc.connectionState === state)
+            resolveCallback();
+    };
+    return promise;
+}
+
+window.addEventListener("pageshow", async function(event) {
+    if (!event.persisted)
+        return;
+    assert_equals(t.pc1.connectionState, "connected");
+    await waitForConnectionState(t.pc1, "disconnected");
+    t.done();
+});
+
+window.addEventListener("pagehide", t.step_func((event) => {
+    assert_equals(t.pc1.connectionState, "connected");
+    if (!event.persisted)
+        assert_uneached("Page failed to enter page cache");
+
+}));
+
+onload = () => {
+    setTimeout(async () => {
+        const localStream = await navigator.mediaDevices.getUserMedia({video: true });
+        const stream = await new Promise((resolve, reject) => {
+            createConnections((firstConnection) => {
+                t.pc1 = firstConnection;
+                firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            }, (secondConnection) => {
+                t.pc2 = secondConnection;
+                secondConnection.ontrack = (trackEvent) => {
+                    resolve(trackEvent.streams[0]);
+                };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+        video.srcObject = stream;
+        await video.play();
+
+        window.location = "../fast/history/resources/page-cache-helper.html";
+    }, 0);
+};
+</script>
+</html>

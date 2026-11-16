@@ -1,0 +1,4 @@
+
+PASS e.style['display'] = "grid-lanes" should set the property value
+PASS e.style['display'] = "inline-grid-lanes" should set the property value
+

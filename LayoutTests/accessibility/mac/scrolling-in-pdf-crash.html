@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<embed id="pdfEmbed" width="75%" height="75%" name="plugin" src="../resources/simple-webkit-pdf-2-pages.pdf" type="application/pdf">
+
+<script>
+var output = "This test ensures that scrolling a PDF with accessibility enabled does not cause a crash.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var pageOne, pageTwo;
+    var pdfAxObject, pdfLayerController;
+    internals.registerPDFTest(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for the embed plugin to load after style update.
+        await UIHelper.waitForPDFFadeIn();
+
+        await waitFor(() => {
+            const embedElement = accessibilityController.accessibleElementById("pdfEmbed");
+            if (!embedElement)
+                return false;
+
+            pdfAxObject = embedElement.childAtIndex(0);
+            return pdfAxObject && pdfAxObject.children.length >= 1;
+        });
+
+        if (pdfAxObject.childAtIndex(0).role.includes("AXPage")) {
+            // Post-Sequoia, the pages in the PDF document are direct children of the PDF AX object in the PDFKit accessibility hierarchy.
+            pageOne = pdfAxObject.childAtIndex(0);
+            pageTwo = pdfAxObject.childAtIndex(1);
+        } else {
+            // Pre-Sequoia, the pages are children of the PDF layer controller.
+            await waitFor(() => {
+                pdfLayerController = pdfAxObject.childAtIndex(0);
+                return pdfLayerController && pdfLayerController.children.length >= 2;
+            });
+
+            let role = pdfLayerController.stringAttributeValue("AXRole");
+            let description = pdfLayerController.stringAttributeValue("AXDescription");
+            if (role !== "AXGroup" && description !== "document")
+                output += `FAIL: PDF layer controller had unexpected role (${role}) or description (${descripton})\n`;
+
+            pageOne = pdfLayerController.childAtIndex(0);
+            pageTwo = pdfLayerController.childAtIndex(1);
+        }
+
+        output += expect("pageOne.role", "'AXRole: AXPage'");
+        output += expect("pageTwo.role", "'AXRole: AXPage'");
+
+        pageTwo.scrollToMakeVisible();
+        output += "PASS: Scrolling to the second page of the PDF didn't cause a crash.\n";
+
+        debug(output);
+        finishJSTest();
+    }, plugin);
+}
+</script>
+</body>
+</html>
+

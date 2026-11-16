@@ -1,0 +1,3 @@
+
+PASS SVGAnimatedNumber interface - utilizing the surfaceScale property of SVGFESpecularLightingElement
+

@@ -1,0 +1,29 @@
+This test ensures aria-hidden text is excluded from stitched accessibility text.
+
+PASS: platformStaticTextValue(text1).includes('$45.79') === true
+PASS: platformStaticTextValue(text1).includes('/mo.') === false
+PASS: platformStaticTextValue(text1).includes('per month') === true
+
+PASS: platformStaticTextValue(text2).includes('Hello') === true
+PASS: platformStaticTextValue(text2).includes('hidden') === false
+PASS: platformStaticTextValue(text2).includes('world') === true
+
+PASS: platformStaticTextValue(text3).includes('Start') === true
+PASS: platformStaticTextValue(text3).includes('middle') === false
+PASS: platformStaticTextValue(text3).includes('end') === true
+
+PASS: platformStaticTextValue(text3).includes('middle') === true
+PASS: platformStaticTextValue(text3).includes('Start') === true
+PASS: platformStaticTextValue(text3).includes('end') === true
+
+PASS: platformStaticTextValue(text3).includes('middle') === false
+PASS: platformStaticTextValue(text3).includes('Start') === true
+PASS: platformStaticTextValue(text3).includes('end') === true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+$45.79/mo. per month
+Hello hidden world
+Start middle end

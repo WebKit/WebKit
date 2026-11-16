@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#source { -webkit-user-drag: element; -webkit-user-select: none;
+          width: 80px; height: 80px; background: cornflowerblue; }
+#zoneA  { width: 120px; height: 120px; display: inline-block; background: salmon; }
+#zoneB  { width: 120px; height: 120px; display: inline-block; background: lightgreen; }
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="source" draggable="true">Drag me</div>
+<div id="zoneA">Zone A</div><div id="zoneB">Zone B</div>
+<div id="console"></div>
+<script>
+description("Test that dragenter and dragleave events carry the correct relatedTarget. " +
+            "Per the DOM Level 2 Events spec, dragenter.relatedTarget is the element just " +
+            "exited and dragleave.relatedTarget is the element being entered.");
+
+var enterARelatedTarget = "not fired";
+var leaveARelatedTarget = "not fired";
+var enterBRelatedTarget = "not fired";
+
+function runTest()
+{
+    if (!window.eventSender)
+        return;
+
+    testRunner.dumpAsText();
+
+    var source = document.getElementById("source");
+    var zoneA  = document.getElementById("zoneA");
+    var zoneB  = document.getElementById("zoneB");
+
+    source.addEventListener("dragstart", function(e) {
+        e.dataTransfer.setData("text/plain", "drag-test");
+    });
+
+    function acceptDrop(e) { e.preventDefault(); }
+    zoneA.addEventListener("dragenter", function(e) {
+        e.preventDefault();
+        enterARelatedTarget = e.relatedTarget;
+    });
+    zoneA.addEventListener("dragover",  acceptDrop);
+    zoneA.addEventListener("dragleave", function(e) {
+        leaveARelatedTarget = e.relatedTarget;
+    });
+    zoneB.addEventListener("dragenter", function(e) {
+        e.preventDefault();
+        enterBRelatedTarget = e.relatedTarget;
+    });
+    zoneB.addEventListener("dragover",  acceptDrop);
+
+    // Compute centers in document coordinates.
+    function cx(el) { return Math.round(el.offsetLeft + el.offsetWidth  / 2); }
+    function cy(el) { return Math.round(el.offsetTop  + el.offsetHeight / 2); }
+
+    eventSender.dragMode = true;
+    eventSender.mouseMoveTo(cx(source), cy(source));
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(cx(zoneA), cy(zoneA));
+    eventSender.leapForward(50);
+    eventSender.mouseMoveTo(cx(zoneB), cy(zoneB));
+    eventSender.leapForward(50);
+    eventSender.mouseUp();
+
+    // dragenter on zone A: no prior drag target, so relatedTarget should be null.
+    shouldBeNull("enterARelatedTarget");
+
+    // dragleave on zone A: leaving toward zone B, so relatedTarget should be zone B.
+    shouldBe("leaveARelatedTarget", "document.getElementById('zoneB')");
+
+    // dragenter on zone B: arriving from zone A, so relatedTarget should be zone A.
+    shouldBe("enterBRelatedTarget", "document.getElementById('zoneA')");
+}
+
+runTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

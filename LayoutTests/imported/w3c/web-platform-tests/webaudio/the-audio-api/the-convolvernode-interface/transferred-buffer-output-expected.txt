@@ -1,0 +1,10 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test Convolver with transferred buffer"
+PASS Audit report
+PASS > [Test Convolver with transferred buffer] Output should be all zeroes
+PASS   Convolver channel 0 output[0:1279] contains only the constant 0.
+PASS   Convolver channel 1 output[0:1279] contains only the constant 0.
+PASS < [Test Convolver with transferred buffer] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

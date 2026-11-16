@@ -1,0 +1,3 @@
+
+FAIL selectionchange event fired on the document in case TextControl element is in Shadow Tree assert_equals: expected 0 but got 1
+

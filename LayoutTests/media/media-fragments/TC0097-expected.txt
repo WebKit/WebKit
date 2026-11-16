@@ -1,0 +1,9 @@
+
+
+Title: TC0097
+Fragment: 't=99999999999'
+Comment: The npt-sec value overflows the integer range. UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+END OF TEST
+

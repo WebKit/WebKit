@@ -1,0 +1,18 @@
+Tests that keystroke user interaction in a cross-origin sub-frame is logged for the top document/frame, not the sub-frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.location.origin is topFrameOrigin
+PASS testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin) is false
+PASS testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin) is false
+PASS inputFocused is true
+PASS testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin) is false
+PASS iframeReceivedKeyDown is true
+PASS keyTyped is true
+PASS testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin) is true
+PASS testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

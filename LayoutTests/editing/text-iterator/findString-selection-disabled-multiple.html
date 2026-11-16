@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Find multiple strings with selection disabled</title>v_
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style type="text/css">
+ .selectionDisabled { -webkit-user-select: none; }
+ .selectionEnabled { -webkit-user-select: auto; }
+</style>
+</head>
+<body>
+    <div id="container">
+        <p id="first">findme</p>
+        <p id="second">findme</p>
+    </div>
+<script>
+
+async function testFindString(disableSelection, expectedNode) {
+    container.className = disableSelection ? "selectionDisabled" : "selectionEnabled";
+
+    const result = await testRunner.findString("findme", ["WrapAround"]);
+
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+    const resultNode = range.startContainer;
+    assert_equals(resultNode.parentElement, expectedNode);
+}
+
+async function runTest(disableSelection, nodeId) {
+        const expectedNode = document.getElementById(nodeId);
+        await promise_test(() => testFindString(disableSelection, expectedNode), `find ${nodeId} string with selection ${disableSelection ? "disabled" : "enabled"}`);
+}
+
+for (disableSelection of [true, false]) {
+    runTest(disableSelection, "first");
+    runTest(disableSelection, "second");
+}
+
+</script>
+</body>
+</html>

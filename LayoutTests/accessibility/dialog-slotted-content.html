@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<template>
+  <dialog>
+    <h2>Hello world</h2>
+    <button>Non-slotted button</button>
+    <slot></slot>
+  </dialog>
+</template>
+
+<custom-dialog>
+  <p>Slotted paragraph text.</p>
+  <a href="http://example.com">Slotted link</a>
+  <input type="text" placeholder="slotted input" />
+  <button>Slotted Button</button>
+</custom-dialog>
+
+<script>
+customElements.define(
+    "custom-dialog",
+    class extends HTMLElement {
+        constructor() {
+            super();
+            const template = document.querySelector("template").content;
+            const shadowRoot = this.attachShadow({ mode: "open" }).appendChild(template.cloneNode(true));
+        }
+
+        showModal() {
+            this.shadowRoot.querySelector("dialog").showModal();
+        }
+    }
+);
+
+var output = "This test ensures that slotted content inside dialogs is accessible.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    document.querySelector("custom-dialog").showModal();
+
+    setTimeout(async function() {
+        // Give a bit of time for the AX tree to update.
+        await sleep(60);
+        output += dumpAccessibilityTree(accessibilityController.rootElement.childAtIndex(0), null, 0)[1];
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

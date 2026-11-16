@@ -1,0 +1,5 @@
+
+PASS imported-module-script.js works when used as top-level
+PASS static imports to outside path restriction should be allowed
+PASS static imports redirecting to outside path restriction should be allowed
+

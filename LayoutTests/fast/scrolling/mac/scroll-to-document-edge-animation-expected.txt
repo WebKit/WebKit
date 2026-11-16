@@ -1,0 +1,25 @@
+Tests that scrolling to the start or end of the document with the keyboard animates with a spring, which takes much longer than the 200ms of other animated scrolls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+End
+PASS scrollY is maxScrollY
+PASS duration > 400 is true
+PASS scrollEndCount is 1
+Home
+PASS scrollY is 0
+PASS duration > 400 is true
+PASS scrollEndCount is 1
+Command-Down Arrow
+PASS scrollY is maxScrollY
+PASS duration > 400 is true
+PASS scrollEndCount is 1
+Command-Up Arrow
+PASS scrollY is 0
+PASS duration > 400 is true
+PASS scrollEndCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

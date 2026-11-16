@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that inline text selection on subpixel position does not leave gaps at the inline boundary.</title>
+<style>
+  body {
+    margin: 0px;
+    font-family: "Ahem";
+    color: rgba(255, 255, 255, 0);
+  }
+
+  .bckg {
+    background: rgba(255, 0, 0, 0.9);
+    font-size: 16px;
+ }
+</style>
+</head>
+<body>
+<div id=container>
+  <div style="position: absolute; height: 16px; width: 0.5px; background-color: white;"></div> 
+  <div class=bckg style="text-indent: 0.4px; margin-left: 0.1px;">foo</div>
+  <div class=bckg>&nbsp</div>
+</div>
+</body>
+</html>

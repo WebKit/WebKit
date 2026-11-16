@@ -1,0 +1,4 @@
+
+PASS getBBox() computes layout for <textPath> referencing <path> in a content-visibility: hidden subtree
+PASS getBBox() computes layout for offset-path referencing <path> in a content-visibility: hidden subtree
+

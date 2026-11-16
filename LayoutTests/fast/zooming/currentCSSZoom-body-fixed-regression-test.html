@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>currentCSSZoom Regression Test</title>
+  <script>
+    if (window.internals)
+      internals.setPageZoomFactor(2);
+  </script>
+</head>
+<body>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  let zoomInfo;
+  if ('currentCSSZoom' in Element.prototype) {
+    zoomInfo = 'currentCSSZoom (Should be "1"): ' + document.body.currentCSSZoom;
+  } else {
+    zoomInfo = 'currentCSSZoom not supported';
+  }
+
+  document.body.innerText = zoomInfo;
+</script>
+</body>
+</html>

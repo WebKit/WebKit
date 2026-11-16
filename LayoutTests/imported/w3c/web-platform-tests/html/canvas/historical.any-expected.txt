@@ -1,0 +1,3 @@
+
+PASS OffscreenCanvasRenderingContext2D.commit method is removed
+

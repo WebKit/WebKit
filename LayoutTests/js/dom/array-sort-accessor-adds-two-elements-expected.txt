@@ -1,0 +1,8 @@
+.sort(comparator):
+c,b,a,d,undefined,undefined,undefined,hole,foo,bar,foo,bar
+.sort():
+a,b,c,d,undefined,undefined,undefined,hole,foo,bar
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            function loadedmetadata()
+            {
+                testExpected('video.audioTracks.length', '1');
+                testExpected('video.audioTracks[0].enabled', true);
+                testExpected('video.audioTracks[0].id', "18446744073709551615");
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                mediaElement.onerror = () => { failTest("error occurred."); }
+                run('mediaElement.src = "../content/short--1-track.webm"');
+                waitForEventOnce('loadedmetadata', loadedmetadata);
+                consoleWrite("");
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video></video>
+    </body>
+</html>

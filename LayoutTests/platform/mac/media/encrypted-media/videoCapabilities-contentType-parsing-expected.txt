@@ -1,0 +1,6 @@
+Test contentType video/mp4XXX; codecs="avc1.64001F"
+Promise rejected correctly OK
+Test contentType video/mp4 ; codecs="avc1.64001F"
+Promise resolved OK
+END OF TEST
+

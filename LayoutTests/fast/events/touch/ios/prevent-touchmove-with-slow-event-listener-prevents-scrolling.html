@@ -1,0 +1,76 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+html, body {
+    margin: 0;
+}
+
+#scroller {
+    width: 300px;
+    height: 300px;
+    background-color: tomato;
+    border: solid 2px red;
+    color: white;
+    top: 0;
+    left: 0;
+    overflow: scroll;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+#column {
+    width: 100%;
+    height: 1000px;
+}
+</style>
+</head>
+<body>
+<div id="scroller">
+    Panning over this element should not cause scrolling.
+    <div id="column"></div>
+</div>
+<div id="console"></div>
+<script>
+jsTestIsAsync = true;
+scroller = document.getElementById("scroller");
+observedFirstTouchMove = false;
+observedTouchEnd = false;
+scroller.addEventListener("scroll", () => testFailed("Observed unexpected scroll event"), { once: true });
+scroller.addEventListener("touchstart", () => observedFirstTouchMove = false, { passive: true });
+scroller.addEventListener("touchend", () => observedTouchEnd = true, { passive: true });
+scroller.addEventListener("touchmove", event => {
+    if (observedFirstTouchMove)
+        return;
+
+    const startTime = Date.now();
+    while (true) {
+        if (Date.now() - startTime > 100)
+            break;
+    }
+    event.preventDefault();
+    testPassed("Prevented touchmove");
+    observedFirstTouchMove = true;
+});
+
+description("This test verifies that panning up and down over an element that prevents 'touchmove' events does not allow scrolling to happen, even if the touchmove event handler temporarily hangs the web process.");
+
+if (window.testRunner) {
+    (async function() {
+        await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+            .begin(150, 150)
+            .move(150, 10, 0.5)
+            .move(150, 290, 1)
+            .move(150, 150, 0.5)
+            .end()
+            .takeResult());
+        await shouldBecomeEqual("observedTouchEnd", "true");
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<html>
+<head>
+<style type="text/css">
+a {
+    border: 2px solid red;
+    position:relative;
+}
+a span{
+    border: 2px solid blue;
+    white-space:nowrap;
+    position:absolute;
+    top:10em;
+    left:0;
+}
+</style>
+
+</head>
+<body>
+<div>
+
+Both <a href="#" id="link">this and<span>this should have correctly placed focus rings</span></a>
+</div>
+
+<script>
+document.getElementById('link').focus();
+</script>
+</body>
+</html>

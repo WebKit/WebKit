@@ -1,0 +1,165 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../../webrtc.gni")
+if (rtc_enable_protobuf) {
+  import("//third_party/protobuf/proto_library.gni")
+}
+
+if (rtc_enable_protobuf) {
+  proto_library("neural_residual_echo_estimator_proto") {
+    sources = [ "neural_residual_echo_estimator.proto" ]
+    proto_out_dir =
+        "modules/audio_processing/aec3/neural_residual_echo_estimator"
+  }
+
+  rtc_library("neural_residual_echo_estimator_impl") {
+    visibility = [ "*" ]
+    poisonous = [ "default_neural_residual_echo_estimator" ]
+    configs += [ "../..:apm_debug_dump" ]
+    public_configs = [ "//third_party/tflite:tflite_config_no_undef" ]
+    sources = [
+      "neural_feature_extractor.cc",
+      "neural_feature_extractor.h",
+      "neural_residual_echo_estimator_impl.cc",
+      "neural_residual_echo_estimator_impl.h",
+    ]
+    deps = [
+      ":neural_residual_echo_estimator_proto",
+      "..:aec3_block",
+      "..:aec3_common",
+      "../..:apm_logging",
+      "../../../../api:make_ref_counted",
+      "../../../../api:ref_count",
+      "../../../../api:scoped_refptr",
+      "../../../../api/audio:aec3_config",
+      "../../../../api/audio:neural_residual_echo_estimator_api",
+      "../../../../api/audio:tflite_model_handle",
+      "../../../../api/environment",
+      "../../../../api/task_queue",
+      "../../../../api/units:timestamp",
+      "../../../../common_audio",
+      "../../../../rtc_base:checks",
+      "../../../../rtc_base:logging",
+      "../../../../rtc_base:macromagic",
+      "../../../../rtc_base/synchronization:mutex",
+      "../../../../system_wrappers:metrics",
+      "//third_party/abseil-cpp/absl/base:nullability",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+      "//third_party/flatbuffers",
+      "//third_party/pffft",
+    ]
+    if (build_with_chromium) {
+      deps += [ "//third_party/tflite" ]
+    } else {
+      deps += [ "//third_party/tflite:tflite_standalone" ]
+    }
+  }
+}
+
+if (rtc_include_tests) {
+  if (rtc_enable_protobuf) {
+    rtc_library("neural_residual_echo_estimator_test_helper") {
+      testonly = true
+      visibility = [ "*" ]
+      configs += [ "//third_party/tflite:tflite_config_no_undef" ]
+      sources = [
+        "neural_residual_echo_estimator_test_helper.cc",
+        "neural_residual_echo_estimator_test_helper.h",
+      ]
+      deps = [
+        "../../../../api/audio:neural_residual_echo_estimator_api",
+        "../../../../api/audio:neural_residual_echo_estimator_creator",
+        "../../../../rtc_base:checks",
+        "../../../../test:fileutils",
+      ]
+      if (build_with_chromium) {
+        deps += [
+          "//third_party/tflite",
+          "//third_party/tflite:tflite_builtin_op_resolver",
+        ]
+      } else {
+        deps += [
+          "//third_party/tflite:tflite_builtin_op_resolver_standalone",
+          "//third_party/tflite:tflite_standalone",
+        ]
+      }
+    }
+
+    rtc_cc_test("neural_feature_extractor_unittest") {
+      sources = [ "neural_feature_extractor_unittest.cc" ]
+      deps = [
+        ":neural_residual_echo_estimator_impl",
+        "..:aec3_common",
+        "../..:echo_canceller_test_tools",
+        "../../../../test:test_support",
+      ]
+      if (build_with_chromium) {
+        deps += [
+          "//third_party/tflite",
+          "//third_party/tflite:tflite_builtin_op_resolver",
+        ]
+      } else {
+        deps += [
+          "//third_party/tflite:tflite_builtin_op_resolver_standalone",
+          "//third_party/tflite:tflite_standalone",
+        ]
+      }
+      configs += [
+        "../..:apm_debug_dump",
+        "//third_party/tflite:tflite_config_no_undef",
+      ]
+    }
+
+    rtc_cc_test("neural_residual_echo_estimator_impl_unittest") {
+      sources = [ "neural_residual_echo_estimator_impl_unittest.cc" ]
+      deps = [
+        ":neural_residual_echo_estimator_impl",
+        ":neural_residual_echo_estimator_proto",
+        "..:aec3_block",
+        "..:aec3_common",
+        "../..:echo_canceller_test_tools",
+        "../../../../api:make_ref_counted",
+        "../../../../api:scoped_refptr",
+        "../../../../api/audio:tflite_model_handle",
+        "../../../../api/environment",
+        "../../../../api/units:time_delta",
+        "../../../../api/units:timestamp",
+        "../../../../rtc_base:checks",
+        "../../../../rtc_base:random",
+        "../../../../system_wrappers:metrics",
+        "../../../../test:create_test_environment",
+        "../../../../test:fileutils",
+        "../../../../test:test_support",
+        "../../../../test:wait_until",
+        "../../../../test/time_controller",
+        "//third_party/abseil-cpp/absl/strings:string_view",
+      ]
+      if (build_with_chromium) {
+        deps += [
+          "//third_party/tflite",
+          "//third_party/tflite:tflite_builtin_op_resolver",
+        ]
+      } else {
+        deps += [
+          "//third_party/tflite:tflite_builtin_op_resolver_standalone",
+          "//third_party/tflite:tflite_standalone",
+        ]
+      }
+      configs += [
+        "../..:apm_debug_dump",
+        "//third_party/tflite:tflite_config_no_undef",
+      ]
+      data_deps = [ "../../../../resources:audio_processing_unittests_data" ]
+      if (is_ios) {
+        deps +=
+            [ "../../../../resources:audio_processing_unittests_bundle_data" ]
+      }
+    }
+  }
+}

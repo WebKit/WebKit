@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta charset="utf-8">
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+
+    #absolute {
+        width: 100vw;
+        height: 50px;
+        position: absolute;
+        left: 0;
+        top: -100px;
+    }
+
+    #container {
+        position: relative;
+        margin-top: 150px;
+    }
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("The highlight rects should not be combined if the content is from different flow. Distinguish flows properly, positioned content descendant + static content.");
+
+    var container = document.getElementById("container");
+    await UIHelper.longPressElement(container);
+    await UIHelper.waitForSelectionToAppear();
+    getSelection().selectAllChildren(container);
+    await UIHelper.waitForSelectionToAppear();
+    selectionRects = await UIHelper.getUISelectionViewRects();
+
+    shouldBe("selectionRects.length", "2");
+    absoluteLineBottom = selectionRects[0].top + selectionRects[0].height;
+    staticLineTop = selectionRects[1].top;
+    shouldBeGreaterThan("staticLineTop", "absoluteLineBottom");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="container">
+        <div><div id="absolute">absolute</div></div>
+        <div id="content">static</div>
+    </div>
+</body>
+</html>

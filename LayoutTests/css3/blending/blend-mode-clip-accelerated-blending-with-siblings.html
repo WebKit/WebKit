@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+
+<link rel="stylesheet" href="resources/blending-style.css">
+<style>
+   .child {
+        width: 400px;
+        height: 50px;
+   }
+</style>
+
+<p>This test checks that blending works if the isolating layer has overflow hidden and the blending layer is accelerated.<br />
+Test passes if you see a green rectangle.</p>
+<div class="clipping isolating lime box">
+    <div class="accelerated black child difference"></div>
+    <div class="accelerated lime child"></div>
+</div>

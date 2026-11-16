@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<style>
+    textarea {
+        width: 200px;
+        height: 200px;
+        background: green;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<textarea></textarea>
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    document.querySelector("textarea").focus();
+    await UIHelper.renderingUpdate();
+
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

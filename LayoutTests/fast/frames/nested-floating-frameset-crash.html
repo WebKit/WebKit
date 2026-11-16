@@ -1,0 +1,27 @@
+<style>
+frameset {
+  float: left;
+}
+
+frameset:nth-last-of-type(n) {
+  height: 0;
+}
+
+frameset:first-child :nth-of-type(n) {
+  height: 0;
+}
+</style>
+<body>PASS if no crash or assert.</body><script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetHeight;
+let parentFrameSet = document.createElement('frameset');
+let chilFrameSet = document.createElement('frameset');
+parentFrameSet.append(chilFrameSet);
+chilFrameSet.append(document.createElement('div'));
+document.body.append(parentFrameSet);
+
+document.body.offsetTop;
+document.body.append('');
+</script>

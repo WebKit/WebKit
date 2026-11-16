@@ -1,0 +1,23 @@
+<style>
+embed { min-height: 1vmax; }
+.class4 { -webkit-margin-end: -1px; }
+html { column-count: 5; }
+</style>
+<script>
+
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.dumpChildFramesAsText();
+}
+
+function runTest() {
+  h = window.parent.history;
+  h.replaceState(null,"1","htmlvar00009");
+  dialog.setAttribute("class", "class4");
+}
+</script>
+<body onload=runTest()>
+<pre id="pre">This test passes if it doesn't crash or timeout.</pre>
+<dialog id="dialog" open="true"></dialog>
+<embed src="#" >Additionally there should only be one child frame.</embed>
+</body>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body {
+    margin: 0;
+}
+
+#target {
+    background: tomato;
+    width: 100px;
+    height: 100px;
+}
+
+img {
+    width: 100px;
+    height: 100px;
+    display: block;
+}
+</style>
+</head>
+<body>
+<h3></h3>
+<img src="crossorigin://test/image" id="cross-origin" alt="Cross origin"/>
+<img src="sameorigin://test/image" id="same-origin" alt="Same origin" />
+<div id="target">Drop here</div>
+<script>
+crossOriginImage = document.getElementById("cross-origin");
+sameOriginImage = document.getElementById("same-origin");
+dropTarget = document.getElementById("target");
+numberOfFiles = new Map;
+inconsistentFilesTypeOnDrop = false;
+
+function handleDragStart(event) {
+    numberOfFiles.clear();
+}
+
+function addDraggableAttribute() {
+    for (let element of [...document.querySelectorAll("img")])
+        element.draggable = true;
+}
+
+function handleDragSessionUpdate(event) {
+    let files = event.dataTransfer.files
+    if (!numberOfFiles.has(event.type))
+        numberOfFiles.set(event.type, files.length);
+
+    if (event.type === "drop" && event.dataTransfer.types.includes("Files") != (files.length > 0))
+        inconsistentFilesTypeOnDrop = true;
+
+    event.stopPropagation();
+    event.preventDefault();
+}
+
+crossOriginImage.addEventListener("dragstart", handleDragStart);
+sameOriginImage.addEventListener("dragstart", handleDragStart);
+dropTarget.addEventListener("dragenter", handleDragSessionUpdate);
+dropTarget.addEventListener("dragover", handleDragSessionUpdate);
+dropTarget.addEventListener("drop", handleDragSessionUpdate);
+</script>
+</body>
+</html>

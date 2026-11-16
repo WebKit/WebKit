@@ -1,0 +1,16 @@
+Test that CanvasManager includes WebGL resources in canvas memory costs.
+
+
+== Running test suite: Canvas.MemoryWebGL
+-- Running test case: Canvas.MemoryWebGL.InitialMemoryCost
+PASS: WebGL should report its initial graphics memory cost.
+
+-- Running test case: Canvas.MemoryWebGL.Buffer
+PASS: Allocating a WebGLBuffer should increase the memory cost.
+
+-- Running test case: Canvas.MemoryWebGL.Texture
+PASS: Allocating a WebGLTexture should increase the memory cost.
+
+-- Running test case: Canvas.MemoryWebGL.Delete
+PASS: Deleting a WebGLBuffer should decrease the memory cost.
+

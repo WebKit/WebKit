@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS ic unit with text zoom: ic equals em regardless of text zoom factor</title>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description("Tests that 'ic' unit remains proportional to 'em' when the frame text zoom " +
+            "factor is applied (simulating Safari's browser zoom). 1ic must equal 1em regardless " +
+            "of text zoom. Regression test for https://bugs.webkit.org/show_bug.cgi?id=279086.");
+    </script>
+</head>
+<body>
+<script>
+    function makeLetterSpacingEl(parent, lengthSpec) {
+        var el = document.createElement('div');
+        el.style.letterSpacing = lengthSpec;
+        parent.appendChild(el);
+        return el;
+    }
+
+    var container, icEl, emEl;
+
+    if (window.internals) {
+        internals.setTextZoomFactor(1.5);
+
+        debug('--- text zoom: 1.5, letter-spacing ---');
+        container = document.createElement('div');
+        container.style.cssText = 'font-size: 20px; position: absolute; visibility: hidden;';
+        document.body.appendChild(container);
+        icEl = makeLetterSpacingEl(container, '1ic');
+        emEl = makeLetterSpacingEl(container, '1em');
+        shouldBe('getComputedStyle(icEl).letterSpacing', 'getComputedStyle(emEl).letterSpacing');
+        document.body.removeChild(container);
+
+        debug('--- text zoom: 1.5, line-height ---');
+        container = document.createElement('div');
+        container.style.cssText = 'font-size: 20px; position: absolute; visibility: hidden;';
+        document.body.appendChild(container);
+        icEl = document.createElement('div');
+        icEl.style.lineHeight = '1ic';
+        emEl = document.createElement('div');
+        emEl.style.lineHeight = '1em';
+        container.appendChild(icEl);
+        container.appendChild(emEl);
+        shouldBe('getComputedStyle(icEl).lineHeight', 'getComputedStyle(emEl).lineHeight');
+        document.body.removeChild(container);
+
+        internals.setTextZoomFactor(1.0);
+    } else {
+        testFailed('This test requires window.internals');
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

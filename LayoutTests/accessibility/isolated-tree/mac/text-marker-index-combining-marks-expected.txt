@@ -1,0 +1,18 @@
+This test ensures a combining mark occupies its own text marker index. The paragraph holds two grapheme clusters that are two code units each, so an index space counting grapheme clusters rather than code units would disagree with the string length.
+
+The accessibility text keeps the marks decomposed.
+PASS: text().length === 12
+PASS: text().codePointAt(4) === 0x301
+PASS: text().codePointAt(9) === 0x308
+PASS: text().normalize('NFC') === 'café naïve'
+
+Every code unit has its own index, and it round-trips.
+PASS: walk.containerTextLength === 12
+PASS: walk.indicesChecked === 12
+PASS: walk.worstRoundTripDrift === 0
+PASS: walk.worstLengthDifference === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

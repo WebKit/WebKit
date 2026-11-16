@@ -1,0 +1,52 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # name: string; the name of the menu.
+  #
+  # multiple: boolean; whether or not the menu is multi-select
+  #
+  # size: integer; the number of items to display at once
+  # 
+  # options: array or hash; the items with which to populate the array.
+  #   If a hash is passed, the hash keys become the names displayed
+  #   to the user while the hash values become the value of the item.
+  # 
+  # default: string; the item selected in the menu by default.
+  # 
+  # onchange: code; JavaScript to be run when the user changes the value
+  #   selected in the menu.
+  #%]
+ 
+[%# Get the scalar representation of the options reference, 
+  # which looks like "ARRAY(0xA352BA3F)" or "HASH(0xA352BA3F)",
+  # so we can figure out whether it is a reference to an array
+  # or a hash.
+  #%]
+[% options_type = BLOCK %][% options %][% END %]
+
+<select name="[% name FILTER html %]" 
+        [% IF onchange %]onchange="[% onchange FILTER html %]"[% END %]
+        [% IF multiple %] multiple [% END %]
+        [% IF size %] size="[% size %]" [% END %]>
+  [% IF options_type.search("ARRAY") %]
+    [% FOREACH value = options %]
+      <option value="[% value FILTER html %]"
+              [% " selected" IF value == default %]>
+        [% value FILTER html %]
+      </option>
+    [% END %]
+  [% ELSIF options_type.search("HASH") %]
+    [% FOREACH option = options %]
+      <option value="[% option.value FILTER html %]" 
+              [% " selected" IF option.value == default %]>
+        [% option.key FILTER html %]
+      </option>
+    [% END %]
+  [% END %]
+</select>

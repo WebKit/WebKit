@@ -1,0 +1,5 @@
+
+PASS Test circle with negative easing on clip-path
+PASS Test ellipse with negative easing on clip-path
+PASS Test inset with negative easing on clip-path
+

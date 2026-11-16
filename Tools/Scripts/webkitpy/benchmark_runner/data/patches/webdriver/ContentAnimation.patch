@@ -1,0 +1,188 @@
+diff --git a/css-accelerated-animation.html b/css-accelerated-animation.html
+index 51ab3178addd49b3d9a19b03479d59be6aabf00b..fd637bc420c751b695afa84cc05ec9b25800f1ad 100644
+--- a/css-accelerated-animation.html
++++ b/css-accelerated-animation.html
+@@ -185,9 +185,42 @@
+         function setupAnimation()
+         {
+             makeParticles();
++
++            window.setTimeout(function() {
++                location.hash = 'done';
++            }, 10000)
++        }
++
++        function hashChanged()
++        {
++            if (location.hash === '#submit')
++                submitResults();
++        }
++
++        function submitResults()
++        {
++            var results = {
++                'content-animation' : {
++                    'metrics' : {
++                        'FrameRate' : ['Arithmetic']
++                    },
++                    'tests' : {
++                        'css-accelerated-animation' : {
++                            'metrics' : {
++                                'FrameRate' : {
++                                    'current' : ['<native_framerate>'] // <native_framerate> is replaced by a framerate computed in native code
++                                }
++                            }
++                        }
++                    }
++                }
++            };
++            var resultsString = JSON.stringify(results);
++            window.webdriver_results = resultsString;
+         }
+ 
+         window.addEventListener('load', setupAnimation, false);
++        window.addEventListener("hashchange", hashChanged, false);
+     </script>
+ </head>
+ <body>
+diff --git a/css-animation.html b/css-animation.html
+index adae19cb018ed1ca93fd6b4cda80002348482fc3..8f1e29933faa13586dbf97b7874024854fbf2147 100644
+--- a/css-animation.html
++++ b/css-animation.html
+@@ -167,9 +167,42 @@
+         function setupAnimation()
+         {
+             makeParticles();
++            
++            window.setTimeout(function() {
++                location.hash = 'done';
++            }, 10000)
++        }
++        
++        function hashChanged()
++        {
++            if (location.hash === '#submit')
++                submitResults();
++        }
++
++        function submitResults()
++        {
++            var results = {
++                'content-animation' : {
++                    'metrics' : {
++                        'FrameRate' : ['Arithmetic']
++                    },
++                    'tests' : {
++                        'css-animation' : {
++                            'metrics' : {
++                                'FrameRate' : {
++                                    'current' : ['<native_framerate>'] // <native_framerate> is replaced by a framerate computed in native code
++                                }
++                            }
++                        }
++                    }
++                }
++            };
++            var resultsString = JSON.stringify(results);
++            window.webdriver_results = resultsString;
+         }
+         
+         window.addEventListener('load', setupAnimation, false);
++        window.addEventListener("hashchange", hashChanged, false);
+     </script>
+ </head>
+ <body>
+diff --git a/raf-animation.html b/raf-animation.html
+index 09e72f222fcafdfa054a2d5a37b1dcc9eca096ca..dbf18e72de9880c28d9fbf9fa156b4949bb6a6cf 100644
+--- a/raf-animation.html
++++ b/raf-animation.html
+@@ -195,9 +195,42 @@
+         {
+             makeParticles();
+             animate();
++
++            window.setTimeout(function() {
++                location.hash = 'done';
++            }, 10000)
++        }
++
++        function hashChanged()
++        {
++            if (location.hash === '#submit')
++                submitResults();
++        }
++
++        function submitResults()
++        {
++            var results = {
++                'content-animation' : {
++                    'metrics' : {
++                        'FrameRate' : ['Arithmetic']
++                    },
++                    'tests' : {
++                        'raf-animation' : {
++                            'metrics' : {
++                                'FrameRate' : {
++                                    'current' : ['<native_framerate>'] // <native_framerate> is replaced by a framerate computed in native code
++                                }
++                            }
++                        }
++                    }
++                }
++            };
++            var resultsString = JSON.stringify(results);
++            window.webdriver_results = resultsString;
+         }
+         
+         window.addEventListener('load', setupAnimation, false);
++        window.addEventListener("hashchange", hashChanged, false);
+     </script>
+ </head>
+ <body>
+diff --git a/svg-animation.html b/svg-animation.html
+index c286d50cc7e0e6d64e1b6fbd2beb3642fe90e958..fb21d522ca200021d452595cbfed3db252c80929 100644
+--- a/svg-animation.html
++++ b/svg-animation.html
+@@ -150,9 +150,42 @@
+         function setupAnimation()
+         {
+             makeParticles();
++
++            window.setTimeout(function() {
++                location.hash = 'done';
++            }, 10000)
++        }
++
++        function hashChanged()
++        {
++            if (location.hash === '#submit')
++                submitResults();
++        }
++
++        function submitResults()
++        {
++            var results = {
++                'content-animation' : {
++                    'metrics' : {
++                        'FrameRate' : ['Arithmetic']
++                    },
++                    'tests' : {
++                        'svg-animation' : {
++                            'metrics' : {
++                                'FrameRate' : {
++                                    'current' : ['<native_framerate>'] // <native_framerate> is replaced by a framerate computed in native code
++                                }
++                            }
++                        }
++                    }
++                }
++            };
++            var resultsString = JSON.stringify(results);
++            window.webdriver_results = resultsString;
+         }
+         
+         window.addEventListener('load', setupAnimation, false);
++        window.addEventListener("hashchange", hashChanged, false);
+     </script>
+ </head>
+ <body>

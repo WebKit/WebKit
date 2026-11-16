@@ -1,0 +1,109 @@
+Verifies that converting list type strips list-type-specific attributes.
+
+Before OL to UL:
+| "\n        "
+| <ol>
+|   class="Apple-decimal-list"
+|   start="2"
+|   style="list-style-type: decimal"
+|   "\n            "
+|   <li>
+|     id="ol1"
+|     "two"
+|   "\n            "
+|   <li>
+|     "three"
+|   "\n            "
+|   <li>
+|     "four"
+|   "\n        "
+| "\n    "
+
+After OL to UL:
+| "\n        "
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   "\n            "
+|   <li>
+|     id="ol1"
+|     "two"
+|   "\n            "
+|   <li>
+|     "three"
+|   "\n            "
+|   <li>
+|     "four<#selection-caret>"
+|   "\n        "
+| "\n    "
+
+After UL back to OL:
+| "\n        "
+| <ol>
+|   class="Apple-decimal-list"
+|   style="list-style-type: decimal;"
+|   "\n            "
+|   <li>
+|     id="ol1"
+|     "two"
+|   "\n            "
+|   <li>
+|     "three"
+|   "\n            "
+|   <li>
+|     "four<#selection-caret>"
+|   "\n        "
+| "\n    "
+
+Before reversed OL to UL:
+| "\n        "
+| <ol>
+|   class="Apple-decimal-list"
+|   reversed=""
+|   style="list-style-type: decimal"
+|   "\n            "
+|   <li>
+|     id="olReversed1"
+|     "alpha"
+|   "\n            "
+|   <li>
+|     "beta"
+|   "\n        "
+| "\n    "
+
+After reversed OL to UL:
+| "\n        "
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   "\n            "
+|   <li>
+|     id="olReversed1"
+|     "alpha"
+|   "\n            "
+|   <li>
+|     "beta<#selection-caret>"
+|   "\n        "
+| "\n    "
+
+Before UL to OL:
+| "\n        "
+| <ul>
+|   class="Apple-disc-list"
+|   "\n            "
+|   <li>
+|     id="ul1"
+|     "alpha"
+|   "\n        "
+| "\n    "
+
+After UL to OL:
+| "\n        "
+| <ol>
+|   class="Apple-decimal-list"
+|   "\n            "
+|   <li>
+|     id="ul1"
+|     "alpha<#selection-caret>"
+|   "\n        "
+| "\n    "

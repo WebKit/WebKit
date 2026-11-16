@@ -1,0 +1,17 @@
+Tests that Script timeline records from Worker targets are not counted as main thread records, which feed the CPU timeline's main thread breakdown.
+
+
+== Running test suite: Timeline.MainThreadScriptRecords
+-- Running test case: Timeline.MainThreadScriptRecords.PageAndWorker
+PASS: The page's timer record should be a main thread record.
+PASS: The Worker's timer record should not be a main thread record.
+PASS: No main thread record should come from a Worker target.
+PASS: Every record that is not from a Worker should be a main thread record.
+PASS: The Script timeline should still contain the Worker's record.
+
+-- Running test case: Timeline.MainThreadScriptRecords.ImportedTargets
+PASS: Should keep only the two page records.
+PASS: Should keep the page records.
+PASS: Should keep only the page record in the time range.
+PASS: Should keep the page's timer record.
+

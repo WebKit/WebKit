@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<title>-webkit-fill-available height on replaced element resolves through indefinite containing block instead of falling back to intrinsic</title>
+<link rel="match" href="replaced-height-fill-available-indefinite-cb-expected.html">
+<style>
+body {
+  margin: 0;
+}
+canvas {
+  display: block;
+  width: 100px;
+  height: -webkit-fill-available;
+  background: green;
+}
+</style>
+<canvas></canvas>

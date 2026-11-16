@@ -1,0 +1,12 @@
+This tests making an input element visible while the associated label element is clicked.To manually test, "click me" below. The input element that becomes visible must be focused.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+focused = false; clickElement(document.querySelector("label"));
+PASS focused is true
+PASS document.activeElement is document.querySelector("input")
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

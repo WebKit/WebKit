@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="resources/push-api-test-pre.js"></script>
+<script src="resources/subscribe-tests.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.grantWebNotificationPermission(window.origin);
+
+navigator.serviceWorker.register("resources/subscribe-worker.js", { }).then(async (registration) => {
+    try {
+        await waitForState(registration.installing, "activated");
+        await testServiceWorkerPermissionState(registration, 'granted');
+        await testDocumentPermissionState(registration, 'granted');
+        await testServiceWorkerSubscribe(registration);
+        await testDocumentSubscribeWithoutUserGesture(registration);
+        await testDocumentSubscribeWithUserGesture(registration);
+    } catch (e) {
+        log(`FAIL: unexpected exception ${e}`);
+    } finally {
+        await registration.unregister();
+        finishPushAPITest();
+    }
+});
+</script>
+</body>
+</html>

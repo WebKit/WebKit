@@ -1,0 +1,9 @@
+
+PASS attachShadow() throws when the element's scoped registry disables shadow for its name
+PASS attachShadow() throws when the element's scoped registry disables shadow for its name, after the element is appended to the document
+PASS attachShadow() ignores the global registry for an element with a scoped registry
+PASS attachShadow() throws when the scoped registry of the element's shadow tree disables shadow for its name
+PASS attachShadow() ignores the global registry for an element in a shadow tree with a scoped registry
+PASS attachShadow() throws when the global registry disables shadow for the name of an element that keeps it in a shadow tree with a scoped registry
+PASS attachShadow() ignores the global registry for an element with a null registry
+

@@ -1,0 +1,10 @@
+Test properties of a button via the client accessibility APIs.
+Root: AXRole: AXScrollArea
+Web area: AXRole: AXWebArea
+Button role: AXRole: AXButton
+Button title: This is a button
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

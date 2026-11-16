@@ -1,0 +1,3 @@
+
+FAIL Known capabilities are reported and are sorted assert_array_equals: lengths differ, expected array ["conditionalCreate", "conditionalGet", "hybridTransport", "passkeyPlatformAuthenticator", "relatedOrigins", "signalAllAcceptedCredentials", "signalCurrentUserDetails", "signalUnknownCredential", "userVerifyingPlatformAuthenticator"] length 9, got ["passkeyPlatformAuthenticator", "conditionalMediation", "conditionalCreate", "hybridTransport", "userVerifyingPlatformAuthenticator"] length 5
+

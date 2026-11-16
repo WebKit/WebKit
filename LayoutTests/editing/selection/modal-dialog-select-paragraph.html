@@ -1,0 +1,30 @@
+<dialog><p>This text should be selectable with the mouse.</p></dialog>
+<div id="log"></div>
+<script>
+document.querySelector("dialog").showModal();
+
+function selectParagraphWithMouse(p) {
+    const rect = p.getBoundingClientRect();
+    const x = rect.left;
+    const y = rect.top + rect.height / 2;
+    const textLength = p.textContent.length;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(200);
+    eventSender.mouseMoveTo(x + rect.width, y);
+    eventSender.mouseUp();
+}
+
+if (window.eventSender) {
+    testRunner.dumpAsText();
+
+    const p = document.querySelector("p");
+    selectParagraphWithMouse(p);
+
+    const selection = getSelection().toString();
+    if (selection == p.textContent)
+        log.textContent = "PASS: all dialog text is selected";
+    else
+        log.textContent = "FAIL: unexpected selection, got: " + selection;
+}
+</script>

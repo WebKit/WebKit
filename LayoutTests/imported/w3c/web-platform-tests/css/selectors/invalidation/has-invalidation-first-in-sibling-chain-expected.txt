@@ -1,0 +1,14 @@
+
+PASS subject1 Initial color
+PASS #subject1 invalidated after adding first sibling
+PASS #subject1 invalidated after removing first sibling
+PASS subject2 Initial color
+PASS #subject2 invalidated after adding first sibling
+PASS #subject2 invalidated after removing first sibling
+PASS subject3 Initial color
+PASS #subject3 invalidated after adding first sibling
+PASS #subject3 invalidated after removing first sibling
+PASS subject4 Initial color
+PASS #subject4 invalidated after adding first sibling
+PASS #subject4 invalidated after removing first sibling
+

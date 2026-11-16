@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="console"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    const line = document.createElement("div");
+    line.textContent = message;
+    document.getElementById("console").appendChild(line);
+}
+
+async function cacheControlSentToServer(options)
+{
+    const response = await fetch("/xmlhttprequest/resources/print-cache-control-header.cgi?" + Math.random(), options);
+    const text = (await response.text()).trim();
+    return text ? text.replace(/^HTTP_CACHE_CONTROL:\s*/, "") : "(none)";
+}
+
+async function run()
+{
+    try {
+        log("caching enabled, page sets max-age=12345: " + await cacheControlSentToServer({ headers: { "cache-control": "max-age=12345" } }));
+
+        if (window.internals)
+            internals.setResourceCachingDisabledByWebInspector(true);
+
+        log("caching disabled, no page header: " + await cacheControlSentToServer({ }));
+        log("caching disabled, page sets max-age=12345: " + await cacheControlSentToServer({ headers: { "cache-control": "max-age=12345" } }));
+
+        if (window.internals)
+            internals.setResourceCachingDisabledByWebInspector(false);
+    } catch (exception) {
+        log("threw " + exception);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+run();
+</script>
+</body>
+</html>

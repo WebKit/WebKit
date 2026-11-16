@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices
+current-version: 4557.0.10
+exports:
+-       targets: [x86_64-ios-simulator, arm64-ios-simulator]
+        symbols: [_SBSCreateOpenApplicationService]
+...

@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/invalid-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-alphabetic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-alphabetic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-alphabetic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-cyclic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-cyclic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-cyclic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-default-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-default-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-default.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-fixed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-fixed-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-fixed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-numeric-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-numeric-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-numeric.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-symbolic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-symbolic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/system-symbolic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/used-in-counter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/used-in-counter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/used-in-counter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/used-in-counters-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/used-in-counters-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function/used-in-counters.html

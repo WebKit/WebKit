@@ -1,0 +1,87 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+// Regression test: pruning a back/forward-cached page that still owns an open MediaKeySession must not crash.
+//
+// When the page enters the BackForwardCache its active DOM objects are suspended and its event-loop task group is
+// suspended. If the cached page is then pruned (rather than restored), Document teardown stops the active DOM
+// objects: markAsReadyToStop() runs first and -- because the group was suspended -- transitions it straight to
+// Stopped, while activeDOMObjectsAreSuspended() stays true. MediaKeySession::stop() then closes the CDM session;
+// the Thunder/Mock backends invoke the close callback synchronously, so before the fix sessionClosed() resolved
+// the "closed" promise synchronously here, tripping DeferredPromise's suspended-context assertion.
+//
+// This page opens a MediaKeySession and navigates to a helper so this document enters the BackForwardCache (the
+// proven page-cache navigation idiom -- a separate document, not a same-URL query change). The helper then prunes
+// the cache, which destroys this still-cached document. The result is reported by the helper, since this page is
+// gone by then.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const encoder = new TextEncoder();
+
+async function setUpOpenSession() {
+    // Mirror the working mock-EME setup (mock-MediaKeySession-close.html): enable the mock media engine first or
+    // "video/mock" is unsupported and requestMediaKeySystemAccess rejects.
+    internals.initializeMockMediaSource();
+    // Pin the factory on window: CDMFactory's registry holds only a WeakRef, MockCDM holds only a WeakPtr,
+    // so the JS wrapper is the only strong reference. A local would let GC collect it across the awaits below,
+    // unregistering the factory mid-flight -- the failure presents as NotSupportedError or NotAllowedError
+    // depending on which await GC interleaves with.
+    window.__mock = internals.registerMockCDM();
+    window.__mock.supportedDataTypes = ["keyids"];
+
+    const access = await navigator.requestMediaKeySystemAccess("org.webkit.mock", [{
+        initDataTypes: ["keyids"],
+        videoCapabilities: [{ contentType: 'video/mock; codecs="mock"' }],
+    }]);
+    const mediaKeys = await access.createMediaKeys();
+    const session = mediaKeys.createSession("temporary");
+
+    // Keep both alive on the window so the session survives un-closed into the BackForwardCache; that is what makes
+    // MediaKeySession::stop() run against a suspended-then-stopped context when the cached page is pruned.
+    window.__mediaKeys = mediaKeys;
+    window.__session = session;
+
+    await session.generateRequest("keyids", encoder.encode(JSON.stringify({ kids: ["MTIzNDU="] })));
+
+    // Touch the "closed" attribute so a DeferredPromise is registered on its DOMPromiseProxy (real EME apps do
+    // `session.closed.then(...)`). Without an attached deferred promise, resolving the closed promise during
+    // teardown is a no-op that never reaches DeferredPromise::callFunction -- so the assertion would not fire and
+    // the test would pass even on the buggy build.
+    window.__closed = session.closed;
+}
+
+window.addEventListener("load", () => {
+    if (!window.internals || !window.testRunner) {
+        document.body.textContent = "FAIL: this test requires window.internals and window.testRunner.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    setUpOpenSession().then(() => {
+        // Navigate outside the load/promise continuation so it produces a history entry.
+        setTimeout(() => { window.location.href = "resources/mock-MediaKeySession-backforwardcache-prune-helper.html"; }, 0);
+    }, e => {
+        document.body.textContent = "FAIL: could not set up MediaKeySession: " + e;
+        testRunner.notifyDone();
+    });
+});
+</script>
+</head>
+<body>
+<!-- Substantial visible content so the main frame is "visually non-empty"; canCachePage refuses a visually-empty
+     main frame, which would stop the page entering the cache at all. -->
+<div style="width: 400px; height: 400px;">
+This page opens an EME MediaKeySession and then navigates to a helper so that this document enters the back/forward
+cache. The helper prunes the cache, destroying this still-cached document while its MediaKeySession is open, which
+is the teardown path the fix is about. This paragraph exists so the page is visually non-empty and therefore
+eligible for the back/forward cache in the first place.
+</div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+
+PASS history.go(0) fires the navigate event
+

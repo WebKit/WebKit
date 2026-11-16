@@ -1,0 +1,3 @@
+
+FAIL path.getPathData() returns attribute base value during Web Animations path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+

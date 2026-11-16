@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script>
+onload = function() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.execCommand('FormatBlock', false, '<pre>');
+    document.write('Pass if test does not crash.\nPASS.');
+};
+</script>
+Text
+
+<style>
+   div {
+        height: 100px;
+    }
+</style>
+<div></div>
+<div></div>

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: bare GPUBuffer reused: true
+CONSOLE MESSAGE: GPUBufferBinding reused: true
+CONSOLE MESSAGE: different GPUBuffer reused: false
+CONSOLE MESSAGE: no validation error
+

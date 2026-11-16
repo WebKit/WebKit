@@ -1,0 +1,18 @@
+<p>This tests to see that clicking on content outside of an editable region with -webkit-user-select: ignore doesn't remove the selection from the editable region. To run it manually, click on the button.  The editable region should not be focused, but the text inside of it should be selected.</p>
+<input id="button" type="button" style="-webkit-user-select: ignore;" value="Click on me">
+<div id="div" contenteditable="true">This text should be selected.</div>
+
+<script>
+div = document.getElementById("div");
+sel = window.getSelection();
+sel.setPosition(div, 0);
+document.execCommand("SelectAll");
+if (window.testRunner) {
+    button = document.getElementById("button");
+    x = button.offsetParent.offsetLeft + button.offsetLeft + button.offsetWidth / 2;
+    y = button.offsetParent.offsetTop + button.offsetTop + button.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+</script>

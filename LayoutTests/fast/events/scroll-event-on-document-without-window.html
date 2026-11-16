@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests add scroll event listener to a document without browsing context. WebKit should not crash.</p>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const doc = document.implementation.createHTMLDocument();
+function listner() { }
+doc.addEventListener('scroll', listner);
+doc.removeEventListener('scroll', listner);
+
+document.write('PASS');
+
+</script>
+</body>
+</html>

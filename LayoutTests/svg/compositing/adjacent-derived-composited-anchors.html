@@ -1,0 +1,22 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+</style>
+</head>
+<body>
+<!-- Two adjacent composited anchor <g>s. Each anchor's own fill must still paint, so green and orange appear. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g style="z-index: 1">
+        <rect style="transform: translateZ(0)" x="10" y="10" width="60" height="60" fill="red"/>
+        <rect x="10" y="90" width="60" height="60" fill="green"/>
+    </g>
+    <g style="z-index: 2">
+        <rect style="transform: translateZ(0)" x="90" y="10" width="60" height="60" fill="blue"/>
+        <rect x="90" y="90" width="60" height="60" fill="orange"/>
+    </g>
+</svg>
+</body>
+</html>

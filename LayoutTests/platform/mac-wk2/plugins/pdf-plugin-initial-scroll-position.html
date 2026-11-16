@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+</script>
+</head>
+<body onload="runTest()">
+
+<embed id="embed" width="200%" height="200%" src="../../../accessibility/resources/simple-webkit-pages.pdf" type="application/pdf">
+
+<script>
+description("This test ensures that a PDF plugin's initial scroll position is correct (0, 0).");
+
+function runTest() {
+    // A bit of delay is required to consistently trigger the bug this test protects against.
+    setTimeout(() => {
+        shouldBe("internals.pluginScrollPositionX(document.getElementById('embed'))", "0");
+        shouldBe("internals.pluginScrollPositionY(document.getElementById('embed'))", "0");
+        finishJSTest();
+    }, 60);
+}
+</script>
+</body>
+</html>

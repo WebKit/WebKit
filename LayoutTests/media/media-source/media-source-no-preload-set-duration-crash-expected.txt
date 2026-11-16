@@ -1,0 +1,9 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+Setting duration when preload is disabled should trigger no crash.
+RUN(source.duration = 42)
+Adding a SourceBuffer when preload is disabled should trigger no crash.
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+END OF TEST
+

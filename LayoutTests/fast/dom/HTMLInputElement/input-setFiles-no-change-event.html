@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<input type="file">
+<script>
+description("Makes sure that no change / input events are fired when setting input.files programmatically");
+jsTestIsAsync = true;
+
+let dispatchedInputEvent = false;
+let dispatchedChangeEvent = false; 
+
+const input = document.querySelector("input");
+input.oninput = (event) => {
+    dispatchedInputEvent = true;    
+};
+
+input.onchange = (event) => {
+    dispatchedChangeEvent = true;
+};
+const dataTransfer = new DataTransfer();
+dataTransfer.items.add(new File(['foo'], 'programmatically_created.txt'));
+input.files = dataTransfer.files;
+
+setTimeout(() => {
+    shouldBeFalse("dispatchedInputEvent");
+    shouldBeFalse("dispatchedChangeEvent");
+    finishJSTest();
+}, 0);
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("This test passes if it does not crash.");
+jsTestIsAsync = true;
+
+const random = (min, max) => {
+    let num = Math.random() * (max - min) + min;
+
+    return Math.round(num);
+};
+
+onload = () => {
+    for (let i = 0; i < 50; i++) {
+        let sampleRate = random(3000, 384000);
+        new PannerNode(new OfflineAudioContext({length: 128, sampleRate: sampleRate}));
+        new OfflineAudioContext({length: 128, sampleRate: sampleRate}).createPanner().disconnect();
+    }
+    
+    setTimeout(finishJSTest, 100);
+};
+</script>
+</body>
+</html>

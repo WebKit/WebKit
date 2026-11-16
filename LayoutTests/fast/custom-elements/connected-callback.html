@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+window.customElements.define('inner-element', class extends HTMLElement {
+    connectedCallback() { result.textContent = 'PASS'; }
+});
+</script>
+<p>This tests using <code>parseHTMLUnsafe</code> to create a declarative shadow DOM.<br>
+connectedCallback should be called on a custom element inside the shadow DOM.</p>
+<div id="result">FAIL</div>
+<div id="container"></div>
+<script>
+container.append(...Document.parseHTMLUnsafe('<outer-element><template shadowrootmode="open"><inner-element></inner-element></template></outer-element>').childNodes);
+</script>
+</body>

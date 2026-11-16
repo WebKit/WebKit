@@ -1,0 +1,3 @@
+
+PASS getComputedStyle should return CSS variables defined on :root
+

@@ -1,0 +1,41 @@
+Tests that cookie-averse documents cannot return or set cookies.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.cookie.indexOf('ppkcookie1=testcookie') is -1
+PASS document.cookie = 'ppkcookie1=testcookie' did not throw exception.
+PASS document.cookie.indexOf('ppkcookie1=testcookie') >= 0 is true
+
+* Frameless document cases
+PASS framelessDocument1.cookie is ""
+PASS framelessDocument1.cookie = 'ppkcookie2=testcookie' did not throw exception.
+PASS framelessDocument1.cookie is ""
+PASS framelessDocument2.cookie is ""
+PASS framelessDocument2.cookie = 'ppkcookie3=testcookie' did not throw exception.
+PASS framelessDocument2.cookie is ""
+
+* Frame with about:blank URL
+PASS frameDocument.cookie.indexOf('ppkcookie1=testcookie') >= 0 is true
+PASS frameDocument.cookie = 'ppkcookie4=testcookie' did not throw exception.
+PASS frameDocument.cookie.indexOf('ppkcookie4=testcookie') >= 0 is true
+PASS frameDocument.cookie is ""
+PASS frameDocument.cookie = 'ppkcookie4=testcookie' did not throw exception.
+PASS frameDocument.cookie is ""
+
+* Frame using data: scheme
+PASS frameDocument.cookie is ""
+PASS frameDocument.cookie = 'ppkcookie5=testcookie' did not throw exception.
+PASS frameDocument.cookie is ""
+
+* Frame using file:// scheme
+PASS frameDocument.cookie = 'ppkcookie6=testcookie' did not throw exception.
+PASS frameDocument.cookie.indexOf('ppkcookie6=testcookie') >= 0 is true
+frame.remove()
+PASS frameDocument.cookie is ""
+PASS frameDocument.cookie = 'ppkcookie7=testcookie' did not throw exception.
+PASS frameDocument.cookie is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

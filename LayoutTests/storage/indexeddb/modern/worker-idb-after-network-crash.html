@@ -1,0 +1,48 @@
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+<body>
+<div id="description">
+This test verifies that IndexedDB operations in a dedicated worker recover after
+the network process is terminated, without any IndexedDB activity on the main
+page to trigger the recovery.
+</div>
+</body>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var worker = new Worker("resources/worker-idb-after-network-crash.js");
+
+worker.onmessage = function(event)
+{
+    var data = event.data;
+    debug("[Worker] " + data);
+
+    if (data === "db-ready") {
+        debug("Terminating network process.");
+        if (window.testRunner)
+            testRunner.terminateNetworkProcess();
+    } else if (data === "recovery-ok") {
+        testPassed("Worker opened a new IndexedDB database after network process crash without main page IDB activity");
+        worker.terminate();
+        finishJSTest();
+    } else if (data.indexOf("recovery-fail:") === 0) {
+        testFailed("Worker IndexedDB recovery failed: " + data.substring("recovery-fail:".length));
+        worker.terminate();
+        finishJSTest();
+    }
+};
+
+worker.onerror = function(event)
+{
+    testFailed("Worker error: " + event.message);
+    finishJSTest();
+};
+
+debug("Starting worker and asking it to open an IDB database.");
+worker.postMessage("open-db");
+
+</script>

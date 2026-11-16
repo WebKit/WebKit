@@ -1,0 +1,15 @@
+
+PASS [top-level-context] document.requestStorageAccess() should exist on the document interface
+PASS [top-level-context] document.requestStorageAccess() should be rejected in insecure context
+PASS [non-fully-active] document.requestStorageAccess() should reject when run in a detached frame
+PASS [non-fully-active] document.requestStorageAccess() should reject when run in a detached DOMParser document
+PASS [top-level-context] document.requestStorageAccess() should be rejected when called with a user gesture in insecure context
+PASS [same-origin-frame] document.requestStorageAccess() should exist on the document interface
+PASS [same-origin-frame] document.requestStorageAccess() should be rejected in insecure context
+PASS [nested-same-origin-frame] document.requestStorageAccess() should exist on the document interface
+PASS [nested-same-origin-frame] document.requestStorageAccess() should be rejected in insecure context
+PASS [cross-origin-frame] document.requestStorageAccess() should exist on the document interface
+PASS [cross-origin-frame] document.requestStorageAccess() should be rejected in insecure context
+PASS [nested-cross-origin-frame] document.requestStorageAccess() should exist on the document interface
+PASS [nested-cross-origin-frame] document.requestStorageAccess() should be rejected in insecure context
+

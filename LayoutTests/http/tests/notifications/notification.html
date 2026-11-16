@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="/js-test-resources/gc.js"></script>
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+</head>
+<body>
+    <div id="log"></div>
+    <div id="container"></div>
+<script>
+
+test(function() {
+    assert_throws_js(TypeError, function() { new Notification(); });
+}, "The Notification constructor requires at least one argument.");
+
+test(function() {
+    let notification = new Notification("test title");
+    
+    assert_class_string(notification, "Notification");
+    assert_equals(notification.title, "test title");
+    assert_equals(notification.dir, "auto");
+    assert_equals(notification.lang, "");
+    assert_equals(notification.body, "");
+    assert_equals(notification.tag, "");
+    assert_equals(notification.icon, "");
+    assert_equals(notification.data, null);
+}, "The Notification object initializes its properties to their default values from the NotificationOptions dictionary if it is not provided.");
+
+test(function() {
+    let notification = new Notification("test title", {
+        dir: "ltr",
+        lang: "en",
+        body: "test body",
+        tag: "test tag",
+        icon: "foo.png",
+        data: {foo: 'bar'}
+    });
+
+    assert_equals(notification.title, "test title");
+    assert_equals(notification.dir, "ltr");
+    assert_equals(notification.lang, "en");
+    assert_equals(notification.body, "test body");
+    assert_equals(notification.tag, "test tag");
+    assert_equals(notification.icon, "http://127.0.0.1:8000/notifications/foo.png");
+    assert_equals(JSON.stringify(notification.data), '{"foo":"bar"}')
+}, "The Notification object initializes its properties to the values from NotificationOptions dictionary if it is provided.");
+
+test(function() {
+    assert_throws_dom('DataCloneError', function() { new Notification("title", { data: function() { } }); });
+}, "The Notification constructor should throw if it is passed a non-cloneable data option.");
+
+test(function() {
+    let notification1 = new Notification("test title", { dir: "auto" });
+    assert_equals(notification1.dir, "auto");
+
+    let notification2 = new Notification("test title", { dir: "ltr" });
+    assert_equals(notification2.dir, "ltr");
+
+    let notification3 = new Notification("test title", { dir: "rtl" });
+    assert_equals(notification3.dir, "rtl");
+
+    assert_throws_js(TypeError, function() { new Notification("test title", { dir: "foo" }) });
+}, "The NotificationOptions dictionary only accepts valid NotificationDirection values.");
+
+promise_test(async function() {
+    let notification = new Notification("test title", { data: { foo: 'bar' } });
+    let data = notification.data;
+    assert_equals(JSON.stringify(data), '{"foo":"bar"}')
+    gc();
+    await new Promise(resolve => setTimeout(resolve, 10));
+    gc();
+    await new Promise(resolve => setTimeout(resolve, 10));
+    assert_equals(data, notification.data);
+}, "The Notification data property returns the same object after GC.");
+
+</script>
+</body>
+</html>

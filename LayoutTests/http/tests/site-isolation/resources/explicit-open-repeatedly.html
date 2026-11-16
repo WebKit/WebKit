@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// Call document.open() while the parent's navigation of this frame is provisional in another process, and
+// stop before its delayed response lets it commit. document.open() removes event listeners on the document
+// and the window, so use a MessageChannel.
+let end;
+let next = 0;
+const channel = new MessageChannel();
+channel.port1.onmessage = function () {
+    const now = Date.now();
+    if (now > end)
+        return;
+    if (now >= next) {
+        document.open();
+        next = now + 2;
+    }
+    channel.port2.postMessage(0);
+};
+onload = function () {
+    end = Date.now() + 500;
+    parent.postMessage("ready", "*");
+    channel.port2.postMessage(0);
+};
+</script>
+</body>
+</html>

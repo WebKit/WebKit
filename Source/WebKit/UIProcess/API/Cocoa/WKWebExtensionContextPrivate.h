@@ -1,0 +1,126 @@
+/*
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import <WebKit/WKWebExtensionContext.h>
+
+@class _WKWebExtensionSidebar;
+
+/*! @abstract Indicates a script error occurred in the extension, such as an uncaught exception, unhandled promise rejection, or a call to console.error(). */
+static const WKWebExtensionContextError WKWebExtensionContextErrorScriptExecutionError = (WKWebExtensionContextError)7;
+
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+@interface WKWebExtensionContext ()
+
+/*! @abstract The extension background view used for the extension, or `nil` if the extension does not have background content or it is currently unloaded. */
+@property (nonatomic, nullable, readonly) WKWebView *_backgroundWebView;
+
+/*! @abstract The extension background content URL for the extension, or `nil` if the extension does not have background content. */
+@property (nonatomic, nullable, readonly) NSURL *_backgroundContentURL;
+
+/*!
+ @abstract Sends a message to the JavaScript `browser.test.onMessage` API.
+ @discussion Allows code to trigger a `browser.test.onMessage` event, enabling bidirectional communication during testing.
+ @param message The message string to send.
+ @param argument The optional JSON-serializable argument to include with the message. Must be JSON-serializable according to \c NSJSONSerialization.
+ */
+- (void)_sendTestMessage:(NSString *)message withArgument:(nullable id)argument;
+
+/*!
+ @abstract Sends data to the JavaScript `browser.test.onTestStarted` API.
+ @discussion Allows code to trigger a `browser.test.onTestStarted` event during testing.
+ @param argument The optional JSON-serializable argument to include with the message. Must be JSON-serializable according to \c NSJSONSerialization.
+ */
+- (void)_sendTestStartedWithArgument:(nullable id)argument;
+
+/*!
+ @abstract Sends data to the JavaScript `browser.test.onTestFinished` API.
+ @discussion Allows code to trigger a `browser.test.onTestFinished` event during testing.
+ @param argument The optional JSON-serializable argument to include with the message. Must be JSON-serializable according to \c NSJSONSerialization.
+ */
+- (void)_sendTestFinishedWithArgument:(nullable id)argument;
+
+/*! @abstract Resets the commands back to the state provided by the manifest. */
+- (void)_resetCommands;
+
+/*!
+ @abstract Terminates and reloads the extension's background content, simulating an idle timeout.
+ @discussion Allows tests to exercise background content termination and relaunch without waiting for the real idle timer.
+ */
+- (void)_reloadBackgroundContentForTesting;
+
+/*!
+ @abstract Terminates the extension's background content without reloading it, simulating an idle timeout.
+ @discussion Allows tests to exercise background content termination without waiting for the real idle timer, leaving
+ the background content unloaded until something (e.g. a message from another extension page) wakes it back up.
+ */
+- (void)_unloadBackgroundContentForTesting;
+
+/*!
+ @abstract Retrieves the extension sidebar which applies to a given tab.
+ @param tab The tab for which to retrieve the extension sidebar.
+ @result The sidebar for that tab, or `nil` if the extension has no sidebar to show there.
+ @discussion The same object is returned for every tab in a window which the extension has not set tab-specific
+ overrides for.  Successive results can be compared by identity when the user switches tabs to determine if the
+ sidebar must also be switched. The returned sidebar's `WKWebView` may likewise be shared with the sidebars of
+ other tabs in the window, even if the sidebar object itself may have tab-specific overrides.
+ */
+- (nullable _WKWebExtensionSidebar *)sidebarForTab:(id <WKWebExtensionTab>)tab NS_SWIFT_NAME(sidebar(for:));
+
+/*!
+ @abstract Should be called by the app when the user activates the body of a notification presented for the extension.
+ @param identifier The identifier of the ``_WKWebExtensionNotification`` that was activated.
+ @discussion This fires the `browser.notifications.onClicked` event. It has no effect if the extension has no notification with the identifier.
+ */
+- (void)_didClickNotificationWithIdentifier:(NSString *)identifier;
+
+/*!
+ @abstract Should be called by the app when the user activates an action button on a notification presented for the extension.
+ @param buttonIndex The index of the activated button within the notification's ``_WKWebExtensionNotification.buttons`` array.
+ @param identifier The identifier of the ``_WKWebExtensionNotification`` whose button was activated.
+ @discussion This fires the `browser.notifications.onButtonClicked` event. It has no effect if the extension has no notification with the identifier, or if the index is out of range.
+ */
+- (void)_didClickButtonAtIndex:(NSUInteger)buttonIndex forNotificationWithIdentifier:(NSString *)identifier;
+
+/*!
+ @abstract Should be called by the app when a notification presented for the extension is closed.
+ @param identifier The identifier of the ``_WKWebExtensionNotification`` that was closed.
+ @param byUser Whether the user dismissed the notification, as opposed to it being closed by the system.
+ @discussion This fires the `browser.notifications.onClosed` event and forgets the notification. It has no effect if the extension has no notification with the identifier.
+ The app should not call this in response to ``WKWebExtensionControllerDelegatePrivate`` asking it to clear a notification.
+ */
+- (void)_didCloseNotificationWithIdentifier:(NSString *)identifier byUser:(BOOL)byUser;
+
+/*! @abstract Whether the extension context has access to file:// URLs.
+ @discussion When YES, the extension can inject content into and interact with file:// pages. Defaults to NO. */
+@property (nonatomic, setter=_setHasAccessToFileURLs:) BOOL _hasAccessToFileURLs;
+
+@end
+
+WK_HEADER_AUDIT_END(nullability, sendability)
+
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebExtensionContextPrivateAdditions.h>
+#endif

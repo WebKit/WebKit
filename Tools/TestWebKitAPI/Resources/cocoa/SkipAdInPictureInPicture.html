@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<video id="video">
+    <source src="video-with-audio.mp4">
+</video>
+<button id="enter-pip" onclick="document.querySelector('video').webkitSetPresentationMode('picture-in-picture')">enter pip</button>
+<script>
+    if ("mediaSession" in navigator) {
+        navigator.mediaSession.setActionHandler("skipad", () => {
+        });
+    }
+</script>
+</html>

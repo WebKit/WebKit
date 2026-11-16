@@ -1,0 +1,21 @@
+<html>
+  <body>
+    <script>    
+      if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
+      }
+
+      function test() {
+        document.designMode = 'on';
+        document.execCommand("selectAll");
+        document.execCommand("InsertHTML", false, "<p>No crash!</p>");
+        document.execCommand("InsertHTML", false, "<span class='Apple-style-span'></span>");
+        
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }
+      setTimeout(test);
+    </script>&lt;
+  </body>
+</html>

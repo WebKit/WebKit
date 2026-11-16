@@ -1,0 +1,458 @@
+/*
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#pragma once
+
+#ifdef __cplusplus
+
+#include "BPlatform.h"
+
+BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+#include "AllocationCounts.h"
+#include "CompactAllocationMode.h"
+#include "Gigacage.h"
+#include "HeapKind.h"
+#include "Mutex.h"
+#include "SystemHeap.h"
+
+#if BUSE(LIBPAS)
+#include "bmalloc_heap_inlines.h"
+#include "tagged_bmalloc_heap_inlines.h"
+#include "pas_internal_config.h"
+#endif
+
+#if BUSE(MIMALLOC)
+#include "mimalloc.h"
+#endif
+
+namespace bmalloc {
+namespace api {
+
+#if BUSE(LIBPAS)
+extern pas_primitive_heap_ref gigacageHeaps[static_cast<size_t>(Gigacage::NumberOfKinds)];
+
+inline pas_primitive_heap_ref& heapForKind(Gigacage::Kind kind)
+{
+    RELEASE_BASSERT(static_cast<size_t>(kind) < static_cast<size_t>(Gigacage::NumberOfKinds));
+    return gigacageHeaps[static_cast<size_t>(kind)];
+}
+#endif
+
+BEXPORT bool isEnabled(HeapKind kind = HeapKind::Primary);
+
+/* pas_mte_is_mte_enabled() is itself inlineable and resolves the undetermined
+   state on its own (see pas_mte_config.h), so this is cheap enough to call from
+   the allocation fast paths. */
+BINLINE bool isMTEEnabled()
+{
+#if defined(PAS_BMALLOC) && PAS_BMALLOC && defined(PAS_ENABLE_MTE) && PAS_ENABLE_MTE
+    return pas_mte_is_mte_enabled();
+#else
+    return false;
+#endif
+}
+
+// Bmalloc is implemented via a bundle of pas_heaps.
+// Some pas_heaps are only reached through dedicated APIs, particularly the
+// structure-heap and TZone buckets. However, the remainder are all intended
+// to be opaque to the consumer, necessitating an internal dispatch tree as
+// implemented in the various API functions below. Altogether, a call to
+// tryMalloc (or any other malloc API) can bottom out in one of four heaps,
+// coming from one of two pas_heap_configs:
+//   1. gigacageHeaps[0], using the bmalloc_heap_config:
+//      only serves Gigacage objects. This path is somewhat archaic and thus
+//      is the only one to use the HeapKind parameter, which exclusively
+//      determines whether objects are allocated via this heap.
+//   2. bmalloc_compact_primitive_heap_ref, using the bmalloc_heap_config:
+//      serves compact objects, identified via the CompactAllocationMode parameter,
+//      regardless of whether MTE is enabled, for locality of certain use-cases.
+//   3. tagged_bmalloc_common_primitive_heap, using the tagged_bmalloc_heap_config:
+//      exclusively serves MTE-tagged memory. As such, three things must all
+//      be true for an allocation to route to this heap:
+//        - `mode` must be non-compact
+//        - `size` must be small enough to permit MTE tagging
+//        - MTE must in fact be enabled
+//   4. bmalloc_common_primitive_heap, using the bmalloc_heap_config:
+//      if an object is not allocated from any of the other heaps, it comes
+//      from here. In practice that means that this serves non-compact objects
+//      when MTE is disabled, as well as objects too large to tag with MTE.
+//      In our most performance-sensitive configurations, most objects are
+//      allocated from this heap.
+//
+
+// Returns null on failure.
+BINLINE void* tryMalloc(size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+
+    // The decision tree
+    if (isGigacage(kind))
+        return bmalloc_try_allocate_auxiliary_inline(&heapForKind(gigacageKind(kind)), size);
+    if (mode == CompactAllocationMode::Compact)
+        return bmalloc_try_allocate_auxiliary_inline(&bmalloc_compact_primitive_heap_ref, size);
+    if (!isMTEEnabled()) [[likely]]
+        return bmalloc_try_allocate_inline(size);
+    if (size > PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE) [[unlikely]]
+        return bmalloc_try_allocate_inline(size);
+    return tagged_bmalloc_try_allocate(size);
+#elif BUSE(MIMALLOC)
+    BUNUSED(mode);
+    BUNUSED(kind);
+    return mi_malloc(size);
+#else
+    BUNUSED(mode);
+    BUNUSED(kind);
+    return ::malloc(size);
+#endif
+}
+
+// Crashes on failure.
+BINLINE void* malloc(size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    if (isGigacage(kind))
+        return bmalloc_allocate_auxiliary_inline(&heapForKind(gigacageKind(kind)), size);
+    if (mode == CompactAllocationMode::Compact)
+        return bmalloc_allocate_auxiliary_inline(&bmalloc_compact_primitive_heap_ref, size);
+    if (!isMTEEnabled()) [[likely]]
+        return bmalloc_allocate_inline(size);
+    if (size > PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE) [[unlikely]]
+        return bmalloc_allocate_inline(size);
+    return tagged_bmalloc_allocate(size);
+#elif BUSE(MIMALLOC)
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = mi_malloc(size);
+    RELEASE_BASSERT(memory);
+    return memory;
+#else
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = ::malloc(size);
+    RELEASE_BASSERT(memory);
+    return memory;
+#endif
+}
+
+BINLINE void* tryZeroedMalloc(size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    if (isGigacage(kind))
+        return bmalloc_try_allocate_auxiliary_zeroed_inline(&heapForKind(gigacageKind(kind)), size);
+    if (mode == CompactAllocationMode::Compact)
+        return bmalloc_try_allocate_auxiliary_zeroed_inline(&bmalloc_compact_primitive_heap_ref, size);
+    if (!isMTEEnabled()) [[likely]]
+        return bmalloc_try_allocate_zeroed_inline(size);
+    if (size > PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE) [[unlikely]]
+        return bmalloc_try_allocate_zeroed_inline(size);
+    return tagged_bmalloc_try_allocate_zeroed(size);
+#elif BUSE(MIMALLOC)
+    BUNUSED(mode);
+    BUNUSED(kind);
+    return mi_zalloc(size);
+#else
+    BUNUSED(mode);
+    BUNUSED(kind);
+    return ::calloc(1, size);
+#endif
+}
+
+// Crashes on failure.
+BINLINE void* zeroedMalloc(size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    if (isGigacage(kind))
+        return bmalloc_allocate_auxiliary_zeroed_inline(&heapForKind(gigacageKind(kind)), size);
+    if (mode == CompactAllocationMode::Compact)
+        return bmalloc_allocate_auxiliary_zeroed_inline(&bmalloc_compact_primitive_heap_ref, size);
+    if (!isMTEEnabled()) [[likely]]
+        return bmalloc_allocate_zeroed_inline(size);
+    if (size > PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE) [[unlikely]]
+        return bmalloc_allocate_zeroed_inline(size);
+    return tagged_bmalloc_allocate_zeroed(size);
+#elif BUSE(MIMALLOC)
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = mi_zalloc(size);
+    RELEASE_BASSERT(memory);
+    return memory;
+#else
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = ::calloc(1, size);
+    RELEASE_BASSERT(memory);
+    return memory;
+#endif
+}
+
+BEXPORT void* mallocOutOfLine(size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary);
+
+// Returns null on failure.
+BINLINE void* tryMemalign(size_t alignment, size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    if (isGigacage(kind)) {
+        return bmalloc_try_allocate_auxiliary_with_alignment_inline(
+            &heapForKind(gigacageKind(kind)), size, alignment);
+    }
+    if (mode == CompactAllocationMode::Compact)
+        return bmalloc_try_allocate_auxiliary_with_alignment_inline(
+            &bmalloc_compact_primitive_heap_ref, size, alignment);
+    if (!isMTEEnabled()) [[likely]]
+        return bmalloc_try_allocate_with_alignment_inline(size, alignment);
+    if (size > PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE) [[unlikely]]
+        return bmalloc_try_allocate_with_alignment_inline(size, alignment);
+    return tagged_bmalloc_try_allocate_with_alignment(size, alignment);
+#elif BUSE(MIMALLOC)
+    BUNUSED(mode);
+    BUNUSED(kind);
+    return mi_malloc_aligned(size, alignment);
+#else
+    BUNUSED(mode);
+    BUNUSED(kind);
+    return ::aligned_alloc(alignment, size);
+#endif
+}
+
+// Crashes on failure.
+BINLINE void* memalign(size_t alignment, size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    if (isGigacage(kind)) {
+        return bmalloc_allocate_auxiliary_with_alignment_inline(
+            &heapForKind(gigacageKind(kind)), size, alignment);
+    }
+    if (mode == CompactAllocationMode::Compact)
+        return bmalloc_allocate_auxiliary_with_alignment_inline(
+            &bmalloc_compact_primitive_heap_ref, size, alignment);
+    if (!isMTEEnabled()) [[likely]]
+        return bmalloc_allocate_with_alignment_inline(size, alignment);
+    if (size > PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE) [[unlikely]]
+        return bmalloc_allocate_with_alignment_inline(size, alignment);
+    return tagged_bmalloc_allocate_with_alignment(size, alignment);
+#elif BUSE(MIMALLOC)
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = mi_malloc_aligned(size, alignment);
+    RELEASE_BASSERT(memory);
+    return memory;
+#else
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = ::aligned_alloc(alignment, size);
+    RELEASE_BASSERT(memory);
+    return memory;
+#endif
+}
+
+// Returns null on failure.
+BINLINE void* tryZeroedMemalign(size_t alignment, size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    if (isGigacage(kind)) {
+        return bmalloc_try_allocate_auxiliary_zeroed_with_alignment_inline(
+            &heapForKind(gigacageKind(kind)), size, alignment);
+    }
+    if (mode == CompactAllocationMode::Compact)
+        return bmalloc_try_allocate_auxiliary_zeroed_with_alignment_inline(
+            &bmalloc_compact_primitive_heap_ref, size, alignment);
+    if (!isMTEEnabled()) [[likely]]
+        return bmalloc_try_allocate_zeroed_with_alignment_inline(size, alignment);
+    if (size > PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE) [[unlikely]]
+        return bmalloc_try_allocate_zeroed_with_alignment_inline(size, alignment);
+    return tagged_bmalloc_try_allocate_zeroed_with_alignment(size, alignment);
+#elif BUSE(MIMALLOC)
+    BUNUSED(mode);
+    BUNUSED(kind);
+    return mi_zalloc_aligned(size, alignment);
+#else
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = ::aligned_alloc(alignment, size);
+    if (memory) [[likely]]
+        memset(memory, 0, size);
+    return memory;
+#endif
+}
+
+// Crashes on failure.
+BINLINE void* zeroedMemalign(size_t alignment, size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    if (isGigacage(kind)) {
+        return bmalloc_allocate_auxiliary_zeroed_with_alignment_inline(
+            &heapForKind(gigacageKind(kind)), size, alignment);
+    }
+    if (mode == CompactAllocationMode::Compact)
+        return bmalloc_allocate_auxiliary_zeroed_with_alignment_inline(
+            &bmalloc_compact_primitive_heap_ref, size, alignment);
+    if (!isMTEEnabled()) [[likely]]
+        return bmalloc_allocate_zeroed_with_alignment_inline(size, alignment);
+    if (size > PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE) [[unlikely]]
+        return bmalloc_allocate_zeroed_with_alignment_inline(size, alignment);
+    return tagged_bmalloc_allocate_zeroed_with_alignment(size, alignment);
+#elif BUSE(MIMALLOC)
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = mi_zalloc_aligned(size, alignment);
+    RELEASE_BASSERT(memory);
+    return memory;
+#else
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = ::aligned_alloc(alignment, size);
+    RELEASE_BASSERT(memory);
+    memset(memory, 0, size);
+    return memory;
+#endif
+}
+
+BEXPORT void* tryReallocOutOfLine(void* object, size_t newSize);
+BEXPORT void* reallocOutOfLine(void* object, size_t newSize);
+
+// Returns null on failure.
+BINLINE void* tryRealloc(void* object, size_t newSize, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    if (isGigacage(kind)) {
+        return bmalloc_try_reallocate_auxiliary_inline(
+            object, &heapForKind(gigacageKind(kind)), newSize, pas_reallocate_free_if_successful);
+    }
+    if (mode == CompactAllocationMode::Compact)
+        return bmalloc_try_reallocate_auxiliary_inline(
+            object, &bmalloc_compact_primitive_heap_ref, newSize, pas_reallocate_free_if_successful);
+    if (!isMTEEnabled()) [[likely]]
+        return bmalloc_try_reallocate_inline(object, newSize, pas_reallocate_free_if_successful);
+    // The object may belong to either heap, so look up ownership out-of-line
+    return tryReallocOutOfLine(object, newSize);
+#elif BUSE(MIMALLOC)
+    BUNUSED(mode);
+    BUNUSED(kind);
+    return mi_realloc(object, newSize);
+#else
+    BUNUSED(mode);
+    BUNUSED(kind);
+    return ::realloc(object, newSize);
+#endif
+}
+
+// Crashes on failure.
+BINLINE void* realloc(void* object, size_t newSize, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    if (isGigacage(kind))
+        return bmalloc_reallocate_auxiliary_inline(
+            object, &heapForKind(gigacageKind(kind)), newSize, pas_reallocate_free_if_successful);
+    if (mode == CompactAllocationMode::Compact)
+        return bmalloc_reallocate_auxiliary_inline(
+            object, &bmalloc_compact_primitive_heap_ref, newSize, pas_reallocate_free_if_successful);
+    if (!isMTEEnabled()) [[likely]]
+        return bmalloc_reallocate_inline(object, newSize, pas_reallocate_free_if_successful);
+    // The object may belong to either heap, so look up ownership out-of-line
+    return reallocOutOfLine(object, newSize);
+#elif BUSE(MIMALLOC)
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = mi_realloc(object, newSize);
+    RELEASE_BASSERT(memory);
+    return memory;
+#else
+    BUNUSED(mode);
+    BUNUSED(kind);
+    void* memory = ::realloc(object, newSize);
+    RELEASE_BASSERT(memory);
+    return memory;
+#endif
+}
+
+// Returns null on failure.
+// This API will give you zeroed pages that are ready to be used. These pages
+// will page fault on first access. It returns to you memory that initially only
+// uses up virtual address space, not `size` bytes of physical memory.
+BEXPORT void* tryLargeZeroedMemalignVirtual(size_t alignment, size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary);
+
+BEXPORT void freeOutOfLine(void* object, HeapKind kind = HeapKind::Primary);
+
+BINLINE void free(void* object, HeapKind kind = HeapKind::Primary)
+{
+#if BUSE(LIBPAS)
+    if (PAS_LIKELY(bmalloc_try_deallocate_inline_only(object)))
+        return;
+    freeOutOfLine(object, kind);
+#elif BUSE(MIMALLOC)
+    BUNUSED(kind);
+    mi_free(object);
+#else
+    BUNUSED(kind);
+    ::free(object);
+#endif
+}
+
+BEXPORT void freeLargeVirtual(void* object, size_t, HeapKind kind = HeapKind::Primary);
+
+BEXPORT void scavengeThisThread();
+
+BEXPORT void scavenge();
+
+// ptr must be aligned to vmPageSizePhysical and size must be divisible 
+// by vmPageSizePhysical.
+BEXPORT void decommitAlignedPhysical(void* object, size_t, HeapKind = HeapKind::Primary);
+BEXPORT void commitAlignedPhysical(void* object, size_t, HeapKind = HeapKind::Primary);
+
+#if BOS(DARWIN)
+BEXPORT void setScavengerThreadQOSClass(qos_class_t overrideClass);
+#endif
+
+BEXPORT void enableMiniMode(bool forceMiniMode = false);
+
+// Used for debugging only.
+BEXPORT void disableScavenger();
+BEXPORT void forceEnablePGM(uint16_t guardMallocRate);
+
+#if BENABLE(MALLOC_SIZE)
+inline size_t mallocSize(const void* object)
+{
+    if (auto* systemHeap = SystemHeap::tryGetIfShouldSupplantBmalloc())
+        return systemHeap->mallocSize(object);
+    return bmalloc_get_allocation_size(const_cast<void*>(object));
+}
+#endif
+
+#if BENABLE(MALLOC_GOOD_SIZE)
+inline size_t mallocGoodSize(size_t size)
+{
+    if (auto* systemHeap = SystemHeap::tryGetIfShouldSupplantBmalloc())
+        return systemHeap->mallocGoodSize(size);
+    return size;
+}
+#endif
+
+} // namespace api
+} // namespace bmalloc
+
+BALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // __cplusplus

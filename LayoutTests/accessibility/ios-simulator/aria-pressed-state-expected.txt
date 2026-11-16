@@ -1,0 +1,15 @@
+button 1
+button 2
+button3 button4
+This test thats aria-pressed changes the traits returned by buttons
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS btn1.traits != btn2.traits is true
+PASS btn3.stringValue is 'AXValue: 1'
+PASS btn4.stringValue is 'AXValue: 1'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

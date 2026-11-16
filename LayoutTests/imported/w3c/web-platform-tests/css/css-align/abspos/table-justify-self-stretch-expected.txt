@@ -1,0 +1,24 @@
+
+
+
+FAIL .item 1 assert_equals:
+<div class="container">
+  <div class="item" data-expected-width="30" data-expected-height="20"></div>
+</div>
+width expected 30 but got 10
+PASS .item 2
+FAIL .item 3 assert_equals:
+<div class="container">
+  <div class="item vrl" data-expected-width="30" data-expected-height="20"></div>
+</div>
+width expected 30 but got 10
+PASS .item 4
+FAIL .item 5 assert_equals:
+<div class="item" data-expected-width="10" data-expected-height="30"></div>
+height expected 30 but got 20
+PASS .item 6
+FAIL .item 7 assert_equals:
+<div class="item vrl" data-expected-width="10" data-expected-height="30"></div>
+height expected 30 but got 20
+PASS .item 8
+

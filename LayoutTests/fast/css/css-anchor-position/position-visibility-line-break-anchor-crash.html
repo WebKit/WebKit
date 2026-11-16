@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<style>
+#target {
+  position: absolute;
+  position-anchor: --a1;
+  position-visibility: anchors-visible;
+  top: anchor(--a1 top);
+}
+</style>
+
+<div>
+  <br id="anchor" style="anchor-name: --a1">
+</div>
+<div id="target"></div>
+
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+
+This test passes if it does not crash.

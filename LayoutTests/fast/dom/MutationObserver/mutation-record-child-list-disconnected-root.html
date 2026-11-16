@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+description('This tests that MutationRecord keeps the disconnected roots of previousSibling and nextSibling alive.');
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+else
+    testFailed('This test requires GCController');
+
+let container = document.createElement('div');
+container.innerHTML = '<prev></prev><next></next>';
+
+const observer = new MutationObserver(() => { });
+observer.observe(container, {childList: true});
+
+// Insert a node between <prev> and <next>.
+// This creates a mutation record with previousSibling=<prev> and nextSibling=<next>.
+container.querySelector('prev').after(document.createElement('b'));
+
+// Take the records synchronously so that moving nodes below doesn't create
+// additional records whose removedNodes would keep the sibling trees alive.
+window.records = observer.takeRecords();
+observer.disconnect();
+
+// Move <prev> and <next> to separate disconnected trees so their opaque roots
+// differ from the target's.
+(function() {
+    let prevRoot = document.createElement('prev-root');
+    prevRoot.appendChild(container.querySelector('prev'));
+    let nextRoot = document.createElement('next-root');
+    nextRoot.appendChild(container.querySelector('next'));
+})();
+
+container = null;
+
+if (window.GCController)
+    GCController.collect();
+
+shouldBeEqualToString('records[0].previousSibling.getRootNode().localName', 'prev-root');
+shouldBeEqualToString('records[0].nextSibling.getRootNode().localName', 'next-root');
+
+</script>
+</body>
+</html>

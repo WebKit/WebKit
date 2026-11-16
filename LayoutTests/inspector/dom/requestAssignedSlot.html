@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+customElements.define("test-element", class TestElement extends HTMLElement {
+    connectedCallback() {
+        let shadowRoot = this.attachShadow({
+            mode: "open",
+            slotAssignment: this.id.substring(0, this.id.indexOf("-")),
+        });
+
+        this._slotElement = shadowRoot.appendChild(document.createElement("slot"));
+        this._slotElement.name = "test-slot";
+    }
+
+    assign(...nodes) {
+        this._slotElement.assign(...nodes);
+    }
+});
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.requestAssignedSlot");
+
+    function addTestCase({name, selector, domNodeHandler})
+    {
+        suite.addTestCase({
+            name,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+
+                let containerNodeId = await documentNode.querySelector(selector);
+                let containerNode = WI.domManager.nodeForId(containerNodeId);
+                InspectorTest.assert(containerNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let slotNodeId = await containerNode.shadowRoots()[0].querySelector("slot");
+                let slotNode = WI.domManager.nodeForId(slotNodeId);
+                InspectorTest.assert(slotNode, `Should find <slot> inside DOM Node for selector '${selector}'.`);
+
+                let childNodeId = await documentNode.querySelector(selector + "-child");
+                let childNode = WI.domManager.nodeForId(childNodeId);
+                InspectorTest.assert(childNode, `Should find DOM Node for selector '${selector}-child'.`);
+
+                await domNodeHandler(slotNode, childNode);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "DOM.requestAssignedSlot.Named.Empty",
+        selector: "#named-empty",
+        async domNodeHandler(slotNode, childNode) {
+            InspectorTest.expectNull(await childNode.requestAssignedSlot(), "Should not be slotted.");
+
+            InspectorTest.log("Adding slot...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#named-empty-child").slot = "test-slot"`);
+            InspectorTest.expectEqual(await childNode.requestAssignedSlot(), slotNode, "Should be slotted.");
+        },
+    });
+
+    addTestCase({
+        name: "DOM.requestAssignedSlot.Named.Filled",
+        selector: "#named-filled",
+        async domNodeHandler(slotNode, childNode) {
+            InspectorTest.expectEqual(await childNode.requestAssignedSlot(), slotNode, "Should be slotted.");
+
+            InspectorTest.log("Removing slot...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#named-filled-child").slot = "invalid-slot"`);
+            InspectorTest.expectNull(await childNode.requestAssignedSlot(), "Should not be slotted.");
+        },
+    });
+
+    addTestCase({
+        name: "DOM.requestAssignedSlot.Manual.Empty",
+        selector: "#manual-empty",
+        async domNodeHandler(slotNode, childNode) {
+            InspectorTest.expectNull(await childNode.requestAssignedSlot(), "Should not be slotted.");
+
+            InspectorTest.log("Adding assigned node...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#manual-empty").assign(document.querySelector("#manual-empty-child"))`);
+            InspectorTest.expectEqual(await childNode.requestAssignedSlot(), slotNode, "Should be slotted.");
+        },
+    });
+
+    addTestCase({
+        name: "DOM.requestAssignedSlot.Manual.Filled",
+        selector: "#manual-filled",
+        async domNodeHandler(slotNode, childNode) {
+            InspectorTest.expectEqual(await childNode.requestAssignedSlot(), slotNode, "Should be slotted.");
+
+            InspectorTest.log("Removing assigned node...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#manual-filled").assign()`);
+            InspectorTest.expectNull(await childNode.requestAssignedSlot(), "Should not be slotted.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "DOM.requestAssignedSlot.MissingNode",
+        async test() {
+            await InspectorTest.expectException(() => DOMAgent.requestAssignedSlot(9999999));
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <test-element id="named-empty">
+        <span slot="invalid-slot" id="named-empty-child"></span>
+    </test-element>
+
+    <test-element id="named-filled">
+        <span slot="test-slot" id="named-filled-child"></span>
+    </test-element>
+
+    <test-element id="manual-empty">
+        <span slot="test-slot" id="manual-empty-child"></span>
+    </test-element>
+
+    <test-element id="manual-filled">
+        <span slot="invalid-slot" id="manual-filled-child"></span>
+    </test-element>
+
+    <script>
+        document.querySelector("#manual-filled").assign(document.querySelector("#manual-filled-child"));
+    </script>
+</body>
+</html>

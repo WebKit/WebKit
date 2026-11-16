@@ -1,0 +1,17 @@
+
+PASS Select html element based on attribute
+PASS Select html element based on attribute mixed case
+PASS Select both HTML and SVG elements based on attribute
+PASS Select HTML element with non-ascii attribute 1
+PASS Select HTML element with non-ascii attribute 2
+PASS Select HTML element with non-ascii attribute 3
+PASS Select SVG element based on mixed case attribute
+PASS Select both HTML and SVG elements based on mixed case attribute
+PASS Select SVG elements with refX attribute
+PASS Select SVG elements with refX attribute incorrect case
+PASS Select SVG elements with refX attribute lowercase
+PASS Select SVG element with non-ascii attribute 1
+PASS Select SVG element with non-ascii attribute 2
+PASS xmlns attribute
+PASS svg element with XLink attribute
+

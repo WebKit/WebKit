@@ -1,0 +1,14 @@
+<style>
+.container {
+  width: min-content;
+  white-space: normal;
+  word-break: break-all;
+  border: 1px solid green;
+  font-family: Monospace;
+}
+</style>
+<pre>green border should hug the content.</pre>
+<div class=container><span>breakall</span></div>
+<div class=container><span style="white-space: pre">preserve</span></div>
+<div class=container><span style="white-space: pre"><span style="white-space: normal">breakall</span></span></div>
+<div class=container><span style="white-space: pre"><span>preserve</span></span></div>

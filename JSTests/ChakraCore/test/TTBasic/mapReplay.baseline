@@ -1,0 +1,12 @@
+x === y: true
+x.baz: 5
+z.has(five): true
+z.get(five): 5
+post update 1 -- y.has(three): true
+post update 1 -- y.get(three): 3
+post update 1 -- z.has(five): false
+post update 2 -- x.has(five): true
+post update 2 -- x.get(five): 5
+post update 2 -- x.get(three): 4
+
+Reached end of Execution -- Exiting.

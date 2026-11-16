@@ -1,0 +1,19 @@
+This test ensures a validity message set with setCustomValidity makes a control report AXInvalid true, and that clearing the message restores AXInvalid false.
+
+A control with no constraint is valid.
+PASS: target.checkValidity() === true
+PASS: invalidStatus() === 'false'
+
+A custom validity message makes it invalid to accessibility too.
+PASS: target.checkValidity() === false
+PASS: target.validationMessage === 'Pick a different value'
+PASS: invalidStatus() === 'true'
+
+Clearing the message restores it.
+PASS: target.checkValidity() === true
+PASS: invalidStatus() === 'false'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

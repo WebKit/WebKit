@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body" role="group">
+
+<fieldset>
+    <label for="captchaAnswer">
+        <h6>Enter the characters in the image below.</h6>
+        <button>Switch to audio</button>
+        <button>Try another</button>
+        <input type="text" id="captchaAnswer" name="captchaAnswer" />
+    </label>
+</fieldset>
+
+<script>
+var output = "This test ensures that buttons within a label that has a for='' don't use the label's text over their own.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const body = accessibilityController.accessibleElementById("body");
+
+    let searchResult = null;
+    while (true) {
+        searchResult = body.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+
+        const role = searchResult.role;
+        output += `\n${role}`;
+        output += `\n${platformTextAlternatives(searchResult)}`;
+        if (role.includes("StaticText") && accessibilityController.platformName !== "ios")
+            output += `\n\t${searchResult.stringValue}`;
+        output += "\n";
+    }
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>
+
+

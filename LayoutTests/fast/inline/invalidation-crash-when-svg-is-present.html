@@ -1,0 +1,23 @@
+<style>
+text {
+  float: left;
+}
+
+:first-child {
+  color: red;
+}
+</style>
+<body>PASS if no crash or assert.</body>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+document.body.append(svg);
+let div = document.createElement('div');
+svg.append(div);
+svg.append(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+document.body.offsetTop;
+div.remove();
+</script>
+

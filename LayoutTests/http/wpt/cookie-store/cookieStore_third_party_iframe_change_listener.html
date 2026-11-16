@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src='/resources/testharness.js'></script>
+    <script src='/resources/testharnessreport.js'></script>
+    <script src="/common/get-host-info.sub.js"></script>
+</head>
+<body>
+    <script>
+
+const host = get_host_info();
+const notSameSiteBaseURL = host.HTTP_NOTSAMESITE_ORIGIN + window.location.pathname.replace(/\/[^\/]*$/, '/') ;
+
+function with_iframe(url) {
+  return new Promise(function(resolve) {
+      var frame = document.createElement('iframe');
+      frame.src = url;
+      frame.onload = function() { resolve(frame); };
+      document.body.appendChild(frame);
+    });
+}
+
+promise_test(async t => {
+    const iframe = await with_iframe(notSameSiteBaseURL + "/resources/third_party_iframe_change_listener.html");
+
+    var otherWindow = window.open(notSameSiteBaseURL + "/resources/third_party_iframe_change_listener_helper.html");
+
+    await new Promise(resolve => {
+        window.addEventListener('message', event => {
+            assert_equals(event.data, false);
+            resolve();
+        }, { once: true });
+        iframe.contentWindow.postMessage('Check if change event fired', '*');
+    });
+
+}, 'Third-party iframe does not get change notifications');
+
+    </script>
+</body>
+</html>

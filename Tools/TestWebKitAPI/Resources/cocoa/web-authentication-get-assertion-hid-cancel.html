@@ -1,0 +1,22 @@
+<input type="text" id="input">
+<script>
+    if (window.internals) {
+        internals.setMockWebAuthenticationConfiguration({ silentFailure: true, hid: { expectCancel: true } });
+        internals.withUserGesture(() => { input.focus(); });
+    }
+
+    const options = {
+        publicKey: {
+            challenge: new Uint8Array(16),
+            timeout: 100
+        }
+    };
+
+    navigator.credentials.get(options).then(credential => {
+        // console.log("Succeeded!");
+        window.webkit.messageHandlers.testHandler.postMessage("Succeeded!");
+    }, error => {
+        // console.log(error.message);
+        window.webkit.messageHandlers.testHandler.postMessage(error.message);
+    });
+</script>

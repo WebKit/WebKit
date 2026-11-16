@@ -1,0 +1,8 @@
+MATCH-1
+MATCH-2
+MATCH-3
+
+PASS Find non-inert text
+FAIL Fail to find inert text assert_false: expected false got true
+PASS Find non-inert text inside inert ancestor
+

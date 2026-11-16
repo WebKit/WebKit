@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html, body {
+    margin: 0;
+}
+
+p {
+    font-size: 16px;
+    font-family: monospace;
+    line-height: 1.5em;
+    width: 400px;
+}
+
+.fixed {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: white;
+    text-align: center;
+    border: solid 1px tomato;
+    box-sizing: border-box;
+}
+
+img {
+    width: 200px;
+    height: 100px;
+    box-sizing: border-box;
+}
+</style>
+</head>
+<body>
+    <template>
+        <div class="fixed">
+            <div>Image of a sunset over the 4th floor of Infinite Loop 2</div>
+            <img src="sunset-in-cupertino-200px.png" />
+        </div>
+    </template>
+    <p>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+    <script>
+        const template = document.querySelector("template");
+        let container;
+        function recreateContainer() {
+            if (container)
+                container.remove();
+            container = template.cloneNode(true).content.children[0];
+            document.body.append(container);
+        }
+        recreateContainer();
+    </script>
+</body>
+</html>

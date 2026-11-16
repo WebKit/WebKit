@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <p>This test ensures that placeholder text is shown regardless of the 'type' and 'placeholder' attribute order.</p>
+    <div>
+        <input type="text" placeholder="12334567890">
+        <input placeholder="12334567890" type="text">
+        <input type="text" id="a" placeholder="12334567890">
+        <input type="text" id="b" placeholder="NA">
+        <input type="text" id="c">
+        <input type="text" id="d">
+        <input id="e">
+    </div>
+    <div>
+        <input type="password" placeholder="12334567890">
+        <input placeholder="12334567890" type="password">
+        <input type="password" id="f" placeholder="12334567890">
+        <input type="password" id="g" placeholder="NA">
+        <input type="password" id="h">
+        <input type="password" id="i">
+        <input id="j">
+    </div>
+    <div>
+        <input type="number" placeholder="12334567890">
+        <input placeholder="12334567890" type="number">
+        <input type="number" id="k" placeholder="12334567890">
+        <input type="number" id="l" placeholder="456">
+        <input type="number" id="m">
+        <input type="number" id="n">
+        <input id="o">
+    </div>
+    <div>
+        <input id="p">
+        <input id="q">
+        <input id="r">
+    </div>
+    <script>
+        for (var id of ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"])
+            document.getElementById(id).placeholder = "12334567890";
+
+        document.getElementById("c").type = "password";
+        document.getElementById("d").type = "number";
+        document.getElementById("e").type = "text";
+
+        document.getElementById("h").type = "text";
+        document.getElementById("i").type = "number";
+        document.getElementById("j").type = "password";
+
+        document.getElementById("m").type = "text";
+        document.getElementById("n").type = "password";
+        document.getElementById("o").type = "number";
+
+        document.getElementById("p").type = "text";
+        document.getElementById("q").type = "password";
+        document.getElementById("r").type = "number";
+        for (var id of ["p", "q", "r"])
+            document.getElementById(id).placeholder = "12334567890";
+    </script>
+</body>
+</html>

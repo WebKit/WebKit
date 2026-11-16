@@ -1,0 +1,8 @@
+{
+    "TestInterfaceName": {
+        "constructor": {
+            "enabledBySettingNamespaceOperation": "[arg]",
+            "overloadedNamespaceOperation": "objArg, strArg"
+        }
+    }
+}

@@ -1,0 +1,4 @@
+
+
+PASS Test that when deferred image is loaded, it uses the latest crossorigin attribute.
+

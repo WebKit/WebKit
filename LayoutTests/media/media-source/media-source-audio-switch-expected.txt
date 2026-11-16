@@ -1,0 +1,27 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Appended all media segments
+RUN(video.play())
+EXPECTED (video.paused == 'false') OK
+
+EXPECTED (video.currentTime >= '1') OK
+RUN(video.currentTime = 3)
+
+EXPECTED (video.currentTime >= '4') OK
+RUN(video.pause())
+EXPECTED (video.paused == 'true') OK
+RUN(sourceBuffer.remove(0, 15))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Appended all media segments
+RUN(video.play())
+EXPECTED (video.paused == 'false') OK
+
+EXPECTED (video.currentTime >= '5') OK
+END OF TEST
+

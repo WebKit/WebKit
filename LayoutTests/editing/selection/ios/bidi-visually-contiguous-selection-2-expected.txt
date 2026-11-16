@@ -1,0 +1,12 @@
+Arabic is left to right: مث لهذا النص
+This test verifies that the text selection appears visually contiguous when selecting across bidi text boundaries.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS isVisuallyContiguous is true
+PASS getSelection().toString() is "Arabic is left to right: مث لهذا النص"
+PASS Extended selection grabbers to endpoints
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

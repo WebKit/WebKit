@@ -1,0 +1,251 @@
+/*
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "RenderHTMLCanvas.h"
+
+#include "CanvasRenderingContext.h"
+#include "DisplayListRecorderImpl.h"
+#include "Document.h"
+#include "GraphicsContext.h"
+#include "HTMLCanvasElement.h"
+#include "HTMLNames.h"
+#include "ImageQualityController.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
+#include "NaturalDimensions.h"
+#include "Page.h"
+#include "PaintInfo.h"
+#include "RenderAncestorIterator.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderChildIterator.h"
+#include "RenderDescendantIterator.h"
+#include "RenderElementStyleInlines.h"
+#include "RenderLayer.h"
+#include "RenderLayerBacking.h"
+#include "RenderObjectInlines.h"
+#include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+using namespace HTMLNames;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderHTMLCanvas);
+
+RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, Style::ComputedStyle&& style)
+    : RenderReplaced(Type::HTMLCanvas, element, WTF::move(style), element.size())
+{
+    ASSERT(isRenderHTMLCanvas());
+}
+
+RenderHTMLCanvas::~RenderHTMLCanvas() = default;
+
+NODELETE HTMLCanvasElement& RenderHTMLCanvas::canvasElement() const
+{
+    return downcast<HTMLCanvasElement>(nodeForNonAnonymous());
+}
+
+void RenderHTMLCanvas::setInnerRenderer(RenderBlock* innerRenderer)
+{
+    ASSERT(!m_innerRenderer || !innerRenderer);
+    m_innerRenderer = innerRenderer;
+}
+
+bool RenderHTMLCanvas::requiresLayer() const
+{
+    if (RenderReplaced::requiresLayer())
+        return true;
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (RefPtr renderingContext = canvasElement().renderingContext(); renderingContext && renderingContext->isHDR())
+        return true;
+#endif
+
+    return canvasCompositingStrategy(*this) != CanvasPaintedToEnclosingLayer;
+}
+
+bool RenderHTMLCanvas::canHaveChildren() const
+{
+    return hasDrawableContent() || firstChild();
+}
+
+bool RenderHTMLCanvas::hasDrawableContent() const
+{
+    return protect(canvasElement())->hasDrawableContent();
+}
+
+void RenderHTMLCanvas::layout()
+{
+    StackStats::LayoutCheckPoint layoutCheckPoint;
+    RenderReplaced::layout();
+
+    if (CheckedPtr innerRenderer = this->innerRenderer()) {
+        for (CheckedRef renderer : descendantsOfType<RenderElement>(*innerRenderer)) {
+            if (renderer->everHadLayout() || !renderer->isCanvasDrawable() || renderer->drawableCanvas() != this)
+                continue;
+            if (RefPtr drawableElement = renderer->element())
+                protect(canvasElement())->drawableElementDidChange(*drawableElement);
+        }
+        innerRenderer->layoutIfNeeded();
+    }
+
+    m_canvasDrawableRecorderMap.clear();
+}
+
+void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    ASSERT(!isSkippedContentRoot(*this));
+
+    GraphicsContext& context = paintInfo.context();
+
+    LayoutRect contentBoxRect = this->contentBoxRect();
+
+    if (context.detectingContentfulPaint()) {
+        if (!context.contentfulPaintDetected() && canvasElement().renderingContext())
+            context.setContentfulPaintDetected();
+        return;
+    }
+
+    contentBoxRect.moveBy(paintOffset);
+    LayoutRect replacedContentRect = this->replacedContentRect();
+    replacedContentRect.moveBy(paintOffset);
+
+    LayoutRect paintRect = computePaintRectForObjectViewBox(replacedContentRect);
+
+    // Not allowed to overflow the content box. Snap before testing containment so that
+    // pixel-snapping can't push paintRect outside contentBoxRect without a clip being applied
+    // (or vice versa).
+    IntRect snappedContentBoxRect = snappedIntRect(contentBoxRect);
+    bool clip = !snappedContentBoxRect.contains(snappedIntRect(paintRect));
+    GraphicsContextStateSaver stateSaver(context, clip);
+    if (clip)
+        context.clip(snappedContentBoxRect);
+
+    if (paintInfo.phase == PaintPhase::Foreground)
+        protect(page())->addRelevantRepaintedObject(*this, intersection(replacedContentRect, contentBoxRect));
+
+    InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
+
+    Ref canvasEl = canvasElement();
+    canvasEl->setIsSnapshotting(paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting));
+    canvasEl->paint(context, paintRect);
+    canvasEl->setIsSnapshotting(false);
+}
+
+DisplayList::RecorderImpl* RenderHTMLCanvas::canvasDrawableRecorder(RenderElement& element, GraphicsContext& context, const IntRect& elementRelativeBounds) const
+{
+    if (!element.isCanvasDrawable())
+        return nullptr;
+
+    // FIXME: Clearing the recorder should happen only when a repaint or a layout happens.
+    auto initialState = context.state().clone(GraphicsContextState::Purpose::Initial);
+    auto initialCTM = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    Ref snapshotRecorder = DisplayList::RecorderImpl::create(initialState, elementRelativeBounds, initialCTM, context.colorSpace());
+    snapshotRecorder->translate(-elementRelativeBounds.x(), -elementRelativeBounds.y());
+
+    m_canvasDrawableRecorderMap.set(element, WTF::move(snapshotRecorder));
+    return m_canvasDrawableRecorderMap.get(element);
+}
+
+std::optional<CanvasElementSnapshot> RenderHTMLCanvas::canvasDrawableSnapshot(RenderElement& element) const
+{
+    if (!element.isCanvasDrawable())
+        return std::nullopt;
+
+    if (RefPtr snapshotRecorder = m_canvasDrawableRecorderMap.get(element))
+        return { { snapshotRecorder->copyDisplayList(), snapshotRecorder->initialClip().size() } };
+
+    return std::nullopt;
+}
+
+void RenderHTMLCanvas::requestPaintEventIfNeeded(const RenderElement& repaintedRenderer) const
+{
+    ASSERT(repaintedRenderer.isDescendantOf(this));
+
+    if (!hasDrawableContent())
+        return;
+
+    for (CheckedRef renderer : lineageOfType<RenderElement>(repaintedRenderer)) {
+        if (renderer.ptr() == this)
+            return;
+
+        if (!renderer->isCanvasDrawable())
+            continue;
+
+        if (RefPtr drawableElement = renderer->element())
+            protect(canvasElement())->drawableElementDidChange(*drawableElement);
+        return;
+    }
+}
+
+bool RenderHTMLCanvas::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+{
+    if (CheckedPtr innerRenderer = this->innerRenderer()) {
+        ASSERT(canHaveChildren());
+
+        for (CheckedRef child : childrenOfType<RenderElement>(*innerRenderer)) {
+            if (child->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
+                return true;
+        }
+    }
+
+    return RenderReplaced::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction);
+}
+
+void RenderHTMLCanvas::canvasSizeChanged()
+{
+    IntSize canvasSize = canvasElement().size();
+    LayoutSize zoomedSize(canvasSize.width() * style().usedZoom(), canvasSize.height() * style().usedZoom());
+
+    if (zoomedSize == intrinsicSize())
+        return;
+
+    setIntrinsicSize(zoomedSize);
+
+    if (!parent())
+        return;
+    setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
+}
+
+void RenderHTMLCanvas::styleDidChange(Style::Difference difference, const Style::ComputedStyle* oldStyle)
+{
+    // Update the context first: whether it is HDR depends on the dynamic range limit, and that decides
+    // whether this canvas needs its own layer, which the base class updates.
+    if (!oldStyle || style().dynamicRangeLimit() != oldStyle->dynamicRangeLimit())
+        protect(canvasElement())->dynamicRangeLimitDidChange(style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
+
+    RenderReplaced::styleDidChange(difference, oldStyle);
+}
+
+NaturalDimensions RenderHTMLCanvas::zoomedNaturalDimensions() const
+{
+    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
+}
+
+} // namespace WebCore

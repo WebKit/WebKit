@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<title>image-set() selecting a cross-fade() tiles the same as the cross-fade itself</title>
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    background-size: 25px 25px;
+    background-repeat: repeat;
+    border: 1px solid black;
+}
+</style>
+<body>
+<div style="background-image: -webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 50%);"></div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS no crossorigin: a cross-origin script without CORS headers loads
+PASS crossorigin=anonymous: a cross-origin script with Access-Control-Allow-Origin loads
+PASS crossorigin=anonymous: a cross-origin script without CORS headers fails
+

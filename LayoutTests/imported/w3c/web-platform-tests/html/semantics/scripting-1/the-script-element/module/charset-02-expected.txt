@@ -1,0 +1,5 @@
+
+PASS UTF-8 module script with UTF-8 BOM
+PASS UTF-16 module script with UTF-16BE BOM
+PASS UTF-16 module script with UTF-16LE BOM
+

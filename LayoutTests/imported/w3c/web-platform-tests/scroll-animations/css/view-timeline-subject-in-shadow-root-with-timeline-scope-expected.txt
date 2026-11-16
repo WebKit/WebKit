@@ -1,0 +1,3 @@
+
+PASS A view timeline with its subject in a shadow root can be referenced outside of that shadow root using "timeline-scope"
+

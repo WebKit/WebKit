@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+PASS Test toJSON() in PerformanceEventTiming.
+

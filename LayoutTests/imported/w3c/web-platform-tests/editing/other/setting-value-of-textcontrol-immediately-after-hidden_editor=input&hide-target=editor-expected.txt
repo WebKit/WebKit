@@ -1,0 +1,9 @@
+
+PASS Wait for load event
+PASS <input>.value = "new value" (without focus)
+PASS <input>.value = "new value" (with focus)
+PASS <input>.value = "new value" (after blur)
+PASS <input>.setRangeText("new", 0, "default".length) (without focus)
+PASS <input>.setRangeText("new", 0, "default".length) (with focus)
+PASS <input>.setRangeText("new", 0, "default".length) (after blur)
+

@@ -1,0 +1,30 @@
+
+RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+EXPECTED (internals.mediaElementViewportVisibility(video) == 'NotVisible') OK
+
+Test viewport visibility in Picture-in-Picture:
+RUN(video.requestPictureInPicture())
+EVENT(enterpictureinpicture)
+EXPECTED (internals.mediaElementViewportVisibility(video) == 'VisibleInPictureInPicture') OK
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+RUN(document.exitPictureInPicture())
+EVENT(leavepictureinpicture)
+EXPECTED (internals.mediaElementViewportVisibility(video) == 'NotVisible') OK
+
+Test viewport visibility in Fullscreen:
+RUN(video.webkitEnterFullscreen())
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (internals.mediaElementViewportVisibility(video) == 'VisibleInFullscreen') OK
+RUN(video.webkitExitFullscreen())
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.mediaElementViewportVisibility(video) == 'NotVisible') OK
+
+Ensure video becomes visible-in-viewport when scrolled on-screen:
+RUN(video.scrollIntoView())
+EXPECTED (internals.mediaElementViewportVisibility(video) == 'VisibleInViewport') OK
+END OF TEST
+

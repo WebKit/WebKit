@@ -1,0 +1,17 @@
+This tests that the user still receives the errors when the page replaces the control they activated while it checks the fields, as a page does when it swaps a button for a spinner. The notification that the errors were found is posted without the control it would normally be posted on.
+
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'false'
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: targetIsSubmitter === false
+PASS: placeOrder.isConnected === false
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'true'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Name
+Enter your name.
+Email
+Enter a valid email address.
+Checking your details

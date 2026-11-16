@@ -1,0 +1,32 @@
+
+PASS CSS Anchor Positioning: try-tactic
+PASS flip-block
+PASS flip-y
+PASS flip-inline
+PASS flip-x
+PASS flip-block flip-inline
+PASS flip-inline flip-block
+PASS flip-y flip-x
+PASS flip-x flip-y
+PASS flip-start
+PASS flip-block flip-start flip-inline
+PASS flip-inline flip-start flip-block
+PASS flip-y flip-start flip-x
+PASS flip-x flip-start flip-y
+PASS flip-start flip-block
+PASS flip-inline flip-start
+PASS flip-start flip-y
+PASS flip-x flip-start
+PASS flip-start flip-inline
+PASS flip-block flip-start
+PASS flip-start flip-x
+PASS flip-y flip-start
+PASS flip-start flip-block flip-inline
+PASS flip-start flip-inline flip-block
+PASS flip-inline flip-block flip-start
+PASS flip-block flip-inline flip-start
+PASS flip-start flip-y flip-x
+PASS flip-start flip-x flip-y
+PASS flip-x flip-y flip-start
+PASS flip-y flip-x flip-start
+

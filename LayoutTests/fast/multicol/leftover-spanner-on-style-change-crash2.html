@@ -1,0 +1,28 @@
+<style>
+  html {
+    columns: 1px;
+  }
+  div {
+    position: absolute;
+  }
+  table {
+    column-span: all;
+  }
+  :read-only {
+    translate: 0;
+  }
+</style>
+<script>
+<!-- PASS if no crash or assert. -->
+  
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  
+  onload = () => {
+    let div0 = document.createElement('div');
+    document.body.append(div0);
+    div0.append(document.createElement('table'));
+    document.body.offsetTop;
+    document.designMode = 'on';
+  };
+</script>

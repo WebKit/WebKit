@@ -1,0 +1,8 @@
+
+PASS A plain object can be posted to a dedicated worker
+PASS RTCCertificate cannot be posted to a dedicated worker
+PASS A plain object can be posted to a shared worker
+PASS RTCCertificate cannot be posted to a shared worker
+PASS A plain object can be posted to a service worker
+PASS RTCCertificate cannot be posted to a service worker
+

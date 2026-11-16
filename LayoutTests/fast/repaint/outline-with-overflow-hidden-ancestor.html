@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that outline is clipped properly.</title>
+<style>
+#container {
+    width: 100px;
+    height: 100px;
+    border: 1px solid green;
+    overflow: hidden;
+	-webkit-transform: translateX(0);
+}
+
+#outline {
+    width: 100px;
+    height: 100px;
+    outline-offset: 2px;
+    outline: 1px solid red;
+}
+</style>
+</head>
+<body>
+<div id=container><div id=outline></div></div>
+</body>
+</html>

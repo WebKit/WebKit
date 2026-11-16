@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "00000000-0000-0000-0000-000000000001",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "defaultTestExecutionTimeAllowance" : 3600,
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:libpas.xcodeproj",
+        "identifier" : "BE5700E51A2B3C4D5E6F7081",
+        "name" : "libpas-xctests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<style>
+div {
+    font: 100px/1 Ahem;
+    color: green;
+}
+span {
+    font-size: 50px;
+    color: blue;
+}
+</style>
+<!-- alignment-baseline: middle centers the box on its parent's x-middle baseline like vertical-align: middle does, rather than
+     lining up the two x-middle baselines (https://github.com/w3c/csswg-drafts/issues/13951). With Ahem, that's
+     80px / 2 - (40px - 10px) / 2 = 25px above the parent's baseline instead of 40px - 20px = 20px. -->
+<div>X<span style="alignment-baseline: middle">X</span></div>
+<div>X<span style="alignment-baseline: middle; vertical-align: 10px">X</span></div>

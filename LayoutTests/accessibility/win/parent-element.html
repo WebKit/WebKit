@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+
+<body id="body">
+
+<p>This tests that elements return their correct parent element.</p>
+
+<p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+<select id="selectElement" multiple>
+    <option>Option 1</option>
+</select>
+
+<p id="console"></p>
+
+<script>
+    if (window.testRunner && window.accessibilityController) {
+        document.getElementById("notDRT").style.visibility = "hidden";
+
+        document.getElementById("selectElement").focus();
+
+        var optionElement = accessibilityController.focusedElement.childAtIndex(0);
+
+        shouldBe('optionElement.parentElement().role', '"AXRole: AXList"');
+    }
+</script>
+</body>
+</html>

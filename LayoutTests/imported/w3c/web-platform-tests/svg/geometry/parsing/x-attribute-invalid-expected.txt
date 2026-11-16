@@ -1,0 +1,6 @@
+
+PASS x="auto" should be an invalid attribute value (ignored)
+PASS x="none" should be an invalid attribute value (ignored)
+PASS x="10px 20px" should be an invalid attribute value (ignored)
+PASS x="garbage" should be an invalid attribute value (ignored)
+

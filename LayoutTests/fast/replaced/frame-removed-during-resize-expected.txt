@@ -1,0 +1,3 @@
+Test for a crash that could occur when a frame’s resize handler removed the frame.
+
+

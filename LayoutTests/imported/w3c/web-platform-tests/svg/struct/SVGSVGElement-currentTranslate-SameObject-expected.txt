@@ -1,0 +1,6 @@
+
+PASS currentTranslate returns the same object on consecutive reads ([SameObject])
+PASS currentTranslate identity is stable across value changes
+PASS mutations through currentTranslate are observable on re-read
+PASS currentTranslate is readonly; assignment does not change the value
+

@@ -1,0 +1,13 @@
+This test ensures AXParagraphTextMarkerRangeForTextMarker bounds a paragraph at block edges rather than at p elements, so a paragraph mixing an image, bold text and a link stays whole, while a bare div and a table cell each bound one of their own.
+
+PASS: paragraphAt(richStart) === 'Start \uFFFC mid bold link end.'
+PASS: paragraphAt(richInterior) === paragraphAt(richStart)
+
+A p element is not required, any block bounds a paragraph:
+PASS: paragraphAt(startMarkerFor('loose')) === 'Loose text in a bare div.'
+PASS: paragraphAt(startMarkerFor('cell')) === 'Cell text.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

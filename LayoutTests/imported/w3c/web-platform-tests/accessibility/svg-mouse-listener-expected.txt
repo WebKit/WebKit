@@ -1,0 +1,3 @@
+
+PASS Clicking SVG element does not crash the browser
+

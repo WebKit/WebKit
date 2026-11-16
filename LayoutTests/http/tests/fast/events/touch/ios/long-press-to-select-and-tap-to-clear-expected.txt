@@ -1,0 +1,8 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS: Correct Selection
+PASS: Cleared selection
+

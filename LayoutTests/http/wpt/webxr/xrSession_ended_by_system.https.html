@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<body>
+  <script src=/resources/testharness.js></script>
+  <script src=/resources/testharnessreport.js></script>
+  <script src="../../webxr/resources/webxr_util.js"></script>
+  <script src="../../webxr/resources/webxr_test_constants.js"></script>
+  <canvas></canvas>
+
+  <script>
+    const testDeviceNotReportingShutdownCompleteName = "end event fires when immersive session is ended by system";
+    const testDeviceReportingShutdownCompleteName = "end event fires when immersive session is ended by system and device reports shutdown complete";
+
+    let watcherDone = new Event("watcherdone");
+    const fakeDeviceInitParams = TRACKED_IMMERSIVE_DEVICE;
+
+    let testDeviceNotReportingShutdownComplete = function(session, testDeviceController, t) {
+      testEndSessionBySystem(session, testDeviceController, t);
+    };
+
+    let testDeviceReportingShutdownComplete = function(session, testDeviceController, t) {
+      testDeviceController.setSupportsShutdownNotification();
+      testEndSessionBySystem(session, testDeviceController, t);
+    };
+
+    let testEndSessionBySystem = function(session, testDeviceController, t) {
+      let eventWatcher = new EventWatcher(t, session, ["end", "watcherdone"]);
+      let eventPromise = eventWatcher.wait_for(["end", "watcherdone"]);
+
+      function onSessionEnd(event) {
+        t.step( () => {
+          assert_equals(event.session, session);
+
+          let eventSession = event.session;
+          assert_equals(eventSession, event.session,
+            "XRSessionEvent.session returns the same object.");
+
+          session.dispatchEvent(watcherDone);
+        });
+      }
+      session.addEventListener("end", onSessionEnd, false);
+
+      testDeviceController.simulateShutdown();
+
+      return eventPromise;
+    };
+
+    xr_session_promise_test(testDeviceNotReportingShutdownCompleteName, testDeviceNotReportingShutdownComplete,
+      fakeDeviceInitParams, 'immersive-vr');
+    xr_session_promise_test(testDeviceReportingShutdownCompleteName, testDeviceReportingShutdownComplete,
+      fakeDeviceInitParams, 'immersive-vr');
+
+  </script>
+</body>

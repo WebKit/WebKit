@@ -1,0 +1,7 @@
+
+EXPECTED (MediaSource.isTypeSupported("video/mock; codecs=mock") == 'true') OK
+EXPECTED (MediaSource.isTypeSupported("video/MOCK; codecs=mock") == 'true') OK
+EXPECTED (MediaSource.isTypeSupported("video/mock; codecs=MOCK") == 'false') OK
+EXPECTED (MediaSource.isTypeSupported("video/MOCK; codecs=MOCK") == 'false') OK
+END OF TEST
+

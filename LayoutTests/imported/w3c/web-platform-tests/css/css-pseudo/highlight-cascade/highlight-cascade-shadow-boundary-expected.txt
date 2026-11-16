@@ -1,0 +1,5 @@
+text
+
+PASS A highlight pseudo-element in a shadow tree inherits from the shadow host's
+PASS A highlight pseudo-element of slotted content inherits through the slot
+

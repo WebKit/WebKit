@@ -1,0 +1,4 @@
+Green
+
+PASS min-width of inline-size container affects container size
+

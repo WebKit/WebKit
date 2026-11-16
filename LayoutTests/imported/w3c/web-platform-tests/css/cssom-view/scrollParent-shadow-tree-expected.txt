@@ -1,0 +1,6 @@
+
+FAIL scrollParent skips intermediate closed shadow tree nodes closedInnerElement.scrollParent is not a function. (In 'closedInnerElement.scrollParent()', 'closedInnerElement.scrollParent' is undefined)
+FAIL scrollParent skips intermediate open shadow tree nodes openInnerElement.scrollParent is not a function. (In 'openInnerElement.scrollParent()', 'openInnerElement.scrollParent' is undefined)
+FAIL scrollParent from inside closed shadow tree closedShadowRoot.querySelector('div').scrollParent is not a function. (In 'closedShadowRoot.querySelector('div').scrollParent()', 'closedShadowRoot.querySelector('div').scrollParent' is undefined)
+FAIL scrollParent from inside open shadow tree openShadowComponent.shadowRoot.querySelector('div').scrollParent is not a function. (In 'openShadowComponent.shadowRoot.querySelector('div').scrollParent()', 'openShadowComponent.shadowRoot.querySelector('div').scrollParent' is undefined)
+

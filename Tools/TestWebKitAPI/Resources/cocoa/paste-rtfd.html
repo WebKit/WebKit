@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="editor" contenteditable></div>
+<script>
+const editor = document.getElementById('editor');
+editor.focus();
+
+var clipboardData = {};
+editor.addEventListener('paste', (event) => {
+    clipboardData.types = Array.from(event.clipboardData.types);
+    clipboardData.items = Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type}));
+    clipboardData.values = clipboardData.types.map((type) => event.clipboardData.getData(type));
+    clipboardData.files = Array.from(event.clipboardData.files);
+
+    setTimeout(() => {
+       let img = document.querySelector('img');
+       if (img.complete)
+           notifyLoaded();
+       else
+           img.onload = notifyLoaded;
+    }, 0);
+});
+
+function notifyLoaded()
+{
+    if (window.webkit)
+        webkit.messageHandlers.testHandler.postMessage('loaded');
+    else
+        alert('loaded');
+}
+
+</script>
+</body>
+</html>

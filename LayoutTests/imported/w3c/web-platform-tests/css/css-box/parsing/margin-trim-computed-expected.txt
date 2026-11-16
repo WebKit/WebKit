@@ -1,0 +1,8 @@
+
+PASS Property margin-trim value 'none'
+PASS Property margin-trim value 'block'
+PASS Property margin-trim value 'block-start'
+PASS Property margin-trim value 'block-end'
+PASS Property margin-trim value 'block-start block-end'
+PASS Property margin-trim value 'block-end block-start'
+

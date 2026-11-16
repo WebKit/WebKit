@@ -1,0 +1,1 @@
+Test that normalize() behaves correctly in the presence of a mutation event that modifies the child order. PASS if test does not crash. abc

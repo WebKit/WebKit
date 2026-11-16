@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `isDelegatedRequest` as part of `ApplePayRequestBase`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+    setup({ explicit_done: true, explicit_timeout: true });
+    test((test) => {
+        const method = validPaymentMethod();
+        method.data.features = ["paymentRequestDelegation"];
+        new PaymentRequest([method], validPaymentDetails());
+    }, "Should have a feature for `paymentRequestDelegation`.");
+    
+    user_activation_test(async (test) => {
+        const request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        
+        request.addEventListener("shippingaddresschange", (event) => {
+            assert_equals(internals.mockPaymentCoordinator.isDelegatedRequest, null, "check that `isDelegatedRequest` is still `null` after an update");
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+        
+        const response = await request.show();
+        
+        assert_equals(internals.mockPaymentCoordinator.isDelegatedRequest, null, "check that `isDelegatedRequest` is still `null` after the payment is accepted");
+        
+        await response.complete("success");
+    }, "Should not have a default value for `isDelegatedRequest`.");
+    
+    user_activation_test(async (test) => {
+        const method = validPaymentMethod();
+        
+        method.data.isDelegatedRequest = true;
+        
+        const request = new PaymentRequest([method], validPaymentDetails());
+        
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        
+        request.addEventListener("shippingaddresschange", (event) => {
+            assert_equals(internals.mockPaymentCoordinator.isDelegatedRequest, method.data.isDelegatedRequest, "check that `isDelegatedRequest` still matches after an update");
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+        
+        const response = await request.show();
+        
+        assert_equals(internals.mockPaymentCoordinator.isDelegatedRequest, method.data.isDelegatedRequest, "check that `isDelegatedRequest` still matches after the payment is accepted");
+        
+        await response.complete("success");
+    }, "Should propagate `isDelegatedRequest` if provided.");
+    
+    done();
+</script>

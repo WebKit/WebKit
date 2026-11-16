@@ -1,0 +1,11 @@
+An ordered marker followed by an unordered marker (or vice versa) on consecutive lines should not trigger smart-list conversion, because ordered and unordered markers are incompatible.
+
+Unordered then ordered:
+| "* Hello"
+| <div>
+|   "1. World<#selection-caret>"
+
+Ordered then unordered:
+| "1. Hello"
+| <div>
+|   "* World<#selection-caret>"

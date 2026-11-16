@@ -1,0 +1,55 @@
+<body>
+<p>Test that a MediaStreamTrack can be transferred through a MessageChannel in the same context.</p>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("log").textContent += msg + "\n";
+}
+
+async function runTest() {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track = stream.getAudioTracks()[0];
+
+    const channel = new MessageChannel();
+    let receivedTransfer = false;
+
+    channel.port2.onmessage = (event) => {
+        if (event.data === "done") {
+            if (!receivedTransfer)
+                log("FAIL: never received the MediaStreamTrack message");
+            if (window.testRunner)
+                testRunner.notifyDone();
+            return;
+        }
+
+        receivedTransfer = true;
+        const received = event.data;
+        if (received instanceof MediaStreamTrack)
+            log("PASS: received a MediaStreamTrack");
+        else
+            log("FAIL: expected a MediaStreamTrack, got " + received);
+
+        if (received.kind === "audio")
+            log("PASS: track kind is audio");
+        else
+            log("FAIL: expected kind 'audio', got '" + received.kind + "'");
+
+        received.stop();
+    };
+
+    channel.port1.postMessage(track, [track]);
+    channel.port1.postMessage("done");
+}
+
+runTest().catch(e => {
+    log("FAIL: " + e);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>

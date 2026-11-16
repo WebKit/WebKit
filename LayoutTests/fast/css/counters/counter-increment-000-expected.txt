@@ -1,0 +1,14 @@
+This is the WebKit version of CSS 2.1 Test Suite: dynamic changes to 'counter-increment'.
+
+Before the dynamic change:
+PASS window.internals.counterValue(document.getElementById('one')) is '1'
+PASS window.internals.counterValue(document.getElementById('three')) is '2'
+PASS window.internals.counterValue(document.getElementById('four')) is '3'
+After the dynamic change:
+PASS window.internals.counterValue(document.getElementById('one')) is '1'
+PASS window.internals.counterValue(document.getElementById('two')) is '2'
+PASS window.internals.counterValue(document.getElementById('three')) is '3'
+PASS window.internals.counterValue(document.getElementById('four')) is '4'
+
+TEST COMPLETE
+

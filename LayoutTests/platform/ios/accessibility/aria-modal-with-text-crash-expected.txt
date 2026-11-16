@@ -1,0 +1,10 @@
+This test ensures we don't crash when using search to traverse an aria-modal with text.
+
+
+StaticText
+AXLabel: Foo
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo

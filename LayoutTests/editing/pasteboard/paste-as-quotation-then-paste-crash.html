@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+:last-child {
+    all: initial;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = () => {
+    let n0 = document.createElement('div');
+    document.documentElement.appendChild(n0);
+    n0.appendChild(document.createElement('input'));
+    let n1 = document.createElement('input');
+    document.documentElement.appendChild(n1);
+    getSelection().selectAllChildren(n0);
+    document.execCommand('Copy');
+    document.designMode = 'on';
+    document.execCommand('PasteAsQuotation');
+    getSelection().extend(n1);
+    document.execCommand('Paste');
+};
+</script>
+</head>
+<body>
+This test passes if WebKit does not crash. PASS
+</body>
+</html>

@@ -1,0 +1,11 @@
+`history.scrollRestoration = 'manual'` should not prevent scrolling to a fragment for non-history navigations
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Navigating to fragment URL
+PASS w.scrollY > 0 became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

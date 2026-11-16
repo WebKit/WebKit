@@ -1,0 +1,14 @@
+<style>
+html {
+  content-visibility: auto;
+}
+body { 
+  column-count: 2;
+  margin: auto; 
+}
+</style>
+<!-- PASS if no crash or assert. -->
+<body><video controls="false"><script>
+window.testRunner?.dumpAsText();
+document.elementFromPoint(0, 0);
+</script>

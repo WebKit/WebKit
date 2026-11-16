@@ -1,0 +1,11 @@
+Verifies that dynamically-inserted image analysis context menu items show up after long-pressing on an image. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Found QR code menu item
+PASS Finished dismissing context menu
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="240" height="240" viewBox="0 0 240 240">
+<defs><path id="m" fill="green" transform="scale(0.15,0.15)" d="M 100 100 L 900 100 L 900 300 L 100 300 Z"/></defs>
+<use xlink:href="#m"/>
+</svg>

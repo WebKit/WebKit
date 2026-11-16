@@ -1,0 +1,4 @@
+
+PASS <dialog> can contain autofocus, without stopping page autofocus content from working
+PASS <dialog>-contained autofocus element gets focused when the dialog is shown
+

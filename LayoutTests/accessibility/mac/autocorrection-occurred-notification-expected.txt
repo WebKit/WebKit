@@ -1,0 +1,10 @@
+This tests that autocorrection posts AXAutocorrectionOccurred, and that the corrected text is already exposed when the notification arrives.
+
+PASS: autocorrectionDeliveries() === 0
+PASS: autocorrectionDeliveries() === 1
+PASS: editorTextAtDelivery === 'You there?'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

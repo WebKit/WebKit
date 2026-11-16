@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<iframe id="frame" srcdoc="<!DOCTYPE html><body></body>"></iframe>
+<script>
+description("Deleting one of several touch handler nodes in a nested document must not drop that document's remaining touch handlers from its parent document.");
+jsTestIsAsync = true;
+
+onload = () => {
+    var frame = document.getElementById('frame');
+    var nestedDocument = frame.contentDocument;
+
+    var keptDiv = nestedDocument.createElement('div');
+    keptDiv.addEventListener('touchstart', () => { });
+    nestedDocument.body.appendChild(keptDiv);
+
+    var div = nestedDocument.createElement('div');
+    div.addEventListener('touchstart', () => { });
+    nestedDocument.body.appendChild(div);
+    shouldBe('internals.touchEventHandlerCount()', '2');
+
+    div.remove();
+    div = null;
+
+    gc();
+    shouldBe('internals.touchEventHandlerCount()', '1');
+
+    frame.remove();
+    shouldBe('internals.touchEventHandlerCount()', '0');
+    finishJSTest();
+};
+</script>

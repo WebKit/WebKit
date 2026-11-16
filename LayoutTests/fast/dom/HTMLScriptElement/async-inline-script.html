@@ -1,0 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+Checks that inline scripts are not async.
+<div id="console"></div>
+<script async>
+  debug(1);
+</script>
+<script>
+  debug(2);
+</script>
+</body>
+</html>

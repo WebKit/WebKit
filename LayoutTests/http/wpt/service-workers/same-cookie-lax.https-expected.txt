@@ -1,0 +1,5 @@
+
+PASS Setup worker
+PASS Test service worker samesite lax cookie - service worker internal fetch
+PASS Test service worker samesite lax cookie - fetch served from service worker
+

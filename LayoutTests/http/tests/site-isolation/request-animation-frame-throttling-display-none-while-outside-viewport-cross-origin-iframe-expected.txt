@@ -1,0 +1,13 @@
+Tests that an out-of-process subframe stops being throttled when it becomes display:none while already outside the viewport
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The frame starts outside the viewport, so it should be throttled.
+PASS throttlingState became "requestAnimationFrame=true,timers=true"
+Hiding the already-offscreen frame with display:none.
+PASS throttlingState became "requestAnimationFrame=false,timers=false"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

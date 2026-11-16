@@ -1,0 +1,26 @@
+<script>
+addEventListener("message", (event) => {
+    if (!event.data || event.data.type != "image-bitmap")
+        return;
+    try {
+        const bitmap = event.data.bitmap;
+        if (!bitmap) {
+            window.parent.postMessage({ type: "child-ack", result: "bitmap was null" }, "*");
+            return;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        const context = canvas.getContext("2d");
+        context.drawImage(bitmap, 0, 0);
+        const pixel = Array.from(context.getImageData(bitmap.width / 2, bitmap.height / 2, 1, 1).data).join();
+        window.parent.postMessage({ type: "child-ack", result: bitmap.width + "x" + bitmap.height + " pixel " + pixel }, "*");
+    } catch (e) {
+        window.parent.postMessage({ type: "child-ack", result: "exception: " + e }, "*");
+    }
+});
+
+addEventListener("messageerror", () => {
+    window.parent.postMessage({ type: "child-ack", result: "messageerror" }, "*");
+});
+</script>

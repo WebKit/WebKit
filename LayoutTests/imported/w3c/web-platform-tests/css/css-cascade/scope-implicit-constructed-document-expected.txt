@@ -1,0 +1,16 @@
+
+PASS Implicit @scope in a constructed stylesheet adopted by a document matches descendants
+PASS Implicit @scope in a constructed stylesheet adopted by a document matches the root element
+PASS :scope in implicit @scope in a constructed stylesheet adopted by a document does not match any element
+PASS Scoped declarations in implicit @scope in a constructed stylesheet adopted by a document do not match any element
+PASS Explicit :scope with a descendant combinator in implicit @scope in a constructed stylesheet adopted by a document
+PASS & with a descendant combinator in implicit @scope in a constructed stylesheet adopted by a document
+PASS Child combinator in implicit @scope in a constructed stylesheet adopted by a document matches only the root element
+PASS Implicit @scope with a scope end in a constructed stylesheet adopted by a document
+PASS Implicit @scope in a constructed stylesheet adopted by a document wins over unscoped rules by proximity
+PASS Implicit @scope in a constructed stylesheet adopted by a document loses to a closer scoping root by proximity
+PASS Nested @scope inside implicit @scope in a constructed stylesheet adopted by a document
+PASS Implicit @scope in a constructed stylesheet adopted by a document does not match in shadow trees
+PASS Implicit @scope in a constructed stylesheet adopted by both a document and a shadow root
+PASS Implicit @scope in a constructed stylesheet stops matching once the document no longer adopts it
+

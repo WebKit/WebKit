@@ -1,0 +1,3 @@
+
+PASS Child elements should be excluded from elementsFromPoint
+

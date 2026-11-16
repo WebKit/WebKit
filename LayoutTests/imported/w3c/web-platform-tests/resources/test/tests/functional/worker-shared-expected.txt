@@ -1,0 +1,18 @@
+Shared Web Worker Tests
+
+Demonstrates running testharness based tests inside a shared worker.
+
+The test harness should time out due to one of the tests in the worker timing out.
+
+This test assumes that the browser supports shared web workers.
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Browser supports SharedWorkers
+PASS Worker test that completes successfully
+FAIL Worker test that fails ('FAIL') assert_true: Failing test expected true got false
+TIMEOUT Worker test that times out ('TIMEOUT') Test timed out
+NOTRUN Worker test that doesn't run ('NOT RUN')
+PASS Worker async_test that completes successfully
+

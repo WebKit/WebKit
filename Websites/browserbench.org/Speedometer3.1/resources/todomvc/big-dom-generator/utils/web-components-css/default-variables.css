@@ -1,0 +1,5 @@
+:root {
+    --complex-border-bottom-color-default: rgb(237, 237, 237);
+    --complex-background-color-default: rgb(255, 255, 255);
+    --complex-label-color-default: rgb(72, 72, 72);
+}

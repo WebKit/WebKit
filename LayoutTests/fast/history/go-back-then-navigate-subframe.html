@@ -1,0 +1,27 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that navigating an iframe after going back does not create a new main frame history item.");
+jsTestIsAsync = true;
+
+function runTest() {
+    if (sessionStorage.didNavigate) {
+        delete sessionStorage.didNavigate;
+        setTimeout(() => {
+            const iframe = document.getElementById("frame");
+            iframe.src = "about:blank";
+            iframe.addEventListener("load", () => {
+                iframe.addEventListener("load", () => {
+                    finishJSTest();
+                });
+                history.back();
+            });
+        }, 0);
+    } else {
+        setTimeout(() => {
+            location.href = 'data:text/html,<script> history.back(); <\/script>';
+        }, 0);
+        sessionStorage.didNavigate = true;
+    }
+}
+</script>
+<iframe id="frame" src="resources/frame-initial-url.html#noalert"></iframe>

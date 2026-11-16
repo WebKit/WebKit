@@ -1,0 +1,6 @@
+| <i>
+|   "hello "
+| <b>
+|   "world"
+|   " "
+| "bar<#selection-caret>"

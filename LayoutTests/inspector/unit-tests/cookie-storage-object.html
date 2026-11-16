@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("CookieStorageObject");
+
+    const host = "www.example.com";
+    const loadedDocumentURL = "https://" + host + "/path/to/dir/index.html";
+
+    // The only resource the frame model has for an out-of-process frame at attach time
+    // is a stub whose URL is the bare security origin, with no path.
+    const originOnlyStubURL = "https://" + host;
+
+    function makeCookie(name, {domain, path, secure} = {})
+    {
+        return WI.Cookie.fromPayload({name, value: "value", domain, path, secure: !!secure, session: true});
+    }
+
+    // A `Set-Cookie` header with no explicit `Path` defaults the cookie's path to the document's directory.
+    let pathScopedCookie = makeCookie("pathScoped", {domain: "." + host, path: "/path/to/dir", secure: true});
+    let hostOnlyDomainCookie = makeCookie("hostOnlyDomain", {domain: host, path: "/"});
+    let otherHostCookie = makeCookie("otherHost", {domain: ".other.com", path: "/"});
+
+    function withStorageDomain(useStorageDomain, callback)
+    {
+        // `shouldUseStorageDomain` is a prototype getter; an own property shadows it for the duration.
+        Object.defineProperty(WI.storageManager, "shouldUseStorageDomain", {value: useStorageDomain, configurable: true});
+        try {
+            callback();
+        } finally {
+            delete WI.storageManager.shouldUseStorageDomain;
+        }
+    }
+
+    // Stands in for the frame model while `callback` runs, and reports whether it was consulted at all.
+    function withFrameForURL(url, callback)
+    {
+        let frame = {mainResource: {url, urlComponents: parseURL(url)}, resourceCollection: []};
+
+        let framesAccessed = false;
+        Object.defineProperty(WI.networkManager, "frames", {
+            get() {
+                framesAccessed = true;
+                return [frame];
+            },
+            configurable: true,
+        });
+        try {
+            callback();
+        } finally {
+            delete WI.networkManager.frames;
+        }
+        return framesAccessed;
+    }
+
+    function names(cookies)
+    {
+        return cookies.map((cookie) => cookie.name);
+    }
+
+    suite.addTestCase({
+        name: "CookieStorageObject.prototype.filterCookiesForHost.StorageDomain",
+        description: "Cookies from the authoritative store should be bucketed by cookie domain, ignoring the frame model.",
+        test() {
+            let cookieStorageObject = new WI.CookieStorageObject(host);
+            let cookies = [pathScopedCookie, hostOnlyDomainCookie, otherHostCookie];
+
+            withStorageDomain(true, () => {
+                let framesAccessed = withFrameForURL(originOnlyStubURL, () => {
+                    let filtered = cookieStorageObject.filterCookiesForHost(cookies);
+                    InspectorTest.expectShallowEqual(names(filtered), ["pathScoped", "hostOnlyDomain"], "Should keep both cookies whose domain matches the host.");
+                });
+                InspectorTest.expectFalse(framesAccessed, "Should not gather resources on the Storage domain path.");
+            });
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "CookieStorageObject.prototype.filterCookiesForHost.LegacyPageDomain",
+        description: "The legacy Page path should keep matching cookies against the URLs of loaded resources.",
+        test() {
+            let cookieStorageObject = new WI.CookieStorageObject(host);
+            let cookies = [pathScopedCookie, hostOnlyDomainCookie, otherHostCookie];
+
+            withStorageDomain(false, () => {
+                withFrameForURL(loadedDocumentURL, () => {
+                    let filtered = cookieStorageObject.filterCookiesForHost(cookies);
+                    InspectorTest.expectShallowEqual(names(filtered), ["pathScoped", "hostOnlyDomain"], "Should keep the cookies whose path scopes the loaded document.");
+                });
+
+                withFrameForURL(originOnlyStubURL, () => {
+                    let filtered = cookieStorageObject.filterCookiesForHost(cookies);
+                    InspectorTest.expectShallowEqual(names(filtered), ["hostOnlyDomain"], "Should drop the path-scoped cookie when only the origin-only stub is loaded.");
+                });
+            });
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing WI.CookieStorageObject.</p>
+</body>
+</html>

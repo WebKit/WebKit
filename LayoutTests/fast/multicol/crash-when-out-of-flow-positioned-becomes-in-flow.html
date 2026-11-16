@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.positioned {
+  position: absolute;
+}
+div, span {
+ column-count: 2;
+}
+</style>
+</head>
+<body>
+PASS if no crash.
+<div><div></div><span></span><div class=positioned><div class=positioned><div></div></div></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+document.head.innerText = "";
+</script>
+</body>
+</html>

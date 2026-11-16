@@ -1,0 +1,25 @@
+<style>
+.container {
+  width: 50px;
+  height: 45px;
+  font-size: 10px;
+  color: transparent;
+  font-family: Ahem;
+  background-color: green;
+}
+.out_of_flow {
+  display: inline;
+  width: 25px;
+  height: 25px;
+  background-color: blue;
+  position: absolute;
+}
+</style>
+<div class=container style="text-align: center">some text<br><div class=out_of_flow></div></div>
+<div class=container style="text-align: right">some text<br><div class=out_of_flow></div></div>
+<div class=container style="text-align-last: center">some text<br><div class=out_of_flow></div></div>
+<div class=container style="text-align-last: right">some text<br><div class=out_of_flow></div></div>
+<div class=container style="direction: rtl; text-align: start">some text<br><div class=out_of_flow></div></div>
+<div class=container style="direction: rtl; text-align: end">some text<br><div class=out_of_flow></div></div>
+<div class=container style="writing-mode: vertical-lr; text-align: center">some text<br><div class=out_of_flow></div></div>
+<div class=container style="writing-mode: vertical-lr; text-align: right">some text<br><div class=out_of_flow></div></div>

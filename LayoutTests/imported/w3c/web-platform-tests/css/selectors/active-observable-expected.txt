@@ -1,0 +1,19 @@
+
+PASS Clicked element matches :active within its pointerdown listener
+PASS Ancestor of clicked element matches :active within pointerdown listener
+PASS Text node press target activates its parent element (pointerdown)
+PASS :active applies on press and clears on release with preventDefault() on pointerdown
+PASS Clicked element matches :active within its mousedown listener
+PASS Ancestor of clicked element matches :active within mousedown listener
+PASS Text node press target activates its parent element (mousedown)
+PASS :active applies on press and clears on release with preventDefault() on mousedown
+PASS :active is set while held and cleared after the pointer is released
+PASS Clicked element no longer matches :active within its pointerup listener
+PASS :active is cleared on release even when pointerup listener calls preventDefault()
+PASS Clicked element no longer matches :active within its mouseup listener
+PASS :active is cleared on release even when mouseup listener calls preventDefault()
+PASS :active persists while the held pointer moves within the target
+PASS Clicked element no longer matches :active within its click listener
+PASS Non-primary (right) button press activates :active
+PASS Non-primary (middle) button press activates :active
+

@@ -1,0 +1,37 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+document.cookie = "secret=PASS"; 
+
+function log(msg) {
+    var line = document.createElement("div");
+    line.appendChild(document.createTextNode(msg));
+    document.getElementById("console").appendChild(line);
+}
+
+function runTest() {
+    log("Running test.");
+    frames[1].document.open();
+    log(frames[1].document.cookie);
+    log("Test complete.");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<base href="http://localhost:8000/security/cookies/resources/set-a-cookie.html">
+</head>
+<body>
+<iframe
+  onload="runTest()"
+  src="http://localhost:8000/security/cookies/resources/set-a-cookie.html">
+</iframe>
+<iframe></iframe>
+<div id="console"></div>
+</body>
+</html>

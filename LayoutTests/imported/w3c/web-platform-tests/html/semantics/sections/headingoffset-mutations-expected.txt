@@ -1,0 +1,41 @@
+
+PASS headingoffset property mutations update descendant headings
+PASS nested headingoffset property mutations propagate to descendants
+PASS headingoffset property mutations update all heading types
+PASS headingoffset property mutations propagate to deeply nested desendants
+PASS headingoffset property mutations on shadow host update shadow DOM headings
+PASS headingoffset property mutations on ancestors of shadow host propagate to shadow DOM
+PASS headingoffset property mutations inside shadow DOM update correctly
+PASS headingoffset property mutations on host (not slot) update slotted headings
+PASS headingoffset property mutations propagate via host chain through nested shadow roots
+PASS headingoffset property mutations respect level clamping
+PASS headingoffset property mutations propagate via host chain across two levels of shadow DOM
+PASS headingoffset property propagates only via host chain through three nested shadow DOMs
+PASS headingoffset property mutations update headings at multiple shadow DOM levels independently
+PASS headingoffset attribute mutations update descendant headings
+PASS nested headingoffset attribute mutations propagate to descendants
+PASS headingoffset attribute mutations update all heading types
+PASS headingoffset attribute mutations propagate to deeply nested desendants
+PASS headingoffset attribute mutations on shadow host update shadow DOM headings
+PASS headingoffset attribute mutations on ancestors of shadow host propagate to shadow DOM
+PASS headingoffset attribute mutations inside shadow DOM update correctly
+PASS headingoffset attribute mutations on host (not slot) update slotted headings
+PASS headingoffset attribute mutations propagate via host chain through nested shadow roots
+PASS headingoffset attribute mutations respect level clamping
+PASS headingoffset attribute mutations propagate via host chain across two levels of shadow DOM
+PASS headingoffset attribute propagates only via host chain through three nested shadow DOMs
+PASS headingoffset attribute mutations update headings at multiple shadow DOM levels independently
+PASS headingreset mutations update descendant headings
+PASS headingreset and headingoffset mutations interact correctly
+PASS invalid headingoffset attribute values are handled correctly on mutation
+PASS slot name attribute changes do not change slotted heading levels
+PASS element slot attribute changes do not change heading levels
+PASS slot element removal and addition do not change slotted heading levels
+PASS default-to-named slot transitions do not change heading levels
+PASS swapping slot names does not change slotted heading levels
+PASS manual slot assignment does not change heading levels
+PASS manual slot reassignment between slots does not change heading levels
+PASS non-HTML elements (SVG) slotted with heading descendants get updated via host chain
+PASS non-HTML elements (MathML) slotted with heading descendants get updated via host chain
+PASS manual slot assignment of non-HTML elements does not change heading levels
+

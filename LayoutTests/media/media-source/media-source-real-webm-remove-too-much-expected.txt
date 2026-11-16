@@ -1,0 +1,12 @@
+Tests SourceBuffer.remove() with real WebM data. Removes [0, 4) and verifies removal extends to the sync frame boundary at PTS=4.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('video/webm; codecs="vp8"'))
+EVENT(updateend)
+EVENT(updateend)
+RUN(sourceBuffer.remove(0, 4))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.start(0) == '4') OK
+END OF TEST
+

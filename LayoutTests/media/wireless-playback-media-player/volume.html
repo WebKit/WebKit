@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+
+                route.volume = 1;
+
+                const urlPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        resolve(url);
+                    });
+                });
+
+                video = document.getElementsByTagName('video')[0];
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                run(`video.play()`);
+                await urlPromise;
+
+                const canplaythroughPromise = waitFor(video, 'canplaythrough');
+                run(`route.ready = true`);
+                await canplaythroughPromise;
+
+                run(`internals.setPageMediaVolume(1)`);
+                run(`internals.setMediaElementVolumeLocked(video, false)`);
+                run(`video.volume = 0.5`);
+                testExpected(`route.volume`, 0.5);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that setting video.volume propagates to a MediaDeviceRoute.</p>
+    </body>
+</html>

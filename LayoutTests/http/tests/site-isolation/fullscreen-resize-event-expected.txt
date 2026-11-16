@@ -1,0 +1,4 @@
+
+Resize count after entering fullscreen: 1
+Resize count after exiting fullscreen: 1
+

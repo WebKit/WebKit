@@ -1,0 +1,36 @@
+This test ensures we don't make incorrect updates to the accessibility tree due to dirty layout.
+
+
+{AXRole: AXWebArea}
+
+{#main AXRole: AXGroup}
+
+{AXRole: AXButton}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: Paragraph one}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: Paragraph two}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: Paragraph three}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: Paragraph four}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button one
+Paragraph one
+
+Paragraph two
+
+Paragraph three
+
+Paragraph four

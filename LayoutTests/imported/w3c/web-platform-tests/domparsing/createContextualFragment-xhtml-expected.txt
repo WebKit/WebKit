@@ -1,0 +1,6 @@
+
+PASS A <body> element must be stripped, preserving its children
+PASS The <head> and <body> nested inside a stray <html> element must be stripped too
+PASS Stripping must recurse through nested <html> elements
+PASS <html>, <head> and <body> in a different namespace must not be special
+

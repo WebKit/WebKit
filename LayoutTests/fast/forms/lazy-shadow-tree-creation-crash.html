@@ -1,0 +1,10 @@
+PASS if no crash.
+<div id=x></div>
+<script>
+let audio0 = document.createElement('audio');
+x.append(audio0);
+audio0.controls = true;
+x.append(document.createElement('input'));
+x.outerHTML += '';
+x.remove();
+</script>

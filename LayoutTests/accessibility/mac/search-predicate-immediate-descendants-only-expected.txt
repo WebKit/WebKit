@@ -1,0 +1,10 @@
+This tests that search predicate immediate descendant only results are accurate.
+
+PASS: allDescendantsCount === 17
+PASS: immediateDescendantsCount === 3
+PASS: immediateDescendantsCount === childrenCount
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

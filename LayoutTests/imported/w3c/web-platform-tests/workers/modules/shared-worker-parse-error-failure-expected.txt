@@ -1,0 +1,4 @@
+
+PASS Module shared worker construction for script with syntax error should dispatch an event named error.
+PASS Static import on module shared worker for script with syntax error should dispatch an event named error.
+

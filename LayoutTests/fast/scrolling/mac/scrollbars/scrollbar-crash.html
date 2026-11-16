@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+    *:root {margin-right: 100%;}
+    *:last-child {direction: rtl;}
+</style>
+
+<script>
+    function main() {
+        ele1.scrollIntoViewIfNeeded();
+        document.onpointerlockerror = func;
+        ele1.requestPointerLock();
+        ele2.submit();
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    }
+
+    function func() {
+        document.styleSheets[0].media.appendMedium("Sample");
+    }
+
+</script>
+<body onload="main()">
+This test passes if it doesn't crash
+<time id="ele1" onfocusin="main()">
+</time>
+<form id="ele2">
+</form>
+</body>
+
+</html>

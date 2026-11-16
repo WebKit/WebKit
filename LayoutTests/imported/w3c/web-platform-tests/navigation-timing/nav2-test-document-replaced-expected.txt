@@ -1,0 +1,8 @@
+Description
+
+This test validates that a PerformanceNavigationTiming corresponding to a detached document can't access a different document's state.
+
+
+
+PASS Navigation Timing 2 WPT
+

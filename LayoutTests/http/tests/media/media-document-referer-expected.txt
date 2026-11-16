@@ -1,0 +1,5 @@
+Tests that a media document has correct referer header.
+
+video loaded, referer was correct! OK
+END OF TEST
+

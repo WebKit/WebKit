@@ -1,0 +1,3 @@
+
+PASS navigate event destination after iframe detach
+

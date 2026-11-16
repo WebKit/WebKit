@@ -1,0 +1,3 @@
+
+PASS scroll: scroll() should throw after a navigation finished promise fulfills
+

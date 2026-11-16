@@ -1,0 +1,6 @@
+SyntaxError: Unexpected identifier 'b'
+SyntaxError: Unexpected keyword 'const'
+SyntaxError: Unexpected identifier 'd'
+SyntaxError: Unexpected identifier 'd'
+SyntaxError: Unexpected identifier 'f'
+success

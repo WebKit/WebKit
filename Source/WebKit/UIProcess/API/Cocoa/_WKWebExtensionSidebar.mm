@@ -1,0 +1,188 @@
+/*
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
+
+#import "config.h"
+#import "_WKWebExtensionSidebarInternal.h"
+
+#import "CocoaHelpers.h"
+#import "CocoaImage.h"
+#import "WebExtensionContext.h"
+#import "WebExtensionSidebar.h"
+#import "WebExtensionTab.h"
+#import <wtf/BlockPtr.h>
+#import <wtf/CompletionHandler.h>
+
+@implementation _WKWebExtensionSidebar
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSidebar, _webExtensionSidebar);
+
+- (WKWebExtensionContext *)webExtensionContext
+{
+    RefPtr context = _webExtensionSidebar->extensionContext();
+    return context ? context->wrapper() : nil;
+}
+
+- (NSString *)title
+{
+    auto *title = _webExtensionSidebar->title().createNSString().get();
+    ASSERT(title);
+    return title;
+}
+
+- (CocoaImage *)iconForSize:(CGSize)size
+{
+    return _webExtensionSidebar->icon(WebCore::FloatSize(size))
+        .transform([](Ref<WebCore::Icon> icon) { return WebKit::toCocoaImage(icon.ptr()); })
+        .value_or(nullptr);
+}
+
+- (SidebarViewControllerType *)viewController
+{
+    auto *viewController = _webExtensionSidebar->viewController().get();
+    ASSERT(viewController);
+    return viewController;
+}
+
+- (BOOL)isEnabled
+{
+    return _webExtensionSidebar->isEnabled();
+}
+
+- (WKWebView *)webView
+{
+    auto *webView = _webExtensionSidebar->webView();
+    ASSERT(webView);
+    return webView;
+}
+
+- (void)willOpenSidebarFromUserInteraction:(BOOL)fromUserInteraction
+{
+    _webExtensionSidebar->willOpenSidebar(fromUserInteraction ? WebKit::WebExtensionSidebar::FromUserInteraction::Yes : WebKit::WebExtensionSidebar::FromUserInteraction::No);
+}
+
+- (void)willCloseSidebar
+{
+    _webExtensionSidebar->willCloseSidebar();
+}
+
+- (id<WKWebExtensionTab>)associatedTab
+{
+    if (auto tab = _webExtensionSidebar->tab())
+        return tab.value()->delegate();
+    return nil;
+}
+
+- (id<WKWebExtensionWindow>)associatedWindow
+{
+    if (auto window = _webExtensionSidebar->window())
+        return window.value()->delegate();
+
+    if (auto tab = _webExtensionSidebar->tab()) {
+        if (RefPtr window = tab.value()->window())
+            return window->delegate();
+    }
+
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+- (API::Object&)_apiObject
+{
+    return *_webExtensionSidebar;
+}
+
+- (WebKit::WebExtensionSidebar&) _webExtensionSidebar
+{
+    return *_webExtensionSidebar;
+}
+
+#else // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
+- (WKWebExtensionContext *)webExtensionContext
+{
+    return nil;
+}
+
+- (NSString *)title
+{
+    return nil;
+}
+
+#if PLATFORM(MAC)
+- (NSImage *)iconForSize:(CGSize)size
+{
+    return nil;
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+- (UIImage *)iconForSize:(CGSize)size
+{
+    return nil;
+}
+#endif
+
+- (SidebarViewControllerType *)viewController
+{
+    return nil;
+}
+
+- (BOOL)isEnabled
+{
+    return false;
+}
+
+- (WKWebView *)webView
+{
+    return nil;
+}
+
+- (void)willOpenSidebarFromUserInteraction:(BOOL)fromUserInteraction
+{
+}
+
+- (void)willCloseSidebar
+{
+}
+
+- (id<WKWebExtensionTab>)associatedTab
+{
+    return nil;
+}
+
+- (id<WKWebExtensionWindow>)associatedWindow
+{
+    return nil;
+}
+
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
+@end

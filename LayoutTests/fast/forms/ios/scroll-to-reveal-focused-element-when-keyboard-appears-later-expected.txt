@@ -1,0 +1,10 @@
+
+Verifies that a focused text area near the bottom of the page is scrolled above the software keyboard when the keyboard only appears after the text area has been focused. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS inputViewBounds.top is >= caretRect.top + caretRect.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

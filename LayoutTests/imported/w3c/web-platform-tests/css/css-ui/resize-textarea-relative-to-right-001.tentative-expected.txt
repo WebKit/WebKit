@@ -1,0 +1,4 @@
+
+
+FAIL resizing of textarea whose position is anchored to the right side assert_equals: width after move 2 expected 158 but got 156
+

@@ -1,0 +1,15 @@
+This test verifies that text marker range bounds for vertical text orientations are correct.
+
+PASS: mixedText.boundsForRange(0, 5) was equal or approximately equal to (x: -1, y: -1, w: 23, h: 45).
+PASS: mixedText.boundsForRange(6, 6) was equal or approximately equal to (x: -1, y: -1, w: 23, h: 52).
+PASS: mixedText.boundsForRange(0, 12) was equal or approximately equal to (x: -1, y: -1, w: 23, h: 102).
+PASS: uprightText.boundsForRange(0, 5) was equal or approximately equal to (x: -1, y: -1, w: 23, h: 101).
+PASS: uprightText.boundsForRange(6, 6) was equal or approximately equal to (x: -1, y: -1, w: 23, h: 121).
+PASS: uprightText.boundsForRange(0, 12) was equal or approximately equal to (x: -1, y: -1, w: 23, h: 226).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world.
+
+Hello world.

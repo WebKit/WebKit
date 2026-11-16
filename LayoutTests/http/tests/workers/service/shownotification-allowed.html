@@ -1,0 +1,82 @@
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<script>
+
+function failTheTest(msg)
+{
+    testFailed(msg);
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.grantWebNotificationPermission(testURL);
+    setTimeout("failTheTest('timed out')", 15000);
+}
+
+description("This tests that a notification shown by a service worker can be clicked and closed, with those actions being observable by the service worker");
+
+shouldBeEqualToString("Notification.permission", "granted");
+
+async function registerServiceWorker() {
+    var registration = await navigator.serviceWorker.register('resources/shownotification-worker.js');
+    
+    if (!registration)
+        return testFailed("No registration");
+    
+    if (registration.active) {
+        registration.active.postMessage("Start");
+        return;
+    }
+
+    var installingWorker = registration.installing;
+    if (!installingWorker)
+        failTheTest("No active *or* installing worker");
+
+    installingWorker.addEventListener("statechange", () => {
+        if (installingWorker.state === "activated") {
+            installingWorker.postMessage("tryshow|title|body|tag|foobar");
+        }
+    });
+}
+
+var gotClicked = false;
+var gotClosed = false;
+
+navigator.serviceWorker.addEventListener('message', async event => {
+    if (event.data == "showFailed") {
+        failTheTest("Unexpectedly received the failed-to-show message");
+    } else if (event.data == "shown") {
+        // We simulate a network process crash so that we make sure that a notification click ensures restarting a service worker
+        if (window.internals)
+            await internals.storeRegistrationsOnDisk();
+        if (window.testRunner)
+            testRunner.terminateNetworkProcess();
+
+        if (testRunner)
+            testRunner.simulateWebNotificationClickForServiceWorkerNotifications();
+    } else if (event.data == "clicked|data:foobar") {
+        shouldBeFalse("gotClicked");
+        shouldBeFalse("gotClosed");
+        gotClicked = true;
+    } else if (event.data == "closed") {
+        shouldBeTrue("gotClicked")
+        shouldBeFalse("gotClosed")
+        gotClosed = true;
+    } else {
+        testFailed("Message received: " + event.data);
+    }
+    
+    if (gotClosed) {
+        testPassed("Close has been observed");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+});
+
+</script>
+</head>
+<body onload="registerServiceWorker()">
+</body>

@@ -1,0 +1,11 @@
+PASS: wheel event was dispatched to <svg> with mouse in empty interior.
+
+(event region
+        (rect (0,0) width=800 height=600)
+      (wheel event listener region
+        (rect (8,8) width=300 height=300)
+        (non-passive
+          (rect (8,8) width=300 height=300)
+        )
+      )
+      )

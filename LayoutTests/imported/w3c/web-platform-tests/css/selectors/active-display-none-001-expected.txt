@@ -1,0 +1,4 @@
+click me
+
+PASS :active on ancestor with display:none does not prevent click from bubbling
+

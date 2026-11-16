@@ -1,0 +1,15 @@
+Tab 1
+First heading
+Second heading
+Third heading
+Elsewhere
+PASS tabRowClicked became true
+PASS getComputedStyle(document.querySelector('.navigation-widget-content')).visibility became 'hidden'
+PASS outlineItemClicked became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+To run this test manually, tap "Tab 1", then "Elsewhere", then "Second heading". "Tab 1" and "Second heading" should each respond to the first tap.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

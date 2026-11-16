@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div tabindex=0 id="scroller1" aria-valuenow="55" role="scrollbar" aria-orientation="vertical">scrollbar</div>
+<div tabindex=0 id="scroller2" aria-valuenow="55" role="scrollbar">scrollbar</div>
+
+<script>
+    var testOutput = "This tests that the ARIA scrollbar role works correctly\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var scroller = accessibilityController.accessibleElementById("scroller1");
+        testOutput += expect("scroller.role", "'AXRole: AXScrollBar'");
+        testOutput += expect("scroller.intValue", "55");
+        testOutput += expect("scroller.orientation", "'AXOrientation: AXVerticalOrientation'");
+
+        document.getElementById("scroller1").setAttribute("aria-orientation", "horizontal");
+        setTimeout(async function() {
+            await waitFor(() => scroller.orientation === "AXOrientation: AXHorizontalOrientation");
+            testOutput += expect("scroller.orientation", "'AXOrientation: AXHorizontalOrientation'");
+
+            // Default orientation should be vertical for scrollbars
+            scroller = accessibilityController.accessibleElementById("scroller2");
+            testOutput += expect("scroller.role", "'AXRole: AXScrollBar'");
+            testOutput += expect("scroller.intValue", "55");
+            testOutput += expect("scroller.orientation", "'AXOrientation: AXVerticalOrientation'");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

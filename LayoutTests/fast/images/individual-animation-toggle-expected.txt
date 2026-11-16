@@ -1,0 +1,22 @@
+This test ensures that when image animation is disabled page-wide, individual image animations can still be toggled on and off individually.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Pausing animations page-wide.
+PASS internals.isImageAnimating(gif) became false
+Resuming animation.
+PASS internals.isImageAnimating(gif) became false
+Pausing animation.
+PASS internals.isImageAnimating(gif) became false
+Resuming animation.
+PASS internals.isImageAnimating(gif) became false
+Scrolling animation off-screen. This should result in it becoming paused.
+PASS internals.isImageAnimating(gif) became false
+Scrolling to make animation visible again.
+PASS internals.isImageAnimating(gif) became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

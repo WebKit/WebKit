@@ -1,0 +1,14 @@
+Debugger.evaluateOnCallFrame in a DFG compiled functions.
+
+Found breakpoint.js
+result: 502500
+dfg function warmed up
+
+Breakpoint set in breakpointBasic()
+Hit Breakpoint!
+Evaluating in DFG frame at frame[1]: 'x = 20000;'
+Resumed from breakpoint
+inside breakpointBasic
+PASS: result is 20003
+Test complete
+

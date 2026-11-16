@@ -1,0 +1,43 @@
+<html>
+<body>
+<p>Test EventSource with an event-stream with incorrect mime-type.</p>
+<div id="result"></div>
+<script>
+function log(msg) {
+    document.getElementById("result").innerHTML += msg + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var es = new EventSource("resources/bad-mime-type.asis");
+
+es.onopen = function (evt) {
+    log("FAIL: got unexpected open event");
+    end();
+};
+
+es.onmessage = function (evt) {
+    log("FAIL: got unexpected message event");
+    end();
+};
+
+es.onerror = function () {
+    if (es.readyState == es.CLOSED)
+        log("PASS");
+    else
+        log("FAIL: invalid state");
+    end();
+};
+
+function end() {
+    es.close();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

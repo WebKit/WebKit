@@ -1,0 +1,96 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div id="test" style="height: 4096px; width: 256px; background-color: blue"></div>
+<script>
+window.jsTestIsAsync = true;
+
+// This is used to detect if scrolling is completely broken.
+const INITIAL_Y_OFFSET = 256;
+let initialScrollY = 0;
+
+function done()
+{
+    document.body.removeChild(document.getElementById("test"));
+    finishJSTest();
+}
+
+async function runTest()
+{
+    await UIHelper.callFunctionAndWaitForScrollToFinish(() => window.scrollTo(0, INITIAL_Y_OFFSET));
+    shouldBe("window.scrollY", "INITIAL_Y_OFFSET", true);
+
+    await testScrollToBottom();
+    await testScrollToTop();
+
+    done();
+}
+
+async function testScrollToBottom()
+{
+    if (window.testRunner) {
+        // Shouldn't scroll.
+        await UIHelper.keyDown("downArrow", ["metaKey", "shiftKey"]);
+        await UIHelper.renderingUpdate();
+        shouldBeTrue("window.scrollY == INITIAL_Y_OFFSET", true);
+
+        // Shouldn't scroll.
+        await UIHelper.keyDown("downArrow", ["metaKey", "altKey"]);
+        await UIHelper.renderingUpdate();
+        shouldBeTrue("window.scrollY == INITIAL_Y_OFFSET", true);
+
+        // Shouldn't scroll.
+        await UIHelper.keyDown("downArrow", ["metaKey", "ctrlKey"]);
+        await UIHelper.renderingUpdate();
+        shouldBeTrue("window.scrollY == INITIAL_Y_OFFSET", true);
+    }
+
+    // Scroll to the end of the document.
+    await UIHelper.callFunctionAndWaitForScrollToFinish(() => {
+        if (window.testRunner)
+            UIHelper.keyDown("downArrow", ["metaKey"]);
+    });
+    shouldBeTrue("window.scrollY >= INITIAL_Y_OFFSET + 1", true);
+}
+
+async function testScrollToTop()
+{
+    if (window.testRunner) {
+        initialScrollY = window.scrollY;
+
+        // Shouldn't scroll.
+        await UIHelper.keyDown("upArrow", ["metaKey", "shiftKey"]);
+        await UIHelper.renderingUpdate();
+        shouldBeTrue("window.scrollY == initialScrollY", true);
+
+        // Shouldn't scroll.
+        await UIHelper.keyDown("upArrow", ["metaKey", "altKey"]);
+        await UIHelper.renderingUpdate();
+        shouldBeTrue("window.scrollY == initialScrollY", true);
+
+        // Shouldn't scroll.
+        await UIHelper.keyDown("upArrow", ["metaKey", "ctrlKey"]);
+        await UIHelper.renderingUpdate();
+        shouldBeTrue("window.scrollY == initialScrollY", true);
+    }
+
+    // Scroll to the beginning of the document.
+    await UIHelper.callFunctionAndWaitForScrollToFinish(() => {
+        if (window.testRunner)
+            UIHelper.keyDown("upArrow", ["metaKey"]);
+    });
+    shouldBeZero("window.scrollY", true);
+}
+
+description("Test key commands to scroll to the end of the document and then to the beginning of the document. To run this test by hand, reload the page then press <kbd>Command</kbd> + <kbd>Down Arrow</kbd> and then press <kbd>Command</kbd> + <kbd>Up Arrow</kbd>.");
+runTest();
+</script>
+</body>
+</html>

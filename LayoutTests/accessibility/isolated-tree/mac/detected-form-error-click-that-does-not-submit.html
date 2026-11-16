@@ -1,0 +1,104 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.field-error { color: #c62828; }
+</style>
+</head>
+<body>
+
+<div id="checkout">
+  <label for="name">Name</label><input id="name" type="text">
+  <div id="name-error" class="field-error"></div>
+  <label for="email">Email</label><input id="email" type="text">
+  <div id="email-error" class="field-error"></div>
+  <label for="filter">Filter</label><input id="filter" type="search" value="shoes">
+  <button id="continue" type="button" disabled>Continue</button>
+  <div id="place-order" role="button" tabindex="0">Place order</div>
+</div>
+
+<script>
+var output = "This tests that a real click only starts a watch for errors when it reaches a control of the page's own that can act. The clear button the browser builds inside a search field is not a control the page wrote, and a disabled button does nothing when clicked, so text the page writes afterwards is not taken for the result of either. The control that does submit still finds its errors afterwards.\n\n";
+
+if (window.accessibilityController && window.eventSender) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var notifications = 0;
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification != "AXPossibleFormValidationError")
+            return;
+        ++notifications;
+        payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    function writeMessage(id, text) {
+        document.getElementById(id).textContent = text;
+    }
+
+    document.getElementById("filter").addEventListener("input", () => writeMessage("name-error", "Enter your name."));
+    document.getElementById("place-order").addEventListener("click", () => {
+        writeMessage("name-error", "Enter your name.");
+        writeMessage("email-error", "Enter a valid email address.");
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    function invalidStatus(id) {
+        return axElement(id).stringAttributeValue("AXInvalid");
+    }
+
+    function isWatching() {
+        return internals.isWatchingForAccessibilityFormErrors();
+    }
+
+    function clickAt(x, y) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    function clickSearchFieldClearButton() {
+        var bounds = document.getElementById("filter").getBoundingClientRect();
+        clickAt(bounds.right - 8, bounds.top + bounds.height / 2);
+    }
+
+    function clickDisabledButton() {
+        var bounds = document.getElementById("continue").getBoundingClientRect();
+        clickAt(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("invalidStatus('name')", "'false'");
+
+        output += evalAndReturn("clickSearchFieldClearButton();");
+        output += expect("document.getElementById('filter').value", "''");
+        output += expect("isWatching()", "false");
+
+        output += evalAndReturn("clickDisabledButton();");
+        output += expect("isWatching()", "false");
+        output += evalAndReturn("writeMessage('email-error', 'Enter a valid email address.');");
+
+        output += expect("notifications", "0");
+        output += expect("invalidStatus('name')", "'false'");
+        output += expect("invalidStatus('email')", "'false'");
+
+        output += evalAndReturn("axElement('place-order').press();");
+        output += await expectAsync("notifications", "1");
+        output += expect("payload", "'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\\nAXFormValidationErrorFieldCount: 2\\n'");
+        output += await expectAsync("invalidStatus('name')", "'true'");
+        output += await expectAsync("invalidStatus('email')", "'true'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

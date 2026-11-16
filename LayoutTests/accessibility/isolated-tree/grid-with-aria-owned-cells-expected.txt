@@ -1,0 +1,12 @@
+This tests that a grid can use aria-owns to establish parent-child relationships between its rows and cells, even when the cell elements are not descendants of the grid in the DOM hierarchy.
+PASS: row1.childAtIndex(0).isEqual(cell_1_1) === true
+PASS: cell_1_1.parentElement().isEqual(row1) === true
+PASS: row3.childAtIndex(13).isEqual(cell_3_14) === true
+PASS: cell_3_14.parentElement().isEqual(row3) === true
+PASS: row5.childAtIndex(27).isEqual(cell_5_28) === true
+PASS: cell_5_28.parentElement().isEqual(row5) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

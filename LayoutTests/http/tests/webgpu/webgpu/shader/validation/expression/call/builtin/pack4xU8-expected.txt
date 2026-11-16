@@ -1,0 +1,21 @@
+
+PASS :unsupported:requires=false
+PASS :unsupported:requires=true
+PASS :supported:requires=false
+PASS :supported:requires=true
+PASS :args:arg="good"
+PASS :args:arg="bad_0args"
+PASS :args:arg="bad_2args"
+PASS :args:arg="bad_0i32"
+PASS :args:arg="bad_0f32"
+PASS :args:arg="bad_0bool"
+PASS :args:arg="bad_0vec4i"
+PASS :args:arg="bad_0vec4f"
+PASS :args:arg="bad_0vec4b"
+PASS :args:arg="bad_0vec2u"
+PASS :args:arg="bad_0vec3u"
+PASS :args:arg="bad_0array"
+PASS :args:arg="bad_0struct"
+PASS :must_use:use=true
+PASS :must_use:use=false
+

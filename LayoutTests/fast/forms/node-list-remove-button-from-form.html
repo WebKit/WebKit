@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<button id="aButton" form="aForm"></button>
+<form id="aForm"></form>
+<script>
+description("Tests that removing a &lt;button&gt; from the document removes it from HTMLFormElement.elements.");
+
+runTest();
+
+function runTest()
+{
+    debug("Before removal of button:");
+    shouldBeNonNull("document.getElementById('aForm').elements");
+    shouldBe("document.getElementById('aForm')['aButton']", "document.getElementById('aButton')");
+    document.getElementById('aButton').remove();
+
+    debug("<br>After removal of button:");
+    shouldBeUndefined("document.getElementById('aForm')['aButton']");
+}
+</script>
+</body>
+</html>

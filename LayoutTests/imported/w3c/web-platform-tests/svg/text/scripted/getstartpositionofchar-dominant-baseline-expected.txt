@@ -1,0 +1,6 @@
+Test Test
+Test Test
+
+PASS textPath: get*PositionOfChar().y should not depend on dominant-baseline
+PASS tspan: get*PositionOfChar().y should not depend on dominant-baseline
+

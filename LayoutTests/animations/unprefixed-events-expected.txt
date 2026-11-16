@@ -1,0 +1,5 @@
+This test performs two iterations of an animation. The animation should fire all three events (start, iteration, end).
+animationstart: move
+animationiteration: move
+animationend: move
+

@@ -1,0 +1,116 @@
+<html>
+<head>
+<title>Smart Invert Images and Video Test</title>
+<style type="text/css">
+    picture, img, video { width: 150px; }
+    /* Testing explicit author overrides. */
+    .no-invert { filter: none; }
+    .preserve-filter { filter: grayscale(1); }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const NONE_VALUE = "none";
+const INVERTED_VALUE = "invert(1)";
+const PRESERVED_VALUE = "grayscale(1)";
+
+function getUIScript() {
+    return `
+    (function() {
+        uiController.simulateAccessibilitySettingsChangeNotification(function() {
+            uiController.uiScriptComplete("Done");
+        });
+    })();`
+}
+
+function expectFilterValueForElements(value, elements, msg) {
+    if (typeof msg !== "string")
+        msg = "";
+    let result = document.getElementById("result");
+    for (el of elements) {
+        var filter = window.getComputedStyle(el).filter;
+        var resultString = filter === value ? "PASS" : "FAIL";
+        resultString += ": filter for " + el.tagName;
+        resultString += el.id ? "#" + el.id : "";
+        resultString += el.className ? "." + el.className : "";
+        resultString += " is '" + filter + "'.";
+        resultString += filter !== value ? "Expected: '" + value + "'." : "";
+        resultString += msg ? " " + msg : "";
+        resultString += "<br>";
+        result.innerHTML += resultString;
+    }
+}
+
+function runTest() {
+    if (!window.internals)
+        return;
+
+    document.getElementById("result").innerHTML += "DEFAULTS<br>";
+
+    // Elements img, picture, video should not be inverted by default.
+    expectFilterValueForElements(NONE_VALUE, document.querySelectorAll("#a, #b, #c, #d, #e, .no-invert"));
+
+    // Verify default for elements with author-provided filter values.
+    expectFilterValueForElements(PRESERVED_VALUE, document.querySelectorAll(".preserve-filter"));
+
+    window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "on";
+    
+    if (testRunner.runUIScript) {
+        testRunner.runUIScript(getUIScript(), function(result) {
+
+            document.getElementById("result").innerHTML += "<br>AFTER INVERT-COLORS IS APPLIED<br>";
+
+            // Elements <img> amd <picture> should be double-inverted when invert colors is on.
+            expectFilterValueForElements(INVERTED_VALUE, document.querySelectorAll("#a, #b, #c"));
+
+            // Element <video> should be double-inverted when invert colors is on.
+            expectFilterValueForElements(INVERTED_VALUE, document.querySelectorAll("#d, #e"));
+
+            // Author overrides should be supported.
+            expectFilterValueForElements(NONE_VALUE, document.querySelectorAll(".no-invert"));
+            expectFilterValueForElements(PRESERVED_VALUE, document.querySelectorAll(".preserve-filter"));
+            
+            document.getElementById("content").hidden = true;
+
+            testRunner.dumpAsText();
+            testRunner.notifyDone();
+        });
+    }
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+</head>
+<body>
+  <div id="content">
+    <img id="a" src="../compositing/resources/simple_image_opaque.png" alt="">
+    <picture id="b"><img class="fallback" src="../compositing/resources/simple_image_opaque.png" alt=""></picture>
+    <picture id="c">
+      <source media="screen" srcset="../compositing/resources/simple_image_opaque.png 150w">
+      <img class="fallback" src="../compositing/resources/simple_image.png" alt="">
+    </picture>
+    <video id="d" poster="../compositing/resources/simple_image_opaque.png"></video>
+    <video id="e" poster="../compositing/resources/simple_image_opaque.png" controls ></video>
+    <br>
+    <img class="no-invert" src="../compositing/resources/simple_image_opaque.png" alt="">
+    <picture class="no-invert"><img class="fallback" src="../compositing/resources/simple_image_opaque.png" alt=""></picture>
+    <picture class="no-invert">
+      <source media="screen" srcset="../compositing/resources/simple_image_opaque.png 150w">
+      <img class="fallback" src="../compositing/resources/simple_image.png" alt="">
+    </picture>
+    <video class="no-invert" poster="../compositing/resources/simple_image_opaque.png"></video>
+    <video class="no-invert" poster="../compositing/resources/simple_image_opaque.png" controls></video>
+    <br>
+    <img class="preserve-filter" src="../compositing/resources/simple_image_opaque.png" alt="">
+    <picture class="preserve-filter"><img class="fallback" src="../compositing/resources/simple_image_opaque.png" alt=""></picture>
+    <picture class="preserve-filter">
+      <source media="screen" srcset="../compositing/resources/simple_image_opaque.png 150w">
+      <img class="fallback" src="../compositing/resources/simple_image.png" alt="">
+    </picture>
+    <video class="preserve-filter" poster="../compositing/resources/simple_image_opaque.png"></video>
+    <video class="preserve-filter" poster="../compositing/resources/simple_image_opaque.png" controls></video>
+  </div>
+  <div id="result"></div>
+</body>
+</html>

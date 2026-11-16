@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel=match href="focus-ring-pseudo-element-list-item-expected.html">
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+div {
+    inline-size: 200px;
+    block-size: 30px;
+    color: transparent;
+}
+
+div::before {
+    content: "";
+    display: list-item;
+    block-size: 100px;
+    color: transparent;
+}
+</style>
+</head>
+<body>
+<div tabindex=0 id=target></div>
+<script>
+onload = () => target.focus();
+</script>
+</body>
+</html>

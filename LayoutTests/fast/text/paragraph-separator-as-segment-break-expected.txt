@@ -1,0 +1,26 @@
+U+2029 PARAGRAPH SEPARATOR is a forced line break in all white-space modes (UAX#14 class BK, CSS Text Level 3 Â§5.1).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('normal').offsetHeight is 20
+PASS document.getElementById('pre').offsetHeight is 20
+PASS document.getElementById('pre-wrap').offsetHeight is 20
+PASS document.getElementById('pre-line').offsetHeight is 20
+PASS document.getElementById('nowrap').offsetHeight is 20
+PASS document.getElementById('multi').offsetHeight is 30
+PASS document.getElementById('edges').offsetHeight is 20
+PASS document.getElementById('in-span').offsetHeight is 20
+PASS document.getElementById('mixed').offsetHeight is 30
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a b
+a b
+a b
+a b
+a b
+a  b
+ a 
+a b
+a b c

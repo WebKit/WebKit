@@ -1,0 +1,16 @@
+Validates that NavigateEvent.info remains valid, even after garbage collection
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS e.info.foo0 is "bar0"
+PASS testFrame.contentWindow.navigation.currentEntry.getState().foo1 is "bar1"
+PASS testFrame.contentWindow.navigation.currentEntry.getState().foo1 is "bar1"
+PASS e.info.foo2 is "bar2"
+PASS e.info.foo2 is "bar2"
+PASS e.info.foo3 is "bar3"
+PASS e.info.foo3 is "bar3"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

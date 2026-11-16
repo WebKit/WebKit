@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (floating) {DIV} at (664,0) size 120x200 [bgcolor=#FF0000]
+      RenderBlock {OL} at (0,0) size 784x0
+      RenderBlock {P} at (0,0) size 784x100
+        RenderText {#text} at (0,0) size 664x99
+          text run at (0,0) width 641: "Vatican approves policy on sex abuse in clergy. The Vatican gave its approval Monday to the revised U.S."
+          text run at (0,20) width 664: "bishops' policy to combat sex abuse in the clergy, declaring the need to restore the image of the priesthood in a"
+          text run at (0,40) width 631: "scandal that has rocked the Roman Catholic Church. The policy allows bishops to conduct a confidential,"
+          text run at (0,60) width 645: "preliminary inquiry when a molestation claim is made to determine whether it is plausible. If it is, the accused"
+          text run at (0,80) width 624: "priest is to be put on leave and then must go before a clerical tribunal to determine his guilt or innocence."

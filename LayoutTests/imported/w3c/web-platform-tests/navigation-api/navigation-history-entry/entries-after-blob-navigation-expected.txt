@@ -1,0 +1,4 @@
+
+
+PASS entries() after navigation to a blob: URL
+

@@ -1,0 +1,11 @@
+helloworld
+helloworld
+helloworld
+
+PASS Selection ending in ::before
+PASS Selection contained in ::before
+PASS Selection ending in ::marker
+PASS Selection contained in ::marker
+PASS Selection ending in ::before-marker
+PASS Selection contained in ::before-marker
+

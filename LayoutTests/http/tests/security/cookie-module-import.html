@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+
+document.cookie = "ModuleSecret=42"
+window.jsTestIsAsync = true;
+
+function pass(url, messagePrefix)
+{
+    testPassed(`${messagePrefix} with ${url}.`);
+    debug("");
+    runNextScriptTest();
+}
+
+function fail(url, messagePrefix)
+{
+    testFailed(`${messagePrefix} with ${url}.`);
+    debug("");
+    runNextScriptTest();
+}
+
+function done()
+{
+    finishJSTest();
+}
+
+let counter = 0;
+function runNextScriptTest()
+{
+    var test = scriptTests.shift();
+    if (!test) {
+        done();
+        return;
+    }
+    var url = test.src + "?testId=" + (counter++);
+    import(url).then(
+        () => test.onload(url),
+        () => test.onerror(url)
+    );
+}
+
+window.onload = runNextScriptTest;
+
+// Tests
+
+const DidLoadScript = "did load script";
+const DidNotLoadScript = "did not load script";
+
+var scriptTests = [
+{
+    src: "./resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+},
+{
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+},
+{
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+},
+{
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+},
+];
+</script>
+</head>
+<body>
+<div id="test-container"></div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+
+PASS inline, 200, parser-inserted
+PASS inline, 404, parser-inserted
+PASS src, 200, parser-inserted
+PASS src, 404, parser-inserted
+PASS src, 200, not parser-inserted
+PASS src, 404, not parser-inserted
+PASS inline, 200, not parser-inserted
+PASS inline, 404, not parser-inserted
+

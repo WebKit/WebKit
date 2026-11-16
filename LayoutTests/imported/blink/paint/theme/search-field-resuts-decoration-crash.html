@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<style>
+span { -webkit-appearance:searchfield-results-decoration; }
+</style>
+Test passes if it does not CRASH.
+<span></span>
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+}
+window.requestAnimationFrame(function() {
+    window.testRunner.notifyDone();
+});
+</script>

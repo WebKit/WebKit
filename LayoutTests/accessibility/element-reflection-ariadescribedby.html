@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="desc1">First description</div>
+<div id="target1">Target 1</div>
+<div class="desc">Second description</div>
+<div id="target2">Target 2</div>
+<div id="desc3">Third description</div>
+<x-target></x-target>
+<div id="desc4">Fourth description</div>
+<div id="target4">Target 4</div>
+<x-custom></x-custom>
+
+<script>
+var output = "Checks that element reflection is exposed to the a11y tree for 'ariaDescribedByElements'\n\n";
+
+class XTarget extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        let target = document.createElement("div");
+        target.id = "innertarget";
+        target.textContent = "Target 3";
+        target.ariaDescribedByElements = [desc3];
+        this.shadowRoot.appendChild(target);
+    }
+}
+customElements.define("x-target", XTarget);
+
+class XCustom extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        let desc = document.createElement("div");
+        desc.id = "desc5";
+        desc.textContent = "Fifth description";
+        let target = document.createElement("div");
+        target.id = "target5";
+        target.textContent = "Target 5";
+        this.shadowRoot.appendChild(desc);
+        this.shadowRoot.appendChild(target);
+        target.ariaDescribedByElements = [desc];
+        document.body.appendChild(desc);
+    }
+}
+customElements.define("x-custom", XCustom);
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var axTarget1, axTarget2, axTarget4, axTarget5, axInnerTarget;
+    target1.ariaDescribedByElements = [desc1];
+    setTimeout(async function() {
+        axTarget1 = accessibilityController.accessibleElementById("target1");
+        if (accessibilityController.platformName == "mac")
+            output += await expectAsync("axTarget1.customContent", "'description: First description'");
+        else
+            output += await expectAsync("axTarget1.helpText", "'AXHelp: First description'");
+
+        target2.ariaDescribedByElements = [document.getElementsByClassName("desc")[0]];
+        axTarget2 = accessibilityController.accessibleElementById("target2");
+        if (accessibilityController.platformName == "mac")
+            output += await expectAsync("axTarget2.customContent", "'description: Second description'");
+        else
+            output += await expectAsync("axTarget2.helpText", "'AXHelp: Second description'");
+
+        target2.setAttribute("aria-describedby", "desc1");
+        if (accessibilityController.platformName == "mac")
+            output += await expectAsync("axTarget2.customContent", "'description: First description'");
+        else
+            output += await expectAsync("axTarget2.helpText", "'AXHelp: First description'");
+
+        axInnerTarget = accessibilityController.accessibleElementById("innertarget");
+        if (accessibilityController.platformName == "mac")
+            output += expect("axInnerTarget.customContent", "'description: Third description'");
+        else
+            output += expect("axInnerTarget.helpText", "'AXHelp: Third description'");
+
+        target2.ariaDescribedByElements = [desc1, document.getElementsByClassName("desc")[0], desc3];
+        if (accessibilityController.platformName == "mac")
+            output += await expectAsync("axTarget2.customContent", "'description: First description Second description Third description'");
+        else
+            output += await expectAsync("axTarget2.helpText", "'AXHelp: First description Second description Third description'");
+
+        target4.ariaDescribedByElements = [desc4];
+        desc4.id = "desc4-new";
+        axTarget4 = accessibilityController.accessibleElementById("target4");
+        if (accessibilityController.platformName == "mac")
+            output += await expectAsync("axTarget4.customContent", "'description: Fourth description'");
+        else
+            output += await expectAsync("axTarget4.helpText", "'AXHelp: Fourth description'");
+
+        axTarget5 = accessibilityController.accessibleElementById("target5");
+        if (accessibilityController.platformName == "mac")
+            output += expect("axTarget5.customContent", "'description: Fifth description'");
+        else
+            output += expect("axTarget5.helpText", "'AXHelp: Fifth description'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true UnifiedPDFEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<style>
+iframe { border: 1px solid red; width: 300px; height: 300px; }
+</style>
+</head>
+<body>
+<script>
+description("This tests that a magnify gesture over a cross-origin PDF iframe does not crash the web content process when site isolation is enabled.");
+jsTestIsAsync = true;
+
+async function runTest() {
+    if (!window.eventSender || !eventSender.scaleGestureStart) {
+        testFailed("This test requires window.eventSender with gesture support (macOS).");
+        finishJSTest();
+        return;
+    }
+
+    const iframe = document.getElementById("frame");
+    const centerX = iframe.offsetLeft + iframe.offsetWidth / 2;
+    const centerY = iframe.offsetTop + iframe.offsetHeight / 2;
+
+    await UIHelper.moveMouseAndWaitForFrame(centerX, centerY);
+    eventSender.scaleGestureStart(1.0);
+    eventSender.scaleGestureChange(1.5);
+    eventSender.scaleGestureChange(2.0);
+    eventSender.scaleGestureEnd(2.0);
+
+    await UIHelper.moveMouseAndWaitForFrame(10, 10);
+    testPassed("Web content process survived the magnify gesture over the cross-origin PDF iframe.");
+    finishJSTest();
+}
+</script>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/test.pdf" onload="runTest()"></iframe>
+</body>
+</html>

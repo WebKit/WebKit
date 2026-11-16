@@ -1,0 +1,18 @@
+<style>
+br { 
+  display: block;
+}
+</style>
+<div><br id=br>PASS if no crash in release.</div><script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+setTimeout(function() {
+  br.style.position = "absolute";
+  document.execCommand("selectAll", false);
+  br.remove();
+  if (window.testRunner)
+    testRunner.notifyDone();
+}, 0);
+</script>

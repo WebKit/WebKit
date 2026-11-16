@@ -1,0 +1,12 @@
+
+PASS Report is not exposed
+PASS ReportBody is not exposed
+PASS ConnectionAllowlistViolationReport is not exposed
+PASS CrashReportBody is not exposed
+PASS CSPViolationReportBody is not exposed
+PASS DeprecationReportBody is not exposed
+PASS IntegrityViolationReportBody is not exposed
+PASS InterventionReportBody is not exposed
+PASS PermissionsPolicyViolationReportBody is not exposed
+PASS ScriptingPolicyReportBody is not exposed
+

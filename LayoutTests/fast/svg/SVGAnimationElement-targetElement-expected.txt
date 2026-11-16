@@ -1,0 +1,121 @@
+CONSOLE MESSAGE: Tests completed: 16/16 passed
+SVGAnimationElement.targetElement Test Suite
+
+Summary: 16/16 elements passed
+
+SVGCircleElement (#test-circle): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGEllipseElement (#test-ellipse): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGRectElement (#test-rect): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGLineElement (#test-line): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGPolylineElement (#test-polyline): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGPolygonElement (#test-polygon): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGPathElement (#test-path): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGTextElement (#test-text): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGImageElement (#test-image): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGGElement (#test-g): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGSVGElement (nested) (#test-svg): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGUseElement (#test-use): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGSwitchElement (#test-switch): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGAElement (#test-a): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGDefsElement (#test-defs): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+SVGSymbolElement (#test-symbol): PASS
+  PASS element found in DOM
+  PASS animate found in DOM
+  PASS targetElement exists
+  PASS targetElement is the parent element
+  PASS targetElement is SVGGraphicsElement
+  PASS targetElement is correct type
+Test
+English
+Click Me
+

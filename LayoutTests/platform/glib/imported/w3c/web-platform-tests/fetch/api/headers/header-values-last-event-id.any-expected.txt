@@ -1,0 +1,3 @@
+
+FAIL fetch() sends the bytes of a non-ASCII Last-Event-ID header value unchanged assert_equals: expected "last-event-id: 636166c3a9\nx-test: 636166c3a9" but got "last-event-id: 636166c383c2a9\nx-test: 636166c383c2a9"
+

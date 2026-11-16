@@ -1,0 +1,7 @@
+
+PASS document has no cookie
+PASS Empty value
+PASS A simple cookie
+PASS A null char
+PASS getting cookie for a cookie-averse document returns empty string, setting does nothing
+

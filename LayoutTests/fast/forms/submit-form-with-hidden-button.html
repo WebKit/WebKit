@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<form id="form">
+<input id="text1" name="text1" value="Press Enter" autofocus>
+<input id="hiddenButton" type="submit" name="hiddenButton" value="Success" hidden>
+<input id="secondButton" type="submit" name="secondButton" value="Fail" style="visibility: hidden">
+</form>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('Tests implicitly submitting with a hidden button.');
+
+let submitter = null;
+form.addEventListener("submit", event => {
+    submitter = event.submitter;
+    event.preventDefault();
+});
+
+text1.focus();
+
+const enterKeyEvent = new KeyboardEvent('keypress', { bubbles: true, cancelable: true, view: window, detail: 0,
+    key: 'Enter', code: 'Enter', keyIdentifier: '', keyCode: 13, charCode: 13, which: 13,
+    location: 0, ctrlKey: false, altKey: false, shiftKey: false, metaKey: false });
+text1.dispatchEvent(enterKeyEvent);
+
+shouldBeEqualToString('submitter.id', 'hiddenButton');
+
+</script>
+</body>
+</html>

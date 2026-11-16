@@ -1,0 +1,4 @@
+Laying out vertical text with this font must not read past the end of its GSUB table. There is nothing to see here; the test is that the web process survives it.
+
+。、「」（）：；ぁあぃい
+PASS

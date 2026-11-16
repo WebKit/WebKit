@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="time" type="time" />
+
+<script>
+var output = "This test ensures that time input meridiem fields can be controlled via assistive technologies.\n\n";
+
+function isValidTextValue(string) { return string.includes("AM") || string.includes("PM"); }
+function isValidIntValue(int) { return int == 0 || int == 1; }
+
+const meridiemElement = internals.shadowRoot(document.getElementById("time")).firstChild.firstChild.lastChild;
+var axMeridiemSpinbutton;
+let lastValueDescription = meridiemElement.ariaValueText;
+let lastIntValue = meridiemElement.ariaValueNow;
+async function verifyAfterChange() {
+    output += await expectAsync("axMeridiemSpinbutton.valueDescription !== lastValueDescription", "true");
+    output += await expectAsync("axMeridiemSpinbutton.ariaValueNow !== lastIntValue", "true");
+    lastValueDescription = axMeridiemSpinbutton.valueDescription;
+    lastIntValue = axMeridiemSpinbutton.intValue;
+    output += expect("isValidTextValue(lastValueDescription)", "true");
+    output += expect("isValidIntValue(lastIntValue)", "true");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // Unfortunately, the childAtIndex path to the meridiem spinbutton can depend on the OS, so do this traversal to find it reliably.
+    let elements = [accessibilityController.accessibleElementById("time")];
+    while (elements.length) {
+        const current = elements.pop();
+        if (current.role.toLowerCase().includes("incrementor") && isValidTextValue(current.valueDescription)) {
+            axMeridiemSpinbutton = current;
+            break;
+        }
+        elements.push(...current.children);
+    }
+    output += expect("axMeridiemSpinbutton.role", "'AXRole: AXIncrementor'");
+    output += expect("isValidTextValue(axMeridiemSpinbutton.valueDescription)", "true");
+
+    document.getElementById("time").focus();
+    eventSender.keyDown("\t");
+    eventSender.keyDown("\t");
+    setTimeout(async () => {
+        output += "\nPressing up arrow.\n";
+        eventSender.keyDown("upArrow");
+        await verifyAfterChange();
+
+        output += "\nPressing up arrow.\n";
+        eventSender.keyDown("upArrow");
+        await verifyAfterChange();
+
+        output += "\nIncrementing via AX API.\n";
+        axMeridiemSpinbutton.increment();
+        await verifyAfterChange();
+
+        output += "\nDecrementing via AX API.\n";
+        axMeridiemSpinbutton.decrement();
+        await verifyAfterChange();
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

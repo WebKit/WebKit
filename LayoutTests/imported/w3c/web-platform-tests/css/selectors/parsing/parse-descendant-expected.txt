@@ -1,0 +1,5 @@
+
+PASS "h1 em" should be a valid selector
+PASS "div * p" should be a valid selector
+PASS "div p *[href]" should be a valid selector
+

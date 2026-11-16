@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<iframe id="firstFrame" src="resources/set-window-name-to-foo.html"></iframe>
+<iframe name="foo"></iframe>
+<script>
+description("Make sure that frame lookup by name has correct ordering when duplicate names are involved.");
+
+onload = () => {
+    // Both frames have the same name "foo" so window.foo should return the first one in tree order, even
+    // though the name of the first frame gets set after the name of the second frame.
+    shouldBe("window.foo", "document.getElementById('firstFrame').contentWindow");
+    shouldBe("open('', 'foo')", "window.foo");
+};
+</script>
+</body>
+</html>

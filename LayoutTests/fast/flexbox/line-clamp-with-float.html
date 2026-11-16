@@ -1,0 +1,25 @@
+<style>
+.line_clamp {
+  font-family: Monospace;
+  font-size: 20px;
+
+  width: 200px;
+  border: solid 1px green;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+   overflow: hidden;
+}
+
+.float {
+  float: right;
+  width: 50px;
+  height: 50px;
+  background-color: green;
+  color: transparent;
+}
+</style>
+<div class=line_clamp style="-webkit-line-clamp: 1"><div><div class=float>X</div>longlonglongtext first line gets truncated</div></div>
+<div class=line_clamp style="-webkit-line-clamp: 2"><div><div class=float>X</div>longlonglongtext second line gets truncated</div></div>
+<div class=line_clamp style="-webkit-line-clamp: 3"><div><div class=float>X</div>longlonglongtext third line gets truncated somewhere here</div></div>
+<div class=line_clamp style="-webkit-line-clamp: 4"><div><div class=float>X</div>longlonglongtext no line gets truncated</div></div>

@@ -1,0 +1,6 @@
+
+PASS :postMessage:transfer=false;mapMode="READ"
+PASS :postMessage:transfer=false;mapMode="WRITE"
+PASS :postMessage:transfer=true;mapMode="READ"
+PASS :postMessage:transfer=true;mapMode="WRITE"
+

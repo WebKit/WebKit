@@ -1,0 +1,4 @@
+
+PASS when shadow host itself is focused, it should match display:none, lose focus then becomes display:block again.
+PASS when shadow host with delegatesFocus=true has focused element inside the shadow, it should also match display:none, then lose focus and become display:block again.
+

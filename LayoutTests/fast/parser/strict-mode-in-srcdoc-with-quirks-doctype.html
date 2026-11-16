@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src='../../resources/js-test.js'></script>
+<iframe id="frame1" srcdoc='<!doctype x>'></iframe>
+<iframe id="frame2" srcdoc='<!doctype html public "-//w3c//dtd html 3.2//en">'></iframe>
+<iframe id="frame3" srcdoc='<!doctype "-//w3c//dtd html 3.2//en">'></iframe>
+<iframe id="frame4" srcdoc='<!doctype html -//w3c//dtd xhtml 1.0 frameset//">'></iframe>
+<script>
+
+description('This tests that the documents in srcdoc are always in strict mode');
+
+onload = () => {
+    shouldBeEqualToString('frame1.contentDocument.compatMode', 'CSS1Compat');
+    shouldBeEqualToString('frame2.contentDocument.compatMode', 'CSS1Compat');
+    shouldBeEqualToString('frame3.contentDocument.compatMode', 'CSS1Compat');
+    shouldBeEqualToString('frame4.contentDocument.compatMode', 'CSS1Compat');
+}
+
+</script>
+</body>
+</html>

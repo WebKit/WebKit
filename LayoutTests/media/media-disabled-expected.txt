@@ -1,0 +1,15 @@
+RUN(internals.settings.setMediaEnabled(false))
+RUN(video = document.createElement("video"))
+EXPECTED (video instanceof HTMLVideoElement == 'false') OK
+EXPECTED (video instanceof HTMLUnknownElement == 'true') OK
+RUN(audio = document.createElement("audio"))
+EXPECTED (audio instanceof HTMLAudioElement == 'false') OK
+EXPECTED (audio instanceof HTMLUnknownElement == 'true') OK
+
+RUN(internals.settings.setMediaEnabled(true))
+RUN(video = document.createElement("video"))
+EXPECTED (video instanceof HTMLVideoElement == 'true') OK
+RUN(audio = document.createElement("audio"))
+EXPECTED (audio instanceof HTMLAudioElement == 'true') OK
+END OF TEST
+

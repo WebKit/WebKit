@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+        
+        .changer {
+            background-color: cyan;
+            width: 200px;
+            height: 200px;
+        }
+
+        .anchor {
+            background-color: green;
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="resources/scroll-anchoring-utils.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        async function doAdjustments(numAdjustments, amount, expectAnchoring)
+        {
+            const changer = document.querySelector('.changer');
+            
+            let curHeight = baseHeight;
+            
+            window.scrollTo(0, 250);
+            
+            for (let i = 0; i < numAdjustments - 1; ++i) {
+                // Height keeps increasing.
+                curHeight += amount;
+                changer.style.height = `${curHeight}px`;
+                await UIHelper.renderingUpdate();
+            }
+            
+            // Test whether anchoring is active on the last one.
+            const currentScrollY = window.scrollY;
+            changer.style.height = `${curHeight + amount}px`;
+            anchoringActive = window.scrollY === (currentScrollY + amount);
+
+            if (expectAnchoring)
+                shouldBeTrue('anchoringActive');
+            else
+                shouldBeFalse('anchoringActive');
+        }
+
+        window.addEventListener('load', async () => {
+            await UIHelper.delayFor(0);
+
+            let iterations = 10;
+            let amount = 10;
+            let expectAnchor = true;
+            debug(`\nTesting anchoring with ${iterations} of size ${amount} - expect anchoring ${expectAnchor}`);
+            await doAdjustments(iterations, amount, expectAnchor);
+
+            window.scrollTo(0, 0);
+            finishJSTest();
+            
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="changer"></div>
+    <div class="anchor"></div>
+    <div id="console"></div>
+</body>
+</html>

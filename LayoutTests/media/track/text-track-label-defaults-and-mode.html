@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+    <title>TextTrack.label and default mode for in-band/script-created tracks</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard:
+//   §4.8.13.7 "Text tracks" -- text track label, sourcing-in-band-text-tracks,
+//                              sourcing-out-of-band-text-tracks (label step)
+//     https://html.spec.whatwg.org/multipage/media.html#text-track-model
+//     https://html.spec.whatwg.org/multipage/media.html#sourcing-in-band-text-tracks
+//   §4.8.13.10 "Text track API" -- TextTrack.label
+//     https://html.spec.whatwg.org/multipage/media.html#dom-texttrack-label
+//
+// - TextTrack.label returns the text track label (the human-readable label
+//   string), or the empty string when the label is empty.
+// - For tracks sourced from a <track> element, the text track label is the
+//   element's track label (i.e., the value of its label content attribute,
+//   or the empty string if the attribute is absent or empty).
+// - When the text track label is the empty string, the user agent should
+//   auto-generate a UI label; that auto-generated label is NOT exposed via
+//   the API (TextTrack.label remains empty).
+// - For an in-band text track, sourcing-in-band-text-tracks step 4 sets
+//   the new text track's mode consistent with user preferences and the
+//   relevant specification. In a layout-test environment with no user
+//   preferences expressed, this defaults to "hidden".
+
+test(() => {
+    const tt = document.createElement("video").addTextTrack("captions");
+    assert_equals(tt.label, "",
+        "addTextTrack with no label argument -> TextTrack.label is empty");
+}, "TextTrack.label: empty string when track was created without a label");
+
+test(() => {
+    const tt = document.createElement("video").addTextTrack("captions", "Hello", "en");
+    assert_equals(tt.label, "Hello",
+        "addTextTrack(kind, label) -> TextTrack.label is the label argument");
+}, "TextTrack.label: returns the label set via addTextTrack");
+
+test(() => {
+    // <track> element with no label attribute -> TextTrack.label empty.
+    const trackEl = document.createElement("track");
+    trackEl.kind = "subtitles";
+    assert_equals(trackEl.track.label, "",
+        "<track> with no label attribute -> TextTrack.label is empty");
+}, "TextTrack.label: empty for <track> element with no label attribute");
+
+test(() => {
+    const trackEl = document.createElement("track");
+    trackEl.kind = "subtitles";
+    trackEl.label = "English captions";
+    assert_equals(trackEl.track.label, "English captions",
+        "<track>.label = X -> TextTrack.label is X");
+}, "TextTrack.label: reflects the <track> element's label content attribute");
+
+test(() => {
+    // Empty-string label content attribute should produce empty TextTrack.label.
+    // Per spec, even when the UA auto-generates a UI label for empty cases,
+    // that auto-generated string must NOT be exposed via the API.
+    const trackEl = document.createElement("track");
+    trackEl.kind = "subtitles";
+    trackEl.setAttribute("label", "");
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    try {
+        video.appendChild(trackEl);
+        trackEl.track.mode = "showing";
+        assert_equals(trackEl.track.label, "",
+            "TextTrack.label stays empty even when the track is showing " +
+            "and the UA might auto-generate a UI label internally");
+    } finally {
+        video.remove();
+    }
+}, "TextTrack.label: empty label is not replaced by an auto-generated UI label");
+
+test(() => {
+    // addTextTrack creates the track with mode "hidden" per spec.
+    // (The "user preferences" branch of sourcing-in-band-text-tracks
+    // doesn't apply here -- this is a script-created track -- but the
+    // observable default mode is the same in a layout-test environment
+    // with no captions preference set.)
+    const tt = document.createElement("video").addTextTrack("captions");
+    assert_equals(tt.mode, "hidden",
+        "addTextTrack-created track has mode 'hidden' by default");
+}, "default mode: addTextTrack creates the track with mode='hidden'");
+
+test(() => {
+    // <track>-element-backed tracks default to mode "disabled" -- the
+    // load algorithm only fires when mode is hidden or showing, so the
+    // default must be disabled to avoid eager fetching.
+    const trackEl = document.createElement("track");
+    trackEl.kind = "subtitles";
+    assert_equals(trackEl.track.mode, "disabled",
+        "<track>-element-backed track has mode 'disabled' by default");
+}, "default mode: <track>-element-backed track has mode='disabled'");
+</script>
+</body>
+</html>

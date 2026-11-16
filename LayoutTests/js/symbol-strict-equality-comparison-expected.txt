@@ -1,0 +1,69 @@
+This tests Strict Equality Comparison results with Symbols.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 42 === symbol is false
+PASS symbol === 42 is false
+PASS NaN === symbol is false
+PASS symbol === NaN is false
+PASS Infinity === symbol is false
+PASS symbol === Infinity is false
+PASS true === symbol is false
+PASS symbol === true is false
+PASS false === symbol is false
+PASS symbol === false is false
+PASS null === symbol is false
+PASS symbol === null is false
+PASS undefined === symbol is false
+PASS symbol === undefined is false
+PASS 'Cappuccino' === symbol is false
+PASS symbol === 'Cappuccino' is false
+PASS symbol === symbol is true
+PASS symbol === symbol is true
+PASS Symbol.iterator === symbol is false
+PASS symbol === Symbol.iterator is false
+PASS object === symbol is false
+PASS symbol === object is false
+PASS array === symbol is false
+PASS symbol === array is false
+PASS date === symbol is false
+PASS symbol === date is false
+PASS symbolObject === symbol is false
+PASS symbol === symbolObject is false
+PASS Symbol('Cocoa') === symbol is false
+PASS symbol === Symbol('Cocoa') is false
+PASS 42 !== symbol is true
+PASS symbol !== 42 is true
+PASS NaN !== symbol is true
+PASS symbol !== NaN is true
+PASS Infinity !== symbol is true
+PASS symbol !== Infinity is true
+PASS true !== symbol is true
+PASS symbol !== true is true
+PASS false !== symbol is true
+PASS symbol !== false is true
+PASS null !== symbol is true
+PASS symbol !== null is true
+PASS undefined !== symbol is true
+PASS symbol !== undefined is true
+PASS 'Cappuccino' !== symbol is true
+PASS symbol !== 'Cappuccino' is true
+PASS symbol !== symbol is false
+PASS symbol !== symbol is false
+PASS Symbol.iterator !== symbol is true
+PASS symbol !== Symbol.iterator is true
+PASS object !== symbol is true
+PASS symbol !== object is true
+PASS array !== symbol is true
+PASS symbol !== array is true
+PASS date !== symbol is true
+PASS symbol !== date is true
+PASS symbolObject !== symbol is true
+PASS symbol !== symbolObject is true
+PASS Symbol('Cocoa') !== symbol is true
+PASS symbol !== Symbol('Cocoa') is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

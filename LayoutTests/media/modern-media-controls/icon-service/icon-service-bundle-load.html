@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Modern media controls button icons load from the WebCore framework bundle</title>
+</head>
+<body>
+<video src="../../content/test.mp4" controls></video>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+window.jsTestIsAsync = true;
+description("Verifies that media-control button icons load from the WebCore framework bundle. This test catches regressions where modern-media-controls/images/ is missing from WebCore.framework on a given platform.");
+
+const video = document.querySelector("video");
+
+function buttonsWithCommittedIcon(mediaControls)
+{
+    return Array.from(mediaControls.querySelectorAll("button")).filter((button) => {
+        const picture = button.querySelector("picture");
+        if (!picture)
+            return false;
+        const match = window.getComputedStyle(picture).maskImage.match(/url\("?([^"\s)]+)"?\)/);
+        return match && match[1].startsWith("blob:");
+    });
+}
+
+video.addEventListener("canplaythrough", async () => {
+    const shadowRoot = internals.shadowRoot(video);
+    const mediaControls = shadowRoot.lastChild;
+
+    const maximumFrames = 120;
+    await UIHelper.waitForCondition(() => buttonsWithCommittedIcon(mediaControls).length > 0, maximumFrames);
+
+    window.buttonsChecked = 0;
+    window.buttonsWithEmptyIcon = 0;
+    for (const button of buttonsWithCommittedIcon(mediaControls)) {
+        const picture = button.querySelector("picture");
+        const match = window.getComputedStyle(picture).maskImage.match(/url\("?([^"\s)]+)"?\)/);
+
+        const response = await fetch(match[1]);
+        const blob = await response.blob();
+        buttonsChecked++;
+        if (blob.size === 0)
+            buttonsWithEmptyIcon++;
+    }
+
+    shouldBeTrue("buttonsChecked > 0");
+    shouldBe("buttonsWithEmptyIcon", "0");
+
+    finishJSTest();
+});
+
+video.addEventListener("error", () => {
+    testFailed("video element failed to load.");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

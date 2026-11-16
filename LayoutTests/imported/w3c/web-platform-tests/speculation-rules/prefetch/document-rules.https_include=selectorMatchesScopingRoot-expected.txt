@@ -1,0 +1,3 @@
+
+PASS test selector_matches with :root
+

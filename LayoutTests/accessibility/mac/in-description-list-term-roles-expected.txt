@@ -1,0 +1,13 @@
+This test ensures AXIsInDescriptionListTerm reports whether an element is inside the term of a description list, meaning the dt of HTML's dl term-and-description grouping. Markup that names a term without being a description list term, a role='term' container or a dfn element, is not reported as one, even though macOS gives all three the AXTerm subrole.
+
+PASS: termContainer.subrole === 'AXSubrole: AXTerm'
+PASS: ariaTermContainer.subrole === 'AXSubrole: AXTerm'
+PASS: dfnContainer.subrole === 'AXSubrole: AXTerm'
+PASS: inTermDeep.isInDescriptionListTerm === true
+PASS: inTermDeep.isInDescriptionListTerm !== inAriaTerm.isInDescriptionListTerm === true
+PASS: inTermDeep.isInDescriptionListTerm !== inDfn.isInDescriptionListTerm === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

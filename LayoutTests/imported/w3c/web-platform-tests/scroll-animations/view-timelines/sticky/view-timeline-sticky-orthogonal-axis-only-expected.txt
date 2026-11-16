@@ -1,0 +1,4 @@
+Subject
+
+PASS Block-axis view timeline with a sticky element stuck only in the (orthogonal) inline axis.
+

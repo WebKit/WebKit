@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("ObjectUtilities");
+
+    suite.addTestCase({
+        name: "Object.shallowEqual",
+        test() {
+            InspectorTest.expectThat(Object.shallowEqual({}, {}), "shallowEqual of empty object literals should be true.");
+            InspectorTest.expectThat(Object.shallowEqual([], []), "shallowEqual of empty array literals should be true.");
+            InspectorTest.expectThat(!Object.shallowEqual([], {}), "shallowEqual of empty array and object literals should be false.");
+
+            let obj1 = {a: 1, b: 2};
+            InspectorTest.expectThat(Object.shallowEqual(obj1, obj1), "shallowEqual of an object with itself should be true.");
+
+            let obj2 = {a: 1, b: 2};
+            InspectorTest.expectThat(Object.shallowEqual(obj1, obj2), "shallowEqual of equal objects should be true.");
+            InspectorTest.expectThat(Object.shallowEqual(obj2, obj1), "shallowEqual of equal objects should be true.");
+
+            let obj3 = {a: 1, b: 2, c: 3};
+            InspectorTest.expectThat(!Object.shallowEqual(obj1, obj3), "shallowEqual of unequal objects should be false.");
+            InspectorTest.expectThat(!Object.shallowEqual(obj3, obj1), "shallowEqual of unequal objects should be false.");
+
+            InspectorTest.expectThat(Object.shallowEqual({x: []}, {x: []}), "shallowEqual of objects with similar arrays at the same key should be true.");
+            InspectorTest.expectThat(Object.shallowEqual({x: new Array}, {x: new Array}), "shallowEqual of objects with similar arrays at the same key should be true.");
+            InspectorTest.expectThat(Object.shallowEqual({x: [1]}, {x: [1]}), "shallowEqual of objects with similar arrays at the same key should be true.");
+
+            InspectorTest.expectThat(!Object.shallowEqual({x: [1]}, {x: []}), "shallowEqual of objects with dissimilar arrays at the same key should be false.");
+            InspectorTest.expectThat(!Object.shallowEqual({x: new Array(1)}, {x: new Array}), "shallowEqual of objects with dissimilar arrays at the same key should be false.");
+
+            InspectorTest.expectThat(!Object.shallowEqual({}, null), "shallowEqual of an object and null should be false.");
+            InspectorTest.expectThat(!Object.shallowEqual({}, 1.23), "shallowEqual of an object and non-object should be false.");
+
+            let str = "abc";
+            InspectorTest.expectThat(!Object.shallowEqual(str, str), "shallowEqual of a non-object with itself should be false.");
+            InspectorTest.expectThat(!Object.shallowEqual("abc", "abc"), "shallowEqual of non-objects should be false.");
+
+            class A {};
+            class B {};
+            class C extends A {};
+
+            InspectorTest.expectThat(Object.shallowEqual(new A, new A), "shallowEqual of objects with equal constructors should be true.");
+            InspectorTest.expectThat(!Object.shallowEqual(new A, new B), "shallowEqual of objects with different constructors should be false.");
+            InspectorTest.expectThat(!Object.shallowEqual(new A, new C), "shallowEqual of objects with different constructors should be false.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Object.filter",
+        test() {
+            const object = {a: 1, b: 2};
+
+            function checkKey(keys, expected) {
+                InspectorTest.expectShallowEqual(Object.filter(object, (key, value) => keys.includes(key)), expected, `filter should remove all entries where the key isn't in ${JSON.stringify(keys)}.`);
+            }
+            checkKey(["a", "b", "c"], {a: 1, b: 2});
+            checkKey(["a"], {a: 1});
+            checkKey(["b"], {b: 2});
+            checkKey(["c"], {});
+
+            function checkValue(values, expected) {
+                InspectorTest.expectShallowEqual(Object.filter(object, (key, value) => values.includes(value)), expected, `filter should remove all entries where the value isn't in ${JSON.stringify(values)}.`);
+            }
+            checkValue([1, 2, 3], {a: 1, b: 2});
+            checkValue([1], {a: 1});
+            checkValue([2], {b: 2});
+            checkValue([3], {});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

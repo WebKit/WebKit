@@ -1,0 +1,3 @@
+
+PASS Scroller should snap to at least one of the targets if unable to snap to both after a layout change.
+

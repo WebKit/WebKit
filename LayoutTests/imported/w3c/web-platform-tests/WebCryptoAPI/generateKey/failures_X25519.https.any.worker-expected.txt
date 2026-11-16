@@ -1,0 +1,106 @@
+
+PASS Bad usages: generateKey(X25519, true, [encrypt])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, encrypt])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, deriveKey, encrypt])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, encrypt])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encrypt])
+PASS Bad usages: generateKey(X25519, true, [decrypt])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, decrypt])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, deriveKey, decrypt])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, decrypt])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decrypt])
+PASS Bad usages: generateKey(X25519, true, [sign])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, sign])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, deriveKey, sign])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, sign])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, sign])
+PASS Bad usages: generateKey(X25519, true, [verify])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, verify])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, deriveKey, verify])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, verify])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, verify])
+PASS Bad usages: generateKey(X25519, true, [wrapKey])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, wrapKey])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, deriveKey, wrapKey])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, wrapKey])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, wrapKey])
+PASS Bad usages: generateKey(X25519, true, [unwrapKey])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, unwrapKey])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, deriveKey, unwrapKey])
+PASS Bad usages: generateKey(X25519, true, [deriveBits, unwrapKey])
+PASS Bad usages: generateKey(X25519, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
+FAIL Bad usages: generateKey(X25519, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey(X25519, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({name: X25519}, true, [encrypt])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, encrypt])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, deriveKey, encrypt])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, encrypt])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encrypt])
+PASS Bad usages: generateKey({name: X25519}, true, [decrypt])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, decrypt])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, deriveKey, decrypt])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, decrypt])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decrypt])
+PASS Bad usages: generateKey({name: X25519}, true, [sign])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, sign])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, deriveKey, sign])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, sign])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, sign])
+PASS Bad usages: generateKey({name: X25519}, true, [verify])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, verify])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, deriveKey, verify])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, verify])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, verify])
+PASS Bad usages: generateKey({name: X25519}, true, [wrapKey])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, wrapKey])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, deriveKey, wrapKey])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, wrapKey])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, wrapKey])
+PASS Bad usages: generateKey({name: X25519}, true, [unwrapKey])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, unwrapKey])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, deriveKey, unwrapKey])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveBits, unwrapKey])
+PASS Bad usages: generateKey({name: X25519}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
+FAIL Bad usages: generateKey({name: X25519}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({name: X25519}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Empty usages: generateKey(X25519, false, [])
+PASS Empty usages: generateKey(X25519, true, [])
+PASS Empty usages: generateKey({name: X25519}, false, [])
+PASS Empty usages: generateKey({name: X25519}, true, [])
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that we use the right entry window to convert relative URL when setting Location.href");
+jsTestIsAsync = true;
+
+onload = () => {
+    popup = open("/resources/square20.jpg");
+    popup.onload = () => {
+        firstURL = self.origin + "/resources/square20.jpg"
+        shouldBeEqualToString("popup.location.href", "" + firstURL);
+
+        popup.location = "resources/square20.jpg";
+        handle = setInterval(() => {
+            if (popup.location.href == firstURL)
+                return;
+
+            clearInterval(handle);
+            shouldBeEqualToString("popup.location.href", self.origin + "/dom/resources/square20.jpg");
+
+            popup.close();
+            finishJSTest();
+        }, 10);
+    };
+};
+</script>
+</body>
+</html>

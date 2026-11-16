@@ -1,0 +1,24 @@
+X XXXX XXX XXX
+X XXXX XXX XXX
+X XXXXX XXX
+X XXXX XXX XXX
+XXXXXXXXXXX
+X XXXX XXX XXX
+X XXXX XXX XXX
+XX X XXXX XXX XXX
+XXXXX XXXXX
+X XXXXX XXXXXX
+X XXXX XXX XXX
+
+PASS .test 1: breaks between the inline boxes
+PASS .test 2: breaks between nested inline boxes
+PASS .test 3: breaks between display: contents content and an inline box
+PASS .test 4: breaks between the inline boxes when an out-of-flow box is at the boundary
+PASS .test 5: breaks at the last boundary that fits after breakable text
+PASS .test 6: breaks after each overflowing inline box
+PASS .test 7: the boundaries are soft wrap opportunities for min-content
+PASS .test 8: wraps at the earlier wrap opportunity before breaking between the inline boxes
+PASS .test 9: does not break after a white space inside a white-space: nowrap inline box
+PASS .test 10: does not break inside a white-space: nowrap inline box
+PASS .test 11: does not break in a white-space: nowrap container
+

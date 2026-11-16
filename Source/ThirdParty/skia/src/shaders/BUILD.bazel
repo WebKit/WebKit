@@ -1,0 +1,78 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+SHADER_FILES = [
+    "SkBitmapProcShader.cpp",
+    "SkBitmapProcShader.h",
+    "SkBlendShader.cpp",
+    "SkBlendShader.h",
+    "SkColorFilterShader.cpp",
+    "SkColorFilterShader.h",
+    "SkColorShader.cpp",
+    "SkColorShader.h",
+    "SkCoordClampShader.cpp",
+    "SkCoordClampShader.h",
+    "SkEmptyShader.cpp",
+    "SkEmptyShader.h",
+    "SkGainmapShader.cpp",
+    "SkImageShader.cpp",
+    "SkImageShader.h",
+    "SkLocalMatrixShader.cpp",
+    "SkLocalMatrixShader.h",
+    "SkPerlinNoiseShaderImpl.cpp",
+    "SkPerlinNoiseShaderImpl.h",
+    "SkPerlinNoiseShaderType.h",
+    "SkPictureShader.cpp",
+    "SkPictureShader.h",
+    "SkRuntimeShader.cpp",
+    "SkRuntimeShader.h",
+    "SkShader.cpp",
+    "SkShaderBase.cpp",
+    "SkShaderBase.h",
+    "SkTransformShader.cpp",
+    "SkTransformShader.h",
+    "SkTriColorShader.cpp",
+    "SkTriColorShader.h",
+    "SkWorkingColorSpaceShader.cpp",
+    "SkWorkingColorSpaceShader.h",
+]
+
+split_srcs_and_hdrs(
+    name = "shader",
+    files = SHADER_FILES,
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [
+        ":shader_srcs",
+        "//src/shaders/gradients:gradient_srcs",
+    ],
+    visibility = [
+        "//src/core:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "opts_srcs",
+    srcs = [
+        "SkPerlinNoiseShaderType.h",
+    ],
+    visibility = ["//src/opts:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_priv_hdrs",
+    srcs = [
+        ":shader_hdrs",
+        "//src/shaders/gradients:gradient_hdrs",
+    ],
+    visibility = [
+        "//src/core:__pkg__",
+    ],
+)

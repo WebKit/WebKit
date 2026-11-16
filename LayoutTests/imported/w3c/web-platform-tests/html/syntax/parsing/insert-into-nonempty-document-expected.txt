@@ -1,0 +1,6 @@
+
+PASS Baseline: a DOCTYPE token appends a doctype to an empty Document
+PASS A DOCTYPE token is dropped when the Document already has a doctype child
+PASS A DOCTYPE token is dropped when the Document already has an element child
+PASS An html start tag is dropped when the Document already has an element child
+

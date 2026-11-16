@@ -1,0 +1,18 @@
+This test ensures that drawFocusIfNeeded() correctly sets accessibility bounds for canvas fallback elements.
+
+PASS: pageX was equal to 108.
+PASS: pageY was equal to 58.
+PASS: width was equal to 80.
+PASS: height was equal to 40.
+
+Dynamic update: move the focus path to a new position.
+
+PASS: pageX was equal to 208.
+PASS: pageY was equal to 158.
+PASS: width was equal to 80.
+PASS: height was equal to 40.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

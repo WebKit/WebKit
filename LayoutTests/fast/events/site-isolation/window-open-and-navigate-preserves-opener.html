@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<!-- Must run from file://: this page and ../resources/message-opener.html are file:// URLs whose Site
+     has an empty registrable domain. -->
+<html>
+<body>
+<p>This test opens a window (initially about:blank) and then navigates it to a same-origin
+document. Under site isolation, navigating the opened window process-swaps it since the opener's
+process committed a meaningful load. This test checks that window.opener still works across that
+swap, ensuring that the connection exists across processes.</p>
+<div id="log">FAIL: did not receive a message from the opened window (window.opener was likely null).</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const log = document.getElementById('log');
+let openedWindow = window.open('about:blank');
+
+window.onmessage = (event) => {
+    if (event.data == 'load') {
+        log.textContent = 'PASS';
+        if (openedWindow)
+            openedWindow.close();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+};
+
+// ../resources/message-opener.html does: opener.top.postMessage('load', '*') on load. If
+// window.opener is null (the bug), no message arrives and the test times out (rather than
+// racing an arbitrary timeout, which is flaky on slower configurations).
+openedWindow.location.href = '../resources/message-opener.html';
+</script>
+</body>
+</html>

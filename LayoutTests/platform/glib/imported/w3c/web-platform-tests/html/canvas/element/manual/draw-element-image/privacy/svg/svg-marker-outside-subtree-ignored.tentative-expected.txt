@@ -1,0 +1,4 @@
+
+
+FAIL drawElementImage does not use SVG markers outside the subtree assert_array_equals: External start marker should not draw expected property 1 to be 255 but got 0 (expected array [255, 255, 255, 255] got object "255,0,0,255")
+

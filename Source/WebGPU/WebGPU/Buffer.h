@@ -1,0 +1,222 @@
+/*
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#import "BindableResource.h"
+#import "Device.h"
+#import "Instance.h"
+#import <Metal/Metal.h>
+#import <WebGPU/WebGPU.h>
+#import <WebGPU/WebGPUCpp.h>
+#import <optional>
+#import <utility>
+#import <wtf/CanBorrow.h>
+#import <wtf/Compiler.h>
+#import <wtf/CompletionHandler.h>
+#import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
+#import <wtf/HashMap.h>
+#import <wtf/Range.h>
+#import <wtf/RangeSet.h>
+#import <wtf/Ref.h>
+#import <wtf/SwiftBridging.h>
+#import <wtf/TZoneMalloc.h>
+#import <wtf/ThreadSafeWeakHashSet.h>
+#import <wtf/WeakPtr.h>
+
+IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
+
+namespace WebGPU::Metal {
+
+class BindGroup;
+class CommandBuffer;
+class CommandEncoder;
+class Device;
+class RenderBundle;
+class Queue;
+
+// https://gpuweb.github.io/gpuweb/#gpubuffer
+class Buffer final : public WebGPU::Buffer, public CanBorrow, public TrackedResource {
+    WTF_MAKE_TZONE_ALLOCATED(Buffer);
+public:
+    enum class State : uint8_t;
+    struct MappingRange {
+        size_t beginOffset; // Inclusive
+        size_t endOffset; // Exclusive
+    };
+
+    static Ref<Buffer> create(id<MTLBuffer> buffer, uint64_t initialSize, OptionSet<WebGPU::BufferUsage> usage, State initialState, MappingRange initialMappingRange, Device& device)
+    {
+        return adoptRef(*new Buffer(buffer, initialSize, usage, initialState, initialMappingRange, device));
+    }
+    static Ref<Buffer> createInvalid(Device& device)
+    {
+        return adoptRef(*new Buffer(device));
+    }
+
+    ~Buffer();
+
+    void destroy() final;
+    void mapAsync(OptionSet<WebGPU::MapMode>, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&&) final;
+    void getMappedRange(uint64_t offset, std::optional<uint64_t> size, NOESCAPE const Function<void(std::span<uint8_t>)>&) final;
+    void copyFrom(std::span<const uint8_t>, size_t offset) final;
+    // The mapped range as a span, for the C API. The C++ API has getMappedRange() instead,
+    // because a proxy cannot return a pointer into the mapping.
+    std::span<uint8_t> getMappedRangeSpan(uint64_t offset, std::optional<uint64_t> size);
+    // The mapped range for the C API, which, unlike the JavaScript API, lets the ranges that it hands
+    // out overlap: they are pointers into the mapping, not ArrayBuffers that are detached on unmap.
+    std::span<uint8_t> mappedRangeForCAPI(uint64_t offset, std::optional<uint64_t> size);
+    void unmap() final;
+    void setLabel(String&&) final;
+    void generateAValidationError() final;
+    void generateAValidationError(String&&);
+
+    NODELETE bool isValid() const final;
+
+    // https://gpuweb.github.io/gpuweb/#buffer-state
+    enum class State : uint8_t {
+        Mapped,
+        MappedAtCreation,
+        MappingPending,
+        Unmapped,
+        Destroyed,
+    };
+
+    id<MTLBuffer> buffer() const { return m_buffer; }
+
+    NODELETE uint64_t initialSize() const;
+    uint64_t currentSize() const;
+    OptionSet<WebGPU::BufferUsage> usage() const { return m_usage; }
+    State state() const { return m_state; }
+
+    Device& device() const { return m_device; }
+    bool isDestroyed() const { return state() == State::Destroyed; }
+
+    void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
+    void addResourceHolder(const BindGroup&) const;
+    void addResourceHolder(const RenderBundle&) const;
+    std::span<uint8_t> getBufferContents() final;
+
+    std::optional<DrawIndexCacheContainerIterator> canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, int32_t baseVertex, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil) const;
+    void drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, int32_t baseVertex, MTLIndexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> = nil);
+    void skippedDrawIndexedValidation(CommandEncoder&, DrawIndexCacheContainerIterator);
+    void skippedBundleIndirectDrawValidation(CommandEncoder&, ReusedIndirectIndexedDraw&&);
+
+    bool didReadOOB(id<MTLIndirectCommandBuffer> = nil) const;
+    void didReadOOB(uint32_t v, id<MTLIndirectCommandBuffer> = nil);
+
+    void indirectBufferInvalidated(CommandEncoder* = nullptr);
+    void indirectBufferInvalidated(CommandEncoder&);
+    // Bumped whenever the contents change in a way that invalidates a previously GPU-encoded indirect draw.
+    uint64_t contentsGeneration() const { return m_contentsGeneration; }
+    uint64_t indexContentsGeneration() const { return m_indexContentsGeneration; }
+    void indexBufferContentsModified(uint32_t maxUintValue, uint16_t maxUshortValue)
+    {
+        ++m_indexContentsGeneration;
+        m_indexValueUpperBoundUint = std::max(m_indexValueUpperBoundUint, maxUintValue);
+        m_indexValueUpperBoundUshort = std::max<uint32_t>(m_indexValueUpperBoundUshort, maxUshortValue);
+    }
+    bool allIndexValuesBelow(MTLIndexType indexType, uint32_t vertexCount) const
+    {
+        return (indexType == MTLIndexTypeUInt16 ? m_indexValueUpperBoundUshort : m_indexValueUpperBoundUint) < vertexCount;
+    }
+    void removeSkippedValidationCommandEncoder(uint64_t);
+    bool mustTakeSlowIndexValidationPath() const { return m_mustTakeSlowIndexValidationPath; }
+    void clearMustTakeSlowIndexValidationPath();
+    void takeSlowIndexValidationPath(CommandBuffer&, uint32_t firstIndex, uint32_t indexCount, MTLIndexType, uint32_t primitiveOffset, uint32_t vertexCount);
+    void takeSlowBundleIndirectDrawValidationPath(CommandBuffer&, const ReusedIndirectIndexedDraw&);
+    bool needsIndexValidation(uint32_t, uint16_t);
+
+private:
+    Buffer(id<MTLBuffer>, uint64_t initialSize, OptionSet<WebGPU::BufferUsage>, State initialState, MappingRange initialMappingRange, Device&);
+    Buffer(Device&);
+
+    bool validateGetMappedRange(size_t offset, size_t rangeSize) const;
+    // validateGetMappedRange() without the check that the range does not overlap a range that has
+    // been handed out.
+    bool validateMappedRangeBounds(size_t offset, size_t rangeSize) const;
+    NSString * _Nullable errorValidatingMapAsync(OptionSet<WebGPU::MapMode>, size_t offset, size_t rangeSize) const;
+    NODELETE bool validateUnmap() const;
+    NODELETE void setState(State);
+    void incrementBufferMapCount();
+    void decrementBufferMapCount();
+    void clearIndexBufferForCommandBuffer(CommandBuffer&);
+    bool hasPendingRecordedIndexWrite() const;
+    id<MTLBuffer> _Nullable snapshotRangeBeforeClear(Queue&, NSUInteger offset, NSUInteger size);
+    void restoreSnapshotAfterCommit(CommandBuffer&, Queue&, id<MTLBuffer> _Nullable snapshot, NSUInteger offset);
+
+    id<MTLBuffer> m_buffer { nil };
+
+    // https://gpuweb.github.io/gpuweb/#buffer-interface
+
+    const uint64_t m_initialSize { 0 };
+    const OptionSet<WebGPU::BufferUsage> m_usage;
+    State m_state { State::Unmapped };
+    // [[mapping]] is unnecessary; we can just use m_device.contents.
+    MappingRange m_mappingRange { 0, 0 };
+    using MappedRanges = RangeSet<Range<size_t>>;
+    MappedRanges m_mappedRanges;
+    OptionSet<WebGPU::MapMode> m_mapMode;
+    // The smallest vertex count that any entry currently in m_drawIndexedCache was proven against by
+    // the clamp shader, or 0 if any of them used a negative baseVertex. Only meaningful while
+    // m_drawIndexedCache is non-empty.
+    uint32_t m_minValidatedVertexCount { UINT32_MAX };
+
+    DrawIndexCacheContainer m_drawIndexedCache;
+
+    const Ref<Device> m_device;
+    mutable ThreadSafeWeakHashSet<BindGroup> m_bindGroups;
+    mutable ThreadSafeWeakHashSet<RenderBundle> m_renderBundles;
+    mutable HashMap<uint64_t, uint32_t> m_gpuResourceMap;
+    HashSet<uint64_t> m_skippedValidationCommandEncoders;
+    mutable HashSet<uint64_t> m_pendingIndexWriteCommandEncoders; // NOLINT
+    bool m_mustTakeSlowIndexValidationPath { false };
+    // Identity of the command buffer this buffer was last cleared for, so that several failed validations
+    // sharing one command buffer do not each capture a "prior" copy and queue a restore of it.
+    uintptr_t m_clearedForCommandBuffer { 0 }; // NOLINT
+    uint64_t m_contentsGeneration { 0 }; // NOLINT
+    uint64_t m_indexContentsGeneration { 0 }; // NOLINT
+    uint32_t m_indexValueUpperBoundUint { 0 }; // NOLINT
+    uint16_t m_indexValueUpperBoundUshort { 0 }; // NOLINT
+#if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
+    bool m_mappedAtCreation { false };
+#endif
+    HashMap<uint64_t, bool> m_didReadOOB;
+} SWIFT_SHARED_REFERENCE(refBuffer, derefBuffer) SWIFT_PRIVATE_FILEID("WebGPU/Buffer.swift") SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+
+} // namespace WebGPU::Metal
+
+inline void refBuffer(WebGPU::Metal::Buffer* obj)
+{
+    obj->ref();
+}
+
+inline void derefBuffer(WebGPU::Metal::Buffer* obj)
+{
+    obj->deref();
+}
+
+IGNORE_CLANG_WARNINGS_END

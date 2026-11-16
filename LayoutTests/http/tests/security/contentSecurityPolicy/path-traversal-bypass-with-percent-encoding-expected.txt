@@ -1,0 +1,44 @@
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources%2F..%2F..%2Fresources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy%2F..%2Fresources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy%2f..%2fresources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources%2f..%2F..%2Fresources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources%2F..%2F..%2F..%2F..%2Fresources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security%2F..%2F..%2F..%2F..%2Fetc/script.js because it does not appear in the script-src directive of the Content Security Policy.
+Percent-encoded path traversal sequences (%2F..%2F) should not bypass CSP path restrictions.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame3-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame4-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame5-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame6-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame7-->'
+--------
+PASS

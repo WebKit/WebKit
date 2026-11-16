@@ -1,0 +1,10 @@
+
+PASS Ensures an omitted offsetRay hit tests along the default ray - webgl
+PASS Ensures an omitted offsetRay hit tests along the default ray - webgl2
+PASS Ensures an omitted offsetRay hit tests along the default ray for transient input - webgl
+PASS Ensures an omitted offsetRay hit tests along the default ray for transient input - webgl2
+PASS Ensures a null offsetRay is rejected - webgl
+PASS Ensures a null offsetRay is rejected - webgl2
+PASS Ensures a null offsetRay is rejected for transient input - webgl
+PASS Ensures a null offsetRay is rejected for transient input - webgl2
+

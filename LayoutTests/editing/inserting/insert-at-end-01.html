@@ -1,0 +1,36 @@
+<html> 
+<head>
+
+<link rel="stylesheet" href="../editingStyle.css">
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    Markup.description(`This tests the visual position at the end of an editable block.
+When the document ended with a &lt;br&gt;, there were visual positions at both [br, 0] and [br, 1].
+This would produce inconsistent behavior when editing at the end of a document.`);
+    moveSelectionForwardByLineCommand();
+    moveSelectionForwardByLineCommand();
+    moveSelectionForwardByLineCommand();
+    moveSelectionForwardByLineCommand();
+    typeCharacterCommand();
+    Markup.dump(test);
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+
+<p></p>
+
+<div contenteditable id="test" class="editing">
+<div>paragraph one</div>
+<div>paragraph two</div>
+<br></div>
+
+<script>runEditingTest();</script>
+
+</body></html>

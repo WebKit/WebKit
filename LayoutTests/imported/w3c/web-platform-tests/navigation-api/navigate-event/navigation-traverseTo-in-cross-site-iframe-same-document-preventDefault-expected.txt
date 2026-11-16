@@ -1,0 +1,4 @@
+
+
+PASS navigation.traverseTo() in a cross-site iframe with same-document preventDefault in its parent
+

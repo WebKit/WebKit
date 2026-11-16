@@ -1,0 +1,19 @@
+
+PASS :set_pipeline:
+PASS :pipeline,device_mismatch:
+PASS :dispatch_sizes:dispatchType="direct";largeDimValueVariant={"mult":0,"add":0}
+PASS :dispatch_sizes:dispatchType="direct";largeDimValueVariant={"mult":0,"add":1}
+PASS :dispatch_sizes:dispatchType="direct";largeDimValueVariant={"mult":1,"add":0}
+PASS :dispatch_sizes:dispatchType="direct";largeDimValueVariant={"mult":1,"add":1}
+PASS :dispatch_sizes:dispatchType="direct";largeDimValueVariant={"mult":0,"add":2147483647}
+PASS :dispatch_sizes:dispatchType="direct";largeDimValueVariant={"mult":0,"add":4294967295}
+PASS :dispatch_sizes:dispatchType="indirect";largeDimValueVariant={"mult":0,"add":0}
+PASS :dispatch_sizes:dispatchType="indirect";largeDimValueVariant={"mult":0,"add":1}
+PASS :dispatch_sizes:dispatchType="indirect";largeDimValueVariant={"mult":1,"add":0}
+PASS :dispatch_sizes:dispatchType="indirect";largeDimValueVariant={"mult":1,"add":1}
+PASS :dispatch_sizes:dispatchType="indirect";largeDimValueVariant={"mult":0,"add":2147483647}
+PASS :dispatch_sizes:dispatchType="indirect";largeDimValueVariant={"mult":0,"add":4294967295}
+PASS :indirect_dispatch_buffer_state:
+PASS :indirect_dispatch_buffer,device_mismatch:
+PASS :indirect_dispatch_buffer,usage:
+

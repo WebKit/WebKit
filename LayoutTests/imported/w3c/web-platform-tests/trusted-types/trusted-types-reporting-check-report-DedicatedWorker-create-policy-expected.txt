@@ -1,0 +1,6 @@
+
+PASS Creating policy works for policy in the allowlist.
+PASS Creating policy works for policy in the blocklist, since it's report-only.
+FAIL Test report-uri works with trusted-types violation. undefined is not an object (evaluating 'data[0]["body"]')
+FAIL Test number of sent reports. assert_equals: Report count was not what was expected. expected 2 but got 0
+

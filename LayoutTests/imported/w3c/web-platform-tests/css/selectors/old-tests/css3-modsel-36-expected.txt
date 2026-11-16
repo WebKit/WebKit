@@ -1,0 +1,8 @@
+This paragraph should have normal background
+
+This div contains only one paragraph
+This paragraph should have green background
+
+
+PASS :only-child matching
+

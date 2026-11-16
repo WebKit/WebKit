@@ -1,0 +1,20 @@
+<script>
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    textAreaID.selectionStart = 1;
+    detailsID.open = false;
+    detailsID.textContent = "1";
+    detailsID.open = true;
+    iframeID.contentDocument.body.append(divID);
+    document.body.innerHTML = 'PASS if no crash.'; 
+}
+</script>
+
+<body onload=test()>
+    <div id="divID">
+    <details id="detailsID" open="true">
+        <textarea id="textAreaID" bordercolor="black"></textarea>
+    </details>
+    </div>
+<iframe id="iframeID"></iframe>

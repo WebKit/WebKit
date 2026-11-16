@@ -1,0 +1,8 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Upgraded image is reported Test timed out
+PASS Upgraded iframe is reported
+TIMEOUT Navigated iframe is upgraded and reported Test timed out
+

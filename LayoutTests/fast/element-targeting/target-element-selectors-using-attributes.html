@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    margin: 0;
+    font-family: system-ui;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.5em;
+}
+    
+div.fixed-height {
+    height: 300px;
+}
+
+img {
+    width: 125px;
+    height: 125px;
+    object-fit: cover;
+    display: inline-block;
+    margin: 0;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    firstSelector = await UIHelper.adjustVisibilityForFrontmostTarget(50, 50);
+    secondSelector = await UIHelper.adjustVisibilityForFrontmostTarget(150, 50);
+    thirdSelector = await UIHelper.adjustVisibilityForFrontmostTarget(50, 150);
+
+    shouldBeEqualToString("firstSelector", "IMG[aria-label='Image of dice']");
+    shouldBeEqualToString("secondSelector", "IMG[src='../images/resources/boston.gif']");
+    shouldBeEqualToString("thirdSelector", "P[customattribute]");
+
+    await UIHelper.delayFor(1000);
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <img src="../images/resources/dice.png" aria-label="Image of dice" />
+    <img src="../images/resources/boston.gif" />
+    <p customattribute>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+    <a href="https://webkit.org" aria-label="Link to WebKit Home page"><img src="../images/resources/dice.png" /></a>
+    <p id="console"></p>
+</body>
+</html>

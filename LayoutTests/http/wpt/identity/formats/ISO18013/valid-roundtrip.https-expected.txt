@@ -1,0 +1,6 @@
+
+PASS Valid ISO 18013-7 Annex C request/response round-trip succeeds.
+PASS Valid response contains expected Annex C EncryptedResponse structure prefix.
+PASS Valid org-iso-mdoc request alongside other protocols: wallet response selects org-iso-mdoc.
+PASS Multiple valid org-iso-mdoc requests in a single call: succeeds.
+

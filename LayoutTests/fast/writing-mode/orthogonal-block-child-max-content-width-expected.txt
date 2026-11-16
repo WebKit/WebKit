@@ -1,0 +1,11 @@
+An orthogonal (vertical-lr) block child contributes its block-axis size (its logical height) to the containing block's intrinsic inline width. Each test box should shrink-wrap to the orthogonal child's horizontal extent. With line-height 1 and a 50px Ahem font, a single line of text is 50px tall, so its horizontal extent (the parent's width) is 50px per line of vertical text.
+
+foobar
+PASS
+foobar
+PASS
+foo
+bar
+PASS
+foobar
+PASS

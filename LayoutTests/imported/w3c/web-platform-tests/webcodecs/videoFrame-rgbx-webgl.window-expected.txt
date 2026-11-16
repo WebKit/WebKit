@@ -1,0 +1,27 @@
+
+PASS texImage2D() (premultiplyAlpha=false) of a RGBX VideoFrame with padding byte 0 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=false) of a RGBX VideoFrame with padding byte 127 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=false) of a RGBX VideoFrame with padding byte 255 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=false) of a BGRX VideoFrame with padding byte 0 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=false) of a BGRX VideoFrame with padding byte 127 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=false) of a BGRX VideoFrame with padding byte 255 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=true) of a RGBX VideoFrame with padding byte 0 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=true) of a RGBX VideoFrame with padding byte 127 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=true) of a RGBX VideoFrame with padding byte 255 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=true) of a BGRX VideoFrame with padding byte 0 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=true) of a BGRX VideoFrame with padding byte 127 is opaque with correct RGB
+PASS texImage2D() (premultiplyAlpha=true) of a BGRX VideoFrame with padding byte 255 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=false) of a RGBX VideoFrame with padding byte 0 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=false) of a RGBX VideoFrame with padding byte 127 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=false) of a RGBX VideoFrame with padding byte 255 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=false) of a BGRX VideoFrame with padding byte 0 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=false) of a BGRX VideoFrame with padding byte 127 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=false) of a BGRX VideoFrame with padding byte 255 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=true) of a RGBX VideoFrame with padding byte 0 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=true) of a RGBX VideoFrame with padding byte 127 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=true) of a RGBX VideoFrame with padding byte 255 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=true) of a BGRX VideoFrame with padding byte 0 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=true) of a BGRX VideoFrame with padding byte 127 is opaque with correct RGB
+PASS texImage2D() as RGB (premultiplyAlpha=true) of a BGRX VideoFrame with padding byte 255 is opaque with correct RGB
+PASS texImage2D() of a cloned RGBX VideoFrame is opaque
+

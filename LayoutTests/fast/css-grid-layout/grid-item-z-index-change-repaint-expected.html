@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+    grid-template-rows: 100px;
+    grid-template-columns: 200px;
+    margin-top: 10px;
+}
+.green {
+    background-color: green;
+}
+</style>
+</head>
+<body>
+<div>
+    <p>This test checks that grid items correctly repaint when 'z-index' changes.</p>
+    <p>For this test to pass, there should be no red below.</p>
+</div>
+
+<div class="grid">
+    <div class="sizedToGridArea green"></div>
+</div>
+
+<div class="grid">
+    <div class="sizedToGridArea green"></div>
+</div>
+
+<div class="grid">
+    <div class="sizedToGridArea green"></div>
+</div>
+
+</body>
+</html>

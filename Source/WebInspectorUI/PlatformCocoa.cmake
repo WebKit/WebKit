@@ -1,0 +1,38 @@
+# NSBundle expects .lproj directories directly under Resources, not nested in Localizations.
+set(WebInspectorUI_LOCALIZED_STRINGS_DIR "${WebInspectorUI_RESOURCES_DIR}/WebInspectorUI/en.lproj")
+
+set(WebInspectorUI_FRAMEWORK_DIR "${CMAKE_BINARY_DIR}/WebInspectorUI.framework")
+set(WebInspectorUI_FRAMEWORK_RESOURCES_DIR "${WebInspectorUI_FRAMEWORK_DIR}/Versions/A/Resources")
+
+set(EXECUTABLE_NAME "WebInspectorUI")
+set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebInspectorUI")
+set(PRODUCT_NAME "WebInspectorUI")
+set(SHORT_VERSION_STRING "${MACOSX_FRAMEWORK_SHORT_VERSION_STRING}")
+set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
+
+add_library(WebInspectorUIFramework SHARED ${WEBINSPECTORUI_DIR}/WebInspectorUI.cpp)
+set_target_properties(WebInspectorUIFramework PROPERTIES
+    FRAMEWORK TRUE
+    FRAMEWORK_VERSION A
+    OUTPUT_NAME WebInspectorUI
+    INSTALL_NAME_DIR "${WEBKIT_SDK_SYSTEM_PREFIX}/System/Library/PrivateFrameworks"
+    BUILD_WITH_INSTALL_RPATH ON
+    MACOSX_RPATH OFF
+    MACOSX_FRAMEWORK_INFO_PLIST ${WEBINSPECTORUI_DIR}/Info.plist
+)
+
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/inspector-framework-resources.stamp
+    DEPENDS ${CMAKE_BINARY_DIR}/inspector-resources.stamp WebInspectorUIFramework
+    COMMENT "Copying inspector resources into WebInspectorUI.framework"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${WebInspectorUI_RESOURCES_DIR}/WebInspectorUI
+        ${WebInspectorUI_FRAMEWORK_RESOURCES_DIR}
+    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_BINARY_DIR}/inspector-framework-resources.stamp
+    VERBATIM
+)
+
+add_custom_target(WebInspectorUIFrameworkResources ALL
+    DEPENDS ${CMAKE_BINARY_DIR}/inspector-framework-resources.stamp
+)
+add_dependencies(WebInspectorUIFrameworkResources WebInspectorUI)

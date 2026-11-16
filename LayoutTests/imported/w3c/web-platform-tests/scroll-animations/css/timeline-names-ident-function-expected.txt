@@ -1,0 +1,14 @@
+
+PASS Property animation-timeline value 'ident("--myident" calc(42 * sign(1em - 1px)))'
+PASS Property animation-timeline value '--tl, scroll(), ident("--myident" calc(42 * sign(1em - 1px)))'
+PASS Property animation-timeline value 'ident("--myident" calc(42 * sign(1em - 1px))), ident("--myident" calc(42 * sign(1em - 1px)))'
+PASS Property scroll-timeline-name value 'ident("--myident" calc(42 * sign(1em - 1px)))'
+PASS Property scroll-timeline-name value '--tl, ident("--myident" calc(42 * sign(1em - 1px)))'
+PASS Property scroll-timeline-name value 'ident("--myident" calc(42 * sign(1em - 1px))), ident("--myident" calc(42 * sign(1em - 1px)))'
+PASS Property timeline-scope value 'ident("--myident" calc(42 * sign(1em - 1px)))'
+PASS Property timeline-scope value '--tl, ident("--myident" calc(42 * sign(1em - 1px)))'
+FAIL Property timeline-scope value 'ident("--myident" calc(42 * sign(1em - 1px))), ident("--myident" calc(42 * sign(1em - 1px)))' assert_equals: expected "--myident42, --myident42" but got "--myident42"
+PASS Property view-timeline-name value 'ident("--myident" calc(42 * sign(1em - 1px)))'
+PASS Property view-timeline-name value '--tl, ident("--myident" calc(42 * sign(1em - 1px)))'
+PASS Property view-timeline-name value 'ident("--myident" calc(42 * sign(1em - 1px))), ident("--myident" calc(42 * sign(1em - 1px)))'
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>textLength with absolutely positioned characters</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<svg width="600" height="200" font-family="Ahem" font-size="20">
+    <text id="absolute" x="10 100 200" y="30" textLength="300" lengthAdjust="spacing">abc</text>
+    <text id="single" x="10" y="60" textLength="300" lengthAdjust="spacing">abc</text>
+    <path id="path" d="M 10 150 L 590 150"/>
+    <text id="onPath"><textPath href="#path" textLength="300" lengthAdjust="spacing">&#x1F600;&#x1F600;&#x1F600;</textPath></text>
+    <text id="reference" x="10" y="190">&#x1F600;</text>
+    <text id="glyphs" x="0 50 100 150" y="120" font-size="50" textLength="100" lengthAdjust="spacingAndGlyphs">XXXX</text>
+    <text id="glyphsAbsolute" x="10 100 200" y="90" textLength="300" lengthAdjust="spacingAndGlyphs">abc</text>
+    <text id="glyphsSingle" x="10" y="90" textLength="300" lengthAdjust="spacingAndGlyphs">abc</text>
+</svg>
+<script>
+function startX(id, index)
+{
+    return document.getElementById(id).getStartPositionOfChar(index).x;
+}
+
+test(() => {
+    assert_approx_equals(startX("absolute", 0), 10, 0.01);
+    assert_approx_equals(startX("absolute", 1), 100, 0.01);
+    assert_approx_equals(startX("absolute", 2), 200, 0.01);
+}, "Absolute x positions are not moved by textLength spacing");
+
+test(() => {
+    assert_approx_equals(startX("single", 0), 10, 0.01);
+    assert_approx_equals(startX("single", 1), 150, 0.01);
+    assert_approx_equals(startX("single", 2), 290, 0.01);
+}, "textLength spacing is distributed between the characters of a single chunk");
+
+test(() => {
+    const advance = document.getElementById("reference").getComputedTextLength();
+    // Each emoji is a surrogate pair. Spacing goes between the three characters, not the six code units.
+    const spacing = (300 - 3 * advance) / 2;
+    assert_approx_equals(startX("onPath", 2) - startX("onPath", 0), advance + spacing, 0.5);
+    assert_approx_equals(startX("onPath", 4) - startX("onPath", 0), 2 * (advance + spacing), 0.5);
+}, "textLength spacing on a path counts characters, not code units");
+
+function assertExtents(id, expectedXs, expectedWidth)
+{
+    const text = document.getElementById(id);
+    expectedXs.forEach((expectedX, i) => {
+        const extent = text.getExtentOfChar(i);
+        assert_approx_equals(extent.x, expectedX, 0.01, `character ${i} x`);
+        assert_approx_equals(extent.width, expectedWidth, 0.01, `character ${i} width`);
+    });
+}
+
+test(() => {
+    assertExtents("glyphsSingle", [10, 110, 210], 100);
+}, "textLength with lengthAdjust=spacingAndGlyphs stretches advances and glyphs of a single chunk");
+
+test(() => {
+    assertExtents("glyphsAbsolute", [10, 100, 200], 100);
+}, "Absolute x positions are not moved by textLength spacingAndGlyphs, the glyphs stretch in place");
+
+test(() => {
+    assertExtents("glyphs", [0, 50, 100, 150], 25);
+}, "Absolute x positions at the natural advances are not moved by textLength spacingAndGlyphs");
+</script>

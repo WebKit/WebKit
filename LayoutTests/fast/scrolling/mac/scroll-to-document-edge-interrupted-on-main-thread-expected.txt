@@ -1,0 +1,15 @@
+Tests that scrolling up during an animated scroll to the end of a scroller that animates on the main thread scrolls up from where the scroller is, rather than from the end.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Page Up
+PASS finalScrollTop < scrollTopBeforeScrollingUp is true
+PASS snapPositions.includes(finalScrollTop) is true
+Up Arrow
+PASS finalScrollTop < scrollTopBeforeScrollingUp is true
+PASS snapPositions.includes(finalScrollTop) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

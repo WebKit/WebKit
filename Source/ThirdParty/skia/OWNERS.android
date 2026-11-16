@@ -1,0 +1,21 @@
+# Bug component: 1346
+#
+# This OWNERS file applies to the Android framework's copy of Skia. Its canonical source is Skia's
+# own repository, and should not be modified directly in the Android framework's copy of Skia.
+#
+# Note: please validate changes with an Android canary before landing them, as Android-specific
+# OWNERS issues can break autoroller uploads.
+#
+# The Android autoroller is exempt from OWNERS requirements by other means (b/514810909).
+
+# Android OWNERS:
+nscobie@google.com
+jmbetancourt@google.com
+egdaniel@google.com
+
+# Fallback API OWNERS, manually duplicated from include/OWNERS to support LAST_RESORT_SUGGESTION:
+fmalita@google.com #{LAST_RESORT_SUGGESTION}
+hcm@google.com #{LAST_RESORT_SUGGESTION}
+girlboss@google.com #{LAST_RESORT_SUGGESTION}
+michaelludwig@google.com #{LAST_RESORT_SUGGESTION}
+robertphillips@google.com #{LAST_RESORT_SUGGESTION}

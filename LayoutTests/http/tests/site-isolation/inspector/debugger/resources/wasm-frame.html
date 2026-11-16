@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script>
+let wasmInstances = [];
+
+addEventListener("message", (event) => {
+    if (event.data === "instantiate-wasm") {
+        let bytes = Uint8Array.from(atob("AGFzbQEAAAABBwFgAn9/AX8DAgEABQMBAAEHEAIDYWRkAAAGbWVtb3J5AgAKCQEHACAAIAFqCw=="), (character) => character.charCodeAt(0));
+        wasmInstances.push(new WebAssembly.Instance(new WebAssembly.Module(bytes)));
+        return;
+    }
+
+    if (event.data === "instantiate-streaming") {
+        WebAssembly.instantiateStreaming(fetch("/inspector/debugger/wasm/resources/named-module.py/path-module.wasm?frame-target")).then(({instance}) => {
+            wasmInstances.push(instance);
+        });
+    }
+});
+</script>

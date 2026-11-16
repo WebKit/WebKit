@@ -1,0 +1,10 @@
+Test that under Site Isolation, a Timeline recording can stop when it is waiting for a provisional frame target that is removed before it commits.
+
+
+== Running test suite: SiteIsolation.Timeline.ProvisionalFrameTargetRemovedDuringRecording
+-- Running test case: SiteIsolation.Timeline.ProvisionalFrameTargetRemovedDuringRecording
+PASS: Added a provisional frame target for the cross-origin load.
+PASS: Capturing should wait for the provisional frame target.
+PASS: The provisional frame target was removed.
+PASS: Capturing stopped.
+

@@ -1,0 +1,22 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (comments.wast:9)
+PASS #3 Test that WebAssembly compilation succeeds (comments.wast:56)
+PASS #4 Test that WebAssembly compilation succeeds (comments.wast:67)
+PASS #5 Test that WebAssembly compilation succeeds (comments.wast:76)
+PASS #6 Test that WebAssembly compilation succeeds (comments.wast:83)
+PASS #7 Reinitialize the default imports
+PASS #8 Test that WebAssembly compilation succeeds (comments.wast:9)
+PASS #9 Test that WebAssembly instantiation succeeds (comments.wast:9)
+PASS #10 Test that WebAssembly compilation succeeds (comments.wast:56)
+PASS #11 Test that WebAssembly instantiation succeeds (comments.wast:56)
+PASS #12 Test that WebAssembly compilation succeeds (comments.wast:67)
+PASS #13 Test that WebAssembly instantiation succeeds (comments.wast:67)
+PASS #14 Test that WebAssembly compilation succeeds (comments.wast:76)
+PASS #15 Test that WebAssembly instantiation succeeds (comments.wast:76)
+PASS #16 Test that WebAssembly compilation succeeds (comments.wast:83)
+PASS #17 Test that WebAssembly instantiation succeeds (comments.wast:83)
+PASS #18 Test that a WebAssembly code returns a specific result (comments.wast:104)
+PASS #19 Test that a WebAssembly code returns a specific result (comments.wast:105)
+PASS #20 Test that a WebAssembly code returns a specific result (comments.wast:106)
+

@@ -1,0 +1,10 @@
+This test verifies that switching first responder from a native text field to web content by tapping on an editable element does not cause the keyboard to quickly disappear and reappear. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS keyboardWillHideCountAfter - keyboardWillHideCountBefore is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

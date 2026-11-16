@@ -1,0 +1,54 @@
+<style>
+    .checkbox {
+        width: 44px;
+        height: 44px;
+        font: 11px system-ui;
+        border: 0.3em solid currentColor;
+        border-radius: 0.5em;
+        vertical-align: text-top;
+        display: inline-block;
+        margin: 2px;
+        margin-top: 3px;
+    }
+
+    .checkmark {
+        font: 40px system-ui;
+        text-align: center;
+        display: content;
+        height: 100%;
+        width: 100%;
+        line-height: 100%; 
+    }
+
+    .enabled .checkbox {
+        color: darkblue;
+    }
+
+    .disabled .checkbox {
+        color: darkblue;
+        background-color: color-mix(in srgb, currentColor 30%, transparent);
+        opacity: 30%;
+    }
+
+    .container {
+        display: inline-block;
+    }
+</style>
+<body>
+    <div class="disabled container">
+        <div class="checkbox"></div>
+        <div class="checkbox">
+            <div class="checkmark">&#x2713;</div>
+        </div>
+    </div>
+    <div class="enabled container">
+        <div class="checkbox"></div>
+        <div class="checkbox">
+            <img src="data:image/svg+xml,
+                <svg viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'>
+                    <path style='fill:darkblue;'
+                        d='m 13.296976,22.378053 q 1.132246,0 1.712901,1.858069 1.161279,3.48387 1.654818,3.48387 0.377437,0 0.783891,-0.580641 8.15805,-11.990307 15.096756,-17.070959 2.932262,-2.1483891 5.719358,-2.1483891 3.687104,0 4.441945,0.2322692 0.319353,0.087116 0.319353,0.7257912 0,0.5225878 -0.667756,1.3064627 -18.667725,21.425788 -22.238696,27.870954 -1.219346,2.20644 -5.632257,2.20644 -1.451615,0 -3.048381,-0.754841 -0.667725,-0.348371 -2.3225729,-4.441929 -2.090338,-5.167737 -2.090338,-9.05806 0,-1.422565 2.032254,-2.351608 2.7870949,-1.277429 4.1806419,-1.277429 z' />
+                </svg>">
+        </div>
+    </div>
+</body>

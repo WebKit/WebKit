@@ -1,0 +1,4 @@
+Should be green
+
+PASS Invalidate :fullscreen based style
+

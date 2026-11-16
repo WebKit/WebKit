@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body, html {
+    margin: 0;
+}
+</style>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<img src="../../resources/text-with-rotated-text.png"></img>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    internals.installImageOverlay(document.querySelector("img"), [
+        {
+            topLeft : new DOMPointReadOnly(0.34, 0.68),
+            topRight : new DOMPointReadOnly(0.63, 0.68),
+            bottomRight : new DOMPointReadOnly(0.63, 0.58),
+            bottomLeft : new DOMPointReadOnly(0.34, 0.58),
+            children: [
+                {
+                    text : "AB",
+                    topLeft : new DOMPointReadOnly(0.34, 0.68),
+                    topRight : new DOMPointReadOnly(0.63, 0.68),
+                    bottomRight : new DOMPointReadOnly(0.63, 0.58),
+                    bottomLeft : new DOMPointReadOnly(0.34, 0.58),
+                },
+            ]
+        },
+        {
+            topLeft : new DOMPointReadOnly(0.34, 0.78),
+            topRight : new DOMPointReadOnly(0.44, 0.78),
+            bottomRight : new DOMPointReadOnly(0.44, 0.69),
+            bottomLeft : new DOMPointReadOnly(0.34, 0.69),
+            children: [
+                {
+                    text : "CD",
+                    topLeft : new DOMPointReadOnly(0.34, 0.78),
+                    topRight : new DOMPointReadOnly(0.44, 0.78),
+                    bottomRight : new DOMPointReadOnly(0.44, 0.69),
+                    bottomLeft : new DOMPointReadOnly(0.34, 0.69),
+                }
+            ]
+        }
+    ]);
+
+    await UIHelper.longPressAtPoint(272, 148);
+    await UIHelper.waitForSelectionToAppear();
+    document.execCommand("SelectAll");
+    await UIHelper.ensurePresentationUpdate();
+    selectionRectsAfterSelectingAll = await UIHelper.getUISelectionViewRects();
+    shouldBe("selectionRectsAfterSelectingAll.length", "2");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

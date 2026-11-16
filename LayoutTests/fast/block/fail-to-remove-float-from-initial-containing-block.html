@@ -1,0 +1,15 @@
+<style>
+  html {
+    float: right;
+    content: url();
+  }
+</style>
+<!-- Pass if no crash or assert. -->
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    document.body.offsetTop;
+    document.styleSheets[0].insertRule(`html { overflow-y: -webkit-paged-x; }`);
+  };
+</script>

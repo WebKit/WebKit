@@ -1,0 +1,18 @@
+
+PASS KeyboardEvent.getModifierState() returns false for every modifier when none are set
+PASS KeyboardEvent.getModifierState('Control') reflects ctrlKey in isolation
+PASS KeyboardEvent.getModifierState('Shift') reflects shiftKey in isolation
+PASS KeyboardEvent.getModifierState('Alt') reflects altKey in isolation
+PASS KeyboardEvent.getModifierState('Meta') reflects metaKey in isolation
+PASS KeyboardEvent.getModifierState('AltGraph') reflects modifierAltGraph in isolation
+PASS KeyboardEvent.getModifierState('CapsLock') reflects modifierCapsLock in isolation
+PASS KeyboardEvent.getModifierState() reports every modifier when all are set
+PASS MouseEvent.getModifierState() returns false for every modifier when none are set
+PASS MouseEvent.getModifierState('Control') reflects ctrlKey in isolation
+PASS MouseEvent.getModifierState('Shift') reflects shiftKey in isolation
+PASS MouseEvent.getModifierState('Alt') reflects altKey in isolation
+PASS MouseEvent.getModifierState('Meta') reflects metaKey in isolation
+PASS MouseEvent.getModifierState('AltGraph') reflects modifierAltGraph in isolation
+PASS MouseEvent.getModifierState('CapsLock') reflects modifierCapsLock in isolation
+PASS MouseEvent.getModifierState() reports every modifier when all are set
+

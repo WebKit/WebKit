@@ -1,0 +1,4 @@
+
+PASS Inline style element should not load without 'unsafe-inline'
+PASS Should fire a securitypolicyviolation event
+Lorem ipsum

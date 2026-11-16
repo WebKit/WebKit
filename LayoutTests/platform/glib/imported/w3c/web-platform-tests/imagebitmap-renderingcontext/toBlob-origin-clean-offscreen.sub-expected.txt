@@ -1,0 +1,3 @@
+
+PASS Test that call convertToBlob on a tainted OffscreenCanvas throws exception
+

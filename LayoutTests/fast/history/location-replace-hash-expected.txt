@@ -1,0 +1,19 @@
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+Tests that using location.replace to update the hash of a page preserves it when navigating back to it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS currentPageId is 1
+PASS currentPageId is 1
+PASS testWindow.location.hash is "#foo"
+PASS currentPageId is 2
+PASS currentPageId is 1
+PASS testWindow.location.hash is "#foo"
+PASS Complete: navigated through all the states
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

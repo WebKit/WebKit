@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="mask-and-clip-path-on-shape-in-group-expected.html">
+</head>
+<body style="margin: 0">
+<!-- A mask and a clip-path on the same non-layer shape inside a plain group. The clip keeps the left
+     half, the mask keeps the top half, so only the top left quarter of the rect should be green. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+<defs>
+    <mask id="topMask" maskUnits="userSpaceOnUse" x="50" y="50" width="200" height="100">
+        <rect x="50" y="50" width="200" height="100" fill="white"/>
+    </mask>
+    <clipPath id="leftClip" clipPathUnits="userSpaceOnUse">
+        <rect x="50" y="50" width="100" height="200"/>
+    </clipPath>
+</defs>
+<g>
+    <rect x="50" y="50" width="200" height="200" fill="green" mask="url(#topMask)" clip-path="url(#leftClip)"/>
+</g>
+</svg>
+</body>
+</html>

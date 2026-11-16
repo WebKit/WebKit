@@ -1,0 +1,8 @@
+This tests that JS wrappers of nodes enqueued to a mutation observer do not get collected.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+

@@ -1,0 +1,12 @@
+Tests that Gamepad.vibrationActuator keeps returning the same object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gamepad.vibrationActuator.foo is "bar"
+PASS gamepad.vibrationActuator.foo is "bar"
+PASS gamepad.vibrationActuator.foo is "bar"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

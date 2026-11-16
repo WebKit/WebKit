@@ -1,0 +1,1969 @@
+This test checks that setting an element's .innerHTML to an identical subtree correctly detaches the replaced nodes from the document, and that any references to that subtree continue to work as expected, with custom properties intact.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Testing with subtree: <a><b>text here</b></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><i>text here</i></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><u>text here</u></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><div>text here</div></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><span>text here</span></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><canvas>text here</canvas></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><object>text here</object></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <b><a>text here</a></b>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <b><i>text here</i></b>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <b><u>text here</u></b>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <b><div>text here</div></b>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <b><span>text here</span></b>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <b><canvas>text here</canvas></b>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <b><object>text here</object></b>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <b><a>text here</a></b>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <i><a>text here</a></i>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <i><b>text here</b></i>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <i><u>text here</u></i>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <i><div>text here</div></i>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <i><span>text here</span></i>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <i><canvas>text here</canvas></i>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <i><object>text here</object></i>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <i><a>text here</a></i>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <u><a>text here</a></u>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <u><b>text here</b></u>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <u><i>text here</i></u>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <u><div>text here</div></u>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <u><span>text here</span></u>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <u><canvas>text here</canvas></u>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <u><object>text here</object></u>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <u><a>text here</a></u>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <div><a>text here</a></div>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <div><b>text here</b></div>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <div><i>text here</i></div>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <div><u>text here</u></div>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <div><span>text here</span></div>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <div><canvas>text here</canvas></div>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <div><object>text here</object></div>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <div><a>text here</a></div>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <span><a>text here</a></span>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <span><b>text here</b></span>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <span><i>text here</i></span>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <span><u>text here</u></span>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <span><div>text here</div></span>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <span><canvas>text here</canvas></span>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <span><object>text here</object></span>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <span><a>text here</a></span>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <canvas><a>text here</a></canvas>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <canvas><b>text here</b></canvas>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <canvas><i>text here</i></canvas>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <canvas><u>text here</u></canvas>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <canvas><div>text here</div></canvas>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <canvas><span>text here</span></canvas>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <canvas><object>text here</object></canvas>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <canvas><a>text here</a></canvas>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <object><a>text here</a></object>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <object><b>text here</b></object>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <object><i>text here</i></object>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <object><u>text here</u></object>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <object><div>text here</div></object>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <object><span>text here</span></object>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <object><canvas>text here</canvas></object>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <object><a>text here</a></object>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><b>text here</b></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><i>text here</i></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><u>text here</u></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><div>text here</div></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><span>text here</span></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><canvas>text here</canvas></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+
+Testing with subtree: <a><object>text here</object></a>
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is anchorPoint.firstChild
+PASS subtreeRoot.parentNode is anchorPoint
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is true
+
+Setting anchorPoint.innerHTML to identical DOM, subtree should become detached.
+
+PASS anchorPoint.innerHTML is htmlString
+PASS subtreeRoot is not anchorPoint.firstChild
+PASS subtreeRoot.parentNode is null
+PASS innerElement.parentNode is subtreeRoot
+PASS textNode.parentNode is innerElement
+PASS subtreeRoot.hasCustomProperty is true
+PASS innerElement.hasCustomProperty is true
+PASS textNode.hasCustomProperty is true
+PASS anchorPoint.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.hasCustomProperty is not true
+PASS anchorPoint.firstChild.firstChild.firstChild.hasCustomProperty is not true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

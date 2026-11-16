@@ -1,0 +1,22 @@
+
+PASS RTCError constructor with errorDetail and message
+PASS RTCError constructor's message argument is optional
+PASS RTCError constructor throws TypeError if arguments are missing
+PASS RTCError constructor throws TypeError if the errorDetail is invalid
+PASS RTCError.name is 'OperationError'
+PASS RTCError.code is 0
+PASS RTCError.errorDetail is readonly.
+PASS RTCErrorInit.errorDetail is the only required attribute
+PASS RTCError.sdpLineNumber is null by default
+PASS RTCError.sdpLineNumber is settable by constructor
+PASS RTCError.sdpLineNumber is readonly
+PASS RTCError.sctpCauseCode is null by default
+PASS RTCError.sctpCauseCode is settable by constructor
+PASS RTCError.sctpCauseCode is readonly
+PASS RTCError.receivedAlert is null by default
+PASS RTCError.receivedAlert is settable by constructor
+PASS RTCError.receivedAlert is readonly
+PASS RTCError.sentAlert is null by default
+PASS RTCError.sentAlert is settable by constructor
+PASS RTCError.sentAlert is readonly
+

@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        /* Pack them to fit everything in 800*600 */
+        div > * {
+            padding: 5px;
+            width: 100px;
+            float: left;
+        }
+        :matches([type]) {
+            background-color: red;
+        }
+        :matches([type=foobar]) {
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <p>Verify style sharing does not ignore the "type" attribute.</p>
+    <div>
+        <div>No type</div>
+        <div type>Type defined</div>
+        <div type="">Type defined empty</div>
+        <div type="foobar">Type is foobar</div>
+    </div>
+    <div>
+        <span>No type</span>
+        <span type>Type defined</span>
+        <span type="">Type defined empty</span>
+        <span type="foobar">Type is foobar</span>
+    </div>
+    <div>
+        <input value="No type">
+        <input type value="Type defined">
+        <input type="" value="Type defined empty">
+        <input type="foobar" value="Type is foobar">
+    </div>
+</body>
+</html>

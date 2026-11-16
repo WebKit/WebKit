@@ -1,0 +1,21 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<input type=checkbox switch>
+<input type=checkbox switch style=zoom:5>
+<script>
+const [control, controlZoom] = document.querySelectorAll("input");
+
+shouldBeEqualToString("getComputedStyle(control).zoom", "1");
+shouldBeEqualToString("getComputedStyle(controlZoom).zoom", "5");
+
+const controlRect = control.getBoundingClientRect();
+const controlWidth = UIHelper.roundToDevicePixel(controlRect.width);
+const controlHeight = UIHelper.roundToDevicePixel(controlRect.height);
+
+const controlZoomRect = controlZoom.getBoundingClientRect();
+const controlZoomWidth = UIHelper.roundToDevicePixel(controlZoomRect.width / 5);
+const controlZoomHeight = UIHelper.roundToDevicePixel(controlZoomRect.height / 5);
+
+shouldBe("controlWidth", "controlZoomWidth");
+shouldBe("controlHeight", "controlZoomHeight");
+</script>

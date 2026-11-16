@@ -1,0 +1,4 @@
+
+
+PASS adoptedStyleSheets won't be cleared when adopting into/from <template>s
+

@@ -1,0 +1,14 @@
+PASS internals.rangeAsText(range1) is 'foobar1'
+PASS internals.rangeAsText(range2) is 'oba'
+PASS internals.rangeAsText(range3) is 'a'
+PASS internals.rangeAsText(range4) is 'foobar4'
+PASS internals.rangeAsText(range5) is ''
+PASS successfullyParsed is true
+
+TEST COMPLETE
+moobar
+foobar1
+foobar2
+foobar3
+foobar4
+foobar5

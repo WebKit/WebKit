@@ -1,0 +1,34 @@
+<style>
+body { font: 20px Ahem; }
+span { color: red; }
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function test() {
+    await new Promise(requestAnimationFrame);
+
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    document.querySelector('span').style.color = 'green';
+
+    await new Promise(requestAnimationFrame);
+
+    if (window.internals) {
+        document.querySelector('#repaints').textContent = window.internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<body onload="test()">
+<div>O tempora, o mores! senatus haec intellegit, consul videt; hic tamen vivit. vivit? <span>immo vero etiam in senatum venit, fit publici consili particeps, notat et designat oculis ad caedem unum quemque nostrum</span>. nos autem fortes viri satis facere rei publicae videmur, si istius furorem ac tela vitamus. ad mortem te, Catilina, duci iussu consulis iam pridem oportebat, in te conferri pestem quam tu in nos omnis iam diu machinaris.</div>
+
+<div id="repaints"></div>
+</body>

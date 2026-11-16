@@ -1,0 +1,8 @@
+
+
+FAIL disconnect() resets range state and geometry. textarea.createValueRange is not a function. (In 'textarea.createValueRange(1, 4)', 'textarea.createValueRange' is undefined)
+FAIL disconnect() is idempotent. textarea.createValueRange is not a function. (In 'textarea.createValueRange(1, 4)', 'textarea.createValueRange' is undefined)
+FAIL disconnect() stops live offset updates. textarea.createValueRange is not a function. (In 'textarea.createValueRange(1, 4)', 'textarea.createValueRange' is undefined)
+FAIL disconnect() only affects the target range. textarea.createValueRange is not a function. (In 'textarea.createValueRange(0, 3)', 'textarea.createValueRange' is undefined)
+FAIL Element accepts new ranges after a prior range is disconnected. textarea.createValueRange is not a function. (In 'textarea.createValueRange(1, 4)', 'textarea.createValueRange' is undefined)
+

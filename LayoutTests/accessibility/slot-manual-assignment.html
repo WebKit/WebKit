@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="host">
+    <button id="alpha">Alpha</button>
+</div>
+
+<script>
+var output = "This tests that imperative slot assignment reparents a node in the accessibility tree, even though it mutates no DOM.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var shadowRoot = document.getElementById("host").attachShadow({ mode: "open", slotAssignment: "manual" });
+    shadowRoot.innerHTML = "<div role='group' aria-label='First' id='firstGroup'><slot id='firstSlot'></slot></div>"
+        + "<div role='group' aria-label='Second' id='secondGroup'><slot id='secondSlot'></slot></div>";
+    var firstSlot = shadowRoot.getElementById("firstSlot");
+    var secondSlot = shadowRoot.getElementById("secondSlot");
+
+    function parentIdOf(id) {
+        var element = accessibilityController.accessibleElementById(id);
+        return element ? element.parentElement().domIdentifier : "not in the accessibility tree";
+    }
+
+    function childCountOf(id) {
+        var element = accessibilityController.accessibleElementById(id);
+        return element ? element.childrenCount : -1;
+    }
+
+    setTimeout(async function() {
+        output += "A manual-assignment slot holds nothing until it is assigned, so the button is unslotted and unrendered.\n";
+        output += await expectAsync("parentIdOf('alpha')", "'not in the accessibility tree'");
+        output += expect("childCountOf('firstGroup')", "0");
+
+        output += "\nAssigning the button to the first slot.\n";
+        firstSlot.assign(document.getElementById("alpha"));
+        output += await expectAsync("parentIdOf('alpha')", "'firstGroup'");
+        output += expect("childCountOf('firstGroup')", "1");
+
+        output += "\nAssigning the same button to the second slot, which mutates no DOM.\n";
+        secondSlot.assign(document.getElementById("alpha"));
+        output += await expectAsync("parentIdOf('alpha')", "'secondGroup'");
+        output += expect("childCountOf('firstGroup')", "0");
+        output += expect("childCountOf('secondGroup')", "1");
+
+        document.getElementById("host").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

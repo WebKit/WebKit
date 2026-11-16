@@ -1,0 +1,5 @@
+
+PASS All tests ran
+PASS loading documents from the origin document.domain was set to should throw
+PASS loading documents from original origin after setting document.domain
+

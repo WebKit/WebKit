@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT The context is navigated to a new document and a close event is fired. Test timed out
+NOTRUN The window is closed and a close event is fired.
+NOTRUN The iframe is deleted and a close event is fired.
+

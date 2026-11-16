@@ -1,0 +1,56 @@
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that the volume slider  respects the user interface layout direction.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 250 });
+
+mediaControls.element.style.position = "relative";
+document.body.appendChild(mediaControls.element);
+
+step2();
+
+
+
+function step2()
+{
+    debug("");
+    debug("width = 600");
+    debug("usesLTRUserInterfaceLayoutDirection = false");
+    mediaControls.usesLTRUserInterfaceLayoutDirection = false;
+    
+    setTimeout(() => {
+        window.volumeSliderContainer = mediaControls.element.querySelector('.volume-slider-container');
+        
+        // In RTL mode with left positioning, the right value should be significantly 
+        // larger than left (element pushed from left edge)
+        const leftValue = getComputedStyle(volumeSliderContainer).left;
+        const rightValue = getComputedStyle(volumeSliderContainer).right;
+        const leftPx = parseFloat(leftValue);
+        const rightPx = parseFloat(rightValue);
+        
+        if (rightPx > leftPx) {
+            testPassed("Volume slider positioned from left in RTL (left: " + leftValue + ", right: " + rightValue + ")");
+        } else {
+            testFailed("Volume slider not positioned correctly in RTL. left: " + leftValue + ", right: " + rightValue);
+        }
+
+        done();
+    }, 100);
+}
+
+function done()
+{
+    debug("");
+    mediaControls.element.remove();
+    finishJSTest();
+}
+
+</script>
+<script src="../../../resources/js-test.js"></script>
+</body>

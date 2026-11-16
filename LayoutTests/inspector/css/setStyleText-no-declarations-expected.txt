@@ -1,0 +1,20 @@
+Tests that CSS.setStyleText writes the first declaration of a rule that has none into the style sheet text.
+
+
+== Running test suite: CSS.setStyleText.NoDeclarations
+-- Running test case: CSS.setStyleText.NoDeclarations.EmptyRule
+PASS: Should find the `.empty-rule` author rule.
+PASS: Rule should start with no declarations.
+PASS: Style should have one declaration after the edit.
+PASS: Declaration text should be `color: green;`.
+PASS: Declaration should have a source range.
+PASS: Style sheet text should contain the new declaration.
+
+-- Running test case: CSS.setStyleText.NoDeclarations.ParentOfOnlyChildRules
+PASS: Should find the `.parent-without-declarations` author rule.
+PASS: Rule should start with no declarations of its own.
+PASS: Style should have one declaration after the edit.
+PASS: Declaration should have a source range.
+PASS: Style sheet text should still contain the untouched child rule.
+PASS: New declaration should be inserted at the start of the rule body.
+

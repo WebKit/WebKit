@@ -1,0 +1,13 @@
+
+PASS checkCurrentDirection
+PASS checkLocalRollback
+PASS checkMsectionReuse
+PASS checkRemoteRollback
+PASS checkStop
+PASS checkStopAfterCreateAnswer
+PASS checkStopAfterCreateOffer
+PASS checkStopAfterSetLocalAnswer
+PASS checkStopAfterSetLocalOffer
+PASS checkStopAfterSetRemoteOffer
+PASS track with audio stays muted when setting the transceiver direction to 'sendrecv' after 'inactive' but no packets flow
+

@@ -1,0 +1,9 @@
+
+PASS parse 'none, all'
+PASS parse 'all, none'
+PASS parse 'foobar'
+PASS parse 'all, foobar'
+PASS parse 'foobar, all'
+PASS parse 'inherit'
+PASS parse 'initial'
+

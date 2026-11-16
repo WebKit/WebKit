@@ -1,0 +1,4 @@
+
+
+PASS Image with srcset inserted into a dynamic iframe should have non-zero natural dimensions
+

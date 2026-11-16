@@ -1,0 +1,171 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "CSSSelector.h"
+#include "InspectorCSSAgent.h"
+#include "InspectorStyleSheet.h"
+#include "InspectorWebAgentBase.h"
+#include "Timer.h"
+#include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakHashMap.h>
+#include <wtf/WeakHashSet.h>
+#include <wtf/WeakRef.h>
+
+namespace Inspector {
+class CSSFrontendDispatcher;
+}
+
+namespace WebCore {
+
+class CSSRule;
+class CSSStyleSheet;
+class CharacterData;
+class Document;
+class Element;
+class EventTarget;
+class FrameDOMAgent;
+class LocalFrame;
+class Node;
+class StyledElement;
+class StyleRule;
+
+namespace Style {
+class ComputedStyle;
+class Resolver;
+struct PseudoElementIdentifier;
+}
+
+class FrameCSSAgent final : public InspectorAgentBase, public Inspector::CSSBackendDispatcherHandler, public InspectorStyleSheet::Listener, public CanMakeCheckedPtr<FrameCSSAgent> {
+    WTF_MAKE_NONCOPYABLE(FrameCSSAgent);
+    WTF_MAKE_TZONE_ALLOCATED(FrameCSSAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameCSSAgent);
+public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
+    FrameCSSAgent(FrameAgentContext&);
+    ~FrameCSSAgent();
+
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend() override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+
+    // CSSBackendDispatcherHandler
+    Inspector::CommandResult<void> enable() override;
+    Inspector::CommandResult<void> disable() override;
+    Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>>> getComputedStyleForNode(Inspector::Protocol::DOM::NodeId) override;
+    Inspector::CommandResultOf<Ref<Inspector::Protocol::CSS::Font>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::Font>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CharacterRange>>> getFontDataForNode(Inspector::Protocol::DOM::NodeId) override;
+    Inspector::CommandResultOf<RefPtr<Inspector::Protocol::CSS::CSSStyle>, RefPtr<Inspector::Protocol::CSS::CSSStyle>> getInlineStylesForNode(Inspector::Protocol::DOM::NodeId) override;
+    Inspector::CommandResultOf<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>>> getMatchedStylesForNode(Inspector::Protocol::DOM::NodeId, std::optional<bool>&& includePseudo, std::optional<bool>&& includeInherited, std::optional<bool>&& includeKeyframes) override;
+    Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>> getAllStyleSheets() override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSStyleSheetBody>> getStyleSheet(const Inspector::Protocol::CSS::StyleSheetId&) override;
+    Inspector::CommandResult<String> getStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId&) override;
+    Inspector::CommandResult<void> setStyleSheetText(const Inspector::Protocol::CSS::StyleSheetId&, const String& text) override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSStyle>> setStyleText(Ref<JSON::Object>&& styleId, const String& text) override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> setRuleSelector(Ref<JSON::Object>&& ruleId, const String& selector) override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::Grouping>> setGroupingHeaderText(Ref<JSON::Object>&& ruleId, const String& headerText) override;
+    Inspector::CommandResult<Inspector::Protocol::CSS::StyleSheetId> createStyleSheet(const Inspector::Protocol::Network::FrameId&) override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> addRule(const Inspector::Protocol::CSS::StyleSheetId&, const String& selector) override;
+    Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>> getSupportedCSSProperties() override;
+    Inspector::CommandResult<Ref<JSON::ArrayOf<String>>> getSupportedSystemFontFamilyNames() override;
+    Inspector::CommandResult<void> forcePseudoState(Inspector::Protocol::DOM::NodeId, Ref<JSON::Array>&& forcedPseudoClasses) override;
+    Inspector::CommandResult<void> setLayoutContextTypeChangedMode(Inspector::Protocol::CSS::LayoutContextTypeChangedMode) override;
+
+    // InspectorStyleSheet::Listener
+    void styleSheetChanged(InspectorStyleSheet*) override;
+
+    // InspectorInstrumentation
+    void didInsertDOMNode(Node&);
+    void didRemoveDOMNode(Node&);
+    void willDestroyDOMNode(Node&);
+    void didModifyDOMAttr(Element&);
+    void didRemoveDOMAttr(Element&);
+    void didInvalidateStyleAttr(Element&);
+    bool forcePseudoState(const Element&, CSSSelector::PseudoClass);
+    void documentDetached(Document&);
+    void fontDataChanged();
+    void mediaQueryResultChanged();
+    void activeStyleSheetsUpdated(Document&);
+    void didChangeRendererForDOMNode(Node&);
+    void didAddEventListener(EventTarget&);
+    void willRemoveEventListener(EventTarget&);
+    void didChangeAssignedSlot(Node&);
+    void didChangeAssignedNodes(Element& slotElement);
+    void characterDataModified(CharacterData&);
+
+    // FrameDOMAgent
+    RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlagsForNode(Node&);
+    void didBindDocument();
+
+private:
+    void reset();
+    bool documentIsReportedByPageCSSAgent() const;
+    RefPtr<Element> elementForId(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    InspectorStyleSheet& bindStyleSheet(CSSStyleSheet*);
+    InspectorStyleSheet* assertStyleSheetForId(Inspector::Protocol::ErrorString&, const Inspector::Protocol::CSS::StyleSheetId&);
+    InspectorStyleSheetForInlineStyle& asInspectorStyleSheet(StyledElement&);
+    RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForAttributesStyle(StyledElement&);
+    RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(const StyleRule*, Style::Resolver&, Element&);
+    RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(CSSRule*);
+    Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> buildArrayForMatchedRuleList(const Vector<Ref<const StyleRule>>&, Style::Resolver&, Element&, std::optional<Style::PseudoElementIdentifier>);
+    Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>> buildArrayForKeyframes(Element&, const Style::ComputedStyle&);
+    void collectAllStyleSheets(Vector<InspectorStyleSheet*>&);
+    void collectAllDocumentStyleSheets(Document&, Vector<CSSStyleSheet*>&);
+    void collectStyleSheets(CSSStyleSheet*, Vector<CSSStyleSheet*>&);
+    void setActiveStyleSheetsForDocument(Document&, Vector<CSSStyleSheet*>&);
+    InspectorStyleSheet* createInspectorStyleSheetForDocument(Document&);
+    NODELETE Inspector::Protocol::CSS::StyleSheetOrigin detectOrigin(CSSStyleSheet*, Document*);
+    void nodeHasLayoutFlagsChange(Node&);
+    void nodesWithPendingLayoutFlagsChangeDispatchTimerFired();
+    void pushLayoutContextNodesToFrontend(FrameDOMAgent&);
+
+    const UniqueRef<Inspector::CSSFrontendDispatcher> m_frontendDispatcher;
+    const Ref<Inspector::CSSBackendDispatcher> m_backendDispatcher;
+    WeakRef<LocalFrame> m_inspectedFrame;
+
+    HashMap<Inspector::Protocol::CSS::StyleSheetId, Ref<InspectorStyleSheet>> m_idToInspectorStyleSheet;
+    HashMap<CSSStyleSheet*, Ref<InspectorStyleSheet>> m_cssStyleSheetToInspectorStyleSheet;
+    HashMap<Ref<Document>, Vector<Ref<InspectorStyleSheet>>> m_documentToInspectorStyleSheet;
+    HashMap<Document*, HashSet<CSSStyleSheet*>> m_documentToKnownCSSStyleSheets;
+    HashMap<Node*, Ref<InspectorStyleSheetForInlineStyle>> m_nodeToInspectorStyleSheet;
+    using PseudoClassHashSet = HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>>;
+    HashMap<Inspector::Protocol::DOM::NodeId, PseudoClassHashSet> m_nodeIdToForcedPseudoState;
+    HashSet<Document*> m_documentsWithForcedPseudoStates;
+    WeakHashMap<Node, OptionSet<InspectorCSSAgent::LayoutFlag>, WeakPtrImplWithEventTargetData> m_lastLayoutFlagsForNode;
+    WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_nodesWithPendingLayoutFlagsChange;
+    Timer m_nodesWithPendingLayoutFlagsChangeDispatchTimer;
+    Inspector::Protocol::CSS::LayoutContextTypeChangedMode m_layoutContextTypeChangedMode { Inspector::Protocol::CSS::LayoutContextTypeChangedMode::Observed };
+    int m_lastStyleSheetId { 1 };
+    bool m_creatingViaInspectorStyleSheet { false };
+    bool m_needsLayoutContextNodesPush { false };
+    bool m_suppressFontDataChanged { false };
+};
+
+} // namespace WebCore

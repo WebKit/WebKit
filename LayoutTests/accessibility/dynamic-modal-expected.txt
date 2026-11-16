@@ -1,0 +1,18 @@
+This tests nested aria-modal dialogs
+
+Initial focus: show
+Show button reachable: true
+
+Clicking on show button
+
+PASS: accessibilityController.focusedElement?.domIdentifier === 'dialog_ok' === true
+PASS: !!accessibilityController.accessibleElementById('show') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Show
+
+Inside dialog
+
+OK

@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="content">Hello<br><br>world</p>
+    
+<script>
+
+var textChild, startMarker, range, currentMarker, lineRange;
+if (window.accessibilityController) {
+    let output = "This test verifies that next line end appropriately finds the next line when there are <br> tags.\n\n";
+    textChild = accessibilityController.accessibleElementById("content").childAtIndex(0);
+
+    range = textChild.textMarkerRangeForElement(textChild);
+    startMarker = textChild.startTextMarkerForTextMarkerRange(range);
+    currentMarker = textChild.nextLineEndTextMarkerForTextMarker(startMarker);
+    output += expect("textChild.indexForTextMarker(currentMarker)", "5");
+
+    currentMarker = textChild.nextLineEndTextMarkerForTextMarker(currentMarker);
+    output += expect("textChild.indexForTextMarker(currentMarker)", "6");
+
+    currentMarker = textChild.nextLineEndTextMarkerForTextMarker(currentMarker);
+    output += expect("textChild.indexForTextMarker(currentMarker)", "12");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,5 @@
+
+FAIL Replacing an attribute prefix preserves name lookup order with namespacedFirst=false assert_equals: expected (object) null but got (string) "replacement"
+FAIL Replacing an attribute prefix preserves name lookup order with namespacedFirst=true assert_equals: expected (object) null but got (string) "replacement"
+FAIL Replacing an attribute prefix preserves other attributes with the old qualified name assert_equals: expected "plain" but got "replacement"
+

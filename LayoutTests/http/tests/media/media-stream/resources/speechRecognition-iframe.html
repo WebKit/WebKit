@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<body>
+<script>
+    var isRunning = true;
+    function reportResult(result)
+    {
+        if (!isRunning)
+            return;
+        isRunning = false;
+        parent.postMessage(result, "*");
+    }
+
+    onload = () => {
+        const recognition = new webkitSpeechRecognition();
+        recognition.onerror = () => {
+            reportResult("error");
+        }
+        recognition.onstart = () => {
+            reportResult("start");
+        }
+        recognition.start();
+    }
+</script>
+</body>
+</html>

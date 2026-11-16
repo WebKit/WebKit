@@ -1,0 +1,12 @@
+Tests that changes in table and row roles result in the appropriate AX properties being exposed.
+Originally axTable has 2 columns and 2 rows
+After setting role to button, axTable has 0 columns and 0 rows
+After setting role to table, axTable has 2 columns and 2 rows
+After setting trs role to list, axTable has 0 columns and 0 rows
+After setting trs role to row, axTable has 2 columns and 2 rows
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a	b
+c	d

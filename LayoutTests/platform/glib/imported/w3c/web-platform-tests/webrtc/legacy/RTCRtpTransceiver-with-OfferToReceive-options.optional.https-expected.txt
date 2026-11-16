@@ -1,0 +1,6 @@
+
+PASS checkAddTransceiverWithStream
+PASS checkAddTransceiverWithOfferToReceiveAudio
+PASS checkAddTransceiverWithOfferToReceiveVideo
+PASS checkAddTransceiverWithOfferToReceiveBoth
+

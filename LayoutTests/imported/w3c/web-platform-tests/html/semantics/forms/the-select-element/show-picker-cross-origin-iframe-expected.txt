@@ -1,0 +1,7 @@
+
+
+PASS Test showPicker() called from cross-origin iframe
+PASS Test showPicker() called from cross-origin iframe 1
+PASS Test showPicker() called from cross-origin iframe 2
+PASS Test showPicker() called from cross-origin iframe 3
+

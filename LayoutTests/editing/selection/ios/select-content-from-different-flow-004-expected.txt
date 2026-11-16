@@ -1,0 +1,12 @@
+The highlight rects should not be combined if the content is from different flow. Distinguish flows properly, positioned content descendant + static content.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionRects.length is 2
+PASS staticLineTop is > absoluteLineBottom
+PASS successfullyParsed is true
+
+TEST COMPLETE
+absolute
+static

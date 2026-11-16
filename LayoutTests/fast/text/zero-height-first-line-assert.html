@@ -1,0 +1,16 @@
+<style>
+.child::first-line {
+  font-size-adjust: 0;
+}
+.child {
+  overflow-wrap: anywhere;
+  text-indent: 10000px;
+}
+</style><div><div class=child>X</div><div>Y</div></div><script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+document.designMode = "on";
+document.execCommand("selectAll",false, null);
+document.execCommand("insertHTML",false, " Pass if no crash or assert ");
+</script>

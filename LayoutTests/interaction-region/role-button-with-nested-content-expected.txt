@@ -1,0 +1,39 @@
+Los Angeles
+Dec 5 - 12
+$38
+Nonstop · 1 hr 33 min
+Las Vegas
+Dec 5 - 12
+$48
+Nonstop · 1 hr 39 min
+San Diego
+Details
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (interaction (20,20) width=300 height=80)
+        (cornerRadius 12.00),
+        (interaction (20,120) width=300 height=80)
+        (cornerRadius 12.00),
+        (interaction (20,220) width=300 height=80)
+        (cornerRadius 12.00),
+        (guard (36,244) width=67 height=38),
+        (interaction (36,254) width=67 height=18)
+        (cornerRadius 8.00),
+        (interaction (20,320) width=38 height=38)
+        (cornerRadius 19.00)])
+      )
+    )
+  )
+)
+

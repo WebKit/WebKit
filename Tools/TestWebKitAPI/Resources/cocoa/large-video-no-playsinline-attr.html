@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            video {
+                width: 480px;
+                height: 320px;
+            }
+        </style>
+        <script>
+            function play() {
+                document.querySelector("video").play();
+            }
+            function pause() {
+                document.querySelector("video").pause();
+            }
+        </script>
+    </head>
+    <body>
+        <video src="large-video-with-audio.mp4"></video>
+        <script>
+            document.querySelector("video").addEventListener("playing", () => {
+                webkit.messageHandlers.testHandler.postMessage("playing");
+            });
+            document.querySelector("video").addEventListener("pause", () => {
+                webkit.messageHandlers.testHandler.postMessage("paused");
+            });
+            document.querySelector("video").addEventListener("webkitbeginfullscreen", () => {
+                webkit.messageHandlers.testHandler.postMessage("beganFullscreen");
+            });
+        </script>
+    </body>
+</html>

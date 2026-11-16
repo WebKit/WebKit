@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-source-mime-sniff-mp4</title>
+    <script src=video-test.js></script>
+    <script>
+        // The <source> declares video/webm, but the body is actually MP4. MediaPlayer should
+        // detect the engine-selection failure, sniff the actual Content-Type, re-run engine
+        // selection with video/mp4, and let the AVF engine play the file.
+        window.addEventListener('load', () => {
+            run('video = document.createElement("video")');
+            run('source = document.createElement("source")');
+            run('source.type = "video/webm"');
+            run('source.src = "content/test-25fps.mp4"');
+            run('video.appendChild(source)');
+            run('document.body.appendChild(video)');
+
+            video.muted = 1;
+
+            source.addEventListener('error', () => {
+                failTest('<source> error fired - sniff fallback did not recover from misdeclared type');
+            });
+
+            video.addEventListener('error', () => {
+                failTest('<video> error fired - sniff fallback failed to play the file');
+            });
+
+            video.addEventListener('loadeddata', () => {
+                consoleWrite(`loadeddata fired`);
+                consoleWrite(`selected source: ${video.currentSrc.split('/').pop()}`);
+                endTest();
+            });
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,15 @@
+This test verifies that subframe navigation does not dismiss the edit menu. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS subFrameLoaded became true
+PASS Selected text
+PASS Menu is still showing
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Select me
+
+
+

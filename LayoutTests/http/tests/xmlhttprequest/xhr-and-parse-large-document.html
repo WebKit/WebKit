@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that XMLHttpRequest.document is valid for large HTML documents");
+jsTestIsAsync = true;
+
+let parsedDocument;
+
+let xhr = new XMLHttpRequest();
+xhr.open('GET', 'resources/large-html-with-script-tags.py', true);
+
+xhr.addEventListener('readystatechange', () => {
+  if (xhr.readyState === 4) {
+    const parser = new DOMParser();
+    parsedDocument = parser.parseFromString(xhr.responseText, "text/html")
+
+    shouldBeEqualToString("parsedDocument.body.lastChild.nodeName", "SCRIPT");
+
+    finishJSTest();
+  }
+});
+
+xhr.addEventListener('error', (e) => {
+    testFailed("XHR failed");
+    finishJSTest();
+});
+
+xhr.send();
+</script>
+</body>
+</html>

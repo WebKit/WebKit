@@ -1,0 +1,4 @@
+
+PASS e.style['font-synthesis-weight'] = "normal" should not set the property value
+PASS e.style['font-synthesis-weight'] = "auto none" should not set the property value
+

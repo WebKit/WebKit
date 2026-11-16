@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>requestVideoFrameCallback with paused webm</title>
+<script src="../resources/testharness.js"></script>
+<script src=video-test.js></script>
+<script src=utilities.js></script>
+<script>
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        let v = document.createElement('video');
+        v.src = "content/test-video-only.mp4";
+        const loadedMetadataPromise = waitFor(v, 'loadedmetadata');
+        const frame1 = await waitForVideoFrame(v);
+        await loadedMetadataPromise;
+        testExpected(v.currentTime, 0);
+        testExpected(frame1[1].mediaTime, 0);
+        testExpected(frame1[1].width, 320);
+        testExpected(frame1[1].height, 240);
+
+        // time of the last video frame.
+        v.currentTime = 6.009;
+
+        const seekPromise = waitFor(v, 'seeked', true);
+        const frame2 = await waitForVideoFrame(v);
+        testExpected(v.currentTime, 6.009);
+        testExpected(frame2[1].mediaTime, 6.009);
+        testExpected(frame2[1].width, 320);
+        testExpected(frame2[1].height, 240);
+
+        await seekPromise;
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+</body>
+</html>

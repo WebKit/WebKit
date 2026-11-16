@@ -1,0 +1,3 @@
+
+PASS Test that a document picture-in-picture window has the base URI of the initiator
+

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML Fast Path Whitespace Caching Test</title>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+    <div id="test-results"></div>
+    <div id="container"></div>
+
+    <script>
+        description("Test that HTMLDocumentParserFastPath correctly caches whitespace (newline + 0-32 spaces) when using innerHTML. This test does not check utilization of the cache. It just verifies that generated text nodes have the correct number of spaces once parsed and constructed into the DOM. There is currently no observable way to detect that the cache has been utilized, or a side effect of using the cache to detect.");
+
+        function testWhitespaceCaching() {
+            const results = [];
+            const container = document.getElementById('container');
+
+            // Define test cases with their innerHTML strings
+            const testCases = [
+                {
+                    name: 'Newline only (0 spaces)',
+                    html: '<span>Before</span>\n<span>After</span>',
+                    expectedCachedWhiteSpace: true,
+                    expectedSpaces: 0
+                },
+                {
+                    name: 'Newline + 1 space',
+                    html: '<span>Before</span>\n <span>After</span>',
+                    expectedCachedWhiteSpace: true,
+                    expectedSpaces: 1
+                },
+                {
+                    name: 'Newline + 4 spaces',
+                    html: '<span>Before</span>\n    <span>After</span>',
+                    expectedCachedWhiteSpace: true,
+                    expectedSpaces: 4
+                },
+                {
+                    name: 'Newline + 8 spaces',
+                    html: '<span>Before</span>\n        <span>After</span>',
+                    expectedCachedWhiteSpace: true,
+                    expectedSpaces: 8
+                },
+                {
+                    name: 'Newline + 16 spaces',
+                    html: '<span>Before</span>\n                <span>After</span>',
+                    expectedCachedWhiteSpace: true,
+                    expectedSpaces: 16
+                },
+                {
+                    name: 'Newline + 16 spaces + content at end',
+                    html: '<span>Before</span>\n                hey<span>After</span>',
+                    expectedCachedWhiteSpace: false,
+                    expectedSpaces: 16
+                },
+                {
+                    name: 'Single span with newline + text',
+                    html: '<span>Before</span>\nJ<span>After</span>',
+                    expectedCachedWhiteSpace: false,
+                    expectedSpaces: null
+                },
+                {
+                    name: 'Newline + 32 spaces (max)',
+                    html: '<span>Before</span>\n                                <span>After</span>',
+                    expectedCachedWhiteSpace: true,
+                    expectedSpaces: 32
+                },
+                {
+                    name: 'Newline + 33 spaces (over max)',
+                    html: '<span>Before</span>\n                                 <span>After</span>',
+                    expectedCachedWhiteSpace: false,
+                    expectedSpaces: 33
+                },
+                {
+                    name: 'Mixed whitespace (tab+spaces)',
+                    html: '<span>Before</span>\n\t  <span>After</span>',
+                    expectedCachedWhiteSpace: false,
+                    expectedSpaces: null
+                },
+                {
+                    name: 'No leading newline',
+                    html: '<span>Before</span>    <span>After</span>',
+                    expectedCachedWhiteSpace: false,
+                    expectedSpaces: null
+                },
+                {
+                    name: 'Text content mixed in',
+                    html: '<span>Before</span>\n    text content<span>After</span>',
+                    expectedCachedWhiteSpace: false,
+                    expectedSpaces: null
+                },
+                {
+                    name: 'Escaped entity in whitespace',
+                    html: '<span>Before</span>\n    &amp;<span>After</span>',
+                    expectedCachedWhiteSpace: false,
+                    expectedSpaces: null
+                },
+                {
+                    name: 'Carriage return in whitespace',
+                    html: '<span>Before</span>\n\r  <span>After</span>',
+                    expectedCachedWhiteSpace: false,
+                    expectedSpaces: null
+                },
+                {
+                    name: 'HTML entity only',
+                    html: '<span>Before</span>&nbsp;<span>After</span>',
+                    expectedCachedWhiteSpace: false,
+                    expectedSpaces: null
+                }
+            ];
+
+            testCases.forEach((testCase, index) => {
+                debug(`Testing case ${index + 1}: ${testCase.name}`);
+                debug(`HTML: ${JSON.stringify(testCase.html)}`);
+
+                testDiv = document.createElement('div');
+                testDiv.className = 'test-container';
+                testDiv.id = `test-case-${index}`;
+
+                // Uses fast path parser
+                testDiv.innerHTML = testCase.html;
+                container.appendChild(testDiv);
+
+                // Should always have exactly 3 child nodes: <span>, text, <span>
+                debug(`Created ${testDiv.childNodes.length} child nodes`);
+                shouldBe("testDiv.childNodes.length", "3");
+
+                // The middle node should be our text node
+                textNode = testDiv.childNodes[1];
+                shouldBe("textNode.nodeType", "3");
+
+                const actualWhitespace = textNode.textContent;
+                debug(`Text node content actual vs expected`)
+                debug(`${JSON.stringify(actualWhitespace)}`)
+                if (testCase.expectedCachedWhiteSpace) {
+                    // For cached cases, we expect exactly the newline + spaces pattern
+                    const expectedWhitespace = '\n' + ' '.repeat(testCase.expectedSpaces);
+                    debug(`${JSON.stringify(expectedWhitespace)}`);
+
+                    if (actualWhitespace === expectedWhitespace) {
+                        testPassed(`${testCase.name} - Found exact cached whitespace with ${testCase.expectedSpaces} spaces`);
+                    } else {
+                        testFailed(`${testCase.name} - Expected ${JSON.stringify(expectedWhitespace)}, got ${JSON.stringify(actualWhitespace)}`);
+                    }
+                } else {
+                    // Non cached case
+                    debug(`${JSON.stringify(actualWhitespace)}`);
+                    testPassed(`${testCase.name} - Non-cached case parsed successfully`);
+                }
+            });
+        }
+
+        testWhitespaceCaching();
+    </script>
+</body>
+</html>

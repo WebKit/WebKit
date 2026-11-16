@@ -1,0 +1,63 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ColorFilterEnabled=true ] -->
+<html>
+    <head>
+        <title>CSS Test: changing -apple-color-filter repaints a gradient with the new filter</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="color-filter-gradient-filter-change-expected.html">
+
+        <meta name="assert" content="A gradient that was painted with one -apple-color-filter is painted with the new filter after the filter changes">
+        <style type="text/css">
+            .row
+            {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            .test
+            {
+                width: 100px;
+                height: 100px;
+                background-image: linear-gradient(yellow, cyan);
+            }
+
+            /* The background is positioned in the padding box but painted in the border box, so it is drawn as a pattern. */
+            .bordered
+            {
+                border-top: 20px solid transparent;
+            }
+
+            .inverted
+            {
+                -apple-color-filter: invert();
+            }
+        </style>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            addEventListener("load", async () => {
+                await UIHelper.renderingUpdate();
+
+                for (let element of document.querySelectorAll(".test"))
+                    element.classList.toggle("inverted");
+
+                await UIHelper.renderingUpdate();
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="row">
+            <div class="test inverted"></div>
+            <div class="test"></div>
+        </div>
+        <div class="row">
+            <div class="test bordered inverted"></div>
+            <div class="test bordered"></div>
+        </div>
+    </body>
+</html>

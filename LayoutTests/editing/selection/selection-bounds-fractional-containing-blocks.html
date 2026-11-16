@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+    .item {
+        height: 23.33px;
+    }
+    .container {
+        position: relative;
+        font-family: Ahem;
+        font-size: 12pt;
+        padding: 12.34px;
+        will-change: transform;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="container">
+            <ol>
+                <li>
+                    <div class="item">
+                        Content
+                    </div>
+                </li>
+                <li>
+                    <div id="target" class="item">
+                        Content
+                    </div>
+                </li>
+                <li>
+                    <div class="item">
+                        Content
+                    </div>
+                </li>
+            </ol>
+        </div>
+    </div>
+<script>
+description("Tests selection bounds computation in fractionally offset renderers inside repaint containers");
+
+let target = document.getElementById('target');
+let text = target.firstChild;
+
+document.getSelection().setBaseAndExtent(target, 0, target, target.childNodes.length);
+
+let selectionBounds;
+if (window.internals) {
+    selectionBounds = internals.selectionBounds();
+    shouldBe('selectionBounds.width', '113')
+    shouldBe('selectionBounds.height', '17')
+}
+
+</script> 
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<canvas id="dest" width="400" height="400"></canvas>
+<div id="console"></div>
+<script>
+description("Single-arc strokes are batched with their stroke color and width. Interleaved with lines, fills, transforms and style changes, they must draw in order and with the right style, and a cross-buffer drawImage must flush them.");
+
+const SIZE = 400;
+const NUM_OBJECTS = 400; // Runs of arcs longer than the 64-entry batch, mixed with other draws.
+const colors = ["#101010", "#808080", "#c0c0c0", "#e01040", "#10c030", "#744cba", "#e05010", "rgba(0, 80, 255, 0.5)"];
+
+function lcg(seed) {
+    let s = seed >>> 0;
+    return () => {
+        s = (s * 1664525 + 1013904223) >>> 0;
+        return s / 0x100000000;
+    };
+}
+
+// When unbatched is true, imageSmoothingEnabled is toggled before each arc.
+// That has no effect on strokes, but it leaves a non-stroke state change
+// pending, so the arc is not batched and is sent on its own with the full
+// state flush: the same drawing, through the unbatched path.
+function draw(ctx, unbatched) {
+    const rand = lcg(0xA4C5);
+    for (let i = 0; i < NUM_OBJECTS; i++) {
+        const kind = rand();
+        const color = colors[Math.floor(rand() * colors.length)];
+        const width = 1 + Math.floor(rand() * 8);
+        const x = rand() * SIZE, y = rand() * SIZE, r = 5 + rand() * 60;
+        const start = rand() * 2 * Math.PI, end = rand() * 2 * Math.PI;
+        const anticlockwise = rand() < 0.5;
+        // Every 100 objects, 70 consecutive arcs: longer than one 64-entry batch.
+        const forceArc = i % 100 < 70;
+        if (kind < 0.6 || forceArc) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.beginPath();
+            if (unbatched)
+                ctx.imageSmoothingEnabled = !ctx.imageSmoothingEnabled;
+            ctx.arc(x, y, r, start, end, anticlockwise);
+            ctx.stroke();
+        } else if (kind < 0.75) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + r, y + r / 2);
+            ctx.stroke();
+        } else if (kind < 0.9) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, r, r / 2);
+        } else {
+            // The first arc sends the pending alpha unbatched; the rest are
+            // batched under the translation and alpha.
+            ctx.save();
+            ctx.translate(10, 5);
+            ctx.globalAlpha = 0.7;
+            for (let j = 0; j < 4; j++) {
+                ctx.strokeStyle = colors[(colors.indexOf(color) + j) % colors.length];
+                ctx.lineWidth = width + j;
+                ctx.beginPath();
+                if (unbatched)
+                    ctx.imageSmoothingEnabled = !ctx.imageSmoothingEnabled;
+                ctx.arc(x, y, r + 4 * j, start, end, anticlockwise);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+    }
+}
+
+function countNonBlank(data) {
+    let count = 0;
+    for (let i = 3; i < data.length; i += 4) {
+        if (data[i])
+            count++;
+    }
+    return count;
+}
+
+function countDifferentBytes(a, b) {
+    let count = 0;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i])
+            count++;
+    }
+    return count;
+}
+
+function render(unbatched) {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = SIZE;
+    const ctx = canvas.getContext("2d");
+    draw(ctx, unbatched);
+    return ctx.getImageData(0, 0, SIZE, SIZE).data;
+}
+
+const batchedData = render(false);
+const unbatchedData = render(true);
+const batchedNonBlank = countNonBlank(batchedData);
+shouldBeGreaterThan("batchedNonBlank", "10000");
+
+// Wrong order or wrong style on any arc changes pixels.
+const unbatchedBytesDifferent = countDifferentBytes(batchedData, unbatchedData);
+shouldBe("unbatchedBytesDifferent", "0");
+
+// Cross-buffer: arcs drawn into an unparented canvas that is never read back
+// directly must be flushed by drawImage into another canvas.
+const src = document.createElement("canvas");
+src.width = src.height = SIZE;
+draw(src.getContext("2d"), false);
+const dctx = document.getElementById("dest").getContext("2d");
+dctx.drawImage(src, 0, 0);
+const destData = dctx.getImageData(0, 0, SIZE, SIZE).data;
+const crossBufferBytesDifferent = countDifferentBytes(destData, batchedData);
+shouldBe("crossBufferBytesDifferent", "0");
+</script>
+</body>
+</html>

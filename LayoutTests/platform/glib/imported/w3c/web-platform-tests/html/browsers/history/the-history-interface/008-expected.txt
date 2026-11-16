@@ -1,0 +1,4 @@
+
+PASS history.pushState URL resolving should be done relative to the document, not the script
+PASS history.replaceState URL resolving should be done relative to the document, not the script
+

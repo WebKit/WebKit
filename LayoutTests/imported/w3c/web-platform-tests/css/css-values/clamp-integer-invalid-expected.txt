@@ -1,0 +1,16 @@
+
+PASS e.style['z-index'] = "clamp(10, -none, 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(10, none, 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(10, 15 + none, 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(none + 10, 15, 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(none / 10, 15, 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(-none, 15, 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(-none, -none, -none)" should not set the property value
+PASS e.style['z-index'] = "clamp(10, abs(none), 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(10, 15, abs(none))" should not set the property value
+PASS e.style['z-index'] = "clamp(10, abs(none + 15), 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(10, sign(none), 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(10, sign(none + 1), 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(10, progress(none, none, none), 20)" should not set the property value
+PASS e.style['z-index'] = "clamp(10, progress(none + 1, none + 1, none + 1), 20)" should not set the property value
+

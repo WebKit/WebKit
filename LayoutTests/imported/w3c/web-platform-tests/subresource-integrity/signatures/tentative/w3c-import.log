@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/accept-signature.parser-inserted.html
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/accept-signature.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/authority.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/client-initiated.cross-origin.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/client-initiated.same-origin.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/csp.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/header-component.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/helper.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/inline.html
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/path.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/query.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/scheme.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/script.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/server-initiated.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/status.window.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/signatures/tentative/unknown-parameter.window.js

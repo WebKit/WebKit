@@ -1,0 +1,9 @@
+Tests that subsequent tests of incorrectly cased codecs do not incorrectly report they are supported
+RUN(mediaElement.canPlayType('audio/mp4; codecs="fLaC"'))
+EXPECTED (mediaElement.canPlayType('audio/mp4; codecs="FlAc"') == '') OK
+RUN(mediaElement.canPlayType('video/mp4; codecs="avc1"'))
+EXPECTED (mediaElement.canPlayType('video/mp4; codecs="AvC1"') == '') OK
+RUN(mediaElement.canPlayType('video/ogg; codecs="vorbis"'))
+EXPECTED (mediaElement.canPlayType('video/ogg; codecs="vOrBiS"') == '') OK
+END OF TEST
+

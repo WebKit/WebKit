@@ -1,0 +1,12 @@
+var map = {};
+
+for (var i = 0; i < 500; i++) {
+  map[i] = i;
+}
+
+function fn() {
+  return map['499'] === 499;
+}
+
+assertEqual(fn(), true);
+test(fn);

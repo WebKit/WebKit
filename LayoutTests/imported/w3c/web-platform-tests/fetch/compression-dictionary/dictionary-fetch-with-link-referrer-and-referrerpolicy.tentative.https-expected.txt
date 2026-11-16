@@ -1,0 +1,14 @@
+
+PASS Initialize global state
+PASS HTMLLinkElement rel=compression-dictionary (no referrerpolicy attribute)
+PASS HTMLLinkElement rel=compression-dictionary (referrerpolicy='')
+PASS HTMLLinkElement rel=compression-dictionary (referrerpolicy='no-referrer')
+PASS HTMLLinkElement rel=compression-dictionary (referrerpolicy='no-referrer-when-downgrade')
+PASS HTMLLinkElement rel=compression-dictionary (referrerpolicy='same-origin')
+PASS HTMLLinkElement rel=compression-dictionary (referrerpolicy='origin')
+PASS HTMLLinkElement rel=compression-dictionary (referrerpolicy='strict-origin')
+PASS HTMLLinkElement rel=compression-dictionary (referrerpolicy='origin-when-cross-origin')
+PASS HTMLLinkElement rel=compression-dictionary (referrerpolicy='strict-origin-when-cross-origin')
+PASS HTMLLinkElement rel=compression-dictionary (referrerpolicy='unsafe-url')
+PASS HTMLLinkElement rel=compression-dictionary (referrerpolicy='invalid')
+

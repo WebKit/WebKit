@@ -1,0 +1,28 @@
+<style>
+html {
+  will-change: transform;
+}
+
+.fixedPositioned {
+  position: fixed;
+}
+
+.relativePositioned {
+  position: relative;
+}
+</style>
+<div id=container class=fixedPositioned>
+  <div class=relativePositioned>
+    <div class=fixedPositioned>
+      <div id=mutateThis class=fixedPositioned></div>
+    </div>
+  </div>
+</div>
+<script>
+window.testRunner?.dumpAsText();
+
+document.body.offsetHeight;
+container.style.willChange = "transform";
+document.body.offsetHeight;
+mutateThis.innerText = "PASS if this is visible";
+</script>

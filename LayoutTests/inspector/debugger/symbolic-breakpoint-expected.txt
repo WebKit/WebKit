@@ -1,0 +1,10 @@
+Tests for SymbolicBreakpoint.
+
+
+== Running test suite: SymbolicBreakpoint
+-- Running test case: SymbolicBreakpoint.Ordering
+PASS: First match should be exact case sensitive.
+PASS: Second match should be exact case insensitive.
+PASS: Third match should be regex case sensitive.
+PASS: Fourth match should be regex case insensitive.
+

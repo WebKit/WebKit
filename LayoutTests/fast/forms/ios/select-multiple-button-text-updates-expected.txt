@@ -1,0 +1,16 @@
+This test verifies that the in-page text of a <select multiple> updates to reflect the number of selected options as options are chosen in the picker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectButtonText is "0 Items"
+PASS selectButtonText is "A"
+PASS selectButtonText is "2 Items"
+PASS selectButtonText is "3 Items"
+PASS selectButtonText is "2 Items"
+PASS selectButtonText is "C"
+PASS selectButtonText is "0 Items"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,13 @@
+This test ensures the scroll view's AXHorizontalScrollBar and AXVerticalScrollBar each resolve to the correspondingly-oriented scrollbar, and that each is the same object the scroll view exposes as a child.
+
+PASS: scrollArea.horizontalScrollbar.role === 'AXRole: AXScrollBar'
+PASS: scrollArea.horizontalScrollbar.orientation === 'AXOrientation: AXHorizontalOrientation'
+PASS: scrollArea.verticalScrollbar.role === 'AXRole: AXScrollBar'
+PASS: scrollArea.verticalScrollbar.orientation === 'AXOrientation: AXVerticalOrientation'
+PASS: scrollArea.horizontalScrollbar.isEqual(horizontalScrollbarChild) === true
+PASS: scrollArea.verticalScrollbar.isEqual(verticalScrollbarChild) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

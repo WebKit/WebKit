@@ -1,0 +1,12 @@
+
+FAIL Sec-Speculation-Tags [rule-based]: integer tag assert_implements: Prerendering must be supported (document.prerendering) undefined
+FAIL Sec-Speculation-Tags [rule-based]: object tag assert_implements: Prerendering must be supported (document.prerendering) undefined
+FAIL Sec-Speculation-Tags [rule-based]: null value tag assert_implements: Prerendering must be supported (document.prerendering) undefined
+FAIL Sec-Speculation-Tags [rule-based]: non-printable character tag assert_implements: Prerendering must be supported (document.prerendering) undefined
+FAIL Sec-Speculation-Tags [rule-based]: string with non-printable character tag assert_implements: Prerendering must be supported (document.prerendering) undefined
+FAIL Sec-Speculation-Tags [rule-based]: non-ascii string tag assert_implements: Prerendering must be supported (document.prerendering) undefined
+FAIL Sec-Speculation-Tags [rule-based]: 0x19 tag assert_implements: Prerendering must be supported (document.prerendering) undefined
+FAIL Sec-Speculation-Tags [rule-based]: 0x20 tag assert_implements: Prerendering must be supported (document.prerendering) undefined
+FAIL Sec-Speculation-Tags [rule-based]: 0x7E tag assert_implements: Prerendering must be supported (document.prerendering) undefined
+FAIL Sec-Speculation-Tags [rule-based]: 0x7F tag assert_implements: Prerendering must be supported (document.prerendering) undefined
+

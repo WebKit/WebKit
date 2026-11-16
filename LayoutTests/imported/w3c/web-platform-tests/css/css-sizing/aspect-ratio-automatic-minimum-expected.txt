@@ -1,0 +1,4 @@
+
+PASS min-width:0 disables automatic minimum
+PASS min-width:auto enables automatic minimum
+

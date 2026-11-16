@@ -1,0 +1,3 @@
+
+FAIL Prevent local scheme documents from loading within a COEP: require-corp iframe if they inherit COEP: none assert_equals: expected 3 but got 1
+

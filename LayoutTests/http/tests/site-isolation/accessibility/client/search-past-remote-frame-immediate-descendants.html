@@ -1,0 +1,96 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="text-before" type="text">
+
+<iframe id="iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-headings.html"></iframe>
+
+<button id="button-after">Button After Iframe</button>
+
+<script>
+var output = "Tests that immediateDescendantsOnly AnyType search correctly finds elements after a cross-process iframe.\n";
+output += "VoiceOver obtains the iframe's FrameHost element via the remote element parent chain.\n";
+output += "Without the fix, the search loops back to the first element.\n\n";
+
+window.jsTestIsAsync = true;
+accessibilityController.setClientAccessibilityMode(true);
+
+var frameHost, nextAfterFrameHost, foundButtonAfter;
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    await waitForElements([
+        (element) => element.role.includes("Heading"),
+    ]);
+
+    var root = accessibilityController.rootElement;
+    var webArea = root.childAtIndex(0);
+
+    // Find the FrameHost (the AccessibilityScrollView wrapping the cross-origin
+    // iframe) among the WebArea's children. It is exposed with the very generic
+    // platform role AXGroup, so we identify it by rawRoleForTesting. FrameHost is
+    // the element VoiceOver was on when it triggered the actual bug, which is why
+    // we search from it below rather than from the iframe's remote element.
+    frameHost = null;
+    for (var i = 0; i < webArea.childrenCount; i++) {
+        var child = webArea.childAtIndex(i);
+        if (child.rawRoleForTesting.includes("FrameHost")) {
+            frameHost = child;
+            break;
+        }
+    }
+    output += expect("frameHost !== null", "true");
+    if (!frameHost) {
+        debug(output);
+        finishJSTest();
+        return;
+    }
+
+    // Now search forward from the FrameHost with immediateDescendantsOnly=true.
+    // This is the exact search VoiceOver performs. Without the fix, the search
+    // loops back to the first element.
+    nextAfterFrameHost = webArea.uiElementsForSearchPredicate(
+        frameHost, true, "AXAnyTypeSearchKey", "", false, true, 10
+    );
+
+    output += `\nElements after FrameHost (immediateDescendantsOnly=true):\n`;
+    if (nextAfterFrameHost) {
+        for (var i = 0; i < nextAfterFrameHost.length; i++)
+            output += `  ${i + 1}: ${nextAfterFrameHost[i].role}\n`;
+    }
+
+    // Verify the button after the iframe was found.
+    foundButtonAfter = false;
+    if (nextAfterFrameHost) {
+        for (var i = 0; i < nextAfterFrameHost.length; i++) {
+            if (nextAfterFrameHost[i].role && nextAfterFrameHost[i].role.includes("Button")) {
+                foundButtonAfter = true;
+                break;
+            }
+        }
+    }
+    output += "\n" + expect("foundButtonAfter", "true");
+
+    // The first result should be the button, not text-before (looping would return
+    // text-before as the first result since the search wraps around).
+    if (nextAfterFrameHost && nextAfterFrameHost.length > 0) {
+        var firstRole = nextAfterFrameHost[0].role || "";
+        if (firstRole.includes("Button"))
+            output += "PASS: First result after FrameHost is the button (no loop-back).\n";
+        else
+            output += `FAIL: First result after FrameHost is not the button; instead was this role, probably indicating a search-loop: ${firstRole}\n`;
+    }
+
+    debug(output);
+    finishJSTest();
+}
+
+document.getElementById("iframe").onload = runTest;
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+
+PASS Use text/xml as fallback MIME type
+PASS Use text/xml as fallback MIME type, 2
+PASS Loading data…
+PASS 1) MIME types need to be parsed and serialized: text/html;charset=gbk
+PASS 2) MIME types need to be parsed and serialized: TEXT/HTML;CHARSET=GBK
+PASS 3) MIME types need to be parsed and serialized: text/html;charset=gbk(
+PASS 4) MIME types need to be parsed and serialized: text/html;x=(;charset=gbk
+PASS 5) MIME types need to be parsed and serialized: text/html;charset=gbk;charset=windows-1255
+PASS 6) MIME types need to be parsed and serialized: text/html;charset=();charset=GBK
+PASS 7) MIME types need to be parsed and serialized: text/html;charset =gbk
+PASS 8) MIME types need to be parsed and serialized: text/html ;charset=gbk
+PASS 9) MIME types need to be parsed and serialized: text/html; charset=gbk
+PASS 10) MIME types need to be parsed and serialized: text/html;charset= gbk
+PASS 11) MIME types need to be parsed and serialized: text/html;charset= "gbk"
+PASS 12) MIME types need to be parsed and serialized: text/html;charset=gbk
+PASS 13) MIME types need to be parsed and serialized: text/html;charset=gbk
+PASS 14) MIME types need to be parsed and serialized: text/html;charset=gbk
+PASS 15) MIME types need to be parsed and serialized: text/html;charset=gbk
+PASS 16) MIME types need to be parsed and serialized: text/html;charset='gbk'
+PASS 17) MIME types need to be parsed and serialized: text/html;charset='gbk
+PASS 18) MIME types need to be parsed and serialized: text/html;charset=gbk'
+PASS 19) MIME types need to be parsed and serialized: text/html;charset=';charset=GBK
+PASS 20) MIME types need to be parsed and serialized: text/html;test;charset=gbk
+PASS 21) MIME types need to be parsed and serialized: text/html;test=;charset=gbk
+PASS 22) MIME types need to be parsed and serialized: text/html;';charset=gbk
+PASS 23) MIME types need to be parsed and serialized: text/html;";charset=gbk
+PASS 24) MIME types need to be parsed and serialized: text/html ; ; charset=gbk
+PASS 25) MIME types need to be parsed and serialized: text/html;;;;charset=gbk
+PASS 26) MIME types need to be parsed and serialized: text/html;charset= ";charset=GBK
+PASS 27) MIME types need to be parsed and serialized: text/html;charset=";charset=foo";charset=GBK
+PASS 28) MIME types need to be parsed and serialized: text/html;charset="gbk"
+PASS 29) MIME types need to be parsed and serialized: text/html;charset="gbk
+PASS 30) MIME types need to be parsed and serialized: text/html;charset=gbk"
+PASS 31) MIME types need to be parsed and serialized: text/html;charset=" gbk"
+PASS 32) MIME types need to be parsed and serialized: text/html;charset="gbk "
+PASS 33) MIME types need to be parsed and serialized: text/html;charset="\ gbk"
+PASS 34) MIME types need to be parsed and serialized: text/html;charset="\g\b\k"
+PASS 35) MIME types need to be parsed and serialized: text/html;charset="gbk"x
+PASS 36) MIME types need to be parsed and serialized: text/html;charset="";charset=GBK
+PASS 37) MIME types need to be parsed and serialized: text/html;charset=";charset=GBK
+PASS 38) MIME types need to be parsed and serialized: text/html;charset={gbk}
+PASS 39) MIME types need to be parsed and serialized: text/html;0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789=x;charset=gbk
+PASS 40) MIME types need to be parsed and serialized: 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789/0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+PASS 41) MIME types need to be parsed and serialized: text/html;a]=bar;b[=bar;c=bar
+PASS 42) MIME types need to be parsed and serialized: text/html;valid=";";foo=bar
+PASS 43) MIME types need to be parsed and serialized: text/html;in]valid=";asd=foo";foo=bar
+PASS 44) MIME types need to be parsed and serialized: !#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz;!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz=!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+PASS 45) MIME types need to be parsed and serialized: x/x;x="	 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"
+PASS 46) MIME types need to be parsed and serialized: x/x;test
+PASS 47) MIME types need to be parsed and serialized: x/x;test="\
+PASS 48) MIME types need to be parsed and serialized: x/x;x=
+PASS 49) MIME types need to be parsed and serialized: x/x;x=	
+PASS 50) MIME types need to be parsed and serialized: x/x
+\r	 ;x=x
+PASS 51) MIME types need to be parsed and serialized:
+\r	 x/x;x=x
+\r	
+PASS 52) MIME types need to be parsed and serialized: x/x;
+\r	 x=x
+\r	 ;x=y
+PASS 53) MIME types need to be parsed and serialized: text/html;test=ÿ;charset=gbk
+PASS 54) MIME types need to be parsed and serialized: x/x;test=�;x=x
+PASS 55) MIME types need to be parsed and serialized: x/x
+PASS 56) MIME types need to be parsed and serialized: x/x
+PASS 57) MIME types need to be parsed and serialized: x/x
+PASS 58) MIME types need to be parsed and serialized: x/x
+PASS 59) MIME types need to be parsed and serialized:
+PASS 60) MIME types need to be parsed and serialized: 	
+PASS 61) MIME types need to be parsed and serialized: /
+PASS 62) MIME types need to be parsed and serialized: bogus
+PASS 63) MIME types need to be parsed and serialized: bogus/
+PASS 64) MIME types need to be parsed and serialized: bogus/
+PASS 65) MIME types need to be parsed and serialized: bogus/bogus/;
+PASS 66) MIME types need to be parsed and serialized: </>
+PASS 67) MIME types need to be parsed and serialized: (/)
+PASS 68) MIME types need to be parsed and serialized: ÿ/ÿ
+PASS 69) MIME types need to be parsed and serialized: text/html(;doesnot=matter
+PASS 70) MIME types need to be parsed and serialized: {/}
+PASS 71) MIME types need to be parsed and serialized: Ā/Ā
+PASS 72) MIME types need to be parsed and serialized: text /html
+PASS 73) MIME types need to be parsed and serialized: text/ html
+PASS 74) MIME types need to be parsed and serialized: "text/html"
+

@@ -1,0 +1,10 @@
+Target with ID
+Target without ID
+   Click Me
+
+FAIL Test with target that has an ID assert_true: targetSelector should not be empty expected true got false
+FAIL Test with simple target (no id) assert_true: targetSelector should not be empty expected true got false
+FAIL Test with image target with id and src assert_true: targetSelector should not be empty expected true got false
+FAIL Test with image target with src only assert_true: targetSelector should not be empty expected true got false
+FAIL Test with disconnected target promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'selector.includes')"
+

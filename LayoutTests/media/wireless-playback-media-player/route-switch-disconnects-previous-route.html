@@ -1,0 +1,69 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route1;
+            var route2;
+            var video;
+
+            function nextURLCallback(route)
+            {
+                return new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        resolve(url);
+                    });
+                });
+            }
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route1 = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                let urlPromise = nextURLCallback(route1);
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route1)`);
+
+                video = document.getElementsByTagName('video')[0];
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                run(`route1.playbackRate = 1`);
+                run(`route1.timeRange = { start: 0, duration: 60 }`);
+                run(`route1.audioOptions = [{ displayName: 'Audio', identifier: 'audio' }]`);
+                run(`video.play()`);
+                await urlPromise;
+
+                const playingPromise = waitFor(video, 'playing');
+                run(`route1.ready = true`);
+                await playingPromise;
+
+                await waitForConditionOrTimeout('route1.connected', true);
+                testExpected(`route1.connected`, true);
+
+                await testExpectedEventually('internals.mediaUsageState(video).hasAudio', true);
+
+                route2 = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                urlPromise = nextURLCallback(route2);
+                run(`route2.playbackRate = 1`);
+                run(`route2.timeRange = { start: 0, duration: 60 }`);
+                run(`route2.audioOptions = [{ displayName: 'Audio', identifier: 'audio' }]`);
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route2)`);
+                await urlPromise;
+
+                run(`route2.ready = true`);
+                await waitForConditionOrTimeout('route2.connected', true);
+
+                await waitForConditionOrTimeout('!route1.connected', true);
+                testExpected(`route1.connected`, false);
+                testExpected(`route2.connected`, true);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that activating a new MediaDeviceRoute disconnects the previously active route.</p>
+    </body>
+</html>

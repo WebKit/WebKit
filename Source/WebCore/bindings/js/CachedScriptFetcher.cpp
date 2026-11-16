@@ -1,0 +1,100 @@
+/*
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "CachedScriptFetcher.h"
+
+#include "CachedCSSStyleSheet.h"
+#include "CachedScript.h"
+#include "ContentSecurityPolicy.h"
+#include "CrossOriginAccessControl.h"
+#include "DocumentResourceLoader.h"
+#include "Settings.h"
+#include "WorkerOrWorkletGlobalScope.h"
+
+namespace WebCore {
+
+Ref<CachedScriptFetcher> CachedScriptFetcher::create(const AtomString& charset)
+{
+    return adoptRef(*new CachedScriptFetcher(charset));
+}
+
+CachedResourceHandle<CachedResource> CachedScriptFetcher::requestModuleResource(Document& document, const URL& sourceURL, FetchOptionsDestination destination, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const
+{
+    return requestResourceWithCache(document, sourceURL, destination, defaultCrossOriginModeForModule, WTF::move(integrity), { }, serviceWorkersMode, referrer);
+}
+
+RefPtr<CachedResource> CachedScriptFetcher::requestResourceWithCache(Document& document, const URL& sourceURL, FetchOptionsDestination destination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority> resourceLoadPriority, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const
+{
+    if (!document.settings().isScriptEnabled())
+        return nullptr;
+
+    ASSERT(document.contentSecurityPolicy());
+    bool hasKnownNonce = protect(document.contentSecurityPolicy())->allowScriptWithNonce(m_nonce, m_isInUserAgentShadowTree);
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+    options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+    options.serviceWorkersMode = serviceWorkersMode.value_or(ServiceWorkersMode::All);
+    options.integrity = WTF::move(integrity);
+    options.referrerPolicy = m_referrerPolicy;
+    options.fetchPriority = m_fetchPriority;
+    options.nonce = m_nonce;
+    options.destination = destination;
+
+    auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTF::move(options), document, crossOriginMode);
+    request.upgradeInsecureRequestIfNeeded(document);
+    request.setCharset(m_charset);
+    request.setPriority(WTF::move(resourceLoadPriority));
+    // Only an HTTP(S) fetch appends a Referer header, and CachedResourceLoader applies the referrer
+    // policy to the request only for those. Setting it for any other scheme would send the importing
+    // script's URL unfiltered, e.g. to a URL scheme handler.
+    if (!referrer.isEmpty() && request.resourceRequest().url().protocolIsInHTTPFamily())
+        request.resourceRequest().setHTTPReferrer(referrer.strippedForUseAsReferrer().string);
+    if (!m_initiatorType.isNull())
+        request.setInitiatorType(m_initiatorType);
+
+    switch (destination) {
+    case FetchOptionsDestination::Script:
+    case FetchOptionsDestination::Json:
+    case FetchOptionsDestination::Text: {
+        auto result = protect(document.cachedResourceLoader())->requestScript(WTF::move(request));
+        return result ? RefPtr { WTF::move(result.value()) } : nullptr;
+    }
+
+    case FetchOptionsDestination::Style: {
+        auto result = protect(document.cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request));
+        return result ? RefPtr { WTF::move(result.value()) } : nullptr;
+    }
+
+    default:
+        break;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+}

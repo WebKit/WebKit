@@ -1,0 +1,12 @@
+Test that, when RequireUserGestureForAudioRateChange is set, starting playback of an muted audio file does not require a user gesture.
+
+
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForAudioRateChange"))
+RUN(video.src = findMediaFile("audio", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+RUN(video.muted = false)
+EVENT(pause)
+END OF TEST
+

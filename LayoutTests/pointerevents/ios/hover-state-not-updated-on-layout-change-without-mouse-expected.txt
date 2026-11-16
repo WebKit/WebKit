@@ -1,0 +1,12 @@
+Test that hover states are not updated after layout changes on iOS when no mouse device is connected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Triggering layout change (expanding spacer by 120px)...
+PASS Hover states correctly remained unchanged during layout change without mouse device
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Item 1Item 2

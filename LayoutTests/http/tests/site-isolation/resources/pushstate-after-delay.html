@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+onload = function () {
+    // Wait for the frame's previous process to finish calling document.open().
+    setTimeout(function () {
+        history.pushState({ }, "", "?pushed");
+        parent.postMessage("PASS if the web process was not terminated. location.search is " + location.search, "*");
+    }, 700);
+};
+</script>
+</body>
+</html>

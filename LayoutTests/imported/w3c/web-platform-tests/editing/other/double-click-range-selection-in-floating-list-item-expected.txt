@@ -1,0 +1,6 @@
+FirstSecond
+firstsecond
+
+FAIL Double click on one floating list item should not select more than one list item assert_equals: Selected Text Should be equal to first list item expected "First" but got "FirstSecond"
+FAIL Double click on one floating strong text should not select more than one item assert_equals: Selected Text Should be equal to first list item expected "first" but got "firstsecond"
+

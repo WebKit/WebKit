@@ -1,0 +1,6 @@
+Media type is set to 'handheld' to be different than the default 'screen'
+PASS window.matchMedia('handheld').matches is true
+
+The page is printed, which changes the media type to 'print', and then back
+PASS window.matchMedia('handheld').matches is true
+

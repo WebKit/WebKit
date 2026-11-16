@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ AcceleratedCompositingEnabled=false ] -->
+<html>
+  <head>
+    <meta name="fuzzy" content="maxDifference=0-5; totalPixels=0-14" />
+    <script>
+      if (window.testRunner)
+          testRunner.setBackingScaleFactor(2, () => {});
+    </script>
+  </head>
+  <body>
+    This is a text.
+    <div style="background-color: yellow;">This is a text in block</div>
+    <b>This is a text in bold</b>
+    <div style="width: 50px; height: 50px; border: 2px solid blue;"></div>
+  </body>
+</html>
+

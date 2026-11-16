@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../media/video-test.js"></script>
+    <script type="text/javascript">
+    var promise;
+
+    function next()
+    {
+        if (!tests.length) {
+            endTest();
+            return;
+        }
+
+        var nextTest = tests.shift();
+        consoleWrite('');
+        nextTest();
+    }
+
+    // Prototype:
+    // checkMediaCapabilitiesInfo(info, expectedSupported, expectedSmooth, expectedPowerEfficient)
+
+    tests = [
+         function() {
+             consoleWrite('MP3 audio should be supported without hardware decoding');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp3' } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, true, true, false);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('MPEG audio should be supported without hardware decoding');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mpeg' } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, true, true, false);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('MP4 container with mp4a.40.2 audio should be supported without hardware decoding');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs=\"mp4a.40.2\"' } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, true, true, false);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('MP4 container with a fictional codec should not be supported');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs=\"fictional\"' } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, false, false, false);
+                 next();
+             }, next);
+         },
+    ];
+    </script>
+</head>
+<body onload="next()" />
+</html>

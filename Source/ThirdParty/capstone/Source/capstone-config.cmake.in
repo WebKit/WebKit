@@ -1,0 +1,6 @@
+@PACKAGE_INIT@
+
+set_and_check(capstone_INCLUDE_DIR "@CAPSTONE_CMAKE_INSTALL_INCLUDEDIR@")
+set_and_check(capstone_LIB_DIR "@CAPSTONE_CMAKE_INSTALL_LIBDIR@")
+
+include("${CMAKE_CURRENT_LIST_DIR}/capstone-targets.cmake")

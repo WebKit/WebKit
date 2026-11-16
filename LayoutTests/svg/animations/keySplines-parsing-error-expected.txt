@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Error: Invalid value for <animate> attribute keySplines=";;"
+CONSOLE MESSAGE: Error: Invalid value for <animate> attribute keySplines="0 ,0  1 , 1  ;;"
+Tests parsing of keySplines attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

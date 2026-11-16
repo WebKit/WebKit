@@ -1,0 +1,19 @@
+<style>
+input {
+  float: left;
+}
+
+div {
+  -webkit-column-count: 2;
+}
+
+input::-webkit-textfield-decoration-container {
+  -webkit-column-span:all;
+}
+</style>
+<div><input type="password"></div>
+PASS if no crash or assert.
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

@@ -1,0 +1,56 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/001-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/001.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/004.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/007-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/007.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/008-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/008.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/009-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/009.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/010-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/010.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/011-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/011.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/012.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/013.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/014.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/015.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/016-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/016.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/017.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/018.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/019.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/020.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/021-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/021.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/022-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/022.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/023-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/023.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/helper-drag-image-dont-drop.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/helper-drag-selection-dont-drop.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/helper-drop-here-reload.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/helper-drop-image-now.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/helper-drop-link-now.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/helper-drop-now.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/navigation/helper-drop-selection-here.xhtml

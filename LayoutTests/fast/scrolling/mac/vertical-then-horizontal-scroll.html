@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 200%;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var initialScrollX;
+        var initialScrollY;
+
+        async function resetScrollPositions(x, y)
+        {
+            window.scrollTo(x, y);
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+        }
+
+        async function doMouseWheelScroll()
+        {
+            // An "L-shaped" gesture with fingers held down throughout: scroll vertically, hold still
+            // (zero-delta events, which still advance the 16ms-per-event timestamp so a real pause
+            // elapses), then scroll horizontally. viewX is toggled to defeat event coalescing.
+            const wheelEventSequence = {
+                "events" : [
+                    { type : "wheel", viewX : 100, viewY : 100, deltaY : -10, phase : "began" },
+                    { type : "wheel", viewX : 101, deltaY : -40, phase : "changed" },
+                    { type : "wheel", viewX : 100, deltaY : -40, phase : "changed" },
+                    { type : "wheel", viewX : 101, deltaY : -40, phase : "changed" },
+                    // Pause with fingers down.
+                    { type : "wheel", viewX : 100, deltaX : 0, deltaY : 0, phase : "changed" },
+                    { type : "wheel", viewX : 101, deltaX : 0, deltaY : 0, phase : "changed" },
+                    { type : "wheel", viewX : 100, deltaX : 0, deltaY : 0, phase : "changed" },
+                    // Now scroll horizontally.
+                    { type : "wheel", viewX : 101, deltaX : -40, phase : "changed" },
+                    { type : "wheel", viewX : 100, deltaX : -40, phase : "changed" },
+                    { type : "wheel", phase : "ended" }
+                ]
+            };
+
+            await UIHelper.sendEventStream(wheelEventSequence);
+            await UIHelper.waitForEvent(window, 'scrollend');
+        }
+
+        async function testLShapedScroll()
+        {
+            // Start mid-way on both axes so movement on either axis is observable regardless of direction.
+            await resetScrollPositions(300, 300);
+            initialScrollX = window.scrollX;
+            initialScrollY = window.scrollY;
+
+            await doMouseWheelScroll();
+
+            // The vertical part of the gesture should have scrolled vertically, and the horizontal part
+            // (after the pause) should have scrolled horizontally.
+            shouldBeTrue('window.scrollY != initialScrollY');
+            shouldBeTrue('window.scrollX != initialScrollX');
+        }
+
+        async function scrollTest()
+        {
+            debug('');
+            debug('Tests that an L-shaped fingers-down gesture scrolls vertically then horizontally');
+
+            await testLShapedScroll();
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+</body>
+</html>

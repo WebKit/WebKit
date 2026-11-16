@@ -1,0 +1,5 @@
+
+PASS IDBIndex's keyPath attribute returns the same object.
+PASS IDBIndex's keyPath array with a single value
+PASS IDBIndex's keyPath array with multiple values
+

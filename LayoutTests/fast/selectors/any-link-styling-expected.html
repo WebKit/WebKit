@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<style>
+a, area {
+    display: block;
+    height: 10px;
+    width: 10px;
+
+    background-color: white;
+}
+:any-link {
+    display: block;
+    height:20px;
+    width:20px;
+    background-color: green;
+    fill: green;
+}
+</style>
+</head>
+<body>
+    <a style="display: block; height:10px; width:10px; background-color:white"></a>
+
+    <a style="display: block; height:20px; width:20px; background-color:green"></a>
+    <a style="display: block; height:20px; width:20px; background-color:green"></a>
+    <a style="display: block; height:20px; width:20px; background-color:green"></a>
+    <a style="display: block; height:20px; width:20px; background-color:green"></a>
+
+    <a style="display: block; height:20px; width:20px; background-color:green"></a>
+    <a style="display: block; height:20px; width:20px; background-color:green"></a>
+    <a style="display: block; height:20px; width:20px; background-color:green"></a>
+    <a style="display: block; height:20px; width:20px; background-color:green"></a>
+
+    <area style="display: block; height:10px; width:10px; background-color:white">
+
+    <area style="display: block; height:20px; width:20px; background-color:green">
+    <area style="display: block; height:20px; width:20px; background-color:green">
+    <area style="display: block; height:20px; width:20px; background-color:green">
+    <area style="display: block; height:20px; width:20px; background-color:green">
+    <map name="image-map-2">
+        <area style="display: block; height:10px; width:10px; background-color:white">
+        <area style="display: block; height:20px; width:20px; background-color:green">
+        <area style="display: block; height:20px; width:20px; background-color:green">
+        <area style="display: block; height:20px; width:20px; background-color:green">
+        <area style="display: block; height:20px; width:20px; background-color:green">
+    </map>
+
+    <svg viewBox="0 0 100 100" style="width: 100px; height: 100px; stroke: black; position: absolute; left: 100px; top: 15px">
+        <a xlink:href="http://www.webkit.org"><text x="5" y="15" stroke-width=0 fill=green>good</text></a>
+        <a href="http://www.webkit.org"><text x="5" y="30" stroke-width=0>bad</text></a>
+        <a xlink:href><text x="5" y="45" stroke-width=0 fill=green>good</text></a>
+    </svg>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+This test validates that image resources which are part of an element's UA-defined interface are not exposed to the performance timeline. This uses an <audio> element as an example of an element with internal resources used for the playback controls, and verifies that resource timing entries are not created.
+
+
+
+PASS Resource timing should not include internal resources.
+

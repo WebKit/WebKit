@@ -1,0 +1,10 @@
+A "track=" fragment that does not match any track id is ignored, leaving the default audio track selection unchanged.
+
+
+EVENT(canplaythrough)
+EXPECTED (video.audioTracks.length == '2') OK
+EVENT(canplaythrough)
+EXPECTED (video.audioTracks[0].enabled == 'true') OK
+EXPECTED (video.audioTracks[1].enabled == 'false') OK
+END OF TEST
+

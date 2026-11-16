@@ -1,0 +1,20 @@
+
+
+FAIL OpaqueRange disconnected on element removal (textarea) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL All OpaqueRanges disconnected on element removal (textarea) el.createValueRange is not a function. (In 'el.createValueRange(0, 3)', 'el.createValueRange' is undefined)
+FAIL Element accepts new OpaqueRanges after re-insertion (textarea) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange disconnected on ancestor removal (textarea) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange disconnected on implicit removal via innerHTML (textarea) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL No error when element removed after manual disconnect (textarea) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange disconnected when element adopted into another document (textarea) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange disconnected on element removal (input) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL All OpaqueRanges disconnected on element removal (input) el.createValueRange is not a function. (In 'el.createValueRange(0, 3)', 'el.createValueRange' is undefined)
+FAIL Element accepts new OpaqueRanges after re-insertion (input) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange disconnected on ancestor removal (input) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange disconnected on implicit removal via innerHTML (input) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL No error when element removed after manual disconnect (input) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange disconnected when element adopted into another document (input) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange disconnected on input type change to "color". input.createValueRange is not a function. (In 'input.createValueRange(1, 4)', 'input.createValueRange' is undefined)
+FAIL OpaqueRange disconnected on input type change to "search". input.createValueRange is not a function. (In 'input.createValueRange(1, 4)', 'input.createValueRange' is undefined)
+FAIL Input accepts new OpaqueRanges after type changes back to text. input.createValueRange is not a function. (In 'input.createValueRange(1, 4)', 'input.createValueRange' is undefined)
+

@@ -1,0 +1,48 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true IsAriaLiveRegionManagementEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<button>start</button>
+<h1>Local heading</h1>
+<iframe id="iframe" onload="runTest()" src="http://localhost:8000/site-isolation/resources/iframe.html"></iframe>
+
+<script>
+var output = "This test ensures that building the accessibility tree for a page with an out-of-process iframe does not deadlock when it happens inside an AXRuntime remote element lookup, as it does when XCTest snapshots a newly loaded page on iOS.\n\n";
+
+function headingSearchReturnsRemoteFrame() {
+    var startElement = accessibilityController.focusedElement.childAtIndex(0);
+    var results = accessibilityController.rootElement.uiElementsForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false, false, 10);
+    for (var index = 0; index < results.length; index++) {
+        if (results[index].isRemotePlatformElement)
+            return true;
+    }
+    return false;
+}
+
+function runTest() {
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        // Nothing may touch the accessibility tree before this: the first cache update builds the whole tree,
+        // including the remote frame, and it has to happen while AXRuntime holds its remote element lock.
+        // This is a canary: the bug deadlocks the lookup, so a timeout here means it's back. A pass doesn't prove
+        // the bug is absent, because on some configurations the lookup never calls back into WebKit, so the
+        // result isn't checked.
+        accessibilityController.rootElement.readFrameDuringRemoteElementLookup();
+        output += "PASS: The remote element lookup returned.\n";
+
+        setTimeout(async function() {
+            await waitFor(headingSearchReturnsRemoteFrame);
+            output += expect("headingSearchReturnsRemoteFrame()", "true");
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+}
+</script>
+</body>
+</html>

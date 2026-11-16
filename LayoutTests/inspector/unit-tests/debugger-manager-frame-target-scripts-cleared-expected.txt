@@ -1,0 +1,28 @@
+Tests that DebuggerManager names the frame target in ScriptsCleared and clears only the scripts of that target.
+
+
+== Running test suite: DebuggerManager.FrameTargetScriptsCleared
+-- Running test case: DebuggerManager.FrameTargetScriptsCleared.NamesClearedTarget
+PASS: The extension script should be parsed.
+PASS: The injected script should be parsed.
+PASS: The anonymous script should be parsed.
+PASS: ScriptsCleared should name the frame target that cleared its scripts.
+PASS: The extension script should not be known after its frame target clears its scripts.
+PASS: The injected script should not be known after its frame target clears its scripts.
+PASS: The anonymous script should not be known after its frame target clears its scripts.
+
+-- Running test case: DebuggerManager.FrameTargetScriptsCleared.KeepsScriptsOfOtherTargets
+PASS: The extension script should be parsed.
+PASS: The injected script should be parsed.
+PASS: The anonymous script should be parsed.
+PASS: The extension script should be parsed.
+PASS: The injected script should be parsed.
+PASS: The anonymous script should be parsed.
+PASS: ScriptsCleared should name the frame target that cleared its scripts.
+PASS: The extension script should not be known after its frame target clears its scripts.
+PASS: The injected script should not be known after its frame target clears its scripts.
+PASS: The anonymous script should not be known after its frame target clears its scripts.
+PASS: The extension script should be known after another frame target clears its scripts.
+PASS: The injected script should be known after another frame target clears its scripts.
+PASS: The anonymous script should be known after another frame target clears its scripts.
+

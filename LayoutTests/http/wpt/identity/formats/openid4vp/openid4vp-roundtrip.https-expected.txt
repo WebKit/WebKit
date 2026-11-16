@@ -1,0 +1,8 @@
+
+PASS openid4vp-v1-signed: roundtrip passes through response data.
+PASS openid4vp-v1-multisigned: roundtrip passes through response data.
+PASS openid4vp-v1-unsigned: roundtrip passes through response data.
+PASS openid4vp-v1-signed: decline rejects with NotAllowedError.
+PASS openid4vp-v1-signed: wait + abort rejects with the abort reason.
+PASS Mixed mdoc + openid4vp request: mdoc takes precedence.
+

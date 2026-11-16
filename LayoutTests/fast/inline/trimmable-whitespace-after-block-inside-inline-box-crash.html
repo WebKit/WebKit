@@ -1,0 +1,21 @@
+<style>
+.class2 {
+  float: right;
+  margin: 1px;
+  padding-top: 50px;
+}
+
+span {
+  word-spacing: 2000000px;
+}
+
+.class3 {
+  -webkit-text-security: disc;
+}
+</style>
+PASS if no crash or assert.
+<div class=class2></div><span id=here>X</span> <span> <span class=class3> <form id=form>
+<script>
+window.testRunner?.dumpAsText();
+here.appendChild(form);
+</script>

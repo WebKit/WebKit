@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<form id="form">
+  <details open>
+    <span id="span1"></span>
+    <marquee id="marquee">
+      <div>&#xA;<span id="span2"></span>&#xA;</div>
+    </marquee>
+  </details>
+</form>
+<script>
+  window.testRunner?.dumpAsText();
+  window.testRunner?.waitUntilDone();
+  form.reportValidity();
+  span1.remove();
+  document.execCommand("hiliteColor", "black");
+  marquee.start();
+  span2.remove();
+  document.body.scrollLeft;
+  document.body.innerHTML = "PASS if no crash";
+  window.testRunner?.notifyDone();
+</script>

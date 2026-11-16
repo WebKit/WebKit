@@ -1,0 +1,8 @@
+
+PASS Omit mode: no cookie sent
+PASS Include mode: 1 cookie
+PASS Include mode: local cookies are not sent with remote request
+PASS Include mode: remote cookies are not sent with local request
+PASS Same-origin mode: cookies are discarded in cors request
+PASS Include mode: remote cookies are not sent with other remote request
+

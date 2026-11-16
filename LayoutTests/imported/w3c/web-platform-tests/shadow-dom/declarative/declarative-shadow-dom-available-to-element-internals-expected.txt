@@ -1,0 +1,3 @@
+
+PASS Declarative Shadow DOM: shadow root should be available to element internals
+

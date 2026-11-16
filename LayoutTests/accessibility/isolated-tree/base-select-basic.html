@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select">
+    <option id="option1">Apple</option>
+    <option id="option2" selected>Banana</option>
+    <option id="option3">Cherry</option>
+</select>
+
+<script>
+var output = "This test verifies basic accessibility properties of base-appearance selects (appearance: base-select).\n\n";
+
+function expectMenuItem(axElement, expectedText) {
+    var result = "";
+    result += expect("(" + axElement + ").role.toLowerCase().includes('menuitem')", "true");
+    window._menuItemText = platformTextAlternatives(eval(axElement));
+    result += _menuItemText + "\n";
+    result += expect("_menuItemText.includes('" + expectedText + "')", "true");
+    return result;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+
+    output += "--- Select role and value ---\n";
+    output += expect("select.role.toLowerCase().includes('popup')", "true");
+    output += expect("select.stringValue.includes('Banana')", "true");
+    output += expect("select.isExpanded", "false");
+
+    setTimeout(async function() {
+        select.press();
+        output += await expectAsync("select.isExpanded", "true");
+
+        // The select should contain a Menu which wraps the MenuItems.
+        // Except on iOS, where the Menu is reparented to be a sibling
+        // of the select (see findBaseSelectMenu for details).
+        window.menu = findBaseSelectMenu(select);
+        output += expect("menu != null", "true");
+        output += expect("menu.role.toLowerCase().includes('menu')", "true");
+        output += expect("menu.childrenCount", "3");
+
+        output += expectMenuItem("menu.childAtIndex(0)", "Apple");
+        output += expectMenuItem("menu.childAtIndex(1)", "Banana");
+        output += expectMenuItem("menu.childAtIndex(2)", "Cherry");
+
+        output += expect("menu.childAtIndex(0).isSelected", "false");
+        output += expect("menu.childAtIndex(1).isSelected", "true");
+        output += expect("menu.childAtIndex(2).isSelected", "false");
+
+        output += expect("menu.selectedChildrenCount", "1");
+        output += expectMenuItem("menu.selectedChildAtIndex(0)", "Banana");
+
+        // Press to close the picker.
+        select.press();
+        output += await expectAsync("select.isExpanded", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

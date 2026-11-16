@@ -1,0 +1,27 @@
+html {
+    height: 100%;
+}
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: rgb(241, 241, 241);
+    font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
+}
+
+#stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(241, 241, 241);
+    overflow: hidden;
+}
+
+#center-text {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

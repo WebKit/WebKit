@@ -1,0 +1,7 @@
+Button 1
+Visible line.
+
+Button 3
+
+FAIL clamped content remains focusable. assert_equals: expected "b2" but got ""
+

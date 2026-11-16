@@ -1,0 +1,6 @@
+Hello, Jarda!
+
+PASS Body element has the initial value for pointerEvents
+PASS Parent element returns the directly specified value for pointerEvents
+PASS Child element inherits the pointerEvents value from its parent
+

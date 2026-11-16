@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<meta name="fuzzy" content="maxDifference=0-3; totalPixels=0-51131" />
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+    }
+</style>    
+<body>
+    <div>
+        <p>Frames of a 3-frame video as image source:</p>
+        <canvas id="canvas-1"></canvas>
+        <canvas id="canvas-2"></canvas>
+        <canvas id="canvas-3"></canvas>
+        <canvas id="canvas-4"></canvas>
+        <canvas id="canvas-5"></canvas>
+        <canvas id="canvas-6"></canvas>
+        <canvas id="canvas-7"></canvas>
+    </div>
+    <script>
+        function drawFrame(image, canvasId) {
+            return new Promise((resolve) => {
+                let canvas = document.getElementById("canvas-" + canvasId);
+                let context = canvas.getContext("2d");
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+                if (window.internals) {
+                    image.addEventListener("webkitImageFrameReady", function() {
+                        resolve(canvasId + 1);
+                    }, false);
+                } else {
+                    setTimeout(() => {
+                        resolve(canvasId + 1);
+                    }, 40);
+                }
+            });
+        }
+
+        function drawImage(image, canvasId, frameCount) {
+            let promise = drawFrame(image, canvasId);
+            for (let frame = 1; frame < frameCount; ++frame) {
+                promise = promise.then((canvasId) => {
+                    return drawFrame(image, canvasId);
+                });
+            }
+            return promise;
+        }
+
+        function loadImage(src, canvasId, frameCount) {
+            return new Promise((resolve) => {
+                let image = new Image;
+                image.onload = (() => {
+                    document.body.appendChild(image);
+                    drawImage(image, canvasId, frameCount).then(() => {
+                        image.remove();
+                        resolve();
+                    });
+                });
+                image.src = src;
+            });
+        }
+
+        (function() {
+            if (window.internals) {
+                internals.clearMemoryCache();
+                internals.settings.setWebkitImageReadyEventEnabled(true);
+                internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+            }
+
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            var imageSrc = "resources/red-green-blue.mov";
+            var firstCanvasId = 1;
+            var frameCount = 7;
+
+            loadImage(imageSrc, firstCanvasId, frameCount).then(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        })();
+    </script>
+</body>
+</html>

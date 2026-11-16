@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Consecutive ordered-list items separated by non-list content and a blank line should still merge into a single ordered list, preserving the start attribute of the first list.');
+
+var test = document.getElementById('test');
+test.focus();
+[...'1. A\n2. B\nC\n\n5. D\n6. E'].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

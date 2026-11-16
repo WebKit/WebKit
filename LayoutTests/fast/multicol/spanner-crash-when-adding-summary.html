@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    column-count: 2;
+}
+details {
+    border-image: url(#foo);
+}
+</style>
+</head>
+<body>
+<div><details><summary style="column-span: all"></summary></details></div>
+PASS if no crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+r = document.caretRangeFromPoint(0, 0);
+r.insertNode(document.createElement("summary"));
+document.body.offsetHeight;
+document.getElementsByTagName("summary")[1].remove();
+</script>
+</body>
+</html>

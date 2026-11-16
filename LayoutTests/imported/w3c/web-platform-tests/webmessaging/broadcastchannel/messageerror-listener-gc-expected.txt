@@ -1,0 +1,4 @@
+
+PASS BroadcastChannel with only a messageerror listener (onmessageerror) receives messageerror after garbage collection
+PASS BroadcastChannel with only a messageerror listener (addEventListener('messageerror')) receives messageerror after garbage collection
+

@@ -1,0 +1,12 @@
+Tests that an animated SVG image in an out-of-process subframe animates once the page becomes visible, for a frame whose view was created while the page was hidden
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The page is hidden, so create the subframe now.
+Showing the page.
+PASS imageIsAnimating became "true"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<canvas id="dest" width="400" height="400"></canvas>
+<div id="console"></div>
+<script>
+description("Regression test for webkit.org/b/315554: drawImage from an unparented source canvas must flush the source's pending strokeLine batch before its pixels are sampled.");
+
+const SIZE = 400;
+const NUM_LINES = 200; // > maxPendingLineStrokes (64) so the source has both
+                       // auto-flushed full batches and trailing pending lines.
+const colors = ["#101010", "#808080", "#c0c0c0", "#e01040", "#10c030", "#744cba", "#e05010"];
+
+function lcg(seed) {
+    let s = seed >>> 0;
+    return () => {
+        s = (s * 1664525 + 1013904223) >>> 0;
+        return s / 0x100000000;
+    };
+}
+
+function drawLines(ctx) {
+    const rand = lcg(0xC0FFEE);
+    for (let i = 0; i < NUM_LINES; i++) {
+        ctx.strokeStyle = colors[Math.floor(rand() * colors.length)];
+        ctx.lineWidth = 1 + Math.floor(rand() * 6);
+        ctx.beginPath();
+        ctx.moveTo(rand() * SIZE, rand() * SIZE);
+        ctx.lineTo(rand() * SIZE, rand() * SIZE);
+        ctx.stroke();
+    }
+}
+
+function countNonBlank(data) {
+    let count = 0;
+    for (let i = 3; i < data.length; i += 4) {
+        if (data[i])
+            count++;
+    }
+    return count;
+}
+
+// Reference path: strokes go directly on a parented canvas; the subsequent
+// getImageData() forces any pending batch to flush.
+const direct = document.createElement("canvas");
+direct.width = direct.height = SIZE;
+drawLines(direct.getContext("2d"));
+const directData = direct.getContext("2d").getImageData(0, 0, SIZE, SIZE).data;
+const directNonBlank = countNonBlank(directData);
+
+// Sanity: catches a silent rendering failure that would otherwise blank both
+// paths and produce a false-positive pixel comparison.
+shouldBeGreaterThan("directNonBlank", "1000");
+
+// Test path: strokes target an UNPARENTED canvas. We never read back from it,
+// so only the cross-buffer drawImage from a parented canvas can flush the
+// pending strokeLine batch via recordResourceUse(ImageBuffer&).
+const src = document.createElement("canvas");
+src.width = src.height = SIZE;
+drawLines(src.getContext("2d"));
+
+const dest = document.getElementById("dest");
+const dctx = dest.getContext("2d");
+dctx.drawImage(src, 0, 0);
+const destData = dctx.getImageData(0, 0, SIZE, SIZE).data;
+const destNonBlank = countNonBlank(destData);
+
+let bytesDifferent = 0;
+for (let i = 0; i < destData.length; i++) {
+    if (destData[i] !== directData[i])
+        bytesDifferent++;
+}
+
+// If the cross-buffer flush regresses, trailing pending strokes (those not
+// auto-flushed at the 64-line batch boundary) are dropped from the source —
+// destNonBlank < directNonBlank — or, if no batch was filled, nothing renders.
+shouldBe("destNonBlank", "directNonBlank");
+shouldBe("bytesDifferent", "0");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

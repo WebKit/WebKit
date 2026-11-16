@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<title>FirstTitle</title>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<script>
+var testOutput = "This tests that &lt;title&gt; will be used as the description for a web area.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // Focusing the body is required so that we don't consider it to be ignored.
+    document.getElementById("body").focus();
+
+    var webArea;
+    setTimeout(async function() {
+        await waitFor(() => {
+            webArea = accessibilityController.focusedElement;
+            return webArea;
+        })
+        testOutput += expect("webArea.description", "'AXDescription: FirstTitle'");
+
+        testOutput += "\nRemoving title element.\n";
+        document.getElementsByTagName("title")[0].remove();
+        await waitFor(() => !webArea.description.includes("FirstTitle"));
+        testOutput += expect("webArea.description", "'AXDescription: '");
+
+        testOutput += "\nAdding new title element.\n";
+        const newTitle = document.createElement("title");
+        newTitle.innerHTML = "SecondTitle";
+        document.head.appendChild(newTitle);
+        await waitFor(() => webArea.description.includes("SecondTitle"));
+        testOutput += expect("webArea.description", "'AXDescription: SecondTitle'");
+
+        testOutput += "\nUsing document.title to update the title string.\n";
+        document.title = "ThirdTitle";
+        await waitFor(() => webArea.description.includes("ThirdTitle"));
+        testOutput += expect("webArea.description", "'AXDescription: ThirdTitle'");
+
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

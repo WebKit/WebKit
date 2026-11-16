@@ -1,0 +1,13 @@
+
+FAIL setPathData() M/L/Z (absolute) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+FAIL setPathData() m/l/z (relative) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+FAIL setPathData() H/V (horizontal/vertical lineto) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+FAIL setPathData() C/S (cubic + smooth cubic) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+FAIL setPathData() Q/T (quadratic + smooth quadratic) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+FAIL setPathData() A (elliptical arc with flags) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+FAIL setPathData() c/s (relative cubic + smooth cubic) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+FAIL setPathData() q/t (relative quadratic + smooth quadratic) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+FAIL setPathData() a (relative elliptical arc) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+FAIL setPathData() A flags follow ToBoolean (non-zero coerces to 1) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+FAIL setPathData() single moveto (minimal valid non-empty path) path.setPathData is not a function. (In 'path.setPathData(c.input)', 'path.setPathData' is undefined)
+

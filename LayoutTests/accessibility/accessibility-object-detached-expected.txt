@@ -1,0 +1,8 @@
+This test makes sure that AccessibilityObjects are detached when the node they point to is detached.
+
+PASS: expectedButtonRole != expectedDetachedRole === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

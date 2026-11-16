@@ -1,0 +1,4 @@
+Open popover      Last focusable element
+
+PASS Focus behavior of popover that is shadow host
+

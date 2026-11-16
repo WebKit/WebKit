@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <style>
+        img {
+            width: 100px;
+            height: 100px;
+        }
+        span {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div id="group-1">
+        <p>Image URL with no fragmentIdentifier:</p>
+        <img src="resources/rgb-icons-1.svg">
+        <img src="resources/rgb-icons-1.svg">
+    </div>
+    <div id="group-2">
+        <p>Image URL with trailing spaces after the fragmentIdentifier:</p>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div id="group-3">
+        <p>Image URL with non-existent fragmentIdentifier:</p>
+        <img src="resources/rgb-icons-1.svg">
+        <img src="resources/rgb-icons-1.svg">
+    </div>
+</body>
+</html>

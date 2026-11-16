@@ -1,0 +1,5 @@
+PASS document.createElement('div').attachShadow({mode: 'open'}) instanceof ShadowRoot is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,97 @@
+<!--
+    Tests that image-rendering behavior for WebGL canvas element is the same as
+    for an image with the same contents.
+    Left (canvas element) should be the same as right (image element).
+ -->
+<body>
+    <style type=text/css>
+    canvas {
+        width: 64px;
+        height: 64px;
+        display: inline-block;
+    }
+    img {
+        width: 64px;
+        height: 64px;
+        display: inline-block;
+    }
+    .pixelated canvas, .pixelated img {
+        image-rendering: pixelated;
+    }
+    .crisp-edges canvas, .crisp-edges img {
+        image-rendering: crisp-edges;
+    }
+    </style>
+    <div class="pixelated">
+        <canvas width="2" height="2""></canvas>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAAqADAAQAAAABAAAAAgAAAADtGLyqAAAADklEQVQIHWNg+A+EyAAAHfQB/5BEIGEAAAAASUVORK5CYII=">
+    </div>
+    <div class="to-be-pixelated">
+        <canvas width="2" height="2""></canvas>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAAqADAAQAAAABAAAAAgAAAADtGLyqAAAADklEQVQIHWNg+A+EyAAAHfQB/5BEIGEAAAAASUVORK5CYII=">
+    </div>
+    <div class="pixelated delayed">
+        <canvas width="2" height="2""></canvas>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAAqADAAQAAAABAAAAAgAAAADtGLyqAAAADklEQVQIHWNg+A+EyAAAHfQB/5BEIGEAAAAASUVORK5CYII=">
+    </div>
+    <div class="crisp-edges">
+        <canvas width="2" height="2"></canvas>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAAqADAAQAAAABAAAAAgAAAADtGLyqAAAADklEQVQIHWNg+A+EyAAAHfQB/5BEIGEAAAAASUVORK5CYII=">
+    </div>
+    <div class="to-be-crisp-edges">
+        <canvas width="2" height="2"></canvas>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAAqADAAQAAAABAAAAAgAAAADtGLyqAAAADklEQVQIHWNg+A+EyAAAHfQB/5BEIGEAAAAASUVORK5CYII=">
+    </div>
+    <div class="crisp-edges delayed">
+        <canvas width="2" height="2"></canvas>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAAqADAAQAAAABAAAAAgAAAADtGLyqAAAADklEQVQIHWNg+A+EyAAAHfQB/5BEIGEAAAAASUVORK5CYII=">
+    </div>
+    <div>
+        <canvas width="2" height="2"></canvas>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAAqADAAQAAAABAAAAAgAAAADtGLyqAAAADklEQVQIHWNg+A+EyAAAHfQB/5BEIGEAAAAASUVORK5CYII=">
+    </div>
+    <div class="to-be-cleared pixelated">
+        <canvas width="2" height="2"></canvas>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAAqADAAQAAAABAAAAAgAAAADtGLyqAAAADklEQVQIHWNg+A+EyAAAHfQB/5BEIGEAAAAASUVORK5CYII=">
+    </div>
+    <div class="to-be-cleared crisp-edges">
+        <canvas width="2" height="2"></canvas>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAAqADAAQAAAABAAAAAgAAAADtGLyqAAAADklEQVQIHWNg+A+EyAAAHfQB/5BEIGEAAAAASUVORK5CYII=">
+    </div>
+
+    <script>
+    if (window.testRunner) {
+        window.testRunner.dumpAsText(true);
+        window.testRunner.waitUntilDone();
+    }
+    function clear(e) {
+        const gl = e.getContext('webgl');
+        gl.clearColor(0, 1, 0, 1);
+        gl.enable(gl.SCISSOR_TEST);
+        gl.scissor(0, 1, 1, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+    [...document.querySelectorAll('canvas')].forEach((e) => {
+        if (e.parentNode.className.includes("delayed"))
+            return;
+        clear(e);
+    });
+
+    [...document.querySelectorAll('.to-be-cleared')].forEach((e) => {
+        e.className = ""
+    });
+    window.requestAnimationFrame(() => {
+        [...document.querySelectorAll('.to-be-pixelated')].forEach((e) => {
+            e.className = "pixelated"
+        });
+        [...document.querySelectorAll('.to-be-crisp-edges')].forEach((e) => {
+            e.className = "crisp-edges"
+        });
+        [...document.querySelectorAll('div.delayed > canvas')].forEach((e) => {
+            clear(e);
+        });
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+    });
+    </script>
+</body>

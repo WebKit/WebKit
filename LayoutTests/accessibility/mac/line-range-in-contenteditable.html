@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+* { font-size: 72px; }
+</style>
+</head>
+<body>
+
+<!-- 
+Laid out like:
+Hello world,
+it's me! This
+is a test of
+some content
+-->
+<p id="editable" style="width: 400px;" contenteditable="true">
+Hello world, it's me! This is a test of some content
+</p>
+    
+<script>
+var output = "This test ensures we compute the correct line range after basic arrow key movement in a contenteditable.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    var editable = accessibilityController.accessibleElementById("editable");
+    var endMarker, markerRange;
+    document.getElementById("editable").focus();
+    setTimeout(async function() {
+        // Move the cursor to the downstream position after "This" (* represents the cursor):
+        //
+        // Laid out like:
+        // Hello world,
+        // it's me! This
+        // *is a test of
+        // some content
+        for (let i = 0; i < 27; i++)
+            eventSender.keyDown("rightArrow");
+
+        await waitFor(() => {
+            markerRange = webarea.selectedTextMarkerRange();
+            if (!markerRange)
+                return false;
+            // The selected range is collapsed (the start and end are the same, a consequence of moving the cursor), so
+            // getting the end marker rather than the start is arbitrary and unimportant.
+            endMarker = webarea.endTextMarkerForTextMarkerRange(markerRange);
+            // Per the cursor position, we should be returning a line range representing "is a test of".
+            //
+            // If we don't, that means the editing cursor rendered by WebKit is going to be out of sync with what
+            // VoiceOver announces as text for the line. e.g. after pressing right arrow 27 times, then pressing the
+            // down arrow to move down a line, the user should hear / braille "some content", as that is the line the
+            // cursor has moved to. But instead they would hear "is a test of" because we are out of sync with the cursor.
+            markerRange = webarea.lineTextMarkerRangeForTextMarker(endMarker);
+            return webarea.stringForTextMarkerRange(markerRange).trim() === "is a test of";
+        });
+        output += "PASS: Computed correct line range based on cursor position: 'is a test of'\n";
+
+        // Test the scenario outlined in the comment above.
+        eventSender.keyDown("downArrow");
+        await waitFor(() => {
+            markerRange = webarea.selectedTextMarkerRange();
+            if (!markerRange)
+                return false;
+            endMarker = webarea.endTextMarkerForTextMarkerRange(markerRange);
+            markerRange = webarea.lineTextMarkerRangeForTextMarker(endMarker);
+            return webarea.stringForTextMarkerRange(markerRange).trim() === "some content";
+        });
+        output += "PASS: Computed correct line range based on cursor position: 'some content'\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

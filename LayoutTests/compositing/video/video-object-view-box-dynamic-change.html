@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSObjectViewBoxEnabled=true ] -->
+<html>
+<head>
+<style>
+    video {
+        display: block;
+        width: 100px;
+        height: 100px;
+        object-fit: fill;
+        margin: 5px;
+    }
+</style>
+<script src="../../media/media-file.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function dumpLayers()
+    {
+        if (!window.internals)
+            return "";
+        return window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS);
+    }
+
+    function init()
+    {
+        var video = document.querySelector("video");
+        video.addEventListener("canplaythrough", function () {
+            setTimeout(function() {
+                var before = dumpLayers();
+                video.style.objectViewBox = "inset(50px 0px 0px 0px)";
+                // No explicit layout is forced here: with an explicitly-sized video (both
+                // width and height set), changing object-view-box alone doesn't dirty layout,
+                // so this exercises RenderVideo::styleDidChange()'s explicit
+                // contentChanged(ContentChangeType::Video) call, relying purely on the
+                // compositing update triggered by the style change itself.
+                setTimeout(function() {
+                    var after = dumpLayers();
+                    document.getElementById("before").innerText = before;
+                    document.getElementById("after").innerText = after;
+                    testRunner.notifyDone();
+                }, 150);
+            }, 150);
+        }, true);
+        video.src = findMediaFile("video", "../../media/content/pure-color-green");
+    }
+</script>
+</head>
+<body onload="init();">
+    <p>This test verifies that dynamically setting object-view-box on an explicitly-sized
+    &lt;video&gt; (a change that does not by itself dirty layout) still updates the
+    compositing contents/clipping rects, by comparing the layer tree before and after the
+    style change.</p>
+    <video></video>
+    <p>Before (no object-view-box):</p>
+<pre id="before"></pre>
+    <p>After (object-view-box: inset(50px 0px 0px 0px)):</p>
+<pre id="after"></pre>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+PASS Property clip value 'auto'
+PASS Property clip value 'rect(10px, 20px, -30px, 40px)'
+PASS Property clip value 'rect(10px, 20px, calc(-1em + 10px), 1em)'
+PASS Property clip value 'rect(10px, -20px, auto, auto)'
+

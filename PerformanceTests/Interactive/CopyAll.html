@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+
+function startTest() {
+    var iframe = document.querySelector('iframe');
+    if (!iframe.contentDocument.queryCommandSupported('Copy')) {
+        alert('execCommand("copy") is not supported.');
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    PerfTestRunner.measureTime({
+        unit: 'ms',
+        setup: function () {
+            document.querySelector('iframe').contentDocument.execCommand('SelectAll');
+        },
+        run: function () {
+            document.querySelector('iframe').contentDocument.execCommand('Copy');
+        },
+        done: function () {
+            document.querySelector('iframe').parentNode.removeChild(iframe);
+        }
+    });
+}
+
+</script>
+<iframe src="../Parser/resources/html5.html" onload="startTest()" width="800" height="600">
+</body>
+</html>

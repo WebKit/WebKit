@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test.js"></script>
+<div id="content">
+
+<div contenteditable="true" id="contenteditable">current1</div>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that you can set the value of a contenteditable element.");
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+
+       accessibilityController.addNotificationListener(function(element, notification) {
+          if (notification == "AXValueChanged") {
+               // Setting the value posts more than one of these, and reading an accessibility
+               // attribute below lets the next one be delivered before this call returns, so stop
+               // listening before doing anything else.
+               // This hack will be obsolete after https://bugs.webkit.org/show_bug.cgi?id=323511 is fixed.
+               accessibilityController.removeNotificationListener();
+
+               debug("Value change notification received");
+               var axElement = accessibilityController.accessibleElementById("contenteditable");
+               debug("Updated Value: " + axElement.stringValue);
+               document.getElementById("content").style.visibility = "hidden";
+               finishJSTest();
+          }
+       });
+
+        function testElement(idValue) {
+            var axElement = accessibilityController.accessibleElementById(idValue);
+            debug("Role: " + axElement.role);
+            debug("Value: " + axElement.stringValue);
+        
+            var writable = axElement.isAttributeSettable("AXValue");
+            debug("Writable: " + writable);
+
+            document.getElementById(idValue).focus();
+
+            axElement.setValue("   leading and trailing spaces   ");
+        }
+
+        debug("\nContenteditable");
+        testElement("contenteditable");
+
+    } else {
+        testFailed("Could not load accessibility controller");
+    }
+
+</script>
+
+</body>
+</html>

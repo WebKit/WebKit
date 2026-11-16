@@ -1,0 +1,22 @@
+
+PASS Checking justify-self: auto
+PASS Checking justify-self: normal
+PASS Checking justify-self: stretch
+PASS Checking justify-self: left
+PASS Checking justify-self: right
+PASS Checking justify-self: start
+PASS Checking justify-self: end
+PASS Checking justify-self: self-start
+PASS Checking justify-self: self-end
+PASS Checking justify-self: center
+FAIL Checking justify-self: flex-start assert_equals: justify-self computed style is not what is should. expected "flow-start" but got "flex-start"
+FAIL Checking justify-self: flex-end assert_equals: justify-self computed style is not what is should. expected "flow-end" but got "flex-end"
+PASS Checking justify-self: baseline
+PASS Checking justify-self: first baseline
+PASS Checking justify-self: last baseline
+FAIL Checking justify-self: safe flex-end assert_equals: justify-self computed style is not what is should. expected "safe flow-end" but got "safe flex-end"
+PASS Checking justify-self: unsafe end
+PASS Checking justify-self: safe end
+FAIL Checking justify-self: unsafe flex-start assert_equals: justify-self computed style is not what is should. expected "unsafe flow-start" but got "unsafe flex-start"
+PASS Checking justify-self: safe center
+

@@ -1,0 +1,27 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices
+current-version: 0
+reexported-libraries:
+-       targets: [arm64-tvos, arm64e-tvos]
+        libraries: [/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard, /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices]
+exports:
+-       targets: [arm64-tvos, arm64e-tvos]
+        symbols: [_FBSOpenApplicationOptionKeyLaunchIntent, _FBSOpenApplicationOptionKeyUnlockDevice, _FBSSceneVisibilityEndowmentNamespace]
+        objc-classes: [FBSOpenApplicationOptions, FBSOpenApplicationService]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard
+current-version: 0
+exports: []
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices
+current-version: 0
+exports: []
+...

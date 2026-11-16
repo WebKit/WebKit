@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="color" id="color" value="#ff0000">
+
+<script>
+var output = "This test ensures that pressing a color picker via accessibility fires a click event.\n\n";
+
+var clickFired = false;
+
+document.getElementById("color").addEventListener("click", function() {
+    clickFired = true;
+
+    output += "Click event received";
+    debug(output);
+    finishJSTest();
+});
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.accessibleElementById("color").press();
+}
+</script>
+</body>
+</html>

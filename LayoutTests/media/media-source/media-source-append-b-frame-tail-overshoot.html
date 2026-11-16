@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-b-frame-tail-overshoot</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Regression coverage for a reordered-B-frame-tail pts-overshoot interacting with MSE
+    // "Coded Frame Processing" step 1.14 case B + step 1.15 cascade.
+    //
+    // Setup:
+    //   Segment 1 (init + media): one sync sample at pts=100 dts=100 dur=100.
+    //     presentationEndTime = 200. After append: highest_end_timestamp = 200.
+    //   Segment 2 (media only): its first DTS is 0, below segment 1's last DTS of 100 — this
+    //     fires the step-1.6 DTS-discontinuity reset, which unsets highest_end_timestamp and
+    //     lastDecodeTimestamp. Subsequent samples process in a fresh coded-frame group.
+    //     Samples in decode order:
+    //       - I-frame: dts=0 pts=0 dur=50 (sync). Case-A remove range [0, 50) — nothing in
+    //         the track buffer to remove. After add: highest_end_timestamp = 50.
+    //       - Reordered B-frame: dts=50 pts=80 dur=30 (non-sync, pts > dts).
+    //         frame_end = 110. Case-B condition `highest_end (50) ≤ pts (80)` holds. Erase
+    //         range = [50, 110). The existing content sync at pts=100 lies inside that range.
+    //
+    // Spec-mandated outcome without any targeted fix: 1.14 removes the content sync at 100,
+    // 1.15 cascades any dependents (none here, since content has only the one sample), and
+    // buffered ends at 0.110 — the content's 0.1-to-0.2 span is gone.
+    //
+    // With the fix (shift the existing overlapped sync forward to the incoming frame's
+    // frame_end): the content sync gets re-keyed at pts=110, so 1.14's half-open [50, 110)
+    // no longer catches it. The sync's decodeTime and presentationEndTime (=200) are
+    // preserved; only its start pts moves by the 10 ms overshoot. buffered ends at 0.200.
+    //
+    // The test does NOT call changeType — the reset that enables Case-B to fire against the
+    // existing sync comes from the natural DTS discontinuity between segments 1 and 2.
+
+    var source;
+    var sourceBuffer;
+    var init;
+    var segment1;
+    var segment2;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+
+        // ---- Segment 1: init + one sync sample at pts=100 ----
+        init = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }],
+        });
+        segment1 = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{
+                id: 1, type: 'video', baseDecodeTime: 100,
+                samples: [
+                    { duration: 100, compositionTimeOffset: 0, isSync: true },
+                ],
+            }],
+        });
+        run('sourceBuffer.appendBuffer(MP4.concat(init, segment1))');
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0.1, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 0.2, 0.01);
+
+        // ---- Segment 2: baseDecodeTime = 0 (forces step-1.6 DTS-discontinuity reset);
+        //                ends in a reordered B-frame whose frame_end = 110 lands 10 ms past
+        //                the existing sync at pts=100. No changeType call. ----
+        segment2 = MP4.mediaSegment({
+            sequenceNumber: 2,
+            tracks: [{
+                id: 1, type: 'video', baseDecodeTime: 0,
+                samples: [
+                    { duration: 50, compositionTimeOffset: 0,  isSync: true  },  // I-frame
+                    { duration: 30, compositionTimeOffset: 30, isSync: false },  // B-frame pts=80 end=110
+                ],
+            }],
+        });
+        run('sourceBuffer.appendBuffer(segment2)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // With the fix: single contiguous buffered range [0, 0.2]. The content sync originally
+        // at pts=0.1 has been shifted to pts=0.11 but retains its presentationEndTime of 0.2.
+        // Without the fix: buffered would end at 0.110 (no content past the ad tail).
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0.0, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 0.2, 0.01);
+
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

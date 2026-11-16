@@ -1,0 +1,20 @@
+Tests the WebGPU 'dual-source-blending' feature and the WGSL dual_source_blending extension. Renders a full-screen triangle whose fragment shader writes @blend_src(0) and @blend_src(1) outputs, blended with srcFactor 'src1' and dstFactor 'one-minus-src1', and verifies the resulting pixel. Also checks the related validation rules.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Adapter advertises 'dual-source-blending' feature
+PASS enable dual_source_blending fails without the feature
+PASS src1 blend factors fail without the feature
+PASS Shader using @blend_src compiles
+PASS src1 blend factors require the fragment shader to use @blend_src
+PASS src1 blend factors require exactly one color target
+PASS Pipeline using dual source blending is valid
+PASS pixel[0] is 255
+PASS pixel[1] is 0
+PASS pixel[2] is 255
+PASS pixel[3] is 255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

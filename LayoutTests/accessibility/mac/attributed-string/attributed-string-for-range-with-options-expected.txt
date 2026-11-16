@@ -1,0 +1,11 @@
+This test ensures that attributed string for text marker range works and only includes misspelled attribute when requested.
+
+PASS: text === expected1
+PASS: text === expected2
+PASS: text === expected3
+PASS: text === expected4
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,22 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (memory_fill0.wast:2)
+PASS #3 Reinitialize the default imports
+PASS #4 Test that WebAssembly compilation succeeds (memory_fill0.wast:2)
+PASS #5 Test that WebAssembly instantiation succeeds (memory_fill0.wast:2)
+PASS #6 Run a WebAssembly test without special assertions (memory_fill0.wast:18)
+PASS #7 Test that a WebAssembly code returns a specific result (memory_fill0.wast:19)
+PASS #8 Test that a WebAssembly code returns a specific result (memory_fill0.wast:20)
+PASS #9 Test that a WebAssembly code returns a specific result (memory_fill0.wast:21)
+PASS #10 Test that a WebAssembly code returns a specific result (memory_fill0.wast:22)
+PASS #11 Test that a WebAssembly code returns a specific result (memory_fill0.wast:23)
+PASS #12 Run a WebAssembly test without special assertions (memory_fill0.wast:26)
+PASS #13 Test that a WebAssembly code returns a specific result (memory_fill0.wast:27)
+PASS #14 Test that a WebAssembly code returns a specific result (memory_fill0.wast:28)
+PASS #15 Run a WebAssembly test without special assertions (memory_fill0.wast:31)
+PASS #16 Test that a WebAssembly code traps (memory_fill0.wast:34)
+PASS #17 Test that a WebAssembly code returns a specific result (memory_fill0.wast:36)
+PASS #18 Test that a WebAssembly code returns a specific result (memory_fill0.wast:37)
+PASS #19 Run a WebAssembly test without special assertions (memory_fill0.wast:40)
+PASS #20 Test that a WebAssembly code traps (memory_fill0.wast:43)
+

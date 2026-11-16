@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests for ObservableArray's [[DefineOwnProperty]]");
+
+let sheet1 = null;
+let sheet2 = null;
+let sheet3 = null;
+
+function runTest() {
+    "use strict";
+
+    sheet1 = new CSSStyleSheet()
+    sheet1.replaceSync('div { color: red }')
+    sheet2 = new CSSStyleSheet()
+    sheet2.replaceSync('div { color: blue }')
+    sheet3 = new CSSStyleSheet();
+    sheet3.replaceSync('div { color: green }')
+    document.adoptedStyleSheets.push(sheet1)
+    document.adoptedStyleSheets.push(sheet2)
+
+    shouldBe("document.adoptedStyleSheets.length", "2");
+
+    
+    evalAndLog("Object.defineProperty(document.adoptedStyleSheets , 'length', { value: 1 })");
+    shouldBe("document.adoptedStyleSheets.length", "1");
+    shouldBe("document.adoptedStyleSheets[0]", "sheet1");
+    shouldBeUndefined("document.adoptedStyleSheets[1]");
+
+    evalAndLog("Object.defineProperty(document.adoptedStyleSheets , 1, { value: sheet2 })");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+    shouldBe("document.adoptedStyleSheets[0]", "sheet1");
+    shouldBe("document.adoptedStyleSheets[1]", "sheet2");
+    shouldBeUndefined("document.adoptedStyleSheets[2]");
+
+    evalAndLog("Object.defineProperty(document.adoptedStyleSheets , 2, { value: sheet3, configurable: true, enumerable: true, writable: true })");
+    shouldBe("document.adoptedStyleSheets.length", "3");
+    shouldBe("document.adoptedStyleSheets[0]", "sheet1");
+    shouldBe("document.adoptedStyleSheets[1]", "sheet2");
+    shouldBe("document.adoptedStyleSheets[2]", "sheet3");
+    shouldBeUndefined("document.adoptedStyleSheets[3]");
+
+    evalAndLog("Object.defineProperty(document.adoptedStyleSheets , 'length', { value: 2, configurable: false, enumerable: false, writable: true })");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+    shouldBe("document.adoptedStyleSheets[0]", "sheet1");
+    shouldBe("document.adoptedStyleSheets[1]", "sheet2");
+    shouldBeUndefined("document.adoptedStyleSheets[2]");
+
+    shouldNotThrow("Object.defineProperty(document.adoptedStyleSheets , 'length', { })");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+
+    shouldNotThrow("Object.defineProperty(document.adoptedStyleSheets , 3, { })");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+
+    debug("");
+    debug("* Error cases")
+    shouldThrow("Object.defineProperty(document.adoptedStyleSheets , 'length', { value: 1, configurable: true })");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+    shouldThrow("Object.defineProperty(document.adoptedStyleSheets , 'length', { value: 1, enumerable: true })");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+    shouldThrow("Object.defineProperty(document.adoptedStyleSheets , 'length', { value: 1, writable: false })");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+    shouldThrow("Object.defineProperty(document.adoptedStyleSheets , 2, { value: sheet3, configurable: false })");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+    shouldThrow("Object.defineProperty(document.adoptedStyleSheets , 2, { value: sheet3, enumerable: false })");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+    shouldThrow("Object.defineProperty(document.adoptedStyleSheets , 2, { value: sheet3, writable: false })");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+
+    document.adoptedStyleSheets.length = 0;
+}
+
+runTest();
+</script>
+</body>

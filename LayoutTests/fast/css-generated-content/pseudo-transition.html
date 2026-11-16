@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<script src="../../resources/js-test-pre.js"></script>
+
+<style>
+#before:before,
+#after:after {
+    content: "";
+    display: block;
+    height: 50px;
+    width: 50px;
+    top: 50px;
+    position: relative;
+    -webkit-transition: width 2s, top 2s;
+    -moz-transition: width 2s, top 2s;
+    transition: width 2s, top 2s;
+}
+
+#before.transition:before,
+#after.transition:after {
+    top: 200px;
+    height: 10px;
+    width: 10px;
+}
+
+#before,
+#after {
+    display: inline-block;
+    border: 1px solid black;
+    background: red;
+}
+
+#after.transition,
+#before.transition {
+    background: green;
+}
+</style>
+
+<div id="before"></div>
+<div id="after"></div>
+
+<script>
+description('Transitions on :before and :after pseudo elements should run');
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function getPseudoComputedTop(id)
+{
+    return Math.round(parseFloat(getComputedStyle(document.getElementById(id), ':' + id).top));
+}
+
+// FIXME: This test should be modified so subpixel doesn't cause off by one
+// below and it no longer needs shouldBeCloseTo.
+
+const prefix = "-webkit-";
+const propertiesRequiringPrefix = ["-webkit-text-stroke-color", "-webkit-text-fill-color"];
+
+function pauseTransitionAtTimeOnPseudoElement(transitionProperty, time, element, pseudoElement)
+{
+    if (transitionProperty.startsWith(prefix) && !propertiesRequiringPrefix.includes(transitionProperty))
+        transitionProperty = transitionProperty.substr(prefix.length);
+
+    for (let animation of element.getAnimations({ subtree: true })) {
+        if (animation instanceof CSSTransition && animation.transitionProperty == transitionProperty && animation.effect.target == element && animation.effect.pseudoElement == pseudoElement) {
+            animation.currentTime = time * 1000;
+            animation.pause();
+            return true;
+        }
+    }
+
+    console.log(`A transition for property ${transitionProperty} could not be found`);
+    return false;
+}
+
+function testTransition(id)
+{
+    const pseudoElement = `::${id}`;
+    var div = document.getElementById(id);
+    div.className = 'transition';
+    window.div = div;
+    shouldBe('div.offsetWidth', '52');
+
+    pauseTransitionAtTimeOnPseudoElement('width', 1.0, div, pseudoElement);
+    shouldBeCloseTo('div.offsetWidth', 20, 1);
+    pauseTransitionAtTimeOnPseudoElement('top', 1.0, div, pseudoElement);
+    computedTop = getPseudoComputedTop(id);
+    shouldBeCloseTo('computedTop', 170, 1);
+    pauseTransitionAtTimeOnPseudoElement('width', 2.0, div, pseudoElement);
+    shouldBeCloseTo('div.offsetWidth', 12, 1);
+    pauseTransitionAtTimeOnPseudoElement('top', 2.0, div, pseudoElement);
+    computedTop = getPseudoComputedTop(id);
+    shouldBeCloseTo('computedTop', 200, 1);
+}
+
+onload = function() {
+    testTransition('before');
+    testTransition('after');
+    if (window.internals)
+        isSuccessfullyParsed();
+    else
+        setTimeout(isSuccessfullyParsed, 2000);
+};
+</script>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-encrypted-event</title>
+    <script src="../../../../media/video-test.js"></script>
+    <script>
+    var mediaData;
+    var mediaSource;
+    var sourceBuffer;
+
+    function startTest() {
+        video = document.querySelector('video');
+        mediaSource = new MediaSource();
+        waitForEvent('sourceopen', sourceOpen, false, false, mediaSource);
+        waitForEventAndFail('error');
+        run('video.srcObject = mediaSource');
+    }
+
+    async function sourceOpen(event) {
+        try {
+            run('sourceBuffer = mediaSource.addSourceBuffer("video/mp4")');
+            var mediaResponse = await fetch('content/fps-cbcs.mp4');
+            mediaData = await mediaResponse.arrayBuffer();
+            waitForEvent('encrypted', encrypted);
+            run('sourceBuffer.appendBuffer(mediaData)');
+        } catch(e) {
+            failTest();
+        }
+    }
+
+    function encrypted(event) {
+        window.event = event;
+        testExpected('event.initData', 'null', '!=');
+        testExpected('event.initDataType', 'sinf');
+        endTest();
+    }
+
+    window.addEventListener('load', startTest);
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

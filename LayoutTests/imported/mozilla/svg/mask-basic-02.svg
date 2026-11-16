@@ -1,0 +1,17 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <title>Testcase that mask defaults to sRGB</title>
+
+  <defs>
+    <mask id="mask" maskContentUnits="objectBoundingBox">
+        <rect width="1" height="1" fill="#3f3f3f" />
+    </mask>
+  </defs>
+
+  <rect width="100" height="100" x="100" y="100" mask="url(#mask)" fill="#FF0000"/>
+
+</svg>

@@ -1,0 +1,14 @@
+<style>
+fieldset {
+  display: flex;
+}
+</style>
+<fieldset><legend id=legend>legend</legend>fieldset</fieldset>
+<pre id="result">PASS if legend (hittest): </pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+let targetRect = legend.getBoundingClientRect();
+result.innerText += document.elementFromPoint((targetRect.left + targetRect.right) / 2, (targetRect.top + targetRect.bottom) / 2);
+</script>

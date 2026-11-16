@@ -1,0 +1,11 @@
+This tests that clicking an overflow element's scrollbar does not blur the currently focused input when no focusable ancestor exists.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement.tagName is "INPUT"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

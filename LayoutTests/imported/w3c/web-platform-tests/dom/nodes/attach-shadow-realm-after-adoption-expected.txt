@@ -1,0 +1,8 @@
+
+
+PASS Precondition (built-in host): node document and relevant realm differ after adoption
+PASS attachShadow() on an adopted built-in host: shadow root uses the node document realm
+PASS Precondition (custom element host): node document and relevant realm differ after adoption
+PASS attachShadow() on an adopted custom element host: shadow root uses the node document realm
+PASS attachShadow() invoked via another realm's method uses the node document realm
+

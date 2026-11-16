@@ -1,0 +1,118 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "CSSOKLab.h"
+
+#include "ExceptionOr.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSOKLab);
+
+ExceptionOr<Ref<CSSOKLab>> CSSOKLab::create(CSSColorPercent&& lightness, CSSColorNumber&& a, CSSColorNumber&& b, CSSColorPercent&& alpha)
+{
+    auto rectifiedLightness = rectifyCSSColorPercent(WTF::move(lightness));
+    if (rectifiedLightness.hasException())
+        return rectifiedLightness.releaseException();
+    auto rectifiedA = rectifyCSSColorNumber(WTF::move(a));
+    if (rectifiedA.hasException())
+        return rectifiedA.releaseException();
+    auto rectifiedB = rectifyCSSColorNumber(WTF::move(b));
+    if (rectifiedB.hasException())
+        return rectifiedB.releaseException();
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTF::move(alpha));
+    if (rectifiedAlpha.hasException())
+        return rectifiedAlpha.releaseException();
+
+    return adoptRef(*new CSSOKLab(rectifiedLightness.releaseReturnValue(), rectifiedA.releaseReturnValue(), rectifiedB.releaseReturnValue(), rectifiedAlpha.releaseReturnValue()));
+}
+
+CSSOKLab::CSSOKLab(RectifiedCSSColorPercent&& lightness, RectifiedCSSColorNumber&& a, RectifiedCSSColorNumber&& b, RectifiedCSSColorPercent&& alpha)
+    : m_lightness(WTF::move(lightness))
+    , m_a(WTF::move(a))
+    , m_b(WTF::move(b))
+    , m_alpha(WTF::move(alpha))
+{
+}
+
+CSSColorPercent CSSOKLab::l() const
+{
+    return toCSSColorPercent(m_lightness);
+}
+
+ExceptionOr<void> CSSOKLab::setL(CSSColorPercent&& lightness)
+{
+    auto rectifiedLightness = rectifyCSSColorPercent(WTF::move(lightness));
+    if (rectifiedLightness.hasException())
+        return rectifiedLightness.releaseException();
+    m_lightness = rectifiedLightness.releaseReturnValue();
+    return { };
+}
+
+CSSColorNumber CSSOKLab::a() const
+{
+    return toCSSColorNumber(m_a);
+}
+
+ExceptionOr<void> CSSOKLab::setA(CSSColorNumber&& a)
+{
+    auto rectifiedA = rectifyCSSColorNumber(WTF::move(a));
+    if (rectifiedA.hasException())
+        return rectifiedA.releaseException();
+    m_a = rectifiedA.releaseReturnValue();
+    return { };
+}
+
+CSSColorNumber CSSOKLab::b() const
+{
+    return toCSSColorNumber(m_b);
+}
+
+ExceptionOr<void> CSSOKLab::setB(CSSColorNumber&& b)
+{
+    auto rectifiedB = rectifyCSSColorNumber(WTF::move(b));
+    if (rectifiedB.hasException())
+        return rectifiedB.releaseException();
+    m_b = rectifiedB.releaseReturnValue();
+    return { };
+}
+
+CSSColorPercent CSSOKLab::alpha() const
+{
+    return toCSSColorPercent(m_alpha);
+}
+
+ExceptionOr<void> CSSOKLab::setAlpha(CSSColorPercent&& alpha)
+{
+    auto rectifiedAlpha = rectifyCSSColorPercent(WTF::move(alpha));
+    if (rectifiedAlpha.hasException())
+        return rectifiedAlpha.releaseException();
+    m_alpha = rectifiedAlpha.releaseReturnValue();
+    return { };
+}
+
+} // namespace WebCore

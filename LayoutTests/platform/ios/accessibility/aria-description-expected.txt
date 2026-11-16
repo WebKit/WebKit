@@ -1,0 +1,15 @@
+This test ensures that aria-description maps to appropriate attributes and works with aria-describedby correctly.
+
+Custom content: description: Longer description
+Custom content: description: text
+Custom content: description: text
+PASS: button.customContent.includes(newDescription) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+button
+button
+text
+button
+text

@@ -1,0 +1,215 @@
+# Copyright 2024 The BoringSSL Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("@rules_license//rules:license.bzl", "license")
+load(
+    ":gen/sources.bzl",
+    "bcm_internal_headers",
+    "bcm_sources",
+    "bcm_sources_asm",
+    "bench_internal_headers",
+    "bench_sources",
+    "bssl_internal_headers",
+    "bssl_sources",
+    "crypto_headers",
+    "crypto_internal_headers",
+    "crypto_sources",
+    "crypto_sources_asm",
+    "crypto_test_data",
+    "crypto_test_sources",
+    "crypto_test_internal_headers",
+    "decrepit_internal_headers",
+    "decrepit_sources",
+    "decrepit_test_sources",
+    "pki_headers",
+    "pki_internal_headers",
+    "pki_sources",
+    "pki_test_data",
+    "pki_test_sources",
+    "ssl_headers",
+    "ssl_internal_headers",
+    "ssl_sources",
+    "ssl_test_sources",
+    "test_support_internal_headers",
+    "test_support_sources",
+    "test_support_sources_asm",
+    "urandom_test_sources",
+)
+load(":util/util.bzl", "bssl_cc_binary", "bssl_cc_library", "bssl_cc_test")
+
+package(
+    default_applicable_licenses = [":license"],
+    # TODO(crbug.com/399387924): Enable parse_headers feature. Not all of our
+    # headers are self-contained. We may need to rename or fix some of them per
+    # https://google.github.io/styleguide/cppguide.html#Self_contained_Headers
+    features = ["-parse_headers"],
+)
+
+license(
+    name = "license",
+    package_name = "BoringSSL",
+    license_kinds = [
+        "@rules_license//licenses/spdx:Apache-2.0",
+    ],
+    license_text = "LICENSE",
+)
+
+exports_files(["LICENSE"])
+
+bssl_cc_library(
+    name = "crypto",
+    srcs = bcm_sources + crypto_sources,
+    hdrs = crypto_headers,
+    asm_srcs = bcm_sources_asm + crypto_sources_asm,
+    copts = ["-DBORINGSSL_IMPLEMENTATION"],
+    includes = ["include"],
+    internal_hdrs = bcm_internal_headers + crypto_internal_headers,
+    linkopts = select({
+        "@platforms//os:windows": [
+            "-defaultlib:advapi32.lib",
+            "-defaultlib:ws2_32.lib",
+        ],
+        "//conditions:default": ["-pthread"],
+    }),
+    visibility = ["//visibility:public"],
+)
+
+bssl_cc_library(
+    name = "ssl",
+    srcs = ssl_sources,
+    hdrs = ssl_headers,
+    copts = ["-DBORINGSSL_IMPLEMENTATION"],
+    # ssl_sources also depend on :crypto's internal headers.
+    implementation_deps = [":crypto_internal"],
+    internal_hdrs = ssl_internal_headers,
+    visibility = ["//visibility:public"],
+    # ssl_headers depend on :crypto's exported headers.
+    deps = [":crypto"],
+)
+
+bssl_cc_library(
+    name = "test_support",
+    testonly = True,
+    srcs = test_support_sources,
+    asm_srcs = test_support_sources_asm,
+    copts = ["-DBORINGSSL_USE_BAZEL_RUNFILES"],
+    internal_hdrs = test_support_internal_headers,
+    deps = [
+        ":crypto_internal",
+        "@bazel_tools//tools/cpp/runfiles",
+        "@googletest//:gtest",
+    ],
+)
+
+bssl_cc_test(
+    name = "crypto_test",
+    size = "large",
+    srcs = crypto_test_sources + crypto_test_internal_headers,
+    data = crypto_test_data,
+    # crypto_test references assembly symbols directly and thus must be linked
+    # statically.
+    linkstatic = True,
+    shard_count = 32,
+    deps = [
+        ":crypto_internal",
+        ":test_support",
+        "@googletest//:gtest",
+    ],
+)
+
+bssl_cc_test(
+    name = "urandom_test",
+    srcs = urandom_test_sources,
+    deps = [
+        ":crypto_internal",
+        ":test_support",
+        "@googletest//:gtest",
+    ],
+)
+
+bssl_cc_test(
+    name = "ssl_test",
+    srcs = ssl_test_sources,
+    deps = [
+        ":crypto_internal",
+        ":ssl_internal",
+        ":test_support",
+        "@googletest//:gtest",
+    ],
+)
+
+bssl_cc_binary(
+    name = "bssl",
+    srcs = bssl_sources + bssl_internal_headers,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":crypto_internal",
+        ":ssl_internal",
+    ],
+)
+
+bssl_cc_binary(
+    name = "bssl_bench",
+    srcs = bench_sources + bench_internal_headers,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":crypto_internal",
+        "@google_benchmark//:benchmark",
+    ],
+)
+
+# Build, but do not export libdecrepit.
+bssl_cc_library(
+    name = "decrepit",
+    srcs = decrepit_sources,
+    copts = ["-DBORINGSSL_IMPLEMENTATION"],
+    internal_hdrs = decrepit_internal_headers,
+    deps = [
+        ":crypto_internal",
+        ":ssl_internal",
+    ],
+)
+
+bssl_cc_test(
+    name = "decrepit_test",
+    srcs = decrepit_test_sources,
+    deps = [
+        ":crypto_internal",
+        ":decrepit",
+        ":test_support",
+        "@googletest//:gtest",
+    ],
+)
+
+# Build, but do not (yet) export libpki.
+bssl_cc_library(
+    name = "pki",
+    srcs = pki_sources,
+    hdrs = pki_headers,
+    copts = ["-DBORINGSSL_IMPLEMENTATION"],
+    internal_hdrs = pki_internal_headers,
+    deps = [":crypto"],
+)
+
+bssl_cc_test(
+    name = "pki_test",
+    srcs = pki_test_sources,
+    data = pki_test_data,
+    deps = [
+        ":crypto_internal",
+        ":pki",
+        ":test_support",
+        "@googletest//:gtest",
+    ],
+)

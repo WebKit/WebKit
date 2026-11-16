@@ -1,0 +1,7 @@
+This line should be green.
+
+This line should be green.
+This line should be green.
+
+PASS NEGATED More than one class selector
+

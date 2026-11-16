@@ -1,0 +1,56 @@
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .box {
+            width: 200px;
+            height: 200px;
+            background-color: white;
+            float: left;
+        }
+        .container > div {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <svg width="800" height="240">
+        <defs>
+            <filter id="test-linear" color-interpolation-filters="linearRGB">
+                <feComponentTransfer>
+                    <feFuncR type="table" tableValues="0.8 0.2"/>
+                    <feFuncG type="table" tableValues="0.8 0.2"/>
+                    <feFuncB type="table" tableValues="0.8 0.2"/>
+                </feComponentTransfer>
+                <feColorMatrix type="hueRotate" values="180"/>
+            </filter>
+
+            <filter id="test-srgb" color-interpolation-filters="sRGB">
+                <feComponentTransfer>
+                    <feFuncR type="table" tableValues="0.8 0.2"/>
+                    <feFuncG type="table" tableValues="0.8 0.2"/>
+                    <feFuncB type="table" tableValues="0.8 0.2"/>
+                </feComponentTransfer>
+                <feColorMatrix type="hueRotate" values="180"/>
+            </filter>
+
+            <filter id="test-default">
+                <feComponentTransfer>
+                    <feFuncR type="table" tableValues="0.8 0.2"/>
+                    <feFuncG type="table" tableValues="0.8 0.2"/>
+                    <feFuncB type="table" tableValues="0.8 0.2"/>
+                </feComponentTransfer>
+                <feColorMatrix type="hueRotate" values="180"/>
+            </filter>
+        </defs>
+        <rect filter="url(#test-linear)" x="10" y="10" width="200" height="200" fill="white"/>
+        <rect filter="url(#test-srgb)" x="230" y="10" width="200" height="200" fill="white"/>
+        <rect filter="url(#test-default)" x="450" y="10" width="200" height="200" fill="white"/>
+    </svg>
+    <div class="container">
+        <div class="box" style="filter: url(#test-linear)"></div>
+        <div class="box" style="filter: url(#test-srgb)"></div>
+        <div class="box" style="filter: url(#test-default)"></div>
+    </div>
+</body>

@@ -1,0 +1,8 @@
+
+PASS ConvolverNode: invalid constructor throws TypeError
+PASS ConvolverNode: default constructor and attributes
+PASS ConvolverNode constructor: AudioNodeOptions are correctly handled
+PASS ConvolverNode: nullable buffer
+PASS ConvolverNode: illegal sample rate buffer throws NotSupportedError
+PASS ConvolverNode: construct with buffer and normalization options
+

@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver should only report intersection change after the target grows height and is scrolled.
+PASS grow-height-and-scrolled
+PASS grow-height-and-scrolled 1
+

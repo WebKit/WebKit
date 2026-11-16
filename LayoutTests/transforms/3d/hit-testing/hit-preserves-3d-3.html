@@ -1,0 +1,50 @@
+<html>
+<head>
+  <title>Hit testing on preserves-3d element with 180deg flip</title>
+  <style>
+    .rotateX {
+      transform: rotateX(180deg);
+      transform-style: preserve-3d;
+      width: 300px;
+      height: 200px;
+      background: cyan;
+    }
+
+    .rotateY {
+      width: 200px;
+      height: 100px;
+      transform: rotateY(180deg);
+      background: blue;
+    }
+
+    #button {
+      width: 100px;
+      height: 50px;
+      background-color: red;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    function runTest()
+    {
+      var hit = document.elementFromPoint(120, 180);
+      var results = document.getElementById('results');
+      if (hit == document.getElementById('button'))
+        results.innerHTML = 'Hit correct target: PASSED';
+      else
+        results.innerHTML = 'Failed to find target: FAIL';
+    }
+  </script>
+</head>
+<body onload="runTest()">
+  <div class="rotateX">
+    <div class="rotateY">
+      <div id="button">
+      </div>
+    </div>
+  </div>
+
+  <div id="results"></div>
+</body>
+</html>

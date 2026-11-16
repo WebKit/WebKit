@@ -1,0 +1,33 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+
+function write(s)
+{
+    frames[0].document.getElementById('console').appendChild(document.createTextNode(s));
+}
+
+function test() {
+    var layoutTestDir = location.href;
+    layoutTestDir = layoutTestDir.substring(layoutTestDir.indexOf("LayoutTests"), layoutTestDir.lastIndexOf("/"));
+
+    var frameSrc = document.getElementsByTagName('frame')[1].src;
+    if (frameSrc.search(layoutTestDir) != -1)
+        write("PASS: Frame 'src' attribute should include '" + layoutTestDir + "' and does.");
+    else
+        write("FAIL: Frame 'src' attribute should include '" + layoutTestDir + "' but instead is '" + frameSrc + "'.");
+}
+</script>
+</head>
+
+<frameset onload="test()">
+<frame src="data:text/html,<p>This test checks whether a frame element's 'src' attribute is a complete, rather than relative, URL.</p><pre id='console'></pre>">
+<frame src="resources/frame-src-attribute-subframe.html">
+</frameset>
+
+</html>

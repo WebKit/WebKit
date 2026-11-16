@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.font { font: sans-serif; }
+.text-color { color: orange; }
+.background-color: { background-color: red; }
+.subscript { vertical-align: sub; }
+.superscript { vertical-align: super; }
+.text-shadow { text-shadow: 1px 1px 2px pink; }
+.underline { text-decoration: underline; }
+.linethrough { text-decoration: line-through; }
+</style>
+</head>
+<body>
+
+<div role="presentation" id="div-1" class="font">One</div>
+<div role="presentation" class="font">Skip</div>
+
+<div role="presentation" class="text-color">Two</div>
+<div role="presentation" class="text-color">Skip</div>
+
+<div role="presentation" class="background-color">Three</div>
+<div role="presentation" class="background-color">Skip</div>
+
+<div role="presentation" class="subscript">Four</div>
+<div role="presentation" class="subscript">Skip</div>
+
+<div role="presentation" class="superscript">Five</div>
+<div role="presentation" class="superscript">Skip</div>
+
+<div role="presentation" class="text-shadow">Six</div>
+<div role="presentation" class="text-shadow">Skip</div>
+
+<div role="presentation" class="underline">Seven</div>
+<div role="presentation" class="underline">Skip</div>
+
+<div role="presentation" id="div-8" class="linethrough">Eight</div>
+<div role="presentation" class="linethrough">Skip</div>Last text
+    
+<script>
+var output = "This test ensures that our handling of the AXStyleChangeSearchKey behaves correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var startText = webArea.childAtIndex(0);
+    output += expect("startText.stringValue", "'AXValue: One'");
+
+    var resultText = webArea.uiElementForSearchPredicate(startText, true, "AXStyleChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Two'");
+
+    resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXStyleChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Three'");
+
+    resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXStyleChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Four'");
+
+    resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXStyleChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Five'");
+
+    resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXStyleChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Six'");
+
+    resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXStyleChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Seven'");
+
+    resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXStyleChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Eight'");
+
+    resultText = webArea.uiElementForSearchPredicate(resultText, true, "AXStyleChangeSearchKey", "", false);
+    output += expect("resultText.stringValue", "'AXValue: Last text'");
+
+    // Ensure we behave correctly after a dynamic change.
+    document.getElementById("div-1").after(document.getElementById("div-8"));
+    setTimeout(async function() {
+        await waitFor(() => {
+            var resultText = webArea.uiElementForSearchPredicate(startText, true, "AXStyleChangeSearchKey", "", false);
+            return resultText && resultText.stringValue === "AXValue: Eight";
+        });
+        output += "PASS: Returned the right element after a dynamic page change.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

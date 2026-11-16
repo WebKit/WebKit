@@ -1,0 +1,17 @@
+Tests that the text width cache keeps widths measured with and without a directional override apart.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS measure('rtlSecond') is measure('rtlReference')
+PASS measure('ltrSecond') is measure('ltrReference')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+To
+To
+To
+To
+To
+To
+

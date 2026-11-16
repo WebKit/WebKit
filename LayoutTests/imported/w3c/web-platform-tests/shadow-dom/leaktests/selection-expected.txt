@@ -1,0 +1,3 @@
+
+PASS selection API should not leak nodes in Shadow DOM.
+

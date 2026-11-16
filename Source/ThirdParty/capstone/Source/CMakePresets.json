@@ -1,0 +1,133 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "locations-base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}"
+    },
+    {
+      "name": "warnings-base",
+      "hidden": true,
+      "warnings": {
+        "dev": true,
+        "deprecated": true,
+        "systemVars": true
+      },
+      "errors": {
+        "dev": true,
+        "deprecated": false
+      }
+    },
+    {
+      "name": "ninja",
+      "hidden": true,
+      "displayName": "Ninja",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_DEFAULT_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "x64",
+      "hidden": true,
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "linux-x64",
+      "inherits": [ "ninja", "x64", "locations-base", "warnings-base" ],
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux"}
+    },
+    {
+      "name": "macos-x64",
+      "inherits": [ "ninja", "x64", "locations-base", "warnings-base" ],
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin"}
+    },
+    {
+      "name": "windows-x64",
+      "inherits": [ "ninja", "x64", "locations-base", "warnings-base" ],
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows"}
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-linux",
+      "configurePreset": "linux-x64",
+      "nativeToolOptions": [ "-v" ],
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux"}
+    },
+    {
+      "name": "build-macos",
+      "configurePreset": "macos-x64",
+      "nativeToolOptions": [ "-v" ],
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin"}
+    },
+    {
+      "name": "build-windows",
+      "configurePreset": "windows-x64",
+      "nativeToolOptions": [ "-v" ],
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows"}
+    },
+    {
+      "name": "build-linux-release",
+      "inherits": "build-linux",
+      "configuration": "Release",
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux"}
+    },
+    {
+      "name": "build-macos-release",
+      "inherits": "build-macos",
+      "configuration": "Release",
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin"}
+    },
+    {
+      "name": "build-windows-release",
+      "inherits": "build-windows",
+      "configuration": "Release",
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows"}
+    },
+    {
+      "name": "install-linux",
+      "configurePreset": "linux-x64",
+      "inherits": "build-linux",
+      "targets": [ "install" ],
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux"}
+    },
+    {
+      "name": "install-macos",
+      "configurePreset": "macos-x64",
+      "inherits": "build-macos",
+      "targets": [ "install" ],
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin"}
+    },
+    {
+      "name": "install-windows",
+      "configurePreset": "windows-x64",
+      "inherits": "build-windows",
+      "targets": [ "install" ],
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows"}
+    },
+    {
+      "name": "install-linux-release",
+      "inherits": "install-linux",
+      "configuration": "Release",
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux"}
+    },
+    {
+      "name": "install-macos-release",
+      "inherits": "install-macos",
+      "configuration": "Release",
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin"}
+    },
+    {
+      "name": "install-windows-release",
+      "inherits": "install-windows",
+      "configuration": "Release",
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows"}
+    }
+  ]
+}

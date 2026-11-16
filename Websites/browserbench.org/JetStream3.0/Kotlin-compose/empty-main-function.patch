@@ -1,0 +1,39 @@
+diff --git a/benchmarks/multiplatform/benchmarks/src/wasmJsMain/kotlin/main.wasmJs.kt b/benchmarks/multiplatform/benchmarks/src/wasmJsMain/kotlin/main.wasmJs.kt
+index d796d88975..f2c9e48eda 100644
+--- a/benchmarks/multiplatform/benchmarks/src/wasmJsMain/kotlin/main.wasmJs.kt
++++ b/benchmarks/multiplatform/benchmarks/src/wasmJsMain/kotlin/main.wasmJs.kt
+@@ -8,11 +8,6 @@ import kotlin.js.Promise
+ val jsOne = 1.toJsNumber()
+ 
+ fun main(args: Array<String>) {
+-    if (isD8env().toBoolean()) {
+-        mainD8(args)
+-    } else {
+-        mainBrowser()
+-    }
+ }
+ 
+ fun mainBrowser() {
+@@ -37,15 +32,6 @@ fun mainBrowser() {
+     }
+ }
+ 
+-
+-// Currently, the initialization can't be adjusted to avoid calling the fun main, but
+-// we don't want use the default fun main, because Jetstream3 requires running the workloads separately / independently of each other.
+-// Also, they require that a benchmark completes before the function exists, which is not possible with if they just call fun main.
+-// Therefore, they'll rely on fun customLaunch, which returns a Promise (can be awaited for).
+-fun mainD8(args: Array<String>) {
+-    println("mainD8 is intentionally doing nothing. Read the comments in main.wasmJs.kt")
+-}
+-
+ private val basicConfigForD8 = Config(
+     // Using only SIMPLE mode, because VSYNC_EMULATION calls delay(...),
+     // which is implemented via setTimeout on web targets.
+@@ -85,6 +71,3 @@ fun d8BenchmarksRunner(args: String): Promise<JsAny?> {
+         jsOne
+     }
+ }
+-
+-private fun isD8env(): JsBoolean =
+-    js("typeof isD8 !== 'undefined'")

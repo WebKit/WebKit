@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ dumpResourceLoadCallbacks=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    internals.clearMemoryCache();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+onload = function() {
+    if (window.testRunner)
+        setTimeout(() => testRunner.notifyDone(), 0);
+}
+</script>
+</head>
+<body>
+<p>Test passes if WebKit ignores the request fragment identifier after the redirect to a url with a fragment identifier.</p>
+<iframe src="resources/redirect-to-fragment.py#foo"></iframe>
+</body>
+</html>

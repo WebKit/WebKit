@@ -1,0 +1,19 @@
+non-editableeditablenon-editable
+
+PASS getSelection().modify("move", "forward", "character") when " []<span contenteditable=false>"
+PASS getSelection().modify("move", "forward", "character") when "editable[]<span contenteditable=false>"
+PASS getSelection().modify("move", "right", "character") when " []<span contenteditable=false>"
+PASS getSelection().modify("move", "right", "character") when "editable[]<span contenteditable=false>"
+PASS getSelection().modify("move", "backward", "character") when " <span contenteditable=false>...</span>[]editable"
+PASS getSelection().modify("move", "backward", "character") when "editable<span contenteditable=false>...</span>[] "
+PASS getSelection().modify("move", "left", "character") when " <span contenteditable=false>...</span>[]editable"
+PASS getSelection().modify("move", "left", "character") when "editable<span contenteditable=false>...</span>[] "
+PASS getSelection().modify("move", "forward", "character") after getSelection().selectAllChildren(editingHost) when " []<span contenteditable=false>"
+PASS getSelection().modify("move", "forward", "character") after getSelection().selectAllChildren(editingHost) when "editable[]<span contenteditable=false>"
+PASS getSelection().modify("move", "right", "character") after getSelection().selectAllChildren(editingHost) when " []<span contenteditable=false>"
+PASS getSelection().modify("move", "right", "character") after getSelection().selectAllChildren(editingHost) when "editable[]<span contenteditable=false>"
+PASS getSelection().modify("move", "backward", "character") after getSelection().selectAllChildren(editingHost) when " <span contenteditable=false>...</span>[]editable"
+PASS getSelection().modify("move", "backward", "character") after getSelection().selectAllChildren(editingHost) when "editable<span contenteditable=false>...</span>[] "
+PASS getSelection().modify("move", "left", "character") after getSelection().selectAllChildren(editingHost) when " <span contenteditable=false>...</span>[]editable"
+PASS getSelection().modify("move", "left", "character") after getSelection().selectAllChildren(editingHost) when "editable<span contenteditable=false>...</span>[] "
+

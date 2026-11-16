@@ -1,0 +1,5 @@
+Body needed for test_driver.click()
+
+PASS Verify write and read clipboard given text: Clipboard write text -> read ([text/plain ClipboardItem]) test
+PASS Verify write and read clipboard given text: non-Latin1 text encoding test データ
+

@@ -1,0 +1,164 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.SameProcessPause");
+
+    let frameATarget;
+    let frameBTarget;
+
+    function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function evaluate(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    function awaitPause(target) {
+        return new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (event.data.target !== target || !WI.debuggerManager.dataForTarget(target).paused)
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+                resolve("paused");
+            });
+        });
+    }
+
+    function evaluateUnlessPaused(target, expression) {
+        return Promise.race([awaitPause(target), evaluate(target, expression)]);
+    }
+
+    async function pauseFrameA() {
+        let paused = awaitPause(frameATarget);
+        frameATarget.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+        await paused;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SameProcessPause.Setup",
+        description: "Find the frame targets of two same-origin iframes.",
+        async test() {
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            frameBTarget = await frameTargetForURLContaining("same-process-frame.html?B");
+
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+            InspectorTest.expectNotNull(frameBTarget, "Should find the frame target for frame B.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameBTarget, "window.ticks > 2"), "Frame B's interval should be running.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SameProcessPause.SiblingHeld",
+        description: "A same-process sibling's interval should not advance while frame A is paused.",
+        async test() {
+            await pauseFrameA();
+            InspectorTest.expectThat(WI.debuggerManager.dataForTarget(frameATarget).paused, "Frame A should be paused.");
+
+            let ticksBefore = await evaluate(frameBTarget, "window.ticks");
+            await sleep(300);
+            let ticksAfter = await evaluate(frameBTarget, "window.ticks");
+            InspectorTest.expectEqual(ticksAfter, ticksBefore, "Frame B's interval should not advance while frame A is paused.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SameProcessPause.DebuggerStatementInSibling",
+        description: "A debugger statement in a same-process sibling should not pause while frame A is paused.",
+        async test() {
+            let result = await evaluateUnlessPaused(frameBTarget, "pauseHere()");
+            InspectorTest.expectEqual(result, "resumed", "Frame B should run past its debugger statement.");
+            InspectorTest.expectThat(WI.debuggerManager.dataForTarget(frameATarget).paused, "Frame A should still be paused.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SameProcessPause.PendingPauseInSibling",
+        description: "A pause requested for a same-process sibling while frame A is paused should wait until frame A resumes.",
+        async test() {
+            await frameBTarget.DebuggerAgent.pause();
+            let result = await evaluateUnlessPaused(frameBTarget, "runStatements()");
+            InspectorTest.expectEqual(result, 2, "Frame B should not pause while frame A is paused.");
+
+            let siblingPaused = awaitPause(frameBTarget);
+            await frameATarget.DebuggerAgent.resume();
+            result = await Promise.race([siblingPaused, sleep(3000).then(() => "timeout")]);
+            InspectorTest.expectEqual(result, "paused", "Frame B should pause after frame A resumes.");
+            InspectorTest.expectFalse(WI.debuggerManager.dataForTarget(frameATarget).paused, "Frame A should not be paused.");
+
+            if (result === "paused") {
+                let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+                await frameBTarget.DebuggerAgent.resume();
+                await resumed;
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SameProcessPause.ExceptionInSibling",
+        description: "An exception in a same-process sibling while frame A is paused should not pause the sibling, then or after frame A resumes.",
+        async test() {
+            await pauseFrameA();
+            await frameBTarget.DebuggerAgent.setPauseOnExceptions("all");
+            let result = await evaluateUnlessPaused(frameBTarget, "throwAndCatch()");
+            InspectorTest.expectEqual(result, "caught", "Frame B should not pause on the exception while frame A is paused.");
+            await frameBTarget.DebuggerAgent.setPauseOnExceptions("none");
+
+            let siblingPaused = awaitPause(frameBTarget);
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            await frameATarget.DebuggerAgent.resume();
+            await resumed;
+
+            result = await Promise.race([siblingPaused, evaluate(frameBTarget, "runStatements()")]);
+            InspectorTest.expectEqual(result, 2, "Frame B should not pause after frame A resumes.");
+
+            if (result === "paused") {
+                resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+                await frameBTarget.DebuggerAgent.resume();
+                await resumed;
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SameProcessPause.RemovePausedFrame",
+        description: "Removing the paused frame should keep the pause until it is resumed, and resuming should release the same-process sibling.",
+        async test() {
+            await pauseFrameA();
+            let ticksBefore = await evaluate(frameBTarget, "window.ticks");
+
+            await evaluate(InspectorTest.mainFrameTarget, "document.getElementById('frameA').remove()");
+            InspectorTest.expectThat(WI.debuggerManager.dataForTarget(frameATarget).paused, "Frame A should still be paused after its iframe is removed.");
+            await sleep(300);
+            InspectorTest.expectEqual(await evaluate(frameBTarget, "window.ticks"), ticksBefore, "Frame B's interval should not advance while frame A is paused.");
+
+            let frameARemoved = new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) => {
+                    if (event.data.target !== frameATarget)
+                        return;
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, listener);
+                    resolve();
+                });
+            });
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            await WI.debuggerManager.resume();
+            await resumed;
+
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameBTarget, `window.ticks > ${ticksBefore}`), "Frame B's interval should advance after resuming.");
+            await frameARemoved;
+            InspectorTest.pass("Frame A's target should be removed after resuming.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that while a frame is paused, a same-process sibling frame is held and cannot start its own pause, and that a paused frame removed from the page stays paused until it is resumed.</p>
+<iframe id="frameA" src="resources/same-process-frame.html?A"></iframe>
+<iframe id="frameB" src="resources/same-process-frame.html?B"></iframe>
+</body>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="334.5 122.5649 486 333.7071" width="486" height="333.7071">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="15" panose-1="2 11 6 4 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="975.0061" descent="-216.99524" font-style="italic" font-weight="500">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-MediumItalic"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 0 4 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="523" cap-height="721" ascent="966.9952" descent="-212.99744" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Light"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 0 8 3 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="975.0061" descent="-216.99524" font-weight="700">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Bold"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.14.1 
+    <dc:date>2020-04-04 21:57:05 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-opacity="1" stroke="none" fill-opacity="1" stroke-dasharray="none" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="334.5" y="122.5649" width="486" height="333.7071"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_83">
+        <rect x="434.5" y="181.5" width="136.5" height="25.363998" fill="white"/>
+        <rect x="434.5" y="181.5" width="136.5" height="25.363998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(439.3165 186.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="0" y="12">DFG Bytecode Parser</tspan>
+        </text>
+      </g>
+      <g id="Graphic_85">
+        <rect x="434.5" y="212" width="136.5" height="25.363998" fill="white"/>
+        <rect x="434.5" y="212" width="136.5" height="25.363998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(459.655 217)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="0" y="12">DFG Optimizer</tspan>
+        </text>
+      </g>
+      <g id="Graphic_86">
+        <rect x="434.5" y="249.5" width="136.5" height="25.363998" fill="white"/>
+        <rect x="434.5" y="249.5" width="136.5" height="25.363998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(461.9365 254.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="2060574e-19" y="12">DFG Backend</tspan>
+        </text>
+      </g>
+      <g id="Graphic_87">
+        <text transform="translate(487.195 127.5649)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="15" font-style="italic" font-weight="500" fill="black" x="29132252e-20" y="15">DFG</tspan>
+        </text>
+      </g>
+      <g id="Graphic_89">
+        <rect x="579" y="181.5" width="136.5" height="25.363998" fill="white"/>
+        <rect x="579" y="181.5" width="136.5" height="25.363998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(583.8165 186.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="0" y="12">DFG Bytecode Parser</tspan>
+        </text>
+      </g>
+      <g id="Graphic_88">
+        <text transform="translate(634.0405 127.5649)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="15" font-style="italic" font-weight="500" fill="black" x="7283063e-19" y="15">FTL</tspan>
+        </text>
+      </g>
+      <g id="Graphic_91">
+        <rect x="579" y="310.228" width="137" height="25" fill="white"/>
+        <rect x="579" y="310.228" width="137" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(597.0665 315.046)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="0" y="12">Lower DFG to B3</tspan>
+        </text>
+      </g>
+      <g id="Graphic_92">
+        <rect x="579" y="340.364" width="137" height="25" fill="white"/>
+        <rect x="579" y="340.364" width="137" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(609.579 345.182)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="27000624e-20" y="12">B3 Optimizer</tspan>
+        </text>
+      </g>
+      <g id="Graphic_93">
+        <rect x="579" y="370.5" width="137" height="25" fill="white"/>
+        <rect x="579" y="370.5" width="137" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(590.924 375.318)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="0" y="12">Instruction Selector</tspan>
+        </text>
+      </g>
+      <g id="Graphic_94">
+        <rect x="579" y="400.636" width="137" height="25" fill="white"/>
+        <rect x="579" y="400.636" width="137" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(609.826 405.454)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="881073e-18" y="12">Air Optimizer</tspan>
+        </text>
+      </g>
+      <g id="Graphic_95">
+        <rect x="579" y="430.772" width="137" height="25" fill="white"/>
+        <rect x="579" y="430.772" width="137" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(612.1075 435.59)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="0" y="12">Air Backend</tspan>
+        </text>
+      </g>
+      <g id="Graphic_97">
+        <text transform="translate(480.712 154)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="300" fill="black" x="34816594e-20" y="13">Fast JIT</tspan>
+        </text>
+      </g>
+      <g id="Graphic_96">
+        <text transform="translate(612.8035 154)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="300" fill="black" x="0" y="13">Powerful JIT</tspan>
+        </text>
+      </g>
+      <g id="Line_98">
+        <line x1="335" y1="243.5" x2="820" y2="243.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Graphic_99">
+        <rect x="579" y="249.5" width="136.5" height="25.363998" fill="white"/>
+        <rect x="579" y="249.5" width="136.5" height="25.363998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(589.114 254.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="4121148e-19" y="12">DFG SSA Converter</tspan>
+        </text>
+      </g>
+      <g id="Graphic_100">
+        <rect x="579" y="279.864" width="136.5" height="25.363998" fill="white"/>
+        <rect x="579" y="279.864" width="136.5" height="25.363998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(589.712 284.864)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="45474735e-20" y="12">DFG SSA Optimizer</tspan>
+        </text>
+      </g>
+      <g id="Graphic_101">
+        <rect x="579" y="212" width="136.5" height="25.363998" fill="white"/>
+        <rect x="579" y="212" width="136.5" height="25.363998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(604.155 217)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" x="0" y="12">DFG Optimizer</tspan>
+        </text>
+      </g>
+      <g id="Graphic_102">
+        <text transform="translate(377.4495 201)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="700" fill="black" x="16839863e-19" y="13">DFG IR</tspan>
+        </text>
+      </g>
+      <g id="Graphic_103">
+        <text transform="translate(731 201)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="700" fill="black" x="0" y="13">DFG IR</tspan>
+        </text>
+      </g>
+      <g id="Graphic_104">
+        <text transform="translate(731 283.8509)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="700" fill="black" x="0" y="13">DFG SSA IR</tspan>
+        </text>
+      </g>
+      <g id="Graphic_105">
+        <text transform="translate(731 345.364)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="700" fill="black" x="0" y="13">B3 IR</tspan>
+        </text>
+      </g>
+      <g id="Graphic_106">
+        <text transform="translate(731 404.94746)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="700" fill="black" x="0" y="13">Assembly IR</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

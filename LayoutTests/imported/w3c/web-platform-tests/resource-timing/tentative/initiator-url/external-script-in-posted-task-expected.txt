@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: scheduler
+
+Description
+
+This test loads a number of resources in the loading-resources.js via scheduler.postTask() and verifies that `iniatitor_url`s in ResourceTiming are expected.

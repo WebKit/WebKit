@@ -1,0 +1,4 @@
+
+PASS word-wrap should be defined as an alias of overflow-wrap
+PASS word-wrap is a legacy name alias for overflow-wrap
+

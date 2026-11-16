@@ -1,0 +1,4 @@
+
+
+PASS Multiple queued lazy load navigations do not crash the page
+

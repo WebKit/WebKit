@@ -1,0 +1,5 @@
+The following block should be green.
+
+
+PASS Dynamic handling of attribute selectors
+

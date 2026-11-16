@@ -1,0 +1,25 @@
+Keyboard interaction with an appearance: base-select multi-select dropdown box. Separate from select-multiple-picker.html so that it can be skipped where key events cannot be synthesized.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.matches(':open') is true
+
+Space toggles the focused option and leaves the picker open.
+PASS select.matches(':open') is true
+PASS two.selected is true
+PASS two.selected is false
+
+Return with the picker closed does not take the single-select path.
+PASS select.matches(':open') is false
+FAIL select.matches(':open') should be false. Was true.
+PASS select.selectedOptions.length is 0
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+
+one
+two
+disabled
+

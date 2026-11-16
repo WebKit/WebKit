@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests when 2 anonymous blocks are merged and the 'to' block has simple line layout path.</title>
+</head>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<div>Pass if no crash or assert in debug.</div>foo<div id="removethis"></div><span>
+<script>
+    document.body.offsetWidth;
+    var elem = document.getElementById("removethis");
+    elem.parentNode.removeChild(elem);
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-overlapping-equal-decode-key</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Regression guard for MSE "Coded Frame Processing" when an incoming sync
+    // sample carries the same (decodeTime, presentationTime) key as a buffered
+    // sample.
+    //
+    // Step 1.14's sync cascade in SourceBufferPrivate::processMediaSample uses
+    // findSampleAfterDecodeKey (std::map::upper_bound), which skips any buffered
+    // sample whose key equals the incoming sample's. SampleMap's decode-order
+    // map is a unique-key std::map, so trackBuffer.addSample() silently drops
+    // the incoming sample if the existing sample at that key is not explicitly
+    // erased first. The 205636@main "samplesWithHigherDecodeTimes" block in
+    // processMediaSample catches the equal-key sample via findSamplesBetween-
+    // DecodeKeys (lower_bound inclusive-begin) and marks it for removal; if
+    // that block is absent the equal-key sample is stranded and the incoming
+    // sample is lost.
+    //
+    // Scenario (timescale=1000 ms):
+    //   Seg 1 has five samples at DTS/PTS = 0, 100, 200, 300, 400, all dur=100,
+    //   with sync at 0, 200, 400 and non-sync at 100, 300. After seg 1, buffer =
+    //   [gen1@0, gen1@100, gen1@200, gen1@300, gen1@400], highestPT=500,
+    //   lastDTS=400.
+    //
+    //   Seg 2 is appended as two separate media segments (two appendBuffer calls)
+    //   so their baseDecodeTime fields can be set independently:
+    //
+    //   Fragment 2A (baseDecodeTime=0): two samples,
+    //     (0,   0, dur=100, sync),
+    //     (100, 100, dur=101, non-sync).
+    //   The second sample's dur=101 pushes highestPT to 201 (=100+101). During
+    //   its own step-1.14-second pass, eraseEnd = pts+dur-1ms = 200, so gen1@200
+    //   is outside the erase range [100, 200) and survives.
+    //
+    //   Fragment 2B (baseDecodeTime=200): single sample
+    //     (200, 200, dur=120, sync).
+    //   For this incoming sync, step-1.14-second's range is
+    //     [eraseBegin=highestPT=201, eraseEnd=200+120-1=319);
+    //   gen1@200 at pts=200 is BELOW eraseBegin=201 and is not caught. The
+    //   step-1.14 cascade does upper_bound((200,200)) = gen1@300 (skipping the
+    //   equal-key gen1@200), erases gen1@300, and the step-1.15 dependent sweep
+    //   runs on erasedSamples={gen1@300}.
+    //
+    //   The 2018 block then looks for samples whose decode key is in the range
+    //   [(200,200), erasedSamples.begin()->first=(300,300)) via lower_bound
+    //   inclusive-begin: it finds gen1@200 and adds it to the dependent set.
+    //   With the block: gen1@200 is evicted and the gen2B incoming sample
+    //   inserts successfully with dur=120. Without the block: gen1@200 stays
+    //   and the unique-key std::map insert of gen2B is a no-op; the sample at
+    //   DTS=200 retains seg 1's dur=100.
+    //
+    //   Detection: find the sample with DTS=0.200000 in the dump output of
+    //   internals.bufferedSamplesForTrackId and check whether its duration
+    //   prints as 0.120000 (seg 2B — block present) or 0.100000 (seg 1 —
+    //   block absent, sample silently dropped).
+
+    let source;
+    let sourceBuffer;
+    let init;
+    let segment1;
+    let segment2a;
+    let segment2b;
+    let bufferedSamples;
+
+    async function runTest() {
+        findMediaElement();
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+
+        init = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }],
+        });
+        segment1 = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 100, compositionTimeOffset: 0, isSync: true  }, // DTS=0
+                { duration: 100, compositionTimeOffset: 0, isSync: false }, // DTS=100
+                { duration: 100, compositionTimeOffset: 0, isSync: true  }, // DTS=200  ← target
+                { duration: 100, compositionTimeOffset: 0, isSync: false }, // DTS=300
+                { duration: 100, compositionTimeOffset: 0, isSync: true  }, // DTS=400
+            ]}],
+        });
+        segment2a = MP4.mediaSegment({
+            sequenceNumber: 2,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 100, compositionTimeOffset: 0, isSync: true  }, // DTS=0
+                { duration: 101, compositionTimeOffset: 0, isSync: false }, // DTS=100, pushes highestPT=201
+            ]}],
+        });
+        segment2b = MP4.mediaSegment({
+            sequenceNumber: 3,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 200, samples: [
+                { duration: 120, compositionTimeOffset: 0, isSync: true  }, // DTS=200, equal-key incoming
+            ]}],
+        });
+
+        run('sourceBuffer.appendBuffer(MP4.concat(init, segment1))');
+        await waitFor(sourceBuffer, 'updateend');
+        run('sourceBuffer.appendBuffer(segment2a)');
+        await waitFor(sourceBuffer, 'updateend');
+        run('sourceBuffer.appendBuffer(segment2b)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
+        bufferedSamples.forEach(consoleWrite);
+
+        window.sampleAt200Dts = bufferedSamples.find(s => /DTS\(\{[^}]*= 0\.200000\}\)/.test(s));
+        window.sampleAt200Found = sampleAt200Dts !== undefined;
+        testExpected('sampleAt200Found', true);
+        window.hasSeg2Duration = sampleAt200Dts !== undefined && /duration\(\{[^}]*= 0\.120000\}\)/.test(sampleAt200Dts);
+        testExpected('hasSeg2Duration', true);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

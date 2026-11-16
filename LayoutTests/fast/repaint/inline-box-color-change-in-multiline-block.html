@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: control case. Same content as
+     inline-box-text-decoration-change-in-multiline-block.html but the hover style only changes color
+     (a repaint level style change), so it should not go through inline layout at all. -->
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+    document.getElementById('target').style.color = 'green';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body { margin: 0; }
+#container { width: 800px; font: 16px/20px Ahem; /* Ahem-only text, so the rects are the same on every port. */ }
+a { text-decoration: none; }
+</style>
+<div id="container">
+  XXXX XXXX<br>
+  XXXX XXXX<br>
+  XXXX XXXX<br>
+  XXXX XXXX<br>
+  <a id="target" class="a" href=".">XXXX XXXX</a><br>
+  XXXX XXXX<br>
+  XXXX XXXX<br>
+  XXXX XXXX<br>
+  XXXX XXXX<br>
+  XXXX XXXX
+</div>

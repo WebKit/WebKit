@@ -1,0 +1,59 @@
+
+
+
+
+PASS command/commandfor on <a> with command=--custom-event should not function
+PASS command/commandfor on <abbr> with command=--custom-event should not function
+PASS command/commandfor on <address> with command=--custom-event should not function
+PASS command/commandfor on <area> with command=--custom-event should not function
+PASS command/commandfor on <article> with command=--custom-event should not function
+PASS command/commandfor on <aside> with command=--custom-event should not function
+PASS command/commandfor on <audio> with command=--custom-event should not function
+PASS command/commandfor on <b> with command=--custom-event should not function
+PASS command/commandfor on <base> with command=--custom-event should not function
+PASS command/commandfor on <bdi> with command=--custom-event should not function
+PASS command/commandfor on <bdo> with command=--custom-event should not function
+PASS command/commandfor on <blockquote> with command=--custom-event should not function
+PASS command/commandfor on <body> with command=--custom-event should not function
+PASS command/commandfor on <br> with command=--custom-event should not function
+PASS command/commandfor on <canvas> with command=--custom-event should not function
+PASS command/commandfor on <caption> with command=--custom-event should not function
+PASS command/commandfor on <cite> with command=--custom-event should not function
+PASS command/commandfor on <code> with command=--custom-event should not function
+PASS command/commandfor on <col> with command=--custom-event should not function
+PASS command/commandfor on <colgroup> with command=--custom-event should not function
+PASS command/commandfor on <data> with command=--custom-event should not function
+PASS command/commandfor on <datalist> with command=--custom-event should not function
+PASS command/commandfor on <dd> with command=--custom-event should not function
+PASS command/commandfor on <del> with command=--custom-event should not function
+PASS command/commandfor on <details> with command=--custom-event should not function
+PASS command/commandfor on <dfn> with command=--custom-event should not function
+PASS command/commandfor on <dialog> with command=--custom-event should not function
+PASS command/commandfor on <div> with command=--custom-event should not function
+PASS command/commandfor on <dl> with command=--custom-event should not function
+PASS command/commandfor on <dt> with command=--custom-event should not function
+PASS command/commandfor on <em> with command=--custom-event should not function
+PASS command/commandfor on <embed> with command=--custom-event should not function
+PASS command/commandfor on <fieldset> with command=--custom-event should not function
+PASS command/commandfor on <figcaption> with command=--custom-event should not function
+PASS command/commandfor on <figure> with command=--custom-event should not function
+PASS command/commandfor on <footer> with command=--custom-event should not function
+PASS command/commandfor on <form> with command=--custom-event should not function
+PASS command/commandfor on <h1> with command=--custom-event should not function
+PASS command/commandfor on <h2> with command=--custom-event should not function
+PASS command/commandfor on <h3> with command=--custom-event should not function
+PASS command/commandfor on <h4> with command=--custom-event should not function
+PASS command/commandfor on <h5> with command=--custom-event should not function
+PASS command/commandfor on <h6> with command=--custom-event should not function
+PASS command/commandfor on <head> with command=--custom-event should not function
+PASS command/commandfor on <header> with command=--custom-event should not function
+PASS command/commandfor on <hr> with command=--custom-event should not function
+PASS command/commandfor on <html> with command=--custom-event should not function
+PASS command/commandfor on <i> with command=--custom-event should not function
+PASS command/commandfor on <iframe> with command=--custom-event should not function
+PASS command/commandfor on <img> with command=--custom-event should not function
+PASS command/commandfor on <input> with command=--custom-event should not function
+PASS command/commandfor on <ins> with command=--custom-event should not function
+PASS command/commandfor on <kbd> with command=--custom-event should not function
+PASS command/commandfor on <label> with command=--custom-event should not function
+

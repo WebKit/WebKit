@@ -1,0 +1,19 @@
+This test verifies that invoking an aria-actions custom action while nothing is focused leaves focus cleared, rather than moving it to the (focusable) action target, and that the transient focus movement is not surfaced to assistive technology.
+
+Nothing is focused before invoking the action:
+PASS: document.activeElement === document.body === true
+
+Invoking the custom action clicks the focusable action target:
+PASS: source.invokeCustomActionAtIndex(0) === true
+PASS: actionClicked === true
+
+Focus is left cleared, rather than moving to the action target:
+PASS: document.activeElement === document.body === true
+
+No accessibility focus notification was surfaced for the transient focus movement:
+PASS: focusNotificationCount === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Source Delete

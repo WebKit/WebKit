@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OffscreenCanvasEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async () => {
+    const worker = new Worker("resources/offscreencanvas-readback-worker.js");
+    const result = await new Promise((resolve, reject) => {
+        worker.onmessage = e => resolve(e.data);
+        worker.onerror = e => reject(new Error(e.message || "worker error"));
+        worker.postMessage("RUN");
+    });
+    assert_equals(result.error, undefined, "worker drew and read back the canvas without throwing");
+    assert_array_equals(result.topLeft, [0, 255, 0, 255], "top-left pixel is the drawn green tile");
+    assert_array_equals(result.bottomRight, [255, 0, 0, 255], "bottom-right pixel is the red fill");
+}, "OffscreenCanvas draw + getImageData readback in a dedicated worker");
+</script>
+</body>
+</html>

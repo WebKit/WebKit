@@ -1,0 +1,9 @@
+<p>This tests to see that plaintext-only regions can be styled as long as they are fully selected. The editable, plaintext-only cell should contain bold text, which should be implemented with the bold CSS property in the cell's inline style declaration, not with wrapper spans inside the cell.</p>
+<div id="div" contenteditable="true"><div>foo</div><table border="1" contenteditable="false"><tr><td>non-editable</td><td contenteditable="plaintext-only">plaintext-only</td></tr></table></div>
+
+<script>
+var div = document.getElementById("div");
+div.focus();
+document.execCommand("SelectAll")
+document.execCommand("Bold");
+</script>

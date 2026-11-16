@@ -1,0 +1,75 @@
+direction: LTR | align-content: 'center'
+
+direction: LTR | align-content: 'right'
+
+direction: RTL | align-content: 'right'
+
+direction: RTL | align-content: 'start'
+
+direction: LTR | justify-content: 'center'
+
+direction: LTR | justify-content: 'end'
+
+direction: RTL | justify-content: 'end'
+
+direction: RTL | justify-content: 'start'
+
+direction: RTL | justify-content: 'stretch'
+
+direction: LTR | justify-content: 'space-evenly'
+
+direction: LTR | justify-content: 'space-between'
+
+direction: LTR | justify-content: 'space-around'
+
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR (parall) | align-items: 'self-start' | justify-items: 'self-start'
+
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR (ortho) | align-items: 'self-end' | justify-items: 'self-end'
+
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL | align-items: 'right' | justify-items: 'right'
+
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL (parall) | align-items: 'self-start' | justify-items: 'self-start'
+
+Negative free space. justify-content: start
+
+Negative free space. justify-content: center
+
+Negative free space. justify-content: end
+
+Negative free space. align-content: start
+
+Negative free space. align-content: center
+
+Negative free space. align-content: end
+
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+PASS .grid 7
+PASS .grid 8
+PASS .grid 9
+PASS .grid 10
+PASS .grid 11
+PASS .grid 12
+PASS .grid 13
+PASS .grid 14
+PASS .grid 15
+PASS .grid 16
+PASS .grid 17
+PASS .grid 18
+PASS .grid 19
+PASS .grid 20
+PASS .grid 21
+PASS .grid 22
+PASS .grid 23
+PASS .grid 24
+PASS .grid 25
+

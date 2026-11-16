@@ -1,0 +1,48 @@
+<!doctype html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<meta charset="utf-8">
+<title>Navigation API: a subframe whose cross-site navigation.navigate() committed in another process gets no navigateerror when it is torn down while loading (Site Isolation)</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<body>
+<script>
+const TOKEN = token();
+const REMOTE = "http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/navigation-api/resources/count-requests.py?token=" + token();
+
+function waitFor(predicate, timeoutMs, description) {
+    return new Promise((resolve, reject) => {
+        const start = Date.now();
+        const tick = () => {
+            if (predicate()) {
+                resolve();
+                return;
+            }
+            if (Date.now() - start >= timeoutMs) {
+                reject(new Error(`timed out waiting for ${description}`));
+                return;
+            }
+            setTimeout(tick, 25);
+        };
+        tick();
+    });
+}
+
+promise_test(async t => {
+    const messages = [];
+    const onMessage = e => messages.push(e.data);
+    window.addEventListener("message", onMessage);
+    t.add_cleanup(() => window.removeEventListener("message", onMessage));
+
+    const iframe = document.createElement("iframe");
+    iframe.src = "resources/navigate-while-loading.html?token=" + TOKEN + "&remote=" + encodeURIComponent(REMOTE);
+    document.body.appendChild(iframe);
+
+    await waitFor(() => messages.includes("destination-loaded"), 4000, "the destination to load");
+    // Leave time for the previous document to be torn down and report its events.
+    await new Promise(resolve => t.step_timeout(resolve, 1000));
+
+    const events = (await (await fetch("resources/record-event.py?token=" + TOKEN)).text()).split(",").filter(event => event).sort();
+    assert_array_equals(events, ["pagehide"], "the previous document got pagehide but no navigateerror");
+}, "A subframe whose cross-site navigation.navigate() committed in another process gets no navigateerror when it is torn down while loading (Site Isolation)");
+</script>
+</body>

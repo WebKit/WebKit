@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel=match href="canvas-drawVideoFrame-expected.html">
+</head>
+<body>
+<canvas id=canvas width=100px hwight=100px></canvas>
+<script>
+function createVideoFrame(value) {
+  const init = {
+    format: 'I420',
+    timestamp: 1234,
+    codedWidth: 4,
+    codedHeight: 4,
+    timestamp: 100,
+    duration: 33
+  };
+  const data = new Uint8Array([
+    value, value, value, value, value, value, value, value,  // y
+    value, value, value, value, value, value, value, value,  // y
+    value, value, value, value,                   // u
+    value, value, value, value                    // v
+  ]);
+  return new VideoFrame(data, init);
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.onload = async () => {
+    const frame1 = createVideoFrame(255);
+    canvas.getContext('2d').drawImage(frame1, 0, 0);
+    frame1.close();
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    const frame2 = createVideoFrame(0);
+    canvas.getContext('2d').drawImage(frame2, 0, 0);
+    frame2.close();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

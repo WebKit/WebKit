@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="font: 19px system-ui">
+<div style="font-style: italic;"><span id="six" style="font-weight: 600;">Hello, World</span><span id="nine" style="font-weight: 900;">Hello, World</span></div>
+</div>
+<script>
+description("This test makes sure that extra-heavy weights of the system font can be achieved.");
+var six = document.getElementById("six");
+var nine = document.getElementById("nine");
+shouldNotBe("six.offsetWidth", "nine.offsetWidth");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

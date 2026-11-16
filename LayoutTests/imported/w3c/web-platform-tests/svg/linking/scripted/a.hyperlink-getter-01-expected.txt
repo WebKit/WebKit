@@ -1,0 +1,5 @@
+
+PASS Test anchor's protocol getter
+PASS Test anchor's hostname getter
+PASS Test anchor's port getter
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("This tests that Notification.requestPermission can only be called once per user gesture.");
+jsTestIsAsync = true;
+
+if (!window.internals)
+    finishJSTest();
+
+function run() {
+    testRunner.denyWebNotificationPermission(self.origin);
+    internals.withUserGesture(() => {
+        let prompt1 = Notification.requestPermission();
+        let prompt2 = Notification.requestPermission();
+        Promise.all([prompt1, prompt2]).then(([permission1, permission2]) => {
+            if (permission1 == 'denied' && permission2 == 'denied')
+                testPassed("both permission requests denied");
+            else
+                testFailed("both permission requests should be denied, but was " + permission1 + " and then " + permission2);
+            shouldBeEqualToString("Notification.permission", "denied");
+            finishJSTest();
+        });
+    });
+}
+
+run();
+</script>

@@ -1,0 +1,3 @@
+
+PASS Ensure that transition easing functions are properly applied.
+

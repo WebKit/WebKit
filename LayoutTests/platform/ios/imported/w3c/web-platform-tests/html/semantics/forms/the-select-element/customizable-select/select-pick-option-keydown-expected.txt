@@ -1,0 +1,6 @@
+
+one
+two
+
+FAIL Canceling keypress does not prevent an option from being picked. assert_equals: The second option should be focused. expected Element node <option class="two">two</option> but got Element node <option class="one">one</option>
+

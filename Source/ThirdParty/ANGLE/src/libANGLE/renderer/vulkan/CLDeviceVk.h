@@ -1,0 +1,84 @@
+//
+// Copyright 2021 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+// CLDeviceVk.h: Defines the class interface for CLDeviceVk, implementing CLDeviceImpl.
+
+#ifndef LIBANGLE_RENDERER_VULKAN_CLDEVICEVK_H_
+#define LIBANGLE_RENDERER_VULKAN_CLDEVICEVK_H_
+
+#include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
+
+#include "libANGLE/renderer/CLDeviceImpl.h"
+
+#include "spirv-tools/libspirv.h"
+
+namespace rx
+{
+
+class CLDeviceVk : public CLDeviceImpl
+{
+  public:
+    explicit CLDeviceVk(const cl::Device &device, vk::Renderer *renderer);
+    ~CLDeviceVk() override;
+
+    Info createInfo(cl::DeviceType type) const override;
+
+    const vk::Renderer *getRenderer() const { return mRenderer; }
+    const cl::Device &getFrontendObject() const { return const_cast<cl::Device &>(mDevice); }
+    const cl::DeviceCaps &getCaps() const override;
+    bool supportsExternalMemoryFd() const;
+    bool supportsExternalMemoryDmaBuf() const;
+    angle::Result createSubDevices(const cl_device_partition_property *properties,
+                                   cl_uint numDevices,
+                                   CreateFuncs &subDevices,
+                                   cl_uint *numDevicesRet) override;
+
+    // Returns runtime-selected LWS value
+    cl::WorkgroupSize selectWorkGroupSize(const cl::NDRange &ndrange) const;
+
+    spv_target_env getSpirvVersion() const { return mSpirvVersion; }
+
+  public:
+    // WGS creation strategies when user leaves this up to the driver
+    static cl::WorkgroupSize CalculateSimplePow2WGS(const cl::NDRange &ndrange,
+                                                    const uint32_t maxSize);
+    static cl::WorkgroupSize CalculateUniformFitWGS(const cl::NDRange &ndrange,
+                                                    const uint32_t maxSize);
+    uint32_t getWorkGroupSizeMultiple() const;
+
+  private:
+    uint32_t getNumComputeUnits() const;
+    cl_ulong getSingleFpConfig() const;
+    cl_ulong getHalfFpConfig() const;
+    cl_ulong getDoubleFpConfig() const;
+    cl_ulong getCacheSize() const;
+    cl_ulong getHeapSizeForResource(const VkMemoryPropertyFlags supportedProperties,
+                                    const VkMemoryPropertyFlags avoidedProperties) const;
+    cl_ulong getGlobalMemSize() const;
+    cl_ulong getMaxMemAllocSize() const;
+    size_t getImageMaxBufferSize() const;
+
+  private:
+    vk::Renderer *mRenderer;
+    spv_target_env mSpirvVersion;
+
+    cl_device_integer_dot_product_capabilities_khr getIntegerDotProductCapabilities() const;
+    cl_device_integer_dot_product_acceleration_properties_khr
+    getIntegerDotProductAccelerationProperties8Bit() const;
+    cl_device_integer_dot_product_acceleration_properties_khr
+    getIntegerDotProductAccelerationProperties4x8BitPacked() const;
+    bool populateSupportedExternalMemoryHandleTypes(Info &info) const;
+    bool setupAndReportDepthImageSupport(Info &info) const;
+};
+
+inline const cl::DeviceCaps &CLDeviceVk::getCaps() const
+{
+    return mCaps;
+}
+
+}  // namespace rx
+
+#endif  // LIBANGLE_RENDERER_VULKAN_CLDEVICEVK_H_

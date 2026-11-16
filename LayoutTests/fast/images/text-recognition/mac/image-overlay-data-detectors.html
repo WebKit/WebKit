@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+}
+</style>
+</head>
+<body>
+<img src="../../resources/green-400x400.png"></img>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    image = document.querySelector("img");
+
+    eventSender.mouseMoveTo(400, 400);
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0.5),
+            topRight : new DOMPointReadOnly(1, 0.5),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0, 1),
+            children: [{
+                text : "webkit.org",
+                topLeft : new DOMPointReadOnly(0, 0.5),
+                topRight : new DOMPointReadOnly(1, 0.5),
+                bottomRight : new DOMPointReadOnly(1, 1),
+                bottomLeft : new DOMPointReadOnly(0, 1),
+            }],
+        }
+    ], [], [
+        {
+            topLeft : new DOMPointReadOnly(0, 0.5),
+            topRight : new DOMPointReadOnly(1, 0.5),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0, 1),
+        }
+    ]);
+
+    eventSender.mouseMoveTo(49, 74);
+    eventSender.mouseMoveTo(50, 75);
+    await shouldBecomeEqual("internals.hasActiveDataDetectorHighlight", "true");
+    testPassed("observed active data detector highlight");
+
+    image.style.width = "400px";
+    image.style.height = "400px";
+
+    await shouldBecomeEqual("internals.hasActiveDataDetectorHighlight", "false");
+    testPassed("cleared active data detector highlight");
+
+    eventSender.mouseMoveTo(199, 299);
+    eventSender.mouseMoveTo(200, 300);
+    await shouldBecomeEqual("internals.hasActiveDataDetectorHighlight", "true");
+    testPassed("observed active data detector highlight (again)");
+
+    eventSender.mouseMoveTo(200, 510);
+    await shouldBecomeEqual("internals.hasActiveDataDetectorHighlight", "false");
+    testPassed("cleared active data detector highlight (again)");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.LayerTree.RemovedFrameTarget");
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.RemovedFrameTarget.LayersForNodeSettles",
+            description: "Fetching a frame's layers should finish whether the reply or the frame's removal arrives first. The order is not forced.",
+            async test() {
+                let childFrameTarget = await frameTargetForURLContaining("frame-with-composited-layers.html");
+                InspectorTest.expectNotNull(childFrameTarget, "Should find the child frame target.");
+
+                let frameDocument;
+                while (!(frameDocument = WI.domManager.frameTargetDocumentForTarget(childFrameTarget)))
+                    await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+
+                let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+                let removePromise = WI.assumingMainTarget().RuntimeAgent.evaluate.invoke({expression: `document.querySelector("iframe").remove()`, objectGroup: "test"});
+                let layersPromise = new Promise((resolve) => WI.layerTreeManager.layersForNode(frameDocument, resolve));
+                await removePromise;
+                await targetRemovedPromise;
+
+                let layers = await layersPromise;
+                InspectorTest.expectThat(Array.isArray(layers), "Fetching layers should finish when the frame target is removed around the request.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that fetching a cross-origin frame's layers finishes when the frame is removed under site isolation.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/layers/resources/frame-with-composited-layers.html"></iframe>
+</body>

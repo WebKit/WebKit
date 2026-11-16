@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="refresh" content="3600">
+<style>
+html, body, iframe { margin: 0; padding: 0; border: none; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<script>
+
+const urls = [];
+const CycleSeconds = 30;
+
+const request = new XMLHttpRequest();
+request.open('GET', '/data/manifest.json', true);
+request.send(null);
+request.onreadystatechange = function () {
+    if (request.readyState != XMLHttpRequest.DONE)
+        return;
+    if (request.status !== 200) {
+        alert('Failed with status: ' + request.status);
+        return;
+    }
+
+    const manifest = JSON.parse(request.responseText);
+    const dashboards = [];
+    for (const dashboardName in manifest.dashboards)
+        dashboards.push(dashboardName);
+
+    for (const dashboardName of dashboards)
+        urls.push('/v3/#/dashboard/' + dashboardName);
+
+    loadURLAt(0);
+}
+
+let oldIframe = null;
+function loadURLAt(i)
+{
+    const newIframe = document.createElement('iframe');
+    document.body.appendChild(newIframe);
+    newIframe.src = urls[i];
+    newIframe.onload = () => {
+        scrollUpIfNeeded(oldIframe).then(() => {
+            showNewFrame(i, newIframe);
+            setTimeout(() => scrollDownIfNeeded(newIframe), CycleSeconds * 1000 / 2);
+        });
+    }
+}
+
+function showNewFrame(i, iframe)
+{
+    if (oldIframe)
+        document.body.removeChild(oldIframe);
+    oldIframe = iframe;
+
+    i = (i + 1) % urls.length;
+    setTimeout(loadURLAt.bind(window, i), CycleSeconds * 1000);
+}
+
+function scrollUpIfNeeded(iframe)
+{
+    const diff = iframe ? iframe.scrollDiff : 0;
+    if (!diff)
+        return Promise.resolve();
+    for (let i = 0; i < 500; i++)
+        setTimeout(() => iframe.contentWindow.scrollTo(0, oldIframe.scrollDiff / 500 * (500 - i)), i);
+    return new Promise((resolve) => setTimeout(resolve, 800));
+}
+
+function scrollDownIfNeeded(iframe)
+{
+    const viewportHeight = iframe.contentWindow.innerHeight;
+    const contentHeight = iframe.contentDocument.body.offsetHeight;
+    if (viewportHeight >= contentHeight)
+        return;
+    const diff = contentHeight - viewportHeight;
+    for (let i = 0; i < 500; i++)
+        setTimeout(() => iframe.contentWindow.scrollTo(0, diff / 500 * i), i);
+    iframe.scrollDiff = diff;
+}
+
+</script>
+</body>
+</html>

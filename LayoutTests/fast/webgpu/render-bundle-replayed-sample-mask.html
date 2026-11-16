@@ -1,0 +1,102 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Each draw replayed from a render bundle must use its own pipeline's sample mask. The fragment shaders write @builtin(sample_mask), so the pipeline's mask is applied in the shader. Each result is the number of samples, out of 4, written by the first, second and third draw, which write the red, green and blue channels with sample masks 0x1, 0xf and 0x3.");
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    const sampleCount = 4;
+    let module = device.createShaderModule({ code: `
+        @group(0) @binding(0) var<uniform> color: vec4f;
+        struct FOut { @location(0) color: vec4f, @builtin(sample_mask) mask: u32, };
+        @vertex fn vs(@builtin(vertex_index) i: u32) -> @builtin(position) vec4f {
+            var p = array(vec2f(-1, -1), vec2f(3, -1), vec2f(-1, 3));
+            return vec4f(p[i], 0, 1);
+        }
+        @fragment fn plain() -> FOut { return FOut(vec4f(1), 0xfu); }
+        @fragment fn withDynamicOffset() -> FOut { return FOut(color, 0xfu); }
+    ` });
+
+    let uniformBuffer = device.createBuffer({ size: 512, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(uniformBuffer, 256, new Float32Array([1, 1, 1, 1]));
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [{ binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform', hasDynamicOffset: true } }],
+    });
+    let bindGroup = device.createBindGroup({ layout: bindGroupLayout, entries: [{ binding: 0, resource: { buffer: uniformBuffer, size: 16 } }] });
+
+    const draws = [
+        { writeMask: GPUColorWrite.RED, mask: 0x1 },
+        { writeMask: GPUColorWrite.GREEN, mask: 0xf },
+        { writeMask: GPUColorWrite.BLUE, mask: 0x3 },
+    ];
+
+    function encodeDraws(encoder, useDynamicOffsets) {
+        for (let draw of draws) {
+            encoder.setPipeline(device.createRenderPipeline({
+                layout: device.createPipelineLayout({ bindGroupLayouts: useDynamicOffsets ? [bindGroupLayout] : [] }),
+                vertex: { module, entryPoint: 'vs' },
+                fragment: { module, entryPoint: useDynamicOffsets ? 'withDynamicOffset' : 'plain', targets: [{ format, writeMask: draw.writeMask }] },
+                multisample: { count: sampleCount, mask: draw.mask },
+            }));
+            if (useDynamicOffsets)
+                encoder.setBindGroup(0, bindGroup, [256]);
+            encoder.draw(3);
+        }
+    }
+
+    async function render({ useBundle, useDynamicOffsets }) {
+        let bundle = null;
+        if (useBundle) {
+            let bundleEncoder = device.createRenderBundleEncoder({ colorFormats: [format], sampleCount });
+            encodeDraws(bundleEncoder, useDynamicOffsets);
+            bundle = bundleEncoder.finish();
+        }
+
+        let colorTexture = device.createTexture({ size: [1, 1], format, sampleCount, usage: GPUTextureUsage.RENDER_ATTACHMENT });
+        let resolveTexture = device.createTexture({ size: [1, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+        let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+        let commandEncoder = device.createCommandEncoder();
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{ view: colorTexture.createView(), resolveTarget: resolveTexture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 0, g: 0, b: 0, a: 0 } }],
+        });
+        if (bundle)
+            pass.executeBundles([bundle]);
+        else
+            encodeDraws(pass, useDynamicOffsets);
+        pass.end();
+        commandEncoder.copyTextureToBuffer({ texture: resolveTexture }, { buffer: readback, bytesPerRow: 256 }, [1, 1]);
+        device.queue.submit([commandEncoder.finish()]);
+
+        await readback.mapAsync(GPUMapMode.READ);
+        let samplesWritten = [...new Uint8Array(readback.getMappedRange(0, 4))].slice(0, 3).map(value => Math.round(value * sampleCount / 255));
+        readback.unmap();
+        return samplesWritten.join();
+    }
+
+    window.results = {
+        direct: await render({ useBundle: false, useDynamicOffsets: false }),
+        replayedBundle: await render({ useBundle: true, useDynamicOffsets: false }),
+        replayedBundleWithDynamicOffsets: await render({ useBundle: true, useDynamicOffsets: true }),
+    };
+    for (let name of Object.keys(results))
+        shouldBeEqualToString('results.' + name, '1,4,2');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

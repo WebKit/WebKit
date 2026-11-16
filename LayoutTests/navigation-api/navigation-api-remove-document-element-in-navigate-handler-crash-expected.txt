@@ -1,0 +1,4 @@
+Tests that removing the document element inside an intercepted navigate handler does not crash. WebKit should not hit assertions or crash under ASAN.
+
+
+PASS

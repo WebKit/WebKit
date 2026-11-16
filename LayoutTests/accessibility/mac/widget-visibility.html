@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="embedContainer">
+    <embed id="pdfEmbed" width="75%" height="75%" name="plugin" src="../resources/simple-webkit-pages.pdf" type="application/pdf">
+</div>
+
+<script>
+let output = "This test ensures that widget visibility status is correctly reported from accessibility via searching.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    let pdfAxObject, pdfEmbedElement;
+    setTimeout(async () => {
+        await waitFor(() => {
+            embedContainer = accessibilityController.accessibleElementById("embedContainer");
+            pdfEmbedElement = accessibilityController.accessibleElementById("pdfEmbed");
+            return embedContainer && pdfEmbedElement && embedContainer.childrenCount && pdfEmbedElement.childrenCount;
+        });
+
+        var domPdfEmbedElement = document.getElementById("pdfEmbed");
+
+        // Ensure explicitly hiding/showing widgets affects searching for "visible only".
+        domPdfEmbedElement.style.visibility = "visible";
+        await waitFor(() => {
+            searchResultElement = pdfEmbedElement.uiElementForSearchPredicate(null, true, "AXAnyTypeSearchKey", "", true);
+            return searchResultElement;
+        });
+        output += expect("searchResultElement.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");
+
+        domPdfEmbedElement.style.visibility = "hidden";
+        await waitFor(() => {
+            searchResultElement = pdfEmbedElement.uiElementForSearchPredicate(null, true, "AXAnyTypeSearchKey", "", true);
+            return !searchResultElement;
+        });
+        output += expect("searchResultElement", "null");
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>
+

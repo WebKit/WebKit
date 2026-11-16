@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/ui-helper.js"></script>
+<p>To test manually, click between two l's in hello below and press shift+tab.<br>
+Focus should move to the text field.</p>
+<input id="textField">
+<div contenteditable><span id="hello">hello</span></div>
+<div id="result"></div>
+<script>
+
+onload = runTest;
+didFocus = null;
+
+async function runTest() {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    result.textContent = 'In progress';
+
+    await UIHelper.activateAt(hello.offsetLeft + hello.offsetWidth / 2, hello.offsetTop + 3);
+    await UIHelper.keyDown('\t', ['shiftKey']);
+
+    result.textContent = document.activeElement == textField ? 'PASS' : 'FAIL';
+
+    testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

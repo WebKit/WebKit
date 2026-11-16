@@ -1,0 +1,16 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function test() {
+    if (window.testRunner) {
+        await window.testRunner.setPageScaleFactor(2, 0, 0);
+        testRunner.notifyDone();
+    }
+}
+</script>
+<body onload="test()";>
+<div style="width:100px; height: 100px; position: absolute; left: 16px; top: 16px; background: green"></div>
+</body>
+</html>

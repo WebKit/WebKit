@@ -1,0 +1,43 @@
+<style>
+.container {
+  width: 100px;
+  height: 100px;
+  outline: 1px solid black;
+}
+.middle-block { 
+  background-color: blue;
+  height: 20px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+</style>
+<div class=container>
+  <span>
+    span start
+    <div class=middle-block></div>
+    span end
+  </span>
+</div>
+
+<div class=container>
+  <span>
+    <div class=middle-block></div>
+    span end
+  </span>
+</div>
+
+<div class=container>
+  <span>
+    span start
+    <div class=middle-block></div>
+  </span>
+</div>
+
+<div class=container>
+  <span>
+    span start
+    <div class=middle-block></div>
+    <div class=middle-block></div>
+    span end
+  </span>
+</div>

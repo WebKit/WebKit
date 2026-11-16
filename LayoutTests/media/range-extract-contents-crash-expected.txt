@@ -1,0 +1,4 @@
+
+Tests that moving a video element from the document tree into a DocumentFragment does not crash.
+
+If this test does not crash, it passes.

@@ -1,0 +1,41 @@
+<style>
+html {
+  zoom: 50%;
+}
+
+body {
+  max-width: 0px;
+  font-size: 1px;
+  zoom: 50%;
+}
+
+details {
+  zoom: 50%;
+}
+
+ol {
+  zoom: 50%;
+}
+
+li {
+  list-style: none;
+  zoom: 50%;
+}
+
+</style>
+PASS if no crash or assert.
+<details id=detailsID>
+<ol id="htmlvar1" contenteditable="plaintext-only">
+    <li>
+    <table id="htmlvar2">
+        <tr>content</tr>
+    </table>
+</ol><script>
+window.testRunner?.dumpAsText();
+
+document.getSelection().setPosition(htmlvar1,0);
+
+document.execCommand("selectAll", false);
+detailsID.appendChild(htmlvar2);
+document.execCommand("insertHTML", false, null);
+</script>

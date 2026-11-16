@@ -1,0 +1,4 @@
+Text
+
+PASS Mutation of 'd' on a 'display: none' <path> referenced by <textPath>
+

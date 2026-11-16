@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button">This is a button</button>
+
+<script>
+var output = "Test properties of a button via the client accessibility APIs.\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        rootElement = null;
+        webArea = null;
+        button = null;
+
+        // Keep polling until all of the elements in the tree are present.
+	// Some accessibility elements aren't initialized until queried.
+	// TODO: replace with waitFor() or make a new general-purpose helper.
+        while (true) {
+            rootElement = accessibilityController.rootElement;
+            if (rootElement)
+                webArea = rootElement.childAtIndex(0);
+            if (webArea)
+                button = webArea.childAtIndex(0);
+            if (button)
+                break;
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
+
+        output += `Root: ${rootElement.role}\n`;
+        output += `Web area: ${webArea.role}\n`;
+        output += `Button role: ${button.role}\n`;
+        output += `Button title: ${button.title}\n`;
+
+        debug(output);
+        document.getElementById("button").hidden = true;
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

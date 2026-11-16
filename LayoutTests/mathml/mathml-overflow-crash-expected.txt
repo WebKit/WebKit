@@ -1,0 +1,30 @@
+This test passes if it does not crash
+
+RenderMathMLFenced
+
+RenderMathMLFraction
+
+RenderMathMLMath
+
+RenderMathMLMenclose
+
+|
+RenderMathMLOperator
+
+RenderMathMLPadded
+
+RenderMathMLRoot
+
+RenderMathMLRow
+
+RenderMathMLScripts
+
+RenderMathMLSpace
+
+A
+RenderMathMLToken
+
+RenderMathMLUnderOver
+
+RenderMathMLBlock (invalid markup)
+

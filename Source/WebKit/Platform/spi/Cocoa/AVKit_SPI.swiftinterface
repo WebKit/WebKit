@@ -1,0 +1,301 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level spi -enable-bare-slash-regex -user-module-version 1270 -module-name AVKit_SPI -module-abi-name AVKit
+
+#if os(visionOS)
+
+@_exported import AVKit
+
+import _Concurrency
+import Combine
+import CoreMedia
+import Foundation
+import QuartzCore
+import RealityFoundation
+import Swift
+import UIKit
+// FIXME (147782145): Define a clang module for XPC to be used in Public SDK builds
+//import XPC
+
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(LMPlayableViewController) @_Concurrency.MainActor(unsafe) public class PlayableViewController : UIKit.UIViewController {
+  public var playable: (any Playable)? { get set }
+  public var prefersAutoDimming: Swift.Bool { get set }
+  public var automaticallyDockOnFullScreenPresentation: Swift.Bool { get set }
+  public var dismissFullScreenOnExitingDocking: Swift.Bool { get set }
+  public var environmentPickerButtonViewController: UIKit.UIViewController? { get }
+}
+
+public enum ContentType : Swift.Equatable, Swift.CaseIterable, Swift.Codable, Swift.Sendable {
+ case immersive
+ case spatial
+ case planar
+ case audioOnly
+ public static func == (a: ContentType, b: ContentType) -> Swift.Bool
+ public func hash(into hasher: inout Swift.Hasher)
+ public typealias AllCases = [ContentType]
+ public static var allCases: [ContentType] {
+   get
+ }
+ public func encode(to encoder: any Swift.Encoder) throws
+ public var hashValue: Swift.Int {
+   get
+ }
+ public init(from decoder: any Swift.Decoder) throws
+ public static func makeEntity(captionLayer: QuartzCore.CALayer) -> RealityFoundation.Entity?
+ public static func makeSpatialEntity(videoMetadata: SpatialVideoMetadata?, extruded: Swift.Bool = true) -> (any RealityFoundation.Entity & Peculiarable)?
+}
+public enum PresentationMode {
+ case inline
+ case fullscreen
+ case fullscreenFromInline
+ case pip
+ public static func == (a: PresentationMode, b: PresentationMode) -> Swift.Bool
+ public func hash(into hasher: inout Swift.Hasher)
+ public var hashValue: Swift.Int {
+   get
+ }
+}
+public struct RenderingConfiguration : Swift.Equatable {
+ public var contentType: ContentType?
+ public var wantsThumbnailLayerPublished: Swift.Bool
+ public var wantsThumbnailMaterialPublished: Swift.Bool
+ public var wantsVideoLayerPublished: Swift.Bool
+ public var wantsVideoMaterialPublished: Swift.Bool
+ public var wantsVideoAssetPublished: Swift.Bool
+ public var wantsPeculiarEntityPublished: Swift.Bool
+ public static func == (a: RenderingConfiguration, b: RenderingConfiguration) -> Swift.Bool
+}
+public enum ViewingMode {
+ case mono
+ case stereo
+ case immersive
+ public static var unique: ViewingMode {
+   get
+ }
+ case spatial
+ public static var singular: ViewingMode {
+   get
+ }
+ public static func == (a: ViewingMode, b: ViewingMode) -> Swift.Bool
+ public func hash(into hasher: inout Swift.Hasher)
+ public var hashValue: Swift.Int {
+   get
+ }
+}
+public struct SeekMetadata {
+  public enum Origin {
+    case user
+    public static func == (a: SeekMetadata.Origin, b: SeekMetadata.Origin) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public let origin: SeekMetadata.Origin
+  public init(origin: SeekMetadata.Origin)
+}
+public protocol Track : AnyObject {
+  var localizedDisplayName: Swift.String { get }
+}
+public enum ImmersiveViewingMode {
+  case portal
+  case full
+  case progressive
+  @available(*, deprecated, renamed: "full", message: "Use .full instead.")
+  public static let immersive = ImmersiveViewingMode.full
+}
+@available(*, deprecated, renamed: "ImmersiveViewingMode", message: "Use ImmersiveViewingMode instead.")
+public typealias PeculiarMode = ImmersiveViewingMode
+public struct SpatialVideoMetadata {
+  public init(width: Swift.Int32, height: Swift.Int32, horizontalFOVDegrees: Swift.Float, baseline: Swift.Float, disparityAdjustment: Swift.Float, isRecommendedForImmersive: Swift.Bool)
+  public var width: Swift.Int32
+  public var height: Swift.Int32
+  public var horizontalFOVDegrees: Swift.Float
+  public var baseline: Swift.Float
+  public var disparityAdjustment: Swift.Float
+  public var isRecommendedForImmersive: Swift.Bool
+}
+public protocol Peculiarable {
+ func setScreen(width: Swift.Float, height: Swift.Float)
+ var screenMode: PeculiarMode { get set }
+ var supportedScreenModes: [PeculiarMode] { get }
+ var screenGUIDPublisher: Combine.AnyPublisher<Swift.UInt64?, Swift.Never> { get }
+ var shouldDisplayThumbnail: Swift.Bool { get }
+ var preferStereoPlayback: Swift.Bool { get set }
+ func setVideoMetaData(to: SpatialVideoMetadata?)
+// FIXME (147782145): Define a clang module for XPC to be used in Public SDK builds
+// var videoReceiverEndpointPublisher: Combine.AnyPublisher<XPC.xpc_object_t?, Swift.Never> { get }
+}
+public typealias PeculiarEntity = RealityFoundation.Entity & Peculiarable
+public enum ContentMode : Swift.Int, Swift.CaseIterable {
+ case scaleAspectFit
+ case scaleAspectFill
+ case scaleToFill
+ public static var `default`: ContentMode
+ public init?(rawValue: Swift.Int)
+ public typealias AllCases = [ContentMode]
+ public typealias RawValue = Swift.Int
+ public static var allCases: [ContentMode] {
+   get
+ }
+ public var rawValue: Swift.Int {
+   get
+ }
+}
+public protocol ContentMetadataKey {
+ associatedtype Value : Swift.Equatable
+ static var name: Swift.String { get }
+}
+public struct ContentMetadata {
+ public enum DisplayTitle : ContentMetadataKey {
+   public typealias Value = Swift.String
+   public static var name: Swift.String
+ }
+ public let displayTitle: ContentMetadata.DisplayTitle
+ public enum DisplaySubtitle : ContentMetadataKey {
+   public typealias Value = Swift.String
+   public static var name: Swift.String
+ }
+ public let displaySubtitle: ContentMetadata.DisplaySubtitle
+ public enum AnticipatedStartDate : ContentMetadataKey {
+   public typealias Value = Foundation.Date
+   public static var name: Swift.String
+ }
+ public let anticipatedStartDate: ContentMetadata.AnticipatedStartDate
+ public enum AnticipatedEndDate : ContentMetadataKey {
+   public typealias Value = Foundation.Date
+   public static var name: Swift.String
+ }
+ public let anticipatedEndDate: ContentMetadata.AnticipatedEndDate
+}
+@dynamicMemberLookup public struct ContentMetadataContainer {
+ public init()
+ public subscript<K>(dynamicMember keyPath: Swift.KeyPath<ContentMetadata, K>) -> K.Value? where K : ContentMetadataKey {
+   get
+   set
+ }
+}
+public struct FullscreenBehaviors : Swift.OptionSet, Swift.CustomStringConvertible {
+ public let rawValue: Swift.Int
+ public init(rawValue: Swift.Int)
+ public static let sceneResize: FullscreenBehaviors
+ public static let sceneSizeRestrictions: FullscreenBehaviors
+ public static let sceneChromeOptions: FullscreenBehaviors
+ public static let hostContentInline: FullscreenBehaviors
+ public static let `default`: [FullscreenBehaviors]
+ public var description: Swift.String {
+   get
+ }
+ public typealias ArrayLiteralElement = FullscreenBehaviors
+ public typealias Element = FullscreenBehaviors
+ public typealias RawValue = Swift.Int
+}
+public protocol Playable : AnyObject {
+ var presentationModePublisher: Combine.AnyPublisher<PresentationMode, Swift.Never> { get }
+ func makeDefaultEntity() -> RealityFoundation.Entity?
+ func updateRenderingConfiguration(_ config: RenderingConfiguration)
+ var errorPublisher: Combine.AnyPublisher<(any Swift.Error)?, Swift.Never> { get }
+ var isLoadingPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ @available(*, deprecated, message: "Replaced by 'playbackRatePublisher'")
+ var isPlayingPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var playbackRatePublisher: Combine.AnyPublisher<Swift.Double, Swift.Never> { get }
+ var selectedPlaybackRatePublisher: Combine.AnyPublisher<Swift.Double, Swift.Never> { get }
+ var playbackRatesPublisher: Combine.AnyPublisher<[Swift.Double], Swift.Never> { get }
+ var requiresLinearPlaybackPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var canTogglePlaybackPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var showsPlaybackControlsPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ func play()
+ func pause()
+ func togglePlayback()
+ func setPlaybackRate(_ rate: Swift.Double)
+ var interstitialRangesPublisher: Combine.AnyPublisher<[Swift.Range<Foundation.TimeInterval>], Swift.Never> { get }
+ var isInterstitialActivePublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ func skipActiveInterstitial()
+ var currentTimePublisher: Combine.AnyPublisher<Foundation.TimeInterval, Swift.Never> { get }
+ var remainingTimePublisher: Combine.AnyPublisher<Foundation.TimeInterval, Swift.Never> { get }
+ var durationPublisher: Combine.AnyPublisher<Foundation.TimeInterval, Swift.Never> { get }
+ func setTimeResolverInterval(_ interval: Foundation.TimeInterval)
+ func setTimeResolverResolution(_ resolution: Swift.Double)
+ var thumbnailLayerPublisher: Combine.AnyPublisher<QuartzCore.CALayer?, Swift.Never> { get }
+ var thumbnailMaterialPublisher: Combine.AnyPublisher<RealityFoundation.VideoMaterial?, Swift.Never> { get }
+ func setThumbnailSize(_ size: CoreFoundation.CGSize)
+ func seekThumbnail(to time: Foundation.TimeInterval)
+ var captionLayerPublisher: Combine.AnyPublisher<QuartzCore.CALayer?, Swift.Never> { get }
+ @available(*, deprecated, message: "Use captionContentInsetsPublisher and setCaptionContentInsets instead.")
+ var captionContentInsets: UIKit.UIEdgeInsets { get set }
+ var captionContentInsetsPublisher: Combine.AnyPublisher<UIKit.UIEdgeInsets, Swift.Never> { get }
+ func setCaptionContentInsets(_ insets: UIKit.UIEdgeInsets)
+ var isSeekingPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var canSeekPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var seekableTimeRangesPublisher: Combine.AnyPublisher<[Swift.ClosedRange<Foundation.TimeInterval>], Swift.Never> { get }
+ @available(*, deprecated, message: "Replace with seek(to:from:metadata:)")
+ func seek(to time: Foundation.TimeInterval)
+ @available(*, deprecated, message: "Replace with seek(to:from:metadata:)")
+ func seek(delta: Foundation.TimeInterval)
+ func seek(to destination: Foundation.TimeInterval, from source: Foundation.TimeInterval, metadata: SeekMetadata) -> Foundation.TimeInterval
+ func beginScrubbing()
+ func endScrubbing()
+ var canScanForwardPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ func beginScanningForward()
+ func endScanningForward()
+ var canScanBackwardPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ func beginScanningBackward()
+ func endScanningBackward()
+ var isTrimmingPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var forwardPlaybackEndTimePublisher: Combine.AnyPublisher<CoreMedia.CMTime?, Swift.Never> { get }
+ var reversePlaybackEndTimePublisher: Combine.AnyPublisher<CoreMedia.CMTime?, Swift.Never> { get }
+ var trimViewPublisher: Combine.AnyPublisher<UIKit.UIView?, Swift.Never> { get }
+ func completeTrimming(commitChanges: Swift.Bool)
+ func updateStartTime(_ time: Foundation.TimeInterval)
+ func updateEndTime(_ time: Foundation.TimeInterval)
+ var contentTypePublisher: Combine.AnyPublisher<ContentType?, Swift.Never> { get }
+ var contentMetadataPublisher: Combine.AnyPublisher<ContentMetadataContainer, Swift.Never> { get }
+ var artworkPublisher: Combine.AnyPublisher<Foundation.Data?, Swift.Never> { get }
+ var isPlayableOfflinePublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var contentInfoViewControllersPublisher: Combine.AnyPublisher<[UIKit.UIViewController], Swift.Never> { get }
+ var contextualActionsPublisher: Combine.AnyPublisher<[UIKit.UIAction], Swift.Never> { get }
+ var contextualActionsInfoViewPublisher: Combine.AnyPublisher<UIKit.UIView?, Swift.Never> { get }
+ var transportBarIncludesTitleViewPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var contentDimensionsPublisher: Combine.AnyPublisher<CoreFoundation.CGSize, Swift.Never> { get }
+ var contentModePublisher: Combine.AnyPublisher<ContentMode, Swift.Never> { get }
+ var videoLayerPublisher: Combine.AnyPublisher<QuartzCore.CALayer?, Swift.Never> { get }
+ var videoMaterialPublisher: Combine.AnyPublisher<RealityFoundation.VideoMaterial?, Swift.Never> { get }
+ @available(*, deprecated, message: "Will be removed during seed -1")
+ var peculiarEntityPublisher: Combine.AnyPublisher<(any RealityFoundation.Entity & Peculiarable)?, Swift.Never> { get }
+ func updateVideoBounds(_ bounds: CoreFoundation.CGRect)
+ var anticipatedViewingModePublisher: Combine.AnyPublisher<ViewingMode?, Swift.Never> { get }
+ func updateViewingMode(_ viewingMode: ViewingMode?)
+ var contentOverlayPublisher: Combine.AnyPublisher<UIKit.UIView?, Swift.Never> { get }
+ var contentOverlayViewControllerPublisher: Combine.AnyPublisher<UIKit.UIViewController?, Swift.Never> { get }
+// FIXME (147782145): Define a clang module for XPC to be used in Public SDK builds
+// func setVideoReceiverEndpoint(_ endpoint: XPC.xpc_object_t)
+ var volumePublisher: Combine.AnyPublisher<Swift.Double, Swift.Never> { get }
+ func setVolume(_ volume: Swift.Double)
+ func beginEditingVolume()
+ func endEditingVolume()
+ var isMutedPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ func setIsMuted(_ value: Swift.Bool)
+ var sessionThumbnailPublisher: Combine.AnyPublisher<UIKit.UIImage?, Swift.Never> { get }
+ var isSessionExtendedPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var hasAudioContentPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var currentAudioTrackPublisher: Combine.AnyPublisher<(any Track)?, Swift.Never> { get }
+ var audioTracksPublisher: Combine.AnyPublisher<[any Track]?, Swift.Never> { get }
+ func setAudioTrack(_ newTrack: (any Track)?)
+ var currentLegibleTrackPublisher: Combine.AnyPublisher<(any Track)?, Swift.Never> { get }
+ var legibleTracksPublisher: Combine.AnyPublisher<[any Track]?, Swift.Never> { get }
+ func setLegibleTrack(_ newTrack: (any Track)?)
+ var allowPipPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ func togglePip()
+ func toggleInlineMode()
+ var allowFullScreenFromInlinePublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var isLiveStreamPublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+ var startDatePublisher: Combine.AnyPublisher<Foundation.Date, Swift.Never> { get }
+ var endDatePublisher: Combine.AnyPublisher<Foundation.Date, Swift.Never> { get }
+ var recommendedViewingRatioPublisher: Combine.AnyPublisher<Swift.Double?, Swift.Never> { get }
+ var fullscreenSceneBehaviorsPublisher: Combine.AnyPublisher<[FullscreenBehaviors], Swift.Never> { get }
+ func willEnterFullscreen()
+ func didCompleteEnterFullscreen(result: Swift.Result<Swift.Void, any Swift.Error>)
+ func willExitFullscreen()
+ func didCompleteExitFullscreen(result: Swift.Result<Swift.Void, any Swift.Error>)
+}
+
+#endif // os(visionOS)

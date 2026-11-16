@@ -1,0 +1,44 @@
+grid width: auto
+
+XXXX
+XXXX
+min-width: 0px. grid height: auto
+
+XXXX
+XXXX
+min-width: 0px. grid height: 15px
+
+XXXX
+XXXX
+min-width: 125px. grid height: auto
+
+XXXX
+XXXX
+min-width: 50%. grid height: auto
+
+XXX XX
+XXX XX
+min-width: min-content. grid height: auto
+
+XXX XX
+XXX XX
+min-width: max-content. grid height: auto
+
+XXX XX
+XXX XX
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+PASS .grid 7
+PASS .grid 8
+PASS .grid 9
+PASS .grid 10
+PASS .grid 11
+PASS .grid 12
+PASS .grid 13
+PASS .grid 14
+

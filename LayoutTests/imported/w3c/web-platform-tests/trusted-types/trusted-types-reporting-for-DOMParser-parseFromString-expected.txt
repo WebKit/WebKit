@@ -1,0 +1,4 @@
+
+PASS No violation reported for TrustedHTML.
+PASS Violation report for plain string.
+

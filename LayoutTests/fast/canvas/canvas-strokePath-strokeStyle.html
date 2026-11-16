@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <script>
+    var canvas = document.createElement('canvas');
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+
+    canvas.width = 200;
+    canvas.height = 200;
+    ctx.lineWidth = 100;
+
+    ctx.clearRect(0, 0, 200, 200);
+
+    // draw red line
+    ctx.strokeStyle = "#f00";
+    ctx.beginPath();
+    ctx.moveTo(50, 0);
+    ctx.lineTo(50, 200);
+    ctx.stroke();
+
+    // draw green line
+    ctx.strokeStyle = "#000";
+    ctx.beginPath();
+    ctx.moveTo(150, 0);
+    ctx.lineTo(150, 200);
+    ctx.stroke();
+  </script>
+</body>
+</html>

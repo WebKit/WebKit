@@ -1,0 +1,5 @@
+
+PASS The default value of onmessageerror is null
+PASS The onmessageerror content attribute must be compiled into the onmessageerror property
+PASS The onmessageerror content attribute must execute when an event is dispatched on the window
+

@@ -1,0 +1,3 @@
+
+PASS RTCSessionDescription constructed without type throws TypeError
+

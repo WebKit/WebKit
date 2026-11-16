@@ -1,0 +1,3 @@
+
+PASS IPC message delivered OK to Swift (or C++).
+

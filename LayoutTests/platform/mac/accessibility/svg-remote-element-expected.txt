@@ -1,0 +1,24 @@
+This test ensures that accessibility elements can be created out of what a remote SVG image defines.
+
+container location: (7, 7)
+Face AXRole: AXButton
+Face AXDescription: face
+FaceX: 0
+FaceY: 0
+Eye AXRole: AXButton
+Eye AXDescription: left-eye
+EyeX: 103
+EyeY: 148
+Nose AXRole: AXButton
+Nose AXDescription: nose
+NoseX: 193
+NoseY: 206
+Mouth AXRole: AXButton
+Mouth AXDescription: smile
+MouthX: 101
+MouthY: 261
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

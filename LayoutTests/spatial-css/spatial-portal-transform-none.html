@@ -1,0 +1,85 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 40cm; height: 20cm; portal-transform: none; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+const centeredCube = "2x2x2-center.usdz";
+const offsetCube = "2x2x2-at-100x50x200.usdz";
+
+promise_test(async t => {
+    const narrowPortal = createPortal(t);
+    const narrowModel = appendModel(narrowPortal, centeredCube);
+
+    const widePortal = createPortal(t, { width: "80cm" });
+    const wideModel = appendModel(widePortal, centeredCube);
+
+    await narrowModel.ready;
+    await wideModel.ready;
+
+    const narrowTransform = await waitForPortalTransform(narrowPortal, portalTransformIsResolved, "narrow portal");
+    const wideTransform = await waitForPortalTransform(widePortal, portalTransformIsResolved, "wide portal");
+
+    assert_3d_matrix_approx_equals(narrowTransform, wideTransform);
+}, `portal-transform: none is independent of the portal's size`);
+
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, offsetCube);
+
+    await model.ready;
+    const transform = await waitForPortalTransform(portal, portalTransformIsResolved, "portal");
+
+    assert_3d_matrix_approx_equals(transform, new DOMMatrixReadOnly().translate(-100, -200, 49));
+}, `portal-transform: none still centers the portal's content`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, offsetCube);
+    await model.ready;
+    await waitForPortalTransform(portal, portalTransformIsResolved, "portal");
+
+    model.style.translate = "200px 0 0";
+    model.style.scale = "2 2 2";
+    const applied = await waitForEntityTransform(model, transform => !transform.isIdentity, "child transform");
+
+    assert_3d_matrix_approx_equals(applied, as3d(new DOMMatrixReadOnly().translate(200, 0, 0).scale3d(2)));
+    assert_3d_matrix_approx_equals(resolvedPortalTransform(portal), new DOMMatrixReadOnly().translate(-100, -200, 49));
+}, `portal-transform: none keeps centering its content when a child is transformed`);
+
+promise_test(async t => {
+    const plainPortal = createPortal(t);
+    const plainModel = appendModel(plainPortal, centeredCube);
+    const transformedPortal = createPortal(t);
+    const transformedModel = appendModel(transformedPortal, centeredCube);
+    await Promise.all([plainModel.ready, transformedModel.ready]);
+
+    transformedModel.style.translate = "200px 0 0";
+    await waitForEntityTransform(transformedModel, transform => !transform.isIdentity, "child transform");
+
+    const plainBefore = await waitForPortalTransform(plainPortal, portalTransformIsResolved, "plain portal");
+    const transformedBefore = await waitForPortalTransform(transformedPortal, portalTransformIsResolved, "transformed portal");
+
+    plainPortal.style.portalTransform = "auto";
+    transformedPortal.style.portalTransform = "auto";
+
+    const refitted = before => transform => transform && !portalTransformsApproxEqual(transform, before);
+    const plainFit = await waitForPortalTransform(plainPortal, refitted(plainBefore), "plain fit");
+    const transformedFit = await waitForPortalTransform(transformedPortal, refitted(transformedBefore), "transformed fit");
+
+    assert_3d_matrix_approx_equals(transformedFit, plainFit);
+}, `a child's transform does not affect the fit when portal-transform flips to auto`);
+
+</script>
+</body>
+</html>

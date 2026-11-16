@@ -1,0 +1,12 @@
+html5lib parser tests
+
+
+PASS <!doctype html><p>foo<search>bar<p>baz: search start tag closes an open p element
+PASS <!doctype html><search><p>foo</search>bar
+PASS <!DOCTYPE html>xxx<svg><x><g><a><search><b>
+PASS <!doctype html><a><search>x</a>y
+PASS <!doctype html><a><search>x<p>y<a>z
+PASS <!doctype html><li>a<search><li>b: search is in the special category, so an li start tag does not close the li outside it
+PASS <!doctype html><dd>a<search><dt>b: search is in the special category, so a dt start tag does not close the dd outside it
+PASS <!doctype html><x><search></x>y
+

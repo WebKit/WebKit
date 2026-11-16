@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<span href="#" title="This should not appear as a tooltip"><span id="container" title>Hello.</span></span>
+<pre id=result></pre>
+<script>
+if (window.internals) {
+        testRunner.dumpAsText();
+        result.innerText = internals.toolTipFromElement(container);
+}
+</script>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>track-in-band-layout</title>
+    <script src="../video-test.js"></script>
+    <script>
+    function firstCueElement() {
+        return internals.shadowRoot(video).querySelector('[pseudo="cue"]');
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        run('video.src = "../content/test-paint-on-captions.mp4"');
+        await waitFor(video.textTracks, 'addtrack');
+        run('video.textTracks[0].mode = "showing"');
+
+        run('video.play()');
+        await testExpectedEventually('video.textTracks[0].cues.length', 3, '>');
+
+        run('video.pause()');
+        run('cues = Array.from(video.textTracks[0].cues)');
+        testExpected('cues.every(cue => cue.positionAlign === "line-left")', true);
+        testExpected('cues.every(cue => cue.position === cues[0].position)', true);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    })
+    </script>
+</head>
+<body>
+    <video controls muted preload="auto">
+</body>
+</html>

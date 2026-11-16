@@ -1,0 +1,4 @@
+
+PASS Properties declared with @property reify correctly
+PASS Re-declaring a property with a different type affects reification
+

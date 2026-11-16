@@ -1,0 +1,56 @@
+<html><!-- webkit-test-runner [ runSingly=true ] -->
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+button { position: absolute; width: 120px; height: 40px; }
+#first { left: 100px; top: 50px; }
+#second { left: 300px; top: 150px; }
+</style>
+</head>
+<body>
+
+<button id="first">First</button>
+<button id="second">Second</button>
+
+<script>
+var output = "Tests hit-testing the center of an element via the client accessibility APIs.\n\n";
+
+function hitTestCenter(element) {
+    const hit = accessibilityController.elementAtPoint(Math.round(element.x + element.width / 2), Math.round(element.y + element.height / 2));
+    return hit && hit.isEqual(element) ? "PASS" : `FAIL, hit ${hit ? hit.role : "null"}`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitForElements([
+            (element) => element.title.includes("Second"),
+        ]);
+        await waitForFrameGeometryReady();
+
+        // Wait for the buttons' frames to reflect layout.
+        var webArea, first, second;
+        await waitFor(() => {
+            webArea = accessibilityController.rootElement.childAtIndex(0);
+            first = webArea.childAtIndex(0);
+            second = webArea.childAtIndex(1);
+            return first.x - webArea.x == 100 && first.y - webArea.y == 50 && second.x - webArea.x == 300 && second.y - webArea.y == 150;
+        });
+
+        output += `First: ${hitTestCenter(first)}\n`;
+        output += `Second: ${hitTestCenter(second)}\n`;
+
+        debug(output);
+        document.getElementById("first").hidden = true;
+        document.getElementById("second").hidden = true;
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0;">
+<input type="text" id="input" style="width: 200px; font-size: 16px;">
+<script>
+const input = document.getElementById("input");
+
+input.addEventListener("focus", () => {
+    window.parent.postMessage({ type: "focused" }, "*");
+});
+
+input.addEventListener("blur", () => {
+    window.parent.postMessage({ type: "blurred" }, "*");
+});
+
+window.addEventListener("message", (event) => {
+    if (event.data.type === "checkActiveElement") {
+        event.source.postMessage({
+            type: "activeElementResult",
+            tagName: document.activeElement ? document.activeElement.tagName : "null"
+        }, event.origin);
+    }
+});
+</script>
+</body>
+</html>

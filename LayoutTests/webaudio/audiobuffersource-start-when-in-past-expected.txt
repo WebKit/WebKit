@@ -1,0 +1,11 @@
+Tests AudioBufferSourceNode starts immediately if the `when` value passed to start() is in the past.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS First half of the rendered data is identical to the source buffer
+PASS Second half of the rendered data is identical to the source buffer as well
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

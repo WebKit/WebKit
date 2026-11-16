@@ -1,0 +1,5 @@
+
+PASS Default source for a View timeline is the nearest scroll ancestor to the subject
+PASS View timeline ignores explicitly set source
+PASS View timeline source is null when display:none
+

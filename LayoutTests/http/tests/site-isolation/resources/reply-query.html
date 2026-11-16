@@ -1,0 +1,5 @@
+<script>
+    addEventListener("message", (event) => {
+        window.parent.postMessage(event.data + " with query " + window.location.search + ", is first child " + (window === window.parent[0]), "*")
+    });
+</script>

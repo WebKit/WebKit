@@ -1,0 +1,11 @@
+
+PASS Reporting to coep-none worker with coep-none worker
+PASS Reporting to coep-none worker with coep-report-only worker
+PASS Reporting to coep-none worker with coep-require-corp worker
+PASS Reporting to coep-report-only worker with coep-none worker
+PASS Reporting to coep-report-only worker with coep-report-only worker
+PASS Reporting to coep-report-only worker with coep-require-corp worker
+PASS Reporting to coep-require-corp worker with coep-none worker
+PASS Reporting to coep-require-corp worker with coep-report-only worker
+PASS Reporting to coep-require-corp worker with coep-require-corp worker
+

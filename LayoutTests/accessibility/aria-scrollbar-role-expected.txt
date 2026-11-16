@@ -1,0 +1,15 @@
+This tests that the ARIA scrollbar role works correctly
+
+PASS: scroller.role === 'AXRole: AXScrollBar'
+PASS: scroller.intValue === 55
+PASS: scroller.orientation === 'AXOrientation: AXVerticalOrientation'
+PASS: scroller.orientation === 'AXOrientation: AXHorizontalOrientation'
+PASS: scroller.role === 'AXRole: AXScrollBar'
+PASS: scroller.intValue === 55
+PASS: scroller.orientation === 'AXOrientation: AXVerticalOrientation'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+scrollbar
+scrollbar

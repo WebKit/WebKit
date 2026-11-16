@@ -1,0 +1,11 @@
+First Element
+First Sibling
+
+Second Element
+Second Sibling
+
+
+PASS state selector has influence on nth-of when state is applied
+PASS state selector only applies on given ident
+PASS style is invalided on clear()
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContactPickerAPIEnabled=true ] -->
+<html>
+    <head>
+        <script src="../resources/js-test.js"></script>
+        <script src="../resources/ui-helper.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest()
+        {
+            description("This test verifies that navigator.contacts.select fails if called from a subframe.");
+
+            window.addEventListener("message", (event) => {
+                if (event.data === "didClickOnContactsButtonAndFailedToSelect") {
+                    testPassed("Did not present contact picker.");
+                    finishJSTest();
+                }
+            });
+
+            frame = document.querySelector("iframe");
+
+            await UIHelper.activateElement(frame);
+        }
+    </script>
+    <body onload=runTest()>
+        <iframe srcdoc="
+            <body>
+                <button style='width: 100%; height: 134px;'>Show contacts</button>
+                <script>
+                    const button = document.querySelector('button');
+                    button.addEventListener('click', async () => {
+                        try {
+                            await navigator.contacts.select(['name']);
+                        } catch (exception) {
+                            if (exception.name === 'InvalidStateError') {
+                                parent.postMessage('didClickOnContactsButtonAndFailedToSelect', '*');
+                            }
+                        }
+                    });
+                </script>
+            </body>
+        "></iframe>
+    </body>
+</html>

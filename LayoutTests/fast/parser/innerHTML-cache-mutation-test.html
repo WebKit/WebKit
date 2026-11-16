@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>innerHTML Cache Mutation and Invalidation Test</title>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+function log(msg) {
+    console.log(msg)
+    document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+}
+
+function testPrefixReuse() {
+    log('=== Basic prefix extension ===');
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    container.innerHTML = '<div>base</div>';
+    container.innerHTML = '<div>base</div><span>extended</span>';
+    log('Set base then extend with prefix match');
+    log('children.length: ' + container.children.length + ' (expected: 2)');
+    log('Result: ' + (container.children.length === 2 ? 'PASS' : 'FAIL') + '\n');
+    container.innerHTML = ''; 
+
+    log('=== Multiple extensions ===');
+    const listContainer = document.createElement('div');
+    document.body.appendChild(listContainer);
+    listContainer.innerHTML = '<ul><li>1</li></ul>';
+    listContainer.innerHTML = '<ul><li>1</li></ul><ul><li>2</li></ul>';
+    listContainer.innerHTML = '<ul><li>1</li></ul><ul><li>2</li></ul><ul><li>3</li></ul>';
+    log('Extend by adding complete lists');
+    log('ul count: ' + listContainer.querySelectorAll('ul').length + ' (expected: 3)');
+    log('Result: ' + (listContainer.querySelectorAll('ul').length === 3 ? 'PASS' : 'FAIL') + '\n');
+    listContainer.innerHTML = ''; 
+
+    log('=== Exact match (cache hit) ===');
+    const exactContainer = document.createElement('div');
+    document.body.appendChild(exactContainer);
+    exactContainer.innerHTML = '<div>content</div><span>more</span>';
+    exactContainer.innerHTML = '<div>content</div><span>more</span>';
+    log('Set same innerHTML twice');
+    log('children.length: ' + exactContainer.children.length + ' (expected: 2)');
+    log('Result: ' + (exactContainer.children.length === 2 ? 'PASS' : 'FAIL') + '\n');
+    exactContainer.innerHTML = ''; 
+}
+
+function testDOMMutations() {
+    log('---------- DOM Mutation Tests ----------\n');
+
+    log('=== appendChild invalidates cache ===');
+    const appendContainer = document.createElement('div');
+    document.body.appendChild(appendContainer);
+    appendContainer.innerHTML = '<div id="append-test">original</div>';
+    appendContainer.innerHTML = '<div id="append-test">original</div><span>extension</span>';
+    // Mutate the cached DOM by appending a <b> element
+    const newEl = document.createElement('b');
+    newEl.textContent = 'added';
+    appendContainer.querySelector('#append-test').appendChild(newEl);
+    // Because the cache was invalidated by the appendChild mutation,
+    // this creates fresh nodes from scratch
+    appendContainer.innerHTML = '<div id="append-test">original</div><span>extension</span><p>more</p>';
+    log('appendChild to cached element, then extend');
+    // Check if the mutation carried over
+    // The test PASSES if there's no <b> element in #append-test
+    // This proves the cache was invalidated and fresh nodes were created
+    log('Result: ' + (!appendContainer.querySelector('#append-test b') ? 'PASS' : 'FAIL') + '\n');
+    appendContainer.innerHTML = '';
+
+    log('=== insertAdjacentHTML invalidates cache ===');
+    const adjacentContainer = document.createElement('div');
+    document.body.appendChild(adjacentContainer);
+    adjacentContainer.innerHTML = '<div id="adjacent-test">content</div>';
+    adjacentContainer.innerHTML = '<div id="adjacent-test">content</div><p>extension</p>';
+    // Mutate the cached DOM by inserting HTML into #adjacent-test
+    adjacentContainer.querySelector('#adjacent-test').insertAdjacentHTML('beforeend', '<span class="strong">inserted</span>');
+    // Because the cache was invalidated by insertAdjacentHTML,
+    // this creates fresh nodes from scratch
+    adjacentContainer.innerHTML = '<div id="adjacent-test">content</div><p>extension</p><div>more</div>';
+    log('insertAdjacentHTML then extend');
+    // Check if the inserted content carried over
+    // The test PASSES if there's no .strong element in #adjacent-test
+    log('Result: ' + (!adjacentContainer.querySelector('#adjacent-test .strong') ? 'PASS' : 'FAIL') + '\n');
+    adjacentContainer.innerHTML = ''; 
+
+    log('=== outerHTML invalidates cache ===');
+    const outerContainer = document.createElement('div');
+    document.body.appendChild(outerContainer);
+    outerContainer.innerHTML = '<div id="outer-test">content</div>';
+    outerContainer.innerHTML = '<div id="outer-test">content</div><span>extension</span>';
+    // Replace the cached element entirely with outerHTML (changes it from div to p)
+    outerContainer.querySelector('#outer-test').outerHTML = '<p id="outer-test">replaced</p>';
+    // Because the cache was invalidated by the outerHTML replacement,
+    // this creates fresh nodes from scratch
+    outerContainer.innerHTML = '<div id="outer-test">content</div><span>extension</span><div class="footer">more</div>';
+    log('outerHTML replacement then extend');
+    // Check if the element is back to being a DIV (not a P)
+    // The test PASSES if it's a DIV, proving fresh nodes were created
+    log('outer-test.tagName: ' + outerContainer.querySelector('#outer-test').tagName + ' (expected: DIV)');
+    log('Result: ' + (outerContainer.querySelector('#outer-test').tagName === 'DIV' ? 'PASS' : 'FAIL') + '\n');
+    outerContainer.innerHTML = '';
+
+    log('=== removeChild invalidates cache ===');
+    const removeContainer = document.createElement('div');
+    document.body.appendChild(removeContainer);
+    removeContainer.innerHTML = '<div id="remove-test"><span>child</span></div>';
+    removeContainer.innerHTML = '<div id="remove-test"><span>child</span></div><p>extension</p>';
+    // Remove the span element from the cached DOM
+    const childToRemove = removeContainer.querySelector('#remove-test span');
+    removeContainer.querySelector('#remove-test').removeChild(childToRemove);
+    // Because the cache was invalidated by removeChild,
+    // this creates fresh nodes from scratch
+    removeContainer.innerHTML = '<div id="remove-test"><span>child</span></div><p>extension</p><div class="footer">more</div>';
+    log('removeChild then extend');
+    // Check if the span is back (it should be, proving fresh nodes were created)
+    log('remove-test has span: ' + (removeContainer.querySelector('#remove-test span') !== null) + ' (expected: true)');
+    log('Result: ' + (removeContainer.querySelector('#remove-test span') !== null ? 'PASS' : 'FAIL') + '\n');
+    removeContainer.innerHTML = '';
+
+    log('=== textContent change invalidates cache ===');
+    const textContainer = document.createElement('div');
+    document.body.appendChild(textContainer);
+    textContainer.innerHTML = '<div id="text-test">original</div>';
+    textContainer.innerHTML = '<div id="text-test">original</div><span>extension</span>';
+    textContainer.querySelector('#text-test').textContent = 'changed';
+    textContainer.innerHTML = '<div id="text-test">original</div><span>extension</span><p>more</p>';
+    log('textContent change then extend');
+    log('text-test.textContent: "' + textContainer.querySelector('#text-test').textContent + '" (expected: "original")');
+    log('Result: ' + (textContainer.querySelector('#text-test').textContent === 'original' ? 'PASS' : 'FAIL') + '\n');
+    textContainer.innerHTML = '';
+
+    log('=== Descendant mutation invalidates cache ===');
+    const nestedContainer = document.createElement('div');
+    document.body.appendChild(nestedContainer);
+    nestedContainer.innerHTML = '<div id="outer-nested"><div id="middle"><span id="inner-nested">text</span></div></div>';
+    nestedContainer.innerHTML = '<div id="outer-nested"><div id="middle"><span id="inner-nested">text</span></div></div><p>extension</p>';
+    nestedContainer.querySelector('#inner-nested').textContent = 'changed';
+    nestedContainer.innerHTML = '<div id="outer-nested"><div id="middle"><span id="inner-nested">text</span></div></div><p>extension</p><div class="footer">more</div>';
+    log('Mutated grandchild element then extend');
+    log('inner-nested.textContent: "' + nestedContainer.querySelector('#inner-nested').textContent + '" (expected: "text")');
+    log('Result: ' + (nestedContainer.querySelector('#inner-nested').textContent === 'text' ? 'PASS' : 'FAIL') + '\n');
+    nestedContainer.innerHTML = ''; 
+}
+
+function testAttributeMutations() {
+    log('---------- Attribute Mutation Tests ----------\n');
+
+    log('=== Inline style change invalidates cache ===');
+    const colorContainer = document.createElement('div');
+    document.body.appendChild(colorContainer);
+    // Note: Avoiding inline style attributes in initial content for fast parser compatibility
+    colorContainer.innerHTML = '<div id="style-color-test">text</div>';
+    // Add style programmatically to the element
+    colorContainer.querySelector('#style-color-test').style.color = 'red';
+    colorContainer.innerHTML = '<div id="style-color-test">text</div><span>extension</span>';
+    // Mutate the cached element's style
+    colorContainer.querySelector('#style-color-test').style.color = 'blue';
+    // Because the cache was invalidated by the style mutation,
+    // this creates fresh nodes from scratch
+    colorContainer.innerHTML = '<div id="style-color-test">text</div><span>extension</span><p>more</p>';
+    log('Changed style.color to blue, then extended');
+    // Check if the style carried over
+    // The test PASSES if style.color is empty (no inline style)
+    const finalColor = colorContainer.querySelector('#style-color-test').style.color;
+    log('Final color: ' + finalColor + ' (expected: empty/default)');
+    log('Result: ' + (finalColor === '' ? 'PASS' : 'FAIL') + '\n');
+    colorContainer.innerHTML = ''; 
+
+    log('=== style.display change invalidates cache ===');
+    const displayContainer = document.createElement('div');
+    document.body.appendChild(displayContainer);
+    displayContainer.innerHTML = '<div id="style-display-test">visible</div>';
+    displayContainer.querySelector('#style-color-testb').style.display = 'block';
+    displayContainer.innerHTML = '<div id="style-display-test">visible</div><span>extension</span>';
+    displayContainer.querySelector('#style-color-testb').style.display = 'none';
+    displayContainer.innerHTML = '<div id="style-display-test">visible</div><span>extension</span><p>more</p>';
+    log('Changed style.display to none, then extended');
+    const finalDisplay = displayContainer.querySelector('#style-color-testb').style.display;
+    log('Final display: ' + finalDisplay + ' (expected: empty/default)');
+    log('Result: ' + (finalDisplay === '' ? 'PASS' : 'FAIL') + '\n');
+    displayContainer.innerHTML = ''; 
+
+    log('=== className change invalidates cache ===');
+    const classContainer = document.createElement('div');
+    document.body.appendChild(classContainer);
+    classContainer.innerHTML = '<div id="class-test" class="original">text</div>';
+    classContainer.innerHTML = '<div id="class-test" class="original">text</div><span>extension</span>';
+    classContainer.querySelector('#class-test').className = 'changed';
+    classContainer.innerHTML = '<div id="class-test" class="original">text</div><span>extension</span><p>more</p>';
+    log('Changed className then extended');
+    log('m7.className: "' + classContainer.querySelector('#class-test').className + '" (expected: "original")');
+    log('Result: ' + (classContainer.querySelector('#class-test').className === 'original' ? 'PASS' : 'FAIL') + '\n');
+    classContainer.innerHTML = ''; 
+
+    log('=== setAttribute invalidates cache ===');
+    const attrContainer = document.createElement('div');
+    document.body.appendChild(attrContainer);
+    // Using id attribute which is supported by fast parser
+    attrContainer.innerHTML = '<div id="attr-test">text</div>';
+    attrContainer.innerHTML = '<div id="attr-test">text</div><span>extension</span>';
+    // Add a data attribute to the cached element
+    attrContainer.querySelector('#attr-test').setAttribute('data-value', '999');
+    // Because the cache was invalidated by setAttribute,
+    // this creates fresh nodes from scratch
+    attrContainer.innerHTML = '<div id="attr-test">text</div><span>extension</span><p>more</p>';
+    log('Added attribute then extended');
+    // Check if the data-value attribute carried over
+    // The test PASSES if there's no data-value attribute
+    const hasDataValue = attrContainer.querySelector('#attr-test').hasAttribute('data-value');
+    log('Has data-value attribute: ' + hasDataValue + ' (expected: false)');
+    log('Result: ' + (!hasDataValue ? 'PASS' : 'FAIL') + '\n');
+    attrContainer.innerHTML = ''; 
+
+    log('=== Descendant attribute change invalidates cache ===');
+    const nestedAttrContainer = document.createElement('div');
+    document.body.appendChild(nestedAttrContainer);
+    nestedAttrContainer.innerHTML = '<div id="nested-attr-outer"><ul><li id="nested-attr-item" class="original">item</li></ul></div>';
+    nestedAttrContainer.innerHTML = '<div id="nested-attr-outer"><ul><li id="nested-attr-item" class="original">item</li></ul></div><span>extension</span>';
+    nestedAttrContainer.querySelector('#nested-attr-item').className = 'changed';
+    nestedAttrContainer.innerHTML = '<div id="nested-attr-outer"><ul><li id="nested-attr-item" class="original">item</li></ul></div><span>extension</span><div class="footer">more</div>';
+    log('Changed nested element className then extended');
+    log('nested.className: "' + nestedAttrContainer.querySelector('#nested-attr-item').className + '" (expected: "original")');
+    log('Result: ' + (nestedAttrContainer.querySelector('#nested-attr-item').className === 'original' ? 'PASS' : 'FAIL') + '\n');
+    nestedAttrContainer.innerHTML = ''; 
+}
+
+function testStringLength() {
+    log('---------- String Length Tests ----------\n');
+
+    log('=== Shorter string invalidates cache ===');
+    const shorterContainer = document.createElement('div');
+    document.body.appendChild(shorterContainer);
+    const longHTML = '<div>base</div><span>extra</span>';
+    const shortHTML = '<div>base</div>';
+    // Set long HTML string (caches it)
+    shorterContainer.innerHTML = longHTML;
+    // Set shorter HTML string (should invalidate cache since it's not a prefix extension)
+    shorterContainer.innerHTML = shortHTML;
+    // Set long HTML string again (should create fresh nodes, not reuse old cache)
+    shorterContainer.innerHTML = longHTML;
+    log('Set long -> short -> long');
+    // If cache was properly invalidated, we should have exactly 2 fresh children
+    log('children.length: ' + shorterContainer.children.length + ' (expected: 2)');
+    log('Result: ' + (shorterContainer.children.length === 2 ? 'PASS' : 'FAIL') + '\n');
+    shorterContainer.innerHTML = ''; 
+
+    log('=== Empty string invalidates cache ===');
+    const emptyContainer = document.createElement('div');
+    document.body.appendChild(emptyContainer);
+    emptyContainer.innerHTML = '<div>content</div>';
+    emptyContainer.innerHTML = '';
+    emptyContainer.innerHTML = '<div>content</div>';
+    log('Set content -> empty -> content');
+    log('children.length: ' + emptyContainer.children.length + ' (expected: 1)');
+    log('Result: ' + (emptyContainer.children.length === 1 ? 'PASS' : 'FAIL') + '\n');
+    // No need to reset here since the test already uses empty string
+}
+
+function testShadowDOM() {
+    log('---------- Shadow DOM Tests ----------\n');
+
+    log('=== Shadow DOM innerHTML caching ===');
+    const shadowHost1 = document.createElement('div');
+    document.body.appendChild(shadowHost1);
+    const shadow1 = shadowHost1.attachShadow({mode: 'open'});
+    shadow1.innerHTML = '<div>shadow base</div>';
+    shadow1.innerHTML = '<div>shadow base</div><span>extended</span>';
+    log('Set shadowRoot.innerHTML twice with prefix match');
+    log('shadow children.length: ' + shadow1.children.length + ' (expected: 2)');
+    log('Result: ' + (shadow1.children.length === 2 ? 'PASS' : 'FAIL') + '\n');
+    shadow1.innerHTML = ''; 
+
+    log('=== Shadow DOM mutation invalidates cache ===');
+    const shadowHost2 = document.createElement('div');
+    document.body.appendChild(shadowHost2);
+    const shadow2 = shadowHost2.attachShadow({mode: 'open'});
+    shadow2.innerHTML = '<div id="shadow-test">content</div>';
+    shadow2.innerHTML = '<div id="shadow-test">content</div><span>extension</span>';
+    shadow2.getElementById('shadow-test').appendChild(document.createElement('b'));
+    shadow2.innerHTML = '<div id="shadow-test">content</div><span>extension</span><p>more</p>';
+    log('Mutate shadow content then extend');
+    log('Result: ' + (!shadow2.getElementById('shadow-test').querySelector('b') ? 'PASS' : 'FAIL') + '\n');
+    shadow2.innerHTML = ''; 
+}
+
+function testCrossContainer() {
+    log('---------- Cross-Container Tests ----------\n');
+
+    log('=== Cache can be reused across different containers ===');
+    const container1 = document.createElement('div');
+    const container2 = document.createElement('div');
+    const container3 = document.createElement('div');
+    document.body.appendChild(container1);
+    document.body.appendChild(container2);
+    document.body.appendChild(container3);
+
+    // Set initial content in container1 (this caches it)
+    container1.innerHTML = '<div id="cross-container-test">content</div><span>more</span>';
+
+    // Set same content in container2 (should reuse cache from container1)
+    container2.innerHTML = '<div id="cross-container-test">content</div><span>more</span>';
+
+    // Extend in container3 with prefix match (should reuse cache)
+    container3.innerHTML = '<div id="cross-container-test">content</div><span>more</span><p>extended</p>';
+
+    log('Set same innerHTML across multiple containers');
+    log('container1 has content: ' + (container1.querySelector('#cross-container-test') !== null));
+    log('container2 has content: ' + (container2.querySelector('#cross-container-test') !== null));
+    log('container3 has extended content: ' + (container3.querySelector('p') !== null));
+    log('Result: ' + (container1.querySelector('#cross-container-test') && container2.querySelector('#cross-container-test') && container3.querySelector('p') ? 'PASS' : 'FAIL') + '\n');
+
+    container1.innerHTML = '';
+    container2.innerHTML = '';
+    container3.innerHTML = '';
+
+    log('=== Mutation in one container invalidates cache for all ===');
+    const mutateContainer1 = document.createElement('div');
+    const mutateContainer2 = document.createElement('div');
+    document.body.appendChild(mutateContainer1);
+    document.body.appendChild(mutateContainer2);
+
+    // Set content in first container (caches it)
+    mutateContainer1.innerHTML = '<div id="mutation-cross-test">original</div>';
+    mutateContainer1.innerHTML = '<div id="mutation-cross-test">original</div><span>extended</span>';
+
+    // Mutate the cached DOM
+    mutateContainer1.querySelector('#mutation-cross-test').appendChild(document.createElement('b'));
+
+    // Try to use cache in a different container
+    // Should create fresh nodes (cache was invalidated by mutation)
+    mutateContainer2.innerHTML = '<div id="mutation-cross-test">original</div><span>extended</span>';
+
+    log('Mutated container1, then set innerHTML in container2');
+    log('container2 has no <b> element: ' + (!mutateContainer2.querySelector('#mutation-cross-test b')));
+    log('Result: ' + (!mutateContainer2.querySelector('#mutation-cross-test b') ? 'PASS' : 'FAIL') + '\n');
+
+    mutateContainer1.innerHTML = '';
+    mutateContainer2.innerHTML = '';
+}
+
+function runTest() {
+    testPrefixReuse();
+    testDOMMutations();
+    testAttributeMutations();
+    testStringLength();
+    testShadowDOM();
+    testCrossContainer();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests innerHTML prefix cache mutations and invalidation.</p>
+<pre id="console"></pre>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            height: 100px;
+            width: 200px;
+            margin: 10px;
+        }
+        
+        svg {
+            background-color: silver;
+        }
+
+        svg:hover {
+            background-color: green;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            var svgElements = document.getElementsByTagName('svg');
+            var result = '';
+
+            for (var i = 0; i < svgElements.length; ++i) {
+                var element = svgElements[i];
+                
+                var rect = element.getBoundingClientRect();
+                var left = rect.left + 10;
+                var top = rect.top + 10;
+                var hitElement = document.elementFromPoint(left, top);
+                
+                if (element === hitElement)
+                    result += 'PASS: element at ' + left + ', ' + top + ' is ' + element.tagName + '\n';
+                else
+                    result += 'FAIL: expected to hit ' + element.tagName + ' at ' + left + ', ' + top + ' but hit ' + hitElement.tagName + '\n';
+            }
+            
+            document.getElementById('result').textContent = result;
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="container">
+	<svg  width="200" height="100"></svg>
+</div>
+
+<div class="container">
+	<svg width="200" height="100" style="display: block;"></svg>
+</div>
+<pre id="result"></pre>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<div id="description">This tests deleting a selection that starts at the beginning of an editable pocket inside a non-editable table. The caret should not disappear during the delete and should be placed inside the editable span. When text is then inserted, it should be placed inside that span.</div>
+<div id="edit" contentEditable="true">
+<div contentEditable="false"><span>&nbsp;</span><span contentEditable="true" id="start">Hello</span></div>
+<div id="end"><br></div>
+</div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+start = document.getElementById("start");
+end = document.getElementById("end");
+s = window.getSelection();
+s.setBaseAndExtent(start, 0, end, 0);
+document.execCommand("Delete");
+document.execCommand("InsertText", false, "Text");
+if (window.testRunner)
+    document.body.innerText = document.getElementById("description").innerText + "\n" + document.getElementById("edit").innerHTML;
+</script>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+:link { color: rgb(0, 255, 0); }
+:visited { color: rgb(255, 165, 0); }
+</style>
+</head>
+<body>
+<a id="lightLink">Light DOM link</a>
+<div id="openHost"></div>
+<div id="closedHost"></div>
+<div id="nestedHost"></div>
+<script>
+if (window.testRunner)
+    testRunner.keepWebHistory();
+
+const unvisitedColor = "rgb(0, 255, 0)";
+const visitedColor = "rgb(255, 165, 0)";
+
+// The visited link store persists across tests and iterations, so use a fragment that has never been visited.
+const fragment = `#visited-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+lightLink.href = fragment;
+
+function attachLink(host, mode)
+{
+    const shadowRoot = host.attachShadow({ mode });
+    shadowRoot.innerHTML = `<style>:link { color: ${unvisitedColor}; } :visited { color: ${visitedColor}; }</style><a href="${fragment}">Shadow link</a>`;
+    return shadowRoot.querySelector("a");
+}
+
+const links = {
+    "light DOM": lightLink,
+    "open shadow root": attachLink(openHost, "open"),
+    "closed shadow root": attachLink(closedHost, "closed"),
+    "nested shadow root": attachLink(nestedHost.attachShadow({ mode: "open" }).appendChild(document.createElement("div")), "open"),
+};
+
+function color(element)
+{
+    return internals.computedStyleIncludingVisitedInfo(element).color;
+}
+
+promise_test(async () => {
+    assert_own_property(window, "internals");
+
+    for (const [name, link] of Object.entries(links))
+        assert_equals(color(link), unvisitedColor, `${name} link before navigation`);
+
+    history.pushState(null, "", fragment);
+
+    for (const [name, link] of Object.entries(links)) {
+        await new Promise(resolve => {
+            const check = () => color(link) === visitedColor ? resolve() : setTimeout(check, 10);
+            check();
+        });
+    }
+}, "Links in shadow trees are restyled when they become visited");
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/timeline-event-utilities.js"></script>
+<script>
+function renderFrames()
+{
+    let frameCount = 0;
+    function update()
+    {
+        document.getElementById("target").style.width = `${100 + ++frameCount}px`;
+        if (frameCount < 12)
+            requestAnimationFrame(update);
+        else {
+            setTimeout(() => {
+                savePageData({frameCount});
+                console.timeStamp("finished-frames");
+            }, 0);
+        }
+    }
+    requestAnimationFrame(update);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineEvent.ScreenshotsMultipleFrames");
+    suite.addTestCase({
+        name: "TimelineEvent.ScreenshotsMultipleFrames.RenderingNotifications",
+        async test() {
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Layout, WI.TimelineRecord.Type.Script, WI.TimelineRecord.Type.Screenshots];
+            let data = await InspectorTest.TimelineEvent.captureTimelineWithMarker({
+                expression: "renderFrames()",
+                checkMarker: (marker) => marker.details === "finished-frames",
+                silent: true,
+            });
+            InspectorTest.expectEqual(data.frameCount, 12, "The page should complete all requested rendering updates.");
+
+            let recording = WI.timelineManager.activeRecording;
+            let screenshots = recording.timelines.get(WI.TimelineRecord.Type.Screenshots).records;
+            InspectorTest.expectGreaterThan(screenshots.length, 1, "Successive rendering updates should produce multiple screenshots.");
+            InspectorTest.expectTrue(screenshots.every((record) => record.imageData.length), "Every screenshot should contain image data.");
+            InspectorTest.expectTrue(screenshots.every((record, index) => !index || record.startTime > screenshots[index - 1].startTime), "Successive screenshots should have increasing timestamps.");
+
+            let composites = recording.timelines.get(WI.TimelineRecord.Type.Layout).records.filter((record) => record.eventType === WI.LayoutTimelineRecord.EventType.Composite);
+            InspectorTest.expectGreaterThan(composites.length, 1, "Successive rendering updates should complete multiple composite records.");
+            InspectorTest.expectTrue(composites.every((record) => record.endTime >= record.startTime), "Each composite record should finish after it starts.");
+        },
+    });
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+#target { width: 100px; height: 100px; background: green; }
+</style>
+</head>
+<body onload="runTest()">
+<div id="target"></div>
+</body>
+</html>

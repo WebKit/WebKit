@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, interactive-widget=resizes-content"/>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+        input {
+            width: 400px;
+            height: 50px;
+        }
+    </style>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input" type="text">
+    <script>
+        jsTestIsAsync = true;
+        addEventListener("load", async () => {
+            let textField = document.querySelector("input");
+
+            await UIHelper.activateElement(textField);
+            await UIHelper.waitForKeyboardToShow();
+
+            window.targetScrollTop = Math.floor((document.scrollingElement.scrollHeight - document.scrollingElement.clientHeight) / 2);
+            window.scrollTo(40, window.targetScrollTop);
+
+            await UIHelper.ensureVisibleContentRectUpdate();
+
+            window.keyboardTopInView = (await UIHelper.inputViewBoundsInWebView()).top;
+
+            shouldBeTrue('document.scrollingElement.scrollTop == window.targetScrollTop');
+            shouldBeTrue('document.scrollingElement.scrollLeft == 40');
+            shouldBeTrue('window.visualViewport.pageTop != 0');
+            shouldBeTrue('window.visualViewport.scale == 1');
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
+
+            shouldBeTrue('internals.layoutViewportRect().height == window.keyboardTopInView');
+
+            window.scrollTo(0, 0);
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            await UIHelper.ensureVisibleContentRectUpdate();
+
+            shouldBeTrue('document.scrollingElement.scrollTop == 0');
+            shouldBeTrue('document.scrollingElement.scrollLeft == 0');
+            shouldBeTrue('window.visualViewport.pageTop == 0');
+            shouldBeTrue('window.visualViewport.scale == 1');
+            shouldBeTrue('window.visualViewport.width == internals.layoutViewportRect().width');
+            shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
+            shouldBeTrue('internals.layoutViewportRect().height == window.keyboardTopInView');
+
+            finishJSTest();
+        });
+    </script>
+</body>
+
+</html>

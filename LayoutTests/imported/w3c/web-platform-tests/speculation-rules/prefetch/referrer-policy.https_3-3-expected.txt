@@ -1,0 +1,3 @@
+
+PASS with "no-referrer" referrer policy
+

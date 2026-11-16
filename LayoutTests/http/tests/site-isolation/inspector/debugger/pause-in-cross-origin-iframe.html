@@ -1,0 +1,84 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.Pause");
+
+    let crossOriginTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.Pause.Setup",
+        description: "Find the cross-origin frame target.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            crossOriginTarget = frameTargets.find((t) => t !== mainFrameTarget);
+
+            InspectorTest.expectNotNull(crossOriginTarget, "Should find a cross-origin frame target.");
+            InspectorTest.expectNotNull(crossOriginTarget.DebuggerAgent, "Cross-origin frame target should have a DebuggerAgent.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.Pause.DebuggerStatement",
+        description: "debugger; statement in cross-origin iframe should pause execution.",
+        async test() {
+            let whenPausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            crossOriginTarget.RuntimeAgent.evaluate.invoke({expression: "triggerDebugger()", objectGroup: "test"});
+
+            await whenPausedPromise;
+
+            InspectorTest.expectThat(WI.debuggerManager.paused, "Debugger should be paused.");
+
+            let targetData = WI.debuggerManager.dataForTarget(crossOriginTarget);
+            InspectorTest.expectThat(targetData.paused, "Frame target data should show paused state.");
+            InspectorTest.expectGreaterThan(targetData.stackTrace.callFrames.length, 0, "Should have call frames.");
+
+            let topCallFrame = targetData.stackTrace.callFrames[0];
+            InspectorTest.expectEqual(topCallFrame.functionName, "triggerDebugger", "Top call frame should be 'triggerDebugger'.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.Pause.EvaluateOnCallFrame",
+        description: "evaluateOnCallFrame should access the frame's locals and globals.",
+        async test() {
+            let targetData = WI.debuggerManager.dataForTarget(crossOriginTarget);
+            let topCallFrame = targetData.stackTrace.callFrames[0];
+
+            let result = await crossOriginTarget.DebuggerAgent.evaluateOnCallFrame.invoke({
+                callFrameId: topCallFrame.id,
+                expression: "frameGlobalValue",
+                objectGroup: "test",
+                returnByValue: true,
+            });
+
+            InspectorTest.expectEqual(result.result.value, "cross-origin-frame-value", "Should be able to access frame's global variable.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.Pause.Resume",
+        description: "Resuming should continue execution in the cross-origin iframe.",
+        async test() {
+            let whenResumedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+
+            await WI.debuggerManager.resume();
+
+            await whenResumedPromise;
+
+            InspectorTest.expectFalse(WI.debuggerManager.paused, "Debugger should no longer be paused.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that `debugger;` statements pause in cross-origin iframes, and can subsequently call evaluateOnCallFrame and resume.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/debugger-frame.html"></iframe>
+</body>

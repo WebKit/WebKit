@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%">
+  <g>
+    <filter filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" id="flt" x="0" y="0" width="50" height="100">
+      <feImage xlink:href="#img" />
+    </filter>
+    <rect filter="url(#flt)" width="50" height="100"/>
+
+    <g transform="translate(50 0)">
+      <g id="img">
+        <radialGradient />
+        <rect width="50" height="100" fill="green"/>
+      </g>
+    </g>
+  </g>
+</svg>

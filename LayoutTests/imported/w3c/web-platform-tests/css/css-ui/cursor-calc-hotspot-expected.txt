@@ -1,0 +1,6 @@
+
+PASS cursor hotspot with sign() depending on font relative units
+PASS cursor hotspot depending on sibling-index()
+PASS cursor hotspot depending on simplified numeric calc()
+PASS cursor hotspot depending on simplified numeric calc() with sign()
+

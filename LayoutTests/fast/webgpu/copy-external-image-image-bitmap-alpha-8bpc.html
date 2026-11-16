@@ -1,0 +1,122 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText(); }
+
+// The 8 bit half of copy-external-image-image-bitmap-alpha.html, split out because reaching an
+// unpremultiplied 8 bit decode needs kCGImageSourceCreateUnpremultipliedPNG, which
+// HAVE(IMAGEIO_CREATE_UNPREMULTIPLIED_PNG) does not cover on macOS. A 16 bit decode is
+// unpremultiplied either way, so the cases in the other file run everywhere.
+
+// A 4x4 8-bit RGBA PNG whose texels encode their own column in R and row in G, so a copy which
+// crops, flips or resizes wrongly yields a texel naming the position it came from. Alpha is 0
+// throughout, so these cases also fail if anything premultiplies on the way through.
+const geometryPngBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAACxJREFUeNoVyDEBADAQAjEkIA1JlYA0JPV+yBLZT0ExyCFQLBclUKwXI1AMH41iFgH8VEmYAAAAAElFTkSuQmCC';
+const geometrySize = 4;
+
+function geometryTexel(x, y)
+{
+    return [x * 64 + 16, y * 64 + 16, 128, 0];
+}
+
+function log(message)
+{
+    document.getElementById('result').textContent += message + '\n';
+}
+
+// How a WebGPU engine reaches copyExternalImageToTexture: encoded bytes in a Blob.
+function pngBlob(base64)
+{
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; ++i)
+        bytes[i] = binary.charCodeAt(i);
+    return new Blob([bytes], { type: 'image/png' });
+}
+
+async function copiedTexels(device, source, copyWidth, copyHeight)
+{
+    const texture = device.createTexture({
+        size: [copyWidth, copyHeight],
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+    device.queue.copyExternalImageToTexture({ source }, { texture, premultipliedAlpha: false }, [copyWidth, copyHeight]);
+
+    // copyTextureToBuffer wants a 256-byte aligned row, which is more than any row used here.
+    const bytesPerRow = 256;
+    const buffer = device.createBuffer({ size: bytesPerRow * copyHeight, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    const encoder = device.createCommandEncoder();
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow }, [copyWidth, copyHeight]);
+    device.queue.submit([encoder.finish()]);
+
+    await buffer.mapAsync(GPUMapMode.READ);
+    const texels = new Uint8Array(buffer.getMappedRange()).slice();
+    buffer.unmap();
+    // Released here so that running this test repeatedly in one process does not accumulate them.
+    buffer.destroy();
+    texture.destroy();
+    return { texels, bytesPerRow };
+}
+
+// ImageBitmaps hold an image buffer each, so they are closed once the checks have read them.
+const openBitmaps = [];
+function tracked(bitmap)
+{
+    openBitmaps.push(bitmap);
+    return bitmap;
+}
+
+// sourceOfDestination(x, y) names the source texel that must land at destination (x, y).
+async function checkGeometry(device, label, source, copyWidth, copyHeight, sourceOfDestination)
+{
+    const { texels, bytesPerRow } = await copiedTexels(device, source, copyWidth, copyHeight);
+    const tolerance = 2;
+    for (let y = 0; y < copyHeight; ++y) {
+        for (let x = 0; x < copyWidth; ++x) {
+            const [sourceX, sourceY] = sourceOfDestination(x, y);
+            const expected = geometryTexel(sourceX, sourceY);
+            const offset = y * bytesPerRow + x * 4;
+            const actual = Array.from(texels.subarray(offset, offset + 4));
+            const withinTolerance = expected.every((value, i) => Math.abs(actual[i] - value) <= tolerance);
+            log(withinTolerance ? `PASS ${label} at ${x},${y}`
+                : `FAIL ${label} at ${x},${y}: got ${actual.join(',')}, expected ${expected.join(',')} (source ${sourceX},${sourceY})`);
+        }
+    }
+}
+
+onload = async () => {
+    let device;
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        device = await adapter.requestDevice();
+        // Silent on a passing run, so a copy that fails instead of returning wrong texels says why.
+        device.addEventListener('uncapturederror', event => log(`FAIL GPU error ${event.error.message}`));
+
+        const geometry = pngBlob(geometryPngBase64);
+        const size = geometrySize;
+
+        // Nothing resampled: the pixels go in directly.
+        await checkGeometry(device, 'whole image', tracked(await createImageBitmap(geometry, { premultiplyAlpha: 'none' })),
+            size, size, (x, y) => [x, y]);
+
+        // flipY reverses the rows, which resamples through a graphics context instead.
+        await checkGeometry(device, 'flipY', tracked(await createImageBitmap(geometry, { premultiplyAlpha: 'none', imageOrientation: 'flipY' })),
+            size, size, (x, y) => [x, size - 1 - y]);
+
+        // Resizing scales the cropped rectangle, so each cropped texel becomes a 2x2 block.
+        await checkGeometry(device, 'crop 1,1 2x2 and resize 2x pixelated',
+            tracked(await createImageBitmap(geometry, 1, 1, 2, 2, { premultiplyAlpha: 'none', resizeWidth: 4, resizeHeight: 4, resizeQuality: 'pixelated' })),
+            4, 4, (x, y) => [1 + (x >> 1), 1 + (y >> 1)]);
+    } catch (error) {
+        log(`FAIL threw ${error}`);
+    } finally {
+        // Ten iterations of this test share one process, so nothing may outlive a single run.
+        for (const bitmap of openBitmaps)
+            bitmap.close();
+        device?.destroy();
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+<p>Tests that createImageBitmap(premultiplyAlpha: "none") preserves an 8 bit alpha channel that carries data rather than opacity, including when the copy crops, flips or resizes, so that GPUQueue.copyExternalImageToTexture can upload it.</p>
+<pre id="result"></pre>

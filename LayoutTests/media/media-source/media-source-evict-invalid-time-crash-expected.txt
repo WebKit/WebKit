@@ -1,0 +1,19 @@
+This tests that the eviction algorithm does not crash when the intersection of track buffer ranges becomes empty during memory pressure eviction.
+RUN(video.src = URL.createObjectURL(source))
+RUN(video.disableRemotePlayback = true)
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(initSegment = makeAInit(500, [makeATrack(1, 'mock', TRACK_KIND.VIDEO), makeATrack(2, 'mock', TRACK_KIND.AUDIO)]))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(makeSyncSamples(1, 200, 400)))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(makeSyncSamples(2, 250, 450)))
+EVENT(updateend)
+RUN(video.currentTime = 200)
+RUN(internals.beginSimulatedMemoryPressure())
+EVENT(bufferedchange)
+RUN(internals.endSimulatedMemoryPressure())
+PASS: No crash from eviction with invalidTime.
+END OF TEST
+

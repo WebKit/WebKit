@@ -1,0 +1,14 @@
+This line should be green.
+This line should be unstyled.
+This line should be unstyled.
+This line should be green.
+This line should be unstyled.
+This line should be green.
+This line should be green.
+This line should be unstyled.
+This line should be green.
+This line should be unstyled.
+This line should be green.
+
+PASS nth-of-type with hidden elements
+

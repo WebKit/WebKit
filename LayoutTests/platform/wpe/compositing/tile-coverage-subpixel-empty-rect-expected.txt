@@ -1,0 +1,35 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 3001.00 5100.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 3001.00 5100.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 1.00 2000.00)
+          (bounds 3000.00 3100.00)
+          (children 1
+            (GraphicsLayer
+              (position -1.00 0.00)
+              (anchor 0.50 0.50)
+              (bounds 3001.00 3101.00)
+              (drawsContent 1)
+              (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [-1.00 0.00 0.00 1.00])
+              (children 1
+                (GraphicsLayer
+                  (position 0.00 3000.00)
+                  (anchor 0.50 0.50)
+                  (bounds 101.00 101.00)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+Offscreen, but large, content
+

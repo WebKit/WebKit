@@ -1,0 +1,3 @@
+
+PASS runtime error in window.onerror
+

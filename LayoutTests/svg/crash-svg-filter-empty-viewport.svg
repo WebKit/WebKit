@@ -1,0 +1,28 @@
+<svg width="0" height="0" xmlns="http://www.w3.org/2000/svg" onload="test()">
+  <script href="../resources/js-test.js"/>
+  <filter id="filter"></filter>
+  <marker id="marker" orient="1" filter="url(#filter)"></marker>
+  <line marker-end="url(#marker)"></line>
+  <script>
+    description('Verify there is no crash when setting x/y baseVal on a filter referencing an empty viewport');
+
+    function test() {
+      let filter = document.getElementById("filter");
+      x = filter.x.baseVal;
+      shouldBe('x.unitType', "SVGLength.SVG_LENGTHTYPE_PERCENTAGE");
+      shouldBe('x.value', "-0");
+      x.value = 1;
+      shouldBe('x.unitType', "SVGLength.SVG_LENGTHTYPE_PERCENTAGE");
+      shouldBe('x.value', "0");
+      y = filter.y.baseVal;
+      shouldBe("y.unitType", "SVGLength.SVG_LENGTHTYPE_PERCENTAGE");
+      shouldBe("y.value", "-0");
+      y.value = 2;
+      shouldBe("y.unitType", "SVGLength.SVG_LENGTHTYPE_PERCENTAGE");
+      shouldBe("y.value", "0");
+
+      if (window.testRunner)
+        testRunner.dumpAsText();
+    }
+  </script>
+</svg>

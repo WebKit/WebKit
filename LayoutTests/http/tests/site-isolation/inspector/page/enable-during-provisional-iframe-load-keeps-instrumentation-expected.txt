@@ -1,0 +1,11 @@
+Tests that enabling Page while an iframe's load is provisional in another process keeps Page events flowing from that process under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.EnableDuringProvisionalIFrameLoadKeepsInstrumentation
+-- Running test case: SiteIsolation.Page.EnableDuringProvisionalIFrameLoadKeepsInstrumentation.Commit
+PASS: Provisional frame target should be paused.
+PASS: Provisional load should commit.
+PASS: Committed frame's target should be removed.
+PASS: Cross-origin frame's navigation should be committed in the frame model.
+

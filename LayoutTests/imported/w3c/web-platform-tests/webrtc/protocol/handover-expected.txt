@@ -1,0 +1,4 @@
+
+PASS Negotiation of handover initiated at caller works
+PASS Negotiation of handover initiated at callee works
+

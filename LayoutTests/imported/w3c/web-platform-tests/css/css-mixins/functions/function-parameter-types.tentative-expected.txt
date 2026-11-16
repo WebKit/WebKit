@@ -1,0 +1,10 @@
+
+PASS A parameter retains its type
+PASS A parameter type acts as a local registration
+PASS A parameter retains its type (parent stack frame)
+PASS A parameter type acts as a local registration (parent stack frame)
+PASS Universally typed parameter can shadow other parameters
+PASS Invalid value for typed local becomes IACVT
+PASS if() within @function can query registered custom property
+PASS A local is untyped even where a registration of the same name exists
+

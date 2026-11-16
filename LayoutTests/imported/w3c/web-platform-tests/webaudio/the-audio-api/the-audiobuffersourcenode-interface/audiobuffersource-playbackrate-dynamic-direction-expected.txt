@@ -1,0 +1,4 @@
+
+PASS Dynamic direction switch negative to positive honors duration
+PASS Dynamic direction switch positive to negative honors duration
+

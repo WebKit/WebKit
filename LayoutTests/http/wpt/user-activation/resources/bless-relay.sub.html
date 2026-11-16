@@ -1,0 +1,93 @@
+<!doctype html>
+<meta charset="utf-8" />
+<!-- Recursive relay frame for bless-nested.sub.html: builds the next descendant, then on
+     command blesses / reports / consumes at its own depth and posts results to window.top. -->
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<body></body>
+<script type="module">
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+    const depth = parseInt(params.get("depth"), 10);
+    // chain: origin URLs for this frame's descendants, resolved by the top.
+    const chain = JSON.parse(decodeURIComponent(params.get("chain") || "[]"));
+
+    const toTop = (msg) => window.top.postMessage(JSON.stringify(msg), "*");
+
+    if (!window.internals) {
+        toTop({
+            id,
+            depth,
+            type: "error",
+            reason: "no internals in this frame",
+        });
+    } else {
+        runRelay();
+    }
+
+    function runRelay() {
+        // Build the next descendant, offset from top-left (so the click must be resolved to
+        // top-window coordinates) and shrunk per depth so it stays fully inside its parent
+        // (a synthetic click cannot reach a clipped-away target).
+        if (chain.length) {
+            const childSrc =
+                chain[0] +
+                location.pathname +
+                `?id=${id}&depth=${depth + 1}&chain=${encodeURIComponent(JSON.stringify(chain.slice(1)))}`;
+            const iframe = document.createElement("iframe");
+            // Shrink per depth so each frame stays inside its parent, with a floor so very deep
+            // chains never produce a zero/negative (and thus unclickable) frame.
+            const width = Math.max(200, 700 - depth * 120);
+            const height = Math.max(150, 500 - depth * 100);
+            iframe.style =
+                `position:absolute; left:40px; top:40px; width:${width}px; height:${height}px;`;
+            iframe.src = childSrc;
+            document.body.appendChild(iframe);
+        }
+
+        window.addEventListener("message", async (event) => {
+            if (typeof event.data !== "string") return;
+            let msg;
+            try {
+                msg = JSON.parse(event.data);
+            } catch {
+                return;
+            }
+            if (msg.id !== id || msg.targetDepth !== depth || !msg.cmd) return;
+
+            switch (msg.cmd) {
+                case "bless":
+                    try {
+                        await test_driver.bless("user activation");
+                        toTop({
+                            id,
+                            depth,
+                            type: "done",
+                            ok: true,
+                            isActive: navigator.userActivation.isActive,
+                        });
+                    } catch (error) {
+                        toTop({
+                            id,
+                            depth,
+                            type: "done",
+                            ok: false,
+                            error: String(error),
+                            stack: error?.stack,
+                        });
+                    }
+                    break;
+                case "report":
+                    toTop({
+                        id,
+                        depth,
+                        type: "state",
+                        hasBeenActive: navigator.userActivation.hasBeenActive,
+                    });
+                    break;
+            }
+        });
+
+        toTop({ id, depth, type: "ready" });
+    }
+</script>

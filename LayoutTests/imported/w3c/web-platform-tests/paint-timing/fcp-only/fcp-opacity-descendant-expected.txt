@@ -1,0 +1,4 @@
+Text
+
+PASS First contentful paint fires due to its ancestor getting positive opacity.
+

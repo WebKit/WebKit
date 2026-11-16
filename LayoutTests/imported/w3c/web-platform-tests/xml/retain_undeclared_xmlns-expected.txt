@@ -1,0 +1,6 @@
+
+PASS xmlns="" attribute is retained when only prefixed namespaces are in scope
+PASS xmlns="" attribute is retained on root element
+PASS xmlns="" attribute is retained when no namespaces are in scope
+PASS xmlns="" attribute is retained when undeclaring a default namespace
+

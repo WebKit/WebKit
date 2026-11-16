@@ -1,0 +1,5 @@
+PASS Left edge of block lines up with right edge of previous block.
+PASS Left edge of block lines up with right edge of previous block.
+PASS Left edge of block lines up with right edge of previous block.
+PASS Left edge of block lines up with right edge of previous block.
+

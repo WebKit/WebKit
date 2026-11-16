@@ -1,0 +1,3 @@
+
+FAIL Fetched sheet replaces placeholder including replaceSync content. assert_equals: Before replaceSync: expected 1 placeholder(s). expected 1 but got 0
+

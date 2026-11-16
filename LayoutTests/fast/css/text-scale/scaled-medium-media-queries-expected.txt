@@ -1,0 +1,6 @@
+
+PASS The media queries flip between L and XXXL
+PASS Category L: em and rem in media queries use the scaled medium
+PASS Category XXXL: em and rem in media queries use the scaled medium
+PASS A MediaQueryList with em gets a change event when the text scale changes
+

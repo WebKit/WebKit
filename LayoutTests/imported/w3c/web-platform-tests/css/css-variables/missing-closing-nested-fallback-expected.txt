@@ -1,0 +1,3 @@
+
+PASS Variable substitution with missing closing parenthesis
+

@@ -1,0 +1,5 @@
+
+PASS A ReadableStream can be transferred to an AudioWorkletProcessor
+PASS A WritableStream can be transferred to an AudioWorkletProcessor
+PASS A TransformStream can be transferred to an AudioWorkletProcessor
+

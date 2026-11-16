@@ -1,0 +1,14 @@
+Tests that setting AXSelectedTextMarkerRange on a web area correctly moves the selection inside a textarea in an iframe. This exercises the setSelectedVisiblePositionRange code path where the accessibility object is the web area but the target position is inside a textarea's shadow DOM.
+
+PASS: rootWebArea.role === 'AXRole: AXWebArea'
+PASS: textarea.role === 'AXRole: AXTextArea'
+PASS: textareaElement.selectionStart === 10
+PASS: textareaElement.selectionEnd === 10
+PASS: textareaElement.selectionStart === 9
+PASS: textareaElement.selectionEnd === 13
+PASS: textarea.stringForTextMarkerRange(selectedRange) === 'dark'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

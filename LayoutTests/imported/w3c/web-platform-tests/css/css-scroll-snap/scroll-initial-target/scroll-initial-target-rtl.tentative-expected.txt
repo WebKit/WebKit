@@ -1,0 +1,3 @@
+
+FAIL scroll-initial-target reflects vertical rtl writing mode. assert_equals: scroller is vertically scrolled to scroll-initial-target expected 291 but got 0
+

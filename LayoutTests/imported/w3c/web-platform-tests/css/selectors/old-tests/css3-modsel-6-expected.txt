@@ -1,0 +1,4 @@
+This line should have a green background.
+
+PASS address[title=foo] should be lime
+

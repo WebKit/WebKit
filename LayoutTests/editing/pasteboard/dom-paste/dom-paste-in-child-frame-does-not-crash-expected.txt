@@ -1,0 +1,13 @@
+Click to copy
+Click to paste
+
+Verifies that programmatic paste in a child frame with the same origin as the parent does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS copiedText became true
+PASS pastedText became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

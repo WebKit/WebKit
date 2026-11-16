@@ -1,0 +1,27 @@
+load(
+    "//bazel:skia_rules.bzl",
+    "skia_cc_library",
+    "skia_filegroup",
+)
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "gpu_tools",
+    srcs = ["GpuTools.h"],
+    visibility = ["//tools/viewer:__pkg__"],
+)
+
+skia_cc_library(
+    name = "benchmark",
+    srcs = ["Benchmark.cpp"],
+    hdrs = ["Benchmark.h"],
+    deps = [
+        "//:core",
+        "//tools:registry",
+    ],
+)

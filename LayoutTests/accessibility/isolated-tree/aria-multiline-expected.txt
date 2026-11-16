@@ -1,0 +1,14 @@
+This tests that aria-multiline will change the role of a text control from a text field to a text area.
+
+#textfield role: AXRole: AXTextField
+#textarea role: AXRole: AXTextArea
+
+Setting #textfield aria-multiline to true and #textarea aria-multiline to false.
+#textfield role: AXRole: AXTextArea
+#textarea role: AXRole: AXTextField
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a
+b

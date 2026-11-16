@@ -1,0 +1,10 @@
+
+PASS eval(string) in shared worker
+PASS indirect eval(string) in shared worker
+PASS eval(TrustedScript) in shared worker
+PASS indirect eval(TrustedScript) in shared worker
+PASS eval(string) with default policy in shared worker
+PASS indirect eval(string) with default policy in shared worker
+PASS eval(string) with default policy mutation in shared worker
+PASS indirect eval(string) with default policy mutation in shared worker
+

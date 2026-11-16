@@ -1,0 +1,15 @@
+Tests that a nested timer changing the style of a visible element does not get throttled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The timer should initially not be throttled.
+PASS internals.isTimerThrottled(timeoutId) is false
+5th iteration, timer should not have been throttled.
+PASS wasThrottled is false
+6th iteration, timer should still be unthrottled.
+PASS internals.isTimerThrottled(timeoutId) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test

@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("A tap inside a cross-origin iframe must report screenX/screenY in top-level page coordinates rather than relative to the iframe.");
+jsTestIsAsync = true;
+
+let eventScreenX, eventScreenY, eventClientX, eventClientY, iframeOffsetX, iframeOffsetY;
+
+addEventListener("message", (event) => {
+    eventScreenX = event.data.screenX;
+    eventScreenY = event.data.screenY;
+    eventClientX = event.data.clientX;
+    eventClientY = event.data.clientY;
+
+    const rect = document.querySelector("iframe").getBoundingClientRect();
+    iframeOffsetX = rect.left;
+    iframeOffsetY = rect.top;
+
+    shouldBe("eventScreenX - eventClientX", "iframeOffsetX");
+    shouldBe("eventScreenY - eventClientY", "iframeOffsetY");
+    finishJSTest();
+});
+
+function onLoad() {
+    UIHelper.tapAt(220, 260);
+}
+</script>
+</head>
+<body style="margin: 0;">
+<iframe onload="onLoad()" style="position: absolute; left: 150px; top: 200px; width: 300px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/touch-events/resources/post-message-click-screen-coordinates.html"></iframe>
+</body>
+</html>

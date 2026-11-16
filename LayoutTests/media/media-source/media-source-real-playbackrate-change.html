@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-playbackrate-change</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Verifies that changing playbackRate during playback does not stall or
+    // error. Catches regressions where the GPU process flushes audio/video
+    // renderers on rate change but the WebContent process is never notified:
+    //   - Audio stops on rate change (bug 308952)
+
+    var source;
+    var sourceBuffer;
+    var timeBeforeRateChange;
+    var timeAfterRestore;
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(MP4.VIDEO_TYPE);
+
+        var initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // 6 seconds of all-sync video.
+        var samples = [];
+        for (var i = 0; i < 6; i++) {
+            samples.push({
+                duration: 1000,
+                compositionTimeOffset: 0,
+                isSync: true,
+            });
+        }
+        var media = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples }]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        source.endOfStream();
+
+        run('video.play()');
+        await waitFor(video, 'playing');
+        await testExpectedEventually('video.currentTime', 0, '>', 5000);
+
+        // Change rate to 2x
+        timeBeforeRateChange = video.currentTime;
+        run('video.playbackRate = 2');
+        testExpected('video.paused', false);
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+        testExpected('video.currentTime > timeBeforeRateChange', true);
+        testExpected('video.paused', false);
+
+        // Change rate back to 1x
+        run('video.playbackRate = 1');
+        timeAfterRestore = video.currentTime;
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+        testExpected('video.currentTime > timeAfterRestore', true);
+        testExpected('video.paused', false);
+
+        testExpected('video.error', null);
+
+        run('video.pause()');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

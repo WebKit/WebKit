@@ -1,0 +1,7 @@
+
+PASS initialize
+PASS existence
+PASS parameters
+PASS exceptions-createBiquadFilter
+PASS exceptions-getFrequencyData
+

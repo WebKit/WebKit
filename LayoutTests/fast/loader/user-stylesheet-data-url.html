@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>User style sheet from a data: URL</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function utf8ToBase64(string) {
+    return btoa(String.fromCharCode(...new TextEncoder().encode(string)));
+}
+
+function testUserStyleSheet(location, expected, description) {
+    test(() => {
+        testRunner.setUserStyleSheetLocation(location);
+        const value = getComputedStyle(document.body).getPropertyValue("--test");
+        testRunner.setUserStyleSheetLocation("");
+        assert_equals(value, expected);
+    }, description);
+}
+
+testRunner.setUserStyleSheetEnabled(true);
+
+testUserStyleSheet(`data:TEXT/CSS;CHARSET=UTF-8;BASE64,${btoa("body{--test:uppercase}")}`, "uppercase", "Uppercase media type and base64 indicator");
+testUserStyleSheet(`data:text/css;base64,${btoa("body{--test:no-charset}")}`, "no-charset", "Base64 without a charset parameter");
+testUserStyleSheet(`data:text/css,${encodeURIComponent("body{--test:percent-encoded}")}`, "percent-encoded", "Percent-encoded");
+testUserStyleSheet(`data:,${encodeURIComponent("body{--test:no-media-type}")}`, "no-media-type", "No media type");
+testUserStyleSheet(`data:text/css;charset=utf-8;base64,${btoa("body{--test:fragment}")}#fragment`, "fragment", "Fragment");
+testUserStyleSheet(`data:text/css;charset=utf-8;base64,${utf8ToBase64("body{--test:\u00E9}")}`, "\u00E9", "UTF-8");
+testUserStyleSheet(`data:text/css;charset=iso-8859-1;base64,${btoa("body{--test:\u00E9}")}`, "\u00E9", "Non-UTF-8 charset parameter");
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.noAutoDump();
+Markup.waitUntilDone();
+
+function editingTest() {
+    for (i = 0; i < 39; i++)
+        extendSelectionForwardByCharacterCommand();
+
+    Markup.dump('root', 'Before copy');
+    copyCommand();
+    pasteCommand();
+    Markup.dump('root', 'After first paste');
+
+    pasteCommand();
+    Markup.dump('root', 'After second paste');
+
+    Markup.notifyDone();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body onload="runEditingTest();" contenteditable id="root">
+
+<div id="test" class="editing">There is a tide in the affairs of men,<div class="editing">Which taken at the flood leads on to fortune.<div class="editing">Omitted, all the voyage of their life,<div class="editing">Is bound in shallows and in miseries.</div></div></div></div>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<html>
+<head>
+<style>
+blockquote {
+    border: 1px dashed #aaa;
+    padding: 0.5em;
+    margin: 0.5em;
+}
+</style>
+</head>
+<body>
+<p>This tests for a bug where indented text would appear quoted in GoogleDocs.  Google docs uses blockquotes and FormatBlock to implement a "Quote Text" feature, and style rules for blockquotes appeared on the blockquotes that we use to implement indenting.</p>
+<div contenteditable="true">
+<div id="div">This should be indented, not quoted.</div>
+<blockquote>This text should be Quoted.</blockquote>
+</div>
+
+<script>
+var selection = window.getSelection();
+var div = document.getElementById("div");
+
+selection.setPosition(div, 0);
+document.execCommand("Indent");
+</script>
+</body>
+</html>

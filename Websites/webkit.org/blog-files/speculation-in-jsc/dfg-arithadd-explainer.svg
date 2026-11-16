@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-10.702296 34.99359 720.7023 218.7606" width="720.7023" height="218.7606">
+  <defs>
+    <font-face font-family="Monaco" font-size="12" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Monaco"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 11 4 3 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="1153.8462" x-height="514" cap-height="714" ascent="966.9952" descent="-212.99744" font-style="italic" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-ThinItalic"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.14.1 
+    <dc:date>2020-04-05 02:04:45 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-opacity="1" stroke="none" fill-opacity="1" stroke-dasharray="none" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="-10.702296" y="34.99359" width="720.7023" height="218.7606"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_56">
+        <text transform="translate(199.20793 150)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">ArithAdd(</tspan>
+        </text>
+      </g>
+      <g id="Graphic_34">
+        <text transform="translate(-5.702296 106.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="18.55" y="13">The name of the </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="1.559" y="29.37709">variable defined by this </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="10.854" y="45.75418">instruction. We can </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="9.645" y="62.13127">refer to the resulting </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="24.79" y="78.50836">value as @25.</tspan>
+        </text>
+      </g>
+      <g id="Line_36">
+        <line x1="114.71698" y1="151.62264" x2="155.15613" y2="155.94728" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_37">
+        <text transform="translate(117.5 210.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="19.5595" y="13">The opcode.</tspan>
+        </text>
+      </g>
+      <g id="Line_38">
+        <line x1="186.96456" y1="205.5" x2="226.8904" y2="170.8908" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_39">
+        <text transform="translate(167 83.37709)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="1.305" y="13">The operands (children).</tspan>
+        </text>
+      </g>
+      <g id="Line_40">
+        <line x1="250.47793" y1="104.75418" x2="293.18173" y2="137.92673" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_41">
+        <line x1="264.56332" y1="104.75418" x2="347.8873" y2="140.13103" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_43">
+        <text transform="translate(393 210.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="7.961" y="13">The variables used by </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="29.0015" y="29.37709">the operands.</tspan>
+        </text>
+      </g>
+      <g id="Line_44">
+        <line x1="413.01693" y1="205.5" x2="335.07646" y2="169.65598" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_45">
+        <line x1="440.34213" y1="205.5" x2="410.21267" y2="171.88039" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_46">
+        <text transform="translate(224 216)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="18.6035" y="13">The type speculations </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="6.923" y="29.37709">chosen for this instruction.</tspan>
+        </text>
+      </g>
+      <g id="Line_47">
+        <line x1="297.2168" y1="211" x2="289.94495" y2="174.70707" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_48">
+        <line x1="323.88284" y1="211" x2="363.84064" y2="172.83766" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_49">
+        <text transform="translate(351 67)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x=".7395" y="13">Flag indicating additional </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="9.768" y="29.37709">speculation decision.</tspan>
+        </text>
+      </g>
+      <g id="Line_50">
+        <line x1="435.8972" y1="104.75418" x2="467.82346" y2="141.85168" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_51">
+        <text transform="translate(550 202.31145)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="8.572" y="13">Flag indicating that this </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="2.15" y="29.37709">instruction may OSR exit.</tspan>
+        </text>
+      </g>
+      <g id="Line_52">
+        <line x1="593.07354" y1="197.31145" x2="561.7255" y2="172.19082" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_53">
+        <text transform="translate(520.5 39.99359)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="10.311" y="13">The semantic and exit origin of </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x=".288" y="29.37709">this instruction (two separate fields </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="8.543" y="45.75418">displayed as one because they </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="36.09" y="62.13127">happen to be equal).</tspan>
+        </text>
+      </g>
+      <g id="Line_54">
+        <line x1="604.9518" y1="110.50195" x2="599.0026" y2="139.30466" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_55">
+        <text transform="translate(170.60059 150)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">25:</tspan>
+        </text>
+      </g>
+      <g id="Graphic_57">
+        <text transform="translate(264.55074 150)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">Int32:@23,</tspan>
+        </text>
+      </g>
+      <g id="Graphic_58">
+        <text transform="translate(343.4287 150)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">Int32:@24,</tspan>
+        </text>
+      </g>
+      <g id="Graphic_59">
+        <text transform="translate(422.61024 150)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">CheckOverflow,</tspan>
+        </text>
+      </g>
+      <g id="Graphic_60">
+        <text transform="translate(530.59646 150)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">Exits,</tspan>
+        </text>
+      </g>
+      <g id="Graphic_61">
+        <text transform="translate(581.0674 150)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">bc#7)</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

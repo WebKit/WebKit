@@ -1,0 +1,3 @@
+
+PASS same-origin direct: hide/show an iframe with a suspended AudioContext (visibility=visibility)
+

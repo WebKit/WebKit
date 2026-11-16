@@ -1,0 +1,4 @@
+
+
+PASS document.applets should return an empty collection.
+

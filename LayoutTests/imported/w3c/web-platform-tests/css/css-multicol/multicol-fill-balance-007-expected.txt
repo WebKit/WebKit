@@ -1,0 +1,5 @@
+Test passes if there is a filled green square below.
+
+
+PASS #container 1
+

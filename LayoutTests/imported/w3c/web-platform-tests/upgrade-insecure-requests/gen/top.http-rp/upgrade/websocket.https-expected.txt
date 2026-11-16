@@ -1,0 +1,4 @@
+
+PASS Upgrade-Insecure-Requests: Expects allowed for websocket to cross-ws-downgrade origin and no-redirect redirection from https context.
+PASS Upgrade-Insecure-Requests: Expects allowed for websocket to same-ws-downgrade origin and no-redirect redirection from https context.
+

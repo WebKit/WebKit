@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/document-leak-test.js"></script>
+<script>
+    description("Tests that animations with animation-timeline:none do not leak the document object");
+    onload = () => runDocumentLeakTest({ frameURL: "resources/animation-timeline-leak-test.html", framesToCreate: 20 });
+</script>
+</body>
+</html>

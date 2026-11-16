@@ -1,0 +1,4 @@
+
+PASS Test referer header https://web-platform.test:9443/beacon/resources/
+PASS Test referer header http://web-platform.test:8800/beacon/resources/
+

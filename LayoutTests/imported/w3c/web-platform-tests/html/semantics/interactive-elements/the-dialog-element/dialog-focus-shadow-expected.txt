@@ -1,0 +1,53 @@
+Focus between tests
+
+PASS show: No autofocus, no delegatesFocus, no siblings
+PASS showModal: No autofocus, no delegatesFocus, no siblings
+PASS show: No autofocus, no delegatesFocus, sibling before
+PASS showModal: No autofocus, no delegatesFocus, sibling before
+PASS show: No autofocus, no delegatesFocus, sibling after
+PASS showModal: No autofocus, no delegatesFocus, sibling after
+PASS show: No autofocus, yes delegatesFocus, no siblings
+PASS showModal: No autofocus, yes delegatesFocus, no siblings
+PASS show: No autofocus, yes delegatesFocus, sibling before
+PASS showModal: No autofocus, yes delegatesFocus, sibling before
+PASS show: No autofocus, yes delegatesFocus, sibling after
+PASS showModal: No autofocus, yes delegatesFocus, sibling after
+PASS show: Autofocus before, no delegatesFocus
+PASS showModal: Autofocus before, no delegatesFocus
+PASS show: Autofocus before, yes delegatesFocus
+PASS showModal: Autofocus before, yes delegatesFocus
+PASS show: Autofocus after, no delegatesFocus
+PASS showModal: Autofocus after, no delegatesFocus
+PASS show: Autofocus after, yes delegatesFocus
+PASS showModal: Autofocus after, yes delegatesFocus
+PASS show: Autofocus on shadow host, yes delegatesFocus, no siblings
+PASS showModal: Autofocus on shadow host, yes delegatesFocus, no siblings
+PASS show: Autofocus on shadow host, yes delegatesFocus, sibling before
+PASS showModal: Autofocus on shadow host, yes delegatesFocus, sibling before
+PASS show: Autofocus on shadow host, yes delegatesFocus, sibling after
+PASS showModal: Autofocus on shadow host, yes delegatesFocus, sibling after
+PASS show: Autofocus on shadow host, no delegatesFocus, no siblings
+PASS showModal: Autofocus on shadow host, no delegatesFocus, no siblings
+PASS show: Autofocus on shadow host, no delegatesFocus, sibling before
+PASS showModal: Autofocus on shadow host, no delegatesFocus, sibling before
+PASS show: Autofocus on shadow host, no delegatesFocus, sibling after
+PASS showModal: Autofocus on shadow host, no delegatesFocus, sibling after
+PASS show: Autofocus inside shadow tree, yes delegatesFocus, no siblings
+PASS showModal: Autofocus inside shadow tree, yes delegatesFocus, no siblings
+PASS show: Autofocus inside shadow tree, yes delegatesFocus, sibling before
+PASS showModal: Autofocus inside shadow tree, yes delegatesFocus, sibling before
+PASS show: Autofocus inside shadow tree, yes delegatesFocus, sibling after
+PASS showModal: Autofocus inside shadow tree, yes delegatesFocus, sibling after
+PASS show: Autofocus inside shadow tree, no delegatesFocus, no siblings
+PASS showModal: Autofocus inside shadow tree, no delegatesFocus, no siblings
+PASS show: Autofocus inside shadow tree, no delegatesFocus, sibling before
+PASS showModal: Autofocus inside shadow tree, no delegatesFocus, sibling before
+PASS show: Autofocus inside shadow tree, no delegatesFocus, sibling after
+PASS showModal: Autofocus inside shadow tree, no delegatesFocus, sibling after
+PASS show: Two shadow trees, both delegatesFocus, first tree doesn't have autofocus element, second does
+PASS showModal: Two shadow trees, both delegatesFocus, first tree doesn't have autofocus element, second does
+PASS show: No autofocus, no delegatesFocus, slotted target
+PASS showModal: No autofocus, no delegatesFocus, slotted target
+PASS show: Shadowroot on child, no autofocus, no delegatesFocus
+PASS showModal: Shadowroot on child, no autofocus, no delegatesFocus
+

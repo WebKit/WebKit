@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/local/fileapi/resources/temp-file-utils.js"></script>
+<script>
+const tempFileContent = "TEST";
+const tempFileName = "test.tmp";
+
+const path = createTempFile(tempFileName, tempFileContent);
+window.parent.postMessage(path, "*");
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MetaViewportInteractiveWidgetEnabled=false ] -->
+<head>
+    <title>The interactive-widget key is not recognized when the feature is disabled, even for otherwise valid values.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
+    <script>
+        function test() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                alert(internals.configurationForViewport(1, 320, 480, 320, 352));
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

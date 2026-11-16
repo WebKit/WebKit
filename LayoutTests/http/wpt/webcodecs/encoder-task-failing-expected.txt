@@ -1,0 +1,3 @@
+
+PASS Test that H264 encoding failure is propagated to JavaScript
+

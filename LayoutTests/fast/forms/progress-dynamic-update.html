@@ -1,0 +1,18 @@
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function load()
+{
+    setTimeout(() => {
+        progress.value = 70;
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+</script>
+<body onload="load()">
+<progress id="progress" max="100" value="50"></progress>

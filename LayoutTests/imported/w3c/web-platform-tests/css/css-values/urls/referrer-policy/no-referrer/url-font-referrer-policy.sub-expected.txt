@@ -1,0 +1,4 @@
+X
+
+PASS referrer-policy(no-referrer) sends no referrer for @font-face
+

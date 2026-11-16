@@ -1,0 +1,5 @@
+Test passes if it does not CRASH in debug.
+
+This test is verifying that setting a table rows height to [min|max|fit]-content does not ASSERT.
+
+

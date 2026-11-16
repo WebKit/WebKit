@@ -1,0 +1,4 @@
+
+PASS DOMParser in an about:blank document
+PASS DOMParser in an about:srcdoc document
+

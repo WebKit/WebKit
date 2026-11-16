@@ -1,0 +1,13 @@
+<script>
+    var changeEventFired = false;
+
+    onload = () => {
+        cookieStore.addEventListener('change', (event) => {
+            changeEventFired = true;
+        });
+
+        window.addEventListener('message', event => {
+            parent.postMessage(changeEventFired, '*');
+        }, { once: true });
+    }
+</script>

@@ -1,0 +1,16 @@
+<style>
+div {
+  width: 100px;
+  background-color: green;
+  padding: 1px;
+}
+
+span::before {
+  display: block;
+  content: '';
+  margin-top: 100px;
+  margin-bottom: 100px;
+}
+</style>
+<!-- empty content should not prevent margin collapsing -->
+<div><span></span></div>

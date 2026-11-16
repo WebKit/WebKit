@@ -1,0 +1,6 @@
+PointerEvent: Verifies that mouse boundary events don't point to shadow-dom
+
+
+
+PASS PointerEvent: Verifies that mouse boundary events don't point to shadow-dom
+

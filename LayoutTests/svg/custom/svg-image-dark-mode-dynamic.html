@@ -1,0 +1,81 @@
+<meta name="fuzzy" content="maxDifference=0-255; totalPixels=0-400" />
+<style>
+    svg, img, div {
+        width: 200px;
+        height: 200px;
+    }  
+    .light-dark {
+        display: inline-block;
+        background-image: url("resources/light-dark-red-green.svg");
+    }
+    .prefers-color-scheme {
+        display: inline-block;
+        background-image: url("resources/prefers-color-scheme-dark-red-green.svg");
+    }
+    .centered {
+        text-align: center;
+    }
+</style>
+<body>
+    <table>
+        <tr>
+             <td colspan="3"><h3>light-dark() CSS function</h3></td>
+        </tr>
+        <tr>
+            <td>
+                <svg style="color-scheme: light dark;" fill="light-dark(red, green)">
+                    <rect width="100%" height="100%"/>
+                </svg>
+            </td>
+            <td>
+                <img src="resources/light-dark-red-green.svg">
+            </td>
+            <td>
+                <div class="light-dark"></div>
+            </td>
+        </tr>
+        <tr>
+            <td><span class="centered">inline SVG</span></td>
+            <td><span class="centered">&lt;img&gt; src</span></td>
+            <td><span class="centered"> CSS background-image</span></td>
+        </tr>
+        <tr>
+             <td colspan="3"><h3>prefers-color-scheme media query</h3></td>
+        </tr>
+        <tr>
+            <td>
+                <svg style="color-scheme: light dark;">
+                    <style>
+                        rect { fill: red; }
+                        @media (prefers-color-scheme: dark) {
+                            rect { fill: green; }
+                        }
+                    </style>
+                    <rect width="100%" height="100%"/>
+                </svg>
+            </td>
+            <td>
+                <img src="resources/prefers-color-scheme-dark-red-green.svg">
+            </td>
+            <td>
+                <div class="prefers-color-scheme"></div>
+            </td>
+        </tr>
+        <tr>
+            <td><span class="centered">inline SVG</span></td>
+            <td><span class="centered">&lt;img&gt; src</span></td>
+            <td><span class="centered"> CSS background-image</span></td>
+        </tr>
+    </table>
+    <script>
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    window.testRunner.setUseDarkAppearanceForTesting(true);
+                    window.testRunner.notifyDone();
+                });
+            });
+    </script>
+</body>

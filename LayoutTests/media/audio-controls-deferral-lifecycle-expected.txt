@@ -1,0 +1,13 @@
+
+
+PASS Controls are built when an offscreen audio element is scrolled into view
+PASS Focusing an offscreen audio element builds its controls
+PASS Showing a text track on an offscreen audio element keeps its controls deferred
+PASS An offscreen audio element removed and inserted again still builds its controls when scrolled into view
+PASS A deferred audio element inserted again near the viewport builds its controls
+PASS An offscreen audio element adopted by another document builds its controls there
+PASS A deferred audio element adopted while its build is scheduled can schedule the build again after insertion
+PASS Adding the controls attribute to an offscreen audio element defers its controls
+PASS Removing and adding the controls attribute while the controls are deferred keeps them deferred until the element is near the viewport
+PASS Adding the controls attribute near the viewport after removing it while the controls were deferred builds them
+

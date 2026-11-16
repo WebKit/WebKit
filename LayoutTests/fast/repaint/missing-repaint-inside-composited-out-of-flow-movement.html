@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<title>Content inside a composited box that moves must repaint.</title>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+#box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: 100px;
+  will-change: transform;
+}
+#target {
+  display: inline-block;
+  width: 200px;
+  height: 100px;
+  vertical-align: top;
+  background-color: red;
+}
+</style>
+<div id=box><span id=target></span></div>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+  box.style.left = "50px";
+  target.style.backgroundColor = "green";
+  await UIHelper.renderingUpdate();
+  await UIHelper.renderingUpdate();
+  window.testRunner?.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

@@ -1,0 +1,6 @@
+
+one
+two
+
+PASS CSS animations on option elements restart when the base-select picker reopens.
+

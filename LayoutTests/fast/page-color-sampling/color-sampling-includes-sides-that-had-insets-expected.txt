@@ -1,0 +1,10 @@
+PASS initialEdgeColors.top is "rgb(0, 122, 255)"
+PASS initialEdgeColors.bottom is "rgb(255, 59, 48)"
+PASS afterRemovingInset.top is "rgb(0, 122, 255)"
+PASS initialEdgeColors.bottom is "rgb(255, 59, 48)"
+PASS afterRemovingBottomContainer.top is "rgb(0, 122, 255)"
+PASS afterRemovingBottomContainer.bottom is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

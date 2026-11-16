@@ -1,0 +1,51 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  globalThis.testRunner?.dumpAsText();
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let module = device.createShaderModule({
+      code: `
+@group(0) @binding(0) var<storage, read_write> buffer0: u32;
+
+@compute @workgroup_size(1)
+fn compute0() {
+  var i = 0x555u;
+  loop {
+    if i < 0x1000 { continue; }
+    break;
+    continuing { i += 1u; }
+  }
+  buffer0 = i;
+}
+`,
+    });
+    let bindGroupLayout0 = device.createBindGroupLayout({entries: [{binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: {type: 'storage'}}]});
+    let storageBuffer0 = device.createBuffer({size: 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC});
+    let commandEncoder0 = device.createCommandEncoder({});
+    let computePassEncoder0 = commandEncoder0.beginComputePass();
+    let pipeline0 = device.createComputePipeline({layout: device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout0]}), compute: {module}});
+    computePassEncoder0.setPipeline(pipeline0);
+    let bindGroup0 = device.createBindGroup({layout: bindGroupLayout0, entries: [{binding: 0, resource: {buffer: storageBuffer0}}]});
+    computePassEncoder0.setBindGroup(0, bindGroup0);
+    computePassEncoder0.dispatchWorkgroups(1);
+    computePassEncoder0.end();
+    let outputBuffer0 = device.createBuffer({size: storageBuffer0.size, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST});
+    commandEncoder0.copyBufferToBuffer(storageBuffer0, 0, outputBuffer0, 0, outputBuffer0.size);
+    let commandBuffer0 = commandEncoder0.finish();
+    device.queue.submit([commandBuffer0]);
+    await device.queue.onSubmittedWorkDone();
+    await outputBuffer0.mapAsync(GPUMapMode.READ);
+    console.log([...new Uint32Array(outputBuffer0.getMappedRange())].map(x => x.toString(0x10)).join(' '));
+    outputBuffer0.unmap();
+    let error = await device.popErrorScope();
+    if (error) {
+      console.log(error.message);
+    } else {
+      console.log('no validation error');
+    }
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

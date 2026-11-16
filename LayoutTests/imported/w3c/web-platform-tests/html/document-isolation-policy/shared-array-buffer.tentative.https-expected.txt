@@ -1,0 +1,5 @@
+
+PASS A SharedArrayBuffer posted by a popup with isolate-and-require-corp to its same-origin frame with isolate-and-require-corp arrives and shares memory with it
+FAIL A SharedArrayBuffer posted by a popup with isolate-and-require-corp to its same-origin frame with isolate-and-credentialless arrives and shares memory with it assert_equals: message event data expected "[object SharedArrayBuffer]" but got "messageerror"
+PASS A SharedArrayBuffer posted by a popup with isolate-and-require-corp to its same-origin frame without a policy fires messageerror at the frame
+

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<div id="description">This tests list creation in an editable context but across non-editable content. Editable content should be pulled into the list and not crash.</div>
+<div contenteditable="true" id="test" style="padding: 1em;">
+  Editable paragraph containing a <span contenteditable="false" style="background-color: LightGray;">non-editable</span> in the middle<br>
+  Another editable paragraph.
+</div>
+<button onclick="insertList();">Insert List</button>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+function insertList() {
+  document.execCommand('insertunorderedlist', false, '');
+}
+
+var s = window.getSelection();
+var div = document.getElementById("test");
+s.setPosition(div.childNodes[0], 10);
+s.modify("extend", "forward", "line");
+
+if (window.testRunner) {
+  insertList();
+  Markup.description(document.getElementById('description').innerText);
+  Markup.dump(div);
+}
+</script>

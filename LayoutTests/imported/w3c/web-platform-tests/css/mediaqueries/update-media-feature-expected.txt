@@ -1,0 +1,16 @@
+
+PASS Should be known: '(update)'
+PASS Should be known: '(update: none)'
+PASS Should be known: '(update: slow)'
+PASS Should be known: '(update: fast)'
+PASS Should be parseable: '(update: ?)'
+PASS Should be unknown: '(update: ?)'
+PASS Should be parseable: '(update: 10px)'
+PASS Should be unknown: '(update: 10px)'
+PASS Should be parseable: '(update: 0)'
+PASS Should be unknown: '(update: 0)'
+PASS Check that update: fast always matches fast displays
+PASS Check that update: slow doesn't match fast displays
+PASS Check that update: none doesn't match fast displays
+PASS Check that update always matches non printing documents
+

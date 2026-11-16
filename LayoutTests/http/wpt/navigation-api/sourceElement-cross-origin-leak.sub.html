@@ -1,0 +1,28 @@
+<!doctype html><!-- webkit-test-runner [ SiteIsolationEnabled=false ] -->
+<meta charset="utf-8">
+<title>NavigateEvent.sourceElement must not leak parent DOM cross-origin (rdar://180371329)</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<section id="account-panel" data-account-id="ACCOUNT_314159">
+  <h2>Private account area</h2>
+  <p id="profile-email">alice@example.test</p>
+</section>
+<a id="victim-link"
+   href="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/navigation-api/resources/sourceElement-cross-origin-leak-frame.html#updated"
+   target="targetFrame">Refresh embedded frame</a>
+<iframe name="targetFrame"
+        src="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/navigation-api/resources/sourceElement-cross-origin-leak-frame.html"></iframe>
+<script>
+async_test(t => {
+  window.addEventListener("message", t.step_func(e => {
+    if (e.data.type === "ready") {
+      document.getElementById("victim-link").click();
+    } else if (e.data.type === "result") {
+      assert_true(e.data.sourceElementIsNull,
+        "sourceElement must be null for cross-origin initiators (was tagName=" + e.data.tagName +
+        ", leakedEmail=" + e.data.leakedEmail + ", leakedAccountId=" + e.data.leakedAccountId + ")");
+      t.done();
+    }
+  }));
+}, "NavigateEvent.sourceElement must be null for cross-origin same-document initiators (parent DOM read)");
+</script>

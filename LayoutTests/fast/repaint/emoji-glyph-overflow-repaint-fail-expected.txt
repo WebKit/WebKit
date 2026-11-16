@@ -1,0 +1,7 @@
+(repaint rects
+  (rect 8 10 21 17)
+  (rect 8 7 784 201)
+  (rect 8 7 784 1)
+  (rect 8 7 784 1)
+)
+

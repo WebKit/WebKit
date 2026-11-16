@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+#container { height: 0; overflow: hidden; }
+</style>
+</head>
+<body>
+
+<div id="container" role="group"></div>
+
+<script>
+var output = "This test ensures deeply chained aria-owns relations don't cause a timeout due to quadratic cycle detection.\n\n";
+var axContainer;
+
+if (window.accessibilityController) {
+    const container = document.getElementById("container");
+    const count = 3000;
+
+    // Create a flat list of sibling elements chained via aria-owns:
+    // e0 owns e1, e1 owns e2, ..., eN-1 owns eN.
+    // This produces an AX tree much deeper than the DOM tree,
+    // stress-testing the parent-chain walk in aria-owns cycle detection.
+    for (let i = 0; i < count; i++) {
+        const div = document.createElement("div");
+        div.id = `e${i}`;
+        div.setAttribute("role", "group");
+        if (i < count - 1)
+            div.setAttribute("aria-owns", `e${i + 1}`);
+        container.appendChild(div);
+    }
+
+    // Accessing the AX tree triggers relation processing, including cycle detection.
+    axContainer = accessibilityController.accessibleElementById("container");
+    output += expect("axContainer.childrenCount > 0", "true");
+
+    output += "PASS: Did not timeout.\n";
+    debug(output);
+}
+</script>
+</body>
+</html>

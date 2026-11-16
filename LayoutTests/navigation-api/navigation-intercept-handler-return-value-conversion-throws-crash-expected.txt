@@ -1,0 +1,3 @@
+Tests that an intercept() handler or precommitHandler whose return value throws while being converted to a promise does not crash.
+
+PASS

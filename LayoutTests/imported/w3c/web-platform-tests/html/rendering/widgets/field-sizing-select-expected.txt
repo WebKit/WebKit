@@ -1,0 +1,8 @@
+
+
+PASS dropdown: The width should depend on the selected OPTION
+PASS dropdown: Change the field-sizing value dynamically
+PASS listbox: The size depend on the content
+PASS listbox: The size attribute value is ignored
+PASS listbox: Change the field-sizing value dynamically
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>ruby-overhang: none is a legacy alias of spaces (identical layout)</title>
+<link rel="help" href="https://drafts.csswg.org/css-ruby-1/#propdef-ruby-overhang">
+<link rel="author" title="Alan Baradlay" href="mailto:zalan@apple.com">
+<style>
+  body { margin: 0; }
+  div { font-family: Ahem; font-size: 20px; line-height: 3; }
+  ruby, rt { color: transparent; }
+</style>
+<!--
+  'none' must behave exactly like 'spaces' (it is a legacy alias), so the annotation
+  overhangs the adjacent spaces and shifts the trailing (visible) "X" identically to the
+  reference, which uses 'spaces'.
+-->
+<div>X <ruby style="ruby-overhang: none">X<rt>XXXX</rt></ruby> X</div>

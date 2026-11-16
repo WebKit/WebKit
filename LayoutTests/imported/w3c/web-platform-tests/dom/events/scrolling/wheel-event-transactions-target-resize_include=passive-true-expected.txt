@@ -1,0 +1,3 @@
+
+FAIL Resize the initial target and use a passive:true listener assert_equals: Wheel event at `0` does not match the expected target expected Element node <div id="initialTarget" class="spacer" style="background:... but got Element node <div id="firstRootSpacer" class="spacer" style="backgroun...
+

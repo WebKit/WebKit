@@ -1,0 +1,6 @@
+x
+x
+x
+
+PASS table vspace hspace (standards mode)
+

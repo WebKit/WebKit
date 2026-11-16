@@ -1,0 +1,13 @@
+Tests that 'ic' unit remains proportional to 'em' when the frame text zoom factor is applied (simulating Safari's browser zoom). 1ic must equal 1em regardless of text zoom. Regression test for https://bugs.webkit.org/show_bug.cgi?id=279086.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+--- text zoom: 1.5, letter-spacing ---
+PASS getComputedStyle(icEl).letterSpacing is getComputedStyle(emEl).letterSpacing
+--- text zoom: 1.5, line-height ---
+PASS getComputedStyle(icEl).lineHeight is getComputedStyle(emEl).lineHeight
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

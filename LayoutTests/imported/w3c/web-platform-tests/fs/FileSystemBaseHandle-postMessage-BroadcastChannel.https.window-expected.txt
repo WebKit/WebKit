@@ -1,0 +1,3 @@
+
+PASS Send and receive messages using a broadcast channel in an iframe, dedicated worker and service worker.
+

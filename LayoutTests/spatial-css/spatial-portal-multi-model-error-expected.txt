@@ -1,0 +1,3 @@
+
+PASS A failing <model> in a spatial portal does not prevent its sibling from loading
+

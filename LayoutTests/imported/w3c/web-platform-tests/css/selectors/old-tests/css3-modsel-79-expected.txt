@@ -1,0 +1,7 @@
+This div contains 3 addresses :
+A first address with normal background
+A second address that should have a green background
+A third address that should have a green background
+
+PASS NEGATED :first-of-type pseudo-class
+

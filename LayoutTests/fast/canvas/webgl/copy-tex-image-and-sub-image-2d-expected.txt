@@ -1,0 +1,73 @@
+
+Verify copyTexImage2D and copyTexSubImage2D
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Testing with antialias on
+PASS getError was expected value: NO_ERROR :
+Testing copyTexImage2D
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS copyTexImage2D is correct (drawn texture was red)
+Testing copyTexSubImage2D
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS copyTexImage2D is correct (drawn texture was green)
+Testing copyTexImage2D from partial FBO rectangle
+PASS copyTexImage2D from partial FBO rectangle is correct (drawn texture was redish)
+PASS getError was expected value: NO_ERROR :
+Testing copyTexSubImage2D from partial FBO rectangle
+PASS copyTexSubImage2D from partial FBO rectangle is correct (drawn texture greenish)
+PASS getError was expected value: NO_ERROR :
+Testing with antialias off
+PASS getError was expected value: NO_ERROR :
+Testing copyTexImage2D
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS copyTexImage2D is correct (drawn texture was red)
+Testing copyTexSubImage2D
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS copyTexImage2D is correct (drawn texture was green)
+Testing copyTexImage2D from partial FBO rectangle
+PASS copyTexImage2D from partial FBO rectangle is correct (drawn texture was redish)
+PASS getError was expected value: NO_ERROR :
+Testing copyTexSubImage2D from partial FBO rectangle
+PASS copyTexSubImage2D from partial FBO rectangle is correct (drawn texture greenish)
+PASS getError was expected value: NO_ERROR :
+Testing with antialias on, WebGL2
+PASS getError was expected value: NO_ERROR :
+Testing copyTexImage2D
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS copyTexImage2D is correct (drawn texture was red)
+Testing copyTexSubImage2D
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS copyTexImage2D is correct (drawn texture was green)
+Testing copyTexImage2D from partial FBO rectangle
+PASS copyTexImage2D from partial FBO rectangle is correct (drawn texture was redish)
+PASS getError was expected value: NO_ERROR :
+Testing copyTexSubImage2D from partial FBO rectangle
+PASS copyTexSubImage2D from partial FBO rectangle is correct (drawn texture greenish)
+PASS getError was expected value: NO_ERROR :
+Testing with antialias off, WebGL2
+PASS getError was expected value: NO_ERROR :
+Testing copyTexImage2D
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS copyTexImage2D is correct (drawn texture was red)
+Testing copyTexSubImage2D
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS copyTexImage2D is correct (drawn texture was green)
+Testing copyTexImage2D from partial FBO rectangle
+PASS copyTexImage2D from partial FBO rectangle is correct (drawn texture was redish)
+PASS getError was expected value: NO_ERROR :
+Testing copyTexSubImage2D from partial FBO rectangle
+PASS copyTexSubImage2D from partial FBO rectangle is correct (drawn texture greenish)
+PASS getError was expected value: NO_ERROR :
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

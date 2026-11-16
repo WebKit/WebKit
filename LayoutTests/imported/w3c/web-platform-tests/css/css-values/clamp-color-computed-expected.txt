@@ -1,0 +1,17 @@
+
+PASS Property color value 'rgb(clamp(10, 20, 30) 0 0)'
+PASS Property color value 'rgb(clamp(none, 30, 33) 0 0)'
+PASS Property color value 'rgb(clamp(none, 33, 30) 0 0)'
+PASS Property color value 'rgb(clamp(30, 33, none) 0 0)'
+PASS Property color value 'rgb(clamp(33, 30, none) 0 0)'
+PASS Property color value 'rgb(clamp(none, 30, none) 0 0)'
+PASS Property color value 'rgb(from red clamp(r, 30, 300) g b)'
+PASS Property color value 'rgb(from red clamp(30, 300, r) g b)'
+PASS Property color value 'rgb(from red clamp(3, r, 300) g b)'
+PASS Property color value 'rgb(from red clamp(3, r, r + 30) g b)'
+PASS Property color value 'rgb(from red clamp(r - 30, r, 300) g b)'
+PASS Property color value 'rgb(from red clamp(3, r, none) g b)'
+PASS Property color value 'rgb(from red clamp(r, 30, none) g b)'
+PASS Property color value 'rgb(from red clamp(none, r, 300) g b)'
+PASS Property color value 'rgb(from red clamp(none, r, r + 30) g b)'
+

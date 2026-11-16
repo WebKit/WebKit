@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<body style="margin: 0; background-color: green">
+<script>
+window.addEventListener("message", event => {
+    if (event.data === "start") {
+        internals.startTrackingRenderingUpdates();
+        event.source.postMessage("started", "*");
+    } else if (event.data === "count")
+        event.source.postMessage(internals.renderingUpdateCount(), "*");
+});
+window.parent.postMessage("loaded", "*");
+</script>
+</body>

@@ -1,0 +1,15 @@
+
+PASS all preloads must be fetched by the preload scanner
+PASS link-preload-initial-load
+PASS link-preload-initial-load 1
+PASS link-preload-initial-load 2
+PASS link-preload-initial-load 3
+PASS link-preload-initial-load 4
+PASS link-preload-initial-load 5
+PASS link-preload-initial-load 6
+PASS link-preload-initial-load 7
+PASS link-preload-initial-load 8
+PASS link-preload-initial-load 9
+PASS link-preload-initial-load 10
+PASS link-preload-initial-load 11
+

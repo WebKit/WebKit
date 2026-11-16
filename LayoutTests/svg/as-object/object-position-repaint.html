@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>A change inside an SVG document in &lt;object&gt; repaints where 'object-fit' and 'object-position' place it</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+object {
+    width: 100px;
+    height: 100px;
+    border: 10px solid black;
+    padding: 10px;
+    object-fit: none;
+    object-position: right bottom;
+}
+</style>
+</head>
+<body>
+<object id="object" type="image/svg+xml" data="resources/rect-50x50.svg"></object>
+<script>
+promise_test(async () => {
+    await new Promise(resolve => window.addEventListener("load", resolve));
+    let rect = object.contentDocument.getElementById("rect");
+    object.contentDocument.documentElement.getBoundingClientRect();
+
+    internals.startTrackingRepaints();
+    rect.setAttribute("fill", "blue");
+    object.contentDocument.documentElement.getBoundingClientRect();
+    let repaintRects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+
+    // The 50x50 SVG is at (70, 70) in the 100x100 content box at (20, 20).
+    let rects = [...repaintRects.matchAll(/\(rect ([\d.-]+) ([\d.-]+) ([\d.-]+) ([\d.-]+)\)/g)].map(match => match.slice(1).map(Number));
+    assert_greater_than(rects.length, 0, repaintRects);
+    for (let [x, y, width, height] of rects)
+        assert_true(x >= 70 && y >= 70 && x + width <= 120 && y + height <= 120, repaintRects);
+}, "Repaints from inside the SVG document are offset by 'object-position'");
+</script>
+</body>
+</html>

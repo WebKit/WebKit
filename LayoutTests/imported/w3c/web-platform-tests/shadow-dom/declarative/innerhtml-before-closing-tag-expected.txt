@@ -1,0 +1,3 @@
+
+PASS Declarative Shadow DOM: innerHTML should work while parsing streaming declarative shadow root <template>
+

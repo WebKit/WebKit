@@ -1,0 +1,4 @@
+
+PASS children on Element instances remains live across batched mutations and supported access methods
+PASS childNodes on Node instances remains live across batched mutations and supported access methods
+

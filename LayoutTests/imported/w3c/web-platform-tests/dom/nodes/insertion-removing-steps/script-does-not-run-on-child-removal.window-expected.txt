@@ -1,0 +1,3 @@
+
+PASS Script execution is never triggered on child removals
+

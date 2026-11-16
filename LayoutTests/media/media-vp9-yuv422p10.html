@@ -1,0 +1,29 @@
+<html>
+<meta name="fuzzy" content="maxDifference=0-134; totalPixels=0-438550" />
+<head>
+<title>webm file with vp9 422 10 bits</title>
+<script src="../resources/testharness.js"></script>
+<script src="utilities.js"></script>
+<script>
+    // image: ffmpeg -sseof -3 -i test-vp9-yuv422p10.webm -pred mixed -pix_fmt rgb24 -sws_flags +accurate_rnd+full_chroma_int -update 1 -q:v 1 -vf "scale=in_range=tv:out_range=tv" test-vp9-yuv422p10.webm.png
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        let v = document.getElementsByTagName('video')[0];
+        v.src = "content/test-vp9-yuv422p10.webm";
+        await once(v, 'canplay');
+        v.play();
+        // duration of the last frame.
+        v.currentTime = v.duration - 0.02;
+        await Promise.all([ once(v, 'seeked'), once(v, 'ended') ]);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video/>
+</body>
+</html>

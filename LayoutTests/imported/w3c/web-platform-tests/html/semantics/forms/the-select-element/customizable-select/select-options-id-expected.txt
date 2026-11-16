@@ -1,0 +1,6 @@
+
+
+PASS Option elements should work if they are a descendant of a selects wrapper div.
+PASS Options in wrapper div should still work when the multiple attribute is added.
+PASS Options in wrapper div in multiple should work after re-parsing and re-attaching.
+

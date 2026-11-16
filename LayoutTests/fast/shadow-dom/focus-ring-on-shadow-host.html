@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+#host:focus {
+    width: 50px;
+    height: 50px;
+    background: green;
+    overflow: hidden;
+}
+</style>
+<div id="host"></div>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+const shadowRoot = host.attachShadow({mode: 'closed', delegatesFocus: true});
+shadowRoot.innerHTML = `<div tabindex="0"></div>
+<style>
+div { width: 100px; height: 100px; background: green; }
+</style>`;
+const foucsableElement = shadowRoot.querySelector('div');
+
+onload = runTest;
+
+async function runTest() {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
+
+    eventSender.mouseMoveTo(host.offsetLeft + 5, host.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    await new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
+
+    if (UIHelper.isWebKit2())
+        await UIHelper.resignFirstResponder();
+    else
+        window.testRunner.setMainFrameIsFirstResponder(false);
+
+    await new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
+
+    testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

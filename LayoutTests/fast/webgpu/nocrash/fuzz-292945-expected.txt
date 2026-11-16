@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: promises created
+CONSOLE MESSAGE: the end
+CONSOLE MESSAGE: fuzz-292945.html
+CONSOLE MESSAGE: Pass
+

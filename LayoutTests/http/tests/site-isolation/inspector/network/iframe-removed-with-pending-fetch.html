@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function fetchAndRemoveIFrame(token) {
+    let iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    iframe.contentWindow.fetch(`/site-isolation/inspector/network/resources/data.json?removed-${token}`).catch(() => {});
+    iframe.remove();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.IFrameRemovedWithPendingFetch");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.IFrameRemovedWithPendingFetch.FetchSettles",
+        description: "Removing an iframe while its fetch is pending should fail the fetch as canceled instead of leaving it pending.",
+        timeout: 20000,
+        async test() {
+            // Unique per run, so repeated runs in one process never share a request.
+            let token = String(Math.random()).slice(2);
+            let origin = await InspectorTest.evaluateInPage("location.origin");
+            let url = `${origin}/site-isolation/inspector/network/resources/data.json?removed-${token}`;
+            let recorder = new FrameLoadRowRecorder;
+
+            InspectorTest.evaluateInPage(`fetchAndRemoveIFrame("${token}")`);
+
+            let resource = await pollUntil(() => recorder.rowsForURL(url)[0]);
+            InspectorTest.expectThat(!!resource, "Fetch should be added.");
+            if (resource) {
+                InspectorTest.expectEqual(await awaitResourceSettled(resource), "failed", "Fetch should fail instead of staying pending.");
+                InspectorTest.expectThat(resource.canceled, "Fetch should be marked as canceled.");
+                InspectorTest.expectEqual(recorder.rowsForURL(url).length, 1, "Fetch should be listed once.");
+            }
+            InspectorTest.expectEqual(await pollUntil(() => WI.networkManager.mainFrame.childFrameCollection.size === 0), true, "Removed iframe should not leave a child frame behind.");
+
+            recorder.stop();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that removing an iframe while its fetch is pending fails the fetch in the Network model, under Site Isolation.</p>
+</body>

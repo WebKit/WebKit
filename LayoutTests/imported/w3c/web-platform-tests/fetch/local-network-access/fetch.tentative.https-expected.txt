@@ -1,0 +1,6 @@
+
+PASS LNA Public to local with permission
+PASS LNA Public to local with permission denied
+PASS LNA Public to local http mixed content bypass
+PASS LNA Public to public http mixed content bypass failure
+

@@ -1,0 +1,200 @@
+Test the key attribute on KeyboardEvent.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+* keydown
+PASS keyboardEvent.key is " "
+* keyup
+PASS keyboardEvent.key is " "
+
+* keydown
+PASS keyboardEvent.key is "a"
+* keyup
+PASS keyboardEvent.key is "a"
+
+* keydown
+PASS keyboardEvent.key is "Backspace"
+* keyup
+PASS keyboardEvent.key is "Backspace"
+
+* keydown
+PASS keyboardEvent.key is "Escape"
+* keyup
+PASS keyboardEvent.key is "Escape"
+
+* keydown
+PASS keyboardEvent.key is "ArrowLeft"
+* keyup
+PASS keyboardEvent.key is "ArrowLeft"
+
+* keydown
+PASS keyboardEvent.key is "ArrowRight"
+* keyup
+PASS keyboardEvent.key is "ArrowRight"
+
+* keydown
+PASS keyboardEvent.key is "ArrowUp"
+* keyup
+PASS keyboardEvent.key is "ArrowUp"
+
+* keydown
+PASS keyboardEvent.key is "ArrowDown"
+* keyup
+PASS keyboardEvent.key is "ArrowDown"
+
+* keydown
+PASS keyboardEvent.key is "PageUp"
+* keyup
+PASS keyboardEvent.key is "PageUp"
+
+* keydown
+PASS keyboardEvent.key is "PageDown"
+* keyup
+PASS keyboardEvent.key is "PageDown"
+
+* keydown
+PASS keyboardEvent.key is "Home"
+* keyup
+PASS keyboardEvent.key is "Home"
+
+* keydown
+PASS keyboardEvent.key is "End"
+* keyup
+PASS keyboardEvent.key is "End"
+
+* keydown
+PASS keyboardEvent.key is "Insert"
+* keyup
+PASS keyboardEvent.key is "Insert"
+
+* keydown
+PASS keyboardEvent.key is "Delete"
+* keyup
+PASS keyboardEvent.key is "Delete"
+
+* keydown
+PASS keyboardEvent.key is "PrintScreen"
+* keyup
+PASS keyboardEvent.key is "PrintScreen"
+
+* keydown
+PASS keyboardEvent.key is "Control"
+* keyup
+PASS keyboardEvent.key is "Control"
+
+* keydown
+PASS keyboardEvent.key is "Shift"
+* keyup
+PASS keyboardEvent.key is "Shift"
+
+* keydown
+PASS keyboardEvent.key is "Alt"
+* keyup
+PASS keyboardEvent.key is "Alt"
+
+* keydown
+PASS keyboardEvent.key is "Control"
+* keyup
+PASS keyboardEvent.key is "Control"
+
+* keydown
+PASS keyboardEvent.key is "Shift"
+* keyup
+PASS keyboardEvent.key is "Shift"
+
+* keydown
+PASS keyboardEvent.key is "Alt"
+* keyup
+PASS keyboardEvent.key is "Alt"
+
+* keydown
+PASS keyboardEvent.key is "F1"
+* keyup
+PASS keyboardEvent.key is "F1"
+
+* keydown
+PASS keyboardEvent.key is "F2"
+* keyup
+PASS keyboardEvent.key is "F2"
+
+* keydown
+PASS keyboardEvent.key is "F3"
+* keyup
+PASS keyboardEvent.key is "F3"
+
+* keydown
+PASS keyboardEvent.key is "F4"
+* keyup
+PASS keyboardEvent.key is "F4"
+
+* keydown
+PASS keyboardEvent.key is "F5"
+* keyup
+PASS keyboardEvent.key is "F5"
+
+* keydown
+PASS keyboardEvent.key is "F6"
+* keyup
+PASS keyboardEvent.key is "F6"
+
+* keydown
+PASS keyboardEvent.key is "F7"
+* keyup
+PASS keyboardEvent.key is "F7"
+
+* keydown
+PASS keyboardEvent.key is "F8"
+* keyup
+PASS keyboardEvent.key is "F8"
+
+* keydown
+PASS keyboardEvent.key is "F9"
+* keyup
+PASS keyboardEvent.key is "F9"
+
+* keydown
+PASS keyboardEvent.key is "F10"
+* keyup
+PASS keyboardEvent.key is "F10"
+
+* keydown
+PASS keyboardEvent.key is "F11"
+* keyup
+PASS keyboardEvent.key is "F11"
+
+* keydown
+PASS keyboardEvent.key is "F12"
+* keyup
+PASS keyboardEvent.key is "F12"
+
+* keydown
+PASS keyboardEvent.key is "Enter"
+* keyup
+PASS keyboardEvent.key is "Enter"
+
+* keydown
+PASS keyboardEvent.key is "A"
+* keyup
+PASS keyboardEvent.key is "A"
+
+* keydown
+PASS keyboardEvent.key is "a"
+* keyup
+PASS keyboardEvent.key is "a"
+
+* keydown
+PASS keyboardEvent.key is "a"
+* keyup
+PASS keyboardEvent.key is "a"
+
+* keydown
+PASS keyboardEvent.key is "1"
+* keyup
+PASS keyboardEvent.key is "1"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+
+PASS :empty is a valid selector
+

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; height: 40000px; }
+/* A fixed, composited layer the scrolling thread must reposition on every
+   display refresh while scrolling. That reposition is what runs
+   CoordinatedSceneState::flushPendingState() on the scrolling thread. */
+#fixed { position: fixed; top: 0; left: 0; width: 40px; height: 40px; background: green; will-change: transform; }
+.box { position: absolute; left: 0; width: 30px; height: 30px; background: blue; will-change: transform; }
+</style>
+</head>
+<body>
+<div id="fixed"></div>
+<div id="base"></div>
+<div id="churn"></div>
+<pre id="result">FAIL: did not finish</pre>
+<script>
+// This is a probabilistic regression test for a data race in
+// CoordinatedSceneState: the main thread mutates m_layers in addLayer()/
+// removeLayer() while the scrolling thread iterates it in flushPendingState().
+//
+// Reproducing it needs THREE things to overlap, all set up below:
+//   1. hasRecentActivity() must stay true so the scrolling thread keeps
+//      ticking -- kept alive with a wheel event every frame (eventSender).
+//      (No 'wheel' listener / background-attachment:fixed here: those add
+//      synchronous scrolling reasons and disable scrolling-thread layer
+//      updates via canUpdateLayersOnScrollingThread().)
+//   2. The main thread's rendering update must overrun the ~half-frame sync
+//      timeout so the scrolling thread DESYNCS and commits layer positions
+//      itself, concurrently with the main thread -- forced by churning a lot
+//      of composited layers per frame (slow compositing update).
+//   3. addLayer()/removeLayer() must run during that slow update -- the churn
+//      itself provides them.
+// Needs a Debug (asserts) build on a scrolling-thread port (GTK/WPE). On other
+// ports it simply passes.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// Keep m_layers large so the scrolling thread's iteration stays open longer.
+const base = document.getElementById('base');
+for (let i = 0; i < 200; i++) {
+    const b = document.createElement('div');
+    b.className = 'box';
+    b.style.top = (i * 31) + 'px';
+    base.appendChild(b);
+}
+
+const churn = document.getElementById('churn');
+const PER_FRAME = 150;
+const DURATION_MS = 8000;
+let previousGeneration = [];
+
+function churnLayers()
+{
+    for (const box of previousGeneration)
+        box.remove();               // detachLayer -> removeLayer
+    const generation = [];
+    for (let i = 0; i < PER_FRAME; i++) {
+        const b = document.createElement('div');
+        b.className = 'box';
+        b.style.top = (i * 31) + 'px';
+        churn.appendChild(b);       // attachLayer -> addLayer
+        generation.push(b);
+    }
+    previousGeneration = generation;
+}
+
+const start = performance.now();
+let direction = -1;
+
+function tick()
+{
+    // Wheel event every frame keeps hasProcessedWheelEventsRecently() true and
+    // scrolls the frame, so the scrolling thread repositions #fixed each refresh.
+    if (window.eventSender) {
+        eventSender.mouseScrollBy(0, direction * 40);
+        if (window.pageYOffset <= 0 || window.pageYOffset >= 39000)
+            direction = -direction;
+    }
+
+    churnLayers();
+
+    if (performance.now() - start < DURATION_MS) {
+        requestAnimationFrame(tick);
+        return;
+    }
+
+    for (const box of previousGeneration)
+        box.remove();
+    previousGeneration = [];
+    document.getElementById('result').textContent = "PASS: did not crash";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

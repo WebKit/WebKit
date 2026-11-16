@@ -1,0 +1,28 @@
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body {
+  margin: 0px;
+  padding: 0px;
+}
+div {
+  margin-top: 0.1px;
+  transition: border-bottom 100ms ease-in-out;
+}
+</style>
+<div id=foobar>PASS if no thin black line is visible below</div>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+foobar.addEventListener("transitionend", () => {
+  (async () => {
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+  })();
+});
+
+async function runTest() {
+  foobar.style.borderBottom = "1px solid transparent";
+}
+window.addEventListener('load', runTest);
+</script>

@@ -1,0 +1,4 @@
+
+PASS Synthetic documents should return about:blank for document.baseURI.
+PASS Synthetic documents should incorporate <base> href URLs correctly.
+

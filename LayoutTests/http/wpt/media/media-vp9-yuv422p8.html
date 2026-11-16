@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>webm file with vp9 422 8 bits</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// Clips: ffmpeg -f lavfi -i "color=c=red:s=WxH:d=0.2:r=25,drawbox=x=W/2:y=0:w=W/2:h=H/2:color=blue:t=fill,drawbox=x=0:y=H/2:w=W/2:h=H-H/2:color=lime:t=fill,drawbox=x=W/2:y=H/2:w=W/2:h=H-H/2:color=yellow:t=fill,format=yuv422p" -c:v libvpx-vp9 -profile:v 1 -lossless 1 -pix_fmt yuv422p -colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv test-vp9-yuv422p-WxH.webm
+const quadrants = [
+    { name: "top-left", x: 0.25, y: 0.25, color: [255, 0, 0] },
+    { name: "top-right", x: 0.75, y: 0.25, color: [0, 0, 255] },
+    { name: "bottom-left", x: 0.25, y: 0.75, color: [0, 255, 0] },
+    { name: "bottom-right", x: 0.75, y: 0.75, color: [255, 255, 0] },
+];
+
+for (const size of ["128x128", "128x97"]) {
+    promise_test(async () => {
+        const video = document.createElement("video");
+        document.body.appendChild(video);
+        video.src = `resources/test-vp9-yuv422p-${size}.webm`;
+        await new Promise(resolve => video.addEventListener("canplay", resolve, { once: true }));
+        video.currentTime = 0.04;
+        await new Promise(resolve => video.addEventListener("seeked", resolve, { once: true }));
+
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0);
+
+        for (const { name, x, y, color } of quadrants) {
+            const pixel = context.getImageData(Math.floor(canvas.width * x), Math.floor(canvas.height * y), 1, 1).data;
+            assert_array_approx_equals(Array.from(pixel.slice(0, 3)), color, 20, name);
+        }
+        video.remove();
+    }, `VP9 4:2:2 8-bit ${size} renders the correct colors`);
+}
+</script>
+</body>
+</html>

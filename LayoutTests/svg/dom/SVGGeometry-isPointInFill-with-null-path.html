@@ -1,0 +1,21 @@
+<style>
+:not(map) { position: absolute; }
+</style>
+<p>This test passes if it doesn't crash.</p>
+<script>
+function eventhandler()
+{
+ document.all[2].appendChild(document.createElement("script"));
+ document.scrollingElement;
+ svgvar1.style.setProperty("rx", "10px");
+ svgvar2.isPointInFill(); 
+}
+window?.testRunner?.dumpAsText();
+document.styleSheets.item(0).disabled = true;
+</script>
+<details case="second">
+<details open="true">
+<svg id="svgvar1">
+<line id="svgvar2">
+</svg>
+<details open="true" ontoggle="eventhandler()">

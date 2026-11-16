@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("WebSocket: bufferedAmount past 32 bits after the socket is closed.");
+
+jsTestIsAsync = true;
+
+// bufferedAmount is an unsigned long long, so once the socket is closed it must keep counting past
+// 2^32 rather than saturating. Sending after close only adds to the count, so no data is ever staged
+// and one buffer can be reused.
+
+const chunkSize = 0x100000;
+const framingOverhead = 2 + 4 + 8; // Base header, masking key, and the 64-bit extended payload length.
+const chunkCost = chunkSize + framingOverhead;
+const chunkCount = Math.ceil(Math.pow(2, 32) / chunkCost) + 1;
+const expectedBufferedAmount = chunkCount * chunkCost;
+
+const ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple");
+
+ws.onopen = () => {
+    debug("Connected");
+    ws.close();
+};
+
+ws.onclose = () => {
+    debug("Closed");
+    shouldBe("ws.bufferedAmount", "0");
+
+    const chunk = new ArrayBuffer(chunkSize);
+    for (let i = 0; i < chunkCount; ++i)
+        ws.send(chunk);
+
+    shouldBeTrue("expectedBufferedAmount > Math.pow(2, 32)");
+    shouldBe("ws.bufferedAmount", "expectedBufferedAmount");
+
+    finishJSTest();
+};
+</script>

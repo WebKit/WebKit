@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<textarea id="textarea">Hello world</textarea>
+<input type="password" id="password" value="secret">
+<div id="div">Not editable</div>
+
+<script>
+var output = "This test verifies the AXShowWritingTools custom action is exposed on editable web content.\n\n";
+
+if (window.accessibilityController) {
+    if (!window.internals || typeof internals.hasWritingToolsTextSuggestionMarker === "undefined") {
+        debug("SKIP: requires ENABLE(WRITING_TOOLS)");
+        finishJSTest();
+    } else {
+        window.jsTestIsAsync = true;
+
+        var axDiv, axTextarea, axPassword;
+
+        (async function() {
+            // Non-editable elements must never get AXShowWritingTools regardless of writing tools availability.
+            axDiv = accessibilityController.accessibleElementById("div");
+            output += expect("axDiv.supportedActions.includes('AXShowWritingTools')", "false");
+
+            // Focus the textarea and wait for the UIProcess → WebProcess IPC round-trip that
+            // updates writingToolsAvailable. With the default WKWebViewConfiguration, focusing
+            // an editable element causes writingToolsBehavior() to return Limited (non-None),
+            // which sets m_writingToolsAvailable = true in the WebProcess.
+            document.getElementById("textarea").focus();
+            axTextarea = accessibilityController.accessibleElementById("textarea");
+            await waitFor(() => axTextarea.supportedActions.includes("AXShowWritingTools"));
+            output += expect("axTextarea.supportedActions.includes('AXShowWritingTools')", "true");
+
+            // Focusing a password field causes writingToolsBehavior() to return None,
+            // so the action must disappear.
+            document.getElementById("password").focus();
+            axPassword = accessibilityController.accessibleElementById("password");
+            await waitFor(() => !axPassword.supportedActions.includes("AXShowWritingTools"));
+            output += expect("axPassword.supportedActions.includes('AXShowWritingTools')", "false");
+
+            debug(output);
+            finishJSTest();
+        })();
+    }
+}
+</script>
+</body>
+</html>

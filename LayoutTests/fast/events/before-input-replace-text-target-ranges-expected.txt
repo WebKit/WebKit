@@ -1,0 +1,13 @@
+To manually test this, type "hllo" and trigger spell checking. Select a spell checking candidate.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS replacementRange.startOffset is 0
+PASS replacementRange.endOffset is 4
+PASS replacementRange.startContainer is editable.childNodes[0]
+PASS replacementRange.endContainer is editable.childNodes[0]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hllo

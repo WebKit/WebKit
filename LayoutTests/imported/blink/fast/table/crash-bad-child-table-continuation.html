@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script>
+function crash() {
+    document.body.style.display = 'inline';
+
+    colgroup=document.createElement('colgroup');
+    document.body.appendChild(colgroup)
+
+    document.execCommand('FormatBlock', '');
+
+    pre=document.createElement('pre');
+    colgroup.parentNode.insertBefore(pre, colgroup);
+    if (window.testRunner)
+        testRunner.dumpAsText()
+}
+window.addEventListener("load", crash, false);
+</script>
+<p>This test passes if it doesn't crash.</p>

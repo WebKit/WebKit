@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>
+<body>
+  <script>
+    document.head.innerHTML = `<meta http-equiv="Content-Security-Policy" content="default-src 'self'">`;
+
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    var clicked = 0;
+    var a = document.createElement('a')
+    a.setAttribute('onclick', 'throw new Error("FAIL: should be unreached!")');
+    a.click();
+
+    a.onclick = function() { clicked++ };
+    a.click();
+
+    if (clicked === 1) {
+      console.log(`PASS: clicked is 1`);
+    } else {
+      console.log(`FAIL: clicked was ${clicked}, should be 1`);
+    }
+  </script>
+  <p>This test checks that if an inline handler was replaced with a JSFunction, CSP doesn't prevent it from being invoked. It passes if there is one SecurityError and 'PASS' message, with no 'FAIL' logs appearing.</p>
+</body>
+</html>

@@ -1,0 +1,18 @@
+É
+É
+É
+É
+É
+
+FAIL .grid-lanes 1 assert_equals:
+<div class="grid-lanes" style="grid-template-rows: minmax(0px, auto) 30px minmax(0px, auto);" data-expected-height="128">
+  <div style="font-size: 20px; width: 60px; background: coral;">É</div>
+  <div style="font-size: 20px; width: 60px; background: plum;">É</div>
+  <div style="font-size: 30px; width: 60px; background: mistyrose;">É</div>
+  <div style="font-size: 40px; padding-top: 25px; width: 60px; background: gold; grid-row: span 2;">É</div>
+  <div style="font-size: 20px; padding-bottom: 5px; width: 60px; background: lightcyan; grid-row: 3;">É</div>
+  <div style="font-size: 20px; width: 60px; height: 100%; background: lightsalmon; grid-row: 1; align-self: normal" data-expected-height="63"></div>
+  <div style="font-size: 20px; width: 60px; height: 100%; background: lightyellow; grid-row: 3; align-self: normal" data-expected-height="35"></div>
+</div>
+height expected 128 but got 152
+

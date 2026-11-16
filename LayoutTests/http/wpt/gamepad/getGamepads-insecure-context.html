@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>navigator.getGamepads() in a non-secure context does not log a console message</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/common/get-host-info.sub.js></script>
+<script>
+// localhost is potentially trustworthy, so run the test from an origin that is not.
+if (location.origin != get_host_info().UNAUTHENTICATED_ORIGIN) {
+    location = get_host_info().UNAUTHENTICATED_ORIGIN + location.pathname;
+    promise_test(() => new Promise(() => { }), "Stall tests on the wrong host.");
+} else {
+    promise_test(async () => {
+        assert_false(self.isSecureContext, "precondition");
+        let consoleMessage = null;
+        internals.setConsoleMessageListener(message => consoleMessage = message);
+        navigator.getGamepads();
+        await new Promise(resolve => internals.postTask(resolve));
+        assert_equals(consoleMessage, null);
+    }, "navigator.getGamepads() does not log a console message");
+}
+</script>

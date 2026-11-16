@@ -1,0 +1,25 @@
+max-width must clamp the used inline size of an out-of-flow positioned replaced element
+that has an intrinsic ratio but no intrinsic inline size. Expected values were measured in
+another engine on this same markup; the tolerance is 0.5px.
+
+PASS inline svg, left:0 right:0, max-width:220px, auto inline margins is within 0.5 of 219.98 x 188.59
+PASS inline svg, left:0 right:0, max-width:220px is within 0.5 of 219.98 x 188.59
+PASS img of a viewBox-only svg, left:0 right:0, max-width:220px is within 0.5 of 219.98 x 188.59
+PASS inline svg, all four insets 0, max-width:220px is within 0.5 of 219.98 x 188.59
+PASS inline svg, left:50px right:50px, max-width:220px is within 0.5 of 219.98 x 188.59
+PASS inline svg, left:0 right:0, max-width:220px, box-sizing:border-box, padding:10px is within 0.5 of 219.98 x 191.45
+PASS inline svg, left:0 right:0, max-width:50% is within 0.5 of 299.98 x 257.17
+PASS inline svg, position:fixed, left:0 right:0, max-width:220px is within 0.5 of 219.98 x 188.59
+PASS inline svg, left:0 right:0, max-width:220px, zero inline margins is within 0.5 of 219.98 x 188.59
+PASS inline svg, left:0 right:0, max-width:220px, direction:rtl is within 0.5 of 219.98 x 188.59
+PASS control: inline svg, left:0 right:0, no max-width is within 0.5 of 599.98 x 514.36
+PASS control: img of a viewBox-only svg, left:0 right:0, no max-width is within 0.5 of 599.98 x 514.36
+PASS control: inline svg, left:0 right:0, max-width:max-content is within 0.5 of 599.98 x 514.36
+PASS control: inline svg, left:0 right:0, min-width:800px is within 0.5 of 800 x 685.81
+PASS control: inline svg, left:0 right:0, min-width:800px, max-width:220px is within 0.5 of 800 x 685.81
+PASS control: inline svg, left:0 right:0, max-width:220px, writing-mode:vertical-rl is within 0.5 of 220 x 188.59
+PASS control: inline svg, left:0 only, width:100%, max-width:220px is within 0.5 of 220 x 188.59
+PASS control: inline svg, left:0 right:0, width:100%, max-width:220px is within 0.5 of 220 x 188.59
+PASS control: inline svg, left:0 right:0, height:100px, max-width:220px is within 0.5 of 116.64 x 100
+PASS control: inline svg, left:0 right:0, max-height:100px is within 0.5 of 116.64 x 100
+PASS control: inline svg, static, width:100%, max-width:220px is within 0.5 of 220 x 188.59

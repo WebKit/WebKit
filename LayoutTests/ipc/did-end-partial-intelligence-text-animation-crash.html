@@ -1,0 +1,60 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<title>Ending a partial intelligence text animation that was never started must not crash the UI process</title>
+<p>This test passes if WebKit does not crash.</p>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+</script>
+<script type="module">
+if (!window.IPC) {
+    testRunner?.notifyDone();
+} else {
+
+const { CoreIPC } = await import('./coreipc.js');
+const page = CoreIPC.UI.WebPageProxy;
+const pageProxyID = IPC.webPageProxyID;
+
+// Writing tools are not enabled on every port.
+if (!page.DidEndPartialIntelligenceTextAnimation) {
+    testRunner?.notifyDone();
+} else {
+
+// The count of in-flight partial animations is only ever raised by a writing tools session driving the WKWebView SPI,
+// so every one of these arrives without a matching start.
+page.DidEndPartialIntelligenceTextAnimation(pageProxyID, { });
+page.DidEndPartialIntelligenceTextAnimation(pageProxyID, { });
+
+// A final text animation reaches the same code through the effect's completion block.
+page.AddTextAnimationForAnimationID(pageProxyID, {
+    uuid: { high: 660, low: 1 },
+    styleData: {
+        style: 2,
+        runMode: 2,
+        unanimatedRangeUUID: { optionalValue: { high: 916, low: 765 } },
+        sourceAnimationUUID: { optionalValue: { high: 916, low: 766 } },
+        destinationAnimationUUID: { },
+    },
+    textIndicator: { },
+});
+
+// Messages are dispatched in order, and a source animation with no destination animation to pair with is rejected
+// with a prompt reply, so this tells us the UI process has finished with the messages above.
+await new Promise(resolve => {
+    page.AddTextAnimationForAnimationIDWithCompletionHandler(pageProxyID, {
+        uuid: { high: 660, low: 2 },
+        styleData: {
+            style: 1,
+            runMode: 2,
+            unanimatedRangeUUID: { },
+            sourceAnimationUUID: { },
+            destinationAnimationUUID: { },
+        },
+        textIndicator: { },
+    }, resolve);
+});
+
+testRunner?.notifyDone();
+
+}
+}
+</script>

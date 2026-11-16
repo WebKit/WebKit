@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>requestVideoFrameCallback with paused webm offscreen</title>
+<script src="../resources/testharness.js"></script>
+<script src=video-test.js></script>
+<script src=utilities.js></script>
+<script>
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        let v = document.createElement('video');
+        v.src = "content/test-vp8-hiddenframes.webm";
+        const loadedMetadataPromise = waitFor(v, 'loadedmetadata');
+        const frame1 = await waitForVideoFrame(v);
+        await loadedMetadataPromise;
+        testExpected(v.currentTime, 0);
+        testExpected(frame1[1].mediaTime, 0);
+        testExpected(frame1[1].width, 320);
+        testExpected(frame1[1].height, 180);
+
+        // duration of the last frame.
+        v.currentTime = v.duration - 0.038;
+
+        const seekPromise = waitFor(v, 'seeked', true);
+        const frame2 = await waitForVideoFrame(v);
+        testExpected(v.currentTime, v.duration - 0.038);
+        testExpected(frame2[1].mediaTime, v.duration - 0.038);
+        testExpected(frame2[1].width, 320);
+        testExpected(frame2[1].height, 180);
+
+        await seekPromise;
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+</body>
+</html>

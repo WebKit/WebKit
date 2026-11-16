@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<script src="../../resources/js-test-pre.js"></script>
+	</head>
+	<body>
+
+		<style id="test1"> dummy { text-orientation: upright; -webkit-text-orientation: sideways; text-orientation: upright;} </style>
+		<style id="test2"> dummy { text-orientation: upright;} </style>
+		<style id="test3"> dummy { -webkit-text-orientation: upright;} </style>
+		<style id="test4"> dummy { text-orientation: upright; -webkit-text-orientation: mixed;} </style>
+		<style id="test5"> dummy { -webkit-text-orientation: upright; text-orientation: mixed;} </style>
+		<style id="test6"> dummy { -webkit-text-orientation: upright; text-orientation: mixed; -webkit-text-orientation: sideways;} </style>
+		<style id="test7"> dummy { -webkit-text-orientation: sideways-right;} </style>
+		<style id="test8"> dummy { text-orientation: sideways-right;} </style>
+
+
+		<script>
+			shouldBeEqualToString("document.getElementById('test1').sheet.cssRules[0].style.getPropertyValue('text-orientation')", "upright");
+			shouldBeEqualToString("document.getElementById('test2').sheet.cssRules[0].style.getPropertyValue('text-orientation')", "upright");
+			shouldBeEqualToString("document.getElementById('test3').sheet.cssRules[0].style.getPropertyValue('text-orientation')", "upright");
+			shouldBeEqualToString("document.getElementById('test4').sheet.cssRules[0].style.getPropertyValue('text-orientation')", "mixed");
+			shouldBeEqualToString("document.getElementById('test5').sheet.cssRules[0].style.getPropertyValue('text-orientation')", "mixed");
+			shouldBeEqualToString("document.getElementById('test6').sheet.cssRules[0].style.getPropertyValue('text-orientation')", "sideways");
+			shouldBeEqualToString("document.getElementById('test7').sheet.cssRules[0].style.getPropertyValue('text-orientation')", "sideways");
+			shouldBeEqualToString("document.getElementById('test8').sheet.cssRules[0].style.getPropertyValue('text-orientation')", "");
+
+			shouldBeEqualToString("document.getElementById('test1').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation')", "upright");
+			shouldBeEqualToString("document.getElementById('test2').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation')", "upright");
+			shouldBeEqualToString("document.getElementById('test3').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation')", "upright");
+			shouldBeEqualToString("document.getElementById('test4').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation')", "mixed");
+			shouldBeEqualToString("document.getElementById('test5').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation')", "mixed");
+			shouldBeEqualToString("document.getElementById('test6').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation')", "sideways");
+			shouldBeEqualToString("document.getElementById('test7').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation')", "sideways");
+			shouldBeEqualToString("document.getElementById('test8').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation')", "");
+		</script>
+
+		<script src="../../resources/js-test-post.js"></script>
+	</body>
+</html>

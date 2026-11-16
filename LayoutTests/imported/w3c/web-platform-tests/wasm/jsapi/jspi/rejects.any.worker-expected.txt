@@ -1,0 +1,7 @@
+
+PASS Throw after the first suspension
+PASS Throw before suspending
+PASS Throw and propagate via Promise
+PASS Stack overflow
+PASS Try to suspend JS
+

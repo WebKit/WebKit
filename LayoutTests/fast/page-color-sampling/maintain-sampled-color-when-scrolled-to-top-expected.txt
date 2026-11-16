@@ -1,0 +1,7 @@
+PASS colorsAfterScrollingDown.top is "rgb(255, 99, 71)"
+PASS colorsAfterScrollingBackUp.top is "rgb(255, 99, 71)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+relative
+

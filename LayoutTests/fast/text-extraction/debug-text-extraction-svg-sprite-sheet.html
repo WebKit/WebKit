@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+.sprite-sheet {
+    display: block;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<svg class="sprite-sheet">
+    <symbol id="sprite-alias" width="16" height="16"><use href="#sprite-icon"></use></symbol>
+    <symbol id="sprite-icon" width="16" height="16"><path d="M8 1 L10 6 L15 6 L11 9 L13 15 L8 11 L3 15 L5 9 L1 6 L6 6 Z" fill="black"></path></symbol>
+    <symbol id="unreferenced-alias" width="16" height="16" aria-label="Unreferenced sprite icon"><use href="#sprite-icon"></use></symbol>
+    <defs>
+        <svg id="defs-icon" width="16" height="16" aria-label="Icon inside defs"><path d="M3 13 L11 5 L13 7 L5 15 Z" fill="black"></path></svg>
+    </defs>
+</svg>
+<p>Visible content follows.</p>
+<svg width="16" height="16" aria-label="Star icon"><use href="#sprite-alias"></use></svg>
+<svg width="16" height="16" aria-label="Inline icon"><path d="M3 13 L11 5 L13 7 L5 15 Z" fill="black"></path></svg>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        normalize: true,
+        nodeIdentifierInclusion: "interactive",
+        includeAccessibilityAttributes: true,
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

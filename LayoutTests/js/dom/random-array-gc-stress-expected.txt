@@ -1,0 +1,9 @@
+Tests to randomly modify an object graph of arrays to make sure the GC handles them properly now that it allocates both the JSArray and the ArrayStorage. To pass we need to not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

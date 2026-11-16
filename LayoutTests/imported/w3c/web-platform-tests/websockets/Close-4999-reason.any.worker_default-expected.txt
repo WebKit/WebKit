@@ -1,0 +1,3 @@
+
+PASS Create WebSocket - Close the Connection - close(4999, reason) - readyState should be in CLOSED state and wasClean is TRUE - Connection should be closed
+

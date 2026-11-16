@@ -1,0 +1,5 @@
+
+PASS no referrerpolicy: the same-origin request sends the full URL
+PASS referrerpolicy=no-referrer sends no Referer header
+PASS referrerpolicy=origin sends the origin only
+

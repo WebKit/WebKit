@@ -1,0 +1,6 @@
+
+
+FAIL focus-keyboard-js assert_equals: #text should be focused by our event listener expected Element node <input type="text" id="text" value="abc"></input> but got Element node <body><input type="text" id="text" value="abc">
+<script>
+...
+

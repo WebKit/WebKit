@@ -1,0 +1,19 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+TESTS_FILES = [
+    "SkParagraphTest.cpp",
+    "SkShaperJSONWriter.cpp",
+    "SkShaperJSONWriter.h",
+    "SkShaperJSONWriterTest.cpp",
+]
+
+split_srcs_and_hdrs(
+    name = "tests",
+    files = TESTS_FILES,
+)

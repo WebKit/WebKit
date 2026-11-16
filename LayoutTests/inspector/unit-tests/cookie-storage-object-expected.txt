@@ -1,0 +1,12 @@
+Testing WI.CookieStorageObject.
+
+
+== Running test suite: CookieStorageObject
+-- Running test case: CookieStorageObject.prototype.filterCookiesForHost.StorageDomain
+PASS: Should keep both cookies whose domain matches the host.
+PASS: Should not gather resources on the Storage domain path.
+
+-- Running test case: CookieStorageObject.prototype.filterCookiesForHost.LegacyPageDomain
+PASS: Should keep the cookies whose path scopes the loaded document.
+PASS: Should drop the path-scoped cookie when only the origin-only stub is loaded.
+

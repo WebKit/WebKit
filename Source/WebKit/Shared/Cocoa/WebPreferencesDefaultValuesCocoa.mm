@@ -1,0 +1,238 @@
+/*
+* Copyright (C) 2020 Apple Inc. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+* 1. Redistributions of source code must retain the above copyright
+*    notice, this list of conditions and the following disclaimer.
+* 2. Redistributions in binary form must reproduce the above copyright
+*    notice, this list of conditions and the following disclaimer in the
+*    documentation and/or other materials provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+* PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+* THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+#import "config.h"
+#import "WebPreferencesDefaultValues.h"
+
+#if PLATFORM(COCOA)
+
+#import "ImageAnalysisUtilities.h"
+#import <Foundation/NSBundle.h>
+#import <pal/spi/cocoa/FeatureFlagsSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/text/WTFString.h>
+
+#if PLATFORM(APPLETV)
+#import <pal/system/ios/Device.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPreferencesDefaultValuesCocoaAdditions.mm>)
+#import <WebKitAdditions/WebPreferencesDefaultValuesCocoaAdditions.mm>
+#else
+
+#if HAVE(LIQUID_GLASS)
+NODELETE static bool platformIsLiquidGlassEnabled()
+{
+    return true;
+}
+#endif
+
+namespace WebKit {
+
+#if ENABLE(VIDEO)
+
+NODELETE bool defaultCaptionDisplaySettingsEnabled()
+{
+    return false;
+}
+
+#endif
+
+#if PLATFORM(MAC)
+
+NODELETE bool defaultTextInputClientSelectionUpdatesEnabled()
+{
+    return false;
+}
+
+#endif // PLATFORM(MAC)
+
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+NODELETE bool defaultWebContentRestrictionsAskToEnabled()
+{
+    return false;
+}
+#endif
+
+}
+
+#endif // namespace WebKit
+
+namespace WebKit {
+
+#if HAVE(LIQUID_GLASS)
+NODELETE static std::optional<bool>& cachedIsLiqudGlassEnabled()
+{
+    static std::optional<bool> isLiquidGlassEnabled;
+    return isLiquidGlassEnabled;
+}
+
+NODELETE bool isLiquidGlassEnabled()
+{
+    if (auto isLiquidGlassEnabled = cachedIsLiqudGlassEnabled())
+        return *isLiquidGlassEnabled;
+    ASSERT_WITH_MESSAGE(!isInAuxiliaryProcess(), "isLiquidGlassEnabled() must not be called before setLiquidGlassEnabled() in auxiliary processes");
+    return platformIsLiquidGlassEnabled();
+}
+
+NODELETE void setLiquidGlassEnabled(bool isLiquidGlassEnabled)
+{
+    cachedIsLiqudGlassEnabled() = isLiquidGlassEnabled;
+}
+#endif // HAVE(LIQUID_GLASS)
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+bool defaultContentChangeObserverEnabled()
+{
+#if (PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)) || HAVE(APPKIT_GESTURES_SUPPORT)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
+#if PLATFORM(MAC)
+bool defaultScrollAnimatorEnabled()
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"NSScrollAnimationEnabled"];
+}
+#endif
+
+bool defaultExtendedProofreadingEnabled()
+{
+    return os_feature_enabled(TextComposer, PostEditingProofreadingReview);
+}
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+bool defaultTextRecognitionInVideosEnabled()
+{
+    static bool enabled = os_feature_enabled(VisualIntelligence, LiveText);
+    return enabled;
+}
+
+bool defaultVisualTranslationEnabled()
+{
+    static bool enabled = os_feature_enabled(Translate, EnableVisualIntelligenceUI);
+    return enabled;
+}
+
+bool defaultRemoveBackgroundEnabled()
+{
+    static bool enabled = os_feature_enabled(VisualIntelligence, RemoveBackground);
+    return enabled;
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
+
+SUPPRESS_NODELETE bool defaultTopContentInsetBackgroundCanChangeAfterScrolling()
+{
+#if PLATFORM(IOS_FAMILY)
+    return PAL::currentUserInterfaceIdiomIsSmallScreen();
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(SCREEN_TIME)
+bool defaultScreenTimeEnabled()
+{
+    bool isSafari = false;
+#if PLATFORM(IOS_FAMILY)
+    isSafari = WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService();
+#elif PLATFORM(MAC)
+    isSafari = WTF::MacApplication::isSafari();
+#endif
+
+    if (isSafari)
+        return false;
+
+#if PLATFORM(MAC)
+    bool isTurboTax = WTF::MacApplication::isTurboTax();
+
+    if (isTurboTax && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AutoLayoutInWKWebView))
+        return false;
+#endif // PLATFORM(MAC)
+
+    return true;
+}
+#endif // ENABLE(SCREEN_TIME)
+
+NODELETE bool defaultContentInsetBackgroundFillEnabled()
+{
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    return isLiquidGlassEnabled();
+#else
+    return false;
+#endif
+}
+
+#if HAVE(MATERIAL_HOSTING)
+NODELETE bool defaultHostedBlurMaterialInMediaControlsEnabled()
+{
+    return isLiquidGlassEnabled();
+}
+#endif
+
+bool defaultIOSurfaceLosslessCompressionEnabled()
+{
+#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES) && HAVE(LOSSLESS_COMPRESSED_IOSURFACE_CG_SUPPORT)
+#define WK_CA_FEATURE_CG_COMPRESSED_IOSURFACES 15
+    return CASupportsFeature(WK_CA_FEATURE_CG_COMPRESSED_IOSURFACES);
+#undef WK_CA_FEATURE_CG_COMPRESSED_IOSURFACES
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(UNIFIED_PDF)
+NODELETE bool defaultUnifiedPDFEnabled()
+{
+#if ENABLE(UNIFIED_PDF_BY_DEFAULT)
+    return true;
+#elif PLATFORM(APPLETV)
+    return PAL::deviceClassIsHomeView();
+#else
+    return false;
+#endif
+}
+#endif
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS) && !USE(APPLE_INTERNAL_SDK)
+
+NODELETE bool defaultHorizontalBannerViewOverlaysEnabled()
+{
+    return false;
+}
+
+#endif
+
+} // namespace WebKit
+
+#endif // PLATFORM(COCOA)

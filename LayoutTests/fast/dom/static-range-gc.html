@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container" contenteditable></div>
+<script src="../../resources/gc.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+description('This tests keeping nodes alive via StaticRange');
+
+function createRange() {
+    container.innerHTML = '<div><em>hello</em></div><p><b><span>world</span></p>';
+    container.focus();
+    getSelection().setBaseAndExtent(container, 0, container, 2);
+    let range;
+    container.addEventListener('beforeinput', (event) => {
+        event.preventDefault();
+        range = event.getTargetRanges()[0];
+    }, {once: true});
+    document.execCommand('delete', false, null);
+    return range;
+}
+
+const ranges = [];
+for (let i = 0; i < 20; ++i) {
+    ranges.push(createRange());
+    gc();
+}
+container.innerHTML = '';
+
+let range;
+for (range of ranges) {
+    shouldBeEqualToString('range.startContainer.getRootNode().localName', 'div');
+    shouldBeEqualToString('range.endContainer.getRootNode().localName', 'p');
+}
+
+successfullyParsed = true;
+
+</script>
+</body>
+</html>

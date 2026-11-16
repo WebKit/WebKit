@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<style>
+div {
+    font: 100px/1 Ahem;
+    color: green;
+}
+span {
+    font-size: 50px;
+    color: blue;
+}
+</style>
+<!-- WebKit doesn't read the fonts' baseline tables, so these baselines are estimated from Ahem's 0.8em ascent and
+     0.2em descent, and each box moves by how far its parent's estimate is from its own, e.g. central:
+     (80px - 20px) / 2 - (40px - 10px) / 2 = 15px. -->
+<div>X<span style="alignment-baseline: ideographic">X</span></div>
+<div>X<span style="alignment-baseline: central">X</span></div>
+<div>X<span style="alignment-baseline: mathematical">X</span></div>
+<div>X<span style="alignment-baseline: hanging">X</span></div>
+<!-- The super shift is UA-defined too. -->
+<div>X<span style="font-size: 20px; vertical-align: super; alignment-baseline: central">X</span></div>

@@ -1,0 +1,5 @@
+Original text
+
+
+PASS clipboard change during paste event handler
+

@@ -1,0 +1,6 @@
+
+
+
+FAIL A later normal-flow sibling is hit-tested above video controls assert_equals: expected Element node <div id="div-on-top" class="target overlap"></div> but got Element node <video controls=""></video>
+PASS Video controls are hit-tested above an earlier normal-flow sibling
+

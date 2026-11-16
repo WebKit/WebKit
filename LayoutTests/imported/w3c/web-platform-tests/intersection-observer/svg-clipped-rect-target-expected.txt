@@ -1,0 +1,6 @@
+
+PASS IntersectionObserver observing a clipped SVG <rect> element
+PASS First rAF.
+FAIL document.scrollingElement.scrollTop = 300 assert_approx_equals: entries[1].intersectionRect.left expected 118 +/- 0 but got 108
+PASS document.scrollingElement.scrollTop = 100
+

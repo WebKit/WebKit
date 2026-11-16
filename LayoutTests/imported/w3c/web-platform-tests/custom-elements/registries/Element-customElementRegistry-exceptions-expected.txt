@@ -1,0 +1,5 @@
+
+PASS customElementRegistry on a failed custom element created by calling createElement on CustomElementRegistry should return the registry
+PASS customElementRegistry on a failed custom element created by setting innerHTML should return the associated scoped registry
+PASS customElementRegistry on a failed custom element created by parser should return the specified custom regsitry
+

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<template id=template>
+    <style>
+    :host(#host1) ::slotted(*) { width: 100px; height: 50px; background-color: green; }
+    :host(#host2, #host3) ::slotted(*) { width: 100px; height: 25px; background-color: red; }
+    </style>
+    <slot></slot>
+</template>
+<style>
+    #host2, #host3 { width: 100px; height: 25px; background-color: green; }
+</style>
+<div id=host1><div></div></div>
+<div id=host2><div></div></div>
+<div id=host3><div></div></div>
+<div id=result1></div>
+<script>
+host1.attachShadow({mode: 'closed'}).append(template.content.cloneNode(true));
+host2.attachShadow({mode: 'closed'}).append(template.content.cloneNode(true));
+host3.attachShadow({mode: 'closed'}).append(template.content.cloneNode(true));
+</script>
+</body>
+</html>

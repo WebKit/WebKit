@@ -1,0 +1,72 @@
+This tests the exposure of aria-current
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+test1 supports autocompletion: false
+AXPlatformAttributes: computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
+
+test2 supports autocompletion: false
+AXPlatformAttributes: autocomplete:none, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
+
+test3 supports autocompletion: false
+AXPlatformAttributes: autocomplete:none, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
+
+test4 supports autocompletion: false
+AXPlatformAttributes: autocomplete:none, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
+
+test5 supports autocompletion: true
+AXPlatformAttributes: autocomplete:both, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
+
+test6 supports autocompletion: true
+AXPlatformAttributes: autocomplete:inline, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
+
+test7 supports autocompletion: true
+AXPlatformAttributes: autocomplete:list, computed-role:searchbox, readonly:false, tag:div, xml-roles:searchbox
+
+test8 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
+
+test9 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
+
+test10 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
+
+test11 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
+
+test12 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
+
+test13 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
+
+test14 supports autocompletion: false
+AXPlatformAttributes: computed-role:group, tag:div, xml-roles:group
+
+test15 supports autocompletion: false
+AXPlatformAttributes: computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
+
+test16 supports autocompletion: false
+AXPlatformAttributes: autocomplete:none, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
+
+test17 supports autocompletion: false
+AXPlatformAttributes: autocomplete:none, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
+
+test18 supports autocompletion: false
+AXPlatformAttributes: autocomplete:none, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
+
+test19 supports autocompletion: true
+AXPlatformAttributes: autocomplete:both, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
+
+test20 supports autocompletion: true
+AXPlatformAttributes: autocomplete:inline, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
+
+test21 supports autocompletion: true
+AXPlatformAttributes: autocomplete:list, computed-role:combobox, haspopup:listbox, readonly:false, tag:div, xml-roles:combobox
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

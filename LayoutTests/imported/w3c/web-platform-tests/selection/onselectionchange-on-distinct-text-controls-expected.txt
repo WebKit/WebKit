@@ -1,0 +1,5 @@
+
+
+PASS selectionchange event on each input element fires independently
+PASS selectionchange event on each textarea element fires independently
+

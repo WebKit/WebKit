@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.scroller { overflow-x: scroll; width: 60px; height: 12px; }
+.content { width: 400px; height: 1px; }
+.dot { display: inline-block; width: 4px; height: 4px; background: green; animation: fade 1s linear; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+</style>
+<script src="../resources/runner.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+
+// Create a DOM tree with a number of elements contained in a scrolling container. The
+// last element sets animation-timeline to reference its previous sibling and the parent
+// sets a timeline-scope for this name. All scroll timelines use the same name.
+// https://bugs.webkit.org/show_bug.cgi?id=322283
+
+const tiles = 300;
+const container = document.getElementById("container");
+
+let markup = "";
+for (let i = 0; i < tiles; ++i) {
+    markup += '<div style="timeline-scope:--timeline">'
+           +      '<div class="scroller" style="scroll-timeline:--timeline inline"><div class="content"></div></div>'
+           +      '<span class="dot" style="animation-timeline:--timeline"></span>'
+           +  '</div>';
+}
+
+
+PerfTestRunner.measureTime({
+    description: "Resolving style for " + tiles + " tiles that all name the same scroll timeline.",
+    setup: function () {
+        container.innerHTML = "";
+        container.offsetHeight;
+    },
+    run: function () {
+        container.innerHTML = markup;
+        container.offsetHeight;
+    }
+});
+
+</script>
+</body>
+</html>

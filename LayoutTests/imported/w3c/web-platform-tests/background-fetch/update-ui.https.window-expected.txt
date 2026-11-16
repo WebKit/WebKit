@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Background Fetch updateUI resolves Test timed out
+NOTRUN Background Fetch updateUI called twice fails
+NOTRUN Background Fetch updateUI fails when event is not active
+

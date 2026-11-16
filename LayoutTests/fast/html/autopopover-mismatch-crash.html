@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<p id="element">PASS if no crash.</p>
+<script>
+ (async () => {
+  testRunner?.waitUntilDone();
+  testRunner?.dumpAsText();
+  var iterations = parseFloat(document.location.search.substring(1));
+  if (!iterations)
+    iterations = 0;
+  if (iterations == 20) {
+    testRunner?.notifyDone();
+    return;
+  }
+  element.popover = `on`;
+  iterations++;
+  location = `?` + iterations;
+  await (() => { constraints = { audio: true }; return navigator.mediaDevices.getUserMedia(constraints) })();
+  element.showPopover();
+  await (() => { name = `foo`; return window.cookieStore.delete(name) })();
+  element.popover = `auto`;
+})();
+ </script>

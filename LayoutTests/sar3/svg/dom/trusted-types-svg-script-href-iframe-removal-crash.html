@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner && window.GCController) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    // The SVG <script> is created in the parent realm so its wrapper never roots the iframe's window.
+    svgScript = document.createElementNS('http://www.w3.org/2000/svg', 'script');
+
+    let iframe = document.createElement('iframe');
+
+    iframe.srcdoc = `<!DOCTYPE html>
+    <meta http-equiv="Content-Security-Policy" content="require-trusted-types-for 'script'; trusted-types default">
+    <body><svg id="svgHost"></svg><script>
+        document.getElementById('svgHost').appendChild(parent.svgScript);
+        parent.innerTrustedTypes = trustedTypes;
+    </` + 'script>';
+
+    iframe.onload = () => setTimeout(() => {
+        // Register the iframe's default policy through the parent-realm createPolicy binding so the
+        // callback's globalObject stays in the parent realm.
+        TrustedTypePolicyFactory.prototype.createPolicy.call(window.innerTrustedTypes, 'default', {
+            createScriptURL: function () {
+                document.adoptNode(svgScript);
+                iframe.remove();
+                iframe = null;
+                GCController.collect();
+                // Returning null yields std::monostate, so trustedTypeCompliantString() reaches
+                // scriptExecutionContext.contentSecurityPolicy() after the Document has been freed.
+                return null;
+            }
+        });
+        window.innerTrustedTypes = null;
+        GCController.collect();
+
+        // SVGAnimatedString::setBaseVal passes the iframe's Document to trustedTypeCompliantString.
+        try {
+            svgScript.href.baseVal = "http://127.0.0.1/payload.js";
+        } catch (e) {
+            e.toString();
+        }
+
+        document.body.innerHTML = '<p>This test passes if WebKit does not hit assertions or crash under ASAN</p>PASS';
+
+        testRunner.notifyDone();
+    }, 0);
+
+    document.body.appendChild(iframe);
+} else
+    document.write('<p>This test requires testRunner and GCController</p>');
+</script>
+</body>
+</html>

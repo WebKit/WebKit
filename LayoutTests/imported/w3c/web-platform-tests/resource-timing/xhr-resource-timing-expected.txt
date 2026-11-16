@@ -1,0 +1,4 @@
+
+PASS Verify resource timing entry creation for successful XHR
+FAIL Verify resource timing entry creation for XHR failing with CORS promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before entry fired"
+

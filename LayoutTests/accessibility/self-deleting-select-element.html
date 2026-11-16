@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+First text
+<main>
+    <div>
+        <div role="group" aria-label="foo">
+            <label for="select">Make a selection:</label>
+            <select name="select" id="select">
+              <option value="">--Please choose an option--</option>
+              <option value="cat">Cat</option>
+              <option value="dog">Dog</option>
+            </select>
+        </div>
+    </div>
+</main>
+Last text
+
+<script>
+document.getElementById("select").addEventListener("change", () => {
+    document.getElementById("select").remove();
+});
+
+var output = "This test ensures we don't hang forever when deleting a select element from the DOM.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    document.getElementById("select").value = "cat";
+    // The change event is not triggered when changing the value of a select programmatically via JS, so manually dispatch
+    // a change event here.
+    document.getElementById('select').dispatchEvent(new Event("change"));
+    setTimeout(async function() {
+        touchAccessibilityTree(accessibilityController.rootElement);
+        output += "PASS: We didn't loop infinitely as a result of the select element deleting itself.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

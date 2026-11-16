@@ -1,0 +1,10 @@
+
+PASS Ensures subscription to hit test works with viewer space - straight ahead - plane - webgl
+PASS Ensures subscription to hit test works with viewer space - straight ahead - plane - webgl2
+PASS Ensures subscription to hit test works with viewer space - straight up - no results - webgl
+PASS Ensures subscription to hit test works with viewer space - straight up - no results - webgl2
+PASS Ensures subscription to hit test works with local space - webgl
+PASS Ensures subscription to hit test works with local space - webgl2
+PASS Ensures subscription to hit test works with local-floor space - webgl
+PASS Ensures subscription to hit test works with local-floor space - webgl2
+

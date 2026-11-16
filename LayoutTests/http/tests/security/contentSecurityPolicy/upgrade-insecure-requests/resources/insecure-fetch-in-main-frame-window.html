@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<body>
+<script>
+window.onload = () => {
+
+    var testIsFinished = false;
+    fetch("http://127.0.0.1:8443/", { mode: "no-cors" }).then(() => {
+        testIsFinished = true;
+        alert("PASS: load was not blocked");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, () => {
+        testIsFinished = true;
+        alert("FAIL: load is not successful");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+
+    // When running in normal environment, let's notify user if something went wrong
+    if (!window.testRunner) {
+        setTimeout(() => {
+            if (testIsFinished)
+                return;
+            alert("Test timed out");
+        }, 2000);
+    }
+};
+</script>
+
+</body>
+</html>

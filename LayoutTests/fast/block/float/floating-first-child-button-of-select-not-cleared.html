@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<style>
+  select { flex-direction: column; }
+  button { float: left; }
+</style>
+<select id="select"></select>
+<script>
+  window.testRunner?.dumpAsText();
+  window.testRunner?.waitUntilDone();
+  select.appendChild(document.createElement("button"));
+  document.body.scrollLeft;
+  select.options.add(document.createElement("option"));
+  document.body.scrollLeft;
+  document.body.innerHTML = "PASS if no crashes.";
+  window.testRunner?.notifyDone();
+</script>

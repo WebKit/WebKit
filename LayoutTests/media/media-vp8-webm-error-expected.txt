@@ -1,0 +1,7 @@
+RUN(video = document.createElement("video"))
+RUN(document.body.appendChild(video))
+RUN(video.src = "content/garbage.webm")
+metadataloaded: 320x240
+received error event
+END OF TEST
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a P-521 SPKI ECDH key");
+
+jsTestIsAsync = true;
+
+var spkiKey = hexStringToUint8Array("30819b301006072a8648ce3d020106052b81040023038186000400e9a76aed2acda29ba2a5dbdc1f04c6160bc16c6d16b737a557f9dcbc8efb79dd1b9eabfc0a911ea3fd574176e2cbf32caa9babb505b04f30ecf369e6bec91d1ac201a8aa718c0c293b085d7902a314cab6e8048e458cc28c7da4fff2fcbf3da6d42fee94de5e0a3fb34342780e3f9df7b424911d6efb8628079566b50efe6971271eea");
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("spki", spkiKey, {name: "ECDH", namedCurve: "P-521"}, extractable, [ ]).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+    shouldBe("publicKey.type", "'public'");
+    shouldBe("publicKey.extractable", "true");
+    shouldBe("publicKey.algorithm.name", "'ECDH'");
+    shouldBe("publicKey.algorithm.namedCurve", "'P-521'");
+    shouldBe("publicKey.usages", "[ ]");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

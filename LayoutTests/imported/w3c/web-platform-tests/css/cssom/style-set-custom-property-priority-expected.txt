@@ -1,0 +1,5 @@
+
+PASS Sanity check
+PASS Set custom property to parent
+PASS Set custom property with priority to self
+

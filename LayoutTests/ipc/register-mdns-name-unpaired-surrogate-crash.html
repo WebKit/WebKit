@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PeerConnectionEnabled=true ] -->
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+import('./coreipc.js').then(({ CoreIPC }) => {
+    // 31 three-byte BMP code points followed by an unpaired high surrogate.
+    // simdutf::utf8_length_from_utf16 over-counts the trailing surrogate, yielding
+    // a length greater than characters.size() * 3.
+    const ipAddress = '\u0800'.repeat(31) + '\uD800';
+    CoreIPC.Networking.NetworkMDNSRegister.RegisterMDNSName(0, {
+        documentIdentifier: { object: { high: 1, low: 1 }, processIdentifier: 1 },
+        ipAddress
+    });
+    setTimeout(() => window.testRunner?.notifyDone(), 100);
+}).catch(() => window.testRunner?.notifyDone());
+</script>
+<body>
+<p>This test passes if the Networking process does not crash.</p>
+</body>

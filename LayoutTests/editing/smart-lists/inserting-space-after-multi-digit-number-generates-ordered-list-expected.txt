@@ -1,0 +1,10 @@
+Typing a multi-digit number (up to 3 digits) followed by ". " at the start of two consecutive lines should auto-convert them into an ordered list whose start attribute matches the first number typed.
+| <ol>
+|   class="Apple-decimal-list"
+|   start="123"
+|   style="list-style-type: decimal;"
+|   <li>
+|     "Hello"
+|     <br>
+|   <li>
+|     "World<#selection-caret>"

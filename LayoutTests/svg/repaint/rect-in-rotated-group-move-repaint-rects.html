@@ -1,0 +1,18 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px">
+    <g transform="matrix(0, 1, -1, 0, 200, 0)"><rect id="target" x="110" y="50" width="20" height="20" fill="green"/><rect x="200" y="50" width="20" height="20" fill="green"/></g>
+</svg>
+<script>
+    // Only the moved rect is repainted, not the whole group, although the bounding box of the group changes.
+    function repaintTest() {
+        document.getElementById("target").setAttribute("x", "150");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

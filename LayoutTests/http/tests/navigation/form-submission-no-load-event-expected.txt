@@ -1,0 +1,4 @@
+Tests that the load event fires if a form submission to a new window happens during the load.
+
+PASS: The load event was fired
+

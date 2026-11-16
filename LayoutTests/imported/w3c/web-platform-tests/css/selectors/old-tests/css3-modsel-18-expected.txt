@@ -1,0 +1,13 @@
+The background color of this paragraph should turn to green when the mouse pointer hovers either its text (here) or its whitespace background, here:
+
+The background color of this anchor (here) should turn to green when the pointing device hovers over it.
+The cells in	this table	should go
+green when	you hover	the pointing
+device over	them (here).	
+The rows in	this table	should go
+dark green	when the	pointing device
+is over the	cells there:	
+And here:		(blank cells).
+
+PASS Verify :hover styles
+

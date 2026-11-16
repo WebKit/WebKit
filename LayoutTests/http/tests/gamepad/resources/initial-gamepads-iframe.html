@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script>
+addEventListener("gamepadconnected", (event) => {
+    if (event.gamepad.index !== 3)
+        return;
+    const indices = navigator.getGamepads().flatMap((gamepad, index) => gamepad ? [index] : []);
+    parent.postMessage({ type: "result", indices }, "*");
+});
+onload = () => parent.postMessage({ type: "ready", pid: internals.processIdentifier }, "*");
+</script>

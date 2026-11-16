@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+svg { display: block; }
+</style>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+<script>
+// Handing the id to the gradient has to repaint the square, otherwise the square keeps its
+// unpainted appearance on screen until something unrelated repaints it.
+function repaintTest()
+{
+    document.getElementById('not-the-gradient-yet').id = 'gradient';
+}
+
+window.addEventListener('load', () => {
+    // Paint once while nothing carries the id the square asks for. That first paint is what makes
+    // the square wait for the id, and snapshotNode() is what gets us a paint at all: a text test
+    // otherwise never paints, and testRunner.display() does not paint either.
+    if (window.internals)
+        internals.snapshotNode(document.getElementById('svg'));
+
+    runRepaintTest();
+}, false);
+</script>
+</head>
+<body>
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <defs>
+        <linearGradient id="not-the-gradient-yet">
+            <stop offset="0" stop-color="green"/>
+            <stop offset="1" stop-color="blue"/>
+        </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="200" height="200" fill="url(#gradient)"/>
+</svg>
+</body>
+</html>

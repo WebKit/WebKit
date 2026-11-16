@@ -1,0 +1,11 @@
+HTMLSelectElement::listBoxDefaultEventHandler() must not keep a pointer to the list box renderer across the change event it dispatches: the event handler can destroy the renderer, which leaves the pointer dangling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.selectedIndex is 0
+PASS Did not crash destroying the list box renderer from a change event handler.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

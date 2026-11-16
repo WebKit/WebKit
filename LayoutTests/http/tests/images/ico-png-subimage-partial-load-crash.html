@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<p>An ICO whose PNG sub-image has only partly arrived must not be asked for a frame buffer before
+the sub-decoder has parsed its own header. The test passes unless a crash happens.</p>
+<img id="image" style="background-color: blue">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function decodeRound()
+{
+    // Drawing an incomplete image is a no-op, so ask the decoder for the frame directly.
+    if (window.internals)
+        internals.forceDecodeImageFrameAtIndex(document.getElementById("image"), 0);
+}
+
+function testDone()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest()
+{
+    // Stall inside the embedded PNG: past the icon directory and the PNG signature, but before
+    // the sub-decoder has enough of the IHDR to publish a size.
+    document.getElementById("image").src = "http://127.0.0.1:8000/resources/load-and-stall.py"
+        + "?name=../images/resources/ico-png-subimage.ico"
+        + "&mimeType=image%2Fvnd.microsoft.icon&stallAt=30&stallFor=60";
+
+    for (var i = 1; i <= 8; ++i)
+        setTimeout(decodeRound, i * 60);
+    setTimeout(testDone, 600);
+}
+
+setTimeout(runTest, 0);
+</script>

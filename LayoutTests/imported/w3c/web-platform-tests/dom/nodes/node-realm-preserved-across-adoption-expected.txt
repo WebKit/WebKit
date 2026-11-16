@@ -1,0 +1,10 @@
+
+text
+x
+
+PASS Built-in element keeps its creation realm after adoption
+PASS Text node keeps its creation realm after adoption
+PASS Comment node keeps its creation realm after adoption
+PASS createElement()d element keeps its creation realm after adoption
+PASS Never-wrapped descendant keeps its creation realm after adoption
+

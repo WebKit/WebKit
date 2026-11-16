@@ -1,0 +1,6 @@
+
+PASS Default referencing an earlier parameter
+PASS Default referencing a later parameter is guaranteed-invalid
+PASS Default referencing a later parameter does not see the calling element
+PASS Default referencing itself does not see the calling element
+

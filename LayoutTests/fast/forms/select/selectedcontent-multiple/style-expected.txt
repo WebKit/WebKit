@@ -1,0 +1,11 @@
+
+PASS Clones that do not match :checked are not displayed with appearance: auto and size=1
+PASS Selecting and deselecting options changes which clones are displayed with appearance: auto and size=1
+PASS Clones that do not match :checked are not displayed with appearance: base-select and size=1
+PASS Selecting and deselecting options changes which clones are displayed with appearance: base-select and size=1
+PASS Clones that do not match :checked are not displayed with appearance: auto
+PASS Selecting and deselecting options changes which clones are displayed with appearance: auto
+PASS Clones that do not match :checked are not displayed with appearance: base-select
+PASS Selecting and deselecting options changes which clones are displayed with appearance: base-select
+PASS Author style can display clones that do not match :checked
+

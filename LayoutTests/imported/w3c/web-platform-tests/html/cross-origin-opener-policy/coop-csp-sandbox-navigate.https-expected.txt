@@ -1,0 +1,4 @@
+
+PASS CSP: sandbox allow-popups allow-scripts allow-same-origin; CSP sandbox popup navigate to Cross-Origin-Opener-Policy document should work
+PASS CSP: sandbox allow-popups allow-scripts; CSP sandbox popup navigate to Cross-Origin-Opener-Policy document should work
+

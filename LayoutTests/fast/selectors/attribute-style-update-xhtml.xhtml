@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color: white;
+    color: black;
+    fill-opacity: 1;
+}
+[lowercase] {
+    background-color: rgb(1, 2, 3);
+}
+[UPPERCASE] {
+    fill-opacity: 0.5;
+}
+[CamelCase] {
+    color: rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <div>
+        <!-- With renderer -->
+        <target></target>
+    </div>
+    <div style="display:none;">
+        <!-- Without renderer -->
+        <target></target>
+    </div>
+</body>
+<script><![CDATA[
+description('Test the basic cases of style update for attribute selectors for XHTML. Unlike HTML, XHTML attribute matching is case sensitive.');
+
+var noMatch = 0;
+var matchLowerCase = 1;
+var matchUpperCase = 1 << 1;
+var matchCamelCase = 1 << 2;
+
+function testColor(mask) {
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor', (mask & matchLowerCase) ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor', (mask & matchLowerCase) ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[0]).fillOpacity', (mask & matchUpperCase) ? '0.5' : '1');
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[1]).fillOpacity', (mask & matchUpperCase) ? '0.5' : '1');
+
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[0]).color', (mask & matchCamelCase) ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[1]).color', (mask & matchCamelCase) ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+}
+
+function setAttribute(attribute, value) {
+    var allTargets = document.querySelectorAll("target");
+    for (var i = 0; i < allTargets.length; ++i)
+        allTargets[i].setAttribute(attribute, value);
+}
+
+function removeAttribute(attribute) {
+    var allTargets = document.querySelectorAll("target");
+    for (var i = 0; i < allTargets.length; ++i)
+        allTargets[i].removeAttribute(attribute);
+}
+
+debug("Initial state does not match anything, there are no attributes on the targets.");
+testColor(noMatch);
+
+debug("Adding \"lowercase\", the background-color should match.");
+setAttribute("lowercase");
+testColor(matchLowerCase);
+
+debug("Removing \"lowercase\", the background-color should no longer match.");
+removeAttribute("lowercase");
+testColor(noMatch);
+
+debug("Adding \"LOWERCASE\", the background-color should match because XML uses case-sensitive attributes.");
+setAttribute("LOWERCASE");
+testColor(noMatch);
+
+debug("Removing \"LOWERCASE\", the background-color should no longer match.");
+removeAttribute("LOWERCASE");
+testColor(noMatch);
+
+debug("Adding \"LowerCase\", the background-color should match because XML uses case-sensitive attributes.");
+setAttribute("LOWERCASE");
+testColor(noMatch);
+
+
+debug("Adding \"UPPERCASE\", the fill-opacity should match.");
+setAttribute("UPPERCASE");
+testColor(matchUpperCase);
+
+debug("Removing \"UPPERCASE\", the fill-opacity should no longer match.");
+removeAttribute("UPPERCASE");
+testColor(noMatch);
+
+debug("Adding \"uppercase\", the fill-opacity should match because XML uses case-sensitive attributes.");
+setAttribute("uppercase");
+testColor(noMatch);
+
+debug("Removing \"uppercase\", the fill-opacity should no longer match.");
+removeAttribute("uppercase");
+testColor(noMatch);
+
+debug("Adding \"UpperCase\", the fill-opacity should match because XML uses case-sensitive attributes.");
+setAttribute("UpperCase");
+testColor(noMatch);
+
+
+debug("Adding \"CamelCase\", the color should match.");
+setAttribute("CamelCase");
+testColor(matchCamelCase);
+
+debug("Removing \"CamelCase\", the color should no longer match.");
+removeAttribute("CamelCase");
+testColor(noMatch);
+
+debug("Adding \"camelcase\", the color should match because XML uses case-sensitive attributes.");
+setAttribute("camelcase");
+testColor(noMatch);
+
+debug("Removing \"camelcase\", the color should no longer match.");
+removeAttribute("camelcase");
+testColor(noMatch);
+
+debug("Adding \"CAMELCASE\", the color should match because XML uses case-sensitive attributes.");
+setAttribute("CAMELCASE");
+testColor(noMatch);
+]]></script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

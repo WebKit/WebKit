@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=true ] -->
+<style>
+
+@keyframes backdrop-filter {
+    to { backdrop-filter: blur(100px) }
+}
+
+div {
+    position: absolute;
+    left: 200px;
+    top: 200px;
+    width: 400px;
+    height: 400px;
+    backdrop-filter: blur(10px);
+}
+
+div.animated {
+    animation: backdrop-filter 1s linear infinite;
+}
+
+</style>
+
+<div>PASS if this does not crash.</div>
+
+<script src="threaded-animations-utils.js"></script>
+<script>
+
+(async function () {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    // Wait for the initial layer tree commit.
+    await threadedAnimationsCommit();
+
+    // Now animate the backdrop-filter property and wait for it to be committed.
+    document.querySelector("div").classList.toggle("animated");
+    await threadedAnimationsCommit();
+
+    window.testRunner?.notifyDone();
+})();
+
+</script>

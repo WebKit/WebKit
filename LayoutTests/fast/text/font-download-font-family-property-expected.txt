@@ -1,0 +1,8 @@
+This test makes sure that unnecessary fonts aren't downloaded. The test fails if Ahem.otf is downloaded.
+横
+font-download-font-family-property.html - willSendRequest <NSURLRequest URL font-download-font-family-property.html, main document URL font-download-font-family-property.html, http method GET> redirectResponse (null)
+font-download-font-family-property.html - didReceiveResponse <NSURLResponse font-download-font-family-property.html, http status code 0>
+font-download-font-family-property.html - didFinishLoading
+Ahem_CJK.ttf - willSendRequest <NSURLRequest URL Ahem_CJK.ttf, main document URL font-download-font-family-property.html, http method GET> redirectResponse (null)
+Ahem_CJK.ttf - didReceiveResponse <NSURLResponse Ahem_CJK.ttf, http status code 0>
+Ahem_CJK.ttf - didFinishLoading

@@ -1,0 +1,30 @@
+<!doctype html>
+<script src="../../resources/js-test.js"></script>
+<body></body>
+<script>
+description("Tests that a self-perpetuating promise chain whose chain function is defined inside a detached iframe is terminated.");
+jsTestIsAsync = true;
+
+var frame = document.createElement('iframe');
+document.body.appendChild(frame);
+
+frame.contentWindow.eval(`
+    function chain() {
+        Promise.resolve().then(chain);
+    }
+    chain();
+`);
+
+frame.remove();
+
+var deadlineTimer = setTimeout(() => {
+    testFailed("Test exceeded 5 second deadline - microtask chain inside detached iframe was not terminated");
+    finishJSTest();
+}, 5000);
+
+setTimeout(() => {
+    clearTimeout(deadlineTimer);
+    testPassed("Main thread remained responsive after removing iframe whose script defined a self-perpetuating promise chain");
+    finishJSTest();
+}, 100);
+</script>

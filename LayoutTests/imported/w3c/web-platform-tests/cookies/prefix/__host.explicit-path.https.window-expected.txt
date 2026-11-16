@@ -1,0 +1,7 @@
+
+PASS CONTROL a cookie set without a Path attribute here has a path of "/"
+PASS CONTROL "__Host-" with an explicit Path of "/" is set
+FAIL "__Host-" without a Path attribute is not set assert_equals: expected (object) null but got (string) "1"
+FAIL "__Host-" with an empty Path attribute is not set assert_equals: expected (object) null but got (string) "1"
+FAIL "__Host-" with a valueless Path attribute is not set assert_equals: expected (object) null but got (string) "1"
+
