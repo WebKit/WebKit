@@ -216,6 +216,7 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/cocoa/CoreMediaUtilities.mm
     Tests/WebCore/cocoa/DatabaseTrackerTest.mm
     Tests/WebCore/cocoa/DecodedMediaSamplesBlockTests.mm
+    Tests/WebCore/cocoa/DisplayListRecursionTestsCG.cpp
     Tests/WebCore/cocoa/GraphicsContextCGTests.mm
     Tests/WebCore/cocoa/H264UtilitiesCocoaTests.mm
     Tests/WebCore/cocoa/HEVCUtilitiesCocoaTests.mm
