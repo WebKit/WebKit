@@ -412,10 +412,9 @@ ExceptionOr<void> DOMEditor::setOuterHTML(Node& node, const String& html, Node*&
 {
     auto action = makeUnique<SetOuterHTMLAction>(node, html);
     auto& rawAction = *action;
-    auto result = m_history.perform(WTF::move(action));
-    if (!result.hasException())
+    return m_history.perform(WTF::move(action), [&] {
         newNode = rawAction.newNode();
-    return result;
+    });
 }
 
 ExceptionOr<void> DOMEditor::insertAdjacentHTML(Element& element, const String& where, const String& html)
