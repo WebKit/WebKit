@@ -49,6 +49,7 @@ public:
     static Ref<WebPageProxyTesting> create(WebPageProxy& page) { return adoptRef(*new WebPageProxyTesting(page)); }
 
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
+    void isLayerTreeFrozen(WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
     void numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&&);
 
     void setDisplayForTesting(uint32_t displayID, unsigned nominalFramesPerSecond);

@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIPageConfiguration.h"
+#import "BrowsingContextGroup.h"
 #import "Connection.h"
 #import "FrameProcess.h"
 #import "FullscreenClient.h"
@@ -460,9 +461,9 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     Ref mainFrameProcess = page->siteIsolatedProcess();
     [self _setupVisibilityPropagationForWebProcess:mainFrameProcess contextID:page->contextIDForVisibilityPropagationInWebProcess()];
 
-    auto remotePages = mainFrameProcess->remotePages();
-    for (auto& remotePage : borrow(remotePages))
-        [self _setupVisibilityPropagationForWebProcess:remotePage->process() contextID:remotePage->contextIDForVisibilityPropagationInWebProcess()];
+    protect(page->browsingContextGroup())->forEachRemotePage(*page, [&](auto& remotePage) {
+        [self _setupVisibilityPropagationForWebProcess:protect(remotePage.process()) contextID:remotePage.contextIDForVisibilityPropagationInWebProcess()];
+    });
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -514,9 +515,9 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     Ref mainFrameProcess = page->siteIsolatedProcess();
     [self _removeVisibilityPropagationForWebProcess:mainFrameProcess];
 
-    auto remotePages = mainFrameProcess->remotePages();
-    for (auto& remotePage : borrow(remotePages))
-        [self _removeVisibilityPropagationForWebProcess:remotePage->process()];
+    protect(page->browsingContextGroup())->forEachRemotePage(*page, [&](auto& remotePage) {
+        [self _removeVisibilityPropagationForWebProcess:protect(remotePage.process())];
+    });
 }
 
 - (void)_removeVisibilityPropagationViewForGPUProcess
@@ -740,6 +741,16 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 - (CGRect)_fixedClippingViewBoundsForTesting
 {
     return [_fixedClippingView bounds];
+}
+
+- (NSArray<NSNumber *> *)_processIdentifiersWithVisibilityPropagationForTesting
+{
+    RetainPtr processIdentifiers = adoptNS([[NSMutableOrderedSet alloc] init]);
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    for (RetainPtr visibilityPropagationView : makeVector<RetainPtr<WKVisibilityPropagationView>>([_visibilityPropagationViews allObjects]))
+        [processIdentifiers addObjectsFromArray:[visibilityPropagationView processIdentifiersForTesting]];
+#endif
+    return [processIdentifiers array];
 }
 
 - (void)_didExitStableState
