@@ -95,7 +95,7 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers, 
 
 void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType, CompletionHandler<void()>&& completionHandler)
 {
-    m_client->mouseUp(button, absoluteTimeForEventTime(m_time), wkModifiers, m_position.x, m_position.y, m_mouseButtonsCurrentlyDown);
+    m_client->mouseUp(button, absoluteTimeForEventTime(m_time), wkModifiers, m_position.x, m_position.y, m_clickCount, m_mouseButtonsCurrentlyDown);
     m_clickPosition = m_position;
     m_clickTime = m_time;
     if (completionHandler)

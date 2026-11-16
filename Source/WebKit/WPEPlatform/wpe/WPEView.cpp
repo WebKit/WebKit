@@ -1086,6 +1086,29 @@ guint wpe_view_compute_press_count(WPEView* view, gdouble x, gdouble y, guint bu
 }
 
 /**
+ * wpe_view_get_press_count:
+ * @view: a #WPEView
+ * @button: the button number
+ *
+ * Retrieve the number of presses for a given button number.
+ *
+ * Returns: the number of button presses
+ *
+ * Since: 2.56
+ */
+guint wpe_view_get_press_count(WPEView* view, guint button)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), 0);
+
+    auto* priv = view->priv;
+    unsigned pressCount = 0;
+    if (priv->lastButtonPress.pressCount && button == priv->lastButtonPress.button)
+        pressCount = priv->lastButtonPress.pressCount;
+
+    return pressCount;
+}
+
+/**
  * wpe_view_focus_in:
  * @view: a #WPEView
  *

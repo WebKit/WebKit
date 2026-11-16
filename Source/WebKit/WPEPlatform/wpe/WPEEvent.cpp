@@ -330,7 +330,6 @@ WPEEvent* wpe_event_pointer_button_new(WPEEventType type, WPEView* view, WPEInpu
 {
     g_return_val_if_fail(type == WPE_EVENT_POINTER_DOWN || type == WPE_EVENT_POINTER_UP, nullptr);
     g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
-    g_return_val_if_fail(!pressCount || type == WPE_EVENT_POINTER_DOWN, nullptr);
 
     return new _WPEEvent { view, type, source, time, { nullptr, nullptr }, WPEEventPointerButton { modifiers, button, pressCount, x, y }, 1 };
 }
@@ -357,14 +356,16 @@ guint wpe_event_pointer_button_get_button(WPEEvent* event)
  * @event: a #WPEEvent
  *
  * Get the number of button presses for @event
- * Note that @event must be a pointer button press event (%WPE_EVENT_POINTER_DOWN).
+ * Note that @event must be a pointer button press or release event
+ * (%WPE_EVENT_POINTER_DOWN or %WPE_EVENT_POINTER_UP). For a release event this is
+ * the press count of the button press that it completes.
  *
  * Returns: the press count of @event
  */
 guint wpe_event_pointer_button_get_press_count(WPEEvent* event)
 {
     g_return_val_if_fail(event, 0);
-    g_return_val_if_fail(event->type == WPE_EVENT_POINTER_DOWN, 0);
+    g_return_val_if_fail(event->type == WPE_EVENT_POINTER_DOWN || event->type == WPE_EVENT_POINTER_UP, 0);
 
     return std::get<WPEEventPointerButton>(event->variant).pressCount;
 }
