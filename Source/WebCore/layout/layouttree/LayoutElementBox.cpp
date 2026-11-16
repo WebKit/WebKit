@@ -27,7 +27,6 @@
 #include "LayoutElementBox.h"
 
 #include "RenderElement.h"
-#include "RenderListOutsideMarker.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
@@ -103,19 +102,6 @@ const Box* ElementBox::lastOutOfFlowChild() const
 bool ElementBox::hasOutOfFlowChild() const
 {
     return !!firstOutOfFlowChild();
-}
-
-bool ElementBox::isListMarkerImage() const
-{
-    CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(rendererForIntegration());
-    return listMarkerRenderer && listMarkerRenderer->isImage();
-}
-
-std::pair<float, float> ElementBox::layoutBoundsForListMarker() const
-{
-    CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(rendererForIntegration());
-    ASSERT(listMarkerRenderer);
-    return listMarkerRenderer->layoutBounds();
 }
 
 }

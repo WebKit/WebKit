@@ -30,7 +30,6 @@
 #include "RenderImage.h"
 #include "RenderListOutsideMarker.h"
 #include "RenderMenuList.h"
-#include "RenderMultiColumnFlow.h"
 #include "RenderObjectDocument.h"
 #include "RenderObjectStyle.h"
 #include "RenderTable.h"
@@ -58,21 +57,6 @@ NODELETE static RenderObject* firstNonMarkerChild(RenderBlock& parent)
 RenderTreeBuilder::List::List(RenderTreeBuilder& builder)
     : m_builder(builder)
 {
-}
-
-struct MarkerParentSearchResult {
-    CheckedPtr<RenderBlock> parent;
-};
-
-static MarkerParentSearchResult parentCandidateForMarker(RenderListItem& listItemRenderer, const RenderListOutsideMarker& marker)
-{
-    if (listItemRenderer.document().settings().listMarkerPositionedPostLayoutEnabled()) {
-        // The outside marker is always the list item's first child and it takes no part in in-flow layout.
-        return { &listItemRenderer };
-    }
-
-    auto result = RenderListItem::firstFormattedLineRootFor(listItemRenderer, marker);
-    return { result.parent ? result.parent : result.fallbackParent };
 }
 
 // An inside marker among the list item's own inline content is not a box of its own: it is an anonymous inline box
@@ -160,36 +144,8 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
             // (RenderText/RenderCounter are handled by propagateStyleToAnonymousChildren on setStyle).
             RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(*container, markerRenderer->style());
         }
-        auto* currentParent = markerRenderer->parent();
-        if (!currentParent) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-
-        auto searchResult = parentCandidateForMarker(listItemRenderer, *markerRenderer);
-        markerRenderer->setIsExcludedFromNormalLayout(false);
-        if (!searchResult.parent) {
-            if (currentParent->isAnonymousBlock()) {
-                // If the marker is currently contained inside an anonymous box, we are the only item in that anonymous box
-                // since no line box parent was found. It's ok to just leave the marker where it is in this case.
-                return;
-            }
-            searchResult.parent = &listItemRenderer;
-            if (auto* multiColumnFlow = listItemRenderer.multiColumnFlow())
-                searchResult.parent = multiColumnFlow;
-        }
-
-        if (searchResult.parent == currentParent)
-            return;
-
-        m_builder.attach(*searchResult.parent, m_builder.detach(*currentParent, *markerRenderer, WillBeDestroyed::No, RenderTreeBuilder::CanCollapseAnonymousBlock::No), firstNonMarkerChild(*searchResult.parent));
-
-        // If current parent is an anonymous block that has lost all its children, destroy it.
-        if (currentParent->isAnonymousBlock() && !currentParent->firstChild()) {
-            // Clear the CheckedPtr first because m_builder.destroy may delete the block that searchResult.parent points to.
-            searchResult.parent = nullptr;
-            m_builder.destroy(*currentParent);
-        }
+        // The outside marker never leaves the list item it was attached to.
+        ASSERT(markerRenderer->parent() == &listItemRenderer);
         return;
     }
 
@@ -202,13 +158,8 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     newMarkerRenderer->initializeStyle();
     m_builder.addListItemNeedingMarkerUpdate(listItemRenderer);
     listItemRenderer.setMarkerRenderer(*newMarkerRenderer);
-    auto searchResult = parentCandidateForMarker(listItemRenderer, *newMarkerRenderer);
-    if (!searchResult.parent) {
-        searchResult.parent = &listItemRenderer;
-        if (auto* multiColumnFlow = listItemRenderer.multiColumnFlow())
-            searchResult.parent = multiColumnFlow;
-    }
-    m_builder.attach(*searchResult.parent, WTF::move(newMarkerRenderer), firstNonMarkerChild(*searchResult.parent));
+    // The outside marker is always the list item's first child and it takes no part in in-flow layout.
+    m_builder.attach(listItemRenderer, WTF::move(newMarkerRenderer), firstNonMarkerChild(listItemRenderer));
 
     buildMarkerContentRenderers(*listItemRenderer.markerBox());
 }

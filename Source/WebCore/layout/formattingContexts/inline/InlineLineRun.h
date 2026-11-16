@@ -54,7 +54,6 @@ struct LineRun {
         SoftLineBreak,
         WordBreakOpportunity,
         AtomicInlineBox,
-        ListMarker,
         InlineBoxStart,
         InlineBoxEnd,
         LineSpanningInlineBoxStart,
@@ -66,7 +65,6 @@ struct LineRun {
     bool isNonBreakingSpace() const { return m_type == Type::NonBreakingSpace; }
     bool isWordSeparator() const { return m_type == Type::WordSeparator; }
     bool isAtomicInlineBox() const { return m_type == Type::AtomicInlineBox; }
-    bool isListMarker() const { return m_type == Type::ListMarker; }
     NODELETE bool isListMarkerOrItsContent() const;
     bool isLineBreak() const { return isHardLineBreak() || isSoftLineBreak(); }
     bool isSoftLineBreak() const  { return m_type == Type::SoftLineBreak; }
@@ -79,7 +77,7 @@ struct LineRun {
     bool isOutOfFlow() const { return m_type == Type::OutOfFlow; }
     bool isBlock() const { return m_type == Type::Block; }
 
-    bool isContentful() const { return (isText() && textContent().length) || isAtomicInlineBox() || isLineBreak() || isListMarker() || isBlock(); }
+    bool isContentful() const { return (isText() && textContent().length) || isAtomicInlineBox() || isLineBreak() || isBlock(); }
     static bool isContentfulOrHasDecoration(const LineRun&, const InlineFormattingContext&);
 
     const Box& layoutBox() const { return *m_layoutBox; }

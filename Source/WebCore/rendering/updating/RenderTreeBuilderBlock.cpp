@@ -91,10 +91,7 @@ struct ParentAndBeforeChild {
 
 NODELETE static bool isExcludedMarker(const RenderBlock& parent, const RenderObject& child)
 {
-    auto* marker = dynamicDowncast<RenderListOutsideMarker>(child);
-    if (!marker || !marker->document().settings().listMarkerPositionedPostLayoutEnabled())
-        return false;
-    return is<RenderListItem>(parent);
+    return is<RenderListOutsideMarker>(child) && is<RenderListItem>(parent);
 }
 
 NODELETE static bool hasInlineInFlowChild(const RenderBlock& parent)

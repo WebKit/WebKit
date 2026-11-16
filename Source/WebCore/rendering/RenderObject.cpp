@@ -3269,8 +3269,6 @@ bool RenderObject::isExcludedMarker() const
     auto* marker = dynamicDowncast<RenderListOutsideMarker>(*this);
     if (!marker)
         return false;
-    if (!document().settings().listMarkerPositionedPostLayoutEnabled())
-        return false;
     return parent() && parent() == marker->listItem();
 }
 

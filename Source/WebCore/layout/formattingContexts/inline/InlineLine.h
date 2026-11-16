@@ -198,7 +198,7 @@ inline bool Line::hasContent() const
     if (m_runs.isEmpty())
         return false;
     for (auto& run : m_runs | std::views::reverse) {
-        if (run.isContentful() && !run.isListMarker())
+        if (run.isContentful())
             return true;
     }
     return false;

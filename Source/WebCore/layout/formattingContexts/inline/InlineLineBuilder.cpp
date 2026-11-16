@@ -1144,7 +1144,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
         if (inlineItem.isAtomicInlineBox()) {
             auto logicalWidth = [&] {
                 auto& formattingUtils = formattingContext().formattingUtils();
-                if (isInIntrinsicWidthMode() && !inlineItem.layoutBox().isListMarkerBox()) {
+                if (isInIntrinsicWidthMode()) {
                     CheckedRef atomicInlineBox = downcast<ElementBox>(inlineItem.layoutBox());
                     return formattingUtils.intrinsicMarginBoxWidth(atomicInlineBox.get(), *intrinsicWidthMode());
                 }

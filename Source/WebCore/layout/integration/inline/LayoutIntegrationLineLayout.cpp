@@ -647,7 +647,6 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
     };
     auto inlineFormattingContext = Layout::InlineFormattingContext { protect(rootLayoutBox()), protect(layoutState()), parentBlockLayoutState };
     // Temporary, integration only.
-    inlineFormattingContext.layoutState().setNestedListMarkerOffsets(m_boxGeometryUpdater.takeNestedListMarkerOffsets());
     auto excludedMarkers = excludedMarkersForFirstFormattedLine(inlineFormattingContext.layoutState());
 
     auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());

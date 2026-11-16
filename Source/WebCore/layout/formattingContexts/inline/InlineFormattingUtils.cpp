@@ -114,10 +114,6 @@ bool InlineFormattingUtils::inlineLevelBoxAffectsLineBox(const InlineLevelBox& i
             return false;
         return formattingContext().layoutState().inStandardsMode() ? true : InlineQuirks::lineBreakBoxIsOnlyContentOnLine(lineBox);
     }
-    if (inlineLevelBox.isListMarker()) {
-        // This does not match other browser engines. see webkit.org/b/256390.
-        return true;
-    }
     if (inlineLevelBox.isInlineBox()) {
         // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
         // "If this results in the entire contents of the line box being displaced, the line box is considered to contain a strut styled according to the root inline box"
@@ -475,14 +471,6 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
         if (!endsWithSoftWrapOpportunity(previousInlineTextItem, nextInlineTextItem))
             return false;
         return TextUtil::isWrappingAllowed(nearestCommonAncestor(protect(previousInlineTextItem.layoutBox()), protect(nextInlineTextItem.layoutBox()), protect(formattingContext().root())).style());
-    }
-    if (previous.layoutBox().isListMarkerBox()) {
-        // An outside marker is not on the line's content flow, so it offers nothing to break after.
-        return false;
-    }
-    if (next.layoutBox().isListMarkerBox()) {
-        // FIXME: SHould this ever be the case?
-        return true;
     }
     if (previous.isAtomicInlineBox() || next.isAtomicInlineBox()) {
         auto isImageWithNoSoftWrapOpportunityNextTo = [&](auto& inlineItem, auto& adjacentInlineItem) {
