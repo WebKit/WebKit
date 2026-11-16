@@ -3967,7 +3967,7 @@
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
         "subtests": {
             "test_pointer": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             }
         }
     },
@@ -4029,13 +4029,13 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
             },
             "test_drag_and_drop_with_draggable_element[0]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["SKIP"], "bug": "webkit.org/b/331482"}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_drag_and_drop_with_draggable_element[300]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["SKIP"], "bug": "webkit.org/b/331482"}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_drag_and_drop_with_draggable_element[800]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["SKIP"], "bug": "webkit.org/b/331482"}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             }
         }
     },
@@ -4058,25 +4058,25 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_many_modifiers_click": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_modifier_click[\\ue00a-altKey]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_modifier_click[\\ue052-altKey]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_modifier_click[\\ue03d-metaKey]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_modifier_click[\\ue053-metaKey]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_modifier_click[\\ue008-shiftKey]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_modifier_click[\\ue050-shiftKey]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             }
         }
     },
@@ -4092,13 +4092,13 @@
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
         "subtests": {
             "test_down_closes_browsing_context[without up]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_down_closes_browsing_context[with up]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_params_actions_origin_outside_viewport[element]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_click_element_center": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
@@ -4116,7 +4116,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_click_navigation": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_move_to_position_in_viewport[default value]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}}
@@ -4160,28 +4160,28 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
             },
             "test_params_actions_origin_no_such_element[attribute]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_params_actions_origin_no_such_element[text node]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_params_actions_origin_no_such_element[processing instruction]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_params_actions_origin_no_such_element[comment]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_params_actions_origin_no_such_element[document]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_params_actions_origin_no_such_element[doctype]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_params_actions_origin_no_such_element[document fragment]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_params_actions_origin_no_such_element[shadow root]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             }
         }
     },
@@ -4189,10 +4189,10 @@
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
         "subtests": {
             "test_pointer_down_closes_browsing_context": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_params_actions_origin_outside_viewport[element]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_pen_pointer_in_shadow_tree[outer-open]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
@@ -4221,10 +4221,10 @@
                 "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}}
             },
             "test_pointer_down_closes_browsing_context": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_params_actions_origin_outside_viewport[element]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_touch_pointer_in_shadow_tree[outer-open]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}

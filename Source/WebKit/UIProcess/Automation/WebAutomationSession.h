@@ -112,6 +112,8 @@ class WebDriverBidiProcessor;
 enum class ForceSoftwareCapturingViewportSnapshot : bool;
 enum class SameDocumentNavigationType : uint8_t;
 
+enum class NodeHandleKind : bool { WebElementReference, SharedReference };
+
 class AutomationCommandError {
 public:
     Inspector::Protocol::Automation::ErrorMessage type;
@@ -257,7 +259,7 @@ public:
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
     void simulateWheelInteraction(WebPageProxy&, const WebCore::IntPoint& locationInView, const WebCore::IntSize& delta, AutomationCompletionHandler&&) override;
 #endif
-    void viewportInViewCenterPointOfElement(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, const Inspector::Protocol::Automation::NodeHandle&, Function<void(std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&) override;
+    void viewportInViewCenterPointOfElement(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, const Inspector::Protocol::Automation::NodeHandle&, NodeHandleKind, Function<void(std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&) override;
 
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 

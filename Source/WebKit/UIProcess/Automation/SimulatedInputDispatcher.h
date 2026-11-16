@@ -52,6 +52,7 @@ enum class VirtualKey;
 namespace WebKit {
 
 class AutomationCommandError;
+enum class NodeHandleKind : bool;
 using AutomationCompletionHandler = WTF::CompletionHandler<void(std::optional<AutomationCommandError>)>;
 
 class WebPageProxy;
@@ -154,6 +155,7 @@ struct SimulatedInputViewport {
 struct SimulatedInputRunOptions {
     std::optional<SimulatedInputViewport> viewport;
     bool interpolatePointerMoves { false };
+    NodeHandleKind elementOriginHandleKind { };
 };
 
 class SimulatedInputDispatcher : public RefCountedAndCanMakeWeakPtr<SimulatedInputDispatcher> {
@@ -175,7 +177,7 @@ public:
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
         virtual void simulateWheelInteraction(WebPageProxy&, const WebCore::IntPoint& locationInView, const WebCore::IntSize& delta, AutomationCompletionHandler&&) = 0;
 #endif
-        virtual void viewportInViewCenterPointOfElement(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, const String& nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&) = 0;
+        virtual void viewportInViewCenterPointOfElement(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, const String& nodeHandle, NodeHandleKind, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&) = 0;
     };
 
     static Ref<SimulatedInputDispatcher> create(WebPageProxy& page, SimulatedInputDispatcher::Client& client)

@@ -90,7 +90,8 @@
                 "NoSuchExtension",
                 "NoSuchUserContext",
                 "NoSuchScript",
-                "NoSuchHistoryEntry"
+                "NoSuchHistoryEntry",
+                "NodeIsNotAnElement"
             ]
         },
         {
