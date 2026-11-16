@@ -65,6 +65,10 @@ class TestExpectations(object):
                     return key
         return None
 
+    def port_expected(self, expected):
+        port_name = self._port_name_for_expected(expected)
+        return expected[port_name] if port_name else None
+
     def _expected_value(self, expected, value, default):
         port_name = self._port_name_for_expected(expected)
         if port_name is None:
