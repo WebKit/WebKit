@@ -3820,7 +3820,7 @@ bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& 
 {
     // Flow threads for multicol or paged overflow should be skipped. They are invisible to the DOM,
     // and percent heights of children should be resolved against the multicol or paged container.
-    if (containingBlock.isRenderFragmentedFlow() && !isPerpendicularWritingMode)
+    if (containingBlock.isRenderMultiColumnFlow() && !isPerpendicularWritingMode)
         return true;
 
     // If the writing mode of the containing block is orthogonal to ours, it means
@@ -4163,7 +4163,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Style::PreferredSize& lo
         return borderBoxLogicalHeight;
     }
 
-    if (logicalHeight.isPercentOrCalculated() && isOutOfFlowPositioned() && !isRenderFragmentedFlow()) {
+    if (logicalHeight.isPercentOrCalculated() && isOutOfFlowPositioned() && !isRenderMultiColumnFlow()) {
         PositionedLayoutConstraints constraints(*this, LogicalBoxAxis::Block);
         return adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, Style::evaluate<LayoutUnit>(logicalHeight, constraints.containingSize(), style().usedZoomForLength()), constraints.containingInlineSize());
     }
@@ -4262,7 +4262,7 @@ LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObj
         return { };
     }
 
-    if (auto* fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(containingBlock)) {
+    if (auto* fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(containingBlock)) {
         return isContainerInlineAxis
             ? LayoutRange(startEdge, fragmentedFlow->contentLogicalWidthOfFirstFragment())
             : LayoutRange(startEdge, fragmentedFlow->contentLogicalHeightOfFirstFragment());
@@ -4620,7 +4620,7 @@ PositionWithAffinity RenderBox::positionForPoint(const LayoutPoint& point, HitTe
     RenderBox* closestRenderer = nullptr;
 
     for (auto& renderer : childrenOfType<RenderBox>(*this)) {
-        if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*this)) {
+        if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(*this)) {
             ASSERT(fragment || fragmentedFlow->isSkippedContent());
             if (!fragmentedFlow->objectShouldFragmentInFlowFragment(&renderer, fragment))
                 continue;
@@ -4824,7 +4824,7 @@ void RenderBox::addOverflowWithRendererOffset(const RenderBox& renderer, LayoutS
     UNUSED_PARAM(options);
 
     // Never allow flow threads to propagate overflow up to a parent.
-    if (renderer.isRenderFragmentedFlow())
+    if (renderer.isRenderMultiColumnFlow())
         return;
 
     CheckedPtr fragmentedFlow = enclosingFragmentedFlow();
@@ -5287,7 +5287,7 @@ static RenderBoxModelObject* containingBlockForStretchResolution(const RenderBox
     auto isIgnoredAsContainingBlock = [](auto& candidate) {
         // Flow threads (multicol/paged) are invisible to the DOM; their children should
         // resolve against the multicol or paged container.
-        if (candidate.isRenderFragmentedFlow())
+        if (candidate.isRenderMultiColumnFlow())
             return true;
 
         // Only anonymous boxes are subject to the CSS 2 Section 9.2.1.1 "ignored when

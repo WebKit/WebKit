@@ -3081,7 +3081,6 @@ rendering/RenderEmbeddedObject.cpp @header:RenderStyleGetters @cost:7
 rendering/RenderFileUploadControl.cpp @header:RenderStyleGetters @cost:7
 rendering/RenderFlexibleBox.cpp @header:RenderStyleGetters @cost:7
 rendering/RenderFragmentContainer.cpp @header:RenderStyleGetters @cost:6
-rendering/RenderFragmentedFlow.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderFrame.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderFrameBase.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderFrameSet.cpp @header:RenderStyleGetters @cost:6
@@ -3110,7 +3109,7 @@ rendering/RenderMedia.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderMenuList.cpp @header:RenderStyleGetters @cost:8
 rendering/RenderMeter.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderModel.cpp
-rendering/RenderMultiColumnFlow.cpp @header:RenderStyleGetters @cost:5
+rendering/RenderMultiColumnFlow.cpp @header:RenderStyleGetters @cost:11
 rendering/RenderMultiColumnSet.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderMultiColumnSpannerPlaceholder.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderObject.cpp @header:RenderStyleGetters @cost:9

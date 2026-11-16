@@ -73,7 +73,6 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
-#include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
 #include "RenderGrid.h"
 #include "RenderHTMLCanvas.h"
@@ -86,6 +85,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceContainer.h"
@@ -958,8 +958,8 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (propagationType == StylePropagationType::BlockAndRubyChildren && !isBlockOrRuby)
             continue;
 
-        // RenderFragmentedFlows are updated through the RenderView::styleDidChange function.
-        if (is<RenderFragmentedFlow>(elementChild.get()))
+        // RenderMultiColumnFlows are updated through the RenderView::styleDidChange function.
+        if (is<RenderMultiColumnFlow>(elementChild))
             continue;
 
         auto newStyle = [&] {
@@ -2564,7 +2564,7 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
 {
     // Once we reach another flow thread we don't need to update the flow thread state
     // but we have to continue cleanup the flow thread info.
-    if (isRenderFragmentedFlow())
+    if (isRenderMultiColumnFlow())
         shouldUpdateState = false;
 
     for (CheckedRef child : childrenOfType<RenderObject>(*this)) {
@@ -2595,7 +2595,7 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
         setFragmentedFlowState(FragmentedFlowState::NotInsideFlow);
 }
 
-void RenderElement::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* fragmentedFlow)
+void RenderElement::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderMultiColumnFlow* fragmentedFlow)
 {
     if (fragmentedFlow)
         fragmentedFlow->removeFlowChildInfo(*this);

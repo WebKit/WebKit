@@ -39,9 +39,9 @@
 #include "RenderBlock.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
-#include "RenderFragmentedFlow.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "StyleBuilderState.h"
@@ -520,7 +520,7 @@ void AnchorPositionEvaluator::addAnchorFunctionScrollCompensatedAxis(Style::Comp
     style.setAnchorFunctionScrollCompensatedAxes(axes);
 }
 
-static LayoutRect boundingRectForFragmentedAnchor(const RenderBoxModelObject& anchorBox, const RenderLayerModelObject& containingBlock, const RenderFragmentedFlow& fragmentedFlow)
+static LayoutRect boundingRectForFragmentedAnchor(const RenderBoxModelObject& anchorBox, const RenderLayerModelObject& containingBlock, const RenderMultiColumnFlow& fragmentedFlow)
 {
     // Compute the bounding box of the fragments.
     // Location is relative to the fragmented flow.
@@ -537,7 +537,7 @@ static LayoutRect boundingRectForFragmentedAnchor(const RenderBoxModelObject& an
     fragmentedFlow.physicalToBlockStartRelative(fragmentsBoundingBox); // Convert to RenderBox coords.
 
     // Now convert to physical coordinates (top/left origin) and walk up.
-    // RenderFragmentedFlow doesn't have a usable frame rect, so use its container's content rect.
+    // RenderMultiColumnFlow doesn't have a usable frame rect, so use its container's content rect.
     CheckedPtr fragmentedFlowContainer = fragmentedFlow.containingBlock();
     if (!fragmentedFlowContainer) {
         ASSERT_NOT_REACHED();

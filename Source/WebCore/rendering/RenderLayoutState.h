@@ -36,7 +36,6 @@ namespace WebCore {
 class RenderBlockFlow;
 class RenderBox;
 class RenderElement;
-class RenderFragmentedFlow;
 class RenderMultiColumnFlow;
 class RenderObject;
 

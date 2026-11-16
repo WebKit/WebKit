@@ -2104,7 +2104,7 @@ static bool inNormalFlow(RenderBox& child)
 {
     RenderBoxModelObject* curr = child.containingBlock();
     while (curr && curr != &child.view()) {
-        if (curr->isRenderFragmentedFlow())
+        if (curr->isRenderMultiColumnFlow())
             return true;
         if (curr->isFloatingOrOutOfFlowPositioned())
             return false;
@@ -2704,7 +2704,7 @@ void RenderBlockFlow::styleDidChange(Style::Difference diff, const Style::Comput
 void RenderBlockFlow::updateStylesForColumnChildren(const Style::ComputedStyle* oldStyle)
 {
     auto columnsNeedLayout = oldStyle && (oldStyle->columnCount() != style().columnCount() || oldStyle->columnWidth() != style().columnWidth()); 
-    for (auto* child = firstChildBox(); child && (child->isRenderFragmentedFlow() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox()) {
+    for (auto* child = firstChildBox(); child && (child->isRenderMultiColumnFlow() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox()) {
         child->setStyle(Style::ComputedStyle::createAnonymousStyleWithDisplay(style(), Style::DisplayType::BlockFlow));
         if (columnsNeedLayout)
             child->setNeedsLayoutAndInvalidateContentLogicalWidths();
@@ -4859,7 +4859,7 @@ void RenderBlockFlow::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 void RenderBlockFlow::checkForPaginationLogicalHeightChange(RelayoutChildren& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged)
 {
     // If we don't use columns or flow threads, then bail.
-    if (!isRenderFragmentedFlow() && !multiColumnFlow())
+    if (!isRenderMultiColumnFlow() && !multiColumnFlow())
         return;
     
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
@@ -4872,7 +4872,7 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(RelayoutChildren& re
                 relayoutChildren = RelayoutChildren::Yes;
         }
         fragmentedFlow->setColumnHeightAvailable(newColumnHeight);
-    } else if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*this)) {
+    } else if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(*this)) {
         // FIXME: This is a hack to always make sure we have a page logical height, if said height
         // is known. The page logical height thing in RenderLayoutState is meaningless for flow
         // thread-based pagination (page height isn't necessarily uniform throughout the flow

@@ -60,7 +60,6 @@
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderEmbeddedObject.h"
-#include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderIFrame.h"
@@ -68,6 +67,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerInlines.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderVideo.h"
@@ -3390,8 +3390,8 @@ bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
             return true;
 
         // CSS Regions flow threads do not need to be composited as we use composited RenderFragmentContainers
-        // to render the background of the RenderFragmentedFlow.
-        if (layer.isRenderFragmentedFlow())
+        // to render the background of the RenderMultiColumnFlow.
+        if (layer.isRenderMultiColumnFlow())
             return false;
 
         return true;

@@ -35,9 +35,9 @@
 namespace WebCore {
 
 class RenderElement;
-class RenderFragmentedFlow;
 class RenderLayer;
 class RenderLayerModelObject;
+class RenderMultiColumnFlow;
 class RenderView;
 class TransformState;
 
@@ -105,7 +105,7 @@ public:
 
     // RenderView gets special treatment, because it applies the scroll offset only for elements inside in fixed position.
     void pushView(const RenderView*, const LayoutSize& scrollOffset, const TransformationMatrix* = nullptr);
-    void pushRenderFragmentedFlow(const RenderFragmentedFlow*);
+    void pushRenderFragmentedFlow(const RenderMultiColumnFlow*);
 
 private:
     void mapToContainer(TransformState&, const RenderLayerModelObject* container = nullptr) const;

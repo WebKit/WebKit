@@ -30,7 +30,6 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
-#include "RenderFragmentedFlow.h"
 #include "RenderLayer.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
@@ -108,7 +107,7 @@ void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, Render
     auto isRepaintContainer = [&] {
         if (CheckedPtr layer = renderer.layer())
             return compositedWithOwnBackingStore(*layer) || layer->requiresFullLayerImageForFilters();
-        return renderer.isRenderFragmentedFlow();
+        return renderer.isRenderMultiColumnFlow();
     }();
     m_layoutDeltaForRepaint = isRepaintContainer ? LayoutSize() : ancestor.layoutDelta();
 #if ASSERT_ENABLED
@@ -140,7 +139,7 @@ void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutC
     auto* ancestor = layoutStateStack.isEmpty() ? nullptr : layoutStateStack.last().get();
     // If we establish a new page height, then cache the offset to the top of the first page.
     // We can compare this later on to figure out what part of the page we're actually on.
-    if (pageLogicalHeight || renderer.isRenderFragmentedFlow()) {
+    if (pageLogicalHeight || renderer.isRenderMultiColumnFlow()) {
         m_pageLogicalHeight = pageLogicalHeight;
         bool isFlipped = renderer.writingMode().isBlockFlipped();
         m_pageOffset = LayoutSize(m_layoutOffset.width() + (!isFlipped ? renderer.borderLeft() + renderer.paddingLeft() : renderer.borderRight() + renderer.paddingRight()), m_layoutOffset.height() + (!isFlipped ? renderer.borderTop() + renderer.paddingTop() : renderer.borderBottom() + renderer.paddingBottom()));

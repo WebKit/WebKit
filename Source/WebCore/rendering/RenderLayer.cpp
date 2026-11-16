@@ -111,7 +111,6 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
-#include "RenderFragmentedFlow.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
@@ -651,7 +650,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         || renderer().isRenderEmbeddedObject()
         || renderer().isRenderIFrame()
         || (renderer().style().specifiesColumns() && !isRenderViewLayer())
-        || renderer().isRenderFragmentedFlow();
+        || renderer().isRenderMultiColumnFlow();
 }
 
 bool RenderLayer::shouldBeCSSStackingContext() const
@@ -1328,7 +1327,7 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
 #endif
         updatePagination();
         LAYER_POSITIONS_ASSERT_IMPLIES(mode == Verify, m_enclosingPaginationLayer.get() ==  oldEnclosingPaginationLayer);
-    } else if (renderer().isRenderFragmentedFlow()) {
+    } else if (renderer().isRenderMultiColumnFlow()) {
         LAYER_POSITIONS_ASSERT_IMPLIES(mode == Verify, m_enclosingPaginationLayer.get() == this);
         m_enclosingPaginationLayer = *this;
         flags.add(UpdatePagination);
@@ -2021,7 +2020,7 @@ void RenderLayer::updatePagination()
     // genuinely know if it is going to have to split itself up when painting only its contents (and not any other descendant
     // layers). We track an enclosingPaginationLayer instead of using a simple bit, since we want to be able to get back
     // to that layer easily.
-    if (renderer().isRenderFragmentedFlow()) {
+    if (renderer().isRenderMultiColumnFlow()) {
         m_enclosingPaginationLayer = *this;
         return;
     }
@@ -2893,7 +2892,7 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
         // We have to break up the transformed extent across our columns.
         // Split our box up into the actual fragment boxes that render in the columns/pages and unite those together to
         // get our true bounding box.
-        auto& enclosingFragmentedFlow = downcast<RenderFragmentedFlow>(paginationLayer->renderer());
+        auto& enclosingFragmentedFlow = downcast<RenderMultiColumnFlow>(paginationLayer->renderer());
         result = enclosingFragmentedFlow.fragmentsBoundingBox(result);
         result.move(paginationLayer->offsetFromAncestor(rootLayer));
         if (paintDirtyRect)
@@ -3023,9 +3022,9 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     const auto& renderer = layer->renderer();
     auto position = renderer.style().position();
 
-    // FIXME: Positioning of out-of-flow(fixed, absolute) elements collected in a RenderFragmentedFlow
+    // FIXME: Positioning of out-of-flow(fixed, absolute) elements collected in a RenderMultiColumnFlow
     // may need to be revisited in a future patch.
-    // If the fixed renderer is inside a RenderFragmentedFlow, we should not compute location using localToAbsolute,
+    // If the fixed renderer is inside a RenderMultiColumnFlow, we should not compute location using localToAbsolute,
     // since localToAbsolute maps the coordinates from named flow to regions coordinates and regions can be
     // positioned in a completely different place in the viewport (RenderView).
     if (position == PositionType::Fixed && (!ancestorLayer || ancestorLayer == renderer.view().layer())) {
@@ -3088,8 +3087,8 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
         parentLayer = layer->parent();
         bool foundAncestorFirst = false;
         while (parentLayer) {
-            // RenderFragmentedFlow is a positioned container, child of RenderView, positioned at (0,0).
-            // This implies that, for out-of-flow positioned elements inside a RenderFragmentedFlow,
+            // RenderMultiColumnFlow is a positioned container, child of RenderView, positioned at (0,0).
+            // This implies that, for out-of-flow positioned elements inside a RenderMultiColumnFlow,
             // we are bailing out before reaching root layer.
             if (isContainerForPositioned(*parentLayer, position, layer->establishesTopLayer()))
                 break;
@@ -3102,8 +3101,8 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
             parentLayer = parentLayer->parent();
         }
 
-        // We should not reach RenderView layer past the RenderFragmentedFlow layer for any
-        // children of the RenderFragmentedFlow.
+        // We should not reach RenderView layer past the RenderMultiColumnFlow layer for any
+        // children of the RenderMultiColumnFlow.
         if (renderer.enclosingFragmentedFlow())
             ASSERT(parentLayer != renderer.view().layer());
 
@@ -4309,7 +4308,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     LayoutRect layerBoundingBoxInFragmentedFlow = layerBoundingBox ? *layerBoundingBox : boundingBox(paginationLayer, offsetWithinPaginatedLayer);
     layerBoundingBoxInFragmentedFlow.intersect(rectsInFragmentedFlow.dirtyBackgroundRect().rect());
 
-    auto& enclosingFragmentedFlow = downcast<RenderFragmentedFlow>(paginationLayer->renderer());
+    auto& enclosingFragmentedFlow = downcast<RenderMultiColumnFlow>(paginationLayer->renderer());
     RenderLayer* parentPaginationLayer = paginationLayer->parent()->enclosingPaginationLayerInSubtree(rootLayer, inclusionMode);
     LayerFragments ancestorFragments;
     if (parentPaginationLayer) {
@@ -4715,7 +4714,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
     ASSERT(!renderer().view().needsLayout());
     
-    ASSERT(!isRenderFragmentedFlow());
+    ASSERT(!isRenderMultiColumnFlow());
     LayoutRect hitTestArea = renderer().view().documentRect();
     if (!request.ignoreClipping()) {
         const auto& settings = renderer().settings();
@@ -4810,7 +4809,7 @@ void RenderLayer::establishesTopLayerDidChange()
 RenderLayer* RenderLayer::enclosingFragmentedFlowAncestor() const
 {
     RenderLayer* curr = parent();
-    for (; curr && !curr->isRenderFragmentedFlow(); curr = curr->parent()) {
+    for (; curr && !curr->isRenderMultiColumnFlow(); curr = curr->parent()) {
         if (curr->isStackingContext() && curr->isComposited()) {
             // We only adjust the position of the first level of layers.
             return nullptr;
@@ -5874,7 +5873,7 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
         // get our true bounding box.
         result.move(childLayer->offsetFromAncestor(paginationLayer));
 
-        auto& enclosingFragmentedFlow = downcast<RenderFragmentedFlow>(paginationLayer->renderer());
+        auto& enclosingFragmentedFlow = downcast<RenderMultiColumnFlow>(paginationLayer->renderer());
         result = enclosingFragmentedFlow.fragmentsBoundingBox(result);
 
         childLayer = paginationLayer;
@@ -6292,7 +6291,7 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         || renderer().isRenderVideo()
         || renderer().isRenderEmbeddedObject()
         || renderer().isRenderIFrame()
-        || renderer().isRenderFragmentedFlow()
+        || renderer().isRenderMultiColumnFlow()
         || isScreenCaptureProtectionLayer();
 }
 

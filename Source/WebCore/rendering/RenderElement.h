@@ -318,7 +318,7 @@ public:
     inline std::optional<FloatSize> usedZoomedImageSize() const; // Defined in RenderElementInlines.h
 
     void removeFromRenderFragmentedFlow();
-    virtual void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow*);
+    virtual void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderMultiColumnFlow*);
 
     // Called before anonymousChild.setStyle(). Override to set custom styles for
     // the child.

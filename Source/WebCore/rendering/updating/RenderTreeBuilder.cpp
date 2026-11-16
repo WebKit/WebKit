@@ -320,12 +320,7 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
     if (auto* beforeChildBox = dynamicDowncast<RenderBox>(beforeChild)) {
         // Adjust the beforeChild if it happens to be a spanner and the its actual location is inside the fragmented flow.
         if (auto* enclosingFragmentedFlow = parent.enclosingFragmentedFlow()) {
-            auto columnSpannerPlaceholderForBeforeChild = [&]() -> RenderMultiColumnSpannerPlaceholder* {
-                auto* multiColumnFlow = dynamicDowncast<RenderMultiColumnFlow>(enclosingFragmentedFlow);
-                return multiColumnFlow ? multiColumnFlow->findColumnSpannerPlaceholder(*beforeChildBox) : nullptr;
-            };
-
-            if (auto* spannerPlaceholder = columnSpannerPlaceholderForBeforeChild())
+            if (auto* spannerPlaceholder = enclosingFragmentedFlow->findColumnSpannerPlaceholder(*beforeChildBox))
                 beforeChild = spannerPlaceholder;
         }
     }
@@ -518,7 +513,7 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
 
     if (m_internalMovesType == IsInternalMove::No) {
         newChild->initializeFragmentedFlowStateOnInsertion();
-        if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(newChild->enclosingFragmentedFlow()))
+        if (CheckedPtr fragmentedFlow = newChild->enclosingFragmentedFlow())
             multiColumnBuilder().multiColumnDescendantInserted(*fragmentedFlow, *newChild);
         if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(*newChild)) {
             for (auto& listItem : listItemRenderer->updateListMarkerNumbers())
@@ -684,7 +679,7 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, S
             return;
         // Out of flow children of RenderMultiColumnFlow are not really part of the multicolumn flow. We need to ensure that changes in positioning like this
         // trigger insertions into the multicolumn flow.
-        if (auto* enclosingFragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(renderer.parent()->enclosingFragmentedFlow())) {
+        if (auto* enclosingFragmentedFlow = renderer.parent()->enclosingFragmentedFlow()) {
             auto movingIntoMulticolumn = [&] {
                 if (wasOutOfFlowPositioned && !isOutOfFlowPositioned)
                     return true;
@@ -933,7 +928,7 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     }
 
     auto isAnonymousAndSafeToDelete = [] (const auto& renderer) {
-        return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow() && !renderer.isRenderSVGViewportContainer();
+        return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderMultiColumnFlow() && !renderer.isRenderSVGViewportContainer();
     };
 
     auto destroyRootIncludingAnonymous = [&] () -> RenderObject& {

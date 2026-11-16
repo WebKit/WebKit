@@ -72,11 +72,11 @@ class RenderBoxModelObject;
 class RenderBlock;
 class RenderBlockFlow;
 class RenderElement;
-class RenderFragmentedFlow;
 class RenderGeometryMap;
 class RenderLayer;
 class RenderLayerModelObject;
 class RenderFragmentContainer;
+class RenderMultiColumnFlow;
 class RenderTheme;
 class RenderTreeBuilder;
 class RenderView;
@@ -254,7 +254,6 @@ public:
 
     enum class BlockFlowFlag : uint8_t {
         IsFragmentContainer = 1 << 0,
-        IsFragmentedFlow = 1 << 1,
         IsTextControl = 1 << 2,
         IsSVGBlock = 1 << 3,
         IsViewTransitionContainingBlock = 1 << 4,
@@ -404,7 +403,7 @@ public:
     RenderBox* enclosingScrollableContainer() const;
 
     // Return our enclosing flow thread if we are contained inside one. Follows the containing block chain.
-    RenderFragmentedFlow* enclosingFragmentedFlow() const;
+    RenderMultiColumnFlow* enclosingFragmentedFlow() const;
 
     WEBCORE_EXPORT bool useDarkAppearance() const;
     WEBCORE_EXPORT OptionSet<StyleColorOptions> styleColorOptions(StyleColorOptionsPurpose) const;
@@ -684,7 +683,6 @@ public:
     bool isHorizontalWritingMode() const { return !m_stateBitfields.hasFlag(StateFlag::VerticalWritingMode); }
 
     bool hasReflection() const { return hasRareData() && rareData().hasReflection; }
-    bool isRenderFragmentedFlow() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsFragmentedFlow); }
     bool hasOutlineAutoAncestor() const { return hasRareData() && rareData().hasOutlineAutoAncestor; }
     bool paintContainmentApplies() const { return m_stateBitfields.hasFlag(StateFlag::PaintContainmentApplies); }
     bool hasSVGTransform() const { return m_stateBitfields.hasFlag(StateFlag::HasSVGTransform); }
@@ -1134,7 +1132,7 @@ protected:
     void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NeedsSimplifiedNormalFlowLayout, b); }
     void setOutOfFlowChildNeedsStaticPositionLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::OutOfFlowChildNeedsStaticPositionLayout, b); }
 
-    virtual RenderFragmentedFlow* locateEnclosingFragmentedFlow() const;
+    virtual RenderMultiColumnFlow* locateEnclosingFragmentedFlow() const;
 
     static FragmentedFlowState computedFragmentedFlowState(const RenderObject&);
 
@@ -1425,7 +1423,7 @@ inline bool RenderObject::needsNormalChildOrSimplifiedLayoutOnly() const
         && !needsOutOfFlowMovementLayout();
 }
 
-inline RenderFragmentedFlow* RenderObject::enclosingFragmentedFlow() const
+inline RenderMultiColumnFlow* RenderObject::enclosingFragmentedFlow() const
 {
     if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return nullptr;

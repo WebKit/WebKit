@@ -58,7 +58,7 @@ The bar for changing this file is high. Entries state rules, invariants and dire
 - Of its box geometry, a `RenderBox` stores the border box rect and the margins (by physical side). Border and padding are computed when read. `borderBoxRect()`, `paddingBoxRect()` and `contentBoxRect()` are physical and local to the border box. `paddingBoxRect()` excludes scrollbars and `paddingBoxRectIncludingScrollbar()` doesn't.
 - Overflow rects are block-start relative in the box's own writing mode. Ink overflow (`visualOverflowRect()`) is for painting, hit-test culling and invalidation and never affects sizes or positions. Scrollable overflow (`layoutOverflowRect()`) sets the scroll extent.
 - Inline boxes (`isInlineBox()`) and text have no box geometry, only display boxes, one or more per line. Read them through `InlineIterator`, whose `visualRect()` is physical in the IFC root's border box coordinates. Only IFC and the inline painters touch display boxes directly.
-- Convert coordinates with `localToAbsolute()`, `absoluteToLocal()` and friends, never by adding up `location()`s: relative and sticky offsets, scroll offsets, transforms and fragmentation are not in them. Inside a fragmented flow, render tree geometry is the position in the `RenderFragmentedFlow`'s single strip, not where the box is displayed.
+- Convert coordinates with `localToAbsolute()`, `absoluteToLocal()` and friends, never by adding up `location()`s: relative and sticky offsets, scroll offsets, transforms and fragmentation are not in them. Inside a fragmented flow, render tree geometry is the position in the `RenderMultiColumnFlow`'s single strip, not where the box is displayed.
 
 ## Direction
 

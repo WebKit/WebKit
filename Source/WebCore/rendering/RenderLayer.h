@@ -88,12 +88,12 @@ class HitTestingTransformState;
 class Region;
 class ClipPathPaintScope;
 class RegionContext;
-class RenderFragmentedFlow;
 class RenderLayerBacking;
 class RenderLayerCompositor;
 class RenderLayerFilters;
 class RenderLayerScrollableArea;
 class RenderMarquee;
+class RenderMultiColumnFlow;
 class RenderReplica;
 class RenderScrollbarPart;
 class RenderSVGHiddenContainer;
@@ -988,11 +988,11 @@ public:
 
     IndirectCompositingReason indirectCompositingReason() const { return static_cast<IndirectCompositingReason>(m_indirectCompositingReason); }
 
-    bool isRenderFragmentedFlow() const { return renderer().isRenderFragmentedFlow(); }
+    bool isRenderMultiColumnFlow() const { return renderer().isRenderMultiColumnFlow(); }
     bool isInsideFragmentedFlow() const { return renderer().fragmentedFlowState() != RenderObject::FragmentedFlowState::NotInsideFlow; }
-    bool isDirtyRenderFragmentedFlow() const
+    bool isDirtyRenderMultiColumnFlow() const
     {
-        ASSERT(isRenderFragmentedFlow());
+        ASSERT(isRenderMultiColumnFlow());
         return zOrderListsDirty() || normalFlowListDirty();
     }
 

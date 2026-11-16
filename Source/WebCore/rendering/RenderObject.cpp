@@ -60,7 +60,6 @@
 #include "RenderCounter.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
-#include "RenderFragmentedFlow.h"
 #include "RenderGrid.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderIterator.h"
@@ -232,7 +231,7 @@ void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowStat
 
     for (CheckedRef child : childrenOfType<RenderObject>(*renderElement)) {
         // If the child is a fragmentation context it already updated the descendants flag accordingly.
-        if (child->isRenderFragmentedFlow() && skipDescendentFragmentedFlow == SkipDescendentFragmentedFlow::Yes)
+        if (child->isRenderMultiColumnFlow() && skipDescendentFragmentedFlow == SkipDescendentFragmentedFlow::Yes)
             continue;
         if (child->isOutOfFlowPositioned()) {
             // Fragmented status propagation stops at out-of-flow boundary.
@@ -282,8 +281,8 @@ void RenderObject::initializeFragmentedFlowStateOnInsertion()
 {
     ASSERT(parent());
 
-    // A RenderFragmentedFlow is always considered to be inside itself, so it never has to change its state in response to parent changes.
-    if (isRenderFragmentedFlow())
+    // A RenderMultiColumnFlow is always considered to be inside itself, so it never has to change its state in response to parent changes.
+    if (isRenderMultiColumnFlow())
         return;
 
     auto computedState = computedFragmentedFlowState(*this);
@@ -305,8 +304,8 @@ void RenderObject::resetFragmentedFlowStateOnRemoval()
         return;
     }
 
-    // A RenderFragmentedFlow is always considered to be inside itself, so it never has to change its state in response to parent changes.
-    if (isRenderFragmentedFlow())
+    // A RenderMultiColumnFlow is always considered to be inside itself, so it never has to change its state in response to parent changes.
+    if (isRenderMultiColumnFlow())
         return;
 
     setFragmentedFlowStateIncludingDescendants(FragmentedFlowState::NotInsideFlow);
@@ -979,7 +978,7 @@ void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerMo
 
     requestCanvasPaintEventIfNeeded(*this, repaintContainer.get());
 
-    if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*repaintContainer)) {
+    if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(*repaintContainer)) {
         fragmentedFlow->repaintRectangleInFragments(r);
         return;
     }
@@ -1374,7 +1373,7 @@ void RenderObject::showLineTreeForThis() const
     SAFE_WTFLOGALWAYS("%s", stream.release().utf8());
 }
 
-static const RenderFragmentedFlow* enclosingFragmentedFlowFromRenderer(const RenderObject* renderer)
+static const RenderMultiColumnFlow* enclosingFragmentedFlowFromRenderer(const RenderObject* renderer)
 {
     if (!renderer)
         return nullptr;
@@ -1390,7 +1389,7 @@ static const RenderFragmentedFlow* enclosingFragmentedFlowFromRenderer(const Ren
 
 void RenderObject::outputRegionsInformation(TextStream& stream) const
 {
-    if (CheckedPtr renderFlagmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*this)) {
+    if (CheckedPtr renderFlagmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(*this)) {
         auto fragmentContainers = renderFlagmentedFlow->renderFragmentContainerList();
 
         stream << " [fragment containers ";
@@ -1764,7 +1763,7 @@ LayoutSize RenderObject::offsetFromContainer(const RenderElement& container, con
         offset -= toLayoutSize(box->scrollPosition());
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = is<RenderFragmentedFlow>(container);
+        *offsetDependsOnPoint = is<RenderMultiColumnFlow>(container);
 
     return offset;
 }
@@ -2248,7 +2247,7 @@ bool RenderObject::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const
     return false;
 }
 
-RenderFragmentedFlow* RenderObject::locateEnclosingFragmentedFlow() const
+RenderMultiColumnFlow* RenderObject::locateEnclosingFragmentedFlow() const
 {
     CheckedPtr containingBlock = this->containingBlock();
     return containingBlock ? containingBlock->enclosingFragmentedFlow() : nullptr;

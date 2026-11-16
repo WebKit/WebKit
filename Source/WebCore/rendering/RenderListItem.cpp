@@ -652,7 +652,7 @@ void RenderListItem::placeExcludedMarker(RenderListOutsideMarker& marker)
         // strip. The column the line ended up in is a sibling of the flow thread rather than an ancestor, so leave
         // the flow thread for that column set and carry on from there, in visual space.
         if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(ancestor)) {
-            CheckedPtr columnSet = dynamicDowncast<RenderMultiColumnSet>(static_cast<const RenderFragmentedFlow&>(*fragmentedFlow).fragmentAtBlockOffset(fragmentedFlow.get(), logicalTop, true));
+            CheckedPtr columnSet = dynamicDowncast<RenderMultiColumnSet>(static_cast<const RenderMultiColumnFlow&>(*fragmentedFlow).fragmentAtBlockOffset(fragmentedFlow.get(), logicalTop, true));
             if (!columnSet)
                 continue;
             auto translation = fragmentedFlow->physicalTranslationOffsetFromFlowToFragment(columnSet.get(), logicalTop);

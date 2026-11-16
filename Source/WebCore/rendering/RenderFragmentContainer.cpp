@@ -40,9 +40,9 @@
 #include "RenderBoxFragmentInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderFragmentedFlow.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -54,13 +54,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFragmentContainer);
 
-RenderFragmentContainer::RenderFragmentContainer(Type type, Element& element, Style::ComputedStyle&& style, RenderFragmentedFlow* fragmentedFlow)
+RenderFragmentContainer::RenderFragmentContainer(Type type, Element& element, Style::ComputedStyle&& style, RenderMultiColumnFlow* fragmentedFlow)
     : RenderBlockFlow(type, element, WTF::move(style), BlockFlowFlag::IsFragmentContainer)
     , m_fragmentedFlow(fragmentedFlow)
 {
 }
 
-RenderFragmentContainer::RenderFragmentContainer(Type type, Document& document, Style::ComputedStyle&& style, RenderFragmentedFlow* fragmentedFlow)
+RenderFragmentContainer::RenderFragmentContainer(Type type, Document& document, Style::ComputedStyle&& style, RenderMultiColumnFlow* fragmentedFlow)
     : RenderBlockFlow(type, document, WTF::move(style), BlockFlowFlag::IsFragmentContainer)
     , m_fragmentedFlow(fragmentedFlow)
 {

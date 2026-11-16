@@ -1065,7 +1065,7 @@ void RenderBoxModelObject::addOutOfFlowBox(RenderBox& outOfFlowBox)
 
     outOfFlowBox.clearGridAreaContentSize();
 
-    if (outOfFlowBox.isRenderFragmentedFlow())
+    if (outOfFlowBox.isRenderMultiColumnFlow())
         return;
     // FIXME: Find out if we can do this as part of outOfFlowBox.setChildNeedsLayout(MarkingBehavior::OnlyThis)
     if (outOfFlowBox.needsLayout()) {
@@ -1393,7 +1393,7 @@ LayoutSize RenderBoxModelObject::offsetFromContainer(const RenderElement& contai
         offset -= toLayoutSize(boxContainer->scrollPosition());
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint |= (is<RenderBox>(container) && container.writingMode().isBlockFlipped()) || is<RenderFragmentedFlow>(container);
+        *offsetDependsOnPoint |= (is<RenderBox>(container) && container.writingMode().isBlockFlipped()) || is<RenderMultiColumnFlow>(container);
 
     return offset;
 }

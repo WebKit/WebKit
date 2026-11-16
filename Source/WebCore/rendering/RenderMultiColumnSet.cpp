@@ -50,10 +50,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMultiColumnSet);
 
-RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow, Style::ComputedStyle&& style)
+RenderMultiColumnSet::RenderMultiColumnSet(RenderMultiColumnFlow& fragmentedFlow, Style::ComputedStyle&& style)
     : RenderFragmentContainer(Type::MultiColumnSet, protect(fragmentedFlow.document()), WTF::move(style), &fragmentedFlow)
-    , m_maxColumnHeight(RenderFragmentedFlow::maxLogicalHeight())
-    , m_minSpaceShortage(RenderFragmentedFlow::maxLogicalHeight())
+    , m_maxColumnHeight(RenderMultiColumnFlow::maxLogicalHeight())
+    , m_minSpaceShortage(RenderMultiColumnFlow::maxLogicalHeight())
 {
     ASSERT(isRenderMultiColumnSet());
 }
@@ -75,7 +75,7 @@ void RenderMultiColumnSet::expandToEncompassFragmentedFlowContentsIfNeeded()
     bool isHorizontal = fragmentedFlow()->isHorizontalWritingMode();
     auto logicalTopOffset = isHorizontal ? rect.y() : rect.x();
     auto overflowHeight = isHorizontal ? fragmentedFlow()->layoutOverflowRect().maxY() : fragmentedFlow()->layoutOverflowRect().maxX();
-    auto logicalHeightWithOverflow = logicalTopOffset == RenderFragmentedFlow::maxLogicalHeight() ? overflowHeight : overflowHeight - logicalTopOffset;
+    auto logicalHeightWithOverflow = logicalTopOffset == RenderMultiColumnFlow::maxLogicalHeight() ? overflowHeight : overflowHeight - logicalTopOffset;
     setFragmentedFlowPortionRect({ rect.x(), rect.y(), isHorizontal ? rect.width() : logicalHeightWithOverflow, isHorizontal ? logicalHeightWithOverflow : rect.height() });
 }
 
@@ -284,8 +284,8 @@ LayoutUnit RenderMultiColumnSet::calculateBalancedHeight(bool initial) const
     // amount of space shortage found during layout.
 
     ASSERT(m_minSpaceShortage > 0); // We should never _shrink_ the height!
-    // ASSERT(m_minSpaceShortage != RenderFragmentedFlow::maxLogicalHeight()); // If this happens, we probably have a bug.
-    if (m_minSpaceShortage == RenderFragmentedFlow::maxLogicalHeight())
+    // ASSERT(m_minSpaceShortage != RenderMultiColumnFlow::maxLogicalHeight()); // If this happens, we probably have a bug.
+    if (m_minSpaceShortage == RenderMultiColumnFlow::maxLogicalHeight())
         return m_computedColumnHeight + sizeContainmentShortage; // So bail out rather than looping infinitely.
 
     auto toAdd = std::max<LayoutUnit>(sizeContainmentShortage, m_minSpaceShortage);
@@ -330,7 +330,7 @@ bool RenderMultiColumnSet::recalculateColumnHeight(bool initial)
     if (m_computedColumnHeight == oldColumnHeight)
         return false; // No change. We're done.
 
-    m_minSpaceShortage = RenderFragmentedFlow::maxLogicalHeight();
+    m_minSpaceShortage = RenderMultiColumnFlow::maxLogicalHeight();
     return true; // Need another pass.
 }
 
@@ -403,7 +403,7 @@ void RenderMultiColumnSet::prepareForLayout(bool initial)
     m_spaceShortageForSizeContainment = 0;
 
     // Start with "infinite" flow thread portion height until height is known.
-    setLogicalBottomInFragmentedFlow(RenderFragmentedFlow::maxLogicalHeight());
+    setLogicalBottomInFragmentedFlow(RenderMultiColumnFlow::maxLogicalHeight());
 
     setNeedsLayout(MarkingBehavior::OnlyThis);
 }
@@ -457,7 +457,7 @@ LayoutUnit RenderMultiColumnSet::calculateMaxColumnHeight() const
     LayoutUnit availableHeight = multiColumnFlow()->columnHeightAvailable();
     if (availableHeight)
         return heightAdjustedForSetOffset(availableHeight);
-    LayoutUnit maxColumnHeight = RenderFragmentedFlow::maxLogicalHeight();
+    LayoutUnit maxColumnHeight = RenderMultiColumnFlow::maxLogicalHeight();
     if (!multicolStyle.logicalMaxHeight().isNone())
         maxColumnHeight = std::min(maxColumnHeight, multicolBlock->computeContentLogicalHeight(multicolStyle.logicalMaxHeight(), std::nullopt).value_or(maxColumnHeight));
     return heightAdjustedForSetOffset(maxColumnHeight);

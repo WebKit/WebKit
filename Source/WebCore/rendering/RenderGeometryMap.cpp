@@ -27,8 +27,8 @@
 #include "RenderGeometryMap.h"
 #include "RenderElementInlines.h"
 
-#include "RenderFragmentedFlow.h"
 #include "RenderLayer.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -155,7 +155,7 @@ NODELETE static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObjec
         if (current->hasTransformOrPerspective())
             return false;
         
-        if (current->isRenderFragmentedFlow())
+        if (current->isRenderMultiColumnFlow())
             return false;
 
         if (current->isLegacyRenderSVGRoot())
@@ -253,7 +253,7 @@ void RenderGeometryMap::pushView(const RenderView* view, const LayoutSize& scrol
     stepInserted(step);
 }
 
-void RenderGeometryMap::pushRenderFragmentedFlow(const RenderFragmentedFlow* fragmentedFlow)
+void RenderGeometryMap::pushRenderFragmentedFlow(const RenderMultiColumnFlow* fragmentedFlow)
 {
     m_mapping.append(RenderGeometryMapStep(fragmentedFlow, false, false, false, false));
     stepInserted(m_mapping.last());

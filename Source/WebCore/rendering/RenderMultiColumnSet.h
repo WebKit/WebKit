@@ -46,11 +46,11 @@ class RenderMultiColumnSet final : public RenderFragmentContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderMultiColumnSet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMultiColumnSet);
 public:
-    RenderMultiColumnSet(RenderFragmentedFlow&, Style::ComputedStyle&&);
+    RenderMultiColumnSet(RenderMultiColumnFlow&, Style::ComputedStyle&&);
     virtual ~RenderMultiColumnSet();
 
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
-    RenderMultiColumnFlow* multiColumnFlow() const { return downcast<RenderMultiColumnFlow>(fragmentedFlow()); }
+    RenderMultiColumnFlow* multiColumnFlow() const { return fragmentedFlow(); }
 
     NODELETE RenderMultiColumnSet* nextSiblingMultiColumnSet() const;
     NODELETE RenderMultiColumnSet* previousSiblingMultiColumnSet() const;
@@ -121,7 +121,7 @@ public:
     // when advancing to the next column set or spanner.
     void endFlow(RenderBlock* container, LayoutUnit bottomInContainer);
     // Has this set been flowed in this layout pass?
-    bool hasBeenFlowed() const { return logicalBottomInFragmentedFlow() != RenderFragmentedFlow::maxLogicalHeight(); }
+    bool hasBeenFlowed() const { return logicalBottomInFragmentedFlow() != RenderMultiColumnFlow::maxLogicalHeight(); }
 
     void expandToEncompassFragmentedFlowContentsIfNeeded();
 

@@ -68,7 +68,6 @@
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
-#include "RenderFragmentedFlow.h"
 #include "RenderGrid.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
@@ -76,6 +75,7 @@
 #include "RenderLayoutState.h"
 #include "RenderListOutsideMarker.h"
 #include "RenderMenuList.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
 #include "RenderTableCell.h"
@@ -184,7 +184,7 @@ public:
     LayoutUnit m_intrinsicBorderForFieldset;
     LayoutUnit m_intrinsicMarginBeforeForFieldset;
     
-    std::optional<SingleThreadWeakPtr<RenderFragmentedFlow>> m_enclosingFragmentedFlow;
+    std::optional<SingleThreadWeakPtr<RenderMultiColumnFlow>> m_enclosingFragmentedFlow;
 };
 
 using RenderBlockRareDataMap = SingleThreadWeakHashMap<const RenderBlock, std::unique_ptr<RenderBlockRareData>>;
@@ -1386,7 +1386,7 @@ bool RenderBlock::createsNewFormattingContext() const
         || isRenderTableCaption()
         || isFieldset()
         || isDocumentElementRenderer()
-        || isRenderFragmentedFlow()
+        || isRenderMultiColumnFlow()
         || isRenderOrLegacyRenderSVGForeignObject()
         || style.specifiesColumns()
         || style.columnSpan() == ColumnSpan::All
@@ -1412,7 +1412,7 @@ bool RenderBlock::isSelectionRoot() const
         || isPositioned() || isFloating()
         || isRenderTableCell() || isNonReplacedAtomicInlineLevelBox()
         || isTransformed() || hasReflection() || hasMask() || isWritingModeRoot()
-        || isRenderFragmentedFlow() || style().columnSpan() == ColumnSpan::All
+        || isRenderMultiColumnFlow() || style().columnSpan() == ColumnSpan::All
         || isFlexItemIncludingDeprecated() || isGridItem())
         return true;
     
@@ -1538,7 +1538,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         return { };
     }
 
-    if (isTransformed() || style().columnSpan() == ColumnSpan::All || isRenderFragmentedFlow()) {
+    if (isTransformed() || style().columnSpan() == ColumnSpan::All || isRenderMultiColumnFlow()) {
         // FIXME: We should learn how to gap fill multiple columns and transforms eventually.
         lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalHeight();
         lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, logicalHeight(), cache);
@@ -2082,7 +2082,7 @@ PositionWithAffinity RenderBlock::positionForPointWithInlineChildren(const Layou
 NODELETE static inline bool isChildHitTestCandidate(const RenderBox& box, HitTestSource source)
 {
     auto isVisible = source == HitTestSource::Script ? box.style().visibility() == Visibility::Visible : box.usedStyle().visibility() == UsedVisibility::Visible;
-    return box.borderBoxHeight() && isVisible && !box.isOutOfFlowPositioned() && !box.isRenderFragmentedFlow();
+    return box.borderBoxHeight() && isVisible && !box.isOutOfFlowPositioned() && !box.isRenderMultiColumnFlow();
 }
 
 // Valid candidates in a FragmentedFlow must be rendered by the fragment.
@@ -2542,7 +2542,7 @@ std::pair<RenderObject*, RenderElement*> RenderBlock::firstLetterAndContainer(Re
     return { firstLetter, firstLetterContainer };
 }
 
-RenderFragmentedFlow* RenderBlock::cachedEnclosingFragmentedFlow() const
+RenderMultiColumnFlow* RenderBlock::cachedEnclosingFragmentedFlow() const
 {
     RenderBlockRareData* rareData = blockRareData();
 
@@ -2568,7 +2568,7 @@ void RenderBlock::setCachedEnclosingFragmentedFlowNeedsUpdate()
     rareData.m_enclosingFragmentedFlow = std::nullopt;
 }
 
-RenderFragmentedFlow* RenderBlock::updateCachedEnclosingFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) const
+RenderMultiColumnFlow* RenderBlock::updateCachedEnclosingFragmentedFlow(RenderMultiColumnFlow* fragmentedFlow) const
 {
     if (!fragmentedFlow) {
         if (auto* rareData = const_cast<RenderBlock&>(*this).blockRareData())
@@ -2580,7 +2580,7 @@ RenderFragmentedFlow* RenderBlock::updateCachedEnclosingFragmentedFlow(RenderFra
     return fragmentedFlow;
 }
 
-RenderFragmentedFlow* RenderBlock::locateEnclosingFragmentedFlow() const
+RenderMultiColumnFlow* RenderBlock::locateEnclosingFragmentedFlow() const
 {
     RenderBlockRareData* rareData = blockRareData();
     if (!rareData || !rareData->m_enclosingFragmentedFlow)
@@ -2590,7 +2590,7 @@ RenderFragmentedFlow* RenderBlock::locateEnclosingFragmentedFlow() const
     return rareData->m_enclosingFragmentedFlow.value().get();
 }
 
-void RenderBlock::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* fragmentedFlow)
+void RenderBlock::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderMultiColumnFlow* fragmentedFlow)
 {
     if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return;
@@ -2663,7 +2663,7 @@ RenderFragmentContainer* RenderBlock::fragmentAtBlockOffset(LayoutUnit blockOffs
     return nullptr;
 }
 
-static bool canComputeFragmentRangeForBox(const RenderBlock& parentBlock, const RenderBox& childBox, const RenderFragmentedFlow& enclosingFragmentedFlow)
+static bool canComputeFragmentRangeForBox(const RenderBlock& parentBlock, const RenderBox& childBox, const RenderMultiColumnFlow& enclosingFragmentedFlow)
 {
     if (!enclosingFragmentedFlow.hasFragments())
         return false;
@@ -2714,7 +2714,7 @@ void RenderBlock::estimateFragmentRangeForBoxChild(const RenderBox& box) const
         return;
     }
 
-    auto estimatedValues = box.computeLogicalHeight(RenderFragmentedFlow::maxLogicalHeight(), logicalTopForChild(box));
+    auto estimatedValues = box.computeLogicalHeight(RenderMultiColumnFlow::maxLogicalHeight(), logicalTopForChild(box));
     LayoutUnit offsetFromLogicalTopOfFirstFragment = box.offsetFromLogicalTopOfFirstPage();
     RenderFragmentContainer* startFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
     RenderFragmentContainer* endFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment + estimatedValues.extent, true);

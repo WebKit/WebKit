@@ -210,10 +210,10 @@ public:
     bool canHaveChildren() const override { return true; }
     virtual bool canDropAnonymousBlockChild() const { return true; }
 
-    NODELETE RenderFragmentedFlow* cachedEnclosingFragmentedFlow() const;
+    NODELETE RenderMultiColumnFlow* cachedEnclosingFragmentedFlow() const;
     void setCachedEnclosingFragmentedFlowNeedsUpdate();
     virtual bool cachedEnclosingFragmentedFlowNeedsUpdate() const;
-    void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* = nullptr) final;
+    void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderMultiColumnFlow* = nullptr) final;
 
     std::optional<LayoutUnit> availableLogicalHeightForPercentageComputation() const final;
     bool hasDefiniteLogicalHeight() const;
@@ -260,7 +260,7 @@ public:
     bool paintChild(RenderBox&, PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect, PaintBlockType paintType = PaintAsBlock);
 
 protected:
-    RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
+    RenderMultiColumnFlow* locateEnclosingFragmentedFlow() const override;
     bool establishesIndependentFormattingContextIgnoringDisplayType(const Style::ComputedStyle&) const;
 
     void layout() override;
@@ -384,7 +384,7 @@ private:
 
     virtual PositionWithAffinity positionForPointWithInlineChildren(const LayoutPoint&, HitTestSource);
 
-    RenderFragmentedFlow* updateCachedEnclosingFragmentedFlow(RenderFragmentedFlow*) const;
+    RenderMultiColumnFlow* updateCachedEnclosingFragmentedFlow(RenderMultiColumnFlow*) const;
 
     void paintDebugBoxShadowIfApplicable(GraphicsContext&, const LayoutRect&) const;
 

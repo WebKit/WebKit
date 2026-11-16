@@ -31,7 +31,7 @@
 
 #include "LayerFragment.h"
 #include "RenderBlockFlow.h"
-#include "RenderFragmentedFlow.h"
+#include "RenderMultiColumnFlow.h"
 #include "VisiblePosition.h"
 #include <memory>
 #include <wtf/WeakHashMap.h>
@@ -41,7 +41,7 @@ namespace WebCore {
 class Element;
 class RenderBox;
 class RenderBoxFragmentInfo;
-class RenderFragmentedFlow;
+class RenderMultiColumnFlow;
 
 class RenderFragmentContainer : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderFragmentContainer);
@@ -54,7 +54,7 @@ public:
     void attachFragment();
     void detachFragment();
 
-    RenderFragmentedFlow* fragmentedFlow() const { return m_fragmentedFlow.get(); }
+    RenderMultiColumnFlow* fragmentedFlow() const { return m_fragmentedFlow.get(); }
 
     // Set once attachFragment() has added the fragment to its fragmented flow. It stays set after detachFragment().
     bool isValid() const { return m_isValid; }
@@ -104,8 +104,8 @@ public:
     virtual bool contentRectSpansFragments(const LayoutRect&) const = 0;
 
 protected:
-    RenderFragmentContainer(Type, Element&, Style::ComputedStyle&&, RenderFragmentedFlow*);
-    RenderFragmentContainer(Type, Document&, Style::ComputedStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Element&, Style::ComputedStyle&&, RenderMultiColumnFlow*);
+    RenderFragmentContainer(Type, Document&, Style::ComputedStyle&&, RenderMultiColumnFlow*);
     virtual ~RenderFragmentContainer();
 
     RenderOverflow* overflowForBox(const RenderBox&) const;
@@ -128,7 +128,7 @@ private:
     LayoutRect computedLayoutOverflowRectForBox(const RenderBox&) const;
 
 protected:
-    SingleThreadWeakPtr<RenderFragmentedFlow> m_fragmentedFlow;
+    SingleThreadWeakPtr<RenderMultiColumnFlow> m_fragmentedFlow;
 
 private:
     LayoutRect m_fragmentedFlowPortionRect;

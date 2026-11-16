@@ -119,7 +119,7 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, co
             return false;
         if (is<RenderTextControl>(*ancestor))
             return false;
-        if (is<RenderFragmentedFlow>(*ancestor)) {
+        if (is<RenderMultiColumnFlow>(*ancestor)) {
             // Don't allow any intervening non-multicol fragmentation contexts. The spec doesn't say
             // anything about disallowing this, but it's just going to be too complicated to
             // implement (not to mention specify behavior).
@@ -165,17 +165,13 @@ void RenderTreeBuilder::MultiColumn::updateAfterDescendants(RenderBlockFlow& flo
     }
 }
 
-RenderObject* RenderTreeBuilder::MultiColumn::resolveMovedChild(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild)
+RenderObject* RenderTreeBuilder::MultiColumn::resolveMovedChild(RenderMultiColumnFlow& enclosingFragmentedFlow, RenderObject* beforeChild)
 {
     if (!beforeChild)
         return nullptr;
 
     auto* beforeChildRenderBox = dynamicDowncast<RenderBox>(*beforeChild);
     if (!beforeChildRenderBox)
-        return beforeChild;
-
-    auto* renderMultiColumnFlow = dynamicDowncast<RenderMultiColumnFlow>(enclosingFragmentedFlow);
-    if (!renderMultiColumnFlow)
         return beforeChild;
 
     // We only need to resolve for column spanners.
@@ -188,7 +184,7 @@ RenderObject* RenderTreeBuilder::MultiColumn::resolveMovedChild(RenderFragmented
     // create and insert a renderer for the sibling node immediately preceding the spanner, we need
     // to map that spanner renderer to the spanner's placeholder, which is where the new inserted
     // renderer belongs.
-    if (auto* placeholder = renderMultiColumnFlow->findColumnSpannerPlaceholder(*beforeChildRenderBox))
+    if (auto* placeholder = enclosingFragmentedFlow.findColumnSpannerPlaceholder(*beforeChildRenderBox))
         return placeholder;
 
     // This is an invalid spanner, or its placeholder hasn't been created yet. This happens when
@@ -225,7 +221,7 @@ void RenderTreeBuilder::MultiColumn::restoreColumnSpannersForContainer(RenderMul
 
 void RenderTreeBuilder::MultiColumn::multiColumnDescendantInserted(RenderMultiColumnFlow& flow, RenderObject& newDescendant)
 {
-    if (gShiftingSpanner || gRestoringColumnSpannersForContainer || newDescendant.isRenderFragmentedFlow())
+    if (gShiftingSpanner || gRestoringColumnSpannersForContainer || newDescendant.isRenderMultiColumnFlow())
         return;
 
     auto* subtreeRoot = &newDescendant;
@@ -299,7 +295,7 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
     flow.invalidateLineLayout(RenderBlockFlow::InvalidationReason::InternalMove);
     // If this soon-to-be multicolumn flow is already part of a multicolumn context, we need to move back the descendant spanners
     // to their original position before moving subtrees around.
-    if (auto* enclosingflow = dynamicDowncast<RenderMultiColumnFlow>(flow.enclosingFragmentedFlow()))
+    if (auto* enclosingflow = flow.enclosingFragmentedFlow())
         restoreColumnSpannersForContainer(*enclosingflow, flow);
 
     auto newFragmentedFlow = WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), Style::ComputedStyle::createAnonymousStyleWithDisplay(flow.style(), Style::DisplayType::BlockFlow));
