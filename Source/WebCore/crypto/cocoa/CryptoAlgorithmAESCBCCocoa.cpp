@@ -80,7 +80,10 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformDecrypt(const Crypto
         return result.releaseException();
 
     auto data = result.releaseReturnValue();
-    if (padding == Padding::Yes && !data.isEmpty()) {
+    if (padding == Padding::Yes) {
+        if (data.isEmpty())
+            return Exception { ExceptionCode::OperationError };
+
         // Validate and remove padding as per https://www.w3.org/TR/WebCryptoAPI/#aes-cbc-operations (Decrypt section).
         auto paddingByte = data.last();
         if (!paddingByte || paddingByte > 16 || paddingByte > data.size())
