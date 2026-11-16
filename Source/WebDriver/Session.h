@@ -179,6 +179,7 @@ private:
     void closeAllToplevelBrowsingContexts(const String& toplevelBrowsingContext, Function<void(CommandResult&&)>&&);
 
     void getToplevelBrowsingContextRect(Function<void(CommandResult&&)>&&);
+    void enterToplevelBrowsingContextFullscreen(Function<void(CommandResult&&)>&&);
 
     std::optional<String> pageLoadStrategyString() const;
     bool clearBrowsingContextsOnError(const CommandResult&);

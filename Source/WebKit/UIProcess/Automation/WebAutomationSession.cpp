@@ -934,6 +934,16 @@ void WebAutomationSession::hideWindowOfBrowsingContext(const Inspector::Protocol
     });
 }
 
+void WebAutomationSession::restoreWindowOfBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, CommandCallback<void>&& callback)
+{
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    restoreWindowForPage(*page, [callback = WTF::move(callback)] mutable {
+        callback({ });
+    });
+}
+
 void WebAutomationSession::exitFullscreenWindowForPage(WebPageProxy& page, WTF::CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(FULLSCREEN_API)
