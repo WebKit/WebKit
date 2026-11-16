@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Scroll to text fragment - target starting with apostrophe must be word-bounded on the left</title>
+<link rel="help" href="https://wicg.github.io/scroll-to-text-fragment/">
+<meta name="assert" content="A text directive target beginning with an apostrophe must only match when its start is at a word boundary. The directive should resolve to the standalone apostrophe-s in the final sentence, not the apostrophe-s inside the word it's earlier in the document.">
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-1500" />
+<style>
+  ::target-text { background-color: pink; }
+</style>
+<p>Pass condition: only the target in the final sentence below is highlighted; nothing in the earlier sentence is highlighted.</p>
+<p>Anyway, it's our only chance.</p>
+<p>And this 's our last time together.</p>
+<script>
+  location.href = "#:~:text=%27s,-our";
+</script>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Scroll to text fragment - target inside a katakana word must be word-bounded</title>
+<link rel="help" href="https://wicg.github.io/scroll-to-text-fragment/">
+<meta name="assert" content="This test checks that a fragment directive target which appears as a substring inside a katakana word is rejected.">
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-1500" />
+<style>
+  ::target-text { background-color: pink; }
+</style>
+
+<p>Pass condition: only the katakana for bread on the last line is highlighted; the first line is not highlighted.</p>
+<!-- champagne -->
+<p>シャンパン</p>
+<!-- bread -->
+<p>パン</p>
+
+<script>
+  location.href = "#:~:text=%E3%83%91%E3%83%B3";
+</script>
+</html>
