@@ -37,18 +37,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderProgress);
 RenderProgress::RenderProgress(HTMLElement& element, Style::ComputedStyle&& style)
     : RenderBlockFlow(Type::Progress, element, WTF::move(style))
     , m_position(HTMLProgressElement::InvalidPosition)
-    , m_animationTimer(*this, &RenderProgress::animationTimerFired)
 {
     ASSERT(isRenderProgress());
 }
 
 RenderProgress::~RenderProgress() = default;
-
-void RenderProgress::willBeDestroyed()
-{
-    m_animationTimer.stop();
-    RenderBlockFlow::willBeDestroyed();
-}
 
 void RenderProgress::updateFromElement()
 {
@@ -57,7 +50,6 @@ void RenderProgress::updateFromElement()
         return;
     m_position = element->position();
 
-    updateAnimationState();
     repaint();
     RenderBlockFlow::updateFromElement();
 }
@@ -75,44 +67,16 @@ RenderBox::LogicalExtentComputedValues RenderProgress::computeLogicalHeight(Layo
     return computedValues;
 }
 
-double RenderProgress::animationProgress() const
+MonotonicTime RenderProgress::animationStartTime() const
 {
-    auto duration = theme().animationDurationForProgressBar();
-    ASSERT(duration > 0_s);
-    return m_animating ? (fmod((MonotonicTime::now() - m_animationStartTime).seconds(), duration.seconds()) / duration.seconds()) : 0;
+    RefPtr element = progressElement();
+    return element ? element->animationStartTime() : MonotonicTime { };
 }
 
 bool RenderProgress::isDeterminate() const
 {
     return (HTMLProgressElement::IndeterminatePosition != position()
             && HTMLProgressElement::InvalidPosition != position());
-}
-
-void RenderProgress::animationTimerFired()
-{
-    // FIXME: Ideally obtaining the repeat interval from Page is not RenderTheme-specific, but it
-    // currently is as it also determines whether we animate at all.
-    auto repeatInterval = theme().animationRepeatIntervalForProgressBar(*this);
-
-    repaint();
-    if (!m_animationTimer.isActive() && m_animating)
-        m_animationTimer.startOneShot(repeatInterval);
-}
-
-void RenderProgress::updateAnimationState()
-{
-    auto repeatInterval = theme().animationRepeatIntervalForProgressBar(*this);
-
-    bool animating = style().hasUsedAppearance() && repeatInterval > 0_s && !isDeterminate();
-    if (animating == m_animating)
-        return;
-
-    m_animating = animating;
-    if (m_animating) {
-        m_animationStartTime = MonotonicTime::now();
-        m_animationTimer.startOneShot(repeatInterval);
-    } else
-        m_animationTimer.stop();
 }
 
 NODELETE HTMLProgressElement* RenderProgress::progressElement() const

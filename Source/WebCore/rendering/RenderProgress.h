@@ -22,7 +22,6 @@
 
 #include "HTMLElement.h"
 #include "RenderBlockFlow.h"
-#include "Timer.h"
 
 namespace WebCore {
 
@@ -36,8 +35,7 @@ public:
     virtual ~RenderProgress();
 
     double position() const { return m_position; }
-    double animationProgress() const;
-    MonotonicTime animationStartTime() const { return m_animationStartTime; }
+    MonotonicTime animationStartTime() const;
 
     NODELETE bool isDeterminate() const;
     void updateFromElement() override;
@@ -48,15 +46,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderProgress"_s; }
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
-    void willBeDestroyed() final;
-
-    void animationTimerFired();
-    void updateAnimationState();
-
     double m_position { 0 };
-    MonotonicTime m_animationStartTime;
-    bool m_animating { false };
-    Timer m_animationTimer;
 };
 
 } // namespace WebCore

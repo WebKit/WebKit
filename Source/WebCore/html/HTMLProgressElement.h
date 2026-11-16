@@ -22,6 +22,8 @@
 #pragma once
 
 #include "HTMLElement.h"
+#include "Timer.h"
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
@@ -43,6 +45,9 @@ public:
 
     double position() const;
 
+    MonotonicTime animationStartTime() const { return m_animationStartTime; }
+    bool isAnimating() const { return m_animationTimer.isActive(); }
+
     bool isDevolvableWidget() const override { return true; }
 
 private:
@@ -59,6 +64,7 @@ private:
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void didAttachRenderers() final;
+    void didDetachRenderers() final;
 
     void updateDeterminateState();
     bool isDeterminate() const { return m_isDeterminate; };
@@ -67,11 +73,16 @@ private:
     void appendShadowTreeForBaseAppearance(ShadowRoot&);
 
     void didChangeElementValue();
+    void updateAnimationState();
+    void animationTimerFired();
+
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     WeakPtr<HTMLDivElement, WeakPtrImplWithEventTargetData> m_valueElement;
     WeakPtr<HTMLDivElement, WeakPtrImplWithEventTargetData> m_fillElement;
     bool m_isDeterminate { false };
+    MonotonicTime m_animationStartTime;
+    Timer m_animationTimer;
 };
 
 } // namespace

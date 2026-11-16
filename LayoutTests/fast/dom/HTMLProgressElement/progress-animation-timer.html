@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<body>
+<progress id="progress"></progress>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests that an indeterminate progress element only runs its animation timer while it has a native appearance renderer.");
+
+const progress = document.getElementById("progress");
+
+function update()
+{
+    progress.offsetWidth;
+}
+
+update();
+shouldBeTrue("internals.isProgressElementAnimating(progress)");
+
+debug("display: none");
+progress.style.display = "none";
+update();
+shouldBeFalse("internals.isProgressElementAnimating(progress)");
+
+debug("display: inline-block");
+progress.style.display = "inline-block";
+update();
+shouldBeTrue("internals.isProgressElementAnimating(progress)");
+
+debug("Determinate value");
+progress.value = 0.5;
+shouldBeFalse("internals.isProgressElementAnimating(progress)");
+
+debug("Indeterminate again");
+progress.removeAttribute("value");
+shouldBeTrue("internals.isProgressElementAnimating(progress)");
+
+debug("appearance: none");
+progress.style.appearance = "none";
+update();
+shouldBeFalse("internals.isProgressElementAnimating(progress)");
+
+debug("appearance: auto");
+progress.style.appearance = "auto";
+update();
+shouldBeTrue("internals.isProgressElementAnimating(progress)");
+
+debug("Removed from the document");
+progress.remove();
+shouldBeFalse("internals.isProgressElementAnimating(progress)");
+
+debug("Created while display: none");
+const hidden = document.createElement("progress");
+hidden.style.display = "none";
+document.body.appendChild(hidden);
+hidden.offsetWidth;
+shouldBeFalse("internals.isProgressElementAnimating(hidden)");
+</script>
+</body>
+</html>

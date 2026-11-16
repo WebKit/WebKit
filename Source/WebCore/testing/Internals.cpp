@@ -124,6 +124,7 @@
 #include "HTMLPictureElement.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLPreloadScanner.h"
+#include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
@@ -1314,6 +1315,12 @@ bool Internals::isImageAnimating(HTMLImageElement& element)
 {
     RefPtr image = imageFromImageElement(element);
     return image && (image->isAnimating() || image->animationPending());
+}
+
+bool Internals::isProgressElementAnimating(Element& element)
+{
+    RefPtr progress = dynamicDowncast<HTMLProgressElement>(element);
+    return progress && progress->isAnimating();
 }
 
 void Internals::setImageAnimationEnabled(bool enabled)
