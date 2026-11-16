@@ -495,7 +495,8 @@ class TestRunner(object):
             else:
                 continue
             for test in tests:
-                changed_tests.setdefault(test, path)
+                if test not in changed_tests or path == TEST_EXPECTATIONS_PATH:
+                    changed_tests[test] = path
 
         if not changed_tests:
             print(f'No tests changed since {ref}.')
