@@ -179,6 +179,11 @@ static NSMutableArray<NSMutableDictionary *> *siblingsOfBookmarkInArray(NSMutabl
     return [_dictionary[@"managed"] boolValue];
 }
 
+- (BOOL)isSyncedForWebExtensionContext:(WKWebExtensionContext *)context
+{
+    return [_dictionary[@"syncing"] boolValue];
+}
+
 - (_WKWebExtensionBookmarkType)bookmarkTypeForWebExtensionContext:(WKWebExtensionContext *)context
 {
     if ([_dictionary[@"type"] isEqualToString:@"folder"])
@@ -589,7 +594,7 @@ TEST_F(WKWebExtensionAPIBookmarks, GetTree)
         @"browser.test.assertTrue(tree[0].parentId === undefined, 'The root should not have a parent');",
         @"let root = tree[0].children;",
         @"browser.test.assertEq(1, root.length, 'The root should have the default folder');",
-        @"browser.test.assertEq('other', root[0].id, 'The root should have the default folder');",
+        @"browser.test.assertEq('other', root[0].folderType, 'The default folder should report its folder type');",
         @"root = root[0].children;",
         @"browser.test.assertEq(3, root.length, 'The default folder should have the three new nodes');",
         @"let foundBookmark1 = root.find(n => n.title === bookmark1.title);",
@@ -951,16 +956,17 @@ TEST_F(WKWebExtensionAPIBookmarks, Search)
     [manager loadAndRun];
 }
 
-TEST_F(WKWebExtensionAPIBookmarks, RootIdentifier)
+TEST_F(WKWebExtensionAPIBookmarks, RootNodeIdentifier)
 {
     auto *script = @[
-        @"let topLevel = await browser.bookmarks.getChildren('0')",
+        @"browser.test.assertEq('0', browser.bookmarks.ROOT_NODE_ID, 'The root identifier should be 0')",
+        @"let topLevel = await browser.bookmarks.getChildren(browser.bookmarks.ROOT_NODE_ID)",
         @"browser.test.assertEq(1, topLevel.length, 'The root should have the top-level node')",
         @"browser.test.assertEq('Other', topLevel[0].title, 'The top-level node should be the default folder')",
-        @"browser.test.assertEq('0', topLevel[0].parentId, 'Top-level nodes should have the root as their parent')",
-        @"let roots = await browser.bookmarks.get('0')",
+        @"browser.test.assertEq(browser.bookmarks.ROOT_NODE_ID, topLevel[0].parentId, 'Top-level nodes should have the root as their parent')",
+        @"let roots = await browser.bookmarks.get(browser.bookmarks.ROOT_NODE_ID)",
         @"browser.test.assertEq(1, roots.length, 'The root can be requested')",
-        @"browser.test.assertEq('0', roots[0].id, 'The root should have the root identifier')",
+        @"browser.test.assertEq(browser.bookmarks.ROOT_NODE_ID, roots[0].id, 'The root should have the root identifier')",
         @"browser.test.notifyPass()",
     ];
 
@@ -997,6 +1003,52 @@ TEST_F(WKWebExtensionAPIBookmarks, UnknownBookmarkIdentifier)
     auto manager = getManagerFor(script, bookmarksManifest);
 
     configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, FolderTypeManagedAndSynced)
+{
+    auto *script = @[
+        @"let tree = await browser.bookmarks.getTree()",
+        @"let nodes = tree[0].children",
+        @"browser.test.assertEq(4, nodes.length, 'The root should have four top-level nodes')",
+        @"browser.test.assertEq('bookmarks-bar', nodes[0].folderType, 'The bookmarks bar should report its folder type')",
+        @"browser.test.assertTrue(nodes[0].unmodifiable === undefined, 'The bookmarks bar should be modifiable')",
+        @"browser.test.assertEq(true, nodes[0].syncing, 'The bookmarks bar should be syncing')",
+        @"browser.test.assertEq('managed', nodes[1].folderType, 'The managed folder should report its folder type')",
+        @"browser.test.assertEq('managed', nodes[1].unmodifiable, 'The managed folder should be unmodifiable')",
+        @"browser.test.assertEq(false, nodes[1].syncing, 'The managed folder should never be syncing')",
+        @"browser.test.assertEq('managed', nodes[1].children[0].unmodifiable, 'A managed bookmark should be unmodifiable')",
+        @"browser.test.assertEq(false, nodes[1].children[0].syncing, 'A managed bookmark should never be syncing, even if the delegate says so')",
+        @"browser.test.assertTrue(nodes[1].children[0].folderType === undefined, 'A bookmark should not have a folder type')",
+        @"browser.test.assertEq('other', nodes[2].folderType, 'The other folder should report its folder type')",
+        @"browser.test.assertEq(false, nodes[2].syncing, 'A node that does not say should not be syncing')",
+        @"browser.test.assertTrue(nodes[3].folderType === undefined, 'An ordinary folder should not have a folder type')",
+        @"let children = await browser.bookmarks.getChildren('managed')",
+        @"browser.test.assertEq('managed', children[0].unmodifiable, 'getChildren should report unmodifiable')",
+        @"let results = await browser.bookmarks.search({ title: 'Policy' })",
+        @"browser.test.assertEq(1, results.length, 'The search should find the managed bookmark')",
+        @"let folderResults = await browser.bookmarks.search('Favorites')",
+        @"browser.test.assertEq(0, folderResults.length, 'The search should not return special folders')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    manager.get().internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<id<_WKWebExtensionBookmark>> *, NSError *)) {
+        auto *bar = @{ @"id": @"bar", @"title": @"Favorites", @"folderType": @"bookmarks-bar", @"syncing": @YES, @"children": @[ ] };
+        auto *managedBookmark = @{ @"id": @"managed-bookmark", @"title": @"Policy", @"url": @"https://webkit.org/", @"managed": @YES, @"syncing": @YES };
+        auto *managed = @{ @"id": @"managed", @"title": @"Managed", @"folderType": @"managed", @"managed": @YES, @"children": @[ managedBookmark ] };
+        auto *other = @{ @"id": @"other", @"title": @"Other", @"folderType": @"other", @"children": @[ ] };
+        auto *ordinary = @{ @"id": @"ordinary", @"title": @"Reading", @"children": @[ ] };
+
+        auto *nodes = [NSMutableArray array];
+        for (NSDictionary *dictionary in @[ bar, managed, other, ordinary ])
+            [nodes addObject:adoptNS([[TestBookmarkNode alloc] initWithDictionary:dictionary]).get()];
+
+        completionHandler(nodes, nil);
+    };
 
     [manager loadAndRun];
 }
@@ -1058,12 +1110,12 @@ TEST_F(WKWebExtensionAPIBookmarks, MutationsRespectTheRootAndManagedBookmarks)
     auto *script = @[
         @"let bookmark = await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' })",
 
-        @"await browser.test.assertRejects(browser.bookmarks.create({ title: 'In Root', parentId: '0' }), /the bookmark root cannot be modified/i, 'create in the root')",
-        @"await browser.test.assertRejects(browser.bookmarks.update('0', { title: 'Renamed' }), /the bookmark root cannot be modified/i, 'update the root')",
-        @"await browser.test.assertRejects(browser.bookmarks.move(bookmark.id, { parentId: '0' }), /the bookmark root cannot be modified/i, 'move into the root')",
-        @"await browser.test.assertRejects(browser.bookmarks.move('0', { parentId: 'other' }), /the bookmark root cannot be modified/i, 'move the root')",
-        @"await browser.test.assertRejects(browser.bookmarks.remove('0'), /the bookmark root cannot be modified/i, 'remove the root')",
-        @"await browser.test.assertRejects(browser.bookmarks.removeTree('0'), /the bookmark root cannot be modified/i, 'remove the root tree')",
+        @"await browser.test.assertRejects(browser.bookmarks.create({ title: 'In Root', parentId: browser.bookmarks.ROOT_NODE_ID }), /the bookmark root cannot be modified/i, 'create in the root')",
+        @"await browser.test.assertRejects(browser.bookmarks.update(browser.bookmarks.ROOT_NODE_ID, { title: 'Renamed' }), /the bookmark root cannot be modified/i, 'update the root')",
+        @"await browser.test.assertRejects(browser.bookmarks.move(bookmark.id, { parentId: browser.bookmarks.ROOT_NODE_ID }), /the bookmark root cannot be modified/i, 'move into the root')",
+        @"await browser.test.assertRejects(browser.bookmarks.move(browser.bookmarks.ROOT_NODE_ID, { parentId: 'other' }), /the bookmark root cannot be modified/i, 'move the root')",
+        @"await browser.test.assertRejects(browser.bookmarks.remove(browser.bookmarks.ROOT_NODE_ID), /the bookmark root cannot be modified/i, 'remove the root')",
+        @"await browser.test.assertRejects(browser.bookmarks.removeTree(browser.bookmarks.ROOT_NODE_ID), /the bookmark root cannot be modified/i, 'remove the root tree')",
 
         @"await browser.test.assertRejects(browser.bookmarks.create({ title: 'In Managed', parentId: 'managed' }), /managed bookmarks cannot be modified/i, 'create in a managed folder')",
         @"await browser.test.assertRejects(browser.bookmarks.update('managed-bookmark', { title: 'Renamed' }), /managed bookmarks cannot be modified/i, 'update a managed bookmark')",

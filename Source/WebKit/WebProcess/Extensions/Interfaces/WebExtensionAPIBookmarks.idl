@@ -28,6 +28,8 @@
     MainWorldOnly,
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPIBookmarks {
+    [ImplementedAs=rootNodeIdentifier] readonly attribute DOMString ROOT_NODE_ID;
+
     [RaisesException, ImplementedAs=createBookmark] void create([NSDictionary] any bookmark, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void getChildren(DOMString id, [Optional, CallbackHandler] function callback);

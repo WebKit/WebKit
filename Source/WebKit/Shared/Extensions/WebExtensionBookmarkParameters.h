@@ -49,6 +49,9 @@ struct WebExtensionBookmarkParameters {
     std::optional<uint64_t> index;
     String title;
     std::optional<URL> url;
+    WebExtensionBookmarkFolderType folderType { WebExtensionBookmarkFolderType::None };
+    bool managed { false };
+    bool synced { false };
     WallTime dateAdded;
     std::optional<Vector<WebExtensionBookmarkParameters>> children;
 };

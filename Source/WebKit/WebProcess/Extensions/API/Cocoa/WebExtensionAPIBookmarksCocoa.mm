@@ -65,6 +65,25 @@ static inline NSDictionary *toWebAPI(const WebExtensionBookmarkParameters& bookm
     } else
         result[typeKey] = folderKey;
 
+    switch (bookmark.folderType) {
+    case WebExtensionBookmarkFolderType::None:
+        break;
+    case WebExtensionBookmarkFolderType::BookmarksBar:
+        result[folderTypeKey] = @"bookmarks-bar";
+        break;
+    case WebExtensionBookmarkFolderType::Managed:
+        result[folderTypeKey] = @"managed";
+        break;
+    case WebExtensionBookmarkFolderType::Other:
+        result[folderTypeKey] = @"other";
+        break;
+    }
+
+    if (bookmark.managed)
+        result[unmodifiableKey] = @"managed";
+
+    result[syncingKey] = @(bookmark.synced);
+
     if (bookmark.children) {
         result[childrenKey] = createNSArray(*bookmark.children, [](const auto& child) {
             return toWebAPI(child);

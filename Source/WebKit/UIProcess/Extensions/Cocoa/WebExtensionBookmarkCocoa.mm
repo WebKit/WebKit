@@ -63,6 +63,7 @@ WebExtensionBookmark::WebExtensionBookmark(const WebExtensionContext& context, N
     , m_respondsToDateAdded([delegate respondsToSelector:@selector(dateAddedForWebExtensionContext:)])
     , m_respondsToFolderType([delegate respondsToSelector:@selector(folderTypeForWebExtensionContext:)])
     , m_respondsToIsManaged([delegate respondsToSelector:@selector(isManagedForWebExtensionContext:)])
+    , m_respondsToIsSynced([delegate respondsToSelector:@selector(isSyncedForWebExtensionContext:)])
     , m_respondsToCreateChild([delegate respondsToSelector:@selector(createChildUsingConfiguration:forWebExtensionContext:completionHandler:)])
     , m_respondsToSetTitle([delegate respondsToSelector:@selector(setTitle:forWebExtensionContext:completionHandler:)])
     , m_respondsToSetURL([delegate respondsToSelector:@selector(setURL:forWebExtensionContext:completionHandler:)])
@@ -169,6 +170,15 @@ bool WebExtensionBookmark::isManaged() const
         return false;
 
     return [(id<_WKWebExtensionBookmark>)m_delegate isManagedForWebExtensionContext:m_extensionContext->wrapper()];
+}
+
+bool WebExtensionBookmark::isSynced() const
+{
+    // Managed nodes are never synced to the account.
+    if (m_isRoot || !isValid() || !m_respondsToIsSynced || isManaged())
+        return false;
+
+    return [(id<_WKWebExtensionBookmark>)m_delegate isSyncedForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
 RefPtr<WebExtensionBookmark> WebExtensionBookmark::parent() const
@@ -442,12 +452,16 @@ WebExtensionBookmarkParameters WebExtensionBookmark::parameters(IncludeChildren 
     parameters.title = title();
     parameters.url = url();
     parameters.dateAdded = dateAdded();
+    parameters.managed = isManaged();
+    parameters.synced = isSynced();
 
     if (RefPtr parent = this->parent())
         parameters.parentIdentifier = parent->identifier();
 
     if (auto index = this->index())
         parameters.index = *index;
+
+    parameters.folderType = folderType();
 
     if (includeChildren == IncludeChildren::Yes && isFolder()) {
         Vector<WebExtensionBookmarkParameters> childrenParameters;

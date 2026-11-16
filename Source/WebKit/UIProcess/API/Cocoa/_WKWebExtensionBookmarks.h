@@ -144,6 +144,14 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) NS_S
 - (BOOL)isManagedForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(isManaged(for:));
 
 /*!
+ @abstract Called when the synced state of the bookmark or folder is needed.
+ @param context The context in which the web extension is running.
+ @return `YES` if the bookmark or folder syncs to the user's account, `NO` otherwise.
+ @discussion Defaults to `NO` if not implemented. Managed bookmarks and folders always report `NO`.
+ */
+- (BOOL)isSyncedForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(isSynced(for:));
+
+/*!
  @abstract Called when the children of the folder are needed.
  @param context The context in which the web extension is running.
  @return The bookmarks and folders in the folder, in order, or `nil` for a bookmark.
