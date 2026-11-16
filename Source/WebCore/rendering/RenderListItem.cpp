@@ -403,7 +403,7 @@ void RenderListItem::updateValue()
 void RenderListItem::updateMarkerContent()
 {
     if (CheckedPtr markerBox = this->markerBox()) {
-        markerBox->updateInlineMarginsAndContent();
+        markerBox->updateContent();
         return;
     }
 
@@ -456,15 +456,6 @@ void RenderListItem::styleDidChange(Style::Difference diff, const Style::Compute
         if (CheckedPtr marker = markerBox(); marker && marker->excludedPosition())
             marker->invalidateExcludedMarkerContainer();
     }
-}
-
-std::pair<LayoutUnit, LayoutUnit> RenderListItem::computeIntrinsicLogicalWidthContributions()
-{
-    // FIXME: RenderListOutsideMarker::updateInlineMargins() mutates margin style which affects preferred widths.
-    if (CheckedPtr marker = markerBox(); marker && marker->hasInvalidContentLogicalWidths())
-        marker->updateInlineMarginsAndContent();
-
-    return RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderListItem::computeIntrinsicLogicalWidths() const

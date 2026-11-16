@@ -59,7 +59,7 @@ public:
     bool isDisclosureMarker() const;
     bool synthesizesGlyph() const;
 
-    void updateInlineMarginsAndContent();
+    void updateContent();
 
     bool isImage() const final;
 
@@ -103,9 +103,7 @@ private:
 
     void element() const = delete;
 
-    void updateInlineMargins();
-    void updateInlineMargins(LayoutUnit logicalWidth);
-    void updateContent();
+    std::pair<LayoutUnit, LayoutUnit> inlineMargins() const;
     LayoutSize markerImageSize(const Style::Image&) const;
     void updateContentContainerText(const ListMarkerTextContent&);
     void setContentContainerImageSize(LayoutSize);

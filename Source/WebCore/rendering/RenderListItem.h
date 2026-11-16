@@ -82,7 +82,6 @@ private:
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 
-    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() final;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const final;
 
     void updateValueAndMarkerContent();

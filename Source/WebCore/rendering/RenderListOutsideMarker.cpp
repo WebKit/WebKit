@@ -169,17 +169,12 @@ void RenderListOutsideMarker::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
-    updateInlineMargins();
     if (CheckedPtr container = contentContainer())
         layoutContentContainer(*container);
 
-    setMarginStart(0);
-    setMarginEnd(0);
-
-    if (auto fixedStartMargin = style().marginStart().tryFixed())
-        setMarginStart(LayoutUnit(fixedStartMargin->resolveZoom(style().usedZoomForLength())));
-    if (auto fixedEndMargin = style().marginEnd().tryFixed())
-        setMarginEnd(LayoutUnit(fixedEndMargin->resolveZoom(style().usedZoomForLength())));
+    auto [marginStart, marginEnd] = inlineMargins();
+    setMarginStart(marginStart, m_listItem->writingMode());
+    setMarginEnd(marginEnd, m_listItem->writingMode());
 
     clearNeedsLayout();
 }
@@ -252,19 +247,13 @@ void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rec
                     element->invalidateStyleAndRenderersForSubtree();
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
             } else if (borderBoxSize() != markerImageSize(*image)) {
-                updateInlineMarginsAndContent();
+                updateContent();
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
             } else
                 repaint();
         }
     }
     RenderBox::imageChanged(o, rect);
-}
-
-void RenderListOutsideMarker::updateInlineMarginsAndContent()
-{
-    updateContent();
-    updateInlineMargins();
 }
 
 LayoutSize RenderListOutsideMarker::markerImageSize(const Style::Image& image) const
@@ -340,33 +329,23 @@ std::pair<LayoutUnit, LayoutUnit> RenderListOutsideMarker::computeIntrinsicLogic
     // The marker is non-wrapping, so its min- and max-content widths are both the content's max-content width.
     // (A ::marker has no border or padding.)
     auto logicalWidth = container ? container->maxContentLogicalWidthContribution() : 0_lu;
-    updateInlineMargins(logicalWidth);
     return { logicalWidth, logicalWidth };
 }
 
-void RenderListOutsideMarker::updateInlineMargins()
+std::pair<LayoutUnit, LayoutUnit> RenderListOutsideMarker::inlineMargins() const
 {
-    updateInlineMargins(minContentLogicalWidthContribution());
-}
-
-void RenderListOutsideMarker::updateInlineMargins(LayoutUnit logicalWidth)
-{
+    // In the list item's inline direction: the marker hangs off the start of the line, so the start margin pulls it
+    // out by its width and the end margin keeps the gap between it and the content.
     constexpr int markerPadding = listMarkerImagePadding;
-    const FontMetrics& fontMetrics = style().metricsOfPrimaryFont();
+    auto logicalWidth = this->logicalWidth();
+    if (isImage())
+        return { -logicalWidth - markerPadding, markerPadding };
 
-    auto marginsForOutsideMarker = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
-        if (isImage())
-            return { -logicalWidth - markerPadding, markerPadding };
+    int offset = style().metricsOfPrimaryFont().intAscent() * 2 / 3;
+    if (synthesizesGlyph())
+        return { -offset - markerPadding - 1, offset + markerPadding + 1 - logicalWidth };
 
-        int offset = fontMetrics.intAscent() * 2 / 3;
-        if (synthesizesGlyph())
-            return { -offset - markerPadding - 1, offset + markerPadding + 1 - logicalWidth };
-
-        return { -logicalWidth, 0 };
-    };
-
-    auto [marginStart, marginEnd] = marginsForOutsideMarker();
-    setListMarkerInlineMargins(mutableStyle(), m_listItem->writingMode(), marginStart, marginEnd);
+    return { -logicalWidth, 0 };
 }
 
 void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd)

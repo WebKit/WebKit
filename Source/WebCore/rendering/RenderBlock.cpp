@@ -2287,9 +2287,10 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
     auto nowrap = style().textWrapMode() == TextWrapMode::NoWrap && style().whiteSpaceCollapse() == WhiteSpaceCollapse::Collapse;
     for (auto& childBox : childrenOfType<RenderBox>(*this)) {
         // Positioned children don't affect the min/max width. Legends in fieldsets are skipped here
-        // since they compute outside of any one layout system. Other children excluded from
-        // normal layout are only used with block flows, so it's ok to calculate them here.
-        if (childBox.isOutOfFlowPositioned() || childBox.isExcludedAndPlacedInBorder())
+        // since they compute outside of any one layout system, and an outside list marker hangs outside
+        // the content box. Other children excluded from normal layout are only used with block flows,
+        // so it's ok to calculate them here.
+        if (childBox.isOutOfFlowPositioned() || childBox.isExcludedAndPlacedInBorder() || childBox.isExcludedMarker())
             continue;
 
         // Either the box itself of its content avoids floats.
