@@ -82,7 +82,12 @@
         "expected": {"all": {"slow": true}}
     },
     "TestInspectorServer": {
-        "expected": {"all": {"slow": true}}
+        "expected": {"all": {"slow": true}},
+        "subtests": {
+            "/webkit/WebKitWebInspectorServer/http-rejects-untrusted-requests": {
+                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/331827", "slow": true}}
+            }
+        }
     },
     "TestLoaderClient": {
         "subtests": {
