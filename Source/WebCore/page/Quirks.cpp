@@ -580,11 +580,25 @@ bool Quirks::hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>
     return true;
 }
 
+static HashSet<RegistrableDomain> singleOwnerLoginDomains(const QuirksData& quirksData)
+{
+    HashSet<RegistrableDomain> domains;
+    for (const auto& behavior : quirksData.behaviorsMatching(QuirkBehaviorID::NeedsSingleOwnerLoginStorageAccessQuirk)) {
+        for (const auto& pattern : behavior.secondaryURL) {
+            if (!pattern.host().isEmpty())
+                domains.add(RegistrableDomain { URL { makeString("https://"_s, pattern.host(), '/') } });
+        }
+    }
+    return domains;
+}
+
 Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&& completionHandler) const
 {
     RefPtr document = m_document.get();
     auto firstPartyDomain = RegistrableDomain(topDocumentURL());
     auto domainsInNeedOfStorageAccess = subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain);
+    if (!domainsInNeedOfStorageAccess || domainsInNeedOfStorageAccess->isEmpty())
+        domainsInNeedOfStorageAccess = singleOwnerLoginDomains(m_quirksData);
     if (!domainsInNeedOfStorageAccess || domainsInNeedOfStorageAccess.value().isEmpty()) {
         completionHandler(ShouldDispatchClick::No);
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
@@ -892,6 +906,13 @@ bool Quirks::anyPatternMatchesCNAMETarget(const Vector<String>& patterns, const 
         auto pattern = QuirkMatchPattern::parse(patternString);
         return pattern && pattern->matches(context);
     });
+}
+
+bool Quirks::isSingleOwnerLoginDomainPair(const RegistrableDomain& topFrameDomain, const RegistrableDomain& subResourceDomain)
+{
+    URL topFrameURL { makeString("https://"_s, topFrameDomain.string(), '/') };
+    URL subResourceURL { makeString("https://"_s, subResourceDomain.string(), '/') };
+    return resolveTopURLQuirks(topFrameURL).behaviorAppliesToURL(QuirkBehaviorID::NeedsSingleOwnerLoginStorageAccessQuirk, subResourceURL);
 }
 
 bool Quirks::shouldExemptCookieFromITPDataRemoval(const String& cookieName)

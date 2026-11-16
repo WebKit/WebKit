@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StorageAccessQuirks.h"
 
+#include "Quirks.h"
 #include <algorithm>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
@@ -67,7 +68,7 @@ void updateStorageAccessPromptQuirks(Vector<OrganizationStorageAccessPromptQuirk
 bool loginDomainMatchesRequestingDomain(const RegistrableDomain& topFrameDomain, const RegistrableDomain& resourceDomain)
 {
     auto loginDomains = subResourceDomainsInNeedOfStorageAccessForFirstParty(topFrameDomain);
-    return (loginDomains && loginDomains.value().contains(resourceDomain)) || !!storageAccessQuirkForDomainPair(topFrameDomain, resourceDomain);
+    return (loginDomains && loginDomains.value().contains(resourceDomain)) || !!storageAccessQuirkForDomainPair(topFrameDomain, resourceDomain) || Quirks::isSingleOwnerLoginDomainPair(topFrameDomain, resourceDomain);
 }
 
 bool canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(const RegistrableDomain& resourceDomain, const RegistrableDomain& topFrameDomain)

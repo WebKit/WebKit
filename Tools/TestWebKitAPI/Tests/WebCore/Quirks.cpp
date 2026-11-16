@@ -189,6 +189,26 @@ TEST_F(QuirksTest, CNAMECloakingCookieCapIsSkippedOnlyBetweenDomainsOfOneOwner)
     EXPECT_FALSE(cnameCloakingCookieCapExempt("https://www.youtube.com/"_s, "evilgoogle.com"_s));
     EXPECT_FALSE(cnameCloakingCookieCapExempt("https://www.google.de/"_s, "www3.l.google.com"_s));
 }
+
+static bool isSingleOwnerLoginDomainPair(ASCIILiteral topFrameDomain, ASCIILiteral subResourceDomain)
+{
+    return WebCore::Quirks::isSingleOwnerLoginDomainPair(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(topFrameDomain), WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(subResourceDomain));
+}
+
+TEST_F(QuirksTest, SingleOwnerLoginDomainPairIsOnlyNestUnderGoogle)
+{
+    EXPECT_TRUE(isSingleOwnerLoginDomainPair("nest.com"_s, "google.com"_s));
+
+    // The pair is directional: Google pages get nothing extra from nest.com.
+    EXPECT_FALSE(isSingleOwnerLoginDomainPair("google.com"_s, "nest.com"_s));
+    EXPECT_FALSE(isSingleOwnerLoginDomainPair("nest.com"_s, "tracker.example"_s));
+    EXPECT_FALSE(isSingleOwnerLoginDomainPair("example.com"_s, "google.com"_s));
+    EXPECT_FALSE(isSingleOwnerLoginDomainPair("nest.com"_s, "evilgoogle.com"_s));
+    EXPECT_FALSE(isSingleOwnerLoginDomainPair("nest.com"_s, "google.de"_s));
+
+    EXPECT_TRUE(resolveQuirksForTopURL("https://home.nest.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsStorageAccessOnLoginButtonClickQuirk));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.google.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsStorageAccessOnLoginButtonClickQuirk));
+}
 #endif
 
 static String shippedQuirkTableJSON()
