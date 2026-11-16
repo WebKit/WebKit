@@ -60,9 +60,8 @@ public:
 
     RenderFragmentedFlow* fragmentedFlow() const { return m_fragmentedFlow.get(); }
 
-    // Valid fragments do not create circular dependencies with other flows.
+    // Set once attachFragment() has added the fragment to its fragmented flow. It stays set after detachFragment().
     bool isValid() const { return m_isValid; }
-    void setIsValid(bool valid) { m_isValid = valid; }
 
     NODELETE RenderBoxFragmentInfo* renderBoxFragmentInfo(const RenderBox&) const;
     void setRenderBoxFragmentInfo(const RenderBox&, LayoutUnit logicalLeft, LayoutUnit logicalWidth);

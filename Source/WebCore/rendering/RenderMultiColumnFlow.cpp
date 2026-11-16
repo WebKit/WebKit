@@ -140,7 +140,6 @@ void RenderMultiColumnFlow::addFragmentToThread(RenderFragmentContainer* fragmen
         m_fragmentList.insertBefore(it, *columnSet);
     } else
         m_fragmentList.add(*columnSet);
-    fragmentContainer->setIsValid(true);
 }
 
 void RenderMultiColumnFlow::willBeRemovedFromTree()

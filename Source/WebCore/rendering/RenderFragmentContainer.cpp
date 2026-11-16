@@ -292,14 +292,13 @@ void RenderFragmentContainer::attachFragment()
     if (renderTreeBeingDestroyed())
         return;
     
-    // A fragment starts off invalid.
-    setIsValid(false);
+    m_isValid = false;
 
     if (!m_fragmentedFlow)
         return;
 
-    // Only after adding the fragment to the thread, the fragment is marked to be valid.
     m_fragmentedFlow->addFragmentToThread(this);
+    m_isValid = true;
 }
 
 void RenderFragmentContainer::detachFragment()
