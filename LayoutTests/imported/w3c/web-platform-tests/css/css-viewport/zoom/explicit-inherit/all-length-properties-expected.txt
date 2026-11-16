@@ -23,6 +23,7 @@ PASS border-inline-end-width: 10px; parent=0px; child=0px
 PASS border-inline-start-width: 10px; parent=0px; child=0px
 PASS border-left-width: 10px; parent=0px; child=0px
 PASS border-right-width: 10px; parent=0px; child=0px
+PASS border-shape: inset(10px); parent=inset(10px); child=inset(10px)
 PASS border-start-end-radius: 10px; parent=10px; child=10px
 PASS border-start-start-radius: 10px; parent=10px; child=10px
 PASS border-top-left-radius: 10px; parent=10px; child=10px
