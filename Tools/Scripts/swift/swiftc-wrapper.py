@@ -2,6 +2,7 @@
 # Thin wrapper around swiftc that:
 #   - relays the command line through a response file on Windows
 #   - forwards the MSVC-style linker switches that CMake's own defaults inject
+#   - drops CMake's -num-threads under -enable-batch-mode, where swiftc warns and ignores it
 #   - merges per-frontend depfiles into one depfile for the whole module
 #   - records when the module last compiled, for rebuild_trigger.py
 #   - optionally runs another wrapper in the compiler's place, so a tool that
@@ -136,6 +137,7 @@ def main(argv):
     real_swiftc = "swiftc"
     args = []
     linking = any(arg in ("-emit-library", "-emit-executable") for arg in argv)
+    batch_mode = "-enable-batch-mode" in argv
 
     depfile_path = None
     depfile_target = None
@@ -143,7 +145,8 @@ def main(argv):
     stamp_path = None
     inner_wrapper = None
     dry_run = False
-    for arg in argv:
+    it = iter(argv)
+    for arg in it:
         if arg.startswith("--original-swift-compiler="):
             real_swiftc = arg[len("--original-swift-compiler="):]
         elif arg.startswith("--swift-wrapper="):
@@ -156,6 +159,13 @@ def main(argv):
             depfile_excludes.append(arg[len("--ninja-depfile-exclude="):])
         elif arg.startswith("--emit-compile-stamp="):
             stamp_path = arg[len("--emit-compile-stamp="):]
+        elif batch_mode and arg == "-num-threads":
+            # CMake's CMakeSwiftInformation.cmake unconditionally injects
+            # `-j <N> -num-threads <N>`, and swiftc warns that batch mode cannot
+            # multithread `-num-threads`.
+            next(it, None)
+        elif batch_mode and arg.startswith("-num-threads="):
+            pass
         elif os.name == "nt" and arg.startswith("/") and len(arg) > 1:
             # Work around a bug in CMake: Its MSVC defaults
             # (Platform/Windows-MSVC.cmake) put raw linker switches like
