@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>CSS selectors corner case - :has(:nth-child()) on the subject element is invalidated on insertion</title>
+    <link rel="help" href="https://www.w3.org/TR/selectors-3/#nth-child-pseudo">
+    <link rel="help" href="https://www.w3.org/TR/selectors-4/#has-pseudo">
+    <style>
+      .container {
+          padding: 10px;
+          background: orange;
+      }
+      .container:has(> :nth-child(3)) {
+          background: green;
+      }
+      .container:has(> :nth-child(4)) {
+          background: red;
+      }
+      .container > div {
+          background: lightgray;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div>Second</div>
+      <div>Third</div>
+    </div>
+    <script>
+      requestAnimationFrame(() => {
+          const container = document.getElementsByClassName("container")[0];
+          let newElement = document.createElement("div");
+          newElement.innerText = 'First';
+          const referenceElement = container.children[0];
+          container.insertBefore(newElement, referenceElement);
+      });
+    </script>
+  </body>
+</html>

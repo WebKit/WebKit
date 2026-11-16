@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>CSS selectors corner case (bug 296807)</title>
+    <link rel="author" title="Paweł Lampe" href="mailto:plampe@igalia.com">
+    <link rel="help" href="https://www.w3.org/TR/selectors-3/#nth-child-pseudo">
+    <link rel="help" href="https://www.w3.org/TR/selectors-4/#has-pseudo">
+    <style>
+      .container {
+          padding: 10px;
+          background: orange;
+      }
+      .container > div {
+          background: lightgray;
+      }
+      .container:has(:nth-child(1)) > div:nth-child(1) {
+          background: lightblue;
+      }
+      .container:has(:nth-child(2)) > div:nth-child(1) {
+          background: green;
+      }
+      .container:has(:nth-child(2)) > div:nth-child(2) {
+          background: lightblue;
+      }
+      .container:has(:nth-child(3)) > div:nth-child(1) {
+          background: red;
+      }
+      .container:has(:nth-child(3)) > div:nth-child(2) {
+          background: green;
+      }
+      .container:has(:nth-child(3)) > div:nth-child(3) {
+          background: lightblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div>Red</div>
+      <div>Green</div>
+      <div>Blue</div>
+    </div>
+  </body>
+</html>

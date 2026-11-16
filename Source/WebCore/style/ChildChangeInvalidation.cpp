@@ -379,6 +379,33 @@ static void invalidateForBackwardPositionalRules(Element& parent, Element* eleme
     }
 }
 
+void ChildChangeInvalidation::resetCachedChildIndexes()
+{
+    // Inserted elements may carry an index from their previous position, possibly under another parent.
+    if (isInsertionForStyle(m_childChange)) {
+        if (auto* insertedElement = m_childChange.siblingChanged)
+            insertedElement->resetStyleRelations();
+        else if (auto* children = m_childChange.insertedChildren) {
+            for (auto& node : *children) {
+                if (auto* element = dynamicDowncast<Element>(node))
+                    element->resetStyleRelations();
+            }
+        }
+    }
+
+    auto* sibling = m_childChange.nextSiblingElement;
+    if (!sibling)
+        return;
+
+    // Indexes are only cached along with one of these flags being set on the parent.
+    auto& parent = parentElement();
+    if (!parent.childrenAffectedByForwardPositionalRules() && !parent.descendantsAffectedByForwardPositionalRules())
+        return;
+
+    for (; sibling; sibling = sibling->nextElementSibling())
+        sibling->resetStyleRelations();
+}
+
 static void invalidateForFirstChildState(Element& child, bool state)
 {
     auto* style = child.renderStyle();
