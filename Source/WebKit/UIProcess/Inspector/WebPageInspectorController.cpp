@@ -306,7 +306,11 @@ void WebPageInspectorController::didCreateProvisionalPage(ProvisionalPageProxy& 
 
 void WebPageInspectorController::willDestroyProvisionalPage(const ProvisionalPageProxy& provisionalPage, WebCore::FrameIdentifier mainFrameID, WebCore::ProcessIdentifier mainFrameProcessID)
 {
-    removeTarget(getTargetID(provisionalPage));
+    auto targetID = getTargetID(provisionalPage);
+    if (CheckedPtr pageTarget = dynamicDowncast<PageInspectorTargetProxy>(m_targets.get(targetID)); !pageTarget || pageTarget->provisionalPage() != &provisionalPage)
+        return;
+
+    removeTarget(targetID);
 
     if (shouldManageFrameTargets())
         removeTarget(FrameInspectorTarget::toTargetID(mainFrameID, mainFrameProcessID));

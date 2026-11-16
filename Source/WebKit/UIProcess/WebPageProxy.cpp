@@ -2830,6 +2830,78 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     return navigation;
 }
 
+std::tuple<Ref<WebProcessProxy>, Ref<BrowsingContextGroup>, RefPtr<ProvisionalPageProxy>> WebPageProxy::prepareProcessForAlternateHTMLLoad(const WebCore::Site& site, const URL& baseURL, const URL& unreachableURL, API::WebsitePolicies* policies)
+{
+    Ref preferences = m_preferences;
+    Ref targetBrowsingContextGroup = m_browsingContextGroup;
+    Ref process = m_legacyMainFrameProcess;
+
+    // An alternate HTML load with a non-empty unreachableURL skips PolicyChecker::checkNavigationPolicy(),
+    // so the UI process never gets a navigation action decision to associate or swap processes for its site.
+    if (unreachableURL.isEmpty() || !preferences->siteIsolationEnabled() || preferences->usesSingleWebProcess() || site.isEmpty() || !m_mainFrame)
+        return { WTF::move(process), WTF::move(targetBrowsingContextGroup), nullptr };
+
+    Ref mainFrame = *m_mainFrame;
+    Ref currentBrowsingContextGroup = m_browsingContextGroup;
+    Ref currentWebsiteDataStore = websiteDataStore();
+    Ref targetWebsiteDataStore = (policies && policies->websiteDataStore()) ? *policies->websiteDataStore() : currentWebsiteDataStore.get();
+    auto lockdownMode = (policies ? policies->lockdownModeEnabled() : shouldEnableLockdownMode()) ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
+    auto enhancedSecurity = preferences->enhancedSecurityForceDisabled() ? EnhancedSecurity::Disabled : currentEnhancedSecurityState(policies);
+    bool enhancedSecurityExplicitlySet = (policies && policies->isEnhancedSecurityExplicitlySet()) || preferences->enhancedSecurityForceDisabled();
+    if (!enhancedSecurityExplicitlySet) {
+        if (RefPtr existingProcess = preferences->siteIsolationSharedProcessEnhancedSecurityEnabled() ? nullptr : currentBrowsingContextGroup->processForSite(site))
+            enhancedSecurity = protect(existingProcess->process())->enhancedSecurity();
+        else if (!enhancedSecurityStatesAreConsistent(enhancedSecurity, currentBrowsingContextGroup->enhancedSecurity()) && currentBrowsingContextGroup->hasPageOtherThan(*this))
+            enhancedSecurity = currentBrowsingContextGroup->enhancedSecurity();
+    }
+
+    bool matchesSecurityAndDataStore = targetWebsiteDataStore.ptr() == currentWebsiteDataStore.ptr()
+        && lockdownMode == currentBrowsingContextGroup->lockdownMode()
+        && enhancedSecurityStatesAreConsistent(currentBrowsingContextGroup->enhancedSecurity(), enhancedSecurity)
+        && currentBrowsingContextGroup->crossOriginMode() == CrossOriginMode::Shared;
+
+    Ref currentFrameProcess = mainFrame->frameProcess();
+    bool isDocumentIsolationPolicyProcess = protect(currentFrameProcess->process())->isDocumentIsolationPolicyProcess();
+    bool alreadyInMatchingSiteProcess = matchesSecurityAndDataStore
+        && !currentFrameProcess->isArchiveProcess()
+        && !isDocumentIsolationPolicyProcess
+        && (currentFrameProcess->site() == site || (currentFrameProcess->isSharedProcess() && currentBrowsingContextGroup->processForSite(site) == currentFrameProcess.ptr()));
+    if (alreadyInMatchingSiteProcess)
+        return { WTF::move(process), WTF::move(targetBrowsingContextGroup), nullptr };
+
+    bool canAssociateCurrentProcessWithSite = matchesSecurityAndDataStore
+        && !process->hasCommittedAnyMeaningfulProvisionalLoads()
+        && (process->site() ? process->site()->isEmpty() : process->site().error() == WebProcessProxy::SiteState::NotYetSpecified)
+        && !currentFrameProcess->isArchiveProcess()
+        && !isDocumentIsolationPolicyProcess
+        && process->frameProcessCount() == 1
+        && currentFrameProcess->frameCount() <= 1
+        && !currentBrowsingContextGroup->hasMultiplePages()
+        && !currentBrowsingContextGroup->processForSite(site);
+    if (canAssociateCurrentProcessWithSite) {
+        mainFrame->setProcess(currentBrowsingContextGroup->ensureProcessForSite(site, site, process, preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::AddProcess));
+        return { WTF::move(process), WTF::move(targetBrowsingContextGroup), nullptr };
+    }
+
+    bool needsNewBrowsingContextGroup = !matchesSecurityAndDataStore
+        || (!preferences->siteIsolationInPlaceBackForwardCacheEnabled() && Site { mainFrame->url() } != site && !currentBrowsingContextGroup->hasMultiplePages());
+    if (needsNewBrowsingContextGroup)
+        targetBrowsingContextGroup = BrowsingContextGroup::create(CrossOriginMode::Shared, targetWebsiteDataStore, lockdownMode, enhancedSecurity);
+
+    if (RefPtr existingFrameProcess = targetBrowsingContextGroup->processForSite(site, ProcessCrossOriginIsolation::None); existingFrameProcess && !protect(existingFrameProcess->process())->isInProcessCache() && existingFrameProcess->process().websiteDataStore() == targetWebsiteDataStore.ptr() && existingFrameProcess->process().matchesLockdownModeAndEnhancedSecurity(lockdownMode, enhancedSecurity))
+        process = existingFrameProcess->process();
+    else
+        process = protect(m_configuration->processPool())->processForSite(targetWebsiteDataStore, WebProcessProxy::IsolatedProcessType::MainFrame, site, site, lockdownMode, enhancedSecurity, m_configuration, ProcessCrossOriginIsolation::None);
+
+    if (process.ptr() == m_legacyMainFrameProcess.ptr() && targetBrowsingContextGroup.ptr() == m_browsingContextGroup.ptr())
+        return { WTF::move(process), WTF::move(targetBrowsingContextGroup), nullptr };
+
+    Ref frameProcess = targetBrowsingContextGroup->ensureProcessForSite(site, site, process, preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::None);
+    Ref provisionalPageForLoad = ProvisionalPageProxy::create(*this, WTF::move(frameProcess), targetBrowsingContextGroup, nullptr, nullptr, false, ResourceRequest { URL { baseURL } }, ProcessSwapRequestedByClient::No, false, WebCore::CertificateInfo { }, policies);
+    m_provisionalPage = provisionalPageForLoad.copyRef();
+    return { WTF::move(process), WTF::move(targetBrowsingContextGroup), WTF::move(provisionalPageForLoad) };
+}
+
 void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const String& encoding, const URL& baseURL, const URL& unreachableURL, RefPtr<API::WebsitePolicies> policies)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadAlternateHTML");
@@ -2846,6 +2918,14 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
     drainDeferredModalsForNewNavigation();
 #endif
 
+    if (protect(preferences())->siteIsolationEnabled() && m_provisionalPage && m_failingProvisionalLoadURL.isEmpty()) {
+        if (RefPtr provisionalPage = std::exchange(m_provisionalPage, nullptr); !provisionalPage->didFailProvisionalLoad()) {
+            provisionalPage->cancel(ProvisionalLoadIsReplaced::Yes);
+            if (m_isClosed || m_provisionalPage || m_isLoadingAlternateHTMLStringForFailingProvisionalLoad)
+                return;
+        }
+    }
+
     if (!m_failingProvisionalLoadURL.isEmpty()) {
         if (!m_allowsLoadingAlternateHTMLForFailingProvisionalLoadURL && unreachableURL == m_failingProvisionalLoadURL) {
             WEBPAGEPROXY_RELEASE_LOG(Loading, "loadAlternateHTML: alternate html is not allowed to load");
@@ -2854,8 +2934,14 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
         m_isLoadingAlternateHTMLStringForFailingProvisionalLoad = true;
     }
 
+    if (protect(preferences())->siteIsolationEnabled())
+        m_provisionalPage = nullptr;
+
+    Site site { baseURL };
     if (!hasRunningProcess())
-        launchProcess(Site { baseURL }, ProcessLaunchReason::InitialProcess);
+        launchProcess(site, ProcessLaunchReason::InitialProcess);
+
+    auto [process, targetBrowsingContextGroup, provisionalPageForLoad] = prepareProcessForAlternateHTMLLoad(site, baseURL, unreachableURL, policies.get());
 
     Ref pageLoadState = internals().pageLoadState;
     auto transaction = pageLoadState->transaction();
@@ -2866,6 +2952,10 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
 
     if (RefPtr mainFrame = m_mainFrame)
         mainFrame->setUnreachableURL(unreachableURL);
+    if (provisionalPageForLoad) {
+        if (RefPtr provisionalMainFrame = provisionalPageForLoad->mainFrame())
+            provisionalMainFrame->setUnreachableURL(unreachableURL);
+    }
 
     LoadParameters loadParameters;
     loadParameters.navigationID = std::nullopt;
@@ -2877,8 +2967,7 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
     // FIXME: This is an unnecessary copy.
     loadParameters.data = WebCore::SharedBuffer::create(htmlData->span());
     auto& agentClusterURL = baseURL.isEmpty() ? aboutBlankURL() : baseURL;
-    loadParameters.agentClusterAssignment = protect(browsingContextGroup())->assignAgentCluster(AgentClusterRequest::forNavigationAction(agentClusterURL, topLevelCreationURL(agentClusterURL, true), IsSubstituteData::Yes), AgentClusterKeyingRecording::Now).first;
-    Ref process = m_legacyMainFrameProcess;
+    loadParameters.agentClusterAssignment = targetBrowsingContextGroup->assignAgentCluster(AgentClusterRequest::forNavigationAction(agentClusterURL, topLevelCreationURL(agentClusterURL, true), IsSubstituteData::Yes), AgentClusterKeyingRecording::Now).first;
     loadParameters.websitePolicies = policies ? std::optional(policies->dataForProcess(process)) : std::nullopt;
     prepareToLoadWebPage(process, loadParameters);
 
@@ -2886,28 +2975,45 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
         this,
         protectedThis = Ref { *this },
         process,
+        weakProvisionalPage = WeakPtr { provisionalPageForLoad },
+        hasProvisionalPage = !!provisionalPageForLoad,
         loadParameters = WTF::move(loadParameters),
         baseURL,
         unreachableURL,
         preventProcessShutdownScope = process->shutdownPreventingScope()
-    ] () mutable {
-        process->assumeReadAccessToBaseURLs(*this, { baseURL.string(), unreachableURL.string() }, [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, baseURL, unreachableURL, loadParameters = WTF::move(loadParameters)] () mutable {
+    ] mutable {
+        process->assumeReadAccessToBaseURLs(*this, { baseURL.string(), unreachableURL.string() }, [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, weakProvisionalPage = WTF::move(weakProvisionalPage), hasProvisionalPage, baseURL, unreachableURL, loadParameters = WTF::move(loadParameters)] mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
             RefPtr protectedProcess = weakProcess.get();
             if (!protectedProcess)
                 return;
+            RefPtr provisionalPage = weakProvisionalPage;
+            if (hasProvisionalPage && (!provisionalPage || protectedThis->m_provisionalPage != provisionalPage)) {
+                protectedThis->m_isLoadingAlternateHTMLStringForFailingProvisionalLoad = false;
+                return;
+            }
             if (baseURL.protocolIsFile())
                 protectedProcess->addPreviouslyApprovedFileURL(baseURL);
             if (unreachableURL.protocolIsFile())
                 protectedProcess->addPreviouslyApprovedFileURL(unreachableURL);
-            protectedThis->send(Messages::WebPage::LoadAlternateHTML(WTF::move(loadParameters)));
+            if (provisionalPage)
+                provisionalPage->send(Messages::WebPage::LoadAlternateHTML(WTF::move(loadParameters)));
+            else
+                protectedThis->send(Messages::WebPage::LoadAlternateHTML(WTF::move(loadParameters)));
             protectedProcess->startResponsivenessTimer();
         });
     };
 
-    addAllowedFirstPartyForCookies(process, Site { baseURL }, LoadedWebArchive::No, WTF::move(continueLoad));
+    if (RefPtr processDataStore = process->websiteDataStore(); processDataStore && processDataStore.get() != &websiteDataStore()) {
+        Ref networkProcess = processDataStore->networkProcess();
+        networkProcess->addAllowedWebPageProxyIdentifier(process, identifier());
+        networkProcess->addAllowedFirstPartyForCookies(process, site, LoadedWebArchive::No, WTF::move(continueLoad));
+        return;
+    }
+
+    addAllowedFirstPartyForCookies(process, site, LoadedWebArchive::No, WTF::move(continueLoad));
 }
 
 void WebPageProxy::stopLoading()
@@ -7345,7 +7451,7 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
     resetStateAfterProcessTermination(ProcessTerminationReason::NavigationSwap);
 
     removeAllMessageReceivers();
-    RefPtr navigation = m_navigationState->navigation(provisionalPage->navigationID());
+    RefPtr navigation = provisionalPage->navigationID() ? m_navigationState->navigation(*provisionalPage->navigationID()) : nullptr;
     bool didSuspendPreviousPage = navigation ? suspendCurrentPageIfPossible(*navigation, *provisionalPage, WTF::move(mainFrameInPreviousProcess)) : false;
 
     RefPtr previousMainFrameProcess = provisionalPage->previousMainFrameProcess();
@@ -7474,7 +7580,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
 
     WebCore::CertificateInfo certificateInfo;
     if (RefPtr provisionalPage = m_provisionalPage; provisionalPage && frame.isMainFrame()) {
-        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "continueNavigationInNewProcess: There is already a pending provisional load, cancelling it (provisonalNavigationID=%" PRIu64 ", navigationID=%" PRIu64 ")", m_provisionalPage->navigationID().object().toUInt64(), navigation.navigationID().object().toUInt64());
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "continueNavigationInNewProcess: There is already a pending provisional load, cancelling it (provisonalNavigationID=%" PRIu64 ", navigationID=%" PRIu64 ")", m_provisionalPage->navigationID() ? m_provisionalPage->navigationID()->object().toUInt64() : 0, navigation.navigationID().object().toUInt64());
         if (provisionalPage->navigationID() == navigation.navigationID()) {
             if (shouldInitializeCertificate) {
                 if (RefPtr provisionalMainFrame = provisionalPage->mainFrame())
@@ -7611,7 +7717,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     // It is important from the previous provisional page to unregister itself before we register a
     // new one to avoid confusion.
     m_provisionalPage = nullptr;
-    Ref provisionalPage = ProvisionalPageProxy::create(*this, WTF::move(frameProcess), browsingContextGroup, WTF::move(suspendedPage), navigation, isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, isProcessSwappingOnNavigationResponse, WTF::move(certificateInfo), websitePolicies.get(), replacedDataStoreForWebArchiveLoad);
+    Ref provisionalPage = ProvisionalPageProxy::create(*this, WTF::move(frameProcess), browsingContextGroup, WTF::move(suspendedPage), &navigation, isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, isProcessSwappingOnNavigationResponse, WTF::move(certificateInfo), websitePolicies.get(), replacedDataStoreForWebArchiveLoad);
     m_provisionalPage = provisionalPage.copyRef();
 
     // FIXME: This should be a CompletionHandler, but http/tests/inspector/target/provisional-load-cancels-previous-load.html doesn't call it.
@@ -10227,6 +10333,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
 
     ASSERT(!m_failingProvisionalLoadURL);
     m_failingProvisionalLoadURL = WTF::move(provisionalURL);
+    WeakPtr failingProvisionalPage = m_provisionalPage;
 #if ENABLE(CONTENT_FILTERING)
     // Web content filter will continue to load error page, so disallow client to load custom page.
     if (protect(preferences())->siteIsolationEnabled() && isBlockedByContentFilterError(error) && willContinueLoading == WillContinueLoading::Yes)
@@ -10304,7 +10411,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
         return;
 
     // If the provisional page's load fails then we destroy the provisional page.
-    if (m_provisionalPage && m_provisionalPage->mainFrame() == &frame)
+    if (m_provisionalPage && m_provisionalPage.get() == failingProvisionalPage.get() && m_provisionalPage->mainFrame() == &frame)
         m_provisionalPage = nullptr;
 
     if (RefPtr provisionalFrame = frame.provisionalFrame()) {
@@ -16381,7 +16488,10 @@ void WebPageProxy::provisionalProcessDidTerminate()
     auto navigationID = m_provisionalPage->navigationID();
     m_provisionalPage = nullptr;
     // The main-frame load that the provisional page carried will neither commit nor fail.
-    m_sessionHistoryTraversalQueue->mainFrameLoadDidFinish(navigationID);
+    if (navigationID)
+        m_sessionHistoryTraversalQueue->mainFrameLoadDidFinish(navigationID);
+    else
+        m_isLoadingAlternateHTMLStringForFailingProvisionalLoad = false;
     m_inspectorController->mainFrameProvisionalLoadDidEnd(ProvisionalLoadIsReplaced::No);
 }
 

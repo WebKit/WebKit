@@ -2943,7 +2943,13 @@ void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
         ASSERT_NOT_REACHED();
         return;
     }
-    protect(m_mainFrame->coreLocalFrame()->loader())->setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);
+    RefPtr localFrame = m_mainFrame->coreLocalFrame() ? m_mainFrame->coreLocalFrame() : m_mainFrame->provisionalFrame();
+    if (!localFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    Ref frameLoader = localFrame->loader();
+    frameLoader->setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);
 
     auto response = ResourceResponse::responseForMIMEType(URL(), loadParameters.MIMEType, sharedBuffer->size(), loadParameters.encodingName);
     m_pendingAgentClusterAssignment = loadParameters.agentClusterAssignment;
@@ -2951,7 +2957,7 @@ void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
         m_pendingAgentClusterAssignment = std::nullopt;
     });
     loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTF::move(loadParameters.websitePolicies), sharedBuffer.releaseNonNull(), ResourceRequest(WTF::move(baseURL)), WTF::move(response), WTF::move(unreachableURL), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
-    protect(m_mainFrame->coreLocalFrame()->loader())->setProvisionalLoadErrorBeingHandledURL({ });
+    frameLoader->setProvisionalLoadErrorBeingHandledURL({ });
 }
 
 void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, ResourceResponse&& simulatedResponse)

@@ -7079,6 +7079,89 @@ TEST(SiteIsolation, AlternateHTMLStringCannotAccessSameOriginFrameWithDocumentIs
     EXPECT_WK_STREQ([webView _test_waitForAlert], "null");
 }
 
+TEST(SiteIsolation, LoadAlternateHTMLStringAfterInitialLoad)
+{
+    HTTPServer server({
+        { "/frame"_s, { { { "Content-Type"_s, "text/html"_s } }, "frame-body"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadHTMLString:@"initial" baseURL:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t initialProcess = [webView _webProcessIdentifier];
+
+    NSURL *exampleURL = [NSURL URLWithString:@"https://example.com/"];
+    [webView _loadAlternateHTMLString:@"<iframe src='https://example.com/frame'></iframe>" baseURL:exampleURL forUnreachableURL:exampleURL];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t exampleProcess = [webView _webProcessIdentifier];
+    EXPECT_EQ(exampleProcess, initialProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"frames[0].document.body.textContent"], "frame-body");
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { "https://example.com"_s } }
+        },
+    });
+
+    NSURL *webkitURL = [NSURL URLWithString:@"https://webkit.org/"];
+    [webView _loadAlternateHTMLString:@"webkit-body" baseURL:webkitURL forUnreachableURL:webkitURL];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([webView _webProcessIdentifier], exampleProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"`${origin} ${document.body.textContent}`"], "https://webkit.org webkit-body");
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://webkit.org"_s },
+    });
+}
+
+TEST(SiteIsolation, LoadAlternateHTMLStringInDidFailProvisionalNavigationWithOpener)
+{
+    HTTPServer server({
+        { "/example"_s, { "opener"_s } },
+        { "/failing"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingRequest } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+
+    __block RetainPtr<TestWKWebView> openedView;
+    __block RetainPtr<TestNavigationDelegate> openedDelegate;
+    __block bool didFinishAlternateLoad = false;
+
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    openerUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *popupConfiguration, WKNavigationAction *, WKWindowFeatures *) {
+        enableSiteIsolation(popupConfiguration);
+        openedDelegate = adoptNS([TestNavigationDelegate new]);
+        [openedDelegate allowAnyTLSCertificate];
+        openedDelegate.get().didFailProvisionalNavigation = ^(WKWebView *view, WKNavigation *, NSError *error) {
+            NSURL *failingURL = error.userInfo[NSURLErrorFailingURLErrorKey];
+            [view _loadAlternateHTMLString:@"recovered" baseURL:failingURL forUnreachableURL:failingURL];
+        };
+        openedDelegate.get().didFinishNavigation = ^(WKWebView *view, WKNavigation *) {
+            if ([view.URL.host isEqualToString:@"webkit.org"])
+                didFinishAlternateLoad = true;
+        };
+        openedView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:popupConfiguration]);
+        openedView.get().navigationDelegate = openedDelegate.get();
+        return openedView.get();
+    };
+
+    RetainPtr openerDelegate = adoptNS([TestNavigationDelegate new]);
+    [openerDelegate allowAnyTLSCertificate];
+    RetainPtr opener = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    opener.get().navigationDelegate = openerDelegate.get();
+    opener.get().UIDelegate = openerUIDelegate.get();
+    opener.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    [opener loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [openerDelegate waitForDidFinishNavigation];
+
+    [opener evaluateJavaScript:@"w = window.open('https://webkit.org/failing');" completionHandler:nil];
+    Util::run(&didFinishAlternateLoad);
+
+    EXPECT_NE([openedView _webProcessIdentifier], [opener _webProcessIdentifier]);
+    EXPECT_WK_STREQ([openedView objectByEvaluatingJavaScript:@"`${origin} ${document.body.textContent}`"], "https://webkit.org recovered");
+    checkFrameTreesInProcesses(openedView.get(), { { RemoteFrame }, { "https://webkit.org"_s } });
+}
+
 TEST(SiteIsolation, MainFrameWithDocumentIsolationPolicyGetsCrossOriginIsolatedProcess)
 {
     HTTPServer server({
