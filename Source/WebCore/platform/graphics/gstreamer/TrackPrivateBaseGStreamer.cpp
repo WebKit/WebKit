@@ -32,6 +32,7 @@
 #include "GStreamerCommon.h"
 #include "TrackPrivateBase.h"
 #include <gst/tag/tag.h>
+#include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringCommon.h>
@@ -176,7 +177,7 @@ void TrackDataHolder::setPad(GRefPtr<GstPad>&& pad)
     g_clear_signal_handler(&m_padCapsNotifyHandlerId, m_pad.get());
     m_pad = WTF::move(pad);
     m_bestUpstreamPad = findBestUpstreamPad(m_pad);
-    m_gstStreamId = byteCast<Latin1Character>(unsafeSpan(gst_pad_get_stream_id(m_pad.get())));
+    m_gstStreamId = String(GMallocString::unsafeAdoptFromUTF8(gst_pad_get_stream_id(m_pad.get())).span());
 
     if (m_shouldUsePadStreamId)
         m_id = parseStreamId(m_gstStreamId).value_or(m_index);
@@ -403,7 +404,7 @@ void TrackDataHolder::streamIdChanged()
     if (!m_pad)
         return;
 
-    String gstStreamId = byteCast<Latin1Character>(unsafeSpan(gst_pad_get_stream_id(m_pad.get())));
+    String gstStreamId(GMallocString::unsafeAdoptFromUTF8(gst_pad_get_stream_id(m_pad.get())).span());
     auto streamId = parseStreamId(gstStreamId);
     if (!streamId)
         return;
