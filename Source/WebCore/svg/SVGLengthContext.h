@@ -46,13 +46,20 @@ struct ZoomFactor;
 
 class SVGLengthContext {
 public:
-    explicit SVGLengthContext(const SVGElement*, const std::optional<FloatSize>& viewportSize = std::nullopt);
+    // Resolves lengths against the SVG viewport of the context element. A null context
+    // resolves without any viewport (e.g. a detached SVGLength).
+    explicit SVGLengthContext(const SVGElement*);
+    // Resolves lengths against the given viewport size instead of an SVG viewport. The element
+    // is only used to resolve font- and viewport-relative CSS units.
+    SVGLengthContext(const SVGElement&, FloatSize viewportSize);
     ~SVGLengthContext();
 
     template<typename T>
     static FloatRect resolveRectangle(const SVGElement* context, T& element, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport)
     {
-        return resolveRectangle(context, type, viewport, element.x(), element.y(), element.width(), element.height());
+        // Without a context element (e.g. a filter referenced from a non-SVG element), resolve against the given viewport.
+        auto lengthContext = context ? SVGLengthContext(context) : SVGLengthContext(element, viewport.size());
+        return resolveRectangle(lengthContext, type, viewport, element.x(), element.y(), element.width(), element.height());
     }
 
     template<typename T>
@@ -80,6 +87,8 @@ public:
     std::optional<FloatSize> viewportSize() const;
 
 private:
+    static FloatRect resolveRectangle(const SVGLengthContext&, SVGUnitTypes::SVGUnitType, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height);
+
     ExceptionOr<float> convertValueFromUserUnitsToPercentage(float value, SVGLengthMode) const;
     ExceptionOr<double> convertValueFromPercentageToUserUnits(double value, SVGLengthMode) const;
     NODELETE static double convertValueFromPercentageToUserUnits(double value, SVGLengthMode, FloatSize);
