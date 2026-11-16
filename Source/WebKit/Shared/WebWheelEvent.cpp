@@ -118,7 +118,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const WebWheelEvent& event)
     ts.dumpProperty("rawPlatformDelta"_s, event.rawPlatformDelta());
     ts.dumpProperty("scrollCount"_s, event.scrollCount());
     ts.dumpProperty("unacceleratedScrollingDelta"_s, event.unacceleratedScrollingDelta());
-    ts.dumpProperty("inputSource"_s, event.inputSource() == WebEventInputSource::Automation ? "automation"_s : "userDriven"_s);
+    ts.dumpProperty("inputSource"_s, event.inputSource() == WebEventInputSource::Touch ? "touch"_s : "default"_s);
 #endif
     return ts;
 }

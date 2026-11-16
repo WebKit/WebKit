@@ -426,7 +426,7 @@ bool Scrollbar::mouseUp(const PlatformMouseEvent& mouseEvent)
 
 bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
 {
-    const auto tolerance = evt.inputSource() == MouseEventInputSource::Automation ? ScrollbarHitTestTolerance::Expanded : ScrollbarHitTestTolerance::None;
+    const auto tolerance = evt.inputSource() == MouseEventInputSource::Touch ? ScrollbarHitTestTolerance::Expanded : ScrollbarHitTestTolerance::None;
     ScrollbarPart pressedPart = theme().hitTest(*this, flooredIntPoint(evt.position()), tolerance);
     auto action = theme().handleMousePressEvent(*this, evt, pressedPart);
     if (action == ScrollbarButtonPressAction::None)

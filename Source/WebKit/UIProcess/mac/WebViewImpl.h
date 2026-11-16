@@ -699,7 +699,7 @@ public:
     void removeFlagsChangedEventMonitor();
     NODELETE bool hasFlagsChangedEventMonitor();
 
-    void mouseMoved(NSEvent *, WebEventInputSource = WebEventInputSource::UserDriven);
+    void mouseMoved(NSEvent *, WebEventInputSource = WebEventInputSource::Default);
     void mouseDown(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
     void mouseUp(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
     void mouseDragged(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
@@ -1005,7 +1005,7 @@ private:
     std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
     bool inputMethodUsesCorrectKeyEventOrder();
 
-    void applyNativeMagnification(float magnification, WebEventPhase, WebCore::FloatPoint originInViewCoordinates, WebEventInputSource = WebEventInputSource::UserDriven);
+    void applyNativeMagnification(float magnification, WebEventPhase, WebCore::FloatPoint originInViewCoordinates, WebEventInputSource = WebEventInputSource::Default);
 
     WeakObjCPtr<WKWebView> m_view;
     const UniqueRef<PageClient> m_pageClient;
@@ -1139,7 +1139,7 @@ private:
     struct PendingMouseEvent {
         uint64_t identifier { 0 };
         RetainPtr<NSEvent> event;
-        WebEventInputSource inputSource { WebEventInputSource::UserDriven };
+        WebEventInputSource inputSource { WebEventInputSource::Default };
         WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag { WebCore::PlatformMouseEvent::CanInitiateDrag::Yes };
         MouseEventState state { MouseEventState::Pending };
     };

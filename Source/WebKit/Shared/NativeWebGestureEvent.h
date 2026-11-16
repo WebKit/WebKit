@@ -48,7 +48,7 @@ public:
         float gestureRotation { 0 };
         MonotonicTime timestamp;
         bool allowsNativeZoom { true };
-        WebEventInputSource inputSource { WebEventInputSource::UserDriven };
+        WebEventInputSource inputSource { WebEventInputSource::Default };
     };
 
     // Null when the gesture phase does not map to a WebEventType.

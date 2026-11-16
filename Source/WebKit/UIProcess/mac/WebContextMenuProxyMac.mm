@@ -1035,7 +1035,7 @@ void WebContextMenuProxyMac::showContextMenuWithItems(Vector<Ref<WebContextMenuI
     auto webView = m_webView.get();
     NSPoint locationInWindowCoordinates = [webView convertPoint:m_context.menuLocation() toView:nil];
 
-    if (m_context.inputSource() == WebEventInputSource::Automation) {
+    if (m_context.inputSource() == WebEventInputSource::Touch) {
 #if HAVE(APPKIT_GESTURES_SUPPORT)
         NSPoint locationInScreenCoordinates = [[webView window] convertPointToScreen:locationInWindowCoordinates];
         RetainPtr screenRelativeContext = [_NSViewMenuContext menuContextWithLocation:locationInScreenCoordinates source:_NSViewMenuRequestSourceTouch];

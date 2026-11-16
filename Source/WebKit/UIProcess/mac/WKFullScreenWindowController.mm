@@ -564,7 +564,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             eventNumber:0
             clickCount:0
             pressure:0];
-        Ref webEvent = WebKit::NativeWebMouseEvent::create(fakeEvent.get(), nil, webView.get(), WebKit::WebEventInputSource::UserDriven);
+        Ref webEvent = WebKit::NativeWebMouseEvent::create(fakeEvent.get(), nil, webView.get(), WebKit::WebEventInputSource::Default);
         page->handleMouseEvent(WTF::move(webEvent));
     }
     page->flushDeferredResizeEvents();

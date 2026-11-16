@@ -50,7 +50,7 @@ struct InteractionInformationRequest {
     bool gatherAnimations { false };
     bool linkIndicatorShouldHaveLegacyMargins { false };
 
-    WebEventInputSource inputSource { WebEventInputSource::UserDriven };
+    WebEventInputSource inputSource { WebEventInputSource::Default };
 
     InteractionInformationRequest() { }
     explicit InteractionInformationRequest(WebCore::IntPoint point)

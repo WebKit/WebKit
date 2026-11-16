@@ -54,7 +54,7 @@ Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(WebEventType type, WebMouse
             .deltaZ = deltaZ,
             .clickCount = clickCount,
             .force = force,
-            .inputSource = WebEventInputSource::UserDriven,
+            .inputSource = WebEventInputSource::Default,
             .canInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes,
             .syntheticClickType = WebMouseEventSyntheticClickType::NoTap,
             .pointerId = WebCore::mousePointerID,

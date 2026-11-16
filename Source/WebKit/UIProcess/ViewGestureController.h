@@ -170,7 +170,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    void handleMagnificationGesture(double scale, WebEventPhase, WebCore::FloatPoint originInViewCoordinates, WebEventInputSource = WebEventInputSource::UserDriven);
+    void handleMagnificationGesture(double scale, WebEventPhase, WebCore::FloatPoint originInViewCoordinates, WebEventInputSource = WebEventInputSource::Default);
     void moveMagnificationOrigin(WebCore::FloatPoint originInViewCoordinates);
     void handleSmartMagnificationGesture(WebCore::FloatPoint gestureLocationInViewCoordinates);
 

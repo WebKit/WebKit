@@ -81,8 +81,8 @@ void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
 
 void WheelEventDeltaFilterMac::updateCurrentVelocityFromEvent(const PlatformWheelEvent& event)
 {
-    if (event.inputSource() == MouseEventInputSource::Automation) {
-        // Automation events are already directionally locked upstream in WKAppKitGestureController; skip
+    if (event.inputSource() == MouseEventInputSource::Touch) {
+        // Events from the touch screen are already directionally locked upstream in WKAppKitGestureController; skip
         // _NSScrollingPredominantAxisFilter (it would flatten intentional diagonals) and pass the delta and
         // velocity straight through. The caller updateFromEvent() still updates m_lastIOHIDEventTimestamp.
         m_currentFilteredDelta = event.delta();

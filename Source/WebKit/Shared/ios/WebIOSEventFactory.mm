@@ -202,7 +202,7 @@ WebMouseEventInit WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
             .deltaZ = deltaZ,
             .clickCount = clickCount,
             .force = 0,
-            .inputSource = WebEventInputSource::UserDriven,
+            .inputSource = WebEventInputSource::Default,
         }
     };
 }

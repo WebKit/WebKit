@@ -797,7 +797,7 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
         completionHandler(std::nullopt);
     };
 
-    if (contextMenu.inputSource == WebEventInputSource::Automation) {
+    if (contextMenu.inputSource == WebEventInputSource::Touch) {
 #if HAVE(APPKIT_GESTURES_SUPPORT)
         NSPoint locationInScreenCoordinates = [window convertPointToScreen:locationInWindowCoordinates];
         RetainPtr screenRelativeContext = [_NSViewMenuContext menuContextWithLocation:locationInScreenCoordinates source:_NSViewMenuRequestSourceTouch];
@@ -1277,7 +1277,9 @@ void WebPageProxy::interruptSyntheticMomentumScrolling()
         .ioHIDEventTimestamp = timestamp,
         .rawPlatformDelta = std::nullopt,
         .momentumEndType = WebWheelEvent::MomentumEndType::Interrupted,
-        .inputSource = WebEventInputSource::Automation,
+        // This is tagged as coming from a touch even when a trackpad swipe ends it, which also keeps
+        // WebCore from taking the event's empty position as the mouse location.
+        .inputSource = WebEventInputSource::Touch,
     });
     handleNativeWheelEvent(NativeWebWheelEvent::create(cancelEvent));
 }

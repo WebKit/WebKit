@@ -472,7 +472,7 @@ void PointerCaptureController::cancelTrackedPointer(PointerID pointerId)
 bool PointerCaptureController::mouseEventCanBelongToTrackedPointer(const PlatformMouseEvent& event) const
 {
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-    return event.inputSource() == MouseEventInputSource::Automation;
+    return event.inputSource() == MouseEventInputSource::Touch;
 #else
     UNUSED_PARAM(event);
     return false;

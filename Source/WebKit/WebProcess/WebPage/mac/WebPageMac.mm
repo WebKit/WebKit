@@ -1283,7 +1283,7 @@ void WebPage::dispatchTrackedPointerEvent(std::optional<FrameIdentifier> frameID
 
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
-    PlatformMouseEvent platformEvent { position, globalPosition, MouseButton::Left, type, 1, platform(modifiers), MonotonicTime::now(), isPressed ? ForceAtClick : 0, SyntheticClickType::NoTap, MouseEventInputSource::Automation, mousePointerID, movementDelta };
+    PlatformMouseEvent platformEvent { position, globalPosition, MouseButton::Left, type, 1, platform(modifiers), MonotonicTime::now(), isPressed ? ForceAtClick : 0, SyntheticClickType::NoTap, MouseEventInputSource::Touch, mousePointerID, movementDelta };
     // Pointer events report `buttons`, and a mouse pointer's `pressure`, from this.
     platformEvent.setButtons(isPressed ? 1 : 0);
 

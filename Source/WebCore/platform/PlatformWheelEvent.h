@@ -205,7 +205,7 @@ protected:
     PlatformWheelEventGranularity m_granularity { PlatformWheelEventGranularity::ScrollByPixelWheelEvent };
     bool m_directionInvertedFromDevice { false };
     bool m_hasPreciseScrollingDeltas { false };
-    MouseEventInputSource m_inputSource { MouseEventInputSource::UserDriven };
+    MouseEventInputSource m_inputSource { MouseEventInputSource::Default };
 
     IntPoint m_position;
     IntPoint m_globalPosition;

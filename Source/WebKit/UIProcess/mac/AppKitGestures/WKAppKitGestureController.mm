@@ -314,7 +314,7 @@ public:
             .ioHIDEventTimestamp = timestamp,
             .rawPlatformDelta = std::nullopt,
             .momentumEndType = WebWheelEvent::MomentumEndType::Interrupted,
-            .inputSource = WebEventInputSource::Automation,
+            .inputSource = WebEventInputSource::Touch,
         });
         m_dispatcher->handleWheelEvent(*m_pageIdentifier, event, { });
         ASSERT(!m_isActive);
@@ -1338,7 +1338,7 @@ static BOOL isCatchingDeceleratingScroll(NSGestureRecognizer *scrollViewPanGestu
 
     auto modifiers = WebKit::WebEventFactory::toWebEventModifierFlags([gesture modifierFlags]);
 
-    [webView _protectedPage]->handleDoubleTapForDoubleClickAtPoint(WebCore::roundedIntPoint(location), modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebKit::WebEventInputSource::Automation, WebKit::WebMouseEventSyntheticClickType::OneFingerTap);
+    [webView _protectedPage]->handleDoubleTapForDoubleClickAtPoint(WebCore::roundedIntPoint(location), modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebKit::WebEventInputSource::Touch, WebKit::WebMouseEventSyntheticClickType::OneFingerTap);
 }
 
 - (void)secondaryClickGestureRecognized:(NSGestureRecognizer *)gesture
@@ -1365,10 +1365,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     auto windowNumber = impl->windowNumber();
 
     RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:location modifierFlags:modifierFlags timestamp:GetCurrentEventTime() windowNumber:windowNumber context:NULL eventNumber:0 clickCount:1 pressure:1.0];
-    impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation);
+    impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Touch);
 
     RetainPtr mouseUp = [NSEvent mouseEventWithType:NSEventTypeRightMouseUp location:location modifierFlags:modifierFlags timestamp:GetCurrentEventTime() windowNumber:windowNumber context:NULL eventNumber:0 clickCount:1 pressure:0.0];
-    impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation);
+    impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Touch);
 }
 
 - (BOOL)_movementExceedsClickAllowableMovement:(NSSize)movementInWindow
@@ -1500,7 +1500,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         pressure:0.0];
     if (activeMouseTrackingGesture)
         mouseUp = [activeMouseTrackingGesture eventReportingMovement:mouseUp atWindowLocation:locationInWindow];
-    impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
+    impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Touch, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
 
     _mouseTrackingHasSentMouseDown = false;
     _mouseTrackingIsSuppressedForTransformGesture = true;
@@ -1607,7 +1607,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                     eventNumber:0
                     clickCount:1
                     pressure:1.0];
-                impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
+                impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Touch, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
                 _mouseTrackingHasSentMouseDown = true;
             }
         }
@@ -1624,7 +1624,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 clickCount:0
                 pressure:0.0];
             mouseMoved = [mouseTrackingGesture eventReportingMovement:mouseMoved atWindowLocation:locationInWindow];
-            impl->mouseMoved(mouseMoved.get(), WebKit::WebEventInputSource::Automation);
+            impl->mouseMoved(mouseMoved.get(), WebKit::WebEventInputSource::Touch);
             break;
         }
 
@@ -1639,7 +1639,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             clickCount:1
             pressure:1.0];
         mouseDragged = [mouseTrackingGesture eventReportingMovement:mouseDragged atWindowLocation:locationInWindow];
-        impl->mouseDragged(mouseDragged.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
+        impl->mouseDragged(mouseDragged.get(), WebKit::WebEventInputSource::Touch, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
         break;
     }
 
@@ -1672,7 +1672,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 clickCount:1
                 pressure:0.0];
             mouseUp = [mouseTrackingGesture eventReportingMovement:mouseUp atWindowLocation:locationInWindow];
-            impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
+            impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Touch, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
         }
         break;
 
@@ -2250,7 +2250,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (WebKit::InteractionInformationRequest)_positionInformationRequestAtLocation:(NSPoint)locationInViewCoordinates
 {
     WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInViewCoordinates } };
-    request.inputSource = WebKit::WebEventInputSource::Automation;
+    request.inputSource = WebKit::WebEventInputSource::Touch;
     return request;
 }
 
@@ -2405,7 +2405,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         ++_dragIdentifier;
 
         RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1.0];
-        impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+        impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Touch, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
         _dragGestureHasSentMouseDown = true;
 
         [_dragPressGestureRecognizer beginReportingMovementFromWindowLocation:locationInWindow];
@@ -2419,7 +2419,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         if (!_gestureDraggingSession) {
             RetainPtr mouseDragged = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDragged location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1.0];
             mouseDragged = [_dragPressGestureRecognizer eventReportingMovement:mouseDragged atWindowLocation:locationInWindow];
-            impl->mouseDragged(mouseDragged, WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+            impl->mouseDragged(mouseDragged, WebKit::WebEventInputSource::Touch, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
         }
         break;
     }
@@ -2431,7 +2431,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
         RetainPtr mouseUp = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:0.0];
         mouseUp = [_dragPressGestureRecognizer eventReportingMovement:mouseUp atWindowLocation:locationInWindow];
-        impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+        impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Touch, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
 
         // Normally, drag state is cleared in draggingSessionEnded: (normal completion) or in startDrag() when
         // beginDraggingSessionWithItems:gesture: returns nil (gesture ended before session started).
@@ -2496,7 +2496,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     [_clickHighlightController beginRequest:*_latestTapID expectsFastCommit:YES];
 
-    [webView _protectedPage]->potentialTapAtPosition(std::nullopt, WebCore::FloatPoint(position), false, *_latestTapID, WebKit::WebEventInputSource::Automation);
+    [webView _protectedPage]->potentialTapAtPosition(std::nullopt, WebCore::FloatPoint(position), false, *_latestTapID, WebKit::WebEventInputSource::Touch);
 }
 
 - (void)_handleTapEnded:(NSGestureRecognizer *)gesture
@@ -2738,7 +2738,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             .ioHIDEventTimestamp = ioHIDEventTimestamp,
             .rawPlatformDelta = rawPlatformDelta,
             .momentumEndType = momentumEndType,
-            .inputSource = WebKit::WebEventInputSource::Automation,
+            .inputSource = WebKit::WebEventInputSource::Touch,
         }));
     };
 
@@ -2845,7 +2845,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         .ioHIDEventTimestamp = timestamp,
         .rawPlatformDelta = std::nullopt,
         .momentumEndType = WebKit::WebWheelEvent::MomentumEndType::Unknown,
-        .inputSource = WebKit::WebEventInputSource::Automation,
+        .inputSource = WebKit::WebEventInputSource::Touch,
         .momentumFastScrollMultiplier = static_cast<float>(fastScrollMultiplier),
     });
     Ref nativeMomentumEvent = WebKit::NativeWebWheelEvent::create(momentumEvent);
@@ -2979,7 +2979,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         .gestureRotation = 0,
         .timestamp = MonotonicTime::fromRawSeconds(GetCurrentEventTime()),
         .allowsNativeZoom = static_cast<bool>([self magnificationGestureRecognizerCanZoom]),
-        .inputSource = WebKit::WebEventInputSource::Automation,
+        .inputSource = WebKit::WebEventInputSource::Touch,
     };
     auto webEvent = WebKit::NativeWebGestureEvent::create(init, webView.getAutoreleased());
 
@@ -3000,14 +3000,14 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if ENABLE(MAC_GESTURE_EVENTS)
     if (gestureController->hasActiveMagnificationGesture()) {
-        gestureController->handleMagnificationGesture(magnification, phase, webEvent ? webEvent->position() : WebCore::FloatPoint { }, WebKit::WebEventInputSource::Automation);
+        gestureController->handleMagnificationGesture(magnification, phase, webEvent ? webEvent->position() : WebCore::FloatPoint { }, WebKit::WebEventInputSource::Touch);
         return;
     }
 
     if (webEvent)
         page->handleGestureEvent(*webEvent);
 #else
-    gestureController->handleMagnificationGesture(magnification, phase, webEvent ? webEvent->position() : WebCore::FloatPoint { }, WebKit::WebEventInputSource::Automation);
+    gestureController->handleMagnificationGesture(magnification, phase, webEvent ? webEvent->position() : WebCore::FloatPoint { }, WebKit::WebEventInputSource::Touch);
 #endif
 }
 
@@ -3033,7 +3033,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         .gestureScale = 0,
         .gestureRotation = static_cast<float>([self currentRotation:gesture.rotationInDegrees atPhase:phase]),
         .timestamp = MonotonicTime::fromRawSeconds(GetCurrentEventTime()),
-        .inputSource = WebKit::WebEventInputSource::Automation,
+        .inputSource = WebKit::WebEventInputSource::Touch,
     };
     if (auto webEvent = WebKit::NativeWebGestureEvent::create(init, webView.getAutoreleased()))
         [webView _protectedPage]->handleGestureEvent(*webEvent);

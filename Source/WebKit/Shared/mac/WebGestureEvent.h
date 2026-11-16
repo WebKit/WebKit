@@ -48,7 +48,7 @@ struct WebGestureEventData {
     float gestureScale { 0 };
     float gestureRotation { 0 };
     WebEventPhase phase { WebEventPhase::None };
-    WebEventInputSource inputSource { WebEventInputSource::UserDriven };
+    WebEventInputSource inputSource { WebEventInputSource::Default };
 };
 
 struct WebGestureEventInit {

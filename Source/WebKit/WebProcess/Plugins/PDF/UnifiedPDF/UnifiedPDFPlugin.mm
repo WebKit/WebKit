@@ -2692,7 +2692,7 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const IntPoint
 
 Vector<String> UnifiedPDFPlugin::contextMenuItemTitlesForTesting(const IntPoint& contextMenuEventRootViewPoint) const
 {
-    auto contextMenu = createContextMenu(contextMenuEventRootViewPoint, WebEventInputSource::UserDriven);
+    auto contextMenu = createContextMenu(contextMenuEventRootViewPoint, WebEventInputSource::Default);
     if (!contextMenu)
         return { };
 
@@ -3143,7 +3143,7 @@ void UnifiedPDFPlugin::extendCurrentSelectionIfNeeded()
 
 static bool shouldNotTrackSelectionForEvent(const WebCore::PlatformMouseEvent& event)
 {
-    return event.inputSource() == WebCore::MouseEventInputSource::Automation && event.syntheticClickType() != WebCore::SyntheticClickType::NoTap;
+    return event.inputSource() == WebCore::MouseEventInputSource::Touch && event.syntheticClickType() != WebCore::SyntheticClickType::NoTap;
 }
 
 void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::FloatPoint& pagePoint, const WebCore::PlatformMouseEvent& event)
@@ -5154,7 +5154,7 @@ void UnifiedPDFPlugin::handleSyntheticClick(PlatformMouseEvent&& event)
 {
 #if HAVE(PDFDOCUMENT_SELECTION_WITH_GRANULARITY)
     auto handledMouseEvent = false;
-    if (event.inputSource() == WebCore::MouseEventInputSource::Automation)
+    if (event.inputSource() == WebCore::MouseEventInputSource::Touch)
         handledMouseEvent = handleMouseEvent(event);
 
     if (event.type() == WebCore::PlatformEventType::MousePressed)

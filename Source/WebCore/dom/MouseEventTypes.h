@@ -38,7 +38,9 @@ static constexpr double ForceAtForceClick = 2;
 
 enum class SyntheticClickType : uint8_t { NoTap, OneFingerTap, TwoFingerTap };
 
-enum class MouseEventInputSource : uint8_t { UserDriven, Automation };
+// Touch is for events that come from direct touches on macOS (the touch screen, not the trackpad), which WebKit delivers as mouse,
+// wheel, and gesture events instead of touch events. Default is everything else, including mouse and trackpad input, and touches on other platforms.
+enum class MouseEventInputSource : uint8_t { Default, Touch };
 
 enum class MouseEventCanInitiateDrag : bool { No, Yes };
 

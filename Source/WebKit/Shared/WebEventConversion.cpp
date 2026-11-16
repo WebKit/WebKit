@@ -84,10 +84,10 @@ WebMouseEventButton kit(std::expected<WebCore::MouseButton, WebCore::MouseButton
 WebCore::MouseEventInputSource platform(WebEventInputSource source)
 {
     switch (source) {
-    case WebEventInputSource::UserDriven:
-        return WebCore::MouseEventInputSource::UserDriven;
-    case WebEventInputSource::Automation:
-        return WebCore::MouseEventInputSource::Automation;
+    case WebEventInputSource::Default:
+        return WebCore::MouseEventInputSource::Default;
+    case WebEventInputSource::Touch:
+        return WebCore::MouseEventInputSource::Touch;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -96,10 +96,10 @@ WebCore::MouseEventInputSource platform(WebEventInputSource source)
 WebEventInputSource kit(WebCore::MouseEventInputSource source)
 {
     switch (source) {
-    case WebCore::MouseEventInputSource::UserDriven:
-        return WebEventInputSource::UserDriven;
-    case WebCore::MouseEventInputSource::Automation:
-        return WebEventInputSource::Automation;
+    case WebCore::MouseEventInputSource::Default:
+        return WebEventInputSource::Default;
+    case WebCore::MouseEventInputSource::Touch:
+        return WebEventInputSource::Touch;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }

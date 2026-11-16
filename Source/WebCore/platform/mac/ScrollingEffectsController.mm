@@ -208,7 +208,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 #if HAVE(APPKIT_GESTURES_SUPPORT)
         const auto viewportSize = m_client.scrollExtents().viewportSize;
         m_gestureBeganAtTop = m_client.edgePinnedState().top();
-        m_rubberbandHyperbolicCoefficient = wheelEvent.inputSource() == MouseEventInputSource::Automation ? NSScrollingBehaviorHyperbolicCoefficientTouch : NSScrollingBehaviorHyperbolicCoefficientTrackpad;
+        m_rubberbandHyperbolicCoefficient = wheelEvent.inputSource() == MouseEventInputSource::Touch ? NSScrollingBehaviorHyperbolicCoefficientTouch : NSScrollingBehaviorHyperbolicCoefficientTrackpad;
         m_stretchScrollForce = hyperbolicReboundDeltaForElasticDelta(stretchAmount, m_rubberbandHyperbolicCoefficient, viewportSize);
 #else
         m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(stretchAmount.width()));
@@ -252,8 +252,8 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     delta += eventDelta;
 
     if (wheelEvent.isGestureEvent()) {
-        // Automation events are already directionally locked upstream in WKAppKitGestureController.
-        auto alreadyDirectionallyLocked = wheelEvent.inputSource() == MouseEventInputSource::Automation;
+        // Events from the touch screen are already directionally locked upstream in WKAppKitGestureController.
+        auto alreadyDirectionallyLocked = wheelEvent.inputSource() == MouseEventInputSource::Touch;
 
         // FIXME: This axis locking replicates what WheelEventDeltaFilter does. We should apply that to events in all phases, and remove axis locking here (webkit.org/b/231207).
         if (!alreadyDirectionallyLocked)
@@ -339,7 +339,7 @@ void ScrollingEffectsController::clampDeltaForAllowedAxes(const PlatformWheelEve
 
 bool ScrollingEffectsController::modifyScrollDeltaForStretching(const PlatformWheelEvent& wheelEvent, FloatSize& delta, bool isHorizontallyStretched, bool isVerticallyStretched)
 {
-    bool allowsDiagonalRubberbanding = wheelEvent.inputSource() == MouseEventInputSource::Automation;
+    bool allowsDiagonalRubberbanding = wheelEvent.inputSource() == MouseEventInputSource::Touch;
 
     auto affectedSide = affectedSideOnDominantAxis(delta);
     auto horizontalSide = ScrollableArea::targetSideForScrollDelta(delta, ScrollEventAxis::Horizontal);
@@ -554,7 +554,7 @@ bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWh
     const auto horizontalDeltaOpposesStretch = isHorizontallyStretched && m_client.isScrollDeltaOpposingStretch(ScrollEventAxis::Horizontal, delta.width());
     const auto verticalDeltaOpposesStretch = isVerticallyStretched && m_client.isScrollDeltaOpposingStretch(ScrollEventAxis::Vertical, delta.height());
 
-    const bool allowsDiagonalRubberbanding = wheelEvent.inputSource() == MouseEventInputSource::Automation;
+    const bool allowsDiagonalRubberbanding = wheelEvent.inputSource() == MouseEventInputSource::Touch;
     const bool canScrollHorizontally = !isHorizontallyStretched && horizontalSide && !m_client.isPinnedOnSide(*horizontalSide);
     const bool canScrollVertically = !isVerticallyStretched && verticalSide && !m_client.isPinnedOnSide(*verticalSide);
 
@@ -797,7 +797,7 @@ void ScrollingEffectsController::startRubberBandAnimationIfNecessary(const Platf
 
     auto initialVelocity = m_momentumVelocity;
 
-    bool allowsDiagonalRubberbanding = wheelEvent.inputSource() == MouseEventInputSource::Automation;
+    bool allowsDiagonalRubberbanding = wheelEvent.inputSource() == MouseEventInputSource::Touch;
     if (allowsDiagonalRubberbanding) {
         bool isHorizontallyStretched = stretchAmount.width() || targetOffset.x() != contrainedOffset.x() || m_stretchScrollForce.width();
         bool isVerticallyStretched = stretchAmount.height() || targetOffset.y() != contrainedOffset.y() || m_stretchScrollForce.height();

@@ -528,7 +528,8 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
         // That state should live in PointerCaptureController, not be inferred from event tags.
         // Migrating there would make this short circuit unnecessary.
         bool isSyntheticTouchEvent = [&] {
-            if (platformEvent.syntheticClickType() != SyntheticClickType::NoTap && platformEvent.inputSource() != MouseEventInputSource::Automation)
+            // Except on the macOS touch screen, where a tap's pointer events come from its synthetic click.
+            if (platformEvent.syntheticClickType() != SyntheticClickType::NoTap && platformEvent.inputSource() != MouseEventInputSource::Touch)
                 return true;
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
             if (element.document().settings().isTouchEventEmulationEnabled())
@@ -4581,7 +4582,7 @@ bool Element::dispatchMouseForceWillBegin()
     if (!frame)
         return false;
 
-    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), std::unexpected { MouseButtonState::None }, PlatformEvent::Type::NoType, 1, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven };
+    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), std::unexpected { MouseButtonState::None }, PlatformEvent::Type::NoType, 1, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::Default };
     auto mouseForceWillBeginEvent = MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().windowProxy(), platformMouseEvent, { }, { }, 0, nullptr);
     mouseForceWillBeginEvent->setTarget(Ref { *this });
     dispatchEvent(mouseForceWillBeginEvent);

@@ -675,7 +675,7 @@ static void selectionPositionInformation(WebPage& page, WebCore::LocalFrame& loc
     if (videoUnderPoint && !info.isRangeInput && !info.isARIASlider)
         info.isCustomSlider = isCustomSlider(*hitNode, *videoUnderPoint);
 
-    if (request.inputSource == WebEventInputSource::Automation)
+    if (request.inputSource == WebEventInputSource::Touch)
         nearbySliderPositionInformation(localRoot, *frameView, contentsPoint, info);
 #endif // HAVE(APPKIT_GESTURES_SUPPORT)
 

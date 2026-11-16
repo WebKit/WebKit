@@ -180,8 +180,8 @@ enum class WebKit::WebEventType : uint32_t {
 };
 
 [CustomHeader] enum class WebKit::WebEventInputSource : uint8_t {
-    UserDriven,
-    Automation,
+    Default,
+    Touch,
 };
 
 enum class WebKit::GestureWasCancelled : bool;

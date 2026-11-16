@@ -141,7 +141,7 @@ static unsigned short buttonsMaskForMouseButton(std::expected<WebCore::MouseButt
     return 0;
 }
 
-static unsigned short buttonsForAutomationEvent(NSEvent *event)
+static unsigned short buttonsForEventFromTouch(NSEvent *event)
 {
     switch ([event type]) {
     case NSEventTypeLeftMouseDown:
@@ -174,7 +174,7 @@ WebMouseEventInit WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *
     }
 
     WebMouseEventButton button = kit(WebCore::mouseButtonForEvent(event));
-    unsigned short buttons = inputSource == WebEventInputSource::Automation ? buttonsForAutomationEvent(event) : WebCore::currentlyPressedMouseButtons();
+    unsigned short buttons = inputSource == WebEventInputSource::Touch ? buttonsForEventFromTouch(event) : WebCore::currentlyPressedMouseButtons();
     float deltaX = [event deltaX];
     float deltaY = [event deltaY];
     float deltaZ = [event deltaZ];

@@ -76,7 +76,7 @@ struct WebMouseEventData {
     float deltaZ { 0 };
     int32_t clickCount { 0 };
     double force { 0 };
-    WebEventInputSource inputSource { WebEventInputSource::UserDriven };
+    WebEventInputSource inputSource { WebEventInputSource::Default };
     WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag { WebCore::PlatformMouseEvent::CanInitiateDrag::Yes };
     WebMouseEventSyntheticClickType syntheticClickType { WebMouseEventSyntheticClickType::NoTap };
 #if PLATFORM(MAC)

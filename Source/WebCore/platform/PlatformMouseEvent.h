@@ -116,7 +116,7 @@ protected:
     unsigned short m_buttons { 0 };
     Vector<PlatformMouseEvent> m_coalescedEvents;
     Vector<PlatformMouseEvent> m_predictedEvents;
-    MouseEventInputSource m_inputSource { MouseEventInputSource::UserDriven };
+    MouseEventInputSource m_inputSource { MouseEventInputSource::Default };
     CanInitiateDrag m_canInitiateDrag { CanInitiateDrag::Yes };
 #if PLATFORM(MAC)
     int m_eventNumber { 0 };

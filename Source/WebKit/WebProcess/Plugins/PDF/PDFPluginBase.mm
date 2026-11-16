@@ -1389,7 +1389,7 @@ bool PDFPluginBase::showContextMenuAtPoint(const IntPoint& point)
         .globalPosition = contentsPoint,
         .clickCount = 1,
         .force = WebCore::ForceAtClick,
-        .inputSource = WebEventInputSource::UserDriven,
+        .inputSource = WebEventInputSource::Default,
     });
     return handleContextMenuEvent(event);
 }

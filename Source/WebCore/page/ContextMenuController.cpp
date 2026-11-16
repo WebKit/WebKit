@@ -992,7 +992,7 @@ void ContextMenuController::createAndAppendUnicodeSubMenu(ContextMenuItem& unico
 static bool contextualClickSkippedWordSelection(const Event* event, const Editor& editor)
 {
     RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event);
-    return mouseEvent && editor.behavior().shouldSelectOnContextualMenuClick() && mouseEvent->inputSource() == MouseEventInputSource::Automation && !mouseEvent->ctrlKey();
+    return mouseEvent && editor.behavior().shouldSelectOnContextualMenuClick() && mouseEvent->inputSource() == MouseEventInputSource::Touch && !mouseEvent->ctrlKey();
 }
 
 static Vector<SimpleRange, 2> wordRangesForContextualClick(const HitTestResult& result)
@@ -2002,7 +2002,7 @@ void ContextMenuController::showContextMenuAt(LocalFrame& frame, const IntPoint&
     clearContextMenu();
     
     // Simulate a click in the middle of the accessibility object.
-    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, MouseButton::Right, PlatformEvent::Type::MousePressed, 1, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
+    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, MouseButton::Right, PlatformEvent::Type::MousePressed, 1, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::Default);
 
     auto result = frame.eventHandler().handleMousePressEvent(mouseEvent);
     if (result.wasHandledByPageOverlay())

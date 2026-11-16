@@ -219,7 +219,7 @@ WebMouseEventInit WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_
             .deltaZ = 0,
             .clickCount = static_cast<int32_t>(clickCount(event)),
             .force = 0,
-            .inputSource = WebEventInputSource::UserDriven,
+            .inputSource = WebEventInputSource::Default,
             .canInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes,
             .syntheticClickType = syntheticClickType,
             .pointerId = WebCore::mousePointerID,

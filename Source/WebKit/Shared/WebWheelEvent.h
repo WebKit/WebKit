@@ -72,7 +72,7 @@ struct WebWheelEventData {
     MonotonicTime ioHIDEventTimestamp;
     std::optional<WebCore::FloatSize> rawPlatformDelta;
     WebWheelEventMomentumEndType momentumEndType { WebWheelEventMomentumEndType::Unknown };
-    WebEventInputSource inputSource { WebEventInputSource::UserDriven };
+    WebEventInputSource inputSource { WebEventInputSource::Default };
     float momentumFastScrollMultiplier { 1 };
 #endif
 };

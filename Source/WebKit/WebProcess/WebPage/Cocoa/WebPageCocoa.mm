@@ -2537,7 +2537,7 @@ bool WebPage::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode,
     if (RefPtr editableRoot = newSelection.rootEditableElement(); editableRoot && editableRoot == targetNode.rootEditableElement()) {
         // FIXME: This logic should be made consistent for both macOS and iOS.
 #if PLATFORM(MAC)
-        return targetNode.shouldSelectOnMouseDown() || inputSource != WebCore::MouseEventInputSource::Automation;
+        return targetNode.shouldSelectOnMouseDown() || inputSource != WebCore::MouseEventInputSource::Touch;
 #else
         // Text interaction gestures will handle selection in the case where we are already editing the node. In the case where we're
         // just starting to focus an editable element by tapping on it, only change the selection if we weren't already showing an
@@ -3342,7 +3342,7 @@ static IntPoint globalPositionForSyntheticMouseEvent(LocalFrame& localRootFrame,
 static void dispatchSyntheticMouseMove(LocalFrame& localFrame, const WebCore::FloatPoint& location, OptionSet<WebEventModifier> modifiers, WebCore::PointerID pointerId, WebCore::MouseEventInputSource inputSource)
 {
     auto movementDelta = [&] -> WebCore::DoublePoint {
-        if (inputSource != WebCore::MouseEventInputSource::Automation)
+        if (inputSource != WebCore::MouseEventInputSource::Touch)
             return { };
         auto lastKnownPosition = localFrame.eventHandler().lastKnownMousePosition();
         return WebCore::DoublePoint(location - lastKnownPosition);
@@ -3631,7 +3631,7 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
         return localRootFrame->nodeRespondingToDoubleClickEvent(m_potentialTapLocation, adjustedDoubleClickPoint) || localRootFrame->windowWithDoubleClickEventListener();
     };
 
-    bool syntheticClickMayBeHandledAsDoubleClick = m_potentialTapInputSource == WebCore::MouseEventInputSource::Automation;
+    bool syntheticClickMayBeHandledAsDoubleClick = m_potentialTapInputSource == WebCore::MouseEventInputSource::Touch;
 
     if (m_potentialTapNode != nodeRespondingToClick)
         commitPotentialTapFailed();
@@ -3992,7 +3992,7 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
     // FIXME: <https://webkit.org/b/314881> For input sources where pointer events may not have already been
     // dispatched upstream by other compat paths, the pointer events that are dispatched in response to this
     // synthetic click will not carry the correct `buttons` value, so we account for that here.
-    bool becomesPointerEvents = m_potentialTapInputSource == WebCore::MouseEventInputSource::Automation;
+    bool becomesPointerEvents = m_potentialTapInputSource == WebCore::MouseEventInputSource::Touch;
     if (becomesPointerEvents)
         pressEvent.setButtons(1);
     bool handledPress = localRootFrame->eventHandler().handleMousePressEvent(pressEvent).wasHandled();
@@ -4129,7 +4129,7 @@ Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::handleDoubl
     auto roundedAdjustedPoint = roundedIntPoint(adjustedPoint);
     auto globalPoint = globalPositionForSyntheticMouseEvent(*localRoot, adjustedPoint);
 
-    bool becomesPointerEvents = platformInputSource == WebCore::MouseEventInputSource::Automation;
+    bool becomesPointerEvents = platformInputSource == WebCore::MouseEventInputSource::Touch;
     auto pressEvent = PlatformMouseEvent { roundedAdjustedPoint, globalPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, 2, platformModifiers, MonotonicTime::now(), becomesPointerEvents ? WebCore::ForceAtClick : 0.0, syntheticClickType, platformInputSource };
     if (becomesPointerEvents)
         pressEvent.setButtons(1);

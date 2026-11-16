@@ -759,8 +759,8 @@ bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestR
 #if ENABLE(DRAG_SUPPORT)
         m_dragStartSelection = getWeakSimpleRangeFromSelection(m_frame->selection().selection());
 #endif
-    } else if (mouseDownMayStartSelect() && event.event().inputSource() != MouseEventInputSource::Automation) {
-        // If the event is an Automation event, avoid interfering with the platform text interaction,
+    } else if (mouseDownMayStartSelect() && event.event().inputSource() != MouseEventInputSource::Touch) {
+        // If the event comes from the macOS touch screen, avoid interfering with the platform text interaction,
         // which handles selection itself.
         selectClosestWordFromHitTestResult(event.hitTestResult(), shouldAppendTrailingWhitespace(event, protect(m_frame)));
     }
@@ -1047,7 +1047,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
     if (handleDrag(event, checkDragHysteresis))
         return true;
 
-    if (event.event().inputSource() == MouseEventInputSource::Automation)
+    if (event.event().inputSource() == MouseEventInputSource::Touch)
         return false;
 
     RefPtr targetNode = event.targetNode();
@@ -1321,7 +1321,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
             // gestures will fail.
             static constexpr auto usePlatformTextInteraction = true;
 #else
-            auto usePlatformTextInteraction = event.event().inputSource() == MouseEventInputSource::Automation;
+            auto usePlatformTextInteraction = event.event().inputSource() == MouseEventInputSource::Touch;
 #endif
 
             if (usePlatformTextInteraction)
@@ -1963,7 +1963,7 @@ std::optional<RemoteFrameGeometryTransformer> EventHandler::geometryTransformerF
 static Scrollbar* scrollbarForMouseEvent(const MouseEventWithHitTestResults& mouseEvent, LocalFrameView* view)
 {
     if (view) {
-        const auto tolerance = mouseEvent.event().inputSource() == MouseEventInputSource::Automation ? ScrollbarHitTestTolerance::Expanded : ScrollbarHitTestTolerance::None;
+        const auto tolerance = mouseEvent.event().inputSource() == MouseEventInputSource::Touch ? ScrollbarHitTestTolerance::Expanded : ScrollbarHitTestTolerance::None;
         if (auto* scrollbar = view->scrollbarAtPoint(flooredIntPoint(mouseEvent.event().position()), tolerance))
             return scrollbar;
     }
@@ -2671,9 +2671,9 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
 
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, protect(mouseEvent.targetNode()).get(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
 
-    bool isNonSyntheticAutomationEvent = platformMouseEvent.inputSource() == MouseEventInputSource::Automation
+    bool isFromTouchOtherThanTap = platformMouseEvent.inputSource() == MouseEventInputSource::Touch
         && platformMouseEvent.syntheticClickType() == SyntheticClickType::NoTap;
-    bool swallowClickEvent = !isNonSyntheticAutomationEvent
+    bool swallowClickEvent = !isFromTouchOtherThanTap
         && swallowAnyClickEvent(platformMouseEvent, mouseEvent, IgnoreAncestorNodesForClickEvent::No);
 
     if (m_resizeLayer) {
@@ -3003,7 +3003,7 @@ DragEventTargetData EventHandler::performDragAndDrop(const PlatformMouseEvent& e
 
 bool EventHandler::isSynthesizedContextMenuPressDuringPendingDrag(const PlatformMouseEvent& event) const
 {
-    return event.inputSource() == MouseEventInputSource::Automation
+    return event.inputSource() == MouseEventInputSource::Touch
         && event.button() == MouseButton::Right
         && m_mousePressed
         && m_mouseDownMayStartDrag
@@ -3367,7 +3367,7 @@ void EventHandler::updateMouseEventTargetAfterLayoutIfNeeded()
         // boundary event processing.
         auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
         PlatformMouseEvent syntheticEvent(valueOrDefault(m_lastKnownMousePosition), m_lastKnownMouseGlobalPosition,
-            std::unexpected { MouseButtonState::None }, PlatformEvent::Type::NoType, 0, modifiers, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
+            std::unexpected { MouseButtonState::None }, PlatformEvent::Type::NoType, 0, modifiers, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::Default);
 
         // EventHandler updates scrollable areas when the element under the mouse changes as a result of the
         // mouse moving. In this case, the mouse did not move, but the element under the mouse still changed,
@@ -3735,7 +3735,7 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
     auto allowsScrollingState = SetForScope(m_currentWheelEventAllowsScrolling, processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling));
     
     setFrameWasScrolledByUser();
-    if (event.inputSource() == MouseEventInputSource::UserDriven)
+    if (event.inputSource() != MouseEventInputSource::Touch)
         setLastKnownMousePosition(event.position(), event.globalPosition(), LastKnownMousePositionSource::Wheel);
 
     if (frame->isRootFrame()) {
@@ -4065,7 +4065,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
     if (mouseEvent.scrollbar() || view->scrollbarAtPoint(flooredEventPosition))
         return false;
 
-    auto shouldSelectOnContextualMenuClick = frame->editor().behavior().shouldSelectOnContextualMenuClick() && (event.inputSource() == MouseEventInputSource::UserDriven || event.controlKey());
+    auto shouldSelectOnContextualMenuClick = frame->editor().behavior().shouldSelectOnContextualMenuClick() && (event.inputSource() != MouseEventInputSource::Touch || event.controlKey());
 
     if (shouldSelectOnContextualMenuClick && !selection->contains(viewportPos)) {
         m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
@@ -4155,7 +4155,7 @@ bool EventHandler::sendContextMenuEventForKey()
 #else
     PlatformEvent::Type eventType = PlatformEvent::Type::MousePressed;
 #endif
-    PlatformMouseEvent platformMouseEvent(position, globalPosition, MouseButton::Right, eventType, 1, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
+    PlatformMouseEvent platformMouseEvent(position, globalPosition, MouseButton::Right, eventType, 1, { }, MonotonicTime::now(), ForceAtClick, SyntheticClickType::NoTap, MouseEventInputSource::Default);
 
     return sendContextMenuEvent(platformMouseEvent);
 }
@@ -4244,7 +4244,7 @@ void EventHandler::fakeMouseMoveEventTimerFired()
         return;
 
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
-    PlatformMouseEvent fakeMouseMoveEvent(*m_lastKnownMousePosition, m_lastKnownMouseGlobalPosition, std::unexpected { MouseButtonState::None }, PlatformEvent::Type::MouseMoved, 0, modifiers, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
+    PlatformMouseEvent fakeMouseMoveEvent(*m_lastKnownMousePosition, m_lastKnownMouseGlobalPosition, std::unexpected { MouseButtonState::None }, PlatformEvent::Type::MouseMoved, 0, modifiers, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::Default);
     auto result = mouseMoved(fakeMouseMoveEvent);
     if (auto remoteUserInputEventData = result.remoteUserInputEventData()) {
         if (RefPtr page = frame->page())
@@ -4955,12 +4955,12 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
 
     // Selection-drag candidates need a disambiguation window between mousedown and the first
     // mousedrag so that the user can choose between extending a selection and dragging it.
-    // Automation-source events come from upstream components that have already disambiguated
+    // Events from the macOS touch screen come from upstream components that have already disambiguated
     // the interaction, so they bypass the window.
     const bool isSelectionDragCandidate = m_mouseDownMayStartDrag
         && m_dragMayStartSelectionInstead
         && dragState().type.contains(DragSourceAction::Selection);
-    const bool inputRequiresDisambiguation = event.event().inputSource() != MouseEventInputSource::Automation;
+    const bool inputRequiresDisambiguation = event.event().inputSource() != MouseEventInputSource::Touch;
     const bool isWithinDisambiguationWindow = event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay;
 
     if (isSelectionDragCandidate && inputRequiresDisambiguation && isWithinDisambiguationWindow) {
@@ -5917,7 +5917,7 @@ void EventHandler::mousePointerDidDisappear()
         return;
 
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
-    PlatformMouseEvent syntheticEvent(position, globalPosition, std::unexpected { MouseButtonState::None }, PlatformEvent::Type::NoType, 0, modifiers, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
+    PlatformMouseEvent syntheticEvent(position, globalPosition, std::unexpected { MouseButtonState::None }, PlatformEvent::Type::NoType, 0, modifiers, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::Default);
     updateMouseEventTargetNode(eventNames().mousemoveEvent, nullptr, syntheticEvent, FireMouseOverOut::Yes);
     document->updateHoverActiveState(hoverTimerHitType, nullptr);
 }

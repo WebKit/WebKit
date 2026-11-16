@@ -727,12 +727,12 @@ std::pair<String, String> PluginView::stringsBeforeAndAfterSelection(int charact
     return m_plugin->stringsBeforeAndAfterSelection(characterCount);
 }
 
-// Automation mouse events funnel through as synthetic clicks, except
+// Mouse events from the macOS touch screen funnel through as synthetic clicks, except
 // for context menu events, which do not have a clear synthetic analogue.
 static bool shouldForwardToPlugin(const Event& event)
 {
     auto* mouseEvent = dynamicDowncast<WebCore::MouseEvent>(event);
-    return !mouseEvent || mouseEvent->inputSource() != WebCore::MouseEventInputSource::Automation || event.type() == eventNames().contextmenuEvent;
+    return !mouseEvent || mouseEvent->inputSource() != WebCore::MouseEventInputSource::Touch || event.type() == eventNames().contextmenuEvent;
 }
 
 void PluginView::handleEvent(Event& event)

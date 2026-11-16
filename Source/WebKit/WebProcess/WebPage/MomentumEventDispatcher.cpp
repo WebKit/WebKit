@@ -213,7 +213,7 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
     tracePoint(SyntheticMomentumStart);
 
     m_currentGesture.active = true;
-    m_currentGesture.momentumCurve = event.inputSource() == WebEventInputSource::Automation ? MomentumCurve::Simple : MomentumCurve::Default;
+    m_currentGesture.momentumCurve = event.inputSource() == WebEventInputSource::Touch ? MomentumCurve::Simple : MomentumCurve::Default;
     m_currentGesture.pageIdentifier = pageIdentifier;
     m_currentGesture.initiatingEvent = &event;
     m_currentGesture.currentOffset = { };

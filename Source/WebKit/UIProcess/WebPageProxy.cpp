@@ -5530,7 +5530,7 @@ void WebPageProxy::continueWheelEventHandling(Ref<WebWheelEvent>&& wheelEvent, c
     LOG_WITH_STREAM(WheelEvents, stream << "WebPageProxy::continueWheelEventHandling - " << result);
 
 #if PLATFORM(COCOA)
-    if (m_mainFrame && wheelEvent->phase() == WebWheelEvent::Phase::Began && wheelEvent->inputSource() != WebEventInputSource::UserDriven) {
+    if (m_mainFrame && wheelEvent->phase() == WebWheelEvent::Phase::Began && wheelEvent->inputSource() == WebEventInputSource::Touch) {
         forEachWebContentProcess([](auto& process, auto pageID) {
             process.send(Messages::WebPage::MousePointerDidDisappear(), pageID);
         });
@@ -5540,7 +5540,7 @@ void WebPageProxy::continueWheelEventHandling(Ref<WebWheelEvent>&& wheelEvent, c
     if (!result.needsMainThreadProcessing()) {
         bool setLastKnownMousePosition = m_mainFrame && wheelEvent->phase() == WebWheelEvent::Phase::Began;
 #if PLATFORM(COCOA)
-        setLastKnownMousePosition = setLastKnownMousePosition && wheelEvent->inputSource() == WebEventInputSource::UserDriven;
+        setLastKnownMousePosition = setLastKnownMousePosition && wheelEvent->inputSource() != WebEventInputSource::Touch;
 #endif
         if (setLastKnownMousePosition) {
             // When wheel events are handled entirely in the UI process, we still need to tell the web process where the mouse is for cursor updates.
@@ -8359,7 +8359,7 @@ RectEdges<bool> WebPageProxy::rubberBandableEdgesRespectingHistorySwipe(const We
         return rubberBandableEdges;
 
 #if PLATFORM(MAC)
-    if (wheelEvent.inputSource() == WebEventInputSource::Automation) {
+    if (wheelEvent.inputSource() == WebEventInputSource::Touch) {
         RefPtr pageClient = this->pageClient();
         if (!pageClient || !pageClient->everMagnifiedDuringCurrentGesture()) {
             rubberBandableEdges.setLeft(false);
