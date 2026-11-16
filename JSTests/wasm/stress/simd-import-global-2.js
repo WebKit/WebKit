@@ -13,7 +13,7 @@ async function test() {
 
     if (typeof WebAssembly.Global.prototype.type !== 'undefined')
         assert.eq(exportV128.exports.global.type().value, "v128")
-    assert.throws(() => exportV128.exports.global.value, WebAssembly.RuntimeError, "Cannot get value of v128 global (evaluating 'exportV128.exports.global.value')")
+    assert.throws(() => exportV128.exports.global.value, TypeError, "Cannot get value of v128 global")
 
     await instantiate(`
     (module

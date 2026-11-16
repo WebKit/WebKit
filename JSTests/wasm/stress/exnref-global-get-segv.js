@@ -10,6 +10,7 @@ import * as assert from "../assert.js";
 const wasm1 = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 6, 6, 1, 105, 0, 208, 105, 11, 7, 5, 1, 1, 103, 3, 0]);
 const module1 = new WebAssembly.Module(wasm1);
 const instance1 = new WebAssembly.Instance(module1);
+assert.throws(() => instance1.exports.g.value, TypeError, "Cannot get value of exnref global");
 
 // (module
 //   (import "M" "g" (global (ref null exn)))
