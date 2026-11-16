@@ -508,7 +508,7 @@ RenderFragmentContainer* RenderFragmentedFlow::lastFragment() const
     return const_cast<RenderFragmentContainer*>(&m_fragmentList.last());
 }
 
-void RenderFragmentedFlow::clearRenderBoxFragmentInfoAndCustomStyle(const RenderBox& box,
+void RenderFragmentedFlow::clearRenderBoxFragmentInfo(const RenderBox& box,
     const RenderFragmentContainer* newStartFragment, const RenderFragmentContainer* newEndFragment,
     const RenderFragmentContainer* oldStartFragment, const RenderFragmentContainer* oldEndFragment)
 {
@@ -546,7 +546,7 @@ void RenderFragmentedFlow::setFragmentRangeForBox(const RenderBox& box, RenderFr
     auto& range = result.iterator->value;
     if (range.startFragment() == startFragment && range.endFragment() == endFragment)
         return;
-    clearRenderBoxFragmentInfoAndCustomStyle(box, startFragment, endFragment, range.startFragment(), range.endFragment());
+    clearRenderBoxFragmentInfo(box, startFragment, endFragment, range.startFragment(), range.endFragment());
 }
 
 bool RenderFragmentedFlow::hasCachedFragmentRangeForBox(const RenderBox& box) const

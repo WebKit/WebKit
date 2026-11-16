@@ -142,7 +142,7 @@ public:
     LayoutRect fragmentsBoundingBox(const LayoutRect& layerBoundingBox) const;
 
     LayoutUnit offsetFromLogicalTopOfFirstFragment(const RenderBlock*) const;
-    void clearRenderBoxFragmentInfoAndCustomStyle(const RenderBox&, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*);
+    void clearRenderBoxFragmentInfo(const RenderBox&, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*);
 
     void addFragmentsVisualEffectOverflow(const RenderBox&);
     void addFragmentsVisualOverflowFromTheme(const RenderBlock&);
