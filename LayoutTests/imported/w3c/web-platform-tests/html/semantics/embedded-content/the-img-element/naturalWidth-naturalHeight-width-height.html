@@ -45,10 +45,12 @@ img {
      "data-{width,height}" attributes (as distinguished from
      data-natural-{width,height}).
      * The "data-not-rendered-{width,height}" attributes are the same thing,
-     but for when the img is not being rendered. These are needed because the
-     rendered and not-rendered values can differ: e.g. a rendered img can be
-     stretched by its containing block, whereas a not-rendered img with a
-     width/height content attribute reports that attribute's value.
+     but for when the img is not being rendered. These and "data-{width,height}"
+     both default to "data-natural-{width,height}", so an expectation that only
+     applies while rendered, such as an img stretched by its containing block, is
+     encoded by specifying "data-{width,height}" and leaving
+     "data-not-rendered-{width,height}" out. A width/height content attribute is
+     reported either way, so those cases specify the same value twice.
      * The "data-density" attribute indicates which natural dimensions are
      SVG-intrinsic (and thus should be density-corrected): "both" (default for
      raster), "width", "height", or "none". Default dimensions (300x150) and

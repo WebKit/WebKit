@@ -13,12 +13,12 @@ function checkScroll() {
   stashResultsThenClose(key, results);
 }
 
-// Ensure two animation frames on load to test the fallback to element anchor,
-// which gets queued for the next frame if the text fragment is not found.
+// Ensure animation frames on load to allow delayed text fragment processing and
+// fallback to element anchor.
 window.onload = function() {
-  window.requestAnimationFrame(function() {
-    window.requestAnimationFrame(checkScroll);
-  });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    requestAnimationFrame(() => requestAnimationFrame(checkScroll));
+  }));
 }
 </script>
 <style>
@@ -26,8 +26,12 @@ window.onload = function() {
     width: 50vw;
     height: 200vh;
   }
+  #generatedSearch::before {
+    content: "search";
+  }
 </style>
 <body>
+  <span id="generatedSearch"></span>
   Won't scroll if matched:
   match suffix
   match suffix3
@@ -40,6 +44,9 @@ window.onload = function() {
     foo foo foo bar bar bar
   </p>
   <p>
+    search Two words ending in flatten
+  </p>
+  <p>
     match suffix2
     prefix match suffix3 matchEnd suffix4 matchEnd suffix5
   </p>
@@ -47,25 +54,25 @@ window.onload = function() {
     Lorem
 
     <br> <i>    </i>
-    <div>  &nbsp; </div>
+    <div>  &nbsp </div>
     <!-- This <p> puts lots of non textual stuff between words -->
     <div style="display: none">This isn't rendered</div>
     <div style="visibility: hidden">This also isn't visible</div>
     <iframe srcdoc="Inner Iframe"></iframe>
     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAEUlEQVR42mNk+M+AARiHsiAAcCIKAYwFoQ8AAAAASUVORK5CYII=">
 
-        &nbsp; &nbsp;    Ipsum
+        &nbsp; &nbsp    Ipsum
 
     Whitespace
 
     <br> <i>    </i>
-    <div>  &nbsp; </div>
+    <div>  &nbsp </div>
     <!-- This <p> puts lots of non textual stuff between words -->
     <div style="display: none">This isn't rendered</div>
     <div style="visibility: hidden">This also isn't visible</div>
     <iframe srcdoc="Inner Iframe"></iframe>
     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAQAAAAnOwc2AAAAEUlEQVR42mNk+M+AARiHsiAAcCIKAYwFoQ8AAAAASUVORK5CYII=">
-        &nbsp; &nbsp;
+        &nbsp; &nbsp
 
     Dipsum
 
@@ -92,5 +99,29 @@ window.onload = function() {
 
   </p>
   <p>
-    This text appears at the end of the document
+    She caught it in one hand and a net.
+    z<i>z</i>z
   </p>
+  <div>
+    <span>What <img src="broken.png"> had said</span>
+  </div>
+  <p>
+    he's falling.
+  </p>
+  <p>
+    3.5
+  </p>
+  <p>
+    <span>40</span><span>.</span><span>2</span>
+  </p>
+  <div>
+    <p>II</p>
+    <p>the cat</p>
+  </div>
+  <p>
+    And I'm sure 't were a sin
+  </p>
+  <p>
+    This text appears at the end of the document
+  </p
+</body>

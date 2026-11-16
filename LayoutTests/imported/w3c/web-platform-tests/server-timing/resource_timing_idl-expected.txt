@@ -1,3 +1,0 @@
-
-PASS resource_timing_idl
-

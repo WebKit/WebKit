@@ -1,0 +1,14 @@
+
+FAIL `start` element contains search-invisible text (iframe). assert_equals: Expected to scroll expected true but got false
+FAIL `start` element contains search-invisible text (image). assert_equals: Expected to scroll expected true but got false
+PASS |end| can match after an overlapping rejected candidate.
+PASS Inline node boundary is not a word boundary.
+FAIL Match across broken image. assert_equals: Expected to scroll expected true but got false
+PASS Match containing an apostrophe is word bounded.
+PASS Match must not start mid-word before an apostrophe.
+FAIL Match starts with apostrophe. assert_equals: Expected to scroll expected true but got false
+PASS Match must not start mid-number inside 3.5.
+PASS Match must not end mid-number at 3. in 3.5.
+PASS Match must not start mid-number inside multi-node 40.2.
+PASS Prefix must start on a word boundary at the start of a node.
+

@@ -16,13 +16,13 @@
           let excessLayers = [];
           for (let i = 0; i < xrSession.maxRenderLayers + 1; i++) {
             excessLayers.push(new XRWebGLLayer(xrSession, gl));
-	  }
+          }
           const updateRenderStateMultilayer = () => xrSession.updateRenderState({ layers: excessLayers });
           try {
             updateRenderStateMultilayer();
             assert_unreached("updateRenderState should fail when created with more layers than maxRenderLayers.")
           } catch (err) {
-	    assert_equals(err.name, "NotSupportedError", "Should get InvalidStateError when updating render state with more layers than maxRenderLayers.");
+            assert_equals(err.name, "NotSupportedError", "Should get InvalidStateError when updating render state with more layers than maxRenderLayers.");
           }
         } else {
           assert_throws_dom('NotSupportedError', updateRenderStateMultilayer, "XRSession should be able to updateRenderState with multiple layers only if the layers feature is enabled.");

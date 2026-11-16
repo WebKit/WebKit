@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
+<!doctype html>
+<meta charset="utf-8" />
 <title>Digital Credential concurrent request rejection tests</title>
 <link rel="help" href="https://w3c-fedid.github.io/digital-credentials/" />
 <script src="/resources/testharness.js"></script>
@@ -37,7 +37,7 @@
       t,
       "NotAllowedError",
       secondRequest,
-      "Second concurrent request should be rejected with NotAllowedError"
+      "Second concurrent request should be rejected with NotAllowedError",
     );
 
     abortController.abort();
@@ -45,13 +45,17 @@
       t,
       "AbortError",
       firstRequest,
-      "First request should be aborted"
+      "First request should be aborted",
     );
   }, "A second get() call while another is pending should reject with NotAllowedError.");
 
   promise_test(async (t) => {
-    // Per "prepare credential requests" this rejection is a queued task, so a
-    // microtask queued in the same tick runs before it.
+    // The concurrency rejection must be queued as a global task on the DOM
+    // manipulation task source (per "prepare credential requests"), not settled
+    // synchronously. A synchronous rejection would settle the promise within
+    // the get() call, scheduling its rejection reaction ahead of a microtask
+    // queued in the same tick; a task-queued rejection lets the microtask run
+    // first.
     await test_driver.set_virtual_wallet_behavior("wait");
     t.add_cleanup(() => test_driver.set_virtual_wallet_behavior("clear"));
 
@@ -94,22 +98,29 @@
       document.body.appendChild(iframe);
     });
 
-    await test_driver.bless("user activation for subframe request", null, iframe.contentWindow);
-    const subframeRequest = iframe.contentWindow.navigator.credentials.get(makeGetOptions());
+    await test_driver.bless(
+      "user activation for subframe request",
+      null,
+      iframe.contentWindow,
+    );
+    const subframeRequest =
+      iframe.contentWindow.navigator.credentials.get(makeGetOptions());
     subframeRequest.catch(() => {});
     iframe.remove();
 
     const responseData = "served-after-teardown";
-    await test_driver.set_virtual_wallet_behavior("respond", "org-iso-mdoc", { value: responseData });
+    await test_driver.set_virtual_wallet_behavior("respond", "org-iso-mdoc", {
+      value: responseData,
+    });
     await test_driver.bless("user activation for top-level request");
     const credential = await navigator.credentials.get(
-      makeGetOptions({ protocol: "org-iso-mdoc" })
+      makeGetOptions({ protocol: "org-iso-mdoc" }),
     );
 
     assert_equals(
       credential.data.value,
       responseData,
-      "A request made after the previous requester's document was destroyed must be served, not rejected as concurrent."
+      "A request made after the previous requester's document was destroyed must be served, not rejected as concurrent.",
     );
   }, "Destroying the requesting document returns the coordinator to the idle interaction state.");
 </script>

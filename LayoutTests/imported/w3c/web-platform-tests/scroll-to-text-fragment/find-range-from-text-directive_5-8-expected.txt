@@ -1,0 +1,6 @@
+
+PASS Multiple overlapping prefixes.
+PASS Multiple overlapping one letter prefixes.
+PASS Prefix overlaps match text.
+PASS Match text after prefix.
+

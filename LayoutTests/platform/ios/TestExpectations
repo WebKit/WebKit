@@ -7975,7 +7975,19 @@ webkit.org/b/287672 imported/w3c/web-platform-tests/css/css-cascade/all-prop-ini
 
 webkit.org/b/287741 fast/viewport/ios/non-responsive-viewport-after-changing-view-scale.html [ Pass Failure ]
 
-webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?1-4 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?5-8 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?9-12 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?13-16 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?17-20 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?21-24 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?25-28 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?29-32 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?33-36 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?37-40 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?41-44 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?45-48 [ Pass Failure ]
+webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html?49-last [ Pass Failure ]
 
 webkit.org/b/288677 [ Debug arm64 ] fast/scrolling/ios/body-overflow-hidden-keyboard.html [ Pass Crash ]
 
@@ -8507,6 +8519,16 @@ webkit.org/b/301548 imported/w3c/web-platform-tests/uievents/mouse/offset_and_pa
 
 # webkit.org/b/301591 [ iOS 26 ] imported/w3c/web-platform-tests/editing/other/empty-elements-insertion.html is a constant text failure 
 imported/w3c/web-platform-tests/editing/other/empty-elements-insertion.html [ Failure ]
+
+# Flaky under stress: the delete sometimes does nothing.
+imported/w3c/web-platform-tests/editing/other/delete-in-child-of-head.tentative.html?designMode=off&method=backspace [ Skip ]
+imported/w3c/web-platform-tests/editing/other/delete-in-child-of-head.tentative.html?designMode=off&method=forwarddelete [ Skip ]
+imported/w3c/web-platform-tests/editing/other/delete-in-child-of-head.tentative.html?designMode=on&method=backspace [ Skip ]
+imported/w3c/web-platform-tests/editing/other/delete-in-child-of-head.tentative.html?designMode=on&method=forwarddelete [ Skip ]
+imported/w3c/web-platform-tests/editing/other/delete-in-child-of-html.tentative.html?designMode=off&method=backspace [ Skip ]
+imported/w3c/web-platform-tests/editing/other/delete-in-child-of-html.tentative.html?designMode=off&method=forwarddelete [ Skip ]
+imported/w3c/web-platform-tests/editing/other/delete-in-child-of-html.tentative.html?designMode=on&method=backspace [ Skip ]
+imported/w3c/web-platform-tests/editing/other/delete-in-child-of-html.tentative.html?designMode=on&method=forwarddelete [ Skip ]
 
 # webkit.org/b/301602 [ iOS 26 ] imported/w3c/web-platform-tests/inert/inert-pseudo-element-hittest.html is a constant text failure
 imported/w3c/web-platform-tests/inert/inert-pseudo-element-hittest.html [ Failure ]

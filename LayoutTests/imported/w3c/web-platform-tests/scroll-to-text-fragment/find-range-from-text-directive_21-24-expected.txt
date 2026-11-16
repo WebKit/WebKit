@@ -1,0 +1,6 @@
+
+PASS no-prefix; no |end| or suffix forces |start| to end on word boundary.
+PASS no-prefix; suffix means |start| need not end on word boundary.
+PASS |start| must start on a word boundary.
+PASS non-existent exact match.
+

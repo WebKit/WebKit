@@ -1,0 +1,6 @@
+
+PASS Search invisible content between prefix and match.
+PASS Prefix appears at end of document.
+PASS |end| forces |start| to end on word boundary.
+PASS no |end| or suffix forces |start| to end on word boundary.
+

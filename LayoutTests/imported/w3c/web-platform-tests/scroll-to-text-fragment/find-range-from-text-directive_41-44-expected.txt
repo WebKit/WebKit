@@ -1,0 +1,6 @@
+
+PASS Non-existent suffix.
+PASS Content appears between match and suffix.
+PASS Non-matching suffix in first potential match.
+PASS Non-matching suffix search continues to prefix match.
+

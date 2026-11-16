@@ -1,0 +1,6 @@
+
+PASS Suffix comes before |end|.
+PASS Search invisible content between |end| and suffix.
+PASS Suffix must be end bounded.
+PASS Suffix need not be start bounded.
+

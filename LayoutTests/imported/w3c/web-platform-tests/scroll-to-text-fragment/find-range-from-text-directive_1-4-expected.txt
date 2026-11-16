@@ -1,0 +1,6 @@
+
+PASS Basic smoke test - full word match.
+PASS Prefix must start on a word boundary.
+PASS Prefix need not end on a word boundary.
+PASS Prefix doesn't exist.
+

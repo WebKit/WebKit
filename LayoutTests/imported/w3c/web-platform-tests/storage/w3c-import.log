@@ -18,7 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/storage/README.md
 /LayoutTests/imported/w3c/web-platform-tests/storage/estimate-indexeddb.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/storage/estimate-parallel.https.any.js
-/LayoutTests/imported/w3c/web-platform-tests/storage/estimate-usage-details-application-cache.https.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/storage/estimate-usage-details-caches.https.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/storage/estimate-usage-details-indexeddb.https.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/storage/estimate-usage-details-service-workers.https.tentative.window.js

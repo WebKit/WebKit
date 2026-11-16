@@ -1,0 +1,6 @@
+
+PASS match doesn't immediately follow prefix.
+PASS match doesn't immediately follow first prefix instance.
+PASS Generated content matching prefix does not prevent a later match.
+PASS no-prefix; |end| forces |start| to end on word boundary.
+

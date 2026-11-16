@@ -1,0 +1,6 @@
+
+PASS |end| must be start bounded even if full range is word bounded.
+PASS non-existent |end|.
+PASS Range with preceeding suffix.
+PASS Match with no suffix.
+

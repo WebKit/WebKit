@@ -17,7 +17,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/server-timing/cross_origin.html
 /LayoutTests/imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.html
 /LayoutTests/imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html
-/LayoutTests/imported/w3c/web-platform-tests/server-timing/resource_timing_idl.html
 /LayoutTests/imported/w3c/web-platform-tests/server-timing/resource_timing_idl.https.html
 /LayoutTests/imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html

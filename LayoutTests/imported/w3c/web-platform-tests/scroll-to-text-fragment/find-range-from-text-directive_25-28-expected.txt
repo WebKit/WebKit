@@ -1,0 +1,6 @@
+
+PASS non-existent range match.
+PASS overlapping exact matches with suffix.
+PASS overlapping one letter exact matches with suffix.
+PASS matching range search.
+

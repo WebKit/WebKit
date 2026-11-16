@@ -1,0 +1,6 @@
+
+PASS suffix means |start| need not end on word boundary.
+PASS |start| doesn't need to start on word boundary.
+PASS prefix with non-existent exact match.
+PASS prefix with non-existent range match.
+

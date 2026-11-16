@@ -1,0 +1,6 @@
+
+PASS inverted range search.
+PASS no suffix forces |end| to be end bounded.
+PASS suffix means |end| need not be end bounded.
+PASS |end| must be start bounded.
+
