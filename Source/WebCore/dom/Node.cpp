@@ -2301,15 +2301,15 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
     }
 }
 
-inline void Node::adoptCustomElementRegistryIntoScopedRegistryDocument()
+NODELETE static inline void adoptCustomElementRegistryIntoScopedRegistryDocument(Node& node)
 {
     // Called during adoption only when the destination document's custom element registry is scoped.
     // An element that inherits the global custom element registry (neither uses the null registry
     // nor an explicit scoped registry) has no global registry to inherit in such a document, so it
     // ends up with a null custom element registry.
-    if (is<Element>(*this) && !usesNullCustomElementRegistry() && !usesScopedCustomElementRegistryMap()) {
-        resetCustomElementRegistryType();
-        setUsesNullCustomElementRegistry();
+    if (is<Element>(node) && !node.usesNullCustomElementRegistry() && !node.usesScopedCustomElementRegistryMap()) {
+        node.resetCustomElementRegistryType();
+        node.setUsesNullCustomElementRegistry();
     }
 }
 
@@ -2334,6 +2334,20 @@ static void clearNullCustomElementRegistryOnAdoption(Node& node, Document& newDo
         node.setUsesGlobalCustomElementRegistry();
 }
 
+static ALWAYS_INLINE void adoptCustomElementRegistry(Node& node, Document& newDocument)
+{
+    if (node.usesNullCustomElementRegistry() && shouldClearNullCustomElementRegistryOnAdoption(node, newDocument)) [[unlikely]]
+        clearNullCustomElementRegistryOnAdoption(node, newDocument);
+
+    if (auto* newRegistry = newDocument.customElementRegistry()) {
+        if (newRegistry->isScoped()) [[unlikely]]
+            adoptCustomElementRegistryIntoScopedRegistryDocument(node);
+    } else if (node.usesGlobalCustomElementRegistry()) [[unlikely]] {
+        node.resetCustomElementRegistryType();
+        node.setUsesNullCustomElementRegistry();
+    }
+}
+
 void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDocument)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!oldDocument.shouldInvalidateNodeListAndCollectionCaches());
@@ -2352,11 +2366,7 @@ void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDoc
 
     ensureWrapperForAdoptedNodeWithForeignGlobalObjectIfNeeded(*this, oldDocument, newDocument);
 
-    if (usesNullCustomElementRegistry() && shouldClearNullCustomElementRegistryOnAdoption(*this, newDocument)) [[unlikely]]
-        clearNullCustomElementRegistryOnAdoption(*this, newDocument);
-
-    if (auto* newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]
-        adoptCustomElementRegistryIntoScopedRegistryDocument();
+    adoptCustomElementRegistry(*this, newDocument);
 
     if (!hasTypeFlag(TypeFlag::HasDidMoveToNewDocument) && !hasEventTargetFlag(EventTargetFlag::HasLangAttr) && !hasEventTargetFlag(EventTargetFlag::HasXMLLangAttr)
         && !isDefinedCustomElement() && !isCustomElementUpgradeCandidate())
@@ -2376,11 +2386,7 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
     newDocument.incrementReferencingNodeCount();
     oldDocument.decrementReferencingNodeCount();
 
-    if (usesNullCustomElementRegistry() && shouldClearNullCustomElementRegistryOnAdoption(*this, newDocument)) [[unlikely]]
-        clearNullCustomElementRegistryOnAdoption(*this, newDocument);
-
-    if (auto* newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]
-        adoptCustomElementRegistryIntoScopedRegistryDocument();
+    adoptCustomElementRegistry(*this, newDocument);
 
     if (hasRareData()) {
         if (auto* nodeLists = rareData()->nodeLists())

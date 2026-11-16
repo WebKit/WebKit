@@ -847,7 +847,6 @@ private:
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
     void moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDocument);
     void moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDocument);
-    NODELETE void adoptCustomElementRegistryIntoScopedRegistryDocument();
 
     WEBCORE_EXPORT void notifyInspectorOfRendererChange();
 

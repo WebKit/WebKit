@@ -3253,9 +3253,15 @@ static void preserveCustomElementRegistryAfterEnteringTreeScope(Element& element
             CustomElementRegistry::removeFromScopedCustomElementRegistryMap(element);
     } else if (!element.usesNullCustomElementRegistry()) {
         if (element.treeScope().customElementRegistry() != element.document().customElementRegistry()) [[unlikely]] {
-            // This element was moved into a shadow tree with a scoped custom element registry.
-            // Keep using the document's non-scoped custom element registry.
-            if (element.document().window())
+            // This element was moved into a shadow tree with a different custom element registry.
+            // Keep using the document's custom element registry.
+            RefPtr registry = element.document().customElementRegistry();
+            if (!registry)
+                element.setUsesNullCustomElementRegistry();
+            else if (registry->isScoped()) [[unlikely]] {
+                // This happens when initialize() was called on a document without a browsing context.
+                CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
+            } else
                 element.setUsesGlobalCustomElementRegistry();
         } else
             element.resetCustomElementRegistryType();
