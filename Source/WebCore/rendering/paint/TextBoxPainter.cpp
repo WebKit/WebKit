@@ -60,7 +60,6 @@
 #include "StyledMarkedText.h"
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
-#include <numeric>
 #include <ranges>
 
 #if ENABLE(WRITING_TOOLS)
@@ -1588,56 +1587,6 @@ void TextBoxPainter::paintPlatformDocumentMarkers()
     }
 }
 
-#if ENABLE(WRITING_TOOLS)
-
-constexpr Seconds writingToolsAnimationLoop = 10000_ms;
-static void drawWritingToolsUnderline(GraphicsContext& context, const FloatRect& rect, IntSize frameSize)
-{
-    auto radius = rect.height() / 2.0;
-    auto minX = rect.x();
-    auto maxX = rect.maxX();
-    auto minY = rect.y();
-    auto maxY = rect.maxY();
-    auto midY = std::midpoint(minY, maxY);
-
-    auto frameX = frameSize.width();
-    auto frameY = frameSize.height();
-
-    constexpr auto redColor = SRGBA<uint8_t> { 227, 100, 136 };
-    constexpr auto yellowColor = SRGBA<uint8_t> { 242, 225, 162 };
-    constexpr auto purpleColor = SRGBA<uint8_t> { 154, 109, 209 };
-
-    auto animationProgress = (MonotonicTime::now() % writingToolsAnimationLoop).value() / 10;
-
-    auto xOffset = frameX * fmod(animationProgress + midY / frameY, 1.0);
-    constexpr std::array colorList { purpleColor, redColor, yellowColor, redColor, purpleColor, purpleColor, redColor, yellowColor, redColor, purpleColor };
-
-    GradientColorStops::StopVector stops;
-    stops.reserveInitialCapacity(colorList.size());
-    auto colorStop = 0.f;
-    auto colorIncrement = 1.0 / colorList.size();
-    for (auto color : colorList) {
-        stops.append(GradientColorStop { colorStop, color });
-        colorStop += colorIncrement;
-    }
-
-    Ref gradient = Gradient::create(Gradient::LinearData { FloatPoint(0 - xOffset, 0), FloatPoint(frameX * 2 - xOffset, frameY) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, WTF::move(stops));
-
-    context.save();
-    context.setFillGradient(WTF::move(gradient));
-
-    Path path;
-    path.moveTo(FloatPoint(minX + radius, maxY));
-    path.addArc(FloatPoint(minX + radius, midY), radius, piOverTwoDouble, 3 * piOverTwoDouble, RotationDirection::Clockwise);
-    path.addLineTo(FloatPoint(maxX - radius, minY));
-    path.addArc(FloatPoint(maxX - radius, midY), radius, 3 * piOverTwoDouble, piOverTwoDouble, RotationDirection::Clockwise);
-
-    context.fillPath(path);
-    context.restore();
-}
-
-#endif // ENABLE(WRITING_TOOLS)
-
 void TextBoxPainter::paintPlatformDocumentMarker(const MarkedText& markedText)
 {
     // Never print document markers (rdar://5327887)
@@ -1646,18 +1595,6 @@ void TextBoxPainter::paintPlatformDocumentMarker(const MarkedText& markedText)
 
     auto bounds = calculateDocumentMarkerBounds(makeIterator(), markedText);
     bounds.moveBy(m_paintRect.location());
-
-#if ENABLE(WRITING_TOOLS)
-#if ENABLE(SIMPLIFIED_SUGGESTION_UNDERLINE)
-    constexpr static bool useSimplifiedSuggestionUnderline = true;
-#else
-    constexpr static bool useSimplifiedSuggestionUnderline = false;
-#endif
-    if (!useSimplifiedSuggestionUnderline && markedText.type == MarkedText::Type::WritingToolsTextSuggestion) {
-        drawWritingToolsUnderline(m_paintInfo.context(), bounds,  protect(m_renderer->frame().view())->size());
-        return;
-    }
-#endif
 
     auto lineStyleMode = [&] {
         switch (markedText.type) {

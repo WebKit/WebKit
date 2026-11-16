@@ -67,7 +67,6 @@ inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarke
 DocumentMarkerController::DocumentMarkerController(Document& document)
     : m_document(document)
     , m_fadeAnimationTimer(*this, &DocumentMarkerController::fadeAnimationTimerFired)
-    , m_writingToolsTextSuggestionAnimationTimer(*this, &DocumentMarkerController::writingToolsTextSuggestionAnimationTimerFired)
 {
 }
 
@@ -78,7 +77,6 @@ void DocumentMarkerController::detach()
     m_markers.clear();
     m_possiblyExistingMarkerTypes = { };
     m_fadeAnimationTimer.stop();
-    m_writingToolsTextSuggestionAnimationTimer.stop();
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
     m_appliedGrammarTextEffectUUIDs.clear();
 #endif
@@ -431,13 +429,6 @@ bool DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
     if (CheckedPtr renderer = node.renderer())
         renderer->repaint();
 
-#if ENABLE(WRITING_TOOLS)
-    if (newMarker.type() == DocumentMarkerType::WritingToolsTextSuggestion) {
-        if (!m_writingToolsTextSuggestionAnimationTimer.isActive())
-            m_writingToolsTextSuggestionAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
-    }
-#endif
-
     invalidateRectsForMarkersInNode(node);
     return true;
 }
@@ -729,11 +720,6 @@ void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarkerType> types
     for (auto& node : copyToVector(m_markers.keys()))
         removedMarkerTypes = removedMarkerTypes & removeMarkersFromList(m_markers.find(node), types, filter);
 
-#if ENABLE(WRITING_TOOLS)
-    if (removedMarkerTypes.contains(DocumentMarkerType::WritingToolsTextSuggestion))
-        m_writingToolsTextSuggestionAnimationTimer.stop();
-#endif
-
     m_possiblyExistingMarkerTypes.remove(removedMarkerTypes);
 }
 
@@ -879,17 +865,6 @@ void DocumentMarkerController::dismissMarkers(OptionSet<DocumentMarkerType> type
 
     if (requiresAnimation && !m_fadeAnimationTimer.isActive())
         m_fadeAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
-}
-
-void DocumentMarkerController::writingToolsTextSuggestionAnimationTimerFired()
-{
-#if ENABLE(WRITING_TOOLS)
-    forEachOfTypes({ DocumentMarkerType::WritingToolsTextSuggestion }, [](Node& node, RenderedDocumentMarker&) {
-        if (CheckedPtr renderer = node.renderer())
-            renderer->repaint();
-        return false;
-    });
-#endif
 }
 
 void DocumentMarkerController::fadeAnimationTimerFired()

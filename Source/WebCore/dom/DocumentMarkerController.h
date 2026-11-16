@@ -133,7 +133,6 @@ private:
     void applyToCollapsedRangeMarker(const SimpleRange&, OptionSet<DocumentMarkerType>, NOESCAPE const Function<bool(Node&, RenderedDocumentMarker&)>&);
 
     void fadeAnimationTimerFired();
-    void writingToolsTextSuggestionAnimationTimerFired();
 
 
     MarkerMap m_markers;
@@ -142,7 +141,6 @@ private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     Timer m_fadeAnimationTimer;
-    Timer m_writingToolsTextSuggestionAnimationTimer;
 
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
     HashSet<String> m_appliedGrammarTextEffectUUIDs;
