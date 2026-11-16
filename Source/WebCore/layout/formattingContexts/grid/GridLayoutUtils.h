@@ -75,9 +75,9 @@ std::optional<LayoutUnit> gridAreaMaximumSize(size_t startLine, size_t endLine, 
 // https://drafts.csswg.org/css-grid-1/#track-sizes
 Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize&);
 
-UsedMargins usedMarginsForAxis(const PlacedGridItem&, const ComputedSizes&);
 UsedMargins usedMarginsForTrackSizing(const PlacedGridItem&, const ComputedSizes&);
 UsedMargins usedMarginsForStretchFit(const PlacedGridItem&, const ComputedSizes&);
+UsedMargins usedMarginsForAlignment(const PlacedGridItem&, const ComputedSizes&, LayoutUnit borderBoxSize, LayoutUnit gridAreaSize);
 
 // The border box size of a specified width, height, minimum or maximum size, honoring box-sizing.
 BorderBoxSize borderBoxSizeForSpecifiedSize(BoxSizing, LayoutUnit specifiedSize, LayoutUnit borderAndPadding);

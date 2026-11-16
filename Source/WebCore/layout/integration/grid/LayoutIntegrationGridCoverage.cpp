@@ -452,7 +452,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if ((!maxHeight.isFixed() || maxHeight.isStretchFunction()) && !maxHeight.isNone())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedMaxHeight, reasons, reasonCollectionMode);
 
-        // These are the margin edges GridLayoutUtils::usedMarginsForAxis() can resolve.
+        // These are the margin edges GridLayoutUtils::usedMargin() can resolve.
         auto gridItemHasUnsupportedMargins = [&] {
             return gridItemStyle->marginBox().anyOf([](const Style::MarginEdge& marginEdge) {
                 return !marginEdge.isFixed() && !marginEdge.isKnownZero();

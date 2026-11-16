@@ -170,21 +170,20 @@ GridItemRects GridLayout::layout(const PlacedGridItems& placedGridItems, const T
     auto [ usedInlineSizes, usedBlockSizes ] = layoutGridItems(placedGridItems, gridAreaSizes, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
 
     // https://drafts.csswg.org/css-grid-1/#alignment
-    auto usedInlineMargins = computeInlineMargins(placedGridItems);
-    auto usedBlockMargins = computeBlockMargins(placedGridItems);
-
-    // https://drafts.csswg.org/css-grid-1/#alignment
     // After a grid container’s grid tracks have been sized, and the dimensions of all grid items
     // are finalized, grid items can be aligned within their grid areas.
-    auto inlineAxisBaselineAlignedMarginBoxPositions = computeBaselineAlignedMarginBoxPositions(placedGridItems, LogicalBoxAxis::Inline, usedInlineMargins, usedInlineSizes,
+    auto usedInlineMarginsForAlignment = computeInlineMarginsForAlignment(placedGridItems, usedInlineSizes, gridAreaSizes.inlineSizes);
+    auto usedBlockMarginsForAlignment = computeBlockMarginsForAlignment(placedGridItems, usedBlockSizes, gridAreaSizes.blockSizes);
+
+    auto inlineAxisBaselineAlignedMarginBoxPositions = computeBaselineAlignedMarginBoxPositions(placedGridItems, LogicalBoxAxis::Inline, usedInlineMarginsForAlignment, usedInlineSizes,
         gridAreaSizes.inlineSizes, usedTrackSizes.columnSizes, gridLayoutState.collapsedColumnTracksList, gridLayoutState.usedColumnGap, formattingContext.integrationUtils());
-    auto blockAxisBaselineAlignedMarginBoxPositions = computeBaselineAlignedMarginBoxPositions(placedGridItems, LogicalBoxAxis::Block, usedBlockMargins, usedBlockSizes,
+    auto blockAxisBaselineAlignedMarginBoxPositions = computeBaselineAlignedMarginBoxPositions(placedGridItems, LogicalBoxAxis::Block, usedBlockMarginsForAlignment, usedBlockSizes,
         gridAreaSizes.blockSizes, usedTrackSizes.rowSizes, gridLayoutState.collapsedRowTracksList, gridLayoutState.usedRowGap, formattingContext.integrationUtils());
 
-    auto inlineAxisPositions = performSelfAlignment(placedGridItems, LogicalBoxAxis::Inline, usedInlineMargins, usedInlineSizes, gridAreaSizes.inlineSizes, inlineAxisBaselineAlignedMarginBoxPositions);
-    auto blockAxisPositions = performSelfAlignment(placedGridItems, LogicalBoxAxis::Block, usedBlockMargins, usedBlockSizes, gridAreaSizes.blockSizes, blockAxisBaselineAlignedMarginBoxPositions);
+    auto inlineAxisPositions = performSelfAlignment(placedGridItems, LogicalBoxAxis::Inline, usedInlineMarginsForAlignment, usedInlineSizes, gridAreaSizes.inlineSizes, inlineAxisBaselineAlignedMarginBoxPositions);
+    auto blockAxisPositions = performSelfAlignment(placedGridItems, LogicalBoxAxis::Block, usedBlockMarginsForAlignment, usedBlockSizes, gridAreaSizes.blockSizes, blockAxisBaselineAlignedMarginBoxPositions);
 
-    return computeGridItemRects(placedGridItems, inlineAxisPositions, blockAxisPositions, usedInlineSizes, usedBlockSizes, usedInlineMargins, usedBlockMargins);
+    return computeGridItemRects(placedGridItems, inlineAxisPositions, blockAxisPositions, usedInlineSizes, usedBlockSizes, usedInlineMarginsForAlignment, usedBlockMarginsForAlignment);
 }
 
 BorderBoxPositions GridLayout::performSelfAlignment(const PlacedGridItems& placedGridItems, LogicalBoxAxis alignmentAxis, const Vector<UsedMargins>& usedMargins, const Vector<LayoutUnit>& borderBoxSizes,
@@ -225,18 +224,20 @@ BorderBoxPositions GridLayout::performSelfAlignment(const PlacedGridItems& place
 }
 
 // https://drafts.csswg.org/css-grid-1/#auto-margins
-Vector<UsedMargins> GridLayout::computeInlineMargins(const PlacedGridItems& placedGridItems)
+Vector<UsedMargins> GridLayout::computeInlineMarginsForAlignment(const PlacedGridItems& placedGridItems, const UsedInlineSizes& borderBoxSizes, const Vector<LayoutUnit>& gridAreaSizes)
 {
-    return placedGridItems.map([](const PlacedGridItem& placedGridItem) {
-        return GridLayoutUtils::usedMarginsForAxis(placedGridItem, placedGridItem.inlineAxisSizes());
+    return Vector<UsedMargins>(placedGridItems.size(), [&](size_t gridItemIndex) {
+        auto& placedGridItem = placedGridItems[gridItemIndex];
+        return GridLayoutUtils::usedMarginsForAlignment(placedGridItem, placedGridItem.inlineAxisSizes(), borderBoxSizes[gridItemIndex], gridAreaSizes[gridItemIndex]);
     });
 }
 
 // https://drafts.csswg.org/css-grid-1/#auto-margins
-Vector<UsedMargins> GridLayout::computeBlockMargins(const PlacedGridItems& placedGridItems)
+Vector<UsedMargins> GridLayout::computeBlockMarginsForAlignment(const PlacedGridItems& placedGridItems, const UsedBlockSizes& borderBoxSizes, const Vector<LayoutUnit>& gridAreaSizes)
 {
-    return placedGridItems.map([](const PlacedGridItem& placedGridItem) {
-        return GridLayoutUtils::usedMarginsForAxis(placedGridItem, placedGridItem.blockAxisSizes());
+    return Vector<UsedMargins>(placedGridItems.size(), [&](size_t gridItemIndex) {
+        auto& placedGridItem = placedGridItems[gridItemIndex];
+        return GridLayoutUtils::usedMarginsForAlignment(placedGridItem, placedGridItem.blockAxisSizes(), borderBoxSizes[gridItemIndex], gridAreaSizes[gridItemIndex]);
     });
 }
 

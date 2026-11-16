@@ -112,6 +112,7 @@ Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTr
         });
 }
 
+// FIXME: Resolve percentage and calc() margins against the grid area's inline size.
 static LayoutUnit usedMargin(const PlacedGridItem& gridItem, const Style::MarginEdge& marginEdge)
 {
     if (auto fixedMargin = marginEdge.tryFixed())
@@ -122,13 +123,6 @@ static LayoutUnit usedMargin(const PlacedGridItem& gridItem, const Style::Margin
 
     ASSERT_NOT_IMPLEMENTED_YET();
     return { };
-}
-
-// Resolves a grid item's used margins in one axis.
-// FIXME: Resolve percentage and calc() margins against the grid area's inline size.
-UsedMargins usedMarginsForAxis(const PlacedGridItem& gridItem, const ComputedSizes& axisSizes)
-{
-    return UsedMargins { usedMargin(gridItem, axisSizes.marginStart), usedMargin(gridItem, axisSizes.marginEnd) };
 }
 
 // https://drafts.csswg.org/css-grid-1/#auto-margins
@@ -159,6 +153,51 @@ UsedMargins usedMarginsForStretchFit(const PlacedGridItem& gridItem, const Compu
     };
 
     return UsedMargins { usedMarginForStretchFit(axisSizes.marginStart), usedMarginForStretchFit(axisSizes.marginEnd) };
+}
+
+// https://drafts.csswg.org/css-grid-1/#auto-margins
+UsedMargins usedMarginsForAlignment(const PlacedGridItem& gridItem, const ComputedSizes& axisSizes, LayoutUnit borderBoxSize, LayoutUnit gridAreaSize)
+{
+    auto marginStartIsAuto = axisSizes.marginStart.isAuto();
+    auto marginEndIsAuto = axisSizes.marginEnd.isAuto();
+
+    // https://drafts.csswg.org/css-grid-1/#grid-area-concept
+    // "A grid item’s grid area forms the containing block into which it is laid out."
+    // https://www.w3.org/TR/CSS2/visudet.html#blockwidth
+    // "'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width'
+    // + 'margin-right' = width of containing block"
+    auto sumOfNonAutoMargins = [&] {
+        auto sum = 0_lu;
+        if (!marginStartIsAuto)
+            sum += usedMargin(gridItem, axisSizes.marginStart);
+        if (!marginEndIsAuto)
+            sum += usedMargin(gridItem, axisSizes.marginEnd);
+        return sum;
+    };
+    auto freeSpace = gridAreaSize - borderBoxSize - sumOfNonAutoMargins();
+
+    auto usedMarginForAlignment = [&](const Style::MarginEdge& marginEdge) -> LayoutUnit {
+        if (!marginEdge.isAuto())
+            return usedMargin(gridItem, marginEdge);
+
+        // https://drafts.csswg.org/css-grid-1/#auto-margins
+        // "Overflowing grid items resolve their auto margins to zero and overflow as specified by their box
+        // alignment properties."
+        if (freeSpace < 0)
+            return 0_lu;
+
+        // https://drafts.csswg.org/css-grid-1/#auto-margins
+        // "As defined for the inline axis of block layout (see CSS2§10.3.3), auto margins in either axis..."
+        // https://www.w3.org/TR/CSS2/visudet.html#blockwidth
+        // "If both 'margin-left' and 'margin-right' are 'auto', their used values are equal."
+        if (marginStartIsAuto && marginEndIsAuto)
+            return freeSpace / 2;
+
+        // "If there is exactly one value specified as 'auto', its used value follows from the equality."
+        return freeSpace;
+    };
+
+    return UsedMargins { usedMarginForAlignment(axisSizes.marginStart), usedMarginForAlignment(axisSizes.marginEnd) };
 }
 
 // https://drafts.csswg.org/css-sizing-4/#aspect-ratio
