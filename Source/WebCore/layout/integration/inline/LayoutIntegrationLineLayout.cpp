@@ -1677,11 +1677,15 @@ void LineLayout::shiftLinesByInBlockDirection(LayoutUnit blockShift)
         displayContent.moveLineInBlockDirection(lineIndex, blockShift);
 
     // An excluded marker is on one of these lines without being part of the content that moves with them, so the
-    // position it was given has to move too (see RenderListItem::placeExcludedMarker).
-    if (CheckedPtr marker = RenderListItem::excludedMarkerAnchoredTo(protect(flow()))) {
-        auto excludedPosition = *marker->excludedPosition();
-        excludedPosition.topLeft.move(0, blockShift.toFloat());
-        marker->setExcludedPosition(excludedPosition);
+    // position it was given has to move too (see RenderListItem::placeExcludedMarker). Nested list items can have
+    // their markers on the same line.
+    for (auto& excludedMarker : flow().view().frameView().layoutContext().excludedMarkers()) {
+        CheckedPtr marker = excludedMarker.get();
+        auto excludedPosition = marker->excludedPosition();
+        if (!excludedPosition || excludedPosition->firstFormattedLineRoot.get() != &flow())
+            continue;
+        excludedPosition->topLeft.move(0, blockShift.toFloat());
+        marker->setExcludedPosition(*excludedPosition);
     }
 
     auto deltaX = isHorizontalWritingMode ? 0_lu : blockShift;
