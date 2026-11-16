@@ -125,9 +125,22 @@ public:
     LayoutUnit verticalSpaceForScrollbar() const { return m_verticalSpaceForScrollbar; }
     LayoutUnit horizontalSpaceForScrollbar() const { return m_horizontalSpaceForScrollbar; }
 
-    // The baseline position of an atomic inline-level box from the top of its margin box, unless it is synthesized.
+    // The baseline position of an atomic inline-level box from the top of its margin box. It's unset when the baseline is
+    // synthesized, except for the boxes that get a synthesized one set (see hasSynthesizedBaseline()).
     std::optional<LayoutUnit> baseline() const { return m_baseline; }
-    void setBaseline(std::optional<LayoutUnit> baseline) { m_baseline = baseline; }
+    void setBaseline(std::optional<LayoutUnit> baseline)
+    {
+        m_baseline = baseline;
+        m_isBaselineSynthesized = false;
+    }
+    void setSynthesizedBaseline(LayoutUnit baseline)
+    {
+        m_baseline = baseline;
+        m_isBaselineSynthesized = true;
+    }
+    // Whether the box has no baseline of its own, so its baselines come from its margin box.
+    // https://drafts.csswg.org/css-inline-3/#baseline-synthesis-box
+    bool hasSynthesizedBaseline() const { return !m_baseline || m_isBaselineSynthesized; }
 
     bool hasMarginBorderOrPadding() const { return horizontalMarginBorderAndPadding() || verticalMarginBorderAndPadding(); }
 
@@ -207,6 +220,7 @@ private:
     LayoutUnit m_horizontalSpaceForScrollbar;
 
     std::optional<LayoutUnit> m_baseline;
+    bool m_isBaselineSynthesized { false };
 
 #if ASSERT_ENABLED
     bool m_hasValidTop { false };

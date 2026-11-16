@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+div {
+    font: 100px/1 Ahem;
+    color: green;
+}
+.box {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-color: blue;
+}
+</style>
+<!-- The parent's baselines are estimated from Ahem's 0.8em ascent and 0.2em descent, and the 40px box's are synthesized
+     from its margin box, e.g. central: (80px - 20px) / 2 - 40px / 2 = 10px. -->
+<div>X<span class="box" style="alignment-baseline: ideographic"></span></div>
+<div>X<span class="box" style="alignment-baseline: central"></span></div>
+<div>X<span class="box" style="alignment-baseline: mathematical"></span></div>
+<div>X<span class="box" style="alignment-baseline: hanging"></span></div>

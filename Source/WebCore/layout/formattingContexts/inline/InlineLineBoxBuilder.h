@@ -46,6 +46,7 @@ public:
 
 private:
     void setVerticalPropertiesForInlineLevelBox(const LineBox&, InlineLevelBox&) const;
+    void setAlignmentBaselineOffsetIfApplicable(const LineBox&, InlineLevelBox&) const;
     void setLayoutBoundsForInlineBox(InlineLevelBox&, FontBaseline) const;
     void adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox&);
     void computeLineBoxGeometry(LineBox&) const;

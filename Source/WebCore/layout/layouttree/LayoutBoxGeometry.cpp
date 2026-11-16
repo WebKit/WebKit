@@ -43,6 +43,7 @@ BoxGeometry::BoxGeometry(const BoxGeometry& other)
     , m_verticalSpaceForScrollbar(other.m_verticalSpaceForScrollbar)
     , m_horizontalSpaceForScrollbar(other.m_horizontalSpaceForScrollbar)
     , m_baseline(other.m_baseline)
+    , m_isBaselineSynthesized(other.m_isBaselineSynthesized)
 #if ASSERT_ENABLED
     , m_hasValidTop(other.m_hasValidTop)
     , m_hasValidLeft(other.m_hasValidLeft)
