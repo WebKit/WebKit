@@ -504,7 +504,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     m_canUseCompressionDictionary = shouldFetchWithCompressionDictionary(request);
     if (m_canUseCompressionDictionary) {
         auto destination = m_parameters.options.destination;
-        parameters.compressionDictionary = CompressionDictionaryParameters { destination, { } };
+        parameters.compressionDictionary = CompressionDictionaryParameters { destination, { }, m_parameters.options.mode == FetchOptions::Mode::NoCors };
 
         // https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
         // To be added with https://github.com/whatwg/fetch/pull/1854
