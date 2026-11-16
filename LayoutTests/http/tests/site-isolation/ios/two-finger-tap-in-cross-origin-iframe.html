@@ -1,0 +1,36 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("A two-finger tap inside a cross-origin iframe should send the iframe a click with metaKey set, at the tapped point in the iframe's coordinates.");
+jsTestIsAsync = true;
+
+let receivedClick = null;
+
+function twoFingerTapAt(x, y)
+{
+    return new Promise(resolve => {
+        testRunner.runUIScript(`uiController.twoFingerSingleTapAtPoint(${x}, ${y}, () => uiController.uiScriptComplete())`, resolve);
+    });
+}
+
+addEventListener("message", async (event) => {
+    if (event.data.type === "click") {
+        receivedClick = event.data;
+        shouldBeTrue("receivedClick.metaKey");
+        shouldBe("receivedClick.clientX", "200");
+        shouldBe("receivedClick.clientY", "150");
+        finishJSTest();
+        return;
+    }
+    if (event.data.type !== "ready")
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+    await twoFingerTapAt(200, 250);
+});
+</script>
+<body style="margin: 0;">
+<iframe style="position: absolute; left: 0; top: 100px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/two-finger-tap-target-frame.html"></iframe>
+</body>
