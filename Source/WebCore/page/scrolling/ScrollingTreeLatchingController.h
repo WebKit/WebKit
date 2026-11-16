@@ -38,11 +38,14 @@ namespace WebCore {
 class PlatformWheelEvent;
 enum class WheelEventProcessingSteps : uint8_t;
 
+enum class LatchedToUnscrollableRoot : bool { No, Yes };
+
 class ScrollingTreeLatchingController {
 public:
     struct ScrollingNodeAndProcessingSteps {
         ScrollingNodeID scrollingNodeID;
         OptionSet<WheelEventProcessingSteps> processingSteps;
+        LatchedToUnscrollableRoot latchedToUnscrollableRoot { LatchedToUnscrollableRoot::No };
     };
 
     NODELETE ScrollingTreeLatchingController();
@@ -51,9 +54,11 @@ public:
 
     std::optional<ScrollingNodeAndProcessingSteps> latchingDataForEvent(const PlatformWheelEvent&, bool allowLatching) const;
     void nodeDidHandleEvent(ScrollingNodeID, OptionSet<WheelEventProcessingSteps>, const PlatformWheelEvent&, bool allowLatching);
+    void latchToUnscrollableRoot(ScrollingNodeID rootNodeID, OptionSet<WheelEventProcessingSteps>, bool allowLatching);
 
     NODELETE std::optional<ScrollingNodeID> latchedNodeID() const;
     NODELETE std::optional<ScrollingNodeAndProcessingSteps> latchedNodeAndSteps() const;
+    NODELETE bool isLatchedToUnscrollableRoot() const;
 
     NODELETE void nodeWasRemoved(ScrollingNodeID);
     NODELETE void clearLatchedNode();

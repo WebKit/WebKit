@@ -208,7 +208,10 @@ bool ScrollingTreeScrollingNode::shouldRubberBandOnSide(BoxSide side, RectEdges<
 
 bool ScrollingTreeScrollingNode::shouldRubberBand(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting) const
 {
-    if (isLatchedNode())
+    // A root latched while it couldn't scroll rubber-bands as if it weren't latched. Check that first: in the web process, the
+    // EventDispatcher queue clears the latch when the next gesture starts while the scrolling thread may be here, and checking
+    // isLatchedNode() first could then see the latch but miss, by the second check, that it was this kind of latch.
+    if (!scrollingTree()->isLatchedToUnscrollableRoot() && isLatchedNode())
         return true;
 
     if (eventTargeting == EventTargeting::NodeOnly)
