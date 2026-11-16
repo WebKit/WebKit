@@ -82,7 +82,7 @@ public:
     WEBCORE_EXPORT void end();
 
     // Used by layout tests.
-    WEBCORE_EXPORT static int pageNumberForElement(Element*, const FloatSize& pageSizeInPixels); // Returns -1 if page isn't found.
+    WEBCORE_EXPORT static int pageNumberForElementForTesting(Element*, const FloatSize& pageSizeInPixels); // Returns -1 if page isn't found.
     WEBCORE_EXPORT static String pageProperty(LocalFrame*, const String& propertyName, int pageNumber);
     WEBCORE_EXPORT static bool isPageBoxVisible(LocalFrame*, int pageNumber);
     WEBCORE_EXPORT static String pageSizeAndMarginsInPixels(LocalFrame*, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
