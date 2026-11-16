@@ -766,6 +766,98 @@ struct WKWebExtensionControllerTests {
     }
 
     @Test
+    func contentSecurityPolicyV3SchemeSourceAllowsImageLoad() async throws {
+        var server = try HTTPServer(protocol: .http) {
+            Route("/image.svg", headerFields: ["Content-Type": "image/svg+xml"]) {
+                "<svg xmlns='http://www.w3.org/2000/svg'></svg>"
+            }
+        }
+
+        let manifest: [String: Any] = [
+            "manifest_version": 3,
+            "name": "Test",
+            "description": "Test",
+            "version": "1.0",
+
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+
+            "content_security_policy": [
+                "extension_pages": "script-src 'self'; img-src http:"
+            ],
+        ]
+
+        try await server.run { configuration in
+            let backgroundScript = """
+                var img = document.createElement('img')
+                img.src = '\(configuration.localhostAddress.absoluteString)image.svg'
+
+                img.onload = () => {
+                  browser.test.notifyPass()
+                }
+
+                img.onerror = () => {
+                  browser.test.notifyFail('The image should load')
+                }
+
+                document.body.appendChild(img)
+                """
+
+            let manager = try loadWebExtension(manifest: manifest, resources: ["background.js": backgroundScript])
+            try await manager.run()
+        }
+    }
+
+    @Test
+    func contentSecurityPolicyV3SchemeSourceBlocksOtherSchemeImageLoad() async throws {
+        var server = try HTTPServer(protocol: .http) {
+            Route("/image.svg", headerFields: ["Content-Type": "image/svg+xml"]) {
+                "<svg xmlns='http://www.w3.org/2000/svg'></svg>"
+            }
+        }
+
+        let manifest: [String: Any] = [
+            "manifest_version": 3,
+            "name": "Test",
+            "description": "Test",
+            "version": "1.0",
+
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+
+            "content_security_policy": [
+                "extension_pages": "script-src 'self'; img-src https:"
+            ],
+        ]
+
+        try await server.run { configuration in
+            let backgroundScript = """
+                var img = document.createElement('img')
+                img.src = '\(configuration.localhostAddress.absoluteString)image.svg'
+
+                img.onerror = () => {
+                  browser.test.notifyPass()
+                }
+
+                img.onload = () => {
+                  browser.test.notifyFail('The image should not load')
+                }
+
+                document.body.appendChild(img)
+                """
+
+            let manager = try loadWebExtension(manifest: manifest, resources: ["background.js": backgroundScript])
+            try await manager.run()
+        }
+    }
+
+    @Test
     func webAccessibleResources() async throws {
         var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {
