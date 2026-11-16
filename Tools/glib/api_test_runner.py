@@ -150,8 +150,7 @@ class TestRunner(object):
                 tests.append(test)
             else:
                 sys.stderr.write(f'WARNING: Unable to find test "{test}". Ignoring it. Pass "-l" to see the available tests\n')
-        # If not test found on requested_test_list then return all available
-        if not tests:
+        if not requested_test_list:
             for test_target in self.TEST_TARGETS:
                 absolute_test_target = os.path.join(self._test_programs_base_dir(), test_target)
                 if test_target.lower().startswith("test") and os.path.isfile(absolute_test_target) and os.access(absolute_test_target, os.X_OK):
