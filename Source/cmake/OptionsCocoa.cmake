@@ -412,6 +412,35 @@ if (NOT USE_APPLE_INTERNAL_SDK AND EXISTS "/usr/local/include/WebKitAdditions" A
     unset(_apple_features_stub)
 endif ()
 
+# Search the WebKitAdditions headers staged in the build directory ahead of the SDK's copies in every target.
+if (USE_APPLE_INTERNAL_SDK)
+    include_directories(BEFORE "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:${WebKitAdditions_FRAMEWORK_HEADERS_DIR}>")
+
+    # Defer the walk because the staging target and most compiled targets are defined after this file runs.
+    function(WEBKIT_ADD_WEBKITADDITIONS_HEADERS_DEPENDENCIES)
+        if (NOT TARGET WebKitAdditions_CopyHeaders)
+            return ()
+        endif ()
+        set(_directories ${CMAKE_SOURCE_DIR})
+        while (_directories)
+            list(POP_FRONT _directories _directory)
+            get_property(_subdirectories DIRECTORY ${_directory}
+                PROPERTY SUBDIRECTORIES)
+            list(APPEND _directories ${_subdirectories})
+            get_property(_targets DIRECTORY ${_directory}
+                PROPERTY BUILDSYSTEM_TARGETS)
+            foreach (_target IN LISTS _targets)
+                get_target_property(_type ${_target} TYPE)
+                if (_type MATCHES "^(EXECUTABLE|STATIC_LIBRARY|SHARED_LIBRARY|MODULE_LIBRARY|OBJECT_LIBRARY)$")
+                    add_dependencies(${_target} WebKitAdditions_CopyHeaders)
+                endif ()
+            endforeach ()
+        endwhile ()
+    endfunction()
+
+    cmake_language(DEFER CALL WEBKIT_ADD_WEBKITADDITIONS_HEADERS_DEPENDENCIES)
+endif ()
+
 # FIXME: Audit and reduce these suppressions. https://bugs.webkit.org/show_bug.cgi?id=312034
 add_compile_options(
     "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:-Wno-shadow-ivar>"
