@@ -149,6 +149,31 @@ void CheckboxInputType::handleMouseMoveEvent(MouseEvent& event)
     updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint(event.absoluteLocation()));
 }
 
+static bool switchContainsAbsoluteLocation(Element& element, LayoutPoint absoluteLocation)
+{
+    CheckedPtr renderer = element.renderBox();
+    if (!renderer)
+        return false;
+    auto localLocation = renderer->absoluteToLocal(absoluteLocation, MapCoordinatesMode::UseTransforms);
+    return renderer->borderBoxRect().contains(LayoutPoint { localLocation });
+}
+
+void CheckboxInputType::handleMouseUpEvent(MouseEvent& event)
+{
+    if (!event.isTrusted() || !isSwitchPointerTracking())
+        return;
+
+    ASSERT(element());
+    Ref element = *this->element();
+    bool releasedOutside = !m_hasSwitchVisuallyOnChanged && !switchContainsAbsoluteLocation(element, LayoutPoint(event.absoluteLocation()));
+    if (!hasSwitchThumbReturned() && !releasedOutside)
+        return;
+
+    if (RefPtr frame = element->document().frame())
+        frame->eventHandler().invalidateClick();
+    stopSwitchPointerTracking();
+}
+
 #if ENABLE(IOS_TOUCH_EVENTS)
 // FIXME: Share these functions with SliderThumbElement somehow?
 static Touch* findTouchWithIdentifier(TouchList& list, unsigned identifier)
@@ -224,6 +249,10 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
             m_switchHeldTimer->stop();
         if (std::exchange(m_isSwitchHeld, false))
             performSwitchAnimation(SwitchAnimationType::Held);
+        if (hasSwitchThumbReturned()) {
+            stopSwitchPointerTracking();
+            return;
+        }
         element->dispatchSimulatedClick(&event, SendNoEvents);
     }
 }
@@ -245,6 +274,7 @@ void CheckboxInputType::willDispatchClick(InputElementClickState& state)
 
     if (isSwitchPointerTracking() && m_hasSwitchVisuallyOnChanged && m_isSwitchVisuallyOn == state.checked) {
         stopSwitchPointerTracking();
+        m_didSkipSwitchToggle = true;
         return;
     }
 
@@ -258,12 +288,13 @@ void CheckboxInputType::willDispatchClick(InputElementClickState& state)
 
 void CheckboxInputType::didDispatchClick(Event& event, const InputElementClickState& state)
 {
+    bool didSkipSwitchToggle = std::exchange(m_didSkipSwitchToggle, false);
     if (event.defaultPrevented() || event.defaultHandled()) {
         ASSERT(element());
         Ref element = *this->element();
         element->setIndeterminate(state.indeterminate);
         element->setChecked(state.checked);
-    } else
+    } else if (!didSkipSwitchToggle)
         fireInputAndChangeEvents();
 
     // The work we did in willDispatchClick was default handling.
@@ -305,6 +336,12 @@ void CheckboxInputType::stopSwitchPointerTracking()
 bool CheckboxInputType::isSwitchPointerTracking() const
 {
     return !!m_switchPointerTrackingLogicalLeftPositionStart;
+}
+
+bool CheckboxInputType::hasSwitchThumbReturned() const
+{
+    ASSERT(element());
+    return isSwitchPointerTracking() && m_hasSwitchVisuallyOnChanged && m_isSwitchVisuallyOn == element()->checked();
 }
 
 bool CheckboxInputType::matchesIndeterminatePseudoClass() const

@@ -32,7 +32,7 @@ x
 
 x
 
-                     x
+                       x
 x
 x
 x
@@ -78,6 +78,9 @@ PASS el-hr
 PASS el-img
 PASS el-input-button
 PASS el-input-checkbox
+PASS el-input-checkbox-with-role
+PASS el-input-checkbox-switch
+PASS el-input-checkbox-switch-with-role
 PASS el-input-email
 PASS el-input-radio
 PASS el-input-range

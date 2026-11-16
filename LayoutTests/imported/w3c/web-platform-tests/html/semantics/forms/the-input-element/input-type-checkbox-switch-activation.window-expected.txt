@@ -1,0 +1,10 @@
+
+PASS click() toggles a switch and fires click, input, and change
+PASS Clicking a switch toggles it and fires click, input, and change once
+PASS Dragging across a disabled switch does not toggle it
+PASS Canceling the click event reverts a switch and fires neither input nor change
+PASS Clicking the label of a switch toggles it
+PASS A switch keeps its indeterminateness until a click resets it
+PASS A switch contributes to form data like a checkbox
+PASS A required switch suffers from being missing while it is off
+

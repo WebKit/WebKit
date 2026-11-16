@@ -36,7 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-type-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/input-checkbox-switch.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/input-checkbox-switch.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange-time-reversed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange-type-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html

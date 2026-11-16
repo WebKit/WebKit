@@ -1,5 +1,6 @@
 
 PASS switch IDL attribute, setter
 PASS switch IDL attribute, getter
+PASS switch IDL attribute, false
 PASS Cloning a switch control
 

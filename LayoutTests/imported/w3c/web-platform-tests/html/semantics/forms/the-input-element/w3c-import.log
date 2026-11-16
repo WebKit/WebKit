@@ -83,7 +83,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-change-empty-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-change-submit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-change-value.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-checkbox-switch.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-checkbox-switch-activation.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-checkbox-switch-drag.optional.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-checkbox-switch.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-checkbox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-number-rtl-invalid-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-types.js

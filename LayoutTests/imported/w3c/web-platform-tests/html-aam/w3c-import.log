@@ -23,7 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/optgroup-role.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-contextual.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-contextual.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-dynamic-switch.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-dynamic-switch.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-generic.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-generic.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-minimum.tentative.html

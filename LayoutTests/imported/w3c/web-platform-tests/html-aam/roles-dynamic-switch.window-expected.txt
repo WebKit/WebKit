@@ -5,4 +5,5 @@ PASS Connected <input type=checkbox switch>: adding switch attribute
 PASS Connected <input type=checkbox switch>: removing switch attribute
 PASS Connected <input type=checkbox switch>: removing type attribute
 PASS Connected <input type=checkbox switch>: adding type attribute
+PASS Connected <input type=checkbox switch>: role attribute overrides switch
 

@@ -2,13 +2,11 @@ Tests the computedrole mappings defined in HTML-AAM. Most test names correspond 
 
 These should remain in alphabetical order, and include all HTML tagnames. If a tag is not tested here, include a pointer to the file where it is tested, such as: <!-- caption -> ./table-roles.html -->
 
-
 a	b	c
 1	2	3
 4	5	6
 x	y	z
 
-PASS el-input-checkbox-switch
 FAIL el-thead assert_equals: <thead data-testname="el-thead" data-expectedrole="rowgroup" class="ex">
     <tr>
       <th>a</th>
