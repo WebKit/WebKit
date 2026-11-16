@@ -91,7 +91,7 @@ AutoInstall.set_directory(os.path.join(autoinstall_base, 'python-{}-{}'.format(s
 AutoInstall.register(Package('pylint', Version(2, 13, 9)))
 AutoInstall.register(
     Package("pytest", Version(8, 4, 2),
-            implicit_deps=["pluggy", "iniconfig"]
+            implicit_deps=["pluggy", "iniconfig", "pygments"]
             + (["exceptiongroup"] if sys.version_info < (3, 11) else []),
             aliases=["_pytest"],
             wheel=True,
@@ -125,6 +125,7 @@ AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
 AutoInstall.register(Package('pluggy', Version(1, 5, 0)))
 AutoInstall.register(Package('pycodestyle', Version(2, 14, 0)))
 AutoInstall.register(Package('pyfakefs', Version(5, 10, 2)))
+AutoInstall.register(Package('pygments', Version(2, 17, 2), wheel=True))
 AutoInstall.register(Package('soupsieve', Version(2, 2, 1)))
 
 # aioquic (WPT WebTransport-over-HTTP/3 server) and its deps, pinned to what pip resolves for aioquic==1.2.0.
