@@ -492,12 +492,10 @@ void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 
     auto markerNeedsOwnLine = [&] {
         // Quirks mode puts the marker of a list item that starts with a nested list on a line of its own above that list, rather than on the line its first item makes.
-        if (!document().inQuirksMode())
-            return false;
         for (CheckedPtr child = firstChild(); child; child = child->nextSibling()) {
-            if (child.get() == m_marker.get() || child->isFloatingOrOutOfFlowPositioned() || is<RenderMenuList>(*child))
-                continue;
-            return child->node() && isHTMLListElement(*child->node());
+            auto boxType = markerSearchBoxType(*child);
+            if (boxType != MarkerSearchBoxType::Opaque)
+                return boxType == MarkerSearchBoxType::NestedListInQuirksMode;
         }
         return false;
     };
