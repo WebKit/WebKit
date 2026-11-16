@@ -1,0 +1,11 @@
+Verifies that back navigation correctly restores a mix of same-origin and cross-origin iframes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crossOriginUrl is "http://localhost:8000/site-isolation/history/resources/report-url.html?id=cross&navigated=true"
+PASS sameOriginUrl is "http://127.0.0.1:8000/site-isolation/history/resources/report-url.html?id=same"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,9 @@
+<script>
+// Client-side redirect: navigates to the URL specified in the ?url= query parameter.
+onload = () => {
+    var params = new URLSearchParams(location.search);
+    var target = params.get("url");
+    if (target)
+        location.replace(target);
+};
+</script>

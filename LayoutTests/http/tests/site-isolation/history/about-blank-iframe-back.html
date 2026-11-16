@@ -1,0 +1,36 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that an about:blank iframe is handled correctly during back navigation with site isolation.");
+jsTestIsAsync = true;
+
+var loadCount = 0;
+
+onmessage = (event) => {
+    loadCount++;
+
+    if (sessionStorage.verifyPhase) {
+        // After back navigation, the page is restored. The about:blank iframe
+        // should exist (re-created from HTML source).
+        shouldBe("document.querySelectorAll('iframe').length", "2");
+        // The cross-origin iframe should report its URL.
+        shouldBeTrue("event.data.includes('id=cross')");
+        delete sessionStorage.verifyPhase;
+        finishJSTest();
+        return;
+    }
+
+    if (loadCount === 1) {
+        // Cross-origin iframe loaded. The about:blank iframe doesn't fire onload via postMessage.
+        // Navigate the cross-origin iframe.
+        document.getElementById("cross").src =
+            "http://localhost:8000/site-isolation/history/resources/report-url.html?id=cross&navigated=true";
+    } else if (loadCount === 2) {
+        // Cross-origin iframe navigated. Navigate main frame away.
+        sessionStorage.verifyPhase = "true";
+        location.href = "/site-isolation/history/resources/go-back.html";
+    }
+};
+</script>
+<iframe id="blank" src="about:blank"></iframe>
+<iframe id="cross" src="http://localhost:8000/site-isolation/history/resources/report-url.html?id=cross"></iframe>
