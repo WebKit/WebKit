@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../media/resources/media-controls-deferral.js"></script>
+</head>
+<body>
+<script>buildFirstMediaControls();</script>
+
+<div style="height: 10000px"></div>
+<video id="video" controls></video>
+
+<script>
+var output = "This tests that an off-screen video element exposes its controls when accessibility is enabled after the element was inserted.\n\n";
+
+// Unlike internals.shadowRoot(), this does not build deferred controls.
+function hasBuiltControls() {
+    return !!internals.ensureUserAgentShadowRoot(document.getElementById("video")).querySelector(".media-controls");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // The controls are still deferred, so the test cannot pass just because accessibility was already on at insertion.
+    output += expect("hasBuiltControls()", "false");
+
+    requestAnimationFrame(() => requestAnimationFrame(async () => {
+        await waitFor(() => {
+            window.axVideo = accessibilityController.accessibleElementById("video");
+            return axVideo && axVideo.childrenCount > 0;
+        });
+        output += expect("axVideo.childrenCount > 0", "true");
+        output += expect("hasBuiltControls()", "true");
+
+        debug(output);
+        finishJSTest();
+    }));
+}
+</script>
+</body>
+</html>

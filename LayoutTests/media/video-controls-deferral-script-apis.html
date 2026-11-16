@@ -1,0 +1,100 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Script APIs work on an off-screen video whose controls are deferred</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="resources/media-controls-deferral.js"></script>
+<body>
+<div style="height: 20000px"></div>
+<div id="container"></div>
+<script>
+buildFirstMediaControls();
+
+// Unlike internals.shadowRoot(), this does not build deferred controls.
+function hasBuiltControls(video) {
+    return !!internals.ensureUserAgentShadowRoot(video).querySelector(".media-controls");
+}
+
+function animationFrames(count) {
+    return new Promise(resolve => {
+        const step = () => count-- > 0 ? requestAnimationFrame(step) : resolve();
+        step();
+    });
+}
+
+function event(target, name) {
+    return new Promise(resolve => target.addEventListener(name, resolve, { once: true }));
+}
+
+async function createOffScreenVideo(t, attributes = { }, parent = container) {
+    if (scrollY) {
+        // On iOS a scroll reaches the viewport asynchronously.
+        scrollTo(0, 0);
+        await UIHelper.ensureVisibleContentRectUpdate();
+    }
+    const video = document.createElement("video");
+    for (const [name, value] of Object.entries(attributes))
+        video.setAttribute(name, value);
+    video.controls = true;
+    parent.appendChild(video);
+    t.add_cleanup(() => {
+        video.pause();
+        container.textContent = "";
+    });
+    if (attributes.src && video.readyState < HTMLMediaElement.HAVE_METADATA)
+        await event(video, "loadedmetadata");
+    await animationFrames(3);
+    assert_false(hasBuiltControls(video), "the off-screen video defers its controls");
+    return video;
+}
+
+async function waitUntilBuilt(video) {
+    while (!hasBuiltControls(video))
+        await animationFrames(1);
+}
+
+promise_test(async t => {
+    const video = await createOffScreenVideo(t, { src: "content/test.mp4", muted: "" });
+    await video.play();
+    assert_false(video.paused, "the video plays");
+    assert_false(hasBuiltControls(video), "playing does not build the controls");
+}, "play() plays an off-screen video without building its controls");
+
+promise_test(async t => {
+    // iOS does not autoplay a video outside the viewport.
+    internals.settings.setInvisibleAutoplayNotPermitted(false);
+    const video = await createOffScreenVideo(t, { src: "content/test.mp4", muted: "", autoplay: "" });
+    if (video.paused)
+        await event(video, "playing");
+    assert_false(hasBuiltControls(video), "autoplay does not build the controls");
+}, "An off-screen autoplay video plays without building its controls");
+
+promise_test(async t => {
+    const video = await createOffScreenVideo(t);
+    video.controls = false;
+    video.controls = true;
+    await animationFrames(3);
+    assert_false(hasBuiltControls(video), "toggling the controls attribute keeps them deferred");
+    video.controls = false;
+    video.scrollIntoView();
+    await animationFrames(3);
+    assert_false(hasBuiltControls(video), "a video without the controls attribute does not build them in view");
+    video.controls = true;
+    await waitUntilBuilt(video);
+}, "Setting the controls attribute on a video in view builds its controls");
+
+promise_test(async t => {
+    const video = await createOffScreenVideo(t, { poster: "content/abe.png" });
+    video.scrollIntoView();
+    await waitUntilBuilt(video);
+}, "An off-screen video with a poster builds its controls when scrolled into view");
+
+promise_test(async t => {
+    const host = container.appendChild(document.createElement("div"));
+    const video = await createOffScreenVideo(t, { }, host.attachShadow({ mode: "open" }));
+    video.scrollIntoView();
+    await waitUntilBuilt(video);
+}, "An off-screen video in a shadow root builds its controls when scrolled into view");
+</script>
+</body>

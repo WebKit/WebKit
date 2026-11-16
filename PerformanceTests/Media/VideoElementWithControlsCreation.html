@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+    video { display: block; }
+</style>
 <script src="../resources/runner.js"></script>
 <script>
     window.addEventListener('load', event => {
         const numberOfIterations = 20;
-        const numberOfItems = 100;
+        const numberOfItems = 300;
+        const syncTimes = [];
+        window.syncTimes = syncTimes;
 
         PerfTestRunner.prepareToMeasureValuesAsync({
             customIterationCount: numberOfIterations,
@@ -17,32 +22,36 @@
 
         function startIteration()
         {
-            testGenerator = runIteration();
-            testGenerator.next();
-        }
-
-        function *runIteration()
-        {
             let target = document.createElement('div');
             document.body.appendChild(target);
 
-            var startTime = PerfTestRunner.now();
+            let startTime = PerfTestRunner.now();
 
+            // Most of the elements are below the fold; only those near the viewport build their controls.
             for (let i = 0; i < numberOfItems; ++i) {
                 let video = document.createElement('video');
                 video.controls = true;
                 target.appendChild(video);
             }
 
+            syncTimes.push(PerfTestRunner.now() - startTime);
 
-            if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime)) {
-                document.body.removeChild(target);
-                return;
-            }
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    // The first iteration is a warm-up that the runner ignores. Log before the final
+                    // measurement because the runner writes its output as soon as it finishes.
+                    if (syncTimes.length > numberOfIterations)
+                        PerfTestRunner.log("Synchronous loop times (ms): " + syncTimes.slice(1).map(value => value.toFixed(2)).join(", "));
 
-            document.body.removeChild(target);
-            PerfTestRunner.gc();
-            setTimeout(startIteration, 0);
+                    let continueTesting = PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+                    document.body.removeChild(target);
+                    if (!continueTesting)
+                        return;
+
+                    PerfTestRunner.gc();
+                    setTimeout(startIteration, 0);
+                });
+            });
         }
 
         startIteration();
