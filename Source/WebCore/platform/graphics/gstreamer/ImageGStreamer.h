@@ -21,6 +21,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "ColorSpace.h"
 #include "FloatRect.h"
 #include "GStreamerCommon.h"
 #include "PlatformImage.h"
@@ -34,9 +35,9 @@ class IntSize;
 
 class ImageGStreamer : public RefCounted<ImageGStreamer> {
 public:
-    static Ref<ImageGStreamer> create(GRefPtr<GstSample>&& sample)
+    static Ref<ImageGStreamer> create(GRefPtr<GstSample>&& sample, std::optional<ColorSpace> colorSpace)
     {
-        return adoptRef(*new ImageGStreamer(WTF::move(sample)));
+        return adoptRef(*new ImageGStreamer(WTF::move(sample), colorSpace));
     }
     ~ImageGStreamer();
 
@@ -56,7 +57,7 @@ public:
     bool hasAlpha() const { return m_hasAlpha; }
 
 private:
-    ImageGStreamer(GRefPtr<GstSample>&&);
+    ImageGStreamer(GRefPtr<GstSample>&&, std::optional<ColorSpace>);
     GRefPtr<GstSample> m_sample;
     PlatformImagePtr m_image;
     FloatRect m_cropRect;
