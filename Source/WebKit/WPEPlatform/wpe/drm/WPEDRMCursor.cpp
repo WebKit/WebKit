@@ -75,7 +75,7 @@ void Cursor::updateBuffer(const uint8_t* pixels, uint32_t width, uint32_t height
     RELEASE_ASSERT(width <= m_deviceWidth);
     RELEASE_ASSERT(height <= m_deviceHeight);
 
-    Vector<uint32_t> deviceBuffer(m_deviceWidth * m_deviceHeight);
+    Vector<uint32_t> deviceBuffer(FillWith { }, m_deviceWidth * m_deviceHeight, 0);
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (uint32_t i = 0; i < height; ++i)
         memcpy(&deviceBuffer[i * m_deviceWidth], pixels + i * stride, width * 4);
