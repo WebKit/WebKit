@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<title>Line-end selection gap meets the selected text</title>
+<style>
+#c { position: absolute; left: 20px; top: 20px; width: 150.3px; text-align: center; font: 5.3px/8px Ahem; color: transparent; }
+::selection { background-color: rgba(0, 0, 255, 0.4); color: transparent; }
+</style>
+<div id="c"><div style="padding-left: 2.96px; padding-right: 0.88px">XX</div><div>XX</div></div>
+<script>getSelection().selectAllChildren(c);</script>

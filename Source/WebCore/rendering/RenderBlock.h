@@ -116,7 +116,7 @@ public:
     NODELETE void getSelectionGapInfo(HighlightState, bool& leftGap, bool& rightGap);
     bool isSelectionRoot() const;
 
-    NODELETE LayoutRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect);
+    NODELETE LayoutRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect) const;
 
     bool establishesIndependentFormattingContext() const;
     bool createsNewFormattingContext() const;

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Selection gaps meet the selected text without hairline overlaps at subpixel positions</title>
+<style>
+#container { position: absolute; left: 20px; top: 20px; width: 300px; font: 5.3px/8px Ahem; color: white; }
+.edge::selection { background-color: white; color: transparent; }
+.mid::selection { background-color: rgba(0, 0, 255, 0.4); color: transparent; }
+</style>
+</head>
+<body>
+<!-- Each row's text ends at a different 1/64px offset; the right gap must start exactly where the text's selection background ends. -->
+<div id="container">
+<div class="edge">XX</div>
+<div class="mid" style="padding-left: calc(0px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(1px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(2px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(3px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(4px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(5px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(6px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(7px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(8px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(9px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(10px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(11px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(12px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(13px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(14px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(15px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(16px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(17px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(18px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(19px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(20px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(21px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(22px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(23px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(24px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(25px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(26px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(27px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(28px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(29px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(30px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(31px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(32px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(33px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(34px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(35px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(36px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(37px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(38px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(39px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(40px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(41px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(42px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(43px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(44px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(45px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(46px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(47px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(48px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(49px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(50px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(51px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(52px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(53px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(54px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(55px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(56px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(57px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(58px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(59px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(60px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(61px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(62px / 64)">XX</div>
+<div class="mid" style="padding-left: calc(63px / 64)">XX</div>
+<div class="edge">XX</div>
+</div>
+<script>
+const container = document.getElementById("container");
+getSelection().setBaseAndExtent(container.firstElementChild.firstChild, 0, container.lastElementChild.firstChild, 2);
+</script>
+</body>
+</html>

@@ -82,6 +82,7 @@ protected:
     void fillCompositionUnderline(float start, float width, const CompositionUnderline&, const CornerRadii&, bool hasLiveConversion) const;
     void paintPlatformDocumentMarker(const MarkedText&);
     LayoutRect backgroundRectForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom) const;
+    LayoutRect measuredSelectionRectForRange(unsigned startOffset, unsigned endOffset) const;
 
     FloatRect computePaintRect(const LayoutPoint& paintOffset);
     bool computeHaveSelection() const;

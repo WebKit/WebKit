@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ deviceScaleFactor=3 ] -->
+<title>Selection gaps between LTR and RTL inline boxes meet the selected text at subpixel positions</title>
+<style>
+#container { position: absolute; left: 20px; top: 20px; width: 150.3px; font: 5.3px/8px Ahem; }
+::selection { background-color: rgba(0, 0, 255, 0.4); color: transparent; }
+</style>
+<!-- Each line has an LTR run, an RTL run and another LTR run, separated by fractional margins. The selection starts at the beginning of the first line and ends at the beginning of the last one, so every line in between is fully selected and has to be filled exactly once. -->
+<div id="container"><div style="text-align: left; color: transparent">X</div></div>
+<script>
+for (let i = 0; i < 20; ++i) {
+    const row = document.createElement("div");
+    row.style.paddingLeft = (i * 0.29) + "px";
+    row.append("XX");
+    const bdo = document.createElement("bdo");
+    bdo.dir = "rtl";
+    bdo.style.marginLeft = (1 + i * 0.13) + "px";
+    bdo.textContent = "XX";
+    row.append(bdo);
+    const span = document.createElement("span");
+    span.style.marginLeft = (0.5 + i * 0.17) + "px";
+    span.textContent = "XX";
+    row.append(span);
+    container.append(row);
+}
+const end = document.createElement("div");
+end.style.textAlign = "left";
+end.style.color = "transparent";
+end.textContent = "X";
+container.append(end);
+getSelection().setBaseAndExtent(container.firstChild.firstChild, 0, end.firstChild, 0);
+</script>

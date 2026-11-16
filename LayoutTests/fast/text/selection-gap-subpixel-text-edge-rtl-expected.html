@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#container { position: absolute; left: 20px; top: 20px; width: 300px; direction: rtl; font: 5.3px/8px Ahem; color: white; }
+.edge::selection { background-color: white; color: transparent; }
+.mid::selection { background-color: rgba(0, 0, 255, 0.4); color: transparent; }
+</style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+const container = document.getElementById("container");
+function addRow(className) {
+    const row = document.createElement("div");
+    row.className = className;
+    row.textContent = "XX";
+    container.appendChild(row);
+}
+addRow("edge");
+for (let i = 0; i < 64; ++i)
+    addRow("mid");
+addRow("edge");
+getSelection().setBaseAndExtent(container.firstElementChild.firstChild, 0, container.lastElementChild.firstChild, 2);
+</script>
+</body>
+</html>

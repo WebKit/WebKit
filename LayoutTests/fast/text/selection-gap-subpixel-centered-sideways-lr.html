@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ deviceScaleFactor=2 ] -->
+<title>Line-end selection gaps meet centered sideways-lr text at subpixel positions</title>
+<style>
+#container { position: absolute; left: 20px; top: 20px; height: 150.3px; writing-mode: sideways-lr; text-align: center; font: 5.3px/8px Ahem; }
+::selection { background-color: rgba(0, 0, 255, 0.4); color: transparent; }
+</style>
+<!-- Centered text puts both edges of every text box at subpixel positions. The selection starts at the beginning of the first line and ends at the beginning of the last one, so every line in between is fully selected and has to be filled exactly once. -->
+<div id="container"><div style="text-align: left; color: transparent">X</div></div>
+<script>
+for (let i = 0; i < 20; ++i) {
+    const row = document.createElement("div");
+    row.style.paddingTop = (i * 0.37) + "px";
+    row.style.paddingBottom = (i * 0.11) + "px";
+    row.textContent = "XX";
+    container.append(row);
+}
+const end = document.createElement("div");
+end.style.textAlign = "left";
+end.style.color = "transparent";
+end.textContent = "X";
+container.append(end);
+getSelection().setBaseAndExtent(container.firstChild.firstChild, 0, end.firstChild, 0);
+</script>

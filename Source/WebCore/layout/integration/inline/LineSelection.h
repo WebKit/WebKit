@@ -52,6 +52,15 @@ public:
         return physicalRect;
     }
 
+    // Selection painters, the text backgrounds and the gaps between and around them, meet at edges taken from the same float
+    // layout values. Truncating each edge, never a size, gives all of them the same LayoutUnit edge to snap to a device pixel.
+    static LayoutRect logicalRectForPainting(const FloatRect& logicalRect)
+    {
+        auto left = LayoutUnit { logicalRect.x() };
+        auto top = LayoutUnit { logicalRect.y() };
+        return { left, top, std::max(LayoutUnit { }, LayoutUnit { logicalRect.maxX() } - left), std::max(LayoutUnit { }, LayoutUnit { logicalRect.maxY() } - top) };
+    }
+
     static float logicalTopAdjustedForPrecedingBlock(const InlineIterator::LineBox& lineBox)
     {
         if (auto blockLevelBox = lineBox.blockLevelBox())
