@@ -467,7 +467,7 @@ void LineBoxBuilder::setAlignmentBaselineOffsetIfApplicable(const LineBox& lineB
         return;
     if (inlineLevelBox.isAtomicInlineBox()) {
         // FIXME: Atomic inline boxes with baselines of their own (e.g. inline-blocks with text) should align them too.
-        if (inlineLevelBox.isListMarker() || !formattingContext().geometryForBox(inlineLevelBox.layoutBox()).hasSynthesizedBaseline())
+        if (!formattingContext().geometryForBox(inlineLevelBox.layoutBox()).hasSynthesizedBaseline())
             return;
     }
     inlineLevelBox.setAlignmentBaselineOffset(alignmentBaselineOffset(inlineLevelBox, lineBox.parentInlineBox(inlineLevelBox), lineBox.baselineType()));
