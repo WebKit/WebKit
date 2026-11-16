@@ -2925,8 +2925,12 @@ void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase* webkitWebViewBase)
     const auto& editorState = webkitWebViewBase->priv->pageProxy->editorState();
     if (editorState.hasPostLayoutAndVisualData()) {
         webkitWebViewBase->priv->inputMethodFilter.notifyCursorRect(editorState.visualData->caretRectAtStart);
-        webkitWebViewBase->priv->inputMethodFilter.notifySurrounding(editorState.postLayoutData->surroundingContext, editorState.postLayoutData->surroundingContextCursorPosition,
-            editorState.postLayoutData->surroundingContextSelectionPosition);
+        // Editor states sent before the web process handled the commits of the input method don't have them yet,
+        // unlike the surrounding text the input method was notified of.
+        if (!webkitWebViewBase->priv->pageProxy->hasQueuedInputMethodKeyEvent()) {
+            webkitWebViewBase->priv->inputMethodFilter.notifySurrounding(editorState.postLayoutData->surroundingContext, editorState.postLayoutData->surroundingContextCursorPosition,
+                editorState.postLayoutData->surroundingContextSelectionPosition);
+        }
     }
 }
 

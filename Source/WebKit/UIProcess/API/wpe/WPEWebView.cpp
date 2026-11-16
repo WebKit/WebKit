@@ -121,8 +121,12 @@ void View::selectionDidChange()
     const auto& editorState = m_pageProxy->editorState();
     if (editorState.hasPostLayoutAndVisualData()) {
         m_inputMethodFilter.notifyCursorRect(editorState.visualData->caretRectAtStart);
-        m_inputMethodFilter.notifySurrounding(editorState.postLayoutData->surroundingContext, editorState.postLayoutData->surroundingContextCursorPosition,
-            editorState.postLayoutData->surroundingContextSelectionPosition);
+        // Editor states sent before the web process handled the commits of the input method don't have them yet,
+        // unlike the surrounding text the input method was notified of.
+        if (!m_pageProxy->hasQueuedInputMethodKeyEvent()) {
+            m_inputMethodFilter.notifySurrounding(editorState.postLayoutData->surroundingContext, editorState.postLayoutData->surroundingContextCursorPosition,
+                editorState.postLayoutData->surroundingContextSelectionPosition);
+        }
     }
 }
 

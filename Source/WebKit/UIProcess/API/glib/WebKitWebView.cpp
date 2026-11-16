@@ -3403,9 +3403,9 @@ void webkitWebViewCancelComposition(WebKitWebView* webView, const String& text)
     getPage(webView).cancelComposition(text);
 }
 
-void webkitWebViewDeleteSurrounding(WebKitWebView* webView, int offset, unsigned characterCount)
+void webkitWebViewDeleteSurrounding(WebKitWebView* webView, int64_t offset, unsigned characterCount, CompletionHandler<void()>&& completionHandler)
 {
-    getPage(webView).deleteSurrounding(offset, characterCount);
+    getPage(webView).deleteSurrounding(offset, characterCount, WTF::move(completionHandler));
 }
 
 #if PLATFORM(WPE)

@@ -171,6 +171,8 @@ enum {
     PREEDIT_FINISHED,
     COMMITTED,
     DELETE_SURROUNDING,
+    DELETE_SURROUNDING_CODE_POINTS,
+    DELETE_SURROUNDING_BYTES,
     LAST_SIGNAL
 };
 
@@ -379,6 +381,62 @@ static void wpe_input_method_context_class_init(WPEInputMethodContextClass* klas
      */
     signals[DELETE_SURROUNDING] = g_signal_new(
         "delete-surrounding",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        G_TYPE_INT,
+        G_TYPE_UINT);
+
+    /**
+     * WPEInputMethodContext::delete-surrounding-code-points:
+     * @context: the #WPEInputMethodContext on which the signal is emitted
+     * @offset: the offset of the text to be deleted from the cursor, in Unicode code points
+     * @n_code_points: the number of Unicode code points to be deleted
+     *
+     * Emitted when the input method wants to delete the context surrounding the cursor, like
+     * #WPEInputMethodContext::delete-surrounding, but with @offset and @n_code_points counted in Unicode
+     * code points of the surrounding text last passed to wpe_input_method_context_set_surrounding(), like
+     * GTK input methods do.
+     *
+     * WebKit converts the deletion to UTF-16 code units using that text, clamped to it, and notifies
+     * the surrounding text without the deleted text right away, without waiting for the page, so that
+     * the input method can count the next deletion in the new text. If @n_code_points is 0, or no
+     * surrounding text was given, nothing is done.
+     *
+     * Since: 2.56
+     */
+    signals[DELETE_SURROUNDING_CODE_POINTS] = g_signal_new(
+        "delete-surrounding-code-points",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        G_TYPE_INT,
+        G_TYPE_UINT);
+
+    /**
+     * WPEInputMethodContext::delete-surrounding-bytes:
+     * @context: the #WPEInputMethodContext on which the signal is emitted
+     * @offset: the offset of the text to be deleted from the cursor, in bytes
+     * @n_bytes: the number of bytes to be deleted
+     *
+     * Emitted when the input method wants to delete the context surrounding the cursor, like
+     * #WPEInputMethodContext::delete-surrounding, but with @offset and @n_bytes counted in bytes of the
+     * UTF-8 surrounding text last passed to wpe_input_method_context_set_surrounding(), like the Wayland
+     * text input protocols do.
+     *
+     * WebKit converts the deletion to UTF-16 code units using that text, clamped to it and extended
+     * to whole characters, and notifies the surrounding text without the deleted text right away,
+     * without waiting for the page, so that the input method can count the next deletion in the new
+     * text. If @n_bytes is 0, or no surrounding text was given, nothing is done.
+     *
+     * Since: 2.56
+     */
+    signals[DELETE_SURROUNDING_BYTES] = g_signal_new(
+        "delete-surrounding-bytes",
         G_TYPE_FROM_CLASS(klass),
         G_SIGNAL_RUN_LAST,
         0, nullptr, nullptr,

@@ -53,6 +53,9 @@ struct WebKit::EditorState {
     bool hasComposition;
     bool triggeredByAccessibilitySelectionChange;
     bool isInPlugin;
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    uint64_t handledInputMethodKeyEventCount;
+#endif
 #if PLATFORM(MAC)
     bool canEnableAutomaticSpellingCorrection;
     bool inputMethodUsesCorrectKeyEventOrder;
