@@ -86,6 +86,9 @@ OBJC_CLASS WebTextIndicatorLayer;
 OBJC_CLASS WKAccessibilitySettingsObserver;
 OBJC_CLASS WKAXCustomColorModePreferencesController;
 OBJC_CLASS WKDOMPasteMenuDelegate;
+#if ENABLE(DOCUMENT_PIP)
+OBJC_CLASS WKDocumentPictureInPictureWindowController;
+#endif
 OBJC_CLASS WKEditorUndoTarget;
 OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImageAnalysisOverlayViewDelegate;
@@ -414,6 +417,17 @@ public:
 #endif
     NSView *fullScreenPlaceholderView();
     NSWindow *fullScreenWindow();
+
+#if ENABLE(DOCUMENT_PIP)
+    // Document Picture-in-Picture, for the opener's web view.
+    void createDocumentPictureInPicturePage(Ref<API::PageConfiguration>&&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&&);
+    void closeDocumentPictureInPictureWindowController();
+    void documentPictureInPictureWindowControllerDidClose(WKDocumentPictureInPictureWindowController *);
+
+    // Document Picture-in-Picture, for the picture-in-picture window's web view.
+    WKDocumentPictureInPictureWindowController *hostingDocumentPictureInPictureWindowController() const { return m_hostingDocumentPictureInPictureWindowController.getAutoreleased(); }
+    void setHostingDocumentPictureInPictureWindowController(WKDocumentPictureInPictureWindowController *controller) { m_hostingDocumentPictureInPictureWindowController = controller; }
+#endif
 
     NODELETE bool isEditable() const;
     bool executeSavedCommandBySelector(SEL);
@@ -1041,6 +1055,11 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
+#endif
+
+#if ENABLE(DOCUMENT_PIP)
+    RetainPtr<WKDocumentPictureInPictureWindowController> m_documentPictureInPictureWindowController;
+    WeakObjCPtr<WKDocumentPictureInPictureWindowController> m_hostingDocumentPictureInPictureWindowController;
 #endif
 
     HashMap<WebKit::PDFPluginIdentifier, RetainPtr<NSView<WKPDFHUDView>>> _pdfHUDViews;

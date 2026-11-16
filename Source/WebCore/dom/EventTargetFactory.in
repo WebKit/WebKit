@@ -15,6 +15,7 @@ CloseWatcher
 CookieStore
 DedicatedWorkerGlobalScope
 DevicePosture
+DocumentPictureInPicture conditional=DOCUMENT_PIP
 DOMAudioSession conditional=DOM_AUDIO_SESSION
 DOMWindow
 EventSource

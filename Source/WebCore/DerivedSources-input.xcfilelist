@@ -456,6 +456,9 @@ $(PROJECT_DIR)/Modules/credentialmanagement/OTPCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/device-posture/DevicePosture.idl
 $(PROJECT_DIR)/Modules/device-posture/DevicePostureType.idl
 $(PROJECT_DIR)/Modules/device-posture/Navigator+DevicePosture.idl
+$(PROJECT_DIR)/Modules/documentpip/DOMWindow+DocumentPictureInPicture.idl
+$(PROJECT_DIR)/Modules/documentpip/DocumentPictureInPicture.idl
+$(PROJECT_DIR)/Modules/documentpip/DocumentPictureInPictureEvent.idl
 $(PROJECT_DIR)/Modules/encryptedmedia/MediaKeyEncryptionScheme.idl
 $(PROJECT_DIR)/Modules/encryptedmedia/MediaKeyMessageEvent.idl
 $(PROJECT_DIR)/Modules/encryptedmedia/MediaKeyMessageEventInit.idl

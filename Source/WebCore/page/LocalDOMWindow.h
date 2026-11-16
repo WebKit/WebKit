@@ -57,6 +57,9 @@ template <typename, ShouldStrongDestructorGrabLock> class Strong;
 namespace WebCore {
 
 class CloseWatcherManager;
+#if ENABLE(DOCUMENT_PIP)
+class DocumentPictureInPicture;
+#endif
 class JSDOMGlobalObject;
 class SecurityOriginData;
 class Viewport;
@@ -249,8 +252,8 @@ public:
     void moveBy(int x, int y) const;
     void moveTo(int x, int y) const;
 
-    void resizeBy(int x, int y) const;
-    void resizeTo(int width, int height) const;
+    ExceptionOr<void> resizeBy(int x, int y);
+    ExceptionOr<void> resizeTo(int width, int height);
 
     Viewport& viewport();
     VisualViewport& visualViewport();
@@ -388,10 +391,19 @@ public:
 
     CookieStore& cookieStore();
 
+#if ENABLE(DOCUMENT_PIP)
+    DocumentPictureInPicture& documentPictureInPicture();
+    DocumentPictureInPicture* documentPictureInPictureIfExists() const { return m_documentPictureInPicture.get(); }
+#endif
+
     CloseWatcherManager& closeWatcherManager();
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     PushManager& pushManager();
+#endif
+
+#if ENABLE(DOCUMENT_PIP)
+    void closePage() final;
 #endif
 
 private:
@@ -401,7 +413,9 @@ private:
 
     NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
+#if !ENABLE(DOCUMENT_PIP)
     void closePage() final;
+#endif
     void eventListenersDidChange() final;
     void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior, ReplaceIfNotCompletelyLoaded, SetLocationLocking, CanNavigateState) final;
 
@@ -533,6 +547,9 @@ private:
 #endif
 
     const RefPtr<CookieStore> m_cookieStore;
+#if ENABLE(DOCUMENT_PIP)
+    const RefPtr<DocumentPictureInPicture> m_documentPictureInPicture;
+#endif
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     const std::unique_ptr<PushManager> m_pushManager;

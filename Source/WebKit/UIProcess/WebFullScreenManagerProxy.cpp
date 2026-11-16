@@ -257,6 +257,13 @@ Awaitable<bool> WebFullScreenManagerProxy::enterFullScreen(IPC::Connection& conn
 {
     MESSAGE_CHECK_BASE_COROUTINE(isFrameInSendingProcess(frameID, connection), connection);
 
+#if ENABLE(DOCUMENT_PIP)
+    // https://wicg.github.io/document-picture-in-picture/#fullscreening-the-pip-window
+    // As stated in §3.2.4 Fullscreen, document picture-in-picture windows are disallowed from entering fullscreen.
+    if (RefPtr page = m_page)
+        MESSAGE_CHECK_BASE_COROUTINE(!page->isDocumentPictureInPicture(), connection);
+#endif
+
     m_fullScreenProcess = dynamicDowncast<WebProcessProxy>(AuxiliaryProcessProxy::fromConnection(connection));
     m_blocksReturnToFullscreenFromPictureInPicture = blocksReturnToFullscreenFromPictureInPicture;
 #if PLATFORM(IOS_FAMILY)

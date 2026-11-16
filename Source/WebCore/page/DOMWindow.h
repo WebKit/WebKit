@@ -41,6 +41,9 @@ class BarProp;
 class CSSRuleList;
 class CSSStyleDeclaration;
 class CookieStore;
+#if ENABLE(DOCUMENT_PIP)
+class DocumentPictureInPicture;
+#endif
 class Crypto;
 class CustomElementRegistry;
 class DOMRect;
@@ -164,6 +167,9 @@ public:
     ExceptionOr<Navigator&> navigator();
     ExceptionOr<bool> offscreenBuffering() const;
     ExceptionOr<CookieStore&> cookieStore();
+#if ENABLE(DOCUMENT_PIP)
+    ExceptionOr<DocumentPictureInPicture&> documentPictureInPicture();
+#endif
     ExceptionOr<Screen&> screen();
     ExceptionOr<double> devicePixelRatio() const;
     ExceptionOr<StyleMedia&> styleMedia();
@@ -209,8 +215,8 @@ public:
     ExceptionOr<void> scrollTo(double x, double y, ScrollClamping = ScrollClamping::Clamped) const;
     ExceptionOr<void> moveBy(int x, int y) const;
     ExceptionOr<void> moveTo(int x, int y) const;
-    ExceptionOr<void> resizeBy(int x, int y) const;
-    ExceptionOr<void> resizeTo(int width, int height) const;
+    ExceptionOr<void> resizeBy(int x, int y);
+    ExceptionOr<void> resizeTo(int width, int height);
     ExceptionOr<DOMSelection*> getSelection();
     ExceptionOr<int> setTimeout(std::unique_ptr<ScheduledAction>, int timeout, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
     ExceptionOr<void> clearTimeout(int timeoutId);

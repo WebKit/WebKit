@@ -26,6 +26,11 @@
 #include "config.h"
 #include "PageClient.h"
 
+#if ENABLE(DOCUMENT_PIP)
+#include "APIPageConfiguration.h"
+#include "WebPageProxy.h"
+#endif
+
 #if ENABLE(VIDEO)
 #include <WebCore/ExceptionData.h>
 #endif
@@ -35,6 +40,13 @@ namespace WebKit {
 PageClient::PageClient(ClangVTableWorkaroundTag)
 {
 }
+
+#if ENABLE(DOCUMENT_PIP)
+void PageClient::createDocumentPictureInPicturePage(Ref<API::PageConfiguration>&&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
+{
+    completionHandler(nullptr);
+}
+#endif
 
 #if ENABLE(VIDEO)
 void PageClient::showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(std::expected<void, WebCore::ExceptionData>&&)>&& completionHandler)

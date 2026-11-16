@@ -554,6 +554,10 @@ private:
 
     bool dragHysteresisExceeded(const FloatPoint&) const;
     bool dragHysteresisExceeded(const IntPoint&) const;
+
+#if ENABLE(DOCUMENT_PIP)
+    bool canMouseDownStartDocumentPictureInPictureWindowDrag(const MouseEventWithHitTestResults&) const;
+#endif
 #endif
     
     bool mouseMovementExceedsThreshold(const FloatPoint&, int pointsThreshold) const;
@@ -707,6 +711,9 @@ private:
     bool m_mouseDownWasSingleClickInSelection { false };
     bool m_hasScheduledCursorUpdate { false };
     bool m_mouseDownMayStartAutoscroll { false };
+#if ENABLE(DRAG_SUPPORT) && ENABLE(DOCUMENT_PIP)
+    bool m_mouseDownMayStartDocumentPictureInPictureWindowDrag { false };
+#endif
     bool m_mouseDownWasInSubframe { false };
     bool m_didStartDrag { false };
     bool m_isHandlingWheelEvent { false };

@@ -1294,8 +1294,15 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setAllowedQueryParametersForAdvancedPrivacyProtections(WTF::move(parameters.allowedQueryParametersForAdvancedPrivacyProtections));
 #endif
     if (parameters.windowFeatures) {
+#if ENABLE(DOCUMENT_PIP)
+        // The UI process sizes and positions document picture-in-picture windows itself.
+        page->setIsDocumentPictureInPicture(parameters.windowFeatures->isDocumentPictureInPicture);
+#endif
         if (!parameters.remotePageParameters) {
-            page->applyWindowFeatures(*parameters.windowFeatures);
+#if ENABLE(DOCUMENT_PIP)
+            if (!parameters.windowFeatures->isDocumentPictureInPicture)
+#endif
+                page->applyWindowFeatures(*parameters.windowFeatures);
             page->chrome().show();
         }
         page->setOpenedByDOM();

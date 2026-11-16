@@ -113,6 +113,7 @@ class HitTestResult;
 class Navigation;
 class Object;
 class OpenPanelParameters;
+class PageConfiguration;
 class SecurityOrigin;
 }
 
@@ -319,6 +320,16 @@ public:
     virtual void didStopUsingProcessForSiteIsolation(WebProcessProxy&) { }
     virtual void processDidUpdateThrottleState() { }
     virtual void pageClosed() = 0;
+
+#if ENABLE(DOCUMENT_PIP)
+    // Document Picture-in-Picture. createDocumentPictureInPicturePage() is called on the opener's
+    // PageClient; the remaining functions are called on the picture-in-picture page's PageClient.
+    virtual void createDocumentPictureInPicturePage(Ref<API::PageConfiguration>&&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&&);
+    virtual void showDocumentPictureInPictureWindow() { }
+    virtual void closeDocumentPictureInPictureWindow() { }
+    virtual void focusDocumentPictureInPictureWindow() { }
+    virtual void setDocumentPictureInPictureWindowFrame(const WebCore::FloatRect&) { }
+#endif
 
     virtual void preferencesDidChange() = 0;
 
