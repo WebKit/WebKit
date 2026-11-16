@@ -128,6 +128,21 @@ TEST(Fullscreen, OverriddenLayoutParameters)
     EXPECT_TRUE(CGSizeEqualToSize([webView _maximumUnobscuredSizeOverride], layoutSize));
 }
 
+TEST(Fullscreen, OverriddenContentInsetAdjustmentBehavior)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration preferences].elementFullscreenEnabled = YES;
+    RetainPtr webView = adoptNS([[FullscreenLayoutParametersWebView alloc] initWithFrame:CGRectMake(0, 0, 390, 800) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"element-fullscreen"];
+
+    [webView scrollView].contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+
+    [webView enterFullscreen];
+    [webView exitFullscreen];
+
+    EXPECT_EQ([webView scrollView].contentInsetAdjustmentBehavior, UIScrollViewContentInsetAdjustmentNever);
+}
+
 TEST(Fullscreen, ResizeEventOrder)
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];

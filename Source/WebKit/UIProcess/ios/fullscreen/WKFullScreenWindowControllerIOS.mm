@@ -283,6 +283,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         _savedContentInsetAdjustmentBehaviorWasExternallyOverridden = scrollView._contentInsetAdjustmentBehaviorWasExternallyOverridden;
+        _savedContentInsetAdjustmentBehavior = scrollView.contentInsetAdjustmentBehavior;
 #endif
         if (RefPtr page = webView._page.get()) {
             _savedWebPageObscuredContentInsets = page->obscuredContentInsets();
