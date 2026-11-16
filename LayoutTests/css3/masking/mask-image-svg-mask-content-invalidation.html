@@ -1,0 +1,44 @@
+<!doctype html>
+<pre id="log"></pre>
+<style>
+    #target {
+        width: 100px;
+        height: 100px;
+        background-color: green;
+        mask-image: url(#testMask);
+    }
+</style>
+
+<div id="target"></div>
+
+<svg width="0" height="0">
+    <mask id="testMask">
+        <rect id="maskRect" width="100" height="100" fill="white"
+              stroke="white" stroke-dasharray="400" stroke-dashoffset="0"/>
+    </mask>
+</svg>
+
+<script>
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            internals.startTrackingRepaints();
+
+            document.getElementById("maskRect").style.strokeDashoffset = "400";
+
+            document.body.offsetTop;
+
+            let rects = internals.repaintRectsAsText();
+            internals.stopTrackingRepaints();
+
+            let hasRepaints = rects.trim().length > 0;
+            document.getElementById("log").textContent = hasRepaints ? "PASS" : "FAIL";
+
+            testRunner.notifyDone();
+        });
+    });
+}
+</script>
