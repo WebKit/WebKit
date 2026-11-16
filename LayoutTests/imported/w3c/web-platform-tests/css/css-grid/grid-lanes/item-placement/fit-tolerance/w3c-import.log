@@ -1,0 +1,65 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/column-fit-tolerance-infinite-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/column-fit-tolerance-infinite-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/column-fit-tolerance-infinite.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/column-initial-fit-tolerance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/column-initial-fit-tolerance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/column-initial-fit-tolerance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-column-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-dynamic-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-dynamic-update-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-dynamic-update.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-column-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-column-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-column-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-intrinsic-column-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-intrinsic-column-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-intrinsic-column-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-intrinsic-row-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-intrinsic-row-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-intrinsic-row-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-row-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-row-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-percentage-row-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/fit-tolerance-row-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/row-fit-tolerance-infinite-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/row-fit-tolerance-infinite-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/row-fit-tolerance-infinite.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/row-initial-fit-tolerance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/row-initial-fit-tolerance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/fit-tolerance/row-initial-fit-tolerance.html

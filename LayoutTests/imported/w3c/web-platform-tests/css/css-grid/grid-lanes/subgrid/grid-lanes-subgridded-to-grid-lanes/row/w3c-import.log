@@ -18,5 +18,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-002a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-002a-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-002a.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-003a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-003a-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-003a.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-004a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-004a-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-004a.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-005a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-005a-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/grid-lanes-subgrid-005a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/independent-formatting-context-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-lanes-subgridded-to-grid-lanes/row/independent-formatting-context.html

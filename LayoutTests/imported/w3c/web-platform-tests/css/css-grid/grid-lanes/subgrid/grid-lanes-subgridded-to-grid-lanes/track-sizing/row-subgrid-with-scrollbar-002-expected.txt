@@ -1,0 +1,4 @@
+
+FAIL Adding and removing a scrollbar updates explicit nested subgrids assert_equals: expected 154 but got 0
+FAIL Inherited rows refresh when scrollbar-only BSP changes back to zero assert_equals: expected 184 but got 0
+

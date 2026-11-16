@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-#holder {
-    height: 50px;
-    width: 300px;
+#grid {
+    display: grid;
+    grid-template-columns: 1fr 30px;
     border: 10px solid fuchsia;
+    width: min-content;
 }
 #item {
+    grid-column: 1 / span 2;
+}
+#filler {
     width: 300px;
     height: 50px;
     background: aqua;
 }
 </style>
-<div id="holder">
-  <div id="item"></div>
+<div id="grid">
+  <div id="item">
+    <div id="filler"></div>
+  </div>
 </div>

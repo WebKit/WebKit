@@ -1,0 +1,14 @@
+
+PASS e.style['fit-tolerance'] = "auto" should not set the property value
+PASS e.style['fit-tolerance'] = "10" should not set the property value
+PASS e.style['fit-tolerance'] = "10px 20px" should not set the property value
+PASS e.style['fit-tolerance'] = "1fr" should not set the property value
+PASS e.style['fit-tolerance'] = "-1px" should not set the property value
+PASS e.style['fit-tolerance'] = "-10%" should not set the property value
+PASS e.style['fit-tolerance'] = "normal 10px" should not set the property value
+PASS e.style['fit-tolerance'] = "infinite 10px" should not set the property value
+PASS e.style['fit-tolerance'] = "10px normal" should not set the property value
+PASS e.style['fit-tolerance'] = "10px infinite" should not set the property value
+PASS e.style['fit-tolerance'] = "normal infinite" should not set the property value
+PASS e.style['fit-tolerance'] = "infinite normal" should not set the property value
+

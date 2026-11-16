@@ -1,0 +1,9 @@
+
+PASS Property fit-tolerance value 'normal'
+PASS Property fit-tolerance value 'infinite'
+PASS Property fit-tolerance value '10px'
+PASS Property fit-tolerance value '20%'
+PASS Property fit-tolerance value 'calc(20% + 10px)'
+PASS Property fit-tolerance value 'calc(-0.5em + 10px)'
+PASS Property fit-tolerance value 'calc(0.5em + 10px)'
+

@@ -12,9 +12,9 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/flow-tolerance-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/flow-tolerance-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/flow-tolerance-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/fit-tolerance-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/fit-tolerance-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/fit-tolerance-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-direction-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-direction-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-direction-valid.html

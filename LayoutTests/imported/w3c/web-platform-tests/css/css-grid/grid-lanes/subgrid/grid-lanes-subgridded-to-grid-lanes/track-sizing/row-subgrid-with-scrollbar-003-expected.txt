@@ -1,0 +1,3 @@
+
+FAIL Percentage gutter follows the inherited size as scrollbars appear and disappear assert_equals: expected 223.5 but got 0
+
