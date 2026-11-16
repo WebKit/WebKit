@@ -80,6 +80,7 @@ const TestFeatures& TestOptions::defaults()
             { "AsyncOverflowScrollingEnabled", false },
             { "BuiltInNotificationsEnabled", false },
             { "CSSUnprefixedBackdropFilterEnabled", true },
+            { "CanvasColorTypeEnabled", true },
             { "CaptureAudioInGPUProcessEnabled", captureAudioInGPUProcessEnabledValue },
             { "CaptureVideoInGPUProcessEnabled", captureVideoInGPUProcessEnabledValue },
             { "ContentChangeObserverEnabled", false },
