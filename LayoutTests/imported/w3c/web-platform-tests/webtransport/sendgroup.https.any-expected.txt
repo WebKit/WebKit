@@ -1,0 +1,17 @@
+
+PASS WebTransport.createSendGroup() should return a WebTransportSendGroup instance
+PASS WebTransport.createUnidirectionalStream() with sendGroup should create a working stream
+PASS WebTransport.createBidirectionalStream() with sendGroup should create a working stream
+PASS WebTransport.createBidirectionalStream() with sendGroup should respect sendOrder option
+PASS WebTransport.createUnidirectionalStream() with sendGroup should respect sendOrder option
+PASS Multiple send groups can be created and used independently
+PASS Multiple streams can be created with the same send group
+PASS WebTransport streams can have both sendGroup and sendOrder options
+PASS sendGroup setter on existing stream updates the sendGroup
+PASS sendGroup setter throws InvalidStateError when sendGroup belongs to a different transport
+PASS sendGroup can be set to null to clear the group
+FAIL createSendGroup() throws InvalidStateError on a closed transport assert_throws_dom: createSendGroup on closed transport should throw InvalidStateError function "() => {
+    wt.createSendGroup();
+  }" did not throw
+PASS WebTransportDatagramsWritable supports sendGroup and sendOrder
+

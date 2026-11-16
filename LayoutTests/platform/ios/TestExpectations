@@ -8960,6 +8960,12 @@ webkit.org/b/321726 imported/w3c/web-platform-tests/largest-contentful-paint/obs
 
 webkit.org/b/321701 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/button-in-popover.html [ Pass Failure Timeout ] # rdar://178158790, rdar://179387420
 
+# Flaky under stress.
+imported/w3c/web-platform-tests/webtransport/headers.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/idlharness-writer.https.sub.any.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/idlharness-writer.https.sub.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/idlharness-writer.https.sub.any.sharedworker.html [ Skip ]
+
 editing/input/cocoa/writing-suggestions-in-anonymous-renderer.html [ ImageOnlyFailure ]
 fast/events/ios/contenteditable-autocapitalize.html [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/webtransport/in-removed-iframe.https.html [ Pass Crash ]

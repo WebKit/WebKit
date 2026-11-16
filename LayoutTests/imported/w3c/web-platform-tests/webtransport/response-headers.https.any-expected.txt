@@ -1,0 +1,4 @@
+
+PASS wt-protocol is stripped from responseHeaders
+PASS responseHeaders is immutable
+

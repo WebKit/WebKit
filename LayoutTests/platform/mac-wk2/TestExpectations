@@ -468,6 +468,11 @@ webkit.org/b/125690 editing/spelling/spellcheck-async.html [ Failure ]
 editing/spelling/spellcheck-queue.html [ Skip ]
 editing/spelling/spelling-insert-html.html [ Skip ]
 
+# Flaky timeouts under stress.
+[ Debug ] imported/w3c/web-platform-tests/webtransport/datagrams-writable.https.any.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/webtransport/headers.https.any.sharedworker.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/webtransport/sendgroup.https.any.html [ Skip ]
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

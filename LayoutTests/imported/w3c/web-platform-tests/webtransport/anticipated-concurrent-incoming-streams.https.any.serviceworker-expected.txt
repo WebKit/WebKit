@@ -1,0 +1,20 @@
+
+PASS Anticipated incoming stream hints are null when omitted
+PASS Anticipated incoming stream hints are null when explicitly null
+PASS Constructor reflects stream hints 99/101
+PASS Constructor reflects stream hints 0/65535
+PASS Constructor reflects stream hints 65535/0
+PASS Anticipated incoming stream hint setters accept boundary and null values
+PASS WebTransport constructor rejects anticipatedConcurrentIncomingUnidirectionalStreams value -1
+PASS WebTransport constructor rejects anticipatedConcurrentIncomingUnidirectionalStreams value 65536
+PASS WebTransport constructor rejects anticipatedConcurrentIncomingUnidirectionalStreams value Infinity
+PASS WebTransport constructor rejects anticipatedConcurrentIncomingUnidirectionalStreams value -Infinity
+PASS WebTransport constructor rejects anticipatedConcurrentIncomingUnidirectionalStreams value NaN
+PASS WebTransport constructor rejects anticipatedConcurrentIncomingBidirectionalStreams value -1
+PASS WebTransport constructor rejects anticipatedConcurrentIncomingBidirectionalStreams value 65536
+PASS WebTransport constructor rejects anticipatedConcurrentIncomingBidirectionalStreams value Infinity
+PASS WebTransport constructor rejects anticipatedConcurrentIncomingBidirectionalStreams value -Infinity
+PASS WebTransport constructor rejects anticipatedConcurrentIncomingBidirectionalStreams value NaN
+FAIL anticipatedConcurrentIncomingUnidirectionalStreams setter rejects out-of-range values assert_throws_js: function "() => wt[name] = value" did not throw
+FAIL anticipatedConcurrentIncomingBidirectionalStreams setter rejects out-of-range values assert_throws_js: function "() => wt[name] = value" did not throw
+

@@ -1,0 +1,13 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS WebTransportSendStream interface: operation getWriter()
+PASS WebTransportWriter interface: existence and properties of interface object
+PASS WebTransportWriter interface object length
+PASS WebTransportWriter interface object name
+PASS WebTransportWriter interface: existence and properties of interface prototype object
+PASS WebTransportWriter interface: existence and properties of interface prototype object's "constructor" property
+PASS WebTransportWriter interface: existence and properties of interface prototype object's @@unscopables property
+PASS WebTransportWriter interface: operation atomicWrite(optional any)
+PASS WebTransportWriter interface: operation commit()
+

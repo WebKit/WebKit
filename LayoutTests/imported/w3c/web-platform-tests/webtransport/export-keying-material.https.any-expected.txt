@@ -1,10 +1,19 @@
 
-PASS WebTransport exportKeyingMaterial returns keying material of the requested length
-PASS WebTransport exportKeyingMaterial honors the requested output length
-PASS WebTransport exportKeyingMaterial is deterministic for identical inputs
-PASS WebTransport exportKeyingMaterial returns different material for different labels
-PASS WebTransport exportKeyingMaterial returns different material for different contexts
-PASS WebTransport exportKeyingMaterial rejects out-of-range arguments with RangeError
-PASS WebTransport exportKeyingMaterial rejects with InvalidStateError after the session is closed
-PASS WebTransport exportKeyingMaterial rejects with InvalidStateError for a failed session
+Harness Error (FAIL), message = Unhandled rejection
+
+PASS exportKeyingMaterial returns the requested number of bytes
+FAIL exportKeyingMaterial can be called while connecting promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+PASS The same inputs on one session produce identical keying material
+PASS Different labels produce different keying material
+PASS Different contexts produce different keying material
+PASS Different sessions produce different keying material
+PASS exportKeyingMaterial accepts ArrayBuffer and ArrayBufferView inputs
+PASS exportKeyingMaterial respects non-zero ArrayBufferView offsets
+FAIL exportKeyingMaterial accepts empty label and context inputs promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL exportKeyingMaterial accepts 255-byte label and context inputs promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+PASS exportKeyingMaterial rejects label and context inputs over 255 bytes
+PASS exportKeyingMaterial rejects a zero output length
+PASS exportKeyingMaterial rejects an output length over 4096 bytes
+PASS exportKeyingMaterial requires all three arguments
+PASS exportKeyingMaterial rejects after the session closes
 

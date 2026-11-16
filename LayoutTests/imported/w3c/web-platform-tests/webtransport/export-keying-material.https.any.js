@@ -1,140 +1,153 @@
 // META: global=window,worker
+// META: script=/common/get-host-info.sub.js
 // META: script=resources/webtransport-test-helpers.sub.js
 
-// Tests for WebTransport.exportKeyingMaterial(), which exports keying material
-// derived from the underlying TLS 1.3 connection (RFC 5705 style exporters).
-// https://www.w3.org/TR/webtransport/#dom-webtransport-exportkeyingmaterial
-
 const encoder = new TextEncoder();
+const defaultLabel = encoder.encode('webtransport-exporter-label');
+const defaultContext = encoder.encode('webtransport-exporter-context');
 
-// exportKeyingMaterial() resolves with the derived bytes. Normalize the result
-// to a Uint8Array so the tests work whether an ArrayBuffer or a typed array
-// view is returned.
-function toBytes(result) {
-  return new Uint8Array(result);
-}
-
-function arraysEqual(a, b) {
-  if (a.length !== b.length)
-    return false;
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i])
-      return false;
-  }
-  return true;
+async function createTransport(t) {
+  const wt = new WebTransport(webtransport_url('echo.py'));
+  t.add_cleanup(() => wt.close());
+  wt.closed.catch(() => {});
+  await wt.ready;
+  return wt;
 }
 
 promise_test(async t => {
-  const wt = new WebTransport(webtransport_url('echo.py'));
-  await wt.ready;
-  t.add_cleanup(() => wt.close());
-
-  const label = encoder.encode('EXPORTER-webtransport');
-  const context = encoder.encode('context');
-  const result = await wt.exportKeyingMaterial(label, context, 32);
-  assert_equals(result.byteLength, 32,
-      'result length should match the requested outputLength');
-}, 'WebTransport exportKeyingMaterial returns keying material of the requested length');
-
-promise_test(async t => {
-  const wt = new WebTransport(webtransport_url('echo.py'));
-  await wt.ready;
-  t.add_cleanup(() => wt.close());
-
-  const label = encoder.encode('EXPORTER-lengths');
-  const context = encoder.encode('context');
-  for (const length of [1, 16, 64, 4096]) {
-    const result = await wt.exportKeyingMaterial(label, context, length);
-    assert_equals(result.byteLength, length,
-        `result length should be ${length}`);
+  const wt = await createTransport(t);
+  for (const length of [1, 32, 4096]) {
+    const result =
+        await wt.exportKeyingMaterial(defaultLabel, defaultContext, length);
+    assert_true(result instanceof Uint8Array);
+    assert_equals(result.byteLength, length);
   }
-}, 'WebTransport exportKeyingMaterial honors the requested output length');
+}, 'exportKeyingMaterial returns the requested number of bytes');
 
 promise_test(async t => {
   const wt = new WebTransport(webtransport_url('echo.py'));
-  await wt.ready;
   t.add_cleanup(() => wt.close());
+  wt.closed.catch(() => {});
 
-  const label = encoder.encode('EXPORTER-determinism');
-  const context = encoder.encode('context');
-  const first = toBytes(await wt.exportKeyingMaterial(label, context, 32));
-  const second = toBytes(await wt.exportKeyingMaterial(label, context, 32));
-  assert_array_equals(second, first,
-      'identical label, context, and length should produce identical output');
-}, 'WebTransport exportKeyingMaterial is deterministic for identical inputs');
+  const result =
+      await wt.exportKeyingMaterial(defaultLabel, defaultContext, 32);
+  assert_true(result instanceof Uint8Array);
+  assert_equals(result.byteLength, 32);
+  await wt.ready;
+}, 'exportKeyingMaterial can be called while connecting');
 
 promise_test(async t => {
-  const wt = new WebTransport(webtransport_url('echo.py'));
-  await wt.ready;
-  t.add_cleanup(() => wt.close());
-
-  const context = encoder.encode('context');
-  const a = toBytes(await wt.exportKeyingMaterial(
-      encoder.encode('EXPORTER-label-a'), context, 32));
-  const b = toBytes(await wt.exportKeyingMaterial(
-      encoder.encode('EXPORTER-label-b'), context, 32));
-  assert_false(arraysEqual(a, b),
-      'different labels should produce different keying material');
-}, 'WebTransport exportKeyingMaterial returns different material for different labels');
+  const wt = await createTransport(t);
+  const first = await wt.exportKeyingMaterial(defaultLabel, defaultContext, 32);
+  const second =
+      await wt.exportKeyingMaterial(defaultLabel, defaultContext, 32);
+  assert_array_equals(first, second);
+}, 'The same inputs on one session produce identical keying material');
 
 promise_test(async t => {
-  const wt = new WebTransport(webtransport_url('echo.py'));
-  await wt.ready;
-  t.add_cleanup(() => wt.close());
-
-  const label = encoder.encode('EXPORTER-context');
-  const a = toBytes(await wt.exportKeyingMaterial(
-      label, encoder.encode('context-a'), 32));
-  const b = toBytes(await wt.exportKeyingMaterial(
-      label, encoder.encode('context-b'), 32));
-  assert_false(arraysEqual(a, b),
-      'different contexts should produce different keying material');
-}, 'WebTransport exportKeyingMaterial returns different material for different contexts');
+  const wt = await createTransport(t);
+  const first = await wt.exportKeyingMaterial(encoder.encode('first-label'),
+                                              defaultContext, 32);
+  const second = await wt.exportKeyingMaterial(encoder.encode('second-label'),
+                                               defaultContext, 32);
+  assert_not_equals(first.toString(), second.toString());
+}, 'Different labels produce different keying material');
 
 promise_test(async t => {
-  const wt = new WebTransport(webtransport_url('echo.py'));
-  await wt.ready;
-  t.add_cleanup(() => wt.close());
-
-  const label = encoder.encode('EXPORTER-range');
-  const context = encoder.encode('context');
-
-  // A label longer than 255 bytes is out of range.
-  await promise_rejects_js(t, RangeError,
-      wt.exportKeyingMaterial(new Uint8Array(256), context, 32),
-      'label longer than 255 bytes');
-  // A context longer than 255 bytes is out of range.
-  await promise_rejects_js(t, RangeError,
-      wt.exportKeyingMaterial(label, new Uint8Array(256), 32),
-      'context longer than 255 bytes');
-  // An outputLength of 0 is out of range.
-  await promise_rejects_js(t, RangeError,
-      wt.exportKeyingMaterial(label, context, 0),
-      'outputLength of 0');
-  // An outputLength greater than 4096 is out of range.
-  await promise_rejects_js(t, RangeError,
-      wt.exportKeyingMaterial(label, context, 4097),
-      'outputLength greater than 4096');
-}, 'WebTransport exportKeyingMaterial rejects out-of-range arguments with RangeError');
+  const wt = await createTransport(t);
+  const first = await wt.exportKeyingMaterial(
+      defaultLabel, encoder.encode('first-context'), 32);
+  const second = await wt.exportKeyingMaterial(
+      defaultLabel, encoder.encode('second-context'), 32);
+  assert_not_equals(first.toString(), second.toString());
+}, 'Different contexts produce different keying material');
 
 promise_test(async t => {
-  const wt = new WebTransport(webtransport_url('echo.py'));
-  await wt.ready;
+  const firstTransport = await createTransport(t);
+  const secondTransport = await createTransport(t);
+  const first = await firstTransport.exportKeyingMaterial(defaultLabel,
+                                                          defaultContext, 32);
+  const second = await secondTransport.exportKeyingMaterial(defaultLabel,
+                                                            defaultContext, 32);
+  assert_not_equals(first.toString(), second.toString());
+}, 'Different sessions produce different keying material');
+
+promise_test(async t => {
+  const wt = await createTransport(t);
+  const label = encoder.encode('buffer-source-label');
+  const context = encoder.encode('buffer-source-context');
+  const fromViews = await wt.exportKeyingMaterial(label, context, 32);
+  const fromBuffers =
+      await wt.exportKeyingMaterial(label.buffer, context.buffer, 32);
+  assert_array_equals(fromViews, fromBuffers);
+}, 'exportKeyingMaterial accepts ArrayBuffer and ArrayBufferView inputs');
+
+promise_test(async t => {
+  const wt = await createTransport(t);
+  const labelBuffer = new Uint8Array(defaultLabel.byteLength + 4);
+  const contextBuffer = new Uint8Array(defaultContext.byteLength + 6);
+  labelBuffer.set(defaultLabel, 2);
+  contextBuffer.set(defaultContext, 3);
+  const label = new Uint8Array(labelBuffer.buffer, 2, defaultLabel.byteLength);
+  const context =
+      new Uint8Array(contextBuffer.buffer, 3, defaultContext.byteLength);
+
+  const fromOffsetViews = await wt.exportKeyingMaterial(label, context, 32);
+  const fromCopies =
+      await wt.exportKeyingMaterial(defaultLabel, defaultContext, 32);
+  assert_array_equals(fromOffsetViews, fromCopies);
+}, 'exportKeyingMaterial respects non-zero ArrayBufferView offsets');
+
+promise_test(async t => {
+  const wt = await createTransport(t);
+  const result =
+      await wt.exportKeyingMaterial(new Uint8Array(0), new Uint8Array(0), 32);
+  assert_true(result instanceof Uint8Array);
+  assert_equals(result.byteLength, 32);
+}, 'exportKeyingMaterial accepts empty label and context inputs');
+
+promise_test(async t => {
+  const wt = await createTransport(t);
+  const result = await wt.exportKeyingMaterial(new Uint8Array(255),
+                                               new Uint8Array(255), 32);
+  assert_equals(result.byteLength, 32);
+}, 'exportKeyingMaterial accepts 255-byte label and context inputs');
+
+promise_test(async t => {
+  const wt = await createTransport(t);
+  await promise_rejects_js(
+      t, RangeError,
+      wt.exportKeyingMaterial(new Uint8Array(256), defaultContext, 32));
+  await promise_rejects_js(
+      t, RangeError,
+      wt.exportKeyingMaterial(defaultLabel, new Uint8Array(256), 32));
+}, 'exportKeyingMaterial rejects label and context inputs over 255 bytes');
+
+promise_test(async t => {
+  const wt = await createTransport(t);
+  await promise_rejects_js(
+      t, RangeError, wt.exportKeyingMaterial(defaultLabel, defaultContext, 0));
+}, 'exportKeyingMaterial rejects a zero output length');
+
+promise_test(async t => {
+  const wt = await createTransport(t);
+  await promise_rejects_js(
+      t, RangeError,
+      wt.exportKeyingMaterial(defaultLabel, defaultContext, 4097));
+}, 'exportKeyingMaterial rejects an output length over 4096 bytes');
+
+promise_test(async t => {
+  const wt = await createTransport(t);
+  await promise_rejects_js(t, TypeError, wt.exportKeyingMaterial(defaultLabel));
+  await promise_rejects_js(
+      t, TypeError, wt.exportKeyingMaterial(defaultLabel, defaultContext));
+}, 'exportKeyingMaterial requires all three arguments');
+
+promise_test(async t => {
+  const wt = await createTransport(t);
   wt.close();
   await wt.closed;
-
-  await promise_rejects_dom(t, 'InvalidStateError',
-      wt.exportKeyingMaterial(
-          encoder.encode('EXPORTER-closed'), encoder.encode('context'), 32));
-}, 'WebTransport exportKeyingMaterial rejects with InvalidStateError after the session is closed');
-
-promise_test(async t => {
-  const wt = new WebTransport('https://webtransport.invalid/');
-  wt.closed.catch(() => {});
-  // Wait for the connection to fail before exporting keying material.
-  await wt.ready.catch(() => {});
-
-  await promise_rejects_dom(t, 'InvalidStateError',
-      wt.exportKeyingMaterial(
-          encoder.encode('EXPORTER-failed'), encoder.encode('context'), 32));
-}, 'WebTransport exportKeyingMaterial rejects with InvalidStateError for a failed session');
+  await promise_rejects_dom(
+      t, 'InvalidStateError',
+      wt.exportKeyingMaterial(defaultLabel, defaultContext, 32));
+}, 'exportKeyingMaterial rejects after the session closes');
