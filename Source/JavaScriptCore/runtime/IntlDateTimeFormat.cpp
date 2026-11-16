@@ -1396,8 +1396,7 @@ NODELETE static void replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(Contain
 
 // ICU4C-WORKAROUND: rdar://182953351 - Islamic calendars never expose a second era
 // (architecturally locked to one); Coptic has a second era but never selects it.
-// Substitute CLDR's "Before Hijra"/"Anno Martyrum" text ourselves. islamic-tbla's
-// epoch differs from civil/umalqura's by a day, hence the separate branch.
+// Substitute CLDR's "Before Hijra"/"Anno Martyrum" text ourselves.
 // needsYearFlip: islamic's raw year has no year-zero skip, unlike Gregorian's native "Before
 // Christ" or Temporal's own eraYear for this era (both use `1 - year`). Coptic's year is already correct.
 // FIXME: doesn't cover formatRange()/formatRangeToParts(); wait for ICU
@@ -1406,27 +1405,47 @@ struct EraOverride {
     ASCIILiteral text;
     bool needsYearFlip { false };
 };
-static std::optional<EraOverride> proposalEraOverrideString(const String& calendar, double epochMs)
+
+struct CalendarFields {
+    int32_t year;
+    int32_t extendedYear;
+};
+
+// The format's calendar is already in the formatter's time zone. Islamic UCAL_YEAR is 0 or
+// negative before 1 AH. Coptic UCAL_YEAR stays positive in the BCE era, so the extended year
+// is the proleptic year that is <= 0 before 1 AM.
+static std::optional<CalendarFields> calendarFields(UDateFormat* format, double value)
 {
-    if (calendar == "islamic-civil"_s || calendar == "islamic-umalqura"_s) {
-        constexpr double islamicEpoch = -42521558822000.0; // ISO 622-07-19T07:52:58.000Z
-        if (epochMs < islamicEpoch)
-            return EraOverride { "Before Hijra"_s, true };
+    UErrorCode status = U_ZERO_ERROR;
+    auto calendar = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_clone(udat_getCalendar(format), &status));
+    if (U_FAILURE(status)) [[unlikely]]
         return std::nullopt;
-    }
-    if (calendar == "islamic-tbla"_s) {
-        constexpr double islamicTblaEpoch = -42521645222000.0; // ISO 622-07-18T07:52:58.000Z
-        if (epochMs < islamicTblaEpoch)
-            return EraOverride { "Before Hijra"_s, true };
+    ucal_setMillis(calendar.get(), value, &status);
+    int32_t year = ucal_get(calendar.get(), UCAL_YEAR, &status);
+    int32_t extendedYear = ucal_get(calendar.get(), UCAL_EXTENDED_YEAR, &status);
+    if (U_FAILURE(status)) [[unlikely]]
         return std::nullopt;
-    }
-    if (calendar == "coptic"_s) {
-        constexpr double copticEpoch = -53184182822000.0; // ISO 284-08-29T07:52:58.000Z
-        if (epochMs < copticEpoch)
-            return EraOverride { "Anno Martyrum"_s };
+    return CalendarFields { year, extendedYear };
+}
+
+static std::optional<EraOverride> proposalEraOverrideString(const String& calendar, UDateFormat* format, double value)
+{
+    bool islamic = calendar == "islamic-civil"_s || calendar == "islamic-umalqura"_s || calendar == "islamic-tbla"_s;
+    bool coptic = calendar == "coptic"_s;
+    if (!islamic && !coptic)
         return std::nullopt;
+
+    auto fields = calendarFields(format, value);
+    if (!fields) [[unlikely]]
+        return std::nullopt;
+    if (islamic) {
+        if (fields->year > 0)
+            return std::nullopt;
+        return EraOverride { "Before Hijra"_s, true };
     }
-    return std::nullopt;
+    if (fields->extendedYear > 0)
+        return std::nullopt;
+    return EraOverride { "Anno Martyrum"_s };
 }
 
 // ICU4C-WORKAROUND: rdar://182953351 - the flipped "Before Hijra" year (1 - year, matching
@@ -1435,15 +1454,10 @@ static std::optional<EraOverride> proposalEraOverrideString(const String& calend
 // already lossily truncated, so flipping it instead of the real value would be wrong.
 static std::optional<String> flippedEraOverrideYear(UDateFormat* format, double value, bool yearIsTwoDigit)
 {
-    UErrorCode status = U_ZERO_ERROR;
-    auto calendar = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_clone(udat_getCalendar(format), &status));
-    if (U_FAILURE(status)) [[unlikely]]
+    auto fields = calendarFields(format, value);
+    if (!fields) [[unlikely]]
         return std::nullopt;
-    ucal_setMillis(calendar.get(), value, &status);
-    int32_t year = ucal_get(calendar.get(), UCAL_YEAR, &status);
-    if (U_FAILURE(status)) [[unlikely]]
-        return std::nullopt;
-    int32_t flipped = 1 - year;
+    int32_t flipped = 1 - fields->year;
     if (!yearIsTwoDigit)
         return String::number(flipped);
     int32_t twoDigit = ((flipped % 100) + 100) % 100;
@@ -1539,7 +1553,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) c
         return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_s);
 
     // ICU4C-WORKAROUND: rdar://182953351 - see proposalEraOverrideString; only when era requested.
-    auto eraOverride = m_impl->m_era != Era::None ? proposalEraOverrideString(m_impl->m_calendar, value) : std::nullopt;
+    auto eraOverride = m_impl->m_era != Era::None ? proposalEraOverrideString(m_impl->m_calendar, m_impl->m_dateFormat.get(), value) : std::nullopt;
     if (eraOverride)
         RELEASE_AND_RETURN(scope, formatWithEraOverride(globalObject, m_impl->m_dateFormat.get(), value, *eraOverride, m_impl->m_year == Year::TwoDigit));
 
@@ -2577,7 +2591,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, JSValue x) cons
         return throwTypeError(globalObject, scope, "DateTimeFormat has no fields applicable to this Temporal type"_s);
 
     // ICU4C-WORKAROUND: rdar://182953351 - see proposalEraOverrideString; only when era requested.
-    auto eraOverride = m_impl->m_era != Era::None ? proposalEraOverrideString(m_impl->m_calendar, record.value) : std::nullopt;
+    auto eraOverride = m_impl->m_era != Era::None ? proposalEraOverrideString(m_impl->m_calendar, tempFormat, record.value) : std::nullopt;
     if (eraOverride)
         RELEASE_AND_RETURN(scope, formatWithEraOverride(globalObject, tempFormat, record.value, *eraOverride, m_impl->m_year == Year::TwoDigit));
 
@@ -2611,7 +2625,7 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, JSValue 
     }
 
     // ICU4C-WORKAROUND: rdar://182953351 - see proposalEraOverrideString; only when era requested.
-    auto eraOverride = m_impl->m_era != Era::None ? proposalEraOverrideString(m_impl->m_calendar, record.value) : std::nullopt;
+    auto eraOverride = m_impl->m_era != Era::None ? proposalEraOverrideString(m_impl->m_calendar, fmt, record.value) : std::nullopt;
     RELEASE_AND_RETURN(scope, buildFormattedDateTimeParts(globalObject, fmt, record.value, nullptr, eraOverride, m_impl->m_year == Year::TwoDigit));
 }
 
