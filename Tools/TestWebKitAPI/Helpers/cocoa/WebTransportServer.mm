@@ -28,8 +28,9 @@
 
 #if HAVE(WEBTRANSPORT)
 
-#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/HTTPServer/TestCertificates.h"
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/darwin/DispatchExtras.h>

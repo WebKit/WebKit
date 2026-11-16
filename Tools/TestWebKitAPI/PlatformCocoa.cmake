@@ -321,6 +321,8 @@ list(APPEND TestWebKit_SOURCES
     Helpers/cocoa/WebExtensionUtilities.mm
     Helpers/cocoa/WebTransportServer.mm
 
+    Helpers/cocoa/HTTPServer/TestCertificates.mm
+
     Helpers/mac/GamepadMappings/GoogleStadia.mm
     Helpers/mac/GamepadMappings/LogitechF310.mm
     Helpers/mac/GamepadMappings/LogitechF710.mm
@@ -816,6 +818,7 @@ list(APPEND TestWebKit_SOURCES
     "Tests/WebKit/WebPage/Mac Touch Support Tests/RefreshControlMacTouchSupportTests.swift"
     "Tests/WebKit/WebPage/Mac Touch Support Tests/SiteIsolationMacTouchSupportTests.swift"
 
+    Tests/WebKit/WKWebView/Challenge.swift
     Tests/WebKit/WKWebView/CodingTests.swift
     Tests/WebKit/WKWebView/ContentAutoSizing.swift
     Tests/WebKit/WKWebView/CrossOriginOpenerPolicyAboutBlankTests.swift

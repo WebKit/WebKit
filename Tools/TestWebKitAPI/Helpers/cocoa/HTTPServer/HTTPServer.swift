@@ -257,9 +257,12 @@ public struct HTTPServer: ~Copyable {
     ///
     /// - Parameters:
     ///   - protocol: The HTTP protocol to use for this server.
+    ///   - requiresClientCertificate: Whether the server asks clients for a certificate during the TLS handshake. The
+    ///     server accepts any certificate a client presents. This has no effect on the `.http` protocol, which has no
+    ///     TLS handshake.
     ///   - route: A group of routes that correspond to a mapping of request paths to responses.
     /// - Throws: Any error that happens during creation of the server.
-    public init(protocol: `Protocol`, @RouteBuilder _ route: () -> Route) throws {
+    public init(protocol: `Protocol`, requiresClientCertificate: Bool = false, @RouteBuilder _ route: () -> Route) throws {
         let responses = route().children
             .reduce(into: [String: HTTPResponseData]()) { result, child in
                 precondition(
@@ -270,8 +273,10 @@ public struct HTTPServer: ~Copyable {
                 result[child.path] = child.responseData
             }
 
+        let verifier: sec_protocol_verify_t? = requiresClientCertificate ? { _, _, complete in complete(true) } : nil
+
         self.protocol = `protocol`
-        self.storage = try HTTPServerCore(protocol: .init(`protocol`), responses: responses)
+        self.storage = try HTTPServerCore(protocol: .init(`protocol`), responses: responses, verifier: verifier)
     }
 
     /// Create a server that hands each connection it accepts to a closure instead of responding from routes.
@@ -510,6 +515,37 @@ extension HTTPServer {
         public func terminate() async {
             // Through the server, so that shutting it down does not also try to terminate this connection.
             await server.terminateIfNeeded(connection)
+        }
+    }
+}
+
+extension HTTPServer {
+    /// A connection handler that challenges every other request for HTTP Basic credentials in the `testrealm` realm,
+    /// and answers the requests in between with a page that shows an alert.
+    ///
+    /// ```swift
+    /// var server = try HTTPServer(protocol: .http, connectionHandler: HTTPServer.respondWithChallengeThenOK)
+    /// ```
+    ///
+    /// - Parameter connection: The connection to respond on.
+    /// - Throws: An error if a request cannot be parsed. Failing to send a response isn't an error, because the client
+    ///   can close the connection at any point.
+    public static func respondWithChallengeThenOK(_ connection: Connection) async throws {
+        do {
+            while try await connection.receiveRequestPath() != nil {
+                try await connection.send(
+                    "HTTP/1.1 401 Unauthorized\r\nDate: Sat, 23 Mar 2019 06:29:01 GMT\r\nContent-Length: 0\r\nWWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n"
+                )
+
+                guard try await connection.receiveRequestPath() != nil else {
+                    return
+                }
+
+                let body = "<script>alert('success!')</script>"
+                try await connection.send("HTTP/1.1 200 OK\r\nContent-Length: \(body.utf8.count)\r\n\r\n\(body)")
+            }
+        } catch is NWError {
+            // The client closed the connection while a response was being sent.
         }
     }
 }
