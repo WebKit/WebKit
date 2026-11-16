@@ -1,0 +1,17 @@
+<!doctype html>
+<title>display-mode application value in an iframe</title>
+<script>
+    window.addEventListener("message", (event) => {
+        if (event.data !== "report") return;
+        event.source.postMessage(
+            {
+                origin: self.origin,
+                application: matchMedia("(display-mode: application)").matches,
+                notApplication: matchMedia("(not (display-mode: application))")
+                    .matches,
+                standalone: matchMedia("(display-mode: standalone)").matches,
+            },
+            "*",
+        );
+    });
+</script>

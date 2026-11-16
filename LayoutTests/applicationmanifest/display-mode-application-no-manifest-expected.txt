@@ -1,0 +1,13 @@
+No manifest, Standalone setting off
+(display-mode: application): false
+(display-mode: browser): true
+(display-mode: standalone): false
+(display-mode: application) and (display-mode: standalone): false
+(display-mode): true
+No manifest, Standalone setting on
+(display-mode: application): true
+(display-mode: browser): false
+(display-mode: standalone): true
+(display-mode: application) and (display-mode: standalone): true
+(display-mode): true
+

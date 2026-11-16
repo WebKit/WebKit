@@ -796,14 +796,16 @@ static const IdentifierSchema& displayModeFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "display-mode"_s,
-        FixedVector { CSSValueID::Fullscreen, CSSValueID::Standalone, CSSValueID::MinimalUi, CSSValueID::Browser },
+        FixedVector { CSSValueID::Application, CSSValueID::Fullscreen, CSSValueID::Standalone, CSSValueID::MinimalUi, CSSValueID::Browser },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
+            Ref frame = *context.document->frame();
+            auto manifest = frame->page() ? frame->page()->applicationManifest() : std::nullopt;
+            bool isApplicationContext = manifest || frame->settings().standalone();
+
             auto identifier = [&] {
-                Ref frame = *context.document->frame();
-                auto manifest = frame->page() ? frame->page()->applicationManifest() : std::nullopt;
                 if (!manifest)
-                    return CSSValueID::Browser;
+                    return isApplicationContext ? CSSValueID::Standalone : CSSValueID::Browser;
 
                 switch (manifest->display) {
                 case ApplicationManifest::Display::Fullscreen:
@@ -819,7 +821,10 @@ static const IdentifierSchema& displayModeFeatureSchema()
                 return CSSValueID::Browser;
             }();
 
-            return MatchingIdentifiers { identifier };
+            MatchingIdentifiers identifiers { identifier };
+            if (isApplicationContext)
+                identifiers.append(CSSValueID::Application);
+            return identifiers;
         }
     };
     return schema;
