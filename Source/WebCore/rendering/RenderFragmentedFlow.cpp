@@ -131,10 +131,10 @@ void RenderFragmentedFlow::validateFragments()
 
                 if (!firstFragmentVisited)
                     firstFragmentVisited = true;
-                else {
-                    if (m_fragmentsHaveUniformLogicalHeight && previousFragmentLogicalHeight != fragmentLogicalHeight)
-                        m_fragmentsHaveUniformLogicalHeight = false;
-                }
+                else if (m_fragmentsHaveUniformLogicalHeight && previousFragmentLogicalHeight != fragmentLogicalHeight)
+                    m_fragmentsHaveUniformLogicalHeight = false;
+
+                previousFragmentLogicalHeight = fragmentLogicalHeight;
             }
 
             setFragmentRangeForBox(*this, &m_fragmentList.first(), &m_fragmentList.last());
