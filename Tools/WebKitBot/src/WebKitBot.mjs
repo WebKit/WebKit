@@ -33,8 +33,8 @@ import LogLevel from "@slack/rtm-api";
 import SlackRTMAPI from "@slack/rtm-api";
 import AsyncTaskQueue from "./AsyncTaskQueue.mjs";
 import {buildGitWebkitRevertCommand, extractCommandAndArgs, extractRevisionsAndReason,
-    extractTextIfMentioned, parseBugId, parsePRUrl} from "./CommandParser.mjs";
-import {dataLogLn, escapeForSlackText, isASCII, rootDirectoryOfWebKit} from "./Utility.mjs";
+    extractTextIfMentioned, parseBugId, parsePRUrl, parsePullRequestAction} from "./CommandParser.mjs";
+import {buildRevertSuccessMessage, dataLogLn, escapeForSlackText, isASCII, rootDirectoryOfWebKit} from "./Utility.mjs";
 
 const defaultTaskLimit = 10;
 const defaultPullPeriod = 60 * 1000 * 60;
@@ -192,15 +192,9 @@ export default class WebKitBot {
                     issueUrl,
                 });
 
-                let successMessage;
-                if (result.startsWith("https://github.com/"))
-                    successMessage = `<@${event.user}> Created revert PR: ${escapeForSlackText(result)}`;
-                else
-                    successMessage = `<@${event.user}> Created a revert patch https://webkit.org/b/${escapeForSlackText(result)}`;
-
                 await this.postMessage({
                     channel: event.channel,
-                    text: successMessage,
+                    text: buildRevertSuccessMessage(event.user, result),
                 });
             } catch (error) {
                 console.error(error);
@@ -496,16 +490,23 @@ Type \`help COMMAND\` for help on my individual commands.`,
         dataLogLn("3. Fetching");
         await this.execInWebKitDirectorySimple("git", ["fetch", "origin"]);
 
-        dataLogLn("4. Checkout out origin/main");
+        dataLogLn("4. Pruning stale 'fork' refs");
+        try {
+            await this.execInWebKitDirectorySimple("git", ["fetch", "--prune", "fork"]);
+        } catch (error) {
+            dataLogLn("Warning: Failed to fetch 'fork':" + String(error));
+        }
+
+        dataLogLn("5. Checkout out origin/main");
         await this.execInWebKitDirectorySimple("git", ["checkout", "origin/main", "-f"]);
 
-        dataLogLn("5. Deleting local 'main' ref");
+        dataLogLn("6. Deleting local 'main' ref");
         await this.execInWebKitDirectorySimple("git", ["branch", "-D", "main"]);
 
-        dataLogLn("6. Creating local 'main' ref");
+        dataLogLn("7. Creating local 'main' ref");
         await this.execInWebKitDirectorySimple("git", ["checkout", "origin/main", "-b", "main"]);
 
-        dataLogLn("7. Cleaning up leftover branches");
+        dataLogLn("8. Cleaning up leftover branches");
         try {
             let {stdout} = await execFileAsync("git", ["for-each-ref", "--format", "%(refname:short)", "refs/heads/"], {
                 cwd: process.env.webkitWorkingDirectory,
@@ -598,8 +599,10 @@ Type \`help COMMAND\` for help on my individual commands.`,
         // captured output for the PR URL (don't re-dump it).
         let {stdout, stderr} = results;
         let prUrl = parsePRUrl(stdout) || parsePRUrl(stderr);
-        if (prUrl)
-            return prUrl;
+        if (prUrl) {
+            let action = parsePullRequestAction(stdout) || parsePullRequestAction(stderr);
+            return {prUrl, action};
+        }
 
         throw new Error("PR URL not found in git-webkit output");
     }
@@ -617,7 +620,7 @@ Type \`help COMMAND\` for help on my individual commands.`,
 
         await this.cleanUpWorkingCopy();
 
-        dataLogLn("7. Creating revert patch ", revisions, reason);
+        dataLogLn("9. Creating revert patch ", revisions, reason);
         let results;
         try {
             const webkitPatchPath = path.resolve("BotWebKit", "Tools", "Scripts", "webkit-patch");
@@ -658,12 +661,12 @@ Type \`help COMMAND\` for help on my individual commands.`,
         {
             let bugId = parseBugId(stdout);
             if (bugId !== null)
-                return bugId;
+                return {bugId};
         }
         {
             let bugId = parseBugId(stderr);
             if (bugId !== null)
-                return bugId;
+                return {bugId};
         }
         throw new Error("bug-id cannot be found");
     }
