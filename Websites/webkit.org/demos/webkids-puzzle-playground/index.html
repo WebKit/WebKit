@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The WebKids puzzle playground</title>
+    <style>
+
+        :root {
+            --bg:#8FADCD;
+            --linecolor:#FFC900;
+            --scribblecolor:#85D4FF;
+            --header-bg:#003A55;
+        }
+
+        #logo {
+            height:80px;
+            margin-top:10px;
+        }
+        #title {
+            width:800px;
+            vertical-align: -27px;
+        }
+
+        :root.dark {
+            --bg:#003A55;
+            --linecolor:#F99801;
+            --scribblecolor:#0082e4;
+        }
+        :root.dark button {
+            filter:brightness(50%) saturate(200%);
+        }
+
+        html, body {
+            background-color:var(--bg);
+            margin:0; padding:0;
+            overflow:hidden;
+            transition:0.5s;
+        }
+        
+        header {
+            width:100%;
+            padding:10px;
+            padding-left:calc(50vw - 435px);
+            min-height:106px;
+            background-color: var(--header-bg);
+        }
+        
+        #world {
+            spatial:portal;
+            width:800px;
+            height:600px;
+            transition:0.5s;
+            margin-left:calc(50vw - 400px);
+            background-color:var(--bg);
+            portal-transform:rotateX(30deg) auto translateZ(-3cm);
+            portal-action:orbit;
+            environment-map: "day";
+        }
+
+        :root.dark #world {
+            environment-map: "night";
+        }
+
+        #board {
+            anchor-name: --board;
+        }
+
+        .block { position-context:anchor; }
+
+        #triangle { position-anchor: --board#pt_triangle; }
+        #star { position-anchor: --board#pt_star; }
+        #plus { position-anchor: --board#pt_plus; }
+        #octagon { position-anchor: --board#pt_octagon; }
+
+        .block { animation: flip-back 0.5s linear ; }
+
+        .block.flipped {
+            animation: flip-over 0.5s linear ;
+            transform:rotateZ(180deg);
+        }
+
+        @keyframes flip-back {
+            0% { transform:scale(100%)  rotateZ(180deg); }
+            50% { transform:translateY(4cm) rotateZ(90deg); }
+            100% { transform:scale(100%) rotateZ(0deg); }
+        }
+
+        @keyframes flip-over {
+            0% { transform:scale(100%)  rotateZ(0deg); }
+            50% { transform:translateY(4cm) rotateZ(90deg); }
+            100% { transform:scale(100%) rotateZ(180deg); }
+        }
+
+        button {
+            background-color: transparent;
+            border:none;
+        }
+        .mode-btn {
+            height:80px;
+            width:160px;
+            margin-left:13vw;
+        }
+
+        .shape-btn {
+            width: 180px;
+            height: 180px;
+            position:absolute;
+        }
+
+        :root.dark #day-btn { display:none;} 
+        #night-btn {display:none;}
+        :root.dark #night-btn {display:block;}
+
+
+        :root.volumetric #launch-btn { display:none;} 
+        #restore-btn {display:none;}
+        :root.volumetric #restore-btn {display:block;}
+
+        #btn_octagon { top:310px; left:10px; }
+        #btn_star { top:310px; right:10px; }
+
+        #btn_plus { top:540px; left:10px; }
+        #btn_triangle { top:540px; right:10px; }
+
+        @environment-map {
+            name: "day";
+            format: equirectangular;
+            src: url("./blocks/day.hdr");
+        }
+        @environment-map {
+            name: "night";
+            format: equirectangular;
+            src: url("./blocks/night.hdr");
+        }
+
+</style>
+</head>
+<body>
+
+    <header>
+        <img src="https://webkit.org/wp-content/themes/webkit/images/webkit.svg" id="logo" alt="The webkit logo">
+        <img src="./blocks/title.svg" id="title" alt="The WebKids Puzzle playground">
+    </header>
+    <div id="world">
+        <model src="./blocks/board.usdz" id="board" alt="The puzzle board"></model>
+        
+        <model class="block" src="./blocks/triangle.usdz" id="triangle" alt="A triangle-shaped block"></model>
+        <model class="block" src="./blocks/octagon.usdz" id="octagon" alt="A octagon-shaped block"></model>
+        <model class="block" src="./blocks/plus.usdz" id="plus" alt="A plus-shaped block"></model>
+        <model class="block" src="./blocks/star.usdz" id="star" alt="A star-shaped block"></model>
+    </div>
+    <br>
+
+    <button class="shape-btn" id="btn_octagon" onclick="octagon.classList.toggle('flipped')">
+        <img src="./blocks/octagon.svg" alt="Flip the octagon-shaped block">
+    </button>
+
+    <button class="shape-btn" id="btn_star" onclick="star.classList.toggle('flipped')">
+        <img src="./blocks/star.svg" alt="Flip the star-shaped block">
+    </button>
+    
+    <button class="shape-btn" id="btn_plus" onclick="plus.classList.toggle('flipped')">
+        <img src="./blocks/plus.svg" alt="Flip the plus-shaped block">
+    </button>
+    
+    <button class="shape-btn" id="btn_triangle" onclick="triangle.classList.toggle('flipped')">
+        <img src="./blocks/triangle.svg" alt="Flip the triangle-shaped block">
+    </button>
+    <br>
+    
+    <button class="mode-btn" id="btn_launch" onclick="toggleVolumetric()">
+        <img id="restore-btn" src="./blocks/restorescene.svg" alt="Restore the volumetric scene">
+        <img id="launch-btn" src="./blocks/launchscene.svg" alt="Launch the volumetric scene">
+    </button>
+    
+    <button class="mode-btn" id="btn_flip" onclick="document.querySelectorAll('.block').forEach(b=>b.classList.toggle('flipped'))">
+        <img src="./blocks/flipall.svg" alt="Flip all the blocks">
+    </button>
+    
+    <button class="mode-btn" id="btn_theme" onclick="document.documentElement.classList.toggle('dark')">
+        <img id="night-btn" src="./blocks/nighttheme.svg" alt="The theme is in night mode">
+        <img id="day-btn" src="./blocks/daytheme.svg" alt="The theme is in day mode">
+    </button>
+    
+</body>
+<script>
+    var isVolumetric = false;
+    function toggleVolumetric() {
+        document.documentElement.classList.toggle('volumetric');
+        if(!isVolumetric) {
+            world.requestVolumetricScene();
+            isVolumetric = true;
+        }  else {
+            world.exitVolumetricScene();
+            isVolumetric = false;
+        }
+    }
+</script>
+</html>
