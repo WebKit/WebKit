@@ -588,6 +588,8 @@ std::optional<bool> FlexLayout::isFlexItemHeightDefiniteInLayoutPhase(const Rend
     switch (*layoutPhase) {
     case LayoutPhase::PreparingFlexItems:
     case LayoutPhase::ComputingFlexBaseSizes:
+    case LayoutPhase::CollectingLines:
+    case LayoutPhase::ResolvingFlexibleLengths:
         // The algorithm has not sized anything yet -- PreparingFlexItems is the setup that collects the items and
         // measures the container's intrinsic widths. No flexed height exists.
         return false;
