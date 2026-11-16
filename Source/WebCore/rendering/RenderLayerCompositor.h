@@ -354,6 +354,7 @@ public:
     void rootLayerConfigurationChanged();
 
     void widgetDidChangeSize(RenderWidget&);
+    bool canSkipRequirementsTraversalForStickyOffsetChange(const RenderLayer&) const;
 
     WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }) const;
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;

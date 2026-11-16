@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=false ] -->
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+        height: 3000px;
+    }
+
+    .sticky {
+        position: sticky;
+        top: 0;
+        margin-top: 100px;
+        height: 80px;
+        background-color: blue;
+    }
+
+    /* Composited descendants that all move with the sticky element: a plain composited box, and one clipped
+       by an element inside the sticky element. The traversal may be skipped here, and everything must still
+       end up where it would without the skip. */
+    .composited {
+        will-change: transform;
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        background-color: green;
+    }
+
+    .inner-clip {
+        display: inline-block;
+        overflow: hidden;
+        width: 60px;
+        height: 30px;
+    }
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.addEventListener('load', async () => {
+        // The sticky element sticks from 100px on; after that, each scroll only changes its sticky offset.
+        // Wheel scrolls of 150px each. Not window.scrollTo(): a programmatic scroll is followed by a full compositing
+        // update (see LocalFrameView::shouldUpdateCompositingLayersAfterScrolling()), which would hide a skipped update.
+        for (let i = 0; i < 4; ++i)
+            await UIHelper.mouseWheelScrollAt(700, 550, 0, -1, 0, -14);
+
+        if (window.internals) {
+            document.getElementById('layers').textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+            document.getElementById('scrolling').textContent = internals.scrollingStateTreeAsText();
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+</script>
+</head>
+<body>
+    <div class="sticky">
+        <div class="composited"></div>
+        <div class="inner-clip"><div class="composited"></div></div>
+    </div>
+<pre id="layers"></pre>
+<pre id="scrolling"></pre>
+</body>
+</html>
