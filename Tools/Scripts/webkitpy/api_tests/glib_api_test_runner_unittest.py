@@ -23,8 +23,12 @@
 
 """Unit tests for Tools/glib/api_test_runner.py."""
 
+import contextlib
+import io
+import json
 import optparse
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -46,6 +50,22 @@ class StubTestRunner(TestRunner):
 
     def is_google_test(self, test_program):
         return os.path.basename(test_program) == "TestWTF"
+
+    def is_glib_test(self, test_program):
+        return os.path.basename(os.path.dirname(test_program)) in ("WPE", "WebKitGTK")
+
+
+class ChangedTestsStubTestRunner(StubTestRunner):
+    def __init__(self, base_directory, source_directory, google_test_cases=()):
+        super().__init__(base_directory)
+        self._source_directory_path = source_directory
+        self._available_google_test_cases = set(google_test_cases)
+
+    def _source_directory(self):
+        return self._source_directory_path
+
+    def _get_tests_from_google_test_suite(self, test_program, skipped_test_cases):
+        return self._available_google_test_cases
 
 
 class StubExpectations(object):
@@ -83,6 +103,30 @@ class GLibAPITestRunnerTest(unittest.TestCase):
 
     def tearDown(self):
         self._temporary_directory.cleanup()
+
+    def _create_source_repository(self, files):
+        self._source_directory = os.path.join(self._base_directory, "source")
+        os.mkdir(self._source_directory)
+        self._git("init", "-q")
+        self._write_sources(files)
+        self._git("add", "-A")
+        self._git("commit", "-q", "-m", "Base")
+        self._git("branch", "base")
+
+    def _git(self, *args):
+        subprocess.check_output(["git", "-c", "user.name=Test", "-c", "user.email=test@example.com"] + list(args), cwd=self._source_directory)
+
+    def _write_sources(self, files):
+        for path, content in files.items():
+            path = os.path.join(self._source_directory, path)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w") as fd:
+                fd.write(content)
+
+    def _changed_tests(self, google_test_cases=()):
+        runner = ChangedTestsStubTestRunner(self._base_directory, self._source_directory, google_test_cases)
+        with contextlib.redirect_stdout(io.StringIO()):
+            return runner._changed_tests("base")
 
     def _create_executable(self, directory, name):
         path = os.path.join(directory, name)
@@ -192,6 +236,52 @@ class GLibAPITestRunnerTest(unittest.TestCase):
 
         self.assertEqual({"/first": "FAIL", "/second": "TIMEOUT", "/third": "PASS"},
                          runner._run_test_repeatedly(self._glib_test, [], []))
+
+    def test_changed_glib_test_source_selects_its_whole_program(self):
+        self._create_executable(self._wpe_directory, "TestDOMElement")
+        sources = [
+            "Tools/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestDownloads.cpp",
+            "Tools/TestWebKitAPI/Tests/WebKit/WKPage/glib/DOMElementTest.cpp",
+            "Tools/TestWebKitAPI/Tests/WebKit/WKWebView/glib/WebViewTest.cpp",
+        ]
+        self._create_source_repository({path: "" for path in sources})
+        self._write_sources({path: "changed" for path in sources})
+
+        self.assertEqual(["TestDOMElement", "TestDownloads"], self._changed_tests())
+
+    def test_changed_google_test_source_selects_its_available_cases(self):
+        path = "Tools/TestWebKitAPI/Tests/WTF/glib/GUniquePtr.cpp"
+        self._create_source_repository({path: "TEST(WTF_GUniquePtr, Basic) { }\n"})
+        self._write_sources({path: "TEST(WTF_GUniquePtr, Basic) { }\nTEST(WTF_GUniquePtr, NotBuilt) { }\n"})
+        self._git("commit", "-q", "-a", "-m", "Change")
+
+        self.assertEqual(["TestWTF.WTF_GUniquePtr.Basic"], self._changed_tests(google_test_cases=["WTF_GUniquePtr.Basic"]))
+
+    def test_changed_expectations_select_their_tests(self):
+        path = "Tools/TestWebKitAPI/glib/TestExpectations.json"
+        failure = {"expected": {"gtk": {"status": ["FAIL"]}}}
+        self._create_source_repository({path: json.dumps({
+            "TestDownloads": {"subtests": {"/webkit/Downloads/fixed": failure, "/webkit/Downloads/unchanged": failure}},
+            "TestWTF": {"subtests": {"WTF_GUniquePtr.Basic": failure}},
+            "TestWebKitWebView": failure,
+        })})
+        self._write_sources({path: json.dumps({
+            "TestDownloads": {"subtests": {"/webkit/Downloads/unchanged": failure, "/webkit/Downloads/new": failure}},
+            "TestWTF": {"subtests": {"WTF_GUniquePtr.Basic": failure}},
+        })})
+
+        self.assertEqual([
+            "TestDownloads:/webkit/Downloads/fixed",
+            "TestDownloads:/webkit/Downloads/new",
+            "TestWebKitWebView",
+        ], self._changed_tests())
+
+    def test_deleted_test_source_selects_nothing(self):
+        path = "Tools/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestDownloads.cpp"
+        self._create_source_repository({path: ""})
+        self._git("rm", "-q", path)
+
+        self.assertEqual([], self._changed_tests())
 
 
 if __name__ == "__main__":
