@@ -55,6 +55,7 @@
 #include <WebCore/CookieJar.h>
 #include <WebCore/DOMRect.h>
 #include <WebCore/DOMRectList.h>
+#include <WebCore/Document.h>
 #include <WebCore/DocumentPage.h>
 #include <WebCore/DocumentView.h>
 #include <WebCore/ElementAncestorIteratorInlines.h>
@@ -1501,6 +1502,45 @@ void WebAutomationSessionProxy::deleteCookie(WebCore::PageIdentifier pageID, std
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+std::optional<RealmIdentifier> WebAutomationSessionProxy::realmIdentifierForFrame(WebCore::FrameIdentifier frameIdentifier) const
+{
+    auto realmIterator = m_frameToRealmIdentifier.find(frameIdentifier);
+    if (realmIterator == m_frameToRealmIdentifier.end())
+        return std::nullopt;
+
+    return realmIterator->value;
+}
+
+void WebAutomationSessionProxy::getBidiRealmInfo(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&& completionHandler)
+{
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return completionHandler(std::nullopt);
+
+    RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr document = coreLocalFrame ? coreLocalFrame->document() : nullptr;
+    if (!document)
+        return completionHandler(std::nullopt);
+
+    // A scriptless subframe might not have a normal-world realm yet. Create it so
+    // getRealms returns the realm identifier used by later script commands and events.
+    // FIXME: Avoid eagerly creating a JSWindowProxy during realm enumeration.
+    // https://bugs.webkit.org/show_bug.cgi?id=310506
+    protect(coreLocalFrame->windowProxy())->jsWindowProxy(mainThreadNormalWorldSingleton());
+
+    auto realmIdentifier = realmIdentifierForFrame(frame->frameID());
+    if (!realmIdentifier) {
+        scriptRealmCreated(frame->frameID(), document->securityOrigin().data());
+        realmIdentifier = realmIdentifierForFrame(frame->frameID());
+    }
+
+    if (!realmIdentifier)
+        return completionHandler(std::nullopt);
+
+    completionHandler(WTF::move(realmIdentifier));
+}
+
 void WebAutomationSessionProxy::addMessageToConsole(WebCore::FrameIdentifier frameID, const JSC::MessageSource& source, const JSC::MessageLevel& level, const String& messageText, const JSC::MessageType& type, const WallTime& timestamp)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::LogEntryAdded(frameID, source, level, messageText, type, timestamp), 0);
@@ -1546,11 +1586,11 @@ void WebAutomationSessionProxy::scriptDedicatedWorkerRealmCreated(const String& 
     if (!document || document->identifier() != ownerDocumentIdentifier || !page || !page->isControlledByAutomation())
         return;
 
-    auto ownerRealmIterator = m_frameToRealmIdentifier.find(ownerFrameIdentifier);
-    if (ownerRealmIterator == m_frameToRealmIdentifier.end()) {
+    auto ownerRealmIdentifier = realmIdentifierForFrame(ownerFrameIdentifier);
+    if (!ownerRealmIdentifier) {
         scriptRealmCreated(ownerFrameIdentifier, document->securityOrigin().data());
-        ownerRealmIterator = m_frameToRealmIdentifier.find(ownerFrameIdentifier);
-        if (ownerRealmIterator == m_frameToRealmIdentifier.end())
+        ownerRealmIdentifier = realmIdentifierForFrame(ownerFrameIdentifier);
+        if (!ownerRealmIdentifier)
             return;
     }
 
@@ -1558,8 +1598,8 @@ void WebAutomationSessionProxy::scriptDedicatedWorkerRealmCreated(const String& 
     auto workerRealmIterator = m_dedicatedWorkerRealmInfo.find(key);
     if (workerRealmIterator == m_dedicatedWorkerRealmInfo.end()) {
         auto realmIdentifier = RealmIdentifier::generate();
-        workerRealmIterator = m_dedicatedWorkerRealmInfo.add(key, DedicatedWorkerRealmInfo { realmIdentifier, ownerRealmIterator->value, ownerDocumentIdentifier }).iterator;
-    } else if (workerRealmIterator->value.ownerRealmIdentifier != ownerRealmIterator->value
+        workerRealmIterator = m_dedicatedWorkerRealmInfo.add(key, DedicatedWorkerRealmInfo { realmIdentifier, *ownerRealmIdentifier, ownerDocumentIdentifier }).iterator;
+    } else if (workerRealmIterator->value.ownerRealmIdentifier != *ownerRealmIdentifier
         || workerRealmIterator->value.ownerDocumentIdentifier != ownerDocumentIdentifier)
         return;
 

@@ -48,6 +48,7 @@
 #include <algorithm>
 #include <cmath>
 #include <wtf/Borrow.h>
+#include <wtf/Box.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HexNumber.h>
 #include <wtf/ProcessID.h>
@@ -369,8 +370,14 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
 
     // FIXME: Route script.callFunction through the BiDi evaluation path.
     // https://bugs.webkit.org/show_bug.cgi?id=313658
-    String realmID = generateRealmIdForBrowsingContext(*browsingContext);
-    session->evaluateJavaScriptFunctionForBidi(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), optionalUserActivation.value_or(false), [callback = WTF::move(callback), realmID](Inspector::CommandResult<String>&& stringResult) {
+    session->evaluateJavaScriptFunctionForBidi(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), optionalUserActivation.value_or(false), [weakThis = WeakPtr { *this }, callback = WTF::move(callback), browsingContext = browsingContext->isolatedCopy()](Inspector::CommandResult<String>&& stringResult) mutable {
+        CheckedPtr protectedThis = weakThis;
+        if (!protectedThis) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+            return;
+        }
+
+        String realmID = protectedThis->generateRealmIdForBrowsingContext(browsingContext);
         // FIXME: Properly serialize RemoteValue types according to WebDriver BiDi spec.
         // https://bugs.webkit.org/show_bug.cgi?id=301159
 
@@ -493,8 +500,10 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
     session->evaluateBidiScript(topLevelContextHandle, frameHandle, expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, std::nullopt,
         [weakThis = WeakPtr { *this }, callback = WTF::move(callback), browsingContext = browsingContext->isolatedCopy(), expression = expression.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
             CheckedPtr protectedThis = weakThis.get();
-            if (!protectedThis)
+            if (!protectedThis) {
+                callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
                 return;
+            }
             String realmID = protectedThis->generateRealmIdForBrowsingContext(browsingContext);
             protectedThis->finishEvaluateBidiScriptResult(realmID, expression, WTF::move(result), WTF::move(callback));
         });
@@ -564,13 +573,10 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
     if (!optionalBrowsingContext.isEmpty()) {
         contextHandleFilter = optionalBrowsingContext;
 
-        // Only support page contexts in this PR - iframe support will be added later.
-        if (optionalBrowsingContext.startsWith("page-"_s))
-            resolvedPageForContext = session->webPageProxyForHandle(optionalBrowsingContext);
-        else
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
-
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!resolvedPageForContext, WindowNotFound);
+        auto pageAndFrameHandles = session->extractBrowsingContextHandles(optionalBrowsingContext);
+        ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
+        resolvedPageForContext = session->webPageProxyForHandle(pageAndFrameHandles.value().first);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!resolvedPageForContext, FrameNotFound);
     }
 
     // Early short-circuit: if a non-window realm type is requested, return empty (we currently only support window realms).
@@ -751,56 +757,25 @@ void BidiScriptAgent::executePreloadScriptsForContext(const String& browsingCont
 }
 
 
-RefPtr<Inspector::Protocol::BidiScript::RealmInfo> BidiScriptAgent::createRealmInfoForFrame(const FrameInfoData& frameInfo)
+Ref<Inspector::Protocol::BidiScript::RealmInfo> BidiScriptAgent::createProtocolRealmInfo(RealmIdentifier realmIdentifier, const RealmInfo& activeRealm)
 {
-    ASSERT(frameInfo.documentID);
-    RefPtr session = m_session.get();
-    if (!session)
-        return nullptr;
-
-    // Per W3C BiDi spec: "If you can't resolve the navigable (detached doc, bfcache edge),
-    // return null for that settings — do not synthesize partial objects."
-    auto contextHandle = contextHandleForFrame(frameInfo);
-    if (!contextHandle)
-        return nullptr;
-
-    RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
-    if (!frame)
-        return nullptr;
-
-    RealmIdentifier realmIdentifier = generateRealmIdForFrame(frameInfo);
-    String realmIDString = protocolRealmIdentifierString(realmIdentifier);
-    String origin = originStringFromSecurityOriginData(frame->documentSecurityOriginData());
-
     auto realmInfo = Inspector::Protocol::BidiScript::RealmInfo::create()
-        .setRealm(realmIDString)
-        .setOrigin(origin)
-        .setType(Inspector::Protocol::BidiScript::RealmType::Window)
+        .setRealm(protocolRealmIdentifierString(realmIdentifier))
+        .setOrigin(originStringFromSecurityOriginData(activeRealm.origin))
+        .setType(activeRealm.type)
         .release();
 
-    realmInfo->setContext(*contextHandle);
+    if (activeRealm.context)
+        realmInfo->setContext(*activeRealm.context);
+
+    if (!activeRealm.owners.isEmpty()) {
+        auto owners = JSON::ArrayOf<String>::create();
+        for (auto owner : activeRealm.owners)
+            owners->addItem(protocolRealmIdentifierString(owner));
+        realmInfo->setOwners(WTF::move(owners));
+    }
 
     return realmInfo;
-}
-
-RealmIdentifier BidiScriptAgent::generateRealmIdForFrame(const FrameInfoData& frameInfo)
-{
-    auto contextHandle = contextHandleForFrame(frameInfo);
-    if (!contextHandle) {
-        // Fallback: generate a new realm identifier if we can't get context handle.
-        return RealmIdentifier::generate();
-    }
-
-    // Look up existing realm identifier for this browsing context.
-    auto it = m_browsingContextToRealmId.find(*contextHandle);
-    if (it == m_browsingContextToRealmId.end()) {
-        // No realm has been created yet for this context - generate a new identifier.
-        auto newRealmId = RealmIdentifier::generate();
-        m_browsingContextToRealmId.set(*contextHandle, newRealmId);
-        return newRealmId;
-    }
-
-    return it->value;
 }
 
 String BidiScriptAgent::generateRealmIdForBrowsingContext(const String& browsingContext)
@@ -899,18 +874,66 @@ void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& page
     pagesToProcess.removeFirst();
 
     currentPage->getAllFrames([weakThis = WeakPtr { *this }, pagesToProcess = WTF::move(pagesToProcess), optionalRealmType = WTF::move(optionalRealmType), contextHandleFilter = WTF::move(contextHandleFilter), accumulated = WTF::move(accumulated), callback = WTF::move(callback)](std::optional<FrameTreeNodeData>&& frameTree) mutable {
-        CheckedPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+        CheckedPtr protectedThis = weakThis;
+        if (!protectedThis) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
             return;
-        // Collect realms from main frames only (no iframes in this PR).
-        Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>> candidateRealms;
+        }
+        Vector<FrameInfoData> candidateFrames;
         if (frameTree)
-            protectedThis->collectExecutionReadyFrameRealms(*frameTree, candidateRealms, contextHandleFilter, false);
+            protectedThis->collectExecutionReadyFrames(WTF::move(*frameTree), candidateFrames, contextHandleFilter);
 
-        for (auto& realmInfo : borrow(candidateRealms))
-            accumulated.append(WTF::move(realmInfo));
+        RefPtr session = protectedThis->m_session;
+        if (!session) {
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+            return;
+        }
 
-        protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
+        auto candidateRealms = Box<Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>>::create();
+        candidateRealms->grow(candidateFrames.size());
+        Ref aggregator = CallbackAggregator::create([weakThis, pagesToProcess = WTF::move(pagesToProcess), optionalRealmType = WTF::move(optionalRealmType), contextHandleFilter = WTF::move(contextHandleFilter), accumulated = WTF::move(accumulated), callback = WTF::move(callback), candidateRealms] mutable {
+            CheckedPtr protectedThis = weakThis;
+            if (!protectedThis) {
+                callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+                return;
+            }
+
+            for (auto& realmInfo : *candidateRealms)
+                accumulated.append(WTF::move(realmInfo));
+
+            protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
+        });
+
+        size_t index = 0;
+        for (auto& frameInfo : borrow(candidateFrames)) {
+            auto contextHandle = protectedThis->contextHandleForFrame(frameInfo);
+            if (!contextHandle) {
+                ++index;
+                continue;
+            }
+
+            auto pageAndFrameHandles = session->extractBrowsingContextHandles(*contextHandle);
+            if (!pageAndFrameHandles) {
+                ++index;
+                continue;
+            }
+
+            session->getBidiRealmInfo(pageAndFrameHandles.value().first, pageAndFrameHandles.value().second, [weakThis, aggregator, candidateRealms, index, frameIdentifier = frameInfo.frameID](std::optional<RealmIdentifier>&& realmIdentifier) mutable {
+                CheckedPtr protectedThis = weakThis;
+                if (!protectedThis || !realmIdentifier)
+                    return;
+
+                auto activeRealm = protectedThis->m_activeRealms.find(*realmIdentifier);
+                if (activeRealm == protectedThis->m_activeRealms.end()
+                    || activeRealm->value.type != Inspector::Protocol::BidiScript::RealmType::Window
+                    || !activeRealm->value.context
+                    || activeRealm->value.frameIdentifier != frameIdentifier)
+                    return;
+
+                (*candidateRealms)[index] = protectedThis->createProtocolRealmInfo(*realmIdentifier, activeRealm->value);
+            });
+            ++index;
+        }
     });
 }
 
@@ -935,19 +958,18 @@ std::optional<String> BidiScriptAgent::contextHandleForFrame(const FrameInfoData
     if (!session)
         return std::nullopt;
 
-    // FIXME: Add support for iframe contexts.
-    // https://bugs.webkit.org/show_bug.cgi?id=304305
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
-    if (!frame || !frame->isMainFrame())
+    if (!frame)
         return std::nullopt;
 
-    if (RefPtr page = frame->page())
-        return session->handleForWebPageProxy(*page);
+    RefPtr page = frame->page();
+    if (!page || !page->isControlledByAutomation())
+        return std::nullopt;
 
-    return std::nullopt;
+    return session->effectiveHandleForWebFrameProxy(*frame);
 }
 
-void BidiScriptAgent::collectExecutionReadyFrameRealms(const FrameTreeNodeData& frameTree, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes)
+void BidiScriptAgent::collectExecutionReadyFrames(FrameTreeNodeData&& frameTree, Vector<FrameInfoData>& frames, const std::optional<String>& contextHandleFilter)
 {
     // FIXME: Per W3C BiDi spec, when contextHandleFilter is present, we should also include
     // worker realms whose owner set includes the active document of that context.
@@ -958,19 +980,12 @@ void BidiScriptAgent::collectExecutionReadyFrameRealms(const FrameTreeNodeData& 
     if (isFrameExecutionReady(frameTree.info)) {
         auto handle = contextHandleForFrame(frameTree.info);
         bool shouldInclude = !contextHandleFilter || (handle && *handle == *contextHandleFilter);
-        if (shouldInclude) {
-            if (auto realmInfo = createRealmInfoForFrame(frameTree.info))
-                realms.append(realmInfo);
-        }
+        if (shouldInclude)
+            frames.append(WTF::move(frameTree.info));
     }
 
-    // FIXME: The recurseSubframes parameter is currently always called with false since this PR
-    // only supports main frame contexts. When iframe support is added, this will be used to
-    // recursively collect realms from nested browsing contexts (iframes).
-    if (recurseSubframes) {
-        for (const auto& child : borrow(frameTree.children))
-            collectExecutionReadyFrameRealms(child, realms, contextHandleFilter, true);
-    }
+    for (auto& child : borrow(frameTree.children))
+        collectExecutionReadyFrames(WTF::move(child), frames, contextHandleFilter);
 }
 
 void BidiScriptAgent::sendRealmCreatedEvent(RealmIdentifier realmIdentifier, const RealmInfo& realmInfo)

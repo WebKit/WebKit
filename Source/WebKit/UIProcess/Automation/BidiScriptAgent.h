@@ -127,14 +127,13 @@ private:
     void sendRealmDestroyedEvent(RealmIdentifier, const RealmInfo&);
 
     void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
-    void collectExecutionReadyFrameRealms(const FrameTreeNodeData&, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes = true);
+    void collectExecutionReadyFrames(FrameTreeNodeData&&, Vector<FrameInfoData>& frames, const std::optional<String>& contextHandleFilter);
     NODELETE bool isFrameExecutionReady(const FrameInfoData&);
-    RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&);
+    static Ref<Inspector::Protocol::BidiScript::RealmInfo> createProtocolRealmInfo(RealmIdentifier, const RealmInfo&);
     std::optional<RealmIdentifier> registerDedicatedWorkerRealm(const WorkerIdentifier&, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& ownerBrowsingContext, const WebCore::SecurityOriginData&, bool emitCreatedEvent);
     void removeDedicatedWorkerRealm(RealmIdentifier);
     void removeDedicatedWorkerRealmsForOwnerRealm(RealmIdentifier);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
-    RealmIdentifier generateRealmIdForFrame(const FrameInfoData&);
     String generateRealmIdForBrowsingContext(const String& browsingContext);
     static String originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
 
