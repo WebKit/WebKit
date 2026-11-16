@@ -50,6 +50,8 @@ public:
         return adoptRef(*new SearchInputType(element));
     }
 
+    WEBCORE_EXPORT virtual ~SearchInputType();
+
     // PopupMenuClient ref-counting (disambiguating from InputType)
     void ref() const final { InputType::ref(); }
     void deref() const final { InputType::deref(); }

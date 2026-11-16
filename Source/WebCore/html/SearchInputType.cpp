@@ -71,6 +71,8 @@ SearchInputType::SearchInputType(HTMLInputElement& element)
     ASSERT(needsShadowSubtree());
 }
 
+SearchInputType::~SearchInputType() = default;
+
 // PopupMenuClient methods
 void SearchInputType::valueChanged(unsigned listIndex, bool fireEvents)
 {
