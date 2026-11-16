@@ -451,7 +451,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         // we want to strip here because the redirect is cross-origin.
         request.clearHTTPAuthorization();
         request.clearHTTPOrigin();
-    } else {
+    } else if (!client() || client()->shouldUseCredentialStorage(this)) {
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
         if (d->m_user.isEmpty() && d->m_password.isEmpty() && !redirectResponse.isNull()) {
