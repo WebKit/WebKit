@@ -192,6 +192,9 @@ extension WebPage {
         }
 
         /// The process pool to use for the page, used for testing.
+        #if hasAttribute(diagnose)
+        @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally exposes processPool SPI for testing")
+        #endif
         @_spi(Testing)
         public var processPool: WKProcessPool? = nil
 
