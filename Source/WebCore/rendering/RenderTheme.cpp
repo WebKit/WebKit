@@ -450,7 +450,7 @@ StyleAppearance RenderTheme::autoAppearanceForElement(Style::ComputedStyle& styl
 #if PLATFORM(IOS_FAMILY)
         return StyleAppearance::MenulistButton;
 #else
-        return select->usesMenuList() ? StyleAppearance::Menulist : StyleAppearance::Listbox;
+        return select->couldBeNativeDropdownBox() ? StyleAppearance::Menulist : StyleAppearance::Listbox;
 #endif
     }
 

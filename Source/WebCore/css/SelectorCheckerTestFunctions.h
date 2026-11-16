@@ -665,10 +665,10 @@ ALWAYS_INLINE bool matchesSuboptimumPseudoClass(const Element& element)
     return false;
 }
 
-ALWAYS_INLINE bool matchesUsesMenulistPseudoClass(const Element& element)
+ALWAYS_INLINE bool matchesSelectCouldBeNativeDropdownBoxPseudoClass(const Element& element)
 {
     if (auto* select = dynamicDowncast<HTMLSelectElement>(element))
-        return select->usesMenuList();
+        return select->couldBeNativeDropdownBox();
     return false;
 }
 

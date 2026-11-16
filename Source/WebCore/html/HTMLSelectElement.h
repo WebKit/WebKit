@@ -97,7 +97,7 @@ public:
     NODELETE bool isDropdownBox(const Style::ComputedStyle* = nullptr) const;
     NODELETE bool isBaseListBox(const Style::ComputedStyle* = nullptr) const;
 
-    NODELETE bool usesMenuList() const;
+    NODELETE bool couldBeNativeDropdownBox() const;
     NODELETE bool isSingleSelectDropdownBox() const;
     NODELETE bool canHaveBaseAppearance() const;
 
