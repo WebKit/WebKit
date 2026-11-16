@@ -1446,6 +1446,7 @@ void Quirks::setTopDocumentURLForTesting(URL&& url)
     m_topDocumentURLForTesting = WTF::move(url);
     determineRelevantQuirks();
     protect(*m_document)->invalidateCachedCSSParserContext();
+    updateInjectedStyleSheets();
 }
 
 void Quirks::determineRelevantQuirks()
