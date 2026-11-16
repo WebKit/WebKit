@@ -28,6 +28,8 @@
 #include <array>
 #include <wtf/URL.h>
 #include <wtf/text/ASCIILiteral.h>
+#include <wtf/HashMap.h>
+#include <wtf/StdLibExtras.h>
 
 #include "JSBasics.h"
 
@@ -71,6 +73,56 @@ bool isWebPlatformTestURL(const URL& url)
     auto host = url.host();
     auto port = url.port().value_or(0);
     return contains(possibleHosts, host) && contains(possiblePorts, port);
+}
+
+static HashMap<JSGlobalContextRef, WTF::Function<void()>>& pendingRAFCompletions()
+{
+    static NeverDestroyed<HashMap<JSGlobalContextRef, WTF::Function<void()>>> completions;
+    return completions;
+}
+
+static JSValueRef secondRequestAnimationFrameCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    auto& map = pendingRAFCompletions();
+    auto globalContext = JSContextGetGlobalContext(context);
+    auto it = map.find(globalContext);
+    if (it != map.end()) {
+        auto completion = WTF::move(it->value);
+        map.remove(it);
+        completion();
+    }
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef firstRequestAnimationFrameCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // First rAF callback: schedule the second rAF
+    auto globalObject = JSContextGetGlobalObject(context);
+    auto window = objectProperty(context, globalObject, "window");
+    auto secondCallback = JSObjectMakeFunctionWithCallback(context, nullptr, secondRequestAnimationFrameCallback);
+    call(context, window, "requestAnimationFrame", { secondCallback });
+    return JSValueMakeUndefined(context);
+}
+
+void waitForDoubleRequestAnimationFrame(JSGlobalContextRef context, WTF::Function<void()>&& completionHandler)
+{
+    if (!context)
+        return;
+
+    auto& map = pendingRAFCompletions();
+    map.set(context, WTF::move(completionHandler));
+
+    auto globalObject = JSContextGetGlobalObject(context);
+    auto window = objectProperty(context, globalObject, "window");
+    auto firstCallback = JSObjectMakeFunctionWithCallback(context, nullptr, firstRequestAnimationFrameCallback);
+    call(context, window, "requestAnimationFrame", { firstCallback });
+}
+
+void cancelPendingDoubleRequestAnimationFrameWait(JSGlobalContextRef context)
+{
+    if (!context)
+        return;
+    pendingRAFCompletions().remove(context);
 }
 
 }
