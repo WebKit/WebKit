@@ -31,7 +31,6 @@
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "LocalizedStrings.h"
-#include "RenderMeter.h"
 #include "RenderObject.h"
 #include "RenderProgress.h"
 
@@ -42,7 +41,7 @@ using namespace HTMLNames;
 AccessibilityProgressIndicator::AccessibilityProgressIndicator(AXID axID, RenderObject& renderer, AXObjectCache& cache)
     : AccessibilityRenderObject(axID, renderer, cache)
 {
-    AX_ASSERT(is<RenderProgress>(renderer) || is<RenderMeter>(renderer) || is<HTMLProgressElement>(renderer.node()) || is<HTMLMeterElement>(renderer.node()));
+    AX_ASSERT(is<RenderProgress>(renderer) || is<HTMLProgressElement>(renderer.node()) || is<HTMLMeterElement>(renderer.node()));
 }
 
 AccessibilityProgressIndicator::AccessibilityProgressIndicator(AXID axID, Element& element, AXObjectCache& cache)

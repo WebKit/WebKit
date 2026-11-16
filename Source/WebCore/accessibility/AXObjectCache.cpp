@@ -134,7 +134,6 @@
 #include "RenderListBox.h"
 #include "RenderListOutsideMarker.h"
 #include "RenderMathMLOperator.h"
-#include "RenderMeter.h"
 #include "RenderObjectInlines.h"
 #include "RenderProgress.h"
 #include "RenderSVGInlineText.h"
@@ -1139,7 +1138,7 @@ static RenderObjectClass renderObjectClass(RenderObject& renderer)
             return RenderObjectClass::ListBoxOption;
     }
 
-    if (is<RenderProgress>(renderer) || is<RenderMeter>(renderer) || is<HTMLProgressElement>(node) || is<HTMLMeterElement>(node))
+    if (is<RenderProgress>(renderer) || is<HTMLProgressElement>(node) || is<HTMLMeterElement>(node))
         return RenderObjectClass::ProgressIndicator;
 
     if (is<RenderSlider>(renderer))

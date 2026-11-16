@@ -85,19 +85,6 @@ void MeterMac::updateCellStates(const FloatRect& rect, const ControlStyle& style
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-FloatSize MeterMac::sizeForBounds(const FloatRect& bounds, const ControlStyle& style) const
-{
-    auto isVerticalWritingMode = style.states.contains(ControlStyle::State::VerticalWritingMode);
-
-    auto logicalSize = isVerticalWritingMode ? bounds.size().transposedSize() : bounds.size();
-
-    // Makes enough room for cell's intrinsic size.
-    NSSize cellSize = [m_levelIndicatorCell cellSizeForBounds:IntRect({ }, IntSize(logicalSize))];
-    logicalSize = { std::max<float>(logicalSize.width(), cellSize.width), std::max<float>(logicalSize.height(), cellSize.height) };
-
-    return isVerticalWritingMode ? logicalSize.transposedSize() : logicalSize;
-}
-
 void MeterMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);

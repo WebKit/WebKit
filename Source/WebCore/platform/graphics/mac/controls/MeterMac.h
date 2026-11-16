@@ -44,8 +44,6 @@ private:
 
     void updateCellStates(const FloatRect&, const ControlStyle&) override;
 
-    FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&) const override;
-
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
     const RetainPtr<NSLevelIndicatorCell> m_levelIndicatorCell;

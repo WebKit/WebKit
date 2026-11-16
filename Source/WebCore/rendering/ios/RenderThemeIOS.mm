@@ -76,7 +76,6 @@
 #import "RenderButton.h"
 #import "RenderElementInlines.h"
 #import "RenderMenuList.h"
-#import "RenderMeter.h"
 #import "RenderObject.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
@@ -1713,11 +1712,9 @@ bool RenderThemeIOS::paintMeter(const RenderElement& renderer, const PaintInfo& 
         return RenderThemeCocoa::paintMeter(renderer, paintInfo, rect);
 #endif
 
-    auto* renderMeter = dynamicDowncast<RenderMeter>(renderer);
-    if (!renderMeter)
+    RefPtr element = dynamicDowncast<HTMLMeterElement>(renderer.element());
+    if (!element)
         return true;
-
-    RefPtr element = renderMeter->meterElement();
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);

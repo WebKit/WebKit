@@ -76,15 +76,15 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 486x18
               text run at (0,0) width 486: "default -webkit-appearance, thus should use platform theme (only for Mac.)"
           RenderListItem {LI} at (43,21) size 732x19
-            RenderMeter {METER} at (0,1) size 80x17
+            RenderBlock {METER} at (0,1) size 80x17
             RenderText {#text} at (80,0) size 217x18
               text run at (80,0) width 217: " has bar style but should ignore it."
           RenderListItem {LI} at (43,42) size 732x19
-            RenderMeter {METER} at (0,1) size 80x17
+            RenderBlock {METER} at (0,1) size 80x17
             RenderText {#text} at (80,0) size 232x18
               text run at (80,0) width 232: " has value style but should ignore it."
           RenderListItem {LI} at (43,63) size 732x19
-            RenderMeter {METER} at (0,1) size 80x17
+            RenderBlock {METER} at (0,1) size 80x17
             RenderText {#text} at (80,0) size 255x18
               text run at (80,0) width 255: " has both styles but should ignore them."
         RenderBlock {UL} at (3,84) size 778x83
@@ -125,7 +125,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (80,0) size 381x18
               text run at (80,0) width 381: " has \"none\" appearance, should be styled with default style."
           RenderListItem {LI} at (43,21) size 732x19
-            RenderMeter {METER} at (0,1) size 80x17
+            RenderBlock {METER} at (0,1) size 80x17
             RenderText {#text} at (80,0) size 280x18
               text run at (80,0) width 280: " has \"meter\" appearance, should be themed."
       RenderBlock {H2} at (3,432) size 778x19

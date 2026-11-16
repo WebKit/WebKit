@@ -46,7 +46,6 @@ public:
     WEBCORE_EXPORT ControlFactory& controlFactory() const;
     WEBCORE_EXPORT void setOverrideControlFactory(RefPtr<ControlFactory>&&);
 
-    FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&);
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&);
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) const;
 
