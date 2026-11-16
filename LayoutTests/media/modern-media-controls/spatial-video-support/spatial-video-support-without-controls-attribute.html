@@ -1,0 +1,58 @@
+<!-- webkit-test-runner [ SpatialVideoRenderingEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<body>
+<video id="projected" src="../../content/test.mp4" style="width: 320px; height: 240px;" projection="equirectangular"></video>
+<video id="opted-out" src="../../content/test.mp4" style="width: 320px; height: 240px;" projection="none"></video>
+<video id="plain" src="../../content/test.mp4" style="width: 320px; height: 240px;"></video>
+<script type="text/javascript">
+
+description("Testing that a projected video is projected without the <code>controls</code> attribute, and that it gets none of the control chrome. A video that opts out with <code>projection=none</code>, or that has no projection at all, gets no media controls shadow tree.");
+
+window.jsTestIsAsync = true;
+
+const projected = document.getElementById("projected");
+const optedOut = document.getElementById("opted-out");
+const plain = document.getElementById("plain");
+
+function hasMediaControls(media)
+{
+    return !!internals.shadowRoot(media);
+}
+
+function projectionCanvas(media)
+{
+    const shadowRoot = internals.shadowRoot(media);
+    return shadowRoot ? shadowRoot.querySelector("canvas") : null;
+}
+
+function controlChromeChildCount(media)
+{
+    const controls = internals.shadowRoot(media).querySelector(".media-controls");
+    return controls ? controls.children.length : 0;
+}
+
+Promise.all([projected, optedOut, plain].map(media => new Promise(resolve => {
+    media.addEventListener("loadedmetadata", resolve, { once: true });
+}))).then(() => {
+    shouldBeTrue("hasMediaControls(projected)");
+
+    debug("");
+    debug("A video that opts out of projection does not need them:");
+    shouldBeFalse("hasMediaControls(optedOut)");
+
+    debug("");
+    debug("Neither does a video with no projection at all:");
+    shouldBeFalse("hasMediaControls(plain)");
+
+    debug("");
+    debug("The projection is rendered:");
+    shouldBecomeDifferent("projectionCanvas(projected)", "null", () => {
+        debug("");
+        debug("...and none of the control chrome is shown:");
+        shouldBecomeEqual("controlChromeChildCount(projected)", "0", finishJSTest);
+    });
+});
+
+</script>
+</body>

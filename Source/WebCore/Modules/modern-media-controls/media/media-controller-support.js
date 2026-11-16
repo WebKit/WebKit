@@ -35,6 +35,11 @@ class MediaControllerSupport
 
     // Public
 
+    shouldBeEnabled(controlsAvailable)
+    {
+        return controlsAvailable;
+    }
+
     enable()
     {
         for (let eventType of this.mediaEvents)

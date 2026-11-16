@@ -1,0 +1,18 @@
+Testing that MediaController asks each supporting object whether it should be enabled, rather than tying every one of them to the controls being available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+With the controls attribute present, both are enabled:
+PASS controls.visible is true
+PASS chrome.enabled is true
+PASS presentation.enabled is true
+
+Without it the controls are unavailable, and only the one that asked for them is disabled:
+PASS controls.visible is false
+PASS chrome.enabled is false
+PASS presentation.enabled is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

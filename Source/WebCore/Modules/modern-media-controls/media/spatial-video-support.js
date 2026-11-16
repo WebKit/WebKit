@@ -51,6 +51,14 @@ class SpatialVideoSupport extends MediaControllerSupport
         return videoTracks ? [videoTracks] : [];
     }
 
+    shouldBeEnabled(controlsAvailable)
+    {
+        if (controlsAvailable)
+            return true;
+
+        return this.mediaController.media.webkitPresentationMode !== "picture-in-picture";
+    }
+
     enable()
     {
         const host = this.mediaController.host;

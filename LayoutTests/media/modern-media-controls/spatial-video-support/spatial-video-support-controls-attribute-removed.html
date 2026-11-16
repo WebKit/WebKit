@@ -1,0 +1,48 @@
+<!-- webkit-test-runner [ SpatialVideoRenderingEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" projection="equirectangular" controls></video>
+<script type="text/javascript">
+
+description("Testing that removing the <code>controls</code> attribute from a projected video does not stop it being projected. The renderer's canvas lives alongside the controls in the shadow tree, but it presents the video rather than being part of the control chrome.");
+
+window.jsTestIsAsync = true;
+
+const video = document.querySelector("video");
+
+function projectionCanvas()
+{
+    const shadowRoot = internals.shadowRoot(video);
+    return shadowRoot ? shadowRoot.querySelector("canvas") : null;
+}
+
+// InlineMediaControls deliberately does not apply the "visible" property to the DOM, so that
+// placards can show while the controls are hidden. Unavailable controls are left with no children
+// instead, so that is what "no chrome" means here.
+function controlChromeChildCount()
+{
+    const controls = internals.shadowRoot(video).querySelector(".media-controls");
+    return controls ? controls.children.length : 0;
+}
+
+video.addEventListener("loadedmetadata", () => {
+    shouldBecomeDifferent("projectionCanvas()", "null", () => {
+        debug("The renderer is running while the controls are shown.");
+
+        debug("");
+        debug("Removing the controls attribute takes the control chrome away:");
+        video.removeAttribute("controls");
+        shouldBecomeEqual("controlChromeChildCount()", "0", () => {
+            debug("");
+            debug("...but the projection is still being rendered:");
+            shouldBeTrue("!!projectionCanvas()");
+
+            video.remove();
+            finishJSTest();
+        });
+    });
+}, { once: true });
+
+</script>
+</body>
