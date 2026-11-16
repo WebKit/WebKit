@@ -53,6 +53,14 @@ TEST(MIMESniffer, MIMETypes)
 
     constexpr std::array<const uint8_t, 12> aviData = { 0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x41, 0x56, 0x49, 0x20 };
     ASSERT_EQ(MIMESniffer::getMIMETypeFromContent({ aviData.data(), aviData.size() }), String("video/avi"_s));
+
+    // Legacy Audible (.aa) - Magic Cookie: 0x57 0x90 0x75 0x36 0x35 0x34 0x31 0x32
+    constexpr std::array<const uint8_t, 12> aaData = { 0x00, 0x00, 0x00, 0x20, 0x57, 0x90, 0x75, 0x36, 0x35, 0x34, 0x31, 0x32 };
+    ASSERT_EQ(MIMESniffer::getMIMETypeFromContent({ aaData.data(), aaData.size() }), String("audio/audible"_s));
+
+    // Modern Audible (.aax) - ISO-BMFF with 'aax ' major brand
+    constexpr std::array<const uint8_t, 12> aaxData = { 0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70, 0x61, 0x61, 0x78, 0x20 };
+    ASSERT_EQ(MIMESniffer::getMIMETypeFromContent({ aaxData.data(), aaxData.size() }), String("audio/vnd.audible.aax"_s));
 }
 
 TEST(MIMESniffer, WebMSnifferDoesNotReadPastEnd)
