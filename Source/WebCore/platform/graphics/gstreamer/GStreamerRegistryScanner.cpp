@@ -186,10 +186,6 @@ GStreamerRegistryScanner::ElementFactories::ElementFactories(OptionSet<ElementFa
         videoEncoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_ENCODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
     if (types.contains(Type::Muxer))
         muxerFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_MUXER, GST_RANK_MARGINAL);
-    if (types.contains(Type::RtpPayloader))
-        rtpPayloaderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_PAYLOADER, GST_RANK_MARGINAL);
-    if (types.contains(Type::RtpDepayloader))
-        rtpDepayloaderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DEPAYLOADER, GST_RANK_MARGINAL);
     if (types.contains(Type::Decryptor))
         decryptorFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECRYPTOR, GST_RANK_MARGINAL);
     if (types.contains(Type::CaptionEncoder))
@@ -206,8 +202,6 @@ GStreamerRegistryScanner::ElementFactories::~ElementFactories()
     gst_plugin_feature_list_free(audioEncoderFactories);
     gst_plugin_feature_list_free(videoEncoderFactories);
     gst_plugin_feature_list_free(muxerFactories);
-    gst_plugin_feature_list_free(rtpPayloaderFactories);
-    gst_plugin_feature_list_free(rtpDepayloaderFactories);
     gst_plugin_feature_list_free(decryptorFactories);
     gst_plugin_feature_list_free(captionEncoderFactories);
 }
@@ -232,10 +226,6 @@ ASCIILiteral GStreamerRegistryScanner::ElementFactories::elementFactoryTypeToStr
         return "video encoder"_s;
     case Type::Muxer:
         return "muxer"_s;
-    case Type::RtpPayloader:
-        return "RTP payloader"_s;
-    case Type::RtpDepayloader:
-        return "RTP depayloader"_s;
     case Type::Decryptor:
         return "Decryptor"_s;
     case Type::CaptionEncoder:
@@ -267,10 +257,6 @@ GList* GStreamerRegistryScanner::ElementFactories::factory(GStreamerRegistryScan
         return videoEncoderFactories;
     case GStreamerRegistryScanner::ElementFactories::Type::Muxer:
         return muxerFactories;
-    case GStreamerRegistryScanner::ElementFactories::Type::RtpPayloader:
-        return rtpPayloaderFactories;
-    case GStreamerRegistryScanner::ElementFactories::Type::RtpDepayloader:
-        return rtpDepayloaderFactories;
     case GStreamerRegistryScanner::ElementFactories::Type::Decryptor:
         return decryptorFactories;
     case GStreamerRegistryScanner::ElementFactories::Type::CaptionEncoder:
@@ -329,7 +315,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     RELEASE_ASSERT(!gst_caps_is_any(caps.get()));
 
     GstPadDirection padDirection = GST_PAD_SINK;
-    if (factoryType == Type::AudioEncoder || factoryType == Type::VideoEncoder || factoryType == Type::Muxer || factoryType == Type::RtpDepayloader || factoryType == Type::CaptionEncoder)
+    if (factoryType == Type::AudioEncoder || factoryType == Type::VideoEncoder || factoryType == Type::Muxer || factoryType == Type::CaptionEncoder)
         padDirection = GST_PAD_SRC;
 
     // We can't use gst_element_factory_list_filter here because it would allow-list elements with

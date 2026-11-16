@@ -24,7 +24,6 @@
 #include "GStreamerCommon.h"
 #include "PlatformMediaConfiguration.h"
 #include "MediaPlayerEnums.h"
-#include "RTCRtpCapabilities.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -116,11 +115,9 @@ protected:
             AudioEncoder = 1 << 5,
             VideoEncoder = 1 << 6,
             Muxer        = 1 << 7,
-            RtpPayloader = 1 << 8,
-            RtpDepayloader = 1 << 9,
-            Decryptor    = 1 << 10,
-            CaptionEncoder = 1 << 11,
-            All          = (1 << 11) - 1
+            Decryptor    = 1 << 8,
+            CaptionEncoder = 1 << 9,
+            All          = (1 << 9) - 1
         };
 
         explicit ElementFactories(OptionSet<Type>);
@@ -143,8 +140,6 @@ protected:
         GList* audioEncoderFactories { nullptr };
         GList* videoEncoderFactories { nullptr };
         GList* muxerFactories { nullptr };
-        GList* rtpPayloaderFactories { nullptr };
-        GList* rtpDepayloaderFactories { nullptr };
         GList* decryptorFactories { nullptr };
         GList* captionEncoderFactories { nullptr };
     };
