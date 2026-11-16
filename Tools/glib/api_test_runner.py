@@ -113,12 +113,25 @@ class TestRunner(object):
         test_dir_prefix_len = len(self._test_programs_base_dir()) + 1
         return (path[test_dir_prefix_len:] for path in test_paths)
 
+    def _resolve_test_program(self, test):
+        # Test binaries to run can be specified by the bare name or by using a path to the binary (relative or full)
+        if os.path.exists(test):
+            return test
+        base_dir = self._test_programs_base_dir()
+        candidate = os.path.join(base_dir, test)
+        if os.path.exists(candidate):
+            return candidate
+        if os.sep not in test and os.path.isdir(base_dir):
+            for entry in sorted(os.listdir(base_dir)):
+                nested = os.path.join(base_dir, entry, test)
+                if os.path.isfile(nested) and os.access(nested, os.X_OK):
+                    return nested
+        return candidate
+
     def _get_tests(self, requested_test_list):
         tests = []
         for test in requested_test_list:
-            test = self._binary_and_subtest(test)[0]
-            if not os.path.exists(test):
-                test = os.path.join(self._test_programs_base_dir(), test)
+            test = self._resolve_test_program(self._binary_and_subtest(test)[0])
             if os.path.isdir(test):
                 tests.extend(self._get_tests_from_dir(test))
             elif os.path.isfile(test) and os.access(test, os.X_OK):
@@ -367,6 +380,16 @@ class TestRunner(object):
         separator = '.' if self.is_google_test(test_path) else ':'
         return f'{short_name}{separator}{test_case}'
 
+    def _generate_test_list_for_json_output(self, tests):
+        test_list = []
+        for test in tests:
+            for test_case in tests[test]:
+                # Report the same name used for results.webkit.org, so that consumers of this
+                # file (the EWS) can look the test up there and pass it back on the command line.
+                # FIXME: get output from failed tests
+                test_list.append({"name": self._get_test_name_for_upload(test, test_case), "output": None})
+        return test_list
+
     def _binary_and_subtest(self, test_name):
         # Accept both the "<binary>:<subtest>" (GLib) and "<binary>.<case>"
         # (Google Test) forms. Split the dotted form only when the bare name is
@@ -378,12 +401,17 @@ class TestRunner(object):
             return tuple(test_name.split('.', 1))
         return test_name, None
 
+    def _canonical_binary_name(self, test_name):
+        # Drop the base directory and any port-specific subdirectory so that the prefixed
+        # ("WPE/TestDownloads") and bare ("TestDownloads") spellings compare equal.
+        return os.path.basename(self._get_test_short_name(test_name))
+
     def _getsubtests_to_run_for_test(self, requested_test_name):
         subtests_to_run = []
-        requested_test_name = self._get_test_short_name(requested_test_name)
+        requested_test_name = self._canonical_binary_name(requested_test_name)
         for test_name in self._initial_test_list:
             test_name, subtest_name = self._binary_and_subtest(test_name)
-            if requested_test_name == self._get_test_short_name(test_name):
+            if requested_test_name == self._canonical_binary_name(test_name):
                 if subtest_name:
                     subtests_to_run.append(subtest_name)
                 else:
@@ -518,21 +546,11 @@ class TestRunner(object):
         report(timed_out_tests, "timeouts", self._test_programs_base_dir())
         report(passed_tests, "passes", self._test_programs_base_dir())
 
-        def generate_test_list_for_json_output(tests):
-            test_list = []
-            for test in tests:
-                base_name = self._get_test_short_name(test)
-                for test_case in tests[test]:
-                    test_name = "%s:%s" % (base_name, test_case)
-                    # FIXME: get output from failed tests
-                    test_list.append({"name": test_name, "output": None})
-            return test_list
-
         if self._options.json_output:
             result_dictionary = {}
-            result_dictionary['Failed'] = generate_test_list_for_json_output(failed_tests)
-            result_dictionary['Crashed'] = generate_test_list_for_json_output(crashed_tests)
-            result_dictionary['Timedout'] = generate_test_list_for_json_output(timed_out_tests)
+            result_dictionary['Failed'] = self._generate_test_list_for_json_output(failed_tests)
+            result_dictionary['Crashed'] = self._generate_test_list_for_json_output(crashed_tests)
+            result_dictionary['Timedout'] = self._generate_test_list_for_json_output(timed_out_tests)
             self._port.host.filesystem.write_text_file(self._options.json_output, json.dumps(result_dictionary, indent=4))
 
         if self._options.report_urls:
