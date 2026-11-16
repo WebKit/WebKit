@@ -1,0 +1,76 @@
+<!doctype HTML>
+<html>
+<head>
+    <title>Test :seeking pseudo-class</title>
+    <style>
+        #subject {
+            background-color: red;
+        }
+        #subject:has(:seeking) {
+            background-color: green;
+        }
+    </style>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "content/test")');
+        await waitFor(video, 'canplay');
+
+        consoleWrite('<br>* :seeking does not match before any seek is started.');
+        testExpected('video.seeking', false);
+        testExpected('document.querySelector("video:seeking")', null);
+        testExpected('document.querySelector("video:not(:seeking)")', video);
+        testExpected('getComputedStyle(subject).backgroundColor', "rgb(255, 0, 0)");
+
+        consoleWrite('<br>* Starting a seek matches :seeking synchronously.');
+        run('video.currentTime = 0.5');
+        testExpected('video.seeking', true);
+        testExpected('document.querySelector("video:seeking")', video);
+        testExpected('document.querySelector("video:not(:seeking)")', null);
+        testExpected('getComputedStyle(subject).backgroundColor', "rgb(0, 128, 0)");
+
+        await waitFor(video, 'seeking');
+        testExpected('video.seeking', true);
+        testExpected('document.querySelector("video:seeking")', video);
+
+        consoleWrite('<br>* Finishing the seek stops matching :seeking.');
+        await waitFor(video, 'seeked');
+        testExpected('video.seeking', false);
+        testExpected('document.querySelector("video:seeking")', null);
+        testExpected('document.querySelector("video:not(:seeking)")', video);
+        testExpected('getComputedStyle(subject).backgroundColor', "rgb(255, 0, 0)");
+
+        consoleWrite('<br>* :seeking is independent of :playing and :paused.');
+        run('video.play()');
+        await waitFor(video, 'playing');
+        testExpected('document.querySelector("video:playing")', video);
+        testExpected('document.querySelector("video:seeking")', null);
+        run('video.currentTime = 0.2');
+        testExpected('document.querySelector("video:seeking")', video);
+        testExpected('document.querySelector("video:playing")', video);
+        testExpected('document.querySelector("video:paused")', null);
+        await waitFor(video, 'seeked');
+        testExpected('document.querySelector("video:seeking")', null);
+
+        consoleWrite('<br>* Pausing while seeking leaves :seeking matching.');
+        run('video.currentTime = 0.4');
+        testExpected('document.querySelector("video:seeking")', video);
+        run('video.pause()');
+        testExpected('document.querySelector("video:seeking")', video);
+        testExpected('document.querySelector("video:paused")', video);
+        await waitFor(video, 'seeked');
+        testExpected('document.querySelector("video:seeking")', null);
+        testExpected('getComputedStyle(subject).backgroundColor', "rgb(255, 0, 0)");
+
+        endTest();
+    });
+    </script>
+<head>
+<body>
+    <div id="subject">
+        <video></video>
+    </div>
+</body>
+</html>
