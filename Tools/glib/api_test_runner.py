@@ -228,7 +228,7 @@ class TestRunner(object):
             if self.is_wpe_platform_test(test_program):
                 # WPE Platform tests can run without swrast since nothing is rendered.
                 env = dict(env)
-                env.pop('LIBGL_ALWAYS_SOFTWARE')
+                env.pop('LIBGL_ALWAYS_SOFTWARE', None)
 
         def is_slow_test(test, subtest):
             return self._expectations.is_slow(test, subtest)
