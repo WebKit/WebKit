@@ -793,6 +793,7 @@ sub get_function_line_ranges_for_cpp($$)
     my $in_parentheses = 0;
     my $in_test_declaration = 0;
     my $quotation_mark;
+    my $raw_string_terminator;
     my $in_braces = 0;
     my $in_toplevel_array_brace = 0;
     my $brace_start = 0;
@@ -819,6 +820,12 @@ sub get_function_line_ranges_for_cpp($$)
     my @all_namespaces;
 
     while (<$file_handle>) {
+        # Handle continued raw string literal.
+        if (defined $raw_string_terminator) {
+            next unless s-.*?\Q$raw_string_terminator\E--;
+            undef $raw_string_terminator;
+        }
+
         # Handle continued quoted string.
         if ($quotation_mark) {
             if (!s-([^\\]|\\.)*$quotation_mark--) {
@@ -847,6 +854,19 @@ sub get_function_line_ranges_for_cpp($$)
         if (/^\s*\#/) {
             $in_macro = 1 if /^([^\\]|\\.)*\\$/;
             next;
+        }
+
+        # Handle raw string literals, e.g. R"js( ... )js". The text between the delimiters
+        # is literal, so it can hold quotes, comment markers and unbalanced braces. Strip
+        # them before the comment and quote handling below, which would otherwise take a
+        # // inside the literal for a comment and its braces for code.
+        while (m-R"([^("\s\\]{0,16})\(-) {
+            my $delimiter = $1;
+            my $terminator = ")$delimiter\"";
+            next if s-R"\Q$delimiter\E\(.*?\Q$terminator\E--;
+            s-R"\Q$delimiter\E\(.*--;
+            $raw_string_terminator = $terminator;
+            last;
         }
 
         # Handle comments and quoted text.

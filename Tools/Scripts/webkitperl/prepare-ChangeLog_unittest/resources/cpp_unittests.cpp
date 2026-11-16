@@ -426,3 +426,43 @@ namespace Foo {
         return 0xc0defefe;
     }
 }
+
+namespace RawString {
+
+    // A raw string spanning several lines, holding text with unbalanced braces,
+    // parentheses, quotes and comment markers. https://webkit.org/b/321581
+    static const char* multiLineScript = R"js(function unbalanced() {
+        window.x = "}";
+        window.y = '('; // a comment inside the literal
+        return window.x + window.y;
+    })js";
+
+    void afterMultiLineRawString()
+    {
+        return;
+    }
+
+    // Same, with an empty delimiter.
+    static const char* emptyDelimiter = R"(} ) " /* not a comment */)";
+
+    void afterEmptyDelimiterRawString()
+    {
+        return;
+    }
+
+    // A single-line raw string holding a URL, so the // must not start a comment.
+    static const char* url = R"js(https://webkit.org/b/321581)js";
+
+    void afterSingleLineRawString()
+    {
+        return;
+    }
+
+    // Two raw strings on one line.
+    static const char* pair[] = { R"({)", R"js(})js" };
+
+    void afterTwoRawStringsOnOneLine()
+    {
+        return;
+    }
+}
