@@ -1,0 +1,23 @@
+
+PASS AES-CBC with a 128-bit key rejects 0-byte ciphertext with OperationError
+PASS AES-CBC with a 128-bit key rejects 1-byte ciphertext with OperationError
+PASS AES-CBC with a 128-bit key rejects 15-byte ciphertext with OperationError
+PASS AES-CBC with a 128-bit key rejects 17-byte ciphertext with OperationError
+PASS AES-CBC with a 128-bit key rejects 31-byte ciphertext with OperationError
+PASS AES-CBC with a 128-bit key rejects 33-byte ciphertext with OperationError
+PASS AES-CBC with a 128-bit key decrypts a padded empty message
+PASS AES-CBC with a 192-bit key rejects 0-byte ciphertext with OperationError
+PASS AES-CBC with a 192-bit key rejects 1-byte ciphertext with OperationError
+PASS AES-CBC with a 192-bit key rejects 15-byte ciphertext with OperationError
+PASS AES-CBC with a 192-bit key rejects 17-byte ciphertext with OperationError
+PASS AES-CBC with a 192-bit key rejects 31-byte ciphertext with OperationError
+PASS AES-CBC with a 192-bit key rejects 33-byte ciphertext with OperationError
+PASS AES-CBC with a 192-bit key decrypts a padded empty message
+PASS AES-CBC with a 256-bit key rejects 0-byte ciphertext with OperationError
+PASS AES-CBC with a 256-bit key rejects 1-byte ciphertext with OperationError
+PASS AES-CBC with a 256-bit key rejects 15-byte ciphertext with OperationError
+PASS AES-CBC with a 256-bit key rejects 17-byte ciphertext with OperationError
+PASS AES-CBC with a 256-bit key rejects 31-byte ciphertext with OperationError
+PASS AES-CBC with a 256-bit key rejects 33-byte ciphertext with OperationError
+PASS AES-CBC with a 256-bit key decrypts a padded empty message
+
