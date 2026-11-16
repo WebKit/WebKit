@@ -284,7 +284,9 @@ static String sandboxDirectory(WTF::AuxiliaryProcessType processType, const Stri
 
 static String sandboxFilePath(const String& directoryPath)
 {
-    return makeString(directoryPath, "/CompiledSandbox"_s);
+    // The cached header contains paths with the user directory suffix, which starts with the bundle identifier,
+    // so each process variant (such as EnhancedSecurity WebContent) needs its own file.
+    return makeString(directoryPath, "/CompiledSandbox-"_s, protect([[NSBundle mainBundle] bundleIdentifier]).get());
 }
 
 static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
