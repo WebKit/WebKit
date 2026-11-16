@@ -256,9 +256,6 @@
         "subtests": {
             "/webkit/WebKitPolicyClient/autoplay-policy": {
                 "expected": {"all": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/222091"}}
-            },
-            "/webkit/WebKitPolicyClient/new-window-policy": {
-                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/281812"}}
             }
         }
     },
@@ -289,9 +286,6 @@
     },
     "TestWebProcessExtensions": {
         "subtests": {
-            "/webkit/WebKitWebProcessExtension/dom-document-title": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"]}}
-            },
             "/webkit/WebKitWebProcessExtension/page-id": {
                 "expected": {
                     "all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/264505"},
@@ -333,16 +327,6 @@
         "subtests": {
             "/webkit/WebKitWebView/file-chooser-request": {
                 "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/279352"}}
-            },
-            "/webkit/WebKitWebView/javascript-dialogs": {
-                "expected": {"gtk@Debug": {"status": ["FAIL", "PASS"]}}
-            }
-        }
-    },
-    "TestWebsiteData": {
-        "subtests": {
-            "/webkit/WebKitWebsiteData/configuration": {
-                "expected": {"all" : { "status": ["PASS", "FAIL", "TIMEOUT"], "bug": "webkit.org/b/301570"}}
             }
         }
     },
