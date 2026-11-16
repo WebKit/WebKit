@@ -51,6 +51,7 @@ GOOGLE_TEST_PROGRAMS_BY_DIRECTORY = {
     "WebKit": "TestWebKit",
 }
 GOOGLE_TEST_RE = re.compile(r'\bTEST(?:_F)?\s*\(\s*(\w+)\s*,\s*(\w+)\s*\)')
+GLIB_TEST_PATH_RE = re.compile(r'^(?:# )?(/\S+)$', re.MULTILINE)
 
 def port_options(options):
     port_options = optparse.Values()
@@ -229,17 +230,32 @@ class TestRunner(object):
     def _use_wpe_legacy_api(self):
         return hasattr(self._options, 'wpe_legacy_api') and self._options.wpe_legacy_api
 
+    def _glib_test_env(self, test_program):
+        if self.is_webxr_test(test_program):
+            return self._monado_env | self._test_env
+        env = self._weston_env if self.is_wpe_platform_wayland_test(test_program) else self._test_env
+        if self.is_wpe_platform_test(test_program):
+            # WPE Platform tests can run without swrast since nothing is rendered.
+            env = dict(env)
+            env.pop('LIBGL_ALWAYS_SOFTWARE', None)
+        return env
+
+    def _get_tests_from_glib_test_program(self, test_program):
+        command = [test_program, '-l']
+        if self._use_wpe_legacy_api():
+            command.append('--wpe-legacy-api')
+        try:
+            output = subprocess.check_output(command, env=self._glib_test_env(test_program)).decode('utf-8')
+        except subprocess.CalledProcessError:
+            sys.stderr.write("ERROR: could not list available tests for binary %s.\n" % (test_program))
+            sys.stderr.flush()
+            sys.exit(1)
+        return GLIB_TEST_PATH_RE.findall(output)
+
     def _run_test_glib(self, test_program, subtests, skipped_test_cases):
         timeout = self._timeout
         wpe_legacy_api = self._use_wpe_legacy_api()
-        if self.is_webxr_test(test_program):
-            env = self._monado_env | self._test_env
-        else:
-            env = self._weston_env if self.is_wpe_platform_wayland_test(test_program) else self._test_env
-            if self.is_wpe_platform_test(test_program):
-                # WPE Platform tests can run without swrast since nothing is rendered.
-                env = dict(env)
-                env.pop('LIBGL_ALWAYS_SOFTWARE', None)
+        env = self._glib_test_env(test_program)
 
         def is_slow_test(test, subtest):
             return self._expectations.is_slow(test, subtest)
@@ -465,7 +481,24 @@ class TestRunner(object):
             old_subtests, new_subtests = old_entry.get('subtests', {}), new_entry.get('subtests', {})
             changed.extend(f'{test}:{subtest}' for subtest in sorted(set(old_subtests) | set(new_subtests))
                            if port_expected(old_subtests.get(subtest, {})) != port_expected(new_subtests.get(subtest, {})))
-        return changed
+        available_subtests = {}
+        return [test for test in changed if self._is_available_test(test, available_subtests)]
+
+    def _is_available_test(self, test, available_subtests):
+        test_name, subtest = self._binary_and_subtest(test)
+        test_program = self._resolve_test_program(test_name)
+        if not os.path.isfile(test_program) or not os.access(test_program, os.X_OK):
+            return False
+        if subtest is None:
+            return True
+        if test_program not in available_subtests:
+            if self.is_google_test(test_program):
+                available_subtests[test_program] = set(self._get_tests_from_google_test_suite(test_program, []))
+            elif self.is_glib_test(test_program):
+                available_subtests[test_program] = set(self._get_tests_from_glib_test_program(test_program))
+            else:
+                available_subtests[test_program] = set()
+        return subtest in available_subtests[test_program]
 
     def _changed_source_tests(self, path):
         test_name = os.path.splitext(os.path.basename(path))[0]
