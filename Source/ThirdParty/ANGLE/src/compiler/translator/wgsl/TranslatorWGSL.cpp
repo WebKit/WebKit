@@ -89,6 +89,18 @@ struct OperatorInfo
     bool IsSymbolicOperator() const { return opName && !std::isalnum(opName[0]); }
 };
 
+// Returns the address space of a pointer to the value modified by an assignment, increment or
+// decrement node.
+WgslPointerAddressSpace GetAddressSpaceOfModifiedValue(TIntermNode *assignmentOrIncrement)
+{
+    if (TIntermUnary *unary = assignmentOrIncrement->getAsUnaryNode())
+    {
+        return GetWgslAddressSpaceForPointer(unary->getOperand());
+    }
+    ASSERT(assignmentOrIncrement->getAsBinaryNode());
+    return GetWgslAddressSpaceForPointer(assignmentOrIncrement->getAsBinaryNode()->getLeft());
+}
+
 // When emitting a list of statements, this determines whether a semicolon follows the statement.
 bool RequiresSemicolonTerminator(TIntermNode &node)
 {
@@ -558,7 +570,9 @@ OperatorInfo OutputWGSLTraverser::useOperatorAndGetInfo(TIntermNode *current,
             }
             else
             {
-                return OperatorInfo{nullptr, mPrelude->assign(*argType0, *argType1, op)};
+                return OperatorInfo{nullptr,
+                                    mPrelude->assign(*argType0, *argType1, op,
+                                                     GetAddressSpaceOfModifiedValue(current))};
             }
 
         case TOperator::EOpAdd:
@@ -637,7 +651,8 @@ OperatorInfo OutputWGSLTraverser::useOperatorAndGetInfo(TIntermNode *current,
             }
             else
             {
-                return OperatorInfo{"", mPrelude->postIncrement(*argType0)};
+                return OperatorInfo{
+                    "", mPrelude->postIncrement(*argType0, GetAddressSpaceOfModifiedValue(current))};
             }
         case TOperator::EOpPostDecrement:
             if (isStatement(current) && argType0->isScalarInt())
@@ -646,7 +661,8 @@ OperatorInfo OutputWGSLTraverser::useOperatorAndGetInfo(TIntermNode *current,
             }
             else
             {
-                return OperatorInfo{"", mPrelude->postDecrement(*argType0)};
+                return OperatorInfo{
+                    "", mPrelude->postDecrement(*argType0, GetAddressSpaceOfModifiedValue(current))};
             }
         // NOTE: ++ and -- can only be postfix unary operators in WGSL. If the current expression is
         // a statement and is a scalar integer, just use the postfix operator, otherwise use a
@@ -658,7 +674,8 @@ OperatorInfo OutputWGSLTraverser::useOperatorAndGetInfo(TIntermNode *current,
             }
             else
             {
-                return OperatorInfo{"", mPrelude->preIncrement(*argType0)};
+                return OperatorInfo{
+                    "", mPrelude->preIncrement(*argType0, GetAddressSpaceOfModifiedValue(current))};
             }
         case TOperator::EOpPreDecrement:
             if (isStatement(current) && argType0->isScalarInt())
@@ -667,7 +684,8 @@ OperatorInfo OutputWGSLTraverser::useOperatorAndGetInfo(TIntermNode *current,
             }
             else
             {
-                return OperatorInfo{"", mPrelude->preDecrement(*argType0)};
+                return OperatorInfo{
+                    "", mPrelude->preDecrement(*argType0, GetAddressSpaceOfModifiedValue(current))};
             }
         case TOperator::EOpVectorTimesScalar:
             return {"*"};
@@ -2427,8 +2445,8 @@ bool OutputWGSLTraverser::visitDeclaration(Visit, TIntermDeclaration *declNode)
             {
                 mIsActuallyOfPointerType.insert(leftSymbolNode->uniqueId());
 
-                evdConfig.emitAsPointer = GetWgslAddressSpaceForPointer(
-                    FindRootVariable(valueNode->getAsAggregate()->getChildNode(0))->getType());
+                evdConfig.emitAsPointer =
+                    GetWgslAddressSpaceForPointer(valueNode->getAsAggregate()->getChildNode(0));
             }
         }
 

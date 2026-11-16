@@ -13,6 +13,7 @@
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/Types.h"
+#include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -369,9 +370,12 @@ GlobalVars FindGlobalVars(TIntermBlock *root)
     return globals;
 }
 
-WgslPointerAddressSpace GetWgslAddressSpaceForPointer(const TType &type)
+WgslPointerAddressSpace GetWgslAddressSpaceForPointer(TIntermNode *pointee)
 {
-    switch (type.getQualifier())
+    // The address space is determined by the variable at the root of the access chain: indexing,
+    // field selection and swizzle nodes are always EvqTemporary, even when they access a
+    // module-scope variable.
+    switch (FindRootVariable(pointee)->getType().getQualifier())
     {
         case EvqTemporary:
         // NOTE: As of Sept 2025, parameters are immutable in WGSL (and are handled by an AST pass

@@ -11,6 +11,7 @@
 #include "compiler/translator/InfoSink.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/Operator_autogen.h"
+#include "compiler/translator/wgsl/Utils.h"
 
 namespace sh
 {
@@ -23,12 +24,21 @@ struct WGSLWrapperFunction
 class WGSLProgramPrelude
 {
   public:
-    WGSLWrapperFunction preIncrement(const TType &preIncrementedType);
-    WGSLWrapperFunction preDecrement(const TType &preDecrementedType);
-    WGSLWrapperFunction postIncrement(const TType &postIncrementedType);
-    WGSLWrapperFunction postDecrement(const TType &postDecrementedType);
+    // The wrapper functions take a pointer to the modified value, in the address space of the
+    // variable that contains the value.
+    WGSLWrapperFunction preIncrement(const TType &preIncrementedType,
+                                     WgslPointerAddressSpace addressSpace);
+    WGSLWrapperFunction preDecrement(const TType &preDecrementedType,
+                                     WgslPointerAddressSpace addressSpace);
+    WGSLWrapperFunction postIncrement(const TType &postIncrementedType,
+                                      WgslPointerAddressSpace addressSpace);
+    WGSLWrapperFunction postDecrement(const TType &postDecrementedType,
+                                      WgslPointerAddressSpace addressSpace);
 
-    WGSLWrapperFunction assign(const TType &dest, const TType &src, TOperator op);
+    WGSLWrapperFunction assign(const TType &dest,
+                               const TType &src,
+                               TOperator op,
+                               WgslPointerAddressSpace addressSpace);
 
     void outputPrelude(TInfoSinkBase &sink);
 

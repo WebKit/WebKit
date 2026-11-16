@@ -79,7 +79,8 @@ enum class WgslPointerAddressSpace
     Function
 };
 
-WgslPointerAddressSpace GetWgslAddressSpaceForPointer(const TType &type);
+// Returns the address space of a pointer to the l-value `pointee`.
+WgslPointerAddressSpace GetWgslAddressSpaceForPointer(TIntermNode *pointee);
 ImmutableString StringForWgslPointerAddressSpace(WgslPointerAddressSpace as);
 
 }  // namespace sh
