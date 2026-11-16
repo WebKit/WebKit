@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CoordinatedPlatformLayer.h"
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER)
 #include "CoordinatedAnimatedBackingStoreClient.h"
 #include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedImageBackingStore.h"
@@ -38,16 +38,8 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayerCoordinated.h"
 #include "NativeImage.h"
-#include <wtf/MainThread.h>
-
-#if USE(TEXTURE_MAPPER)
-#include "CoordinatedBackingStore.h"
-#include "TextureMapperLayer.h"
-#endif
-
-#if USE(SKIA)
 #include "SkiaCompositingLayer.h"
-#endif
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -64,9 +56,7 @@ Ref<CoordinatedPlatformLayer> CoordinatedPlatformLayer::create()
 CoordinatedPlatformLayer::CoordinatedPlatformLayer(Client* client)
     : m_client(client)
     , m_id(PlatformLayerIdentifier::generate())
-#if USE(SKIA)
     , m_threadSafeGrContext(m_client ? m_client->tileManager().threadSafeGrContext() : nullptr)
-#endif
 {
     ASSERT(isMainThread());
 }
@@ -105,23 +95,6 @@ CoordinatedTileManager& CoordinatedPlatformLayer::tileManager() const
     return m_client->tileManager();
 }
 
-#if USE(TEXTURE_MAPPER)
-TextureMapperLayer& CoordinatedPlatformLayer::ensureTarget()
-{
-    ASSERT(!isMainThread());
-    if (!m_target) {
-        m_target = makeUnique<TextureMapperLayer>();
-#if ENABLE(DAMAGE_TRACKING)
-        m_target->setDamagePropagationEnabled(m_damagePropagationEnabled);
-        if (m_damagePropagationEnabled)
-            m_target->setDamageInGlobalCoordinateSpace(m_damageInGlobalCoordinateSpace);
-#endif
-    }
-    return *m_target;
-}
-
-#else
-
 SkiaCompositingLayer& CoordinatedPlatformLayer::ensureTarget()
 {
     ASSERT(!isMainThread());
@@ -132,7 +105,6 @@ SkiaCompositingLayer& CoordinatedPlatformLayer::ensureTarget()
 #endif
     return *m_target;
 }
-#endif
 
 static bool shouldReleaseBuffer(CoordinatedPlatformLayerBuffer* buffer)
 {
@@ -152,18 +124,9 @@ void CoordinatedPlatformLayer::invalidateTarget()
     ASSERT(!isMainThread());
     {
         Locker locker { m_lock };
-#if USE(TEXTURE_MAPPER)
-        m_backingStore = nullptr;
-        if (m_target && shouldReleaseBuffer(m_contentsBuffer.committed.get()))
-            m_contentsBuffer.committed = nullptr;
-        m_contentsBuffer.hasCommitted = false;
-#endif
         m_imageBackingStore.committed = nullptr;
     }
 
-#if USE(TEXTURE_MAPPER)
-    m_target = nullptr;
-#else
     if (m_target && !shouldReleaseBuffer(m_target->contentsBuffer())) {
         Locker locker { m_videoContents.lock };
         if (!m_videoContents.buffer.has_value())
@@ -174,7 +137,6 @@ void CoordinatedPlatformLayer::invalidateTarget()
         m_target->invalidate();
         m_target = nullptr;
     }
-#endif
 }
 
 void CoordinatedPlatformLayer::invalidateClient()
@@ -567,16 +529,8 @@ float CoordinatedPlatformLayer::contentsScale() const
 void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, std::optional<Damage>&& dirtyRegion)
 {
     assertIsHeld(m_lock);
-#if USE(TEXTURE_MAPPER)
-    if (!buffer && !m_contentsBuffer.pending && !m_contentsBuffer.hasCommitted)
-        return;
-
-    m_contentsBuffer.pending = WTF::move(buffer);
-    m_pendingChanges.add(Change::ContentsBuffer);
-#else
     m_contentsBuffer = WTF::move(buffer);
     m_pendingChanges.add(Change::ContentsBuffer);
-#endif
 
 #if ENABLE(DAMAGE_TRACKING)
     if (dirtyRegion)
@@ -798,25 +752,6 @@ void CoordinatedPlatformLayer::setReplica(CoordinatedPlatformLayer* replica)
     notifyCompositionRequired();
 }
 
-#if USE(TEXTURE_MAPPER)
-void CoordinatedPlatformLayer::setBackdrop(CoordinatedPlatformLayer* backdrop)
-{
-    assertIsHeld(m_lock);
-    if (m_backdrop == backdrop)
-        return;
-
-    m_backdrop = backdrop;
-    notifyBackdropFiltersChanged();
-}
-
-void CoordinatedPlatformLayer::notifyBackdropFiltersChanged()
-{
-    assertIsHeld(m_lock);
-    m_pendingChanges.add(Change::Backdrop);
-    damageWholeLayer();
-    notifyCompositionRequired();
-}
-#else
 void CoordinatedPlatformLayer::setBackdropFilters(const FilterOperations& filters)
 {
     assertIsHeld(m_lock);
@@ -828,7 +763,6 @@ void CoordinatedPlatformLayer::setBackdropFilters(const FilterOperations& filter
     damageWholeLayer();
     notifyCompositionRequired();
 }
-#endif
 
 void CoordinatedPlatformLayer::setBackdropRect(const FloatRoundedRect& backdropRect)
 {
@@ -865,11 +799,7 @@ void CoordinatedPlatformLayer::setIsBackdropRoot(bool isBackdropRoot)
     notifyCompositionRequired();
 }
 
-#if USE(TEXTURE_MAPPER)
-void CoordinatedPlatformLayer::setAnimations(const TextureMapperAnimations& animations)
-#else
 void CoordinatedPlatformLayer::setAnimations(const AcceleratedAnimations& animations)
-#endif
 {
     assertIsHeld(m_lock);
     m_animations = animations;
@@ -988,7 +918,7 @@ bool CoordinatedPlatformLayer::needsBackingStore() const
 
     // Check if there's a filter that sets the opacity to zero.
     bool hasOpacityZeroFilter = std::ranges::any_of(m_filters, [](auto& operation) {
-        return operation->type() == FilterOperation::Type::Opacity && !downcast<BasicComponentTransferFilterOperation>(operation.get()).amount();
+        return operation->type() == FilterOperation::Type::Opacity && !downcast<BasicComponentTransferFilterOperation>(operation).amount();
     });
 
     return !hasOpacityZeroFilter;
@@ -998,13 +928,8 @@ void CoordinatedPlatformLayer::updateBackingStore()
 {
     assertIsMainThread();
 
-#if USE(CAIRO)
-    if (m_dirtyRegion.isEmpty() && !m_pendingTilesCreation && !m_needsTilesUpdate)
-        return;
-#else
     if (m_dirtyRegion.isEmpty() && !m_needsTilesUpdate)
         return;
-#endif
 
     FloatSize size;
     float contentsScale;
@@ -1022,17 +947,10 @@ void CoordinatedPlatformLayer::updateBackingStore()
     }
 
     Damage damage(size, Damage::Mode::Rectangles);
-#if USE(CAIRO)
-    bool shouldCreateDestroyTiles = m_pendingTilesCreation || m_needsTilesUpdate;
-#else
     bool shouldCreateDestroyTiles = m_needsTilesUpdate;
-#endif
     auto updateResult = backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, size, m_visibleRect, contentsScale, contentsOpaque, shouldCreateDestroyTiles, m_dirtyRegion, damage, *this);
     m_dirtyRegion.clear();
     m_needsTilesUpdate = false;
-#if USE(CAIRO)
-    m_pendingTilesCreation = updateResult.contains(CoordinatedBackingStoreProxy::UpdateResult::TilesPending);
-#endif
 
     bool tilesChanged = updateResult.contains(CoordinatedBackingStoreProxy::UpdateResult::TilesChanged);
     {
@@ -1078,13 +996,6 @@ void CoordinatedPlatformLayer::updateContents(bool affectedByTransformAnimation)
             m_pendingChanges.add(Change::BackingStore);
         }
     }
-
-#if USE(TEXTURE_MAPPER)
-    if (m_backdrop) {
-        Locker locker { m_backdrop->lock() };
-        m_backdrop->updateContents(affectedByTransformAnimation);
-    }
-#endif
 }
 
 void CoordinatedPlatformLayer::purgeBackingStores()
@@ -1096,12 +1007,7 @@ void CoordinatedPlatformLayer::purgeBackingStores()
             m_backingStoreProxy = nullptr;
         }
         m_imageBackingStore.current = nullptr;
-#if USE(TEXTURE_MAPPER)
-        if (shouldReleaseBuffer(m_contentsBuffer.pending.get()))
-            m_contentsBuffer.pending = nullptr;
-#else
         m_contentsBuffer = nullptr;
-#endif
     }
 
     {
@@ -1160,11 +1066,9 @@ void CoordinatedPlatformLayer::didPaintTile()
 
 void CoordinatedPlatformLayer::didPaintPreRenderedTile()
 {
-#if USE(SKIA)
     // Called from painting threads.
     if (m_client)
         m_client->didPaintPreRenderedTile(*this);
-#endif
 }
 
 void CoordinatedPlatformLayer::waitUntilPaintingFinished()
@@ -1226,236 +1130,6 @@ void CoordinatedPlatformLayer::flushScrollingPositionChanges(const OptionSet<Com
     if (boundsOrigin)
         layer.setBoundsOrigin(*boundsOrigin);
 }
-
-#if USE(TEXTURE_MAPPER)
-void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<CompositionReason>& reasons)
-{
-    ASSERT(!isMainThread());
-    Locker locker { m_lock };
-    if (m_pendingChanges.isEmpty() && (!reasons.contains(CompositionReason::RenderingUpdate) || !m_backingStoreProxy))
-        return;
-
-    flushCompositingStateOnTarget(reasons, ensureTarget());
-}
-
-void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<CompositionReason>& reasons, TextureMapperLayer& layer)
-{
-    assertIsHeld(m_lock);
-    if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling })) {
-        if (m_pendingChanges.contains(Change::ContentsRect)) {
-            layer.setContentsRect(m_contentsRect);
-            m_pendingChanges.remove(Change::ContentsRect);
-        }
-
-        if (m_pendingChanges.contains(Change::ContentsClippingRect)) {
-            layer.setContentsClippingRect(m_contentsClippingRect);
-            m_pendingChanges.remove(Change::ContentsClippingRect);
-        }
-
-        // FIXME: clip the contents to the corner-shape contour here too. TextureMapper::beginClip()
-        // takes a ClipPath, a triangulated vertex buffer, so this needs a Path tessellation step that
-        // does not exist yet; until then a non-round corner shape on composited contents is clipped
-        // only by the rect above.
-        m_pendingChanges.remove(Change::ContentsClipShapePath);
-    }
-
-    if (reasons.contains(CompositionReason::RenderingUpdate)) {
-        if (m_pendingChanges.contains(Change::Position)) {
-            layer.setPosition(effectivePositionForScrolling());
-            m_pendingChanges.remove(Change::Position);
-        }
-
-        if (m_pendingChanges.contains(Change::BoundsOrigin)) {
-            layer.setBoundsOrigin(effectiveBoundsOriginForScrolling());
-            m_pendingChanges.remove(Change::BoundsOrigin);
-        }
-
-        if (m_pendingChanges.contains(Change::AnchorPoint)) {
-            layer.setAnchorPoint(m_anchorPoint);
-            m_pendingChanges.remove(Change::AnchorPoint);
-        }
-
-        if (m_pendingChanges.contains(Change::Size)) {
-            layer.setSize(m_size);
-            m_pendingChanges.remove(Change::Size);
-        }
-
-        if (m_pendingChanges.contains(Change::Transform)) {
-            layer.setTransform(m_transform);
-            m_pendingChanges.remove(Change::Transform);
-        }
-
-        if (m_pendingChanges.contains(Change::ChildrenTransform)) {
-            layer.setChildrenTransform(m_childrenTransform);
-            m_pendingChanges.remove(Change::ChildrenTransform);
-        }
-
-        if (m_pendingChanges.contains(Change::Preserves3D)) {
-            layer.setPreserves3D(m_preserves3D);
-            m_pendingChanges.remove(Change::Preserves3D);
-        }
-
-        if (m_pendingChanges.contains(Change::MasksToBounds)) {
-            layer.setMasksToBounds(m_masksToBounds);
-            m_pendingChanges.remove(Change::MasksToBounds);
-        }
-
-        if (m_pendingChanges.contains(Change::BackfaceVisibility)) {
-            layer.setBackfaceVisibility(m_backfaceVisibility);
-            m_pendingChanges.remove(Change::BackfaceVisibility);
-        }
-
-        if (m_pendingChanges.contains(Change::BackgroundColor)) {
-            layer.setBackgroundColor(m_backgroundColor);
-            m_pendingChanges.remove(Change::BackgroundColor);
-        }
-
-        if (m_pendingChanges.contains(Change::Opacity)) {
-            layer.setOpacity(m_opacity);
-            m_pendingChanges.remove(Change::Opacity);
-        }
-
-        if (m_pendingChanges.contains(Change::BackingStore)) {
-            if (m_backingStoreProxy) {
-                if (!m_backingStore)
-                    m_backingStore = CoordinatedBackingStore::create();
-                layer.setBackingStore(m_backingStore.get());
-                layer.setBackgroundColor({ });
-
-                if (auto* animatedBackingStoreClient = m_backingStoreProxy->animatedBackingStoreClient())
-                    layer.setAnimatedBackingStoreClient(animatedBackingStoreClient);
-            } else {
-                layer.setBackingStore(nullptr);
-                layer.setAnimatedBackingStoreClient(nullptr);
-                m_backingStore = nullptr;
-            }
-            m_pendingChanges.remove(Change::BackingStore);
-        }
-
-        if (m_pendingChanges.contains(Change::ContentsImage)) {
-            m_imageBackingStore.committed = m_imageBackingStore.current;
-            m_pendingChanges.remove(Change::ContentsImage);
-        }
-
-        if (m_pendingChanges.contains(Change::ContentsVisible)) {
-            layer.setContentsVisible(m_contentsVisible);
-            m_pendingChanges.remove(Change::ContentsVisible);
-        }
-
-        if (m_pendingChanges.contains(Change::ContentsOpaque)) {
-            layer.setContentsOpaque(m_contentsOpaque);
-            m_pendingChanges.remove(Change::ContentsOpaque);
-        }
-
-        if (m_pendingChanges.contains(Change::ContentsRectClipsDescendants)) {
-            layer.setContentsRectClipsDescendants(m_contentsRectClipsDescendants);
-            m_pendingChanges.remove(Change::ContentsRectClipsDescendants);
-        }
-
-        if (m_pendingChanges.contains(Change::ContentsTiling)) {
-            layer.setContentsTileSize(m_contentsTileSize);
-            layer.setContentsTilePhase(m_contentsTilePhase);
-            m_pendingChanges.remove(Change::ContentsTiling);
-        }
-
-        if (m_pendingChanges.contains(Change::ContentsColor)) {
-            layer.setSolidColor(m_contentsColor);
-            m_pendingChanges.remove(Change::ContentsColor);
-        }
-
-#if ENABLE(DAMAGE_TRACKING)
-        if (m_pendingChanges.contains(Change::Damage)) {
-            ASSERT(m_damage.has_value());
-            layer.setDamage(*std::exchange(m_damage, std::nullopt));
-            m_pendingChanges.remove(Change::Damage);
-        }
-#endif
-
-        if (m_pendingChanges.contains(Change::Filters)) {
-            layer.setFilters(m_filters);
-            m_pendingChanges.remove(Change::Filters);
-        }
-
-        if (m_pendingChanges.contains(Change::Mask)) {
-            layer.setMaskLayer(m_mask ? &m_mask->ensureTarget() : nullptr);
-            m_pendingChanges.remove(Change::Mask);
-        }
-
-        if (m_pendingChanges.contains(Change::Replica)) {
-            layer.setReplicaLayer(m_replica ? &m_replica->ensureTarget() : nullptr);
-            m_pendingChanges.remove(Change::Replica);
-        }
-
-        if (m_pendingChanges.contains(Change::Backdrop)) {
-            layer.setBackdropLayer(m_backdrop ? &m_backdrop->ensureTarget() : nullptr);
-            m_pendingChanges.remove(Change::Backdrop);
-        }
-
-        if (m_pendingChanges.contains(Change::BackdropRect)) {
-            layer.setBackdropFiltersRect(m_backdropRect);
-            m_pendingChanges.remove(Change::BackdropRect);
-        }
-
-        // FIXME: clip the backdrop to the corner-shape contour here too. TextureMapper::beginClip()
-        // takes a ClipPath, a triangulated vertex buffer, so this needs a Path tessellation step that
-        // does not exist yet; until then a non-round corner shape on a backdrop filter is clipped only
-        // by the rounded rect above. The Skia compositor, which GTK and WPE use by default, clips to
-        // the contour.
-        m_pendingChanges.remove(Change::BackdropShapePath);
-
-        if (m_pendingChanges.contains(Change::Animations)) {
-            layer.setAnimations(m_animations);
-            m_pendingChanges.remove(Change::Animations);
-        }
-
-        if (m_pendingChanges.contains(Change::DebugIndicators)) {
-            layer.setShowRepaintCounter(m_repaintCount != -1);
-            layer.setRepaintCount(m_repaintCount);
-
-            layer.setShowDebugBorder(m_debugBorderColor.isVisible());
-            layer.setDebugBorderColor(m_debugBorderColor);
-            layer.setDebugBorderWidth(m_debugBorderWidth);
-            m_pendingChanges.remove(Change::DebugIndicators);
-        }
-
-        if (m_pendingChanges.contains(Change::Children)) {
-            layer.setChildren(WTF::map(m_children, [](auto& child) {
-                return &child->ensureTarget();
-            }));
-            m_pendingChanges.remove(Change::Children);
-        }
-
-        if (m_backingStoreProxy) {
-            m_backingStore->resize(layer.size(), m_contentsScale);
-
-            auto update = m_backingStoreProxy->takePendingUpdate();
-            for (auto tileID : update.tilesToCreate())
-                m_backingStore->createTile(tileID);
-            for (auto tileID : update.tilesToRemove())
-                m_backingStore->removeTile(tileID);
-            for (const auto& tileUpdate : update.tilesToUpdate())
-                m_backingStore->updateTile(tileUpdate.tileID, tileUpdate.dirtyRect, tileUpdate.tileRect, tileUpdate.buffer.copyRef(), { });
-        }
-    }
-
-    if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::VideoFrame, CompositionReason::AsyncScrolling })) {
-        if (m_pendingChanges.contains(Change::ContentsBuffer)) {
-            m_contentsBuffer.committed = WTF::move(m_contentsBuffer.pending);
-            m_contentsBuffer.hasCommitted = !!m_contentsBuffer.committed;
-            m_pendingChanges.remove(Change::ContentsBuffer);
-        }
-
-        if (m_contentsBuffer.committed)
-            layer.setContentsLayer(m_contentsBuffer.committed.get());
-        else if (m_imageBackingStore.committed) {
-            if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling }))
-                layer.setContentsLayer(m_imageBackingStore.committed->buffer());
-        } else
-            layer.setContentsLayer(nullptr);
-    }
-}
-
-#else
 
 void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<CompositionReason>& reasons)
 {
@@ -1715,48 +1389,26 @@ void CoordinatedPlatformLayer::flushCompositingStateVideoContents(const OptionSe
         layer.damageWholeLayer();
     }
 }
-#endif
 
 bool CoordinatedPlatformLayer::hasPendingBackingStoreTileUpdates() const
 {
     ASSERT(!isMainThread());
-
-#if USE(TEXTURE_MAPPER)
-    Locker locker { m_lock };
-    if (m_backingStore)
-        return m_backingStore->hasPendingUpdates();
-#else
-    if (m_target)
-        return m_target->hasPendingBackingStoreTileUpdates();
-#endif
-
-    return false;
+    return m_target ? m_target->hasPendingBackingStoreTileUpdates() : false;
 }
 
 void CoordinatedPlatformLayer::processPendingBackingStoreTileUpdates()
 {
     ASSERT(!isMainThread());
-
-#if USE(TEXTURE_MAPPER)
-    Locker locker { m_lock };
-    if (m_backingStore)
-        m_backingStore->processPendingUpdates();
-#else
-    if (m_target) {
+    if (m_target)
         m_target->processPendingTileUpdates();
-        return;
-    }
-#endif
 }
 
-#if USE(SKIA)
 bool CoordinatedPlatformLayer::processPendingBackingStoreTileUpdatesIncludingPreRendered(const Function<bool()>& shouldStopProcessingTiles)
 {
     ASSERT(!isMainThread());
     return m_target ? m_target->processPendingTileUpdatesIncludingPreRendered(shouldStopProcessingTiles) : false;
 }
-#endif
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER)
