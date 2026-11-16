@@ -27,16 +27,18 @@ function test() {
         InspectorTest.expectThat(startTime <= record.startTime && record.endTime <= endTime, `Record from the ${description} should be within the recording.`);
     }
 
-    function expectNoLayoutOrPaintRecordsFromPageTarget() {
-        // Style records still come from the page target, and Composite records always do.
-        const layoutAndPaintTypes = [
+    function expectNoLayoutStyleOrPaintRecordsFromPageTarget() {
+        // Composite records always come from the page target.
+        const layoutStyleAndPaintTypes = [
+            InspectorBackend.Enum.Timeline.EventType.ScheduleStyleRecalculation,
+            InspectorBackend.Enum.Timeline.EventType.RecalculateStyles,
             InspectorBackend.Enum.Timeline.EventType.InvalidateLayout,
             InspectorBackend.Enum.Timeline.EventType.ScheduleLayout,
             InspectorBackend.Enum.Timeline.EventType.Layout,
             InspectorBackend.Enum.Timeline.EventType.Paint,
         ];
-        let types = FrameTimelineTest.recordPayloadTypes(WI.mainTarget).filter((type) => layoutAndPaintTypes.includes(type));
-        InspectorTest.expectEqual(types.length, 0, "No layout or paint records should come from the page target.");
+        let types = FrameTimelineTest.recordPayloadTypes(WI.mainTarget).filter((type) => layoutStyleAndPaintTypes.includes(type));
+        InspectorTest.expectEqual(types.length, 0, "No layout, style or paint records should come from the page target.");
     }
 
     function expectNoScriptRecordsFromPageTarget(recording) {
@@ -134,7 +136,7 @@ function test() {
             await FrameTimelineTest.stopCapturing();
             InspectorTest.pass("Capturing stopped.");
 
-            expectNoLayoutOrPaintRecordsFromPageTarget();
+            expectNoLayoutStyleOrPaintRecordsFromPageTarget();
         }
     });
 
@@ -187,7 +189,7 @@ function test() {
             await inactivePromise;
             InspectorTest.pass("Capturing stopped.");
 
-            expectNoLayoutOrPaintRecordsFromPageTarget();
+            expectNoLayoutStyleOrPaintRecordsFromPageTarget();
         }
     });
 

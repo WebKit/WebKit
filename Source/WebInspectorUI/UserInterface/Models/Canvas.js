@@ -137,13 +137,6 @@ WI.Canvas = class Canvas extends WI.Object
         });
     }
 
-    static _domNodeForId(target, nodeId)
-    {
-        if (target instanceof WI.FrameTarget)
-            return WI.domManager.nodeForIdInFrameTarget(nodeId, target);
-        return WI.domManager.nodeForId(nodeId);
-    }
-
     static displayNameForContextType(contextType)
     {
         switch (contextType) {
@@ -279,7 +272,7 @@ WI.Canvas = class Canvas extends WI.Object
                 if (promise !== this._requestNodesPromise)
                     return this._domNodes;
 
-                this._domNodes = nodeIds.map((nodeId) => WI.Canvas._domNodeForId(this._target, nodeId));
+                this._domNodes = nodeIds.map((nodeId) => WI.domManager.nodeForIdInTarget(nodeId, this._target));
                 return this._domNodes;
             }, () => promise === this._requestNodesPromise ? [] : this._domNodes);
             this._requestNodesPromise = promise;
@@ -310,7 +303,7 @@ WI.Canvas = class Canvas extends WI.Object
                 if (promise !== this._requestCSSCanvasClientNodesPromise)
                     return this._cssCanvasClientNodes;
 
-                this._cssCanvasClientNodes = clientNodeIds.map((clientNodeId) => WI.Canvas._domNodeForId(this._target, clientNodeId));
+                this._cssCanvasClientNodes = clientNodeIds.map((clientNodeId) => WI.domManager.nodeForIdInTarget(clientNodeId, this._target));
                 return this._cssCanvasClientNodes;
             }, () => promise === this._requestCSSCanvasClientNodesPromise ? [] : this._cssCanvasClientNodes);
             this._requestCSSCanvasClientNodesPromise = promise;

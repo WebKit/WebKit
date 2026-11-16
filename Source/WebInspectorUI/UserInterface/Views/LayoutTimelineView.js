@@ -281,19 +281,25 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 
         this._showingHighlightForRecord = record;
 
-        if (record.domNodeOrInfo instanceof WI.DOMNode) {
+        // FIXME: <https://webkit.org/b/331841> Under Site Isolation, neither highlight below is drawn for a frame that
+        // is not its process's local root (e.g. a same-origin iframe).
+
+        // A destroyed node can't be highlighted, so fall back to the record's quad.
+        if (record.domNodeOrInfo instanceof WI.DOMNode && !record.domNodeOrInfo.destroyed) {
             record.domNodeOrInfo.highlight();
             this._showingHighlight = true;
             return;
         }
 
-        let target = WI.assumingMainTarget();
-
         const contentColor = {r: 111, g: 168, b: 220, a: 0.66};
         const outlineColor = {r: 255, g: 229, b: 153, a: 0.66};
 
         var quad = record.quad;
-        if (quad) {
+        let target = record.target || WI.assumingMainTarget();
+        // The record's frame target is gone if its frame navigated or was removed after recording.
+        if (quad && !target.isDestroyed) {
+            // Each target holds its own highlight, so clear the others first.
+            WI.domManager.hideDOMNodeHighlight({excludedTargets: new Set([target])});
             target.DOMAgent.highlightQuad(quad.toProtocol(), contentColor, outlineColor);
             this._showingHighlight = true;
             return;
@@ -302,7 +308,7 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
         // This record doesn't have a highlight, so hide any existing highlight.
         if (this._showingHighlight) {
             this._showingHighlight = false;
-            target.DOMAgent.hideHighlight();
+            WI.domManager.hideDOMNodeHighlight();
         }
     }
 
@@ -312,9 +318,7 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 
         if (this._showingHighlight) {
             this._showingHighlight = false;
-
-            let target = WI.assumingMainTarget();
-            target.DOMAgent.hideHighlight();
+            WI.domManager.hideDOMNodeHighlight();
         }
     }
 

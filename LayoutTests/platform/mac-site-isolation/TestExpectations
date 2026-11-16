@@ -28,8 +28,6 @@ http/tests/media/media-stream/enumerate-devices-source-id.html [ Timeout ]
 http/tests/workers/service/resultingClientId.https.html [ Timeout ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-video.html [ Pass Timeout ]
-webkit.org/b/329361 inspector/timeline/timeline-layout-events.html [ Timeout ]
-webkit.org/b/329361 inspector/timeline/timeline-layout-events-iframe.html [ Timeout ]
 webkit.org/b/320122 inspector/network/clear-resource-data-on-navigate.html [ Timeout ]
 webkit.org/b/327494 http/tests/inspector/network/intercept-request-with-error.html [ Timeout ]
 
@@ -109,6 +107,7 @@ webkit.org/b/327495 http/tests/websocket/tests/hybi/inspector/server-close.html 
 webkit.org/b/327495 http/tests/websocket/tests/hybi/inspector/set-extra-http-headers.html [ Failure ]
 webkit.org/b/327495 webkit.org/b/327496 http/tests/websocket/tests/hybi/inspector/resolveWebSocket.html [ Failure ]
 webkit.org/b/330351 inspector/dom/focus.html [ Failure ]
+webkit.org/b/330228 inspector/timeline/timeline-layout-events.html [ Pass Failure ]
 
 #########################
 # Tests that Image fail #

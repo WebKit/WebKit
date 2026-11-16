@@ -602,6 +602,7 @@ private:
     static InstrumentingAgents* instrumentingAgents(const LocalFrame*);
     static InstrumentingAgents* instrumentingAgents(ScriptExecutionContext&);
     NODELETE static InstrumentingAgents* instrumentingAgents(Document&);
+    static InstrumentingAgents* instrumentingAgentsForFrameOrPage(Document&);
     static InstrumentingAgents* instrumentingAgents(Document*);
     static InstrumentingAgents* instrumentingAgents(WorkerOrWorkletGlobalScope*);
 };
@@ -1129,21 +1130,21 @@ inline void InspectorInstrumentation::didPaint(RenderObject& renderer, const Lay
 inline void InspectorInstrumentation::willRecalculateStyle(Document& document)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForFrameOrPage(document))
         willRecalculateStyleImpl(*agents);
 }
 
 inline void InspectorInstrumentation::didRecalculateStyle(Document& document)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForFrameOrPage(document))
         didRecalculateStyleImpl(*agents, document);
 }
 
 inline void InspectorInstrumentation::didScheduleStyleRecalculation(Document& document)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForFrameOrPage(document))
         didScheduleStyleRecalculationImpl(*agents, document);
 }
 
