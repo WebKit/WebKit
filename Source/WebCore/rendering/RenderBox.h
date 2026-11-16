@@ -41,7 +41,7 @@ class LayoutRoundedRectRadii;
 class LocalFrameView;
 class RenderBlockFlow;
 class RenderBoxFragmentInfo;
-class RenderFragmentContainer;
+class RenderMultiColumnSet;
 class PositionedLayoutConstraints;
 struct PaintInfo;
 struct RenderBoxOverridingSizes;
@@ -505,7 +505,7 @@ public:
     bool hitTestVisualOverflow(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
     bool hitTestClipPath(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
     bool hitTestBorderRadius(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
-    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*) override;
 
     Vector<FloatRect> localBorderBoxRects() const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
@@ -562,10 +562,10 @@ public:
     LayoutUnit containingBlockAvailableLineWidth() const;
     LayoutUnit perpendicularContainingBlockLogicalHeight() const;
 
-    RenderFragmentContainer* clampToStartAndEndFragments(RenderFragmentContainer*) const;
+    RenderMultiColumnSet* clampToStartAndEndFragments(RenderMultiColumnSet*) const;
     bool hasFragmentRangeInFragmentedFlow() const;
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
-    NODELETE RenderBoxFragmentInfo* renderBoxFragmentInfo(RenderFragmentContainer*, RenderBoxFragmentInfoFlags = RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const;
+    NODELETE RenderBoxFragmentInfo* renderBoxFragmentInfo(RenderMultiColumnSet*, RenderBoxFragmentInfoFlags = RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const;
 
     // True if this box can have a range in an outside fragmentation context.
     bool canHaveOutsideFragmentRange() const { return !isRenderFragmentedFlow(); }

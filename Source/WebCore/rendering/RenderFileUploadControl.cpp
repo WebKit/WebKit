@@ -321,7 +321,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderFileUploadControl::computeIntrinsicLogic
     return computeIntrinsicLogicalWidths();
 }
 
-PositionWithAffinity RenderFileUploadControl::positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*)
+PositionWithAffinity RenderFileUploadControl::positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*)
 {
     return PositionWithAffinity();
 }

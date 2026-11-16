@@ -2452,7 +2452,7 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset) const
 
     // See if we're in the last fragment.
     LayoutUnit pageOffset = offsetFromLogicalTopOfFirstPage() + logicalOffset;
-    RenderFragmentContainer* fragment = fragmentedFlow->fragmentAtBlockOffset(this, pageOffset, true);
+    RenderMultiColumnSet* fragment = fragmentedFlow->fragmentAtBlockOffset(this, pageOffset, true);
     if (!fragment)
         return false;
 
@@ -2460,8 +2460,8 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset) const
     if (fragment->isLastFragment())
         return true;
 
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     fragmentedFlow->getFragmentRangeForBox(*this, startFragment, endFragment);
     return (endFragment && fragment != endFragment);
 }
@@ -2507,7 +2507,7 @@ bool RenderBlockFlow::pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustm
 {
     bool checkFragment = false;
     auto* fragmentedFlow = enclosingFragmentedFlow();
-    RenderFragmentContainer* currentFragmentContainer = nullptr;
+    RenderMultiColumnSet* currentFragmentContainer = nullptr;
     for (auto pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment); pageLogicalHeight; pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment)) {
         if (minimumLogicalHeight <= pageLogicalHeight)
             return true;
@@ -4144,7 +4144,7 @@ Position RenderBlockFlow::positionForPoint(const LayoutPoint& point, HitTestSour
     return positionForPoint(point, source, nullptr).position();
 }
 
-PositionWithAffinity RenderBlockFlow::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer*)
+PositionWithAffinity RenderBlockFlow::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderMultiColumnSet*)
 {
     return RenderBlock::positionForPoint(point, source, nullptr);
 }

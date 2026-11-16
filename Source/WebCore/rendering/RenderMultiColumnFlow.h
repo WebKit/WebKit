@@ -76,14 +76,14 @@ public:
     bool progressionIsReversed() const { return m_progressionIsReversed; }
     void setProgressionIsReversed(bool reversed) { m_progressionIsReversed = reversed; }
 
-    RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const final;
+    RenderMultiColumnSet* mapFromFlowToFragment(TransformState&) const final;
 
     // This method takes a logical offset and returns a physical translation that can be applied to map
     // a physical point (corresponding to the logical offset) into the fragment's physical coordinate space.
-    LayoutSize physicalTranslationOffsetFromFlowToFragment(const RenderFragmentContainer*, const LayoutUnit) const;
+    LayoutSize physicalTranslationOffsetFromFlowToFragment(const RenderMultiColumnSet*, const LayoutUnit) const;
     
     // The point is physical, and the result is a physical location within the fragment.
-    RenderFragmentContainer* physicalTranslationFromFlowToFragment(LayoutPoint&) const;
+    RenderMultiColumnSet* physicalTranslationFromFlowToFragment(LayoutPoint&) const;
     
     // This method is the inverse of the previous method and goes from fragment to flow.
     LayoutSize physicalTranslationFromFragmentToFlow(const RenderMultiColumnSet*, const LayoutPoint&) const;
@@ -101,7 +101,7 @@ public:
 
 private:
     ASCIILiteral renderName() const override;
-    void addFragmentToThread(RenderFragmentContainer*) override;
+    void addFragmentToThread(RenderMultiColumnSet*) override;
     void willBeRemovedFromTree() override;
     void fragmentedFlowDescendantBoxLaidOut(RenderBox*) override;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
@@ -112,8 +112,8 @@ private:
     void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) override;
     void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) override;
     void updateSpaceShortageForSizeContainment(const RenderBlock*, LayoutUnit offset, LayoutUnit shortage) override;
-    RenderFragmentContainer* fragmentAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastFragment = false) const override;
-    void setFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*, RenderFragmentContainer*) override;
+    RenderMultiColumnSet* fragmentAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastFragment = false) const override;
+    void setFragmentRangeForBox(const RenderBox&, RenderMultiColumnSet*, RenderMultiColumnSet*) override;
     bool addForcedFragmentBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) override;
     bool isPageLogicalHeightKnown() const override;
 

@@ -55,7 +55,7 @@ private:
 
     int maxFilenameLogicalWidth() const;
 
-    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*) override;
 
     NODELETE HTMLInputElement* uploadButton() const;
 

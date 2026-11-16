@@ -422,7 +422,7 @@ void RenderSVGText::applyTransform(TransformationMatrix& transform, const Style:
     applySVGTransform(transform, protect(textElement()), style, boundingBox, std::nullopt, std::nullopt, options);
 }
 
-PositionWithAffinity RenderSVGText::positionForPoint(const LayoutPoint& pointInContents, HitTestSource source, const RenderFragmentContainer* fragment)
+PositionWithAffinity RenderSVGText::positionForPoint(const LayoutPoint& pointInContents, HitTestSource source, const RenderMultiColumnSet* fragment)
 {
     InlineIterator::BoxIterator closestBox;
     InlineIterator::BoxIterator lastBox;

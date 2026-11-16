@@ -36,10 +36,10 @@
 #include "RenderBoxFragmentInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderFragmentContainer.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayoutState.h"
+#include "RenderMultiColumnSet.h"
 #include "RenderObjectInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -53,8 +53,30 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFragmentedFlow);
 
+inline RenderFragmentedFlow::RenderFragmentContainerRange::RenderFragmentContainerRange(RenderMultiColumnSet* start, RenderMultiColumnSet* end)
+{
+    setRange(start, end);
+}
+
+inline void RenderFragmentedFlow::RenderFragmentContainerRange::setRange(RenderMultiColumnSet* start, RenderMultiColumnSet* end)
+{
+    m_startFragment = start;
+    m_endFragment = end;
+    m_rangeInvalidated = true;
+}
+
+inline RenderMultiColumnSet* RenderFragmentedFlow::RenderFragmentContainerRange::startFragment() const
+{
+    return m_startFragment.get();
+}
+
+inline RenderMultiColumnSet* RenderFragmentedFlow::RenderFragmentContainerRange::endFragment() const
+{
+    return m_endFragment.get();
+}
+
 template<typename FragmentList, typename Functor>
-static void forEachFragmentInRange(FragmentList& fragmentList, const RenderFragmentContainer& startFragment, const RenderFragmentContainer& endFragment, NOESCAPE const Functor& functor)
+static void forEachFragmentInRange(FragmentList& fragmentList, const RenderMultiColumnSet& startFragment, const RenderMultiColumnSet& endFragment, NOESCAPE const Functor& functor)
 {
     ASSERT(fragmentList.contains(startFragment));
     ASSERT(fragmentList.contains(endFragment));
@@ -96,7 +118,7 @@ void RenderFragmentedFlow::removeFlowChildInfo(RenderElement& child)
         removeRenderBoxFragmentInfo(*box);
 }
 
-void RenderFragmentedFlow::removeFragmentFromThread(RenderFragmentContainer& renderFragmentContainer)
+void RenderFragmentedFlow::removeFragmentFromThread(RenderMultiColumnSet& renderFragmentContainer)
 {
     m_fragmentList.remove(renderFragmentContainer);
 }
@@ -209,8 +231,8 @@ bool RenderFragmentedFlow::absoluteQuadsForBox(Vector<FloatQuad>& quads, bool* w
     auto boxRect = FloatRect { { }, box.borderBoxSize() };
     auto boxRectInFlowCoordinates = LayoutRect { box.localToContainerQuad(boxRect, this).boundingBox() };
 
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     if (!computedFragmentRangeForBox(box, startFragment, endFragment))
         return false;
 
@@ -232,8 +254,8 @@ bool RenderFragmentedFlow::boxIsFragmented(const RenderBox& box) const
     auto boxRect = FloatRect { { }, box.borderBoxSize() };
     auto boxRectInFlowCoordinates = LayoutRect { box.localToContainerQuad(boxRect, this).boundingBox() };
 
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     computedFragmentRangeForBox(box, startFragment, endFragment);
     if (startFragment != endFragment)
         return true;
@@ -254,7 +276,7 @@ public:
     NODELETE const LayoutUnit& lowValue() const { return m_offset; }
     NODELETE const LayoutUnit& highValue() const { return m_offset; }
 
-    NODELETE void collectIfNeeded(const PODInterval<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>>& interval)
+    NODELETE void collectIfNeeded(const PODInterval<LayoutUnit, SingleThreadWeakPtr<RenderMultiColumnSet>>& interval)
     {
         if (m_result)
             return;
@@ -262,14 +284,14 @@ public:
             m_result = interval.data();
     }
 
-    NODELETE RenderFragmentContainer* result() const { return m_result.get(); }
+    NODELETE RenderMultiColumnSet* result() const { return m_result.get(); }
 
 private:
     LayoutUnit m_offset;
-    SingleThreadWeakPtr<RenderFragmentContainer> m_result;
+    SingleThreadWeakPtr<RenderMultiColumnSet> m_result;
 };
 
-RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const RenderBox* clampBox, LayoutUnit offset, bool extendLastFragment) const
+RenderMultiColumnSet* RenderFragmentedFlow::fragmentAtBlockOffset(const RenderBox* clampBox, LayoutUnit offset, bool extendLastFragment) const
 {
     ASSERT(!m_fragmentsInvalidated);
 
@@ -277,15 +299,15 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
         return nullptr;
 
     if (m_fragmentList.computeSize() == 1 && extendLastFragment) {
-        return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
+        return const_cast<RenderMultiColumnSet*>(&m_fragmentList.first());
     }
 
-    auto clamp = [clampBox](RenderFragmentContainer* fragment)  {
+    auto clamp = [clampBox](RenderMultiColumnSet* fragment)  {
         return clampBox ? clampBox->clampToStartAndEndFragments(fragment) : fragment;
     };
 
     if (offset <= 0) {
-        return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.first()));
+        return clamp(const_cast<RenderMultiColumnSet*>(&m_fragmentList.first()));
     }
 
     FragmentSearchAdapter adapter(offset);
@@ -294,18 +316,18 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
         return clamp(fragment);
 
     // If no fragment was found, the offset is in the flow thread overflow, which the last column set contains.
-    return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.last()));
+    return clamp(const_cast<RenderMultiColumnSet*>(&m_fragmentList.last()));
 }
 
 LayoutUnit RenderFragmentedFlow::pageLogicalTopForOffset(LayoutUnit offset) const
 {
-    RenderFragmentContainer* fragment = fragmentAtBlockOffset(0, offset, false);
+    RenderMultiColumnSet* fragment = fragmentAtBlockOffset(0, offset, false);
     return fragment ? fragment->pageLogicalTopForOffset(offset) : 0_lu;
 }
 
 LayoutUnit RenderFragmentedFlow::pageLogicalHeightForOffset(LayoutUnit offset) const
 {
-    RenderFragmentContainer* fragment = fragmentAtBlockOffset(0, offset, false);
+    RenderMultiColumnSet* fragment = fragmentAtBlockOffset(0, offset, false);
     if (!fragment)
         return 0;
 
@@ -314,7 +336,7 @@ LayoutUnit RenderFragmentedFlow::pageLogicalHeightForOffset(LayoutUnit offset) c
 
 LayoutUnit RenderFragmentedFlow::pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule pageBoundaryRule) const
 {
-    RenderFragmentContainer* fragment = fragmentAtBlockOffset(0, offset, false);
+    RenderMultiColumnSet* fragment = fragmentAtBlockOffset(0, offset, false);
     if (!fragment)
         return 0;
 
@@ -347,8 +369,8 @@ void RenderFragmentedFlow::removeRenderBoxFragmentInfo(const RenderBox& box)
         return;
     }
 
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     if (getFragmentRangeForBox(box, startFragment, endFragment)) {
         forEachFragmentInRange(m_fragmentList, *startFragment, *endFragment, [&](auto& fragment) {
             fragment.removeRenderBoxFragmentInfo(box);
@@ -389,8 +411,8 @@ void RenderFragmentedFlow::logicalWidthChangedInFragmentsForBlock(const RenderBl
         return;
     }
 
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     if (!getFragmentRangeForBox(block, startFragment, endFragment))
         return;
 
@@ -415,7 +437,7 @@ void RenderFragmentedFlow::logicalWidthChangedInFragmentsForBlock(const RenderBl
 
 LayoutUnit RenderFragmentedFlow::contentLogicalWidthOfFirstFragment() const
 {
-    RenderFragmentContainer* firstValidFragmentInFlow = firstFragment();
+    RenderMultiColumnSet* firstValidFragmentInFlow = firstFragment();
     if (!firstValidFragmentInFlow)
         return 0;
     return isHorizontalWritingMode() ? firstValidFragmentInFlow->contentBoxWidth() : firstValidFragmentInFlow->contentBoxHeight();
@@ -423,29 +445,29 @@ LayoutUnit RenderFragmentedFlow::contentLogicalWidthOfFirstFragment() const
 
 LayoutUnit RenderFragmentedFlow::contentLogicalHeightOfFirstFragment() const
 {
-    RenderFragmentContainer* firstValidFragmentInFlow = firstFragment();
+    RenderMultiColumnSet* firstValidFragmentInFlow = firstFragment();
     if (!firstValidFragmentInFlow)
         return 0;
     return isHorizontalWritingMode() ? firstValidFragmentInFlow->contentBoxHeight() : firstValidFragmentInFlow->contentBoxWidth();
 }
 
-RenderFragmentContainer* RenderFragmentedFlow::firstFragment() const
+RenderMultiColumnSet* RenderFragmentedFlow::firstFragment() const
 {
     if (!hasFragments())
         return nullptr;
-    return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
+    return const_cast<RenderMultiColumnSet*>(&m_fragmentList.first());
 }
 
-RenderFragmentContainer* RenderFragmentedFlow::lastFragment() const
+RenderMultiColumnSet* RenderFragmentedFlow::lastFragment() const
 {
     if (!hasFragments())
         return nullptr;
-    return const_cast<RenderFragmentContainer*>(&m_fragmentList.last());
+    return const_cast<RenderMultiColumnSet*>(&m_fragmentList.last());
 }
 
 void RenderFragmentedFlow::clearRenderBoxFragmentInfo(const RenderBox& box,
-    const RenderFragmentContainer* newStartFragment, const RenderFragmentContainer* newEndFragment,
-    const RenderFragmentContainer* oldStartFragment, const RenderFragmentContainer* oldEndFragment)
+    const RenderMultiColumnSet* newStartFragment, const RenderMultiColumnSet* newEndFragment,
+    const RenderMultiColumnSet* oldStartFragment, const RenderMultiColumnSet* oldEndFragment)
 {
     ASSERT(newStartFragment && newEndFragment && oldStartFragment && oldEndFragment);
 
@@ -469,7 +491,7 @@ void RenderFragmentedFlow::clearRenderBoxFragmentInfo(const RenderBox& box,
     }
 }
 
-void RenderFragmentedFlow::setFragmentRangeForBox(const RenderBox& box, RenderFragmentContainer* startFragment, RenderFragmentContainer* endFragment)
+void RenderFragmentedFlow::setFragmentRangeForBox(const RenderBox& box, RenderMultiColumnSet* startFragment, RenderMultiColumnSet* endFragment)
 {
     ASSERT(hasFragments());
     ASSERT(startFragment && endFragment && startFragment->fragmentedFlow() == this && endFragment->fragmentedFlow() == this);
@@ -489,7 +511,7 @@ bool RenderFragmentedFlow::hasCachedFragmentRangeForBox(const RenderBox& box) co
     return m_fragmentRangeMap.contains(box);
 }
 
-bool RenderFragmentedFlow::getFragmentRangeForBoxFromCachedInfo(const RenderBox& box, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const
+bool RenderFragmentedFlow::getFragmentRangeForBoxFromCachedInfo(const RenderBox& box, RenderMultiColumnSet*& startFragment, RenderMultiColumnSet*& endFragment) const
 {
     ASSERT(hasValidFragmentInfo());
     ASSERT((startFragment == nullptr) && (endFragment == nullptr));
@@ -506,14 +528,14 @@ bool RenderFragmentedFlow::getFragmentRangeForBoxFromCachedInfo(const RenderBox&
     return false;
 }
 
-bool RenderFragmentedFlow::getFragmentRangeForBox(const RenderBox& box, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const
+bool RenderFragmentedFlow::getFragmentRangeForBox(const RenderBox& box, RenderMultiColumnSet*& startFragment, RenderMultiColumnSet*& endFragment) const
 {
     startFragment = endFragment = nullptr;
     if (!hasValidFragmentInfo()) // We clear the ranges when we invalidate the fragments.
         return false;
 
     if (m_fragmentList.computeSize() == 1) {
-        startFragment = endFragment = const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
+        startFragment = endFragment = const_cast<RenderMultiColumnSet*>(&m_fragmentList.first());
         return true;
     }
 
@@ -523,7 +545,7 @@ bool RenderFragmentedFlow::getFragmentRangeForBox(const RenderBox& box, RenderFr
     return false;
 }
 
-bool RenderFragmentedFlow::computedFragmentRangeForBox(const RenderBox& box, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const
+bool RenderFragmentedFlow::computedFragmentRangeForBox(const RenderBox& box, RenderMultiColumnSet*& startFragment, RenderMultiColumnSet*& endFragment) const
 {
     startFragment = endFragment = nullptr;
     if (!hasValidFragmentInfo()) // We clear the ranges when we invalidate the fragments.
@@ -553,12 +575,12 @@ bool RenderFragmentedFlow::computedFragmentRangeForBox(const RenderBox& box, Ren
     return false;
 }
 
-bool RenderFragmentedFlow::fragmentInRange(const RenderFragmentContainer* targetFragment, const RenderFragmentContainer* startFragment, const RenderFragmentContainer* endFragment) const
+bool RenderFragmentedFlow::fragmentInRange(const RenderMultiColumnSet* targetFragment, const RenderMultiColumnSet* startFragment, const RenderMultiColumnSet* endFragment) const
 {
     ASSERT(targetFragment);
 
     for (auto it = m_fragmentList.find(*startFragment), end = m_fragmentList.end(); it != end; ++it) {
-        const RenderFragmentContainer& currFragment = *it;
+        const RenderMultiColumnSet& currFragment = *it;
         if (targetFragment == &currFragment)
             return true;
         if (&currFragment == endFragment)
@@ -568,7 +590,7 @@ bool RenderFragmentedFlow::fragmentInRange(const RenderFragmentContainer* target
     return false;
 }
 
-bool RenderFragmentedFlow::objectShouldFragmentInFlowFragment(const RenderObject* object, const RenderFragmentContainer* fragment) const
+bool RenderFragmentedFlow::objectShouldFragmentInFlowFragment(const RenderObject* object, const RenderMultiColumnSet* fragment) const
 {
     ASSERT(object);
     ASSERT(fragment || isSkippedContent());
@@ -580,8 +602,8 @@ bool RenderFragmentedFlow::objectShouldFragmentInFlowFragment(const RenderObject
     if (!fragment || !m_fragmentList.contains(*fragment))
         return false;
     
-    RenderFragmentContainer* enclosingBoxStartFragment = nullptr;
-    RenderFragmentContainer* enclosingBoxEndFragment = nullptr;
+    RenderMultiColumnSet* enclosingBoxStartFragment = nullptr;
+    RenderMultiColumnSet* enclosingBoxEndFragment = nullptr;
     // If the box has no range, do not check fragmentInRange. Boxes inside inlines do not get ranges.
     // Instead, the containing RootInlineBox will abort when trying to paint inside the wrong fragment.
     if (computedFragmentRangeForBox(object->enclosingBox(), enclosingBoxStartFragment, enclosingBoxEndFragment)
@@ -762,8 +784,8 @@ void RenderFragmentedFlow::physicalToBlockStartRelativeIgnoringSize(LayoutRect& 
 
 void RenderFragmentedFlow::addFragmentsVisualEffectOverflow(const RenderBox& box)
 {
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     if (!getFragmentRangeForBox(box, startFragment, endFragment))
         return;
 
@@ -778,8 +800,8 @@ void RenderFragmentedFlow::addFragmentsVisualEffectOverflow(const RenderBox& box
 
 void RenderFragmentedFlow::addFragmentsVisualOverflowFromTheme(const RenderBlock& block)
 {
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     if (!getFragmentRangeForBox(block, startFragment, endFragment))
         return;
 
@@ -796,13 +818,13 @@ void RenderFragmentedFlow::addFragmentsVisualOverflowFromTheme(const RenderBlock
 
 void RenderFragmentedFlow::addFragmentsOverflowFromChild(const RenderBox& box, const RenderBox& child, const LayoutSize& delta)
 {
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     if (!getFragmentRangeForBox(child, startFragment, endFragment))
         return;
 
-    RenderFragmentContainer* containerStartFragment = nullptr;
-    RenderFragmentContainer* containerEndFragment = nullptr;
+    RenderMultiColumnSet* containerStartFragment = nullptr;
+    RenderMultiColumnSet* containerEndFragment = nullptr;
     if (!getFragmentRangeForBox(box, containerStartFragment, containerEndFragment))
         return;
 
@@ -825,8 +847,8 @@ void RenderFragmentedFlow::addFragmentsOverflowFromChild(const RenderBox& box, c
     
 void RenderFragmentedFlow::addFragmentsVisualOverflow(const RenderBox& box, const LayoutRect& visualOverflow)
 {
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     if (!getFragmentRangeForBox(box, startFragment, endFragment))
         return;
     
@@ -839,8 +861,8 @@ void RenderFragmentedFlow::addFragmentsVisualOverflow(const RenderBox& box, cons
 
 void RenderFragmentedFlow::clearFragmentsOverflow(const RenderBox& box)
 {
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     if (!getFragmentRangeForBox(box, startFragment, endFragment))
         return;
 

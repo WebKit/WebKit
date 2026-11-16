@@ -1115,7 +1115,7 @@ std::optional<LayoutUnit> RenderReplaced::stretchFitLogicalWidthWithoutNaturalSi
     return std::clamp(computeConstrainedLogicalWidth(), transferredMinLogicalWidth, transferredMaxLogicalWidth);
 }
 
-PositionWithAffinity RenderReplaced::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
+PositionWithAffinity RenderReplaced::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderMultiColumnSet* fragment)
 {
     auto [top, bottom] = [&]() -> std::pair<float, float> {
         if (auto run = InlineIterator::boxFor(*this)) {

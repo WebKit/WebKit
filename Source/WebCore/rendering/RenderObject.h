@@ -76,7 +76,7 @@ class RenderFragmentedFlow;
 class RenderGeometryMap;
 class RenderLayer;
 class RenderLayerModelObject;
-class RenderFragmentContainer;
+class RenderMultiColumnSet;
 class RenderTheme;
 class RenderTreeBuilder;
 class RenderView;
@@ -253,11 +253,10 @@ public:
     // Type Specific Flags
 
     enum class BlockFlowFlag : uint8_t {
-        IsFragmentContainer = 1 << 0,
-        IsFragmentedFlow = 1 << 1,
-        IsTextControl = 1 << 2,
-        IsSVGBlock = 1 << 3,
-        IsViewTransitionContainingBlock = 1 << 4,
+        IsFragmentedFlow = 1 << 0,
+        IsTextControl = 1 << 1,
+        IsSVGBlock = 1 << 2,
+        IsViewTransitionContainingBlock = 1 << 3,
     };
 
     enum class LineBreakFlag : uint8_t {
@@ -465,7 +464,6 @@ public:
 #if ENABLE(MODEL_ELEMENT)
     bool isRenderModel() const { return type() == Type::Model; }
 #endif
-    bool isRenderFragmentContainer() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsFragmentContainer); }
     bool isRenderReplica() const { return type() == Type::Replica; }
 
     bool isRenderSlider() const { return type() == Type::Slider; }
@@ -811,7 +809,7 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     virtual Position positionForPoint(const LayoutPoint&, HitTestSource);
-    virtual PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*);
+    virtual PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*);
     PositionWithAffinity createPositionWithAffinity(int offset, Affinity) const;
     PositionWithAffinity createPositionWithAffinity(const Position&) const;
 

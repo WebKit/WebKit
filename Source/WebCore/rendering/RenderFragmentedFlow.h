@@ -32,7 +32,6 @@
 #include "LayerFragment.h"
 #include "PODIntervalTree.h"
 #include "RenderBlockFlow.h"
-#include "RenderFragmentContainer.h"
 #include <wtf/InlineWeakPtr.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakListHashSet.h>
@@ -40,11 +39,11 @@
 namespace WebCore {
 
 class RenderFragmentedFlow;
-class RenderFragmentContainer;
+class RenderMultiColumnSet;
 
-typedef SingleThreadWeakListHashSet<RenderFragmentContainer> RenderFragmentContainerList;
+typedef SingleThreadWeakListHashSet<RenderMultiColumnSet> RenderFragmentContainerList;
 typedef Vector<InlineWeakPtr<RenderLayer>> RenderLayerList;
-typedef PODIntervalTree<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>> FragmentIntervalTree;
+typedef PODIntervalTree<LayoutUnit, SingleThreadWeakPtr<RenderMultiColumnSet>> FragmentIntervalTree;
 
 namespace Style {
 class ComputedStyle;
@@ -52,8 +51,8 @@ class ComputedStyle;
 
 // RenderFragmentedFlow is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
-// directly to screen. Instead, RenderFragmentContainer objects will redirect their paint 
-// and nodeAtPoint methods to this object. Each RenderFragmentContainer will actually be a viewPort
+// directly to screen. Instead, RenderMultiColumnSet objects will redirect their paint
+// and nodeAtPoint methods to this object. Each RenderMultiColumnSet will actually be a viewPort
 // of the RenderFragmentedFlow.
 
 class RenderFragmentedFlow : public RenderBlockFlow {
@@ -64,8 +63,8 @@ public:
 
     void removeFlowChildInfo(RenderElement&);
 
-    virtual void addFragmentToThread(RenderFragmentContainer*) = 0;
-    void removeFragmentFromThread(RenderFragmentContainer&);
+    virtual void addFragmentToThread(RenderMultiColumnSet*) = 0;
+    void removeFragmentFromThread(RenderMultiColumnSet&);
     const RenderFragmentContainerList& renderFragmentContainerList() const LIFETIME_BOUND { return m_fragmentList; }
 
     void updateLogicalWidth() final;
@@ -94,27 +93,27 @@ public:
 
     virtual void updateSpaceShortageForSizeContainment(const RenderBlock*, LayoutUnit offset, LayoutUnit shortage) = 0;
 
-    virtual RenderFragmentContainer* fragmentAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastFragment = false) const;
+    virtual RenderMultiColumnSet* fragmentAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastFragment = false) const;
 
     bool fragmentsHaveUniformLogicalHeight() const { return m_fragmentsHaveUniformLogicalHeight; }
 
-    virtual RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const = 0;
+    virtual RenderMultiColumnSet* mapFromFlowToFragment(TransformState&) const = 0;
 
     void logicalWidthChangedInFragmentsForBlock(const RenderBlock&, RelayoutChildren&);
 
     LayoutUnit contentLogicalWidthOfFirstFragment() const;
     LayoutUnit contentLogicalHeightOfFirstFragment() const;
     
-    RenderFragmentContainer* firstFragment() const;
-    RenderFragmentContainer* lastFragment() const;
+    RenderMultiColumnSet* firstFragment() const;
+    RenderMultiColumnSet* lastFragment() const;
 
-    virtual void setFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*, RenderFragmentContainer*);
-    bool getFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
-    bool computedFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    virtual void setFragmentRangeForBox(const RenderBox&, RenderMultiColumnSet*, RenderMultiColumnSet*);
+    bool getFragmentRangeForBox(const RenderBox&, RenderMultiColumnSet*& startFragment, RenderMultiColumnSet*& endFragment) const;
+    bool computedFragmentRangeForBox(const RenderBox&, RenderMultiColumnSet*& startFragment, RenderMultiColumnSet*& endFragment) const;
     NODELETE bool hasCachedFragmentRangeForBox(const RenderBox&) const;
 
     // Check if the object should be painted in this fragment and if the fragment is part of this flow thread.
-    bool objectShouldFragmentInFlowFragment(const RenderObject*, const RenderFragmentContainer*) const;
+    bool objectShouldFragmentInFlowFragment(const RenderObject*, const RenderMultiColumnSet*) const;
 
     virtual bool addForcedFragmentBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) = 0;
 
@@ -125,7 +124,7 @@ public:
     LayoutRect fragmentsBoundingBox(const LayoutRect& layerBoundingBox) const;
 
     LayoutUnit offsetFromLogicalTopOfFirstFragment(const RenderBlock*) const;
-    void clearRenderBoxFragmentInfo(const RenderBox&, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*);
+    void clearRenderBoxFragmentInfo(const RenderBox&, const RenderMultiColumnSet*, const RenderMultiColumnSet*, const RenderMultiColumnSet*, const RenderMultiColumnSet*);
 
     void addFragmentsVisualEffectOverflow(const RenderBox&);
     void addFragmentsVisualOverflowFromTheme(const RenderBlock&);
@@ -143,7 +142,7 @@ public:
     // Used to estimate the maximum height of the flow thread.
     static LayoutUnit maxLogicalHeight() { return LayoutUnit::max() / 2; }
 
-    NODELETE bool fragmentInRange(const RenderFragmentContainer* targetFragment, const RenderFragmentContainer* startFragment, const RenderFragmentContainer* endFragment) const;
+    NODELETE bool fragmentInRange(const RenderMultiColumnSet* targetFragment, const RenderMultiColumnSet* startFragment, const RenderMultiColumnSet* endFragment) const;
 
     bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox&) const;
 
@@ -176,33 +175,25 @@ protected:
     void updateFragmentsFragmentedFlowPortionRect();
     NODELETE bool shouldRepaint(const LayoutRect&) const;
 
-    NODELETE bool getFragmentRangeForBoxFromCachedInfo(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    NODELETE bool getFragmentRangeForBoxFromCachedInfo(const RenderBox&, RenderMultiColumnSet*& startFragment, RenderMultiColumnSet*& endFragment) const;
 
     void removeRenderBoxFragmentInfo(const RenderBox&);
 
     class RenderFragmentContainerRange {
     public:
         RenderFragmentContainerRange() = default;
-        RenderFragmentContainerRange(RenderFragmentContainer* start, RenderFragmentContainer* end)
-        {
-            setRange(start, end);
-        }
-        
-        void setRange(RenderFragmentContainer* start, RenderFragmentContainer* end)
-        {
-            m_startFragment = start;
-            m_endFragment = end;
-            m_rangeInvalidated = true;
-        }
+        RenderFragmentContainerRange(RenderMultiColumnSet*, RenderMultiColumnSet*);
 
-        RenderFragmentContainer* startFragment() const { return m_startFragment.get(); }
-        RenderFragmentContainer* endFragment() const { return m_endFragment.get(); }
+        void setRange(RenderMultiColumnSet*, RenderMultiColumnSet*);
+
+        RenderMultiColumnSet* startFragment() const;
+        RenderMultiColumnSet* endFragment() const;
         bool rangeInvalidated() const { return m_rangeInvalidated; }
         void clearRangeInvalidated() { m_rangeInvalidated = false; }
 
     private:
-        SingleThreadWeakPtr<RenderFragmentContainer> m_startFragment;
-        SingleThreadWeakPtr<RenderFragmentContainer> m_endFragment;
+        SingleThreadWeakPtr<RenderMultiColumnSet> m_startFragment;
+        SingleThreadWeakPtr<RenderMultiColumnSet> m_endFragment;
         bool m_rangeInvalidated { false };
     };
 

@@ -167,7 +167,7 @@ static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox
     return fragment.characterOffset - textBox.start() + textBox.renderer().scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
 }
 
-PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderFragmentContainer*)
+PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderMultiColumnSet*)
 {
     auto firstTextBox = InlineIterator::lineLeftmostTextBoxFor(*this);
     if (!firstTextBox || text().isEmpty())

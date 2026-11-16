@@ -75,7 +75,6 @@
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
-#include "RenderFragmentContainer.h"
 #include "RenderGeometryMap.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
@@ -88,6 +87,7 @@
 #include "RenderListOutsideMarker.h"
 #include "RenderMathMLBlock.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderMultiColumnSet.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderTableCellInlines.h"
@@ -226,7 +226,7 @@ void RenderBox::willBeDestroyed()
     RenderBoxModelObject::willBeDestroyed();
 }
 
-RenderFragmentContainer* RenderBox::clampToStartAndEndFragments(RenderFragmentContainer* fragment) const
+RenderMultiColumnSet* RenderBox::clampToStartAndEndFragments(RenderMultiColumnSet* fragment) const
 {
     CheckedPtr fragmentedFlow = enclosingFragmentedFlow();
 
@@ -238,8 +238,8 @@ RenderFragmentContainer* RenderBox::clampToStartAndEndFragments(RenderFragmentCo
     // logical top or logical bottom of the block to size as though the border box in the first and
     // last fragments extended infinitely. Otherwise the lines are going to size according to the fragments
     // they overflow into, which makes no sense when this block doesn't exist in |fragment| at all.
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     if (!fragmentedFlow->getFragmentRangeForBox(*this, startFragment, endFragment))
         return fragment;
 
@@ -3208,7 +3208,7 @@ void RenderBox::computeInlineDirectionMargins(const RenderBoxModelObject& contai
     marginEnd = Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidth, zoomFactor);
 }
 
-RenderBoxFragmentInfo* RenderBox::renderBoxFragmentInfo(RenderFragmentContainer* fragment, RenderBoxFragmentInfoFlags cacheFlag) const
+RenderBoxFragmentInfo* RenderBox::renderBoxFragmentInfo(RenderMultiColumnSet* fragment, RenderBoxFragmentInfoFlags cacheFlag) const
 {
     // Make sure nobody is trying to call this with a null fragment.
     if (!fragment)
@@ -4270,7 +4270,7 @@ LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObj
 
     if (enclosingFragmentedFlow() && enclosingFragmentedFlow()->writingMode().inlineAxis() == physicalAxis) {
         LayoutUnit pageOffset = containingBlock->offsetFromLogicalTopOfFirstPage();
-        if (RenderFragmentContainer* fragment = containingBlock->fragmentAtBlockOffset(pageOffset)) {
+        if (RenderMultiColumnSet* fragment = containingBlock->fragmentAtBlockOffset(pageOffset)) {
             if (auto boxInfo = containingBlock->renderBoxFragmentInfo(fragment)) {
                 auto size = boxInfo->logicalWidth();
                 if (BoxAxis::Horizontal == physicalAxis)
@@ -4366,7 +4366,7 @@ void RenderBox::computeOutOfFlowPositionedLogicalWidth(LogicalExtentComputedValu
             ASSERT(canHaveBoxInfoInFragment(inlineConstraints.container()));
             LayoutUnit logicalLeftPos = computedValues.position;
             LayoutUnit cbPageOffset = container->offsetFromLogicalTopOfFirstPage();
-            RenderFragmentContainer* cbFragment = container->fragmentAtBlockOffset(cbPageOffset);
+            RenderMultiColumnSet* cbFragment = container->fragmentAtBlockOffset(cbPageOffset);
             if (cbFragment) {
                 RenderBoxFragmentInfo* boxInfo = container->renderBoxFragmentInfo(cbFragment);
                 if (boxInfo) {
@@ -4522,7 +4522,7 @@ void RenderBox::computeOutOfFlowPositionedLogicalHeight(LogicalExtentComputedVal
             ASSERT(canHaveBoxInfoInFragment(blockConstraints.container()));
             LayoutUnit logicalTopPos = computedValues.position;
             LayoutUnit cbPageOffset = container->offsetFromLogicalTopOfFirstPage() - logicalLeft();
-            RenderFragmentContainer* cbFragment = container->fragmentAtBlockOffset(cbPageOffset);
+            RenderMultiColumnSet* cbFragment = container->fragmentAtBlockOffset(cbPageOffset);
             if (cbFragment) {
                 RenderBoxFragmentInfo* boxInfo = container->renderBoxFragmentInfo(cbFragment);
                 if (boxInfo) {
@@ -4598,7 +4598,7 @@ LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalHeightUsing(const Style::
     return adjustContentBoxLogicalHeightForBoxSizing(logicalHeight, Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()), blockConstraints.containingInlineSize());
 }
 
-PositionWithAffinity RenderBox::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
+PositionWithAffinity RenderBox::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderMultiColumnSet* fragment)
 {
     // no children...return this render object's element, if there is one, and offset 0
     if (!firstChild())

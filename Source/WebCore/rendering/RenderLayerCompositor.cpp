@@ -3389,7 +3389,7 @@ bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
         if (!layer.isInsideFragmentedFlow())
             return true;
 
-        // CSS Regions flow threads do not need to be composited as we use composited RenderFragmentContainers
+        // CSS Regions flow threads do not need to be composited as we use composited RenderMultiColumnSets
         // to render the background of the RenderFragmentedFlow.
         if (layer.isRenderFragmentedFlow())
             return false;

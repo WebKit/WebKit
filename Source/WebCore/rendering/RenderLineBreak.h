@@ -56,7 +56,7 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final { }
     void imageChanged(WrappedImagePtr, const IntRect*) final { }
 
-    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) final;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*) final;
     int caretMinOffset() const final;
     NODELETE int caretMaxOffset() const final;
     NODELETE bool canBeSelectionLeaf() const final;

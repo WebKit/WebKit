@@ -55,7 +55,6 @@
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
-#include "RenderFragmentContainer.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
@@ -63,6 +62,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderMultiColumnSet.h"
 #include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
 #include "RenderTable.h"
@@ -928,7 +928,7 @@ void RenderBoxModelObject::clearFirstLetterRemainingText()
     firstLetterRemainingTextMap().remove(*this);
 }
 
-PositionWithAffinity RenderBoxModelObject::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
+PositionWithAffinity RenderBoxModelObject::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderMultiColumnSet* fragment)
 {
     CheckedPtr containingBlock = this->containingBlock();
     return containingBlock->positionForPoint(point, source, fragment);
@@ -1383,7 +1383,7 @@ void RenderBoxModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixe
 
 LayoutSize RenderBoxModelObject::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const
 {
-    ASSERT(&container == this->container() || is<RenderFragmentContainer>(container));
+    ASSERT(&container == this->container() || is<RenderMultiColumnSet>(container));
 
     LayoutSize offset;
     if (isInFlowPositioned())

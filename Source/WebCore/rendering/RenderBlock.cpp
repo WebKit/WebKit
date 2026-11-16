@@ -2086,7 +2086,7 @@ NODELETE static inline bool isChildHitTestCandidate(const RenderBox& box, HitTes
 }
 
 // Valid candidates in a FragmentedFlow must be rendered by the fragment.
-static inline bool isChildHitTestCandidate(const RenderBox& box, const RenderFragmentContainer* fragment, const LayoutPoint& point, HitTestSource source)
+static inline bool isChildHitTestCandidate(const RenderBox& box, const RenderMultiColumnSet* fragment, const LayoutPoint& point, HitTestSource source)
 {
     if (!isChildHitTestCandidate(box, source))
         return false;
@@ -2100,7 +2100,7 @@ static inline bool isChildHitTestCandidate(const RenderBox& box, const RenderFra
     return block.fragmentAtBlockOffset(point.y()) == fragment;
 }
 
-PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
+PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderMultiColumnSet* fragment)
 {
     if (isRenderTable())
         return RenderBox::positionForPoint(point, source, fragment);
@@ -2655,7 +2655,7 @@ LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
     return 0;
 }
 
-RenderFragmentContainer* RenderBlock::fragmentAtBlockOffset(LayoutUnit blockOffset) const
+RenderMultiColumnSet* RenderBlock::fragmentAtBlockOffset(LayoutUnit blockOffset) const
 {
     if (CheckedPtr fragmentedFlow = enclosingFragmentedFlow(); fragmentedFlow && fragmentedFlow->hasValidFragmentInfo())
         return fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstPage() + blockOffset, true);
@@ -2690,8 +2690,8 @@ void RenderBlock::computeFragmentRangeForBoxChild(const RenderBox& box) const
     ASSERT(fragmentedFlow && canComputeFragmentRangeForBox(*this, box, *fragmentedFlow));
     ASSERT(box.fragmentedFlowState() == FragmentedFlowState::InsideFlow);
 
-    RenderFragmentContainer* startFragment;
-    RenderFragmentContainer* endFragment;
+    RenderMultiColumnSet* startFragment;
+    RenderMultiColumnSet* endFragment;
     LayoutUnit offsetFromLogicalTopOfFirstFragment = box.offsetFromLogicalTopOfFirstPage();
     if (childBoxIsUnsplittableForFragmentation(box))
         startFragment = endFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
@@ -2716,8 +2716,8 @@ void RenderBlock::estimateFragmentRangeForBoxChild(const RenderBox& box) const
 
     auto estimatedValues = box.computeLogicalHeight(RenderFragmentedFlow::maxLogicalHeight(), logicalTopForChild(box));
     LayoutUnit offsetFromLogicalTopOfFirstFragment = box.offsetFromLogicalTopOfFirstPage();
-    RenderFragmentContainer* startFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
-    RenderFragmentContainer* endFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment + estimatedValues.extent, true);
+    RenderMultiColumnSet* startFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
+    RenderMultiColumnSet* endFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment + estimatedValues.extent, true);
 
     fragmentedFlow->setFragmentRangeForBox(box, startFragment, endFragment);
 }
@@ -2728,14 +2728,14 @@ bool RenderBlock::updateFragmentRangeForBoxChild(const RenderBox& box) const
     if (!fragmentedFlow || box.fragmentedFlowState() == FragmentedFlowState::NotInsideFlow || !canComputeFragmentRangeForBox(*this, box, *fragmentedFlow))
         return false;
 
-    RenderFragmentContainer* startFragment = nullptr;
-    RenderFragmentContainer* endFragment = nullptr;
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
     fragmentedFlow->getFragmentRangeForBox(box, startFragment, endFragment);
 
     computeFragmentRangeForBoxChild(box);
 
-    RenderFragmentContainer* newStartFragment = nullptr;
-    RenderFragmentContainer* newEndFragment = nullptr;
+    RenderMultiColumnSet* newStartFragment = nullptr;
+    RenderMultiColumnSet* newEndFragment = nullptr;
     fragmentedFlow->getFragmentRangeForBox(box, newStartFragment, newEndFragment);
 
 

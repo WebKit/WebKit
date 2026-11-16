@@ -37,8 +37,8 @@
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderFragmentContainer.h"
 #include "RenderImage.h"
+#include "RenderMultiColumnSet.h"
 #include "RenderView.h"
 #include "StyleImage.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -195,7 +195,7 @@ static inline LayoutUnit marginBorderAndPaddingBeforeWithStyleForWritingMode(con
 
 static LayoutUnit logicalLeftOffset(const RenderBox& renderer)
 {
-    if (renderer.isRenderFragmentContainer())
+    if (renderer.isRenderMultiColumnSet())
         return 0_lu;
 
     // The offset converts from reference-box coordinates to border-box coordinates.

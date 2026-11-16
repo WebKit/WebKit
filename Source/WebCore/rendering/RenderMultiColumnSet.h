@@ -26,11 +26,16 @@
 #pragma once
 
 #include "LayerFragment.h"
-#include "RenderFragmentContainer.h"
 #include "RenderMultiColumnFlow.h"
+#include "VisiblePosition.h"
+#include <memory>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
+
+class RenderBox;
+class RenderBoxFragmentInfo;
 
 // RenderMultiColumnSet represents a set of columns that all have the same width and height. By combining runs of same-size columns into a single
 // object, we significantly reduce the number of unique RenderObjects required to represent columns.
@@ -42,12 +47,69 @@ namespace WebCore {
 //
 // Column spans result in the creation of new column sets as well, since a spanning fragment has to be placed in between the column sets that
 // come before and after the span.
-class RenderMultiColumnSet final : public RenderFragmentContainer {
+class RenderMultiColumnSet final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderMultiColumnSet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMultiColumnSet);
 public:
     RenderMultiColumnSet(RenderFragmentedFlow&, Style::ComputedStyle&&);
     virtual ~RenderMultiColumnSet();
+
+    void setFragmentedFlowPortionRect(const LayoutRect& rect) { m_fragmentedFlowPortionRect = rect; }
+    LayoutRect fragmentedFlowPortionRect() const { return m_fragmentedFlowPortionRect; }
+    LayoutRect fragmentedFlowPortionOverflowRect() const;
+
+    void attachFragment();
+    void detachFragment();
+
+    RenderFragmentedFlow* fragmentedFlow() const { return m_fragmentedFlow.get(); }
+
+    // Set once attachFragment() has added the fragment to its fragmented flow. It stays set after detachFragment().
+    bool isValid() const { return m_isValid; }
+
+    NODELETE RenderBoxFragmentInfo* renderBoxFragmentInfo(const RenderBox&) const;
+    void setRenderBoxFragmentInfo(const RenderBox&, LayoutUnit logicalLeft, LayoutUnit logicalWidth);
+    std::unique_ptr<RenderBoxFragmentInfo> takeRenderBoxFragmentInfo(const RenderBox&);
+    void removeRenderBoxFragmentInfo(const RenderBox&);
+
+    void deleteAllRenderBoxFragmentInfo();
+
+    bool isFirstFragment() const;
+    bool isLastFragment() const;
+
+    // The width and height of a single column or page in the set.
+    LayoutUnit pageLogicalWidth() const { return m_computedColumnWidth; }
+    LayoutUnit pageLogicalHeight() const { return m_computedColumnHeight; }
+
+    NODELETE LayoutUnit logicalTopOfFragmentedFlowContentRect(const LayoutRect&) const;
+    NODELETE LayoutUnit logicalBottomOfFragmentedFlowContentRect(const LayoutRect&) const;
+    LayoutUnit logicalTopForFragmentedFlowContent() const { return logicalTopOfFragmentedFlowContentRect(fragmentedFlowPortionRect()); };
+    LayoutUnit logicalBottomForFragmentedFlowContent() const { return logicalBottomOfFragmentedFlowContentRect(fragmentedFlowPortionRect()); };
+
+    // The logical height of the entire flow thread portion used by the set, i.e. the height of all the pages
+    // or columns added together.
+    LayoutUnit logicalHeightOfAllFragmentedFlowContent() const { return logicalHeightInFragmentedFlow(); }
+
+    // The top of the nearest column or page inside the set.
+    LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const;
+
+    void repaintFragmentedFlowContent(const LayoutRect& repaintRect) const;
+
+    void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) const;
+
+    void addLayoutOverflowForBox(const RenderBox&, const LayoutRect&);
+    void addVisualOverflowForBox(const RenderBox&, const LayoutRect&);
+    LayoutRect visualOverflowRectForBox(const RenderBox&) const;
+    LayoutRect layoutOverflowRectForBoxForPropagation(const RenderBox&);
+    LayoutRect visualOverflowRectForBoxForPropagation(const RenderBox&);
+
+    LayoutRect rectFlowPortionForBox(const RenderBox&, const LayoutRect&) const;
+
+    bool canHaveChildren() const override { return false; }
+    bool canHaveGeneratedChildren() const override { return true; }
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*) override;
+
+    Vector<LayoutRect> fragmentRectsForFlowContentRect(const LayoutRect&) const;
+    bool contentRectSpansFragments(const LayoutRect&) const;
 
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
     RenderMultiColumnFlow* multiColumnFlow() const { return downcast<RenderMultiColumnFlow>(fragmentedFlow()); }
@@ -158,23 +220,22 @@ private:
 
     void paintObject(PaintInfo&, const LayoutPoint&) override { }
 
-    LayoutUnit pageLogicalWidth() const override { return m_computedColumnWidth; }
-    LayoutUnit pageLogicalHeight() const override { return m_computedColumnHeight; }
-
-    LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const override;
-
-    LayoutUnit logicalHeightOfAllFragmentedFlowContent() const override { return logicalHeightInFragmentedFlow(); }
-
-    void repaintFragmentedFlowContent(const LayoutRect& repaintRect) const override;
-
-    void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) const override;
-
-    Vector<LayoutRect> fragmentRectsForFlowContentRect(const LayoutRect&) const final;
-    bool contentRectSpansFragments(const LayoutRect&) const final;
-
-    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
-
     ASCIILiteral renderName() const override;
+
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
+
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
+
+    RenderOverflow* overflowForBox(const RenderBox&) const;
+    LayoutRect computedVisualOverflowRectForBox(const RenderBox&) const;
+    LayoutRect computedLayoutOverflowRectForBox(const RenderBox&) const;
+
+    LayoutRect overflowRectForFragmentedFlowPortion(const LayoutRect& fragmentedFlowPortionRect, bool isFirstPortion, bool isLastPortion) const;
+    void repaintFragmentedFlowContentRectangle(const LayoutRect& repaintRect, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect = 0) const;
+
+    NODELETE LayoutRect fragmentedFlowContentRectangle(const LayoutRect&, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect = 0) const;
 
     LayoutUnit calculateMaxColumnHeight() const;
 
@@ -206,6 +267,19 @@ private:
     void distributeImplicitBreaks();
 
     LayoutUnit calculateBalancedHeight(bool initial) const;
+
+    SingleThreadWeakPtr<RenderFragmentedFlow> m_fragmentedFlow;
+
+    LayoutRect m_fragmentedFlowPortionRect;
+
+    // This map holds unique information about a block that is split across fragments.
+    // A RenderBoxFragmentInfo* tells us about any layout information for a RenderBox that
+    // is unique to the fragment. For now it just holds logical width information for RenderBlocks, but eventually
+    // it will also hold a custom style for any box (for fragment styling).
+    using RenderBoxFragmentInfoMap = SingleThreadWeakHashMap<const RenderBox, std::unique_ptr<RenderBoxFragmentInfo>>;
+    RenderBoxFragmentInfoMap m_renderBoxFragmentInfo;
+
+    bool m_isValid { false };
 
     unsigned m_computedColumnCount { 1 }; // Used column count (the resulting 'N' from the pseudo-algorithm in the multicol spec)
     LayoutUnit m_computedColumnWidth; // Used column width (the resulting 'W' from the pseudo-algorithm in the multicol spec)
@@ -246,6 +320,10 @@ private:
     };
     Vector<ContentRun, 1> m_contentRuns;
 };
+
+#ifndef NDEBUG
+TextStream& operator<<(TextStream&, const RenderMultiColumnSet&);
+#endif
 
 } // namespace WebCore
 

@@ -108,7 +108,7 @@ public:
 
     LayoutUnit textIndentOffset() const;
 
-    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*) override;
 
     GapRects selectionGapRectsForRepaint(const RenderLayerModelObject* repaintContainer);
     LayoutRect logicalLeftSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, RenderElement* selObj, LayoutUnit logicalLeft, LayoutUnit logicalTop, LayoutUnit logicalHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
@@ -229,7 +229,7 @@ public:
     virtual bool canPerformSimplifiedLayout() const;
 
     LayoutUnit offsetFromLogicalTopOfFirstPage() const override;
-    RenderFragmentContainer* fragmentAtBlockOffset(LayoutUnit) const;
+    RenderMultiColumnSet* fragmentAtBlockOffset(LayoutUnit) const;
 
     void clearLayoutOverflow();
 

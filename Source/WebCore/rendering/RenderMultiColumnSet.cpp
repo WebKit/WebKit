@@ -1,6 +1,8 @@
 /*
+ * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
  * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Google Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +38,7 @@
 #include "RenderBlockInlines.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderLayer.h"
@@ -43,6 +46,7 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -51,7 +55,8 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMultiColumnSet);
 
 RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow, Style::ComputedStyle&& style)
-    : RenderFragmentContainer(Type::MultiColumnSet, protect(fragmentedFlow.document()), WTF::move(style), &fragmentedFlow)
+    : RenderBlockFlow(Type::MultiColumnSet, protect(fragmentedFlow.document()), WTF::move(style))
+    , m_fragmentedFlow(fragmentedFlow)
     , m_maxColumnHeight(RenderFragmentedFlow::maxLogicalHeight())
     , m_minSpaceShortage(RenderFragmentedFlow::maxLogicalHeight())
 {
@@ -871,7 +876,7 @@ void RenderMultiColumnSet::repaintFragmentedFlowContent(const LayoutRect& repain
     // Now we can compare this rect with the flow thread portions owned by each column. First let's
     // just see if the repaint rect intersects our flow thread portion at all.
     LayoutRect clippedRect(fragmentedFlowRepaintRect);
-    clippedRect.intersect(RenderFragmentContainer::fragmentedFlowPortionOverflowRect());
+    clippedRect.intersect(fragmentedFlowPortionOverflowRect());
     if (clippedRect.isEmpty())
         return;
     
@@ -991,7 +996,7 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
     // Now we can compare with the flow thread portions owned by each column. First let's
     // see if the rect intersects our flow thread portion at all.
     LayoutRect clippedRect(layerBoundsInFragmentedFlow);
-    clippedRect.intersect(RenderFragmentContainer::fragmentedFlowPortionOverflowRect());
+    clippedRect.intersect(fragmentedFlowPortionOverflowRect());
     if (clippedRect.isEmpty())
         return;
     
@@ -1130,7 +1135,7 @@ void RenderMultiColumnSet::addOverflowFromInFlowChildren(OptionSet<ComputeOverfl
         m_overflow->addContentOverflow(lastRect);
 }
 
-PositionWithAffinity RenderMultiColumnSet::positionForPoint(const LayoutPoint& logicalPoint, HitTestSource source, const RenderFragmentContainer*)
+PositionWithAffinity RenderMultiColumnSet::positionForPoint(const LayoutPoint& logicalPoint, HitTestSource source, const RenderMultiColumnSet*)
 {
     return multiColumnFlow()->positionForPoint(translateFragmentPointToFragmentedFlow(logicalPoint, ClampHitTestTranslationToColumns), source, this);
 }
@@ -1237,5 +1242,336 @@ ASCIILiteral RenderMultiColumnSet::renderName() const
 {    
     return "RenderMultiColumnSet"_s;
 }
+
+LayoutRect RenderMultiColumnSet::fragmentedFlowPortionOverflowRect() const
+{
+    return overflowRectForFragmentedFlowPortion(fragmentedFlowPortionRect(), isFirstFragment(), isLastFragment());
+}
+
+LayoutRect RenderMultiColumnSet::overflowRectForFragmentedFlowPortion(const LayoutRect& fragmentedFlowPortionRect, bool isFirstPortion, bool isLastPortion) const
+{
+    ASSERT(isValid());
+
+    auto renderableInfiniteRect = [] {
+        // Return a infinite-like rect whose values are such that, when converted to float pixel values, they can reasonably represent device pixels.
+        return LayoutRect(LayoutUnit::nearlyMin() / 32, LayoutUnit::nearlyMin() / 32, LayoutUnit::nearlyMax() / 16, LayoutUnit::nearlyMax() / 16);
+    }();
+
+    // Only clip along the block direction axis.
+    LayoutRect clipRect(renderableInfiniteRect);
+
+    if (m_fragmentedFlow->isHorizontalWritingMode()) {
+        if (!isFirstPortion)
+            clipRect.shiftYEdgeTo(fragmentedFlowPortionRect.y());
+        if (!isLastPortion)
+            clipRect.shiftMaxYEdgeTo(fragmentedFlowPortionRect.maxY());
+        return clipRect;
+    }
+
+    if (!isFirstPortion)
+        clipRect.shiftXEdgeTo(fragmentedFlowPortionRect.x());
+    if (!isLastPortion)
+        clipRect.shiftMaxXEdgeTo(fragmentedFlowPortionRect.maxX());
+    return clipRect;
+}
+
+bool RenderMultiColumnSet::isFirstFragment() const
+{
+    ASSERT(isValid());
+
+    return m_fragmentedFlow->firstFragment() == this;
+}
+
+bool RenderMultiColumnSet::isLastFragment() const
+{
+    ASSERT(isValid());
+
+    return m_fragmentedFlow->lastFragment() == this;
+}
+
+void RenderMultiColumnSet::repaintFragmentedFlowContentRectangle(const LayoutRect& repaintRect, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect) const
+{
+    ASSERT(isValid());
+
+    // We only have to issue a repaint in this fragment if the fragment rect intersects the repaint rect.
+    LayoutRect clippedRect(repaintRect);
+
+    if (fragmentedFlowPortionClipRect) {
+        LayoutRect physicalFragmentedFlowPortionClipRect(*fragmentedFlowPortionClipRect);
+        fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionClipRect);
+        clippedRect.intersect(physicalFragmentedFlowPortionClipRect);
+    }
+
+    if (clippedRect.isEmpty())
+        return;
+
+    LayoutRect physicalFragmentedFlowPortionRect(fragmentedFlowPortionRect);
+    fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionRect); // Put the fragment rects into physical coordinates.
+
+    // Put the fragment rect into the fragment's physical coordinate space.
+    clippedRect.setLocation(fragmentLocation + (clippedRect.location() - physicalFragmentedFlowPortionRect.location()));
+
+    // Now switch to the fragment's writing mode coordinate space and let it repaint itself.
+    physicalToBlockStartRelative(clippedRect);
+
+    // Issue the repaint.
+    repaintRectangle(clippedRect);
+}
+
+LayoutRect RenderMultiColumnSet::fragmentedFlowContentRectangle(const LayoutRect& rect, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect) const
+{
+    auto clippedRect = rect;
+
+    if (fragmentedFlowPortionClipRect) {
+        LayoutRect physicalFragmentedFlowPortionClipRect(*fragmentedFlowPortionClipRect);
+        fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionClipRect);
+        clippedRect.edgeInclusiveIntersect(physicalFragmentedFlowPortionClipRect); // edgeInclusiveIntersect to avoid rects with zero height or width becoming zero-sized.
+    }
+
+    LayoutRect physicalFragmentedFlowPortionRect(fragmentedFlowPortionRect);
+    fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionRect);
+
+    // Put the fragment rect into the fragment's physical coordinate space.
+    clippedRect.setLocation(fragmentLocation + (clippedRect.location() - physicalFragmentedFlowPortionRect.location()));
+
+    // Now switch to the fragment's writing mode coordinate space and let it repaint itself.
+    physicalToBlockStartRelative(clippedRect);
+
+    return clippedRect;
+}
+
+void RenderMultiColumnSet::attachFragment()
+{
+    if (renderTreeBeingDestroyed())
+        return;
+
+    m_isValid = false;
+
+    if (!m_fragmentedFlow)
+        return;
+
+    m_fragmentedFlow->addFragmentToThread(this);
+    m_isValid = true;
+}
+
+void RenderMultiColumnSet::detachFragment()
+{
+    if (m_fragmentedFlow)
+        m_fragmentedFlow->removeFragmentFromThread(*this);
+    m_fragmentedFlow = nullptr;
+}
+
+RenderBoxFragmentInfo* RenderMultiColumnSet::renderBoxFragmentInfo(const RenderBox& box) const
+{
+    ASSERT(isValid());
+    return m_renderBoxFragmentInfo.get(box);
+}
+
+void RenderMultiColumnSet::setRenderBoxFragmentInfo(const RenderBox& box, LayoutUnit logicalLeft, LayoutUnit logicalWidth)
+{
+    ASSERT(isValid());
+
+    m_renderBoxFragmentInfo.add(box, makeUnique<RenderBoxFragmentInfo>(logicalLeft, logicalWidth));
+}
+
+std::unique_ptr<RenderBoxFragmentInfo> RenderMultiColumnSet::takeRenderBoxFragmentInfo(const RenderBox& box)
+{
+    return m_renderBoxFragmentInfo.take(box);
+}
+
+void RenderMultiColumnSet::removeRenderBoxFragmentInfo(const RenderBox& box)
+{
+    m_renderBoxFragmentInfo.remove(box);
+}
+
+void RenderMultiColumnSet::deleteAllRenderBoxFragmentInfo()
+{
+    m_renderBoxFragmentInfo.clear();
+}
+
+LayoutUnit RenderMultiColumnSet::logicalTopOfFragmentedFlowContentRect(const LayoutRect& rect) const
+{
+    ASSERT(isValid());
+    return fragmentedFlow()->isHorizontalWritingMode() ? rect.y() : rect.x();
+}
+
+LayoutUnit RenderMultiColumnSet::logicalBottomOfFragmentedFlowContentRect(const LayoutRect& rect) const
+{
+    ASSERT(isValid());
+    return fragmentedFlow()->isHorizontalWritingMode() ? rect.maxY() : rect.maxX();
+}
+
+void RenderMultiColumnSet::insertedIntoTree()
+{
+    attachFragment();
+    if (isValid())
+        RenderBlockFlow::insertedIntoTree();
+}
+
+void RenderMultiColumnSet::willBeRemovedFromTree()
+{
+    RenderBlockFlow::willBeRemovedFromTree();
+
+    detachFragment();
+}
+
+std::pair<LayoutUnit, LayoutUnit> RenderMultiColumnSet::computeIntrinsicLogicalWidths() const
+{
+    if (isValid())
+        return { };
+    return RenderBlockFlow::computeIntrinsicLogicalWidths();
+}
+
+std::pair<LayoutUnit, LayoutUnit> RenderMultiColumnSet::computeIntrinsicLogicalWidthContributions()
+{
+    ASSERT(hasInvalidContentLogicalWidths());
+
+    if (!isValid())
+        return RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
+
+    // FIXME: Currently, the code handles only the <length> case for min-width/max-width.
+    // It should also support other values, like percentage, calc or viewport relative.
+    if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
+        auto logicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth(), LayoutUnit { fixedLogicalWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
+        return { logicalWidth, logicalWidth };
+    }
+    return computeIntrinsicLogicalWidths();
+}
+
+LayoutRect RenderMultiColumnSet::computedVisualOverflowRectForBox(const RenderBox& box) const
+{
+    ASSERT(m_fragmentedFlow->objectShouldFragmentInFlowFragment(&box, this));
+
+    auto borderBox = box.borderBoxRect();
+    if (borderBox.isEmpty())
+        return { };
+
+    borderBox = rectFlowPortionForBox(box, borderBox);
+    m_fragmentedFlow->physicalToBlockStartRelativeIgnoringSize(borderBox);
+    return borderBox;
+}
+
+LayoutRect RenderMultiColumnSet::computedLayoutOverflowRectForBox(const RenderBox& box) const
+{
+    ASSERT(m_fragmentedFlow->objectShouldFragmentInFlowFragment(&box, this));
+    auto clientBox = LayoutRect(box.borderLeft(), box.borderTop(), box.paddingBoxWidth(), box.paddingBoxHeight());
+    if (clientBox.isEmpty())
+        return { };
+
+    clientBox = rectFlowPortionForBox(box, clientBox);
+    m_fragmentedFlow->physicalToBlockStartRelativeIgnoringSize(clientBox);
+    return clientBox;
+}
+
+RenderOverflow* RenderMultiColumnSet::overflowForBox(const RenderBox& box) const
+{
+    ASSERT(m_fragmentedFlow->renderFragmentContainerList().contains(*this));
+    ASSERT(isValid());
+
+    auto* boxInfo = renderBoxFragmentInfo(box);
+    if (!boxInfo)
+        return { };
+
+    if (auto* overflow = boxInfo->overflow())
+        return overflow;
+
+    boxInfo->createOverflow(computedLayoutOverflowRectForBox(box), computedVisualOverflowRectForBox(box));
+    return boxInfo->overflow();
+}
+
+LayoutRect RenderMultiColumnSet::rectFlowPortionForBox(const RenderBox& box, const LayoutRect& rect) const
+{
+    LayoutRect mappedRect = m_fragmentedFlow->mapFromLocalToFragmentedFlow(&box, rect);
+
+    RenderMultiColumnSet* startFragment = nullptr;
+    RenderMultiColumnSet* endFragment = nullptr;
+    if (m_fragmentedFlow->getFragmentRangeForBox(box, startFragment, endFragment)) {
+        if (fragmentedFlow()->isHorizontalWritingMode()) {
+            if (this != startFragment)
+                mappedRect.shiftYEdgeTo(std::max<LayoutUnit>(logicalTopForFragmentedFlowContent(), mappedRect.y()));
+            if (this != endFragment)
+                mappedRect.setHeight(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFragmentedFlowContent() - mappedRect.y(), mappedRect.height())));
+        } else {
+            if (this != startFragment)
+                mappedRect.shiftXEdgeTo(std::max<LayoutUnit>(logicalTopForFragmentedFlowContent(), mappedRect.x()));
+            if (this != endFragment)
+                mappedRect.setWidth(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFragmentedFlowContent() - mappedRect.x(), mappedRect.width())));
+        }
+    }
+
+    return m_fragmentedFlow->mapFromFragmentedFlowToLocal(&box, mappedRect);
+}
+
+void RenderMultiColumnSet::addLayoutOverflowForBox(const RenderBox& box, const LayoutRect& rect)
+{
+    if (rect.isEmpty())
+        return;
+
+    if (CheckedPtr overflow = overflowForBox(box))
+        overflow->addLayoutOverflow(rect);
+}
+
+void RenderMultiColumnSet::addVisualOverflowForBox(const RenderBox& box, const LayoutRect& rect)
+{
+    if (rect.isEmpty())
+        return;
+
+    if (CheckedPtr overflow = overflowForBox(box)) {
+        LayoutRect blockStartRelativeRect = rect;
+        fragmentedFlow()->physicalToBlockStartRelativeIgnoringSize(blockStartRelativeRect);
+        overflow->addVisualOverflow(blockStartRelativeRect);
+    }
+}
+
+LayoutRect RenderMultiColumnSet::visualOverflowRectForBox(const RenderBox& box) const
+{
+    if (CheckedPtr overflow = overflowForBox(box))
+        return overflow->visualOverflowRect();
+    return computedVisualOverflowRectForBox(box);
+}
+
+// FIXME: This doesn't work for writing modes.
+LayoutRect RenderMultiColumnSet::layoutOverflowRectForBoxForPropagation(const RenderBox& box)
+{
+    // Only propagate interior layout overflow if we don't clip it.
+    LayoutRect rect = box.borderBoxRect();
+    rect = rectFlowPortionForBox(box, rect);
+    if (!box.hasNonVisibleOverflow()) {
+        auto layoutOverflowRect = LayoutRect { };
+        if (CheckedPtr overflow = overflowForBox(box))
+            layoutOverflowRect = overflow->layoutOverflowRect();
+        else
+            layoutOverflowRect = computedLayoutOverflowRectForBox(box);
+        rect.unite(layoutOverflowRect);
+    }
+
+    bool hasTransform = box.isTransformed();
+    if (box.isInFlowPositioned() || hasTransform) {
+        if (hasTransform)
+            rect = box.layer()->currentTransform().mapRect(rect);
+
+        if (box.isInFlowPositioned())
+            rect.move(box.offsetForInFlowPosition());
+    }
+
+    return rect;
+}
+
+LayoutRect RenderMultiColumnSet::visualOverflowRectForBoxForPropagation(const RenderBox& box)
+{
+    LayoutRect rect = visualOverflowRectForBox(box);
+    fragmentedFlow()->blockStartRelativeIgnoringSizeToPhysical(rect);
+
+    return rect;
+}
+
+#ifndef NDEBUG
+
+TextStream& operator<<(TextStream& stream, const RenderMultiColumnSet& container)
+{
+    return stream << &container;
+}
+
+#endif
 
 }

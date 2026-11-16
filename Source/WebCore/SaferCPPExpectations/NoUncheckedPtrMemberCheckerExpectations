@@ -15,6 +15,7 @@ rendering/RenderLayerBacking.h
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerScrollableArea.h
 rendering/RenderLayoutState.h
+rendering/RenderMultiColumnSet.h
 rendering/RenderSelectionGeometry.h
 rendering/RenderTableSection.h
 rendering/RenderText.cpp

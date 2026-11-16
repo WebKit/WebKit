@@ -68,7 +68,7 @@ bool RenderLineBreak::canBeSelectionLeaf() const
     return true;
 }
 
-PositionWithAffinity RenderLineBreak::positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*)
+PositionWithAffinity RenderLineBreak::positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*)
 {
     return createPositionWithAffinity(0, Affinity::Downstream);
 }

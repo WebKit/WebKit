@@ -1053,7 +1053,7 @@ static PositionWithAffinity createPositionWithAffinityAfterAdjustingOffsetForBiD
 }
 
 
-PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderFragmentContainer*)
+PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderMultiColumnSet*)
 {
     auto firstRun = InlineIterator::lineLeftmostTextBoxFor(*this);
 

@@ -6262,7 +6262,6 @@
 		D6E276B014637455001D280A /* MutationObserverRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = D6E276AE14637455001D280A /* MutationObserverRegistration.h */; };
 		D6E528A4149A926D00EFE1F3 /* MutationObserverInterestGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = D6E528A2149A926D00EFE1F3 /* MutationObserverInterestGroup.h */; };
 		D6F1F4B42E42AAA200FAB161 /* UserAgentStringData.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F1F4B32E42AAA200FAB161 /* UserAgentStringData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		D70AD65813E1342B005B50B4 /* RenderFragmentContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = D70AD65613E1342B005B50B4 /* RenderFragmentContainer.h */; };
 		D72D8B7BFB8842FA17CD110E /* PlatformRenderTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B17072C67B7410700BE6FB9 /* PlatformRenderTheme.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D8B6152F1032495100C8554A /* Cookie.h in Headers */ = {isa = PBXBuildFile; fileRef = D8B6152E1032495100C8554A /* Cookie.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D913B53B28AC3BFA008B9648 /* PermissionQuerySource.h in Headers */ = {isa = PBXBuildFile; fileRef = D913B53A28AC3BF2008B9648 /* PermissionQuerySource.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -21938,8 +21937,6 @@
 		D6EFC0BD1666DF7A003D291E /* HTMLTemplateElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLTemplateElement.idl; sourceTree = "<group>"; };
 		D6F1F4B32E42AAA200FAB161 /* UserAgentStringData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserAgentStringData.h; sourceTree = "<group>"; };
 		D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTemplateElementCustom.cpp; sourceTree = "<group>"; };
-		D70AD65513E1342B005B50B4 /* RenderFragmentContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFragmentContainer.cpp; sourceTree = "<group>"; };
-		D70AD65613E1342B005B50B4 /* RenderFragmentContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFragmentContainer.h; sourceTree = "<group>"; };
 		D7E7E02D100D3C3969DAEB93 /* SkipForward10.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = SkipForward10.svg; sourceTree = "<group>"; };
 		D8A6C642D6DAE088EF53F376 /* UnifiedSource68-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource68-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		D8B6152E1032495100C8554A /* Cookie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cookie.h; sourceTree = "<group>"; };
@@ -42636,8 +42633,6 @@
 				066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */,
 				53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */,
 				53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */,
-				D70AD65513E1342B005B50B4 /* RenderFragmentContainer.cpp */,
-				D70AD65613E1342B005B50B4 /* RenderFragmentContainer.h */,
 				508CCA4E13CF106B003151F3 /* RenderFragmentedFlow.cpp */,
 				508CCA4D13CF106B003151F3 /* RenderFragmentedFlow.h */,
 				A871DECC0A1530C700B12A68 /* RenderFrame.cpp */,
@@ -48710,7 +48705,6 @@
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
 				066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */,
 				53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */,
-				D70AD65813E1342B005B50B4 /* RenderFragmentContainer.h in Headers */,
 				508CCA4F13CF106B003151F3 /* RenderFragmentedFlow.h in Headers */,
 				A871DED30A1530C700B12A68 /* RenderFrame.h in Headers */,
 				0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */,

@@ -141,7 +141,7 @@ private:
 
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
 
-    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) final;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*) final;
 
     bool canBeSelectionLeaf() const override { return true; }
 

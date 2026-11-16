@@ -301,7 +301,7 @@ public:
     bool subtreeContainsFloat(const RenderBox&) const;
 
     Position positionForPoint(const LayoutPoint&, HitTestSource) override;
-    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*) override;
 
     NODELETE LayoutUnit lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
     NODELETE LayoutUnit lowestFloatLogicalBottom(FloatingObjectType) const;

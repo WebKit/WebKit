@@ -907,7 +907,7 @@ RenderObject::RepaintContainerStatus RenderObject::containerForRepaint() const
         }
     }
 
-    // If we have a flow thread, then we need to do individual repaints within the RenderFragmentContainers instead.
+    // If we have a flow thread, then we need to do individual repaints within the RenderMultiColumnSets instead.
     // Return the flow thread as a repaint container in order to create a chokepoint that allows us to change
     // repainting to do individual region repaints.
     if (CheckedPtr parentRenderFragmentedFlow = enclosingFragmentedFlow()) {
@@ -1421,8 +1421,8 @@ void RenderObject::outputRegionsInformation(TextStream& stream) const
     if (!box)
         return;
 
-    RenderFragmentContainer* startContainer = nullptr;
-    RenderFragmentContainer* endContainer = nullptr;
+    RenderMultiColumnSet* startContainer = nullptr;
+    RenderMultiColumnSet* endContainer = nullptr;
     fragmentedFlow->getFragmentRangeForBox(*box, startContainer, endContainer);
     stream << " [spans fragment containers in flow " << fragmentedFlow.get() << " from " << startContainer << " to " << endContainer << "]";
 }
@@ -1990,7 +1990,7 @@ Position RenderObject::positionForPoint(const LayoutPoint& point, HitTestSource 
     return positionForPoint(point, source, nullptr).position();
 }
 
-PositionWithAffinity RenderObject::positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*)
+PositionWithAffinity RenderObject::positionForPoint(const LayoutPoint&, HitTestSource, const RenderMultiColumnSet*)
 {
     return createPositionWithAffinity(caretMinOffset(), Affinity::Downstream);
 }
